@@ -1,5 +1,5 @@
 import { LinkDTO } from './link.dto';
-import { MonitorLocationDTO } from './monitor-locations.dto';
+import { MonitorLocationDTO } from './monitor-location.dto';
 export class MonitorPlanDTO {
   constructor(
     id: string,
