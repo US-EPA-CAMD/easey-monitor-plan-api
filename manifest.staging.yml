@@ -1,0 +1,15 @@
+applications:
+  - name: monitor-plans-api
+    path: .
+    command: npm run start
+    memory: 512M
+    env:
+      OPTIMIZE_MEMORY: true
+    # services:
+    #   - camd-pg-db
+    # instances: 2
+    # health-check-type: http
+    # health-check-http-endpoint: /swagger
+    routes:
+      - route: easey-stg.app.cloud.gov/api/monitor-plans
+      - route: easey-stg.app.cloud.gov/api/monitor-locations
