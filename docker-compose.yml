@@ -1,0 +1,30 @@
+version: '3'
+services:
+  database:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../devops/db:/docker-entrypoint-initdb.d
+    ports:
+      - '5432:5432'
+  monitor-plan-api:
+    depends_on:
+      - database
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./
+    volumes:
+      - /app/node_modules
+      - ./:/app
+    environment:
+      - PG_HOST=database
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PWD=password
+      - PG_DB=postgres
+    ports:
+      - '8000:8000'
+volumes:
+  pgdata:
