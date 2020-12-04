@@ -1,0 +1,35 @@
+import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+
+@Entity({ name: 'monitor_plan' })
+export class MonitorPlan extends BaseEntity {
+  @PrimaryColumn({ type: 'varchar', length: 45, name: 'mon_plan_id' })
+  monPlanId: string;
+
+  @Column({ length: 38, name: 'fac_id' })
+  facId: number;
+
+  @Column({
+    type: 'varchar',
+    length: 7,
+    nullable: true,
+    name: 'config_type_cd',
+  })
+  configTypeCd: string;
+
+  @Column({ length: 38, nullable: true, name: 'submission_id' })
+  submissionId: number;
+
+  @Column({
+    type: 'varchar',
+    length: 7,
+    nullable: true,
+    name: 'submission_availability_cd',
+  })
+  submissionAvailabilityCd: string;
+
+  @Column({ length: 38, name: 'begin_rpt_period_id' })
+  beginRptPeriodId: number;
+
+  @Column({ length: 38, nullable: true, name: 'end_rpt_period_id' })
+  endRptPeriodId: number;
+}
