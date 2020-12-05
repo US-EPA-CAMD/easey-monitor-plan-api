@@ -5,7 +5,7 @@ export class MonitorPlan extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'mon_plan_id' })
   monPlanId: string;
 
-  @Column({ length: 38, name: 'fac_id' })
+  @Column({ name: 'fac_id' })
   facId: number;
 
   @Column({
@@ -16,7 +16,7 @@ export class MonitorPlan extends BaseEntity {
   })
   configTypeCd: string;
 
-  @Column({ length: 38, nullable: true, name: 'submission_id' })
+  @Column({ nullable: true, name: 'submission_id' })
   submissionId: number;
 
   @Column({
@@ -27,9 +27,9 @@ export class MonitorPlan extends BaseEntity {
   })
   submissionAvailabilityCd: string;
 
-  @Column({ length: 38, name: 'begin_rpt_period_id' })
+  @Column({ name: 'begin_rpt_period_id' })
   beginRptPeriodId: number;
 
-  @Column({ length: 38, nullable: true, name: 'end_rpt_period_id' })
+  @Column({ nullable: true, name: 'end_rpt_period_id' })
   endRptPeriodId: number;
 }
