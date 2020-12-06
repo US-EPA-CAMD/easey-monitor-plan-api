@@ -1,0 +1,12 @@
+applications:
+  - name: monitor-plan-api
+    path: .
+    command: npm run start
+    memory: 512M
+    env:
+      HOST: ((host))
+      OPTIMIZE_MEMORY: true
+    routes:
+      - route: ((host))/api/monitor-plan-mgmt
+    services:
+      - camd-pg-db

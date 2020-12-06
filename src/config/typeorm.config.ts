@@ -1,29 +1,23 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-let pgHost = process.env.PG_HOST || 'localhost';
-let pgPort = +process.env.PG_PORT || 5432;
-let pgUser = process.env.PG_USER;
-let pgPwd = process.env.PG_PWD;
-let pgDb = process.env.PG_DB;
+@Injectable()
+export class TypeOrmConfigService implements TypeOrmOptionsFactory {
+  constructor(private configService: ConfigService) {}
 
-if (process.env.VCAP_SERVICES) {
-  const vcapSvc = JSON.parse(process.env.VCAP_SERVICES);
-  const vcapSvcCreds = vcapSvc['aws-rds'][0].credentials;
-  
-  pgHost = vcapSvcCreds.host;
-  pgPort = +vcapSvcCreds.port;
-  pgUser = vcapSvcCreds.username;
-  pgPwd = vcapSvcCreds.password;
-  pgDb = vcapSvcCreds.name;
+  createTypeOrmOptions(): TypeOrmModuleOptions {
+    console.log(__dirname);
+    console.log(this.configService.get<string>('database.port'));
+    return {
+      type: 'postgres',
+      host: this.configService.get<string>('database.host'),
+      port: this.configService.get<number>('database.port'),
+      username: this.configService.get<string>('database.user'),
+      password: this.configService.get<string>('database.pwd'),
+      database: this.configService.get<string>('database.name'),
+      entities: [__dirname + '/../**/*.entity.{js,ts}'],
+      synchronize: false,
+    };
+  }
 }
-
-export const typeOrmConfig: TypeOrmModuleOptions = {
-  type: 'postgres',
-  host: pgHost,
-  port: pgPort,
-  username: pgUser,
-  password: pgPwd,
-  database: pgDb,
-  entities: [__dirname + '/../**/*.entity.{js,ts}'],
-  synchronize: false,
-};

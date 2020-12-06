@@ -12,16 +12,16 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 
-import { MonitorPlanService } from './monitor-plan.service';
+import { MonitorLocationService } from './monitor-location.service';
 
-@ApiTags('Monitor Plan')
-@Controller('monitor-plans')
-export class MonitorPlanController {
-  constructor(private monitorPlanService: MonitorPlanService) {}
+@ApiTags('Monitor Location')
+@Controller('monitor-locations')
+export class MonitorLocationController {
+  constructor(private monitorLocationService: MonitorLocationService) {}
 
   @Get()
   @ApiOkResponse({
-    description: 'Retrieved all Monitor Plans',
+    description: 'Retrieved all Monitor Locations',
   })
   @ApiBadRequestResponse({
     description: 'Invalid Request',
@@ -29,8 +29,8 @@ export class MonitorPlanController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getMonitorPlans(): string {
+  getMonitorLocations(): string {
     // TODO: will need a query param (state, limit, offset) and DTO
-    return this.monitorPlanService.getMonitorPlans();
+    return this.monitorLocationService.getMonitorLocations();
   }
 }
