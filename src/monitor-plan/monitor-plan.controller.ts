@@ -6,11 +6,12 @@ import {
 } from '@nestjs/swagger';
 
 import {
+  Req,
   Get,
-  Param,
   Controller,
-  ParseIntPipe,
 } from '@nestjs/common';
+
+import { Request } from 'express';
 
 import { MonitorPlanService } from './monitor-plan.service';
 
@@ -29,8 +30,12 @@ export class MonitorPlanController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getMonitorPlans(): string {
-    // TODO: will need a query param (state, limit, offset) and DTO
+  getMonitorPlans(@Req() req: Request) {
+    req.res.setHeader('Link', '</monitor-plans?page=1&per-page=25>; rel="previous",'+
+      '</monitor-plans?page=3&per-page=25>; rel="next",'+
+      '</monitor-plans?page=10&per-page=25>; rel="last"'
+    );
+    req.res.setHeader('X-Total-Count', 245);
     return this.monitorPlanService.getMonitorPlans();
   }
 }
