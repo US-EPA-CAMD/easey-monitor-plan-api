@@ -1,12 +1,12 @@
 import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
 
 @Entity({ name: 'unit' })
-@Unique('uq_unit', ['fac_id', 'unitid'])
+@Unique('uq_unit', ['facId', 'unitid'])
 export class Unit extends BaseEntity {
-  @PrimaryColumn({ length: 38, name: 'unit_id' })
+  @PrimaryColumn({ name: 'unit_id' })
   unitId: number;
 
-  @Column({ length: 38, name: 'fac_id' })
+  @Column({ name: 'fac_id' })
   facId: number;
 
   @Column({ type: 'varchar', length: 6, name: 'unitid' })
@@ -23,6 +23,6 @@ export class Unit extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'comm_op_date' })
   commOpDate: Date;
 
-  @Column({ length: 38, nullable: true, name: 'boiler_sequence_number' })
+  @Column({ nullable: true, name: 'boiler_sequence_number' })
   boilerSequenceNumber: number;
 }

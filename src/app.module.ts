@@ -11,7 +11,7 @@ import { MonitorLocationModule } from './monitor-location/monitor-location.modul
 
 @Module({
   imports: [
-   ConfigModule.forRoot({
+    ConfigModule.forRoot({
       isGlobal: true,
       load: [
         dbConfig,
