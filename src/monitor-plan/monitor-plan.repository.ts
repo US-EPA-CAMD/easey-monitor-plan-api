@@ -157,7 +157,8 @@ const monitorLocation11: Array<MonitorLocationDTO> = [
   ),
 ];
 
-const facilities1: Array<MonitorPlanDTO> = [
+// static data for facility with orisCode = 3
+const monitorPlansFacility1: Array<MonitorPlanDTO> = [
   new MonitorPlanDTO(
     'MDC-DSF87364AD9879A8FDS7G',
     '1, 2, CS0AAN',
@@ -223,7 +224,8 @@ const facilities1: Array<MonitorPlanDTO> = [
   ),
 ];
 
-const facilities2: Array<MonitorPlanDTO> = [
+// static data for facility with orisCode = 9
+const monitorPlansFacility2: Array<MonitorPlanDTO> = [
   new MonitorPlanDTO(
     'MDC-SXI4SNK1X2R2862XBRAY1',
     'CTG-1',
@@ -233,7 +235,8 @@ const facilities2: Array<MonitorPlanDTO> = [
   ),
 ];
 
-const facilities3: Array<MonitorPlanDTO> = [
+// static data for facility with orisCode = 51
+const monitorPlansFacility3: Array<MonitorPlanDTO> = [
   new MonitorPlanDTO(
     'MDC-2WF59ZGNX40AD96KB6HU1',
     '1',
@@ -243,22 +246,86 @@ const facilities3: Array<MonitorPlanDTO> = [
   ),
 ];
 
+//sort by id, name, and active
+export function sortMonitorPlan(orderBy: string): any {
+  return (monitorPlan1: MonitorPlanDTO, monitorPlan2: MonitorPlanDTO) => {
+    switch (orderBy) {
+      case 'id':
+        return monitorPlan1.id < monitorPlan2.id
+          ? -1
+          : monitorPlan1.id > monitorPlan2.id
+          ? 1
+          : 0;
+      case 'name':
+        return monitorPlan1.name < monitorPlan2.name
+          ? -1
+          : monitorPlan1.name > monitorPlan2.name
+          ? 1
+          : 0;
+      //active = true first
+      case 'active':
+        return monitorPlan1.active > monitorPlan2.active
+          ? -1
+          : monitorPlan1.active < monitorPlan2.active
+          ? 1
+          : 0;
+    }
+  };
+}
+
 @EntityRepository(MonitorPlan)
 export class MonitorPlanRepository extends Repository<MonitorPlan> {
   getMonitorPlan(monitorPlanParamsDTO: MonitorPlanParamsDTO): MonitorPlanDTO[] {
-    const { orisCode, facId } = monitorPlanParamsDTO;
+    const {
+      orisCode,
+      facId,
+      page,
+      perPage,
+      orderBy,
+      active,
+    } = monitorPlanParamsDTO;
+    let monitorPlanArray: Array<MonitorPlanDTO>;
+
     if (+orisCode === +3 || +facId === +1) {
-      return facilities1;
+      monitorPlanArray = monitorPlansFacility1;
+    } else if (+orisCode === +9 || +facId === +2) {
+      monitorPlanArray = monitorPlansFacility2;
+    } else if (+orisCode === +51 || +facId === +3) {
+      monitorPlanArray = monitorPlansFacility3;
+    } else if (
+      +orisCode === +87 ||
+      +orisCode === +108 ||
+      +orisCode === +113 ||
+      +orisCode === +130 ||
+      +orisCode === +477 ||
+      +orisCode === +564 ||
+      +orisCode === +596
+    ) {
+      monitorPlanArray = []; // returns empty list for facilities with no monitor plan static data
+    } else {
+      throw new NotFoundException();
     }
 
-    if (+orisCode === +9 || +facId === +2) {
-      return facilities2;
+    if (orderBy) {
+      monitorPlanArray = monitorPlanArray.sort(sortMonitorPlan(orderBy));
     }
 
-    if (+orisCode === +51 || +facId === +3) {
-      return facilities3;
+    if (active) {
+      monitorPlanArray = monitorPlanArray.filter(
+        x => String(x.active) === String(active),
+      );
     }
 
-    throw new NotFoundException();
+    if (page && perPage) {
+      const pageNum: number = +page;
+      const perPageNum: number = +perPage;
+
+      const begin: number = (pageNum - 1) * perPageNum;
+      const end: number = begin + perPageNum;
+
+      monitorPlanArray = monitorPlanArray.slice(begin, end);
+    }
+
+    return monitorPlanArray;
   }
 }
