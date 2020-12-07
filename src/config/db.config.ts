@@ -1,10 +1,10 @@
 import { registerAs } from '@nestjs/config';
 
-let pgHost = process.env.PG_HOST || 'database';
-let pgPort = process.env.PG_PORT || 5432;
-let pgUser = process.env.PG_USER || 'postgres';
-let pgPwd = process.env.PG_PWD || 'password';
-let pgDb = process.env.PG_DB || 'postgres';
+let pgHost = process.env.EASEY_DB_HOST || 'database';
+let pgPort = process.env.EASEY_DB_PORT || 5432;
+let pgUser = process.env.EASEY_DB_USER || 'postgres';
+let pgPwd = process.env.EASEY_DB_PWD || 'password';
+let pgDb = process.env.EASEY_DB_NAME || 'postgres';
 
 if (process.env.VCAP_SERVICES) {
   const vcapSvc = JSON.parse(process.env.VCAP_SERVICES);
