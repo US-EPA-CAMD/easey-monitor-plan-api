@@ -6,7 +6,7 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ../devops/db:/docker-entrypoint-initdb.d
+      #- ../devops/db:/docker-entrypoint-initdb.d
     ports:
       - '5432:5432'
   monitor-plan-api:
@@ -19,12 +19,12 @@ services:
       - /app/node_modules
       - ./:/app
     environment:
-      - PG_HOST=database
-      - PG_PORT=5432
-      - PG_USER=postgres
-      - PG_PWD=password
-      - PG_DB=postgres
+      - EASEY_DB_HOST=database
+      - EASEY_DB_PORT=5432
+      - EASEY_DB_USER=postgres
+      - EASEY_DB_PWD=password
+      - EASEY_DB_NAME=postgres
     ports:
-      - '8000:8000'
+      - '8080:8080'
 volumes:
   pgdata:
