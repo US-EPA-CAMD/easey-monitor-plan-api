@@ -9,4 +9,7 @@ export class MonitorPlanParamsDTO extends PaginationDTO {
   @IsOptional()
   @ApiPropertyOptional()
   orisCode: number;
+  @IsOptional()
+  @ApiPropertyOptional()
+  active: boolean;
 }
