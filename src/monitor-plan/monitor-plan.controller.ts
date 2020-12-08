@@ -12,7 +12,7 @@ import { MonitorPlanDTO } from './dto/monitor-plan.dto';
 import { Request } from 'express';
 
 @ApiTags('Monitor Plan')
-@Controller()
+@Controller('monitor-plans')
 export class MonitorPlanController {
   constructor(private monitorPlanService: MonitorPlanService) {}
 
