@@ -50,28 +50,26 @@ export class MonitorPlanService {
           `</monitor-plans?page=${totalPages}&perPage=${perPage}`,
         ];
 
-        let index: string | number;
-
         if (orderBy) {
-          for (index in linkList) {
+          for (const index in linkList) {
             linkList[index] = linkList[index] + `&orderBy=${orderBy}`;
           }
         }
 
         if (facId) {
-          for (index in linkList) {
+          for (const index in linkList) {
             linkList[index] = linkList[index] + `&facId=${facId}`;
           }
         }
 
         if (orisCode) {
-          for (index in linkList) {
+          for (const index in linkList) {
             linkList[index] = linkList[index] + `&orisCode=${orisCode}`;
           }
         }
 
         if (active) {
-          for (index in linkList) {
+          for (const index in linkList) {
             linkList[index] = linkList[index] + `&active=${active}`;
           }
         }
