@@ -276,16 +276,9 @@ export function sortMonitorPlan(orderBy: string): any {
 @EntityRepository(MonitorPlan)
 export class MonitorPlanRepository extends Repository<MonitorPlan> {
   getMonitorPlan(monitorPlanParamsDTO: MonitorPlanParamsDTO): MonitorPlanDTO[] {
-    const {
-      orisCode,
-      facId,
-      page,
-      perPage,
-      orderBy,
-      active,
-    } = monitorPlanParamsDTO;
-    let monitorPlanArray: Array<MonitorPlanDTO>;
+    const { orisCode, facId, orderBy, active } = monitorPlanParamsDTO;
 
+    let monitorPlanArray: Array<MonitorPlanDTO>;
     if (+orisCode === +3 || +facId === +1) {
       monitorPlanArray = monitorPlansFacility1;
     } else if (+orisCode === +9 || +facId === +2) {
@@ -314,16 +307,6 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
       monitorPlanArray = monitorPlanArray.filter(
         x => String(x.active) === String(active),
       );
-    }
-
-    if (page && perPage) {
-      const pageNum: number = +page;
-      const perPageNum: number = +perPage;
-
-      const begin: number = (pageNum - 1) * perPageNum;
-      const end: number = begin + perPageNum;
-
-      monitorPlanArray = monitorPlanArray.slice(begin, end);
     }
 
     return monitorPlanArray;
