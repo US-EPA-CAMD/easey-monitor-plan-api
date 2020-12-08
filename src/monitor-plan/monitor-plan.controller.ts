@@ -1,32 +1,24 @@
+import { Req, Controller, Get, Query, ValidationPipe } from '@nestjs/common';
 import {
-  ApiTags,
-  ApiOkResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
 } from '@nestjs/swagger';
-
-import {
-  Req,
-  Get,
-  Query,
-  Controller,
-  ValidationPipe,
-} from '@nestjs/common';
-
-import { Request } from 'express';
-
 import { MonitorPlanParamsDTO } from './dto/monitor-plan-params.dto';
 import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanDTO } from './dto/monitor-plan.dto';
 
+import { Request } from 'express';
+
 @ApiTags('Monitor Plan')
-@Controller('monitor-plans')
+@Controller()
 export class MonitorPlanController {
   constructor(private monitorPlanService: MonitorPlanService) {}
 
   @Get()
   @ApiOkResponse({
-    description: 'Retrieved all Monitor Plans',
+    description: 'Retrieved Monitor Plans',
   })
   @ApiBadRequestResponse({
     description: 'Invalid Request',
@@ -34,19 +26,14 @@ export class MonitorPlanController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getMonitorPlans(
-    @Req() req: Request,
+  getMonitorPlan(
     @Query(ValidationPipe) monitorPlanParamsDTO: MonitorPlanParamsDTO,
+    @Req() req: Request,
   ): MonitorPlanDTO[] {
-    req.res.setHeader('Link', '</monitor-plans?page=1&per-page=25>; rel="previous",'+
-      '</monitor-plans?page=3&per-page=25>; rel="next",'+
-      '</monitor-plans?page=10&per-page=25>; rel="last"'
-    );
-    req.res.setHeader('X-Total-Count', 245);
-    /* const { facId, orisCode, page, perPage, orderBy } = monitorPlanParamsDTO;
-      console.log(
-        `facId=${facId}, orisCode=${orisCode}, page=${page}, perPage=${perPage}, orderBy=${orderBy}`,
-      );*/
-    return this.monitorPlanService.getMonitorPlan(monitorPlanParamsDTO);
+    /*const { facId, orisCode, page, perPage, orderBy } = monitorPlanParamsDTO;
+    console.log(
+      `facId=${facId}, orisCode=${orisCode}, page=${page}, perPage=${perPage}, orderBy=${orderBy}`,
+    );*/
+    return this.monitorPlanService.getMonitorPlan(monitorPlanParamsDTO, req);
   }
 }

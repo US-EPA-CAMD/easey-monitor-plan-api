@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorPlanParamsDTO } from './dto/monitor-plan-params.dto';
+import { MonitorPlanDTO } from './dto/monitor-plan.dto';
 
 const mockMonitorPlanRepository = () => ({
   getMonitorPlan: jest.fn(),
@@ -30,24 +31,35 @@ describe('MonitorPlanService', () => {
 
   describe('getMonitorPlan', () => {
     it('calls MonitorPlanRepository.getMonitorPlan() and gets all the monitor plans for a particular facility', async () => {
-      monitorPlanRepository.getMonitorPlan.mockReturnValue(
-        'list of monitor plans',
-      );
+      const monitorPlan: Array<MonitorPlanDTO> = [
+        new MonitorPlanDTO('1', '1A', undefined, undefined, true),
+        new MonitorPlanDTO('2', '2A', undefined, undefined, true),
+        new MonitorPlanDTO('3', '3A', undefined, undefined, true),
+        new MonitorPlanDTO('4', '4A', undefined, undefined, true),
+      ];
+      monitorPlanRepository.getMonitorPlan.mockReturnValue(monitorPlan);
+
+      const request = {
+        res: {
+          setHeader: jest.fn(),
+        },
+      };
+      request.res.setHeader.mockReturnValue('some response');
 
       const params: MonitorPlanParamsDTO = {
-        facId: 1,
-        orisCode: 1,
+        facId: undefined,
+        orisCode: undefined,
         active: true,
-        page: 1,
-        perPage: 1,
-        orderBy: 'some string',
+        page: 2,
+        perPage: 2,
+        orderBy: undefined,
       };
 
       expect(monitorPlanRepository.getMonitorPlan).not.toHaveBeenCalled();
-      const result = monitorPlanService.getMonitorPlan(params);
+      const result = monitorPlanService.getMonitorPlan(params, request);
 
       expect(monitorPlanRepository.getMonitorPlan).toHaveBeenCalled();
-      expect(result).toEqual('list of monitor plans');
+      expect(result).toEqual(monitorPlan.slice(2, 4));
     });
   });
 });
