@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
 
 
-@Entity({ name: 'ECPMS.monitor_method_data' })
+@Entity({ name: 'ecmps.monitor_method_data' })
 
 export class MonitorMethodData extends BaseEntity {
 
