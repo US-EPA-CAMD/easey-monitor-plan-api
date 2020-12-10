@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'node_modules';
+import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
 
 
 @Entity({ name: 'ECPMS.monitor_method_data' })

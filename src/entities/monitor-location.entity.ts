@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'node_modules';
+import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
 
 
 @Entity({ name: 'ECPMS.monitor_location' })
@@ -11,7 +11,7 @@ export class MonitorLocation extends BaseEntity {
     @Column({ type: 'varchar', length: 45, nullable: true, name: 'stack_pipe_id' })
     stackPipeId: string;
 
-    @PrimaryColumn({nullable: true, name: 'unit_id' })
+    @Column({nullable: true, name: 'unit_id' })
     unitId: number;
 
     @Column({ type: 'varchar', length: 8, nullable: true, name: 'userid' })
