@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanRepository } from './monitor-plan.repository';
-import { MonitorPlanParamsDTO } from './dto/monitor-plan-params.dto';
-import { MonitorPlanDTO } from './dto/monitor-plan.dto';
+import { MonitorPlanParamsDTO } from 'src/dtos/monitor-plan-params.dto';
+import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
 
 const mockMonitorPlanRepository = () => ({
   getMonitorPlan: jest.fn(),

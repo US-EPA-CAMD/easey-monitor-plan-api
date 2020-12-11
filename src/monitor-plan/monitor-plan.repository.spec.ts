@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { MonitorPlanRepository } from './monitor-plan.repository';
-import { MonitorPlanParamsDTO } from './dto/monitor-plan-params.dto';
+import { MonitorPlanParamsDTO } from 'src/dtos/monitor-plan-params.dto';
 
 describe('MonitorPlanRepository', () => {
   let monitorPlanRepository;

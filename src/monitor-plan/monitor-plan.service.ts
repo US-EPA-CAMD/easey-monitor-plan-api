@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { MonitorPlanRepository } from './monitor-plan.repository';
-import { MonitorPlanParamsDTO } from './dto/monitor-plan-params.dto';
-import { MonitorPlanDTO } from './dto/monitor-plan.dto';
+import { MonitorPlanParamsDTO } from 'src/dtos/monitor-plan-params.dto';
+import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
 
 import { Request } from 'express';
 
