@@ -38,18 +38,6 @@ import {
       return this.service.getMonitoringMethods(monLocId);
     }
   
-    // @Get('/:id')
-    // @ApiOkResponse({
-    //   description: 'Retrieved Unit By ID',
-    // })
-    // @ApiBadRequestResponse({
-    //   description: 'The specified unit ID is invalid.',
-    // })
-    // @ApiNotFoundResponse({
-    //   description: 'A unit with the specificed ID was not found.',
-    // })
-    // getUnitById(@Param('id', ParseIntPipe) id: number): UnitDTO {
-    //   return this.service.getUnitById(id);
-    // }
+    
   }
   
