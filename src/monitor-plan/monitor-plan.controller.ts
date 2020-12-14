@@ -6,7 +6,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { MonitorPlanParamsDTO } from 'src/dtos/monitor-plan-params.dto';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+
 import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
 

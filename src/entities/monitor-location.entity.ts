@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
 
 
-@Entity({ name: 'ecmps.monitor_location' })
+@Entity({ name: 'camdecmps.monitor_location' })
 
 export class MonitorLocation extends BaseEntity {
 

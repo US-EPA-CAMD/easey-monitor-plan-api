@@ -1,6 +1,6 @@
 import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
 
-@Entity({ name: 'ecmps.unit' })
+@Entity({ name: 'camdecmps.unit' })
 @Unique('uq_unit', ['facId', 'unitid'])
 export class Unit extends BaseEntity {
   @PrimaryColumn({ name: 'unit_id' })
