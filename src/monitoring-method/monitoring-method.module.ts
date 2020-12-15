@@ -14,8 +14,7 @@ import { MonitorMethodMap } from '../maps/monitor-method.map';
   controllers: [MonitoringMethodController],
   providers: [
     MonitorMethodMap,
-    MonitoringMethodService,
- 
+    MonitoringMethodService, 
   ],
 })
 

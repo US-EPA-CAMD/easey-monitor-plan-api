@@ -24,7 +24,7 @@ import {
       private service: MonitoringMethodService,
     ) {}
   
-    @Get('')
+    @Get()
     @ApiOkResponse({
       description: 'Retrieved Methods',
     })

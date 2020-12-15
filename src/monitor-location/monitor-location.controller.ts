@@ -15,7 +15,7 @@ import {
 import { MonitorLocationService } from './monitor-location.service';
 
 @ApiTags('Monitor Location')
-@Controller('')
+@Controller()
 export class MonitorLocationController {
   constructor(private monitorLocationService: MonitorLocationService) {}
 

@@ -18,7 +18,7 @@ export class MonitoringMethodService {
       select: [ "id", "parameterCode", "methodCode", "subDataCode","bypassApproachCode","addDate","endDate" ],
       where: { monLocId: monLocId }
     }
-    const [results, totalCount] = await this.repository.findAndCount(findOpts);
+    const results = await this.repository.find(findOpts);
     return this.map.many(results);
   }
 }
