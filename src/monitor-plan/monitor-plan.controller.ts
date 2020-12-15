@@ -6,14 +6,15 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { MonitorPlanParamsDTO } from 'src/dtos/monitor-plan-params.dto';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+
 import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
 
 import { Request } from 'express';
 
-@ApiTags('Monitor Plan')
-@Controller('monitor-plans')
+@ApiTags()
+@Controller()
 export class MonitorPlanController {
   constructor(private monitorPlanService: MonitorPlanService) {}
 

@@ -1,10 +1,10 @@
 import { Repository, EntityRepository } from 'typeorm';
 
-import { LinkDTO } from 'src/dtos/link.dto';
-import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
-import { MonitorPlan } from 'src/entities/monitor-plan.entity';
-import { MonitorPlanParamsDTO } from 'src/dtos/monitor-plan-params.dto';
-import { MonitorLocationDTO } from 'src/dtos/monitor-location.dto';
+import { LinkDTO } from '../dtos/link.dto';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { NotFoundException } from '@nestjs/common';
 
 function createMonitorPlanLinks(id: string): LinkDTO[] {

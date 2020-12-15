@@ -1,13 +1,13 @@
 import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
 
 
-@Entity({ name: 'ecmps.monitor_method_data' })
+@Entity({ name: 'camdecmps.monitor_method' })
 
 export class MonitorMethodData extends BaseEntity {
 
 
     @PrimaryColumn({ type: 'varchar', length: 45,  name: 'mon_method_id' })
-    matsMethodId: string;
+    id: string;
 
     @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
     monLocId: string;
