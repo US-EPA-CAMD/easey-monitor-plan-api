@@ -25,6 +25,11 @@ export class Unit extends BaseEntity {
   })
   name: string;
 
+  @Column({
+    name: 'fac_id'
+  })
+  facId: number;
+
   @ManyToOne(() => Plant, plant => plant.units)
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;

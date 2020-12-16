@@ -22,11 +22,11 @@ export class MonitorLocation extends BaseEntity {
   })
   id: string;
 
-  @ManyToOne(() => StackPipe, stackPipe => stackPipe.locations)
+  @ManyToOne(() => StackPipe, stackPipe => stackPipe.locations, { eager: true })
   @JoinColumn({ name: 'stack_pipe_id'})
   stackPipe: StackPipe;
 
-  @ManyToOne(() => Unit, unit => unit.locations)
+  @ManyToOne(() => Unit, unit => unit.locations, { eager: true })
   @JoinColumn({ name: 'unit_id'})
   unit: Unit;
 

@@ -284,7 +284,7 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
 
     const query = this.createQueryBuilder('plan')
       .innerJoin('plan.plant', 'plant', 'plant.orisCode = :orisCode', { orisCode: orisCode })
-      .innerJoin('plan.locations', 'location')
+      .innerJoinAndSelect('plan.locations', 'location')
       //.leftJoinAndSelect('location.unit', 'unit')
       //.leftJoinAndSelect('location.stackPipe', 'stackPipe')
     console.log(query.getSql());
