@@ -1,22 +1,27 @@
-import { Req, Controller, Get, Query, ValidationPipe } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
+  Get,
+  Query,
+  Controller,  
+  ValidationPipe
+} from '@nestjs/common';
+
+import {
+  ApiTags,  
   ApiOkResponse,
-  ApiTags,
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
-import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
-
-import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
-
-import { Request } from 'express';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+import { MonitorPlanService } from './monitor-plan.service';
 
 @ApiTags()
 @Controller()
 export class MonitorPlanController {
-  constructor(private monitorPlanService: MonitorPlanService) {}
+  constructor(
+    private service: MonitorPlanService
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -28,14 +33,9 @@ export class MonitorPlanController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getMonitorPlan(
-    @Query(ValidationPipe) monitorPlanParamsDTO: MonitorPlanParamsDTO,
-    @Req() req: Request,
-  ): MonitorPlanDTO[] {
-    /*const { facId, orisCode, page, perPage, orderBy } = monitorPlanParamsDTO;
-    console.log(
-      `facId=${facId}, orisCode=${orisCode}, page=${page}, perPage=${perPage}, orderBy=${orderBy}`,
-    );*/
-    return this.monitorPlanService.getMonitorPlan(monitorPlanParamsDTO, req);
+  getMonitorPlans(
+    @Query(ValidationPipe) paramsDTO: MonitorPlanParamsDTO
+  ): Promise<MonitorPlanDTO[]> {
+    return this.service.getMonitorPlans(paramsDTO);
   }
 }

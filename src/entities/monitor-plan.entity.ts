@@ -1,35 +1,39 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToMany,
+  ManyToOne,
+  JoinTable,
+  JoinColumn
+} from 'typeorm';
+
+import { Plant } from './plant.entity';
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
-  @PrimaryColumn({ type: 'varchar', length: 45, name: 'mon_plan_id' })
-  monPlanId: string;
-
-  @Column({ name: 'fac_id' })
-  facId: number;
-
-  @Column({
-    type: 'varchar',
-    length: 7,
-    nullable: true,
-    name: 'config_type_cd',
+  @PrimaryColumn({
+    name: 'mon_plan_id'
   })
-  configTypeCd: string;
+  id: string;
 
-  @Column({ nullable: true, name: 'submission_id' })
-  submissionId: number;
+  @ManyToOne(() => Plant, plant => plant.plans)
+  @JoinColumn({ name: 'fac_id' })
+  plant: Plant;
 
-  @Column({
-    type: 'varchar',
-    length: 7,
-    nullable: true,
-    name: 'submission_availability_cd',
+  @ManyToMany(() => MonitorLocation, location => location.plans, { eager: true })
+  @JoinTable({
+    name: 'camdecmps.monitor_plan_location',
+    joinColumn: {
+      name: 'mon_plan_id',
+      referencedColumnName: 'id'
+    },
+    inverseJoinColumn: {
+      name: 'mon_loc_id',
+      referencedColumnName: 'id'
+    }
   })
-  submissionAvailabilityCd: string;
-
-  @Column({ name: 'begin_rpt_period_id' })
-  beginRptPeriodId: number;
-
-  @Column({ nullable: true, name: 'end_rpt_period_id' })
-  endRptPeriodId: number;
+  locations: MonitorLocation[];
 }
