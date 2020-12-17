@@ -14,8 +14,10 @@ export class MonitorMethodMap extends BaseMap<MonitorMethodData, MonitorMethodDT
       methodCode: entity.methodCode,
       subDataCode: entity.subDataCode,
       bypassApproachCode: entity.bypassApproachCode,
-      addDate: entity.addDate,
+      beginDate: entity.beginDate,
+      beginHour: entity.beginHour,
       endDate: entity.endDate,
+      endHour: entity.endHour,
     };
   }
 }

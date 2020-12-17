@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { MonitoringMethodController } from './monitoring-method.controller';
-import { MonitoringMethodService } from './monitoring-method.service';
-import { MonitorMethodRepository } from './monitoring-method.repository';
+import { MonitorMethodController } from './monitor-method.controller';
+import { MonitorMethodService } from './monitor-method.service';
+import { MonitorMethodRepository } from './monitor-method.repository';
 
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 
@@ -11,10 +11,10 @@ import { MonitorMethodMap } from '../maps/monitor-method.map';
   imports: [
     TypeOrmModule.forFeature([MonitorMethodRepository]),
   ],
-  controllers: [MonitoringMethodController],
+  controllers: [MonitorMethodController],
   providers: [
     MonitorMethodMap,
-    MonitoringMethodService, 
+    MonitorMethodService, 
   ],
 })
 

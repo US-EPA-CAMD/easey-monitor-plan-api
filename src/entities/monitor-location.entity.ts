@@ -1,25 +1,35 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+  JoinColumn
+} from 'typeorm';
 
+import { Unit } from './unit.entity';
+import { StackPipe } from './stack-pipe.entity';
+import { MonitorPlan } from './monitor-plan.entity';
 
-@Entity({ name: 'camdecmps.monitor_location' })
-
+@Entity({
+  name: 'camdecmps.monitor_location'
+})
 export class MonitorLocation extends BaseEntity {
+  @PrimaryColumn({
+    name: 'mon_loc_id',
+  })
+  id: string;
 
-    @PrimaryColumn({ type: 'varchar', length: 45,  name: 'mon_loc_id' })
-    monLocId: string;
+  @ManyToOne(() => StackPipe, stackPipe => stackPipe.locations, { eager: true })
+  @JoinColumn({ name: 'stack_pipe_id'})
+  stackPipe: StackPipe;
 
-    @Column({ type: 'varchar', length: 45, nullable: true, name: 'stack_pipe_id' })
-    stackPipeId: string;
+  @ManyToOne(() => Unit, unit => unit.locations, { eager: true })
+  @JoinColumn({ name: 'unit_id'})
+  unit: Unit;
 
-    @Column({nullable: true, name: 'unit_id' })
-    unitId: number;
-
-    @Column({ type: 'varchar', length: 8, nullable: true, name: 'userid' })
-    userId: string;
-
-    @Column({ type: 'date', nullable: true, name: 'add_date' })
-    addDate: Date;
-
-    @Column({ type: 'date', nullable: true, name: 'update_date' })
-    updateDate: Date;
+  @ManyToMany(() => MonitorPlan, plan => plan.locations, { eager: true })
+  plans: MonitorPlan[];
 }

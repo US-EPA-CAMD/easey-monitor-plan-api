@@ -1,13 +1,16 @@
 import { Routes } from "nest-router";
 
-import { MonitorMethodModule } from "./monitoring-method/monitoring-method.module";
+import { MonitorPlanModule } from "./monitor-plan/monitor-plan.module"
 import { MonitorLocationModule } from "./monitor-location/monitor-location.module";
-import {MonitorPlanModule} from "./monitor-plan/monitor-plan.module"
-
+import { MonitorMethodModule } from "./monitor-method/monitor-method.module";
 
 const routes: Routes = [
   {
-    path: '/monitoring-locations',
+    path: '/monitor-plans',
+    module: MonitorPlanModule,
+  },
+  {
+    path: '/monitor-locations',
     module: MonitorLocationModule,
     children: [
       {
@@ -15,14 +18,7 @@ const routes: Routes = [
         module: MonitorMethodModule,
       },
     ],
-   
- 
   },
-  {
-    path: '/monitor-plans',
-    module: MonitorPlanModule,    
-  }, 
-
 ];
 
 export default routes;
