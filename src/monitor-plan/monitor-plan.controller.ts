@@ -1,8 +1,8 @@
 import {
   Get,
-  Query,
+  Param,
   Controller,  
-  ValidationPipe
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import {
@@ -13,17 +13,16 @@ import {
 } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
-import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
 import { MonitorPlanService } from './monitor-plan.service';
 
-@ApiTags()
+@ApiTags('Monitor Plan')
 @Controller()
 export class MonitorPlanController {
   constructor(
     private service: MonitorPlanService
   ) {}
 
-  @Get()
+  @Get('/:orisCode/configurations')
   @ApiOkResponse({
     description: 'Retrieved Monitor Plans',
   })
@@ -33,9 +32,7 @@ export class MonitorPlanController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getMonitorPlans(
-    @Query(ValidationPipe) paramsDTO: MonitorPlanParamsDTO
-  ): Promise<MonitorPlanDTO[]> {
-    return this.service.getMonitorPlans(paramsDTO);
+  getConfigurations(@Param('orisCode', ParseIntPipe) orisCode: number): Promise<MonitorPlanDTO[]> {
+    return this.service.getConfigurations(orisCode);
   }
 }

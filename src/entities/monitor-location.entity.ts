@@ -30,6 +30,6 @@ export class MonitorLocation extends BaseEntity {
   @JoinColumn({ name: 'unit_id'})
   unit: Unit;
 
-  @ManyToMany(() => MonitorPlan, plan => plan.locations)
+  @ManyToMany(() => MonitorPlan, plan => plan.locations, { eager: true })
   plans: MonitorPlan[];
 }

@@ -13,7 +13,7 @@ import {
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 
-@Entity({ name: 'camdecmps.unit' })
+@Entity({ name: 'camd.unit' })
 export class Unit extends BaseEntity {
   @PrimaryColumn({
     name: 'unit_id'

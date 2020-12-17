@@ -7,21 +7,18 @@ import {
   
   import {
     Get,
-    Query,
     Param,
     Controller,
-    ParseIntPipe,
-    ValidationPipe,
   } from '@nestjs/common';
   
   import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-  import { MonitoringMethodService } from './monitoring-method.service';
+  import { MonitorMethodService } from './monitor-method.service';
   
-  @ApiTags('MonitoringMethods')
+  @ApiTags('Monitor Methods')
   @Controller()
-  export class MonitoringMethodController {
+  export class MonitorMethodController {
     constructor(
-      private service: MonitoringMethodService,
+      private service: MonitorMethodService,
     ) {}
   
     @Get()
@@ -35,9 +32,7 @@ import {
       description: 'Resource Not Found',
     })
     getUnits(@Param('id') monLocId: string): Promise<MonitorMethodDTO[]> {
-      return this.service.getMonitoringMethods(monLocId);
+      return this.service.getMonitorMethods(monLocId);
     }
-  
-    
   }
   

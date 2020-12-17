@@ -18,7 +18,6 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
   }
 
   public async one(entity: MonitorPlan): Promise<MonitorPlanDTO> {
-    console.log(entity.locations);
     const locations = await this.locationMap.many(entity.locations);
 
     return {

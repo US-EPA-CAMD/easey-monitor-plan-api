@@ -9,7 +9,7 @@ import appConfig from './config/app.config'
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
-import { MonitorMethodModule } from './monitoring-method/monitoring-method.module'
+import { MonitorMethodModule } from './monitor-method/monitor-method.module'
 
 @Module({
   imports: [
