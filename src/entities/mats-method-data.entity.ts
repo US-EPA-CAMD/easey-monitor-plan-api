@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn} from 'typeorm';
 
 @Entity({ name: 'camdecmps.mats_method_data' })
 export class MatsMethodData extends BaseEntity {

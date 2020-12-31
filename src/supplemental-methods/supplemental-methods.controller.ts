@@ -14,7 +14,7 @@ import {
   import { MatsMethodDataDTO } from '../dtos/mats-method-data.dto';
   import { SupplementalMethodsService } from './supplemental-methods.service';
   
-  @ApiTags('supplemental Methods')
+  @ApiTags('Supplemental Methods')
   @Controller()
   export class supplementalMethodsController {
     constructor(

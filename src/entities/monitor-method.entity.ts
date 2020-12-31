@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, Unique } from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn} from 'typeorm';
 
 @Entity({ name: 'camdecmps.monitor_method' })
 export class MonitorMethodData extends BaseEntity {
