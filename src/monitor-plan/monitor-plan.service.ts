@@ -1,113 +1,40 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { MonitorLocation } from 'src/entities/monitor-location.entity';
 import { Injectable } from '@nestjs/common';
-import { MonitorPlanRepository } from './monitor-plan.repository';
-import { MonitorPlanParamsDTO } from './dto/monitor-plan-params.dto';
-import { MonitorPlanDTO } from './dto/monitor-plan.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Request } from 'express';
+import { MonitorPlanRepository } from './monitor-plan.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlanMap } from '../maps/monitor-plan.map';
 
 @Injectable()
 export class MonitorPlanService {
   constructor(
     @InjectRepository(MonitorPlanRepository)
     private monitorPlanRepository: MonitorPlanRepository,
+    @InjectRepository(MonitorLocationRepository)
+    private monitorLocationRepository: MonitorLocationRepository,
+    private map: MonitorPlanMap
   ) {}
 
-  getMonitorPlan(
-    monitorPlanParamsDTO: MonitorPlanParamsDTO,
-    req: Request,
-  ): MonitorPlanDTO[] {
-    const {
-      page,
-      perPage,
-      orisCode,
-      facId,
-      orderBy,
-      active,
-    } = monitorPlanParamsDTO;
-
-    let monitorPlans = this.monitorPlanRepository.getMonitorPlan(
-      monitorPlanParamsDTO,
-    );
-
-    if (page && perPage) {
-      const totalCount = monitorPlans.length;
-      const totalPages: number = Math.ceil(monitorPlans.length / +perPage);
-
-      const pageNum: number = +page;
-      const perPageNum: number = +perPage;
-
-      const begin: number = (pageNum - 1) * perPageNum;
-      const end: number = begin + perPageNum;
-
-      monitorPlans = monitorPlans.slice(begin, end);
-
-      if (+totalPages > +1) {
-        let linkList = [
-          `</monitor-plans?page=1&perPage=${perPage}`,
-          `</monitor-plans?page=${+page - 1}&perPage=${perPage}`,
-          `</monitor-plans?page=${+page + 1}&perPage=${perPage}`,
-          `</monitor-plans?page=${totalPages}&perPage=${perPage}`,
-        ];
-
-        if (orderBy) {
-          for (const index in linkList) {
-            linkList[index] = linkList[index] + `&orderBy=${orderBy}`;
-          }
+  async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
+    const plans = await this.monitorPlanRepository.getMonitorPlansByOrisCode(orisCode);
+    //TODO: error handling here in case no plans returned
+    const locations = await this.monitorLocationRepository.getMonitorLocationsByFacId(plans[0].facId);
+    plans.forEach(p => {
+      const matchedLocations: MonitorLocation[] = [];
+      locations.forEach(l => {
+        const planIds = l.plans.map(lp => lp.id);
+        if (planIds.includes(p.id)) {
+          matchedLocations.push(l);
         }
-
-        if (facId) {
-          for (const index in linkList) {
-            linkList[index] = linkList[index] + `&facId=${facId}`;
-          }
-        }
-
-        if (orisCode) {
-          for (const index in linkList) {
-            linkList[index] = linkList[index] + `&orisCode=${orisCode}`;
-          }
-        }
-
-        if (active) {
-          for (const index in linkList) {
-            linkList[index] = linkList[index] + `&active=${active}`;
-          }
-        }
-
-        linkList[0] = linkList[0] + '>; rel="first"';
-        linkList[1] = linkList[1] + '>; rel="prev"';
-        linkList[2] = linkList[2] + '>; rel="next"';
-        linkList[3] = linkList[3] + '>; rel="last"';
-
-        let responseLinks: string;
-
-        switch (+page) {
-          case 1: {
-            responseLinks = linkList[2] + ',' + linkList[3];
-            break;
-          }
-          case totalPages: {
-            responseLinks = linkList[0] + ',' + linkList[1];
-            break;
-          }
-          default: {
-            responseLinks =
-              linkList[0] +
-              ',' +
-              linkList[1] +
-              ',' +
-              linkList[2] +
-              ',' +
-              linkList[3];
-            break;
-          }
-        }
-
-        req.res.setHeader('Link', responseLinks);
-        req.res.setHeader('X-Total-Count', totalCount);
-      }
-    }
-
-    return monitorPlans;
+      });
+      p.locations = matchedLocations;
+    });
+    const results = await this.map.many(plans);
+    results.sort((a, b) => {
+      return (a.name < b.name) ? -1 : (a.name == b.name) ? 0 : 1
+    });
+    return results;
   }
 }
