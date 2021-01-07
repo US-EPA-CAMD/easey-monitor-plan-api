@@ -10,6 +10,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { MonitorMethodModule } from './monitor-method/monitor-method.module'
+import { SupplementalMethodsModule} from "./supplemental-methods/supplemental-methods.module"
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { MonitorMethodModule } from './monitor-method/monitor-method.module'
     }),
     MonitorPlanModule,
     MonitorLocationModule,    
-    MonitorMethodModule
+    MonitorMethodModule,
+    SupplementalMethodsModule
   ],
 })
 export class AppModule {}
