@@ -4,7 +4,7 @@
 [![Develop Branch Pipeline](https://github.com/US-EPA-CAMD/easey-monitor-plan-api/workflows/Develop%20Branch%20Workflow/badge.svg)](https://github.com/US-EPA-CAMD/easey-monitor-plan-api/actions)<br>
 Monitor Plan data API for the EPA CAMD Business Systems EASEY Application
 
-The monitor plan API endpoints return the monitor plans of a particular facility, monitor methods of a particular monitor location, and the supplemental methods of a particular monitor location.
+The monitor plan API endpoints return the monitor plans of a particular facility and the monitor methods and supplemental methods of a particular monitor location.
 ​
 ## Getting Started
 ​
@@ -12,38 +12,38 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You will need to set up the following in order to access the database:
-- Environment variables
-- Cloud.gov SSH tunnel
+- Set environment variables
+- Establish cloud.gov SSH tunnel
 
 **Environment Variables**
 
-Please reach out to an EPA tech lead (see Mike Heese or Jason Whitehead) to get the values for these variables:
+You will need to set up the following environment variables in order to access the database. These are to be used for development purposes only.
 
-- EASEY_DB_HOST
+- EASEY_DB_HOST: localhost
+- EASEY_DB_PORT: `LOCAL_PORT` used in the SSH tunnel
+
+Please reach out to an EPA tech lead (see Mike Heese or Jason Whitehead) to get the values for these variables
+
 - EASEY_DB_NAME
-- EASEY_DB_PORT
 - EASEY_DB_PWD
 - EASEY_DB_USER
-
-These are to be used for developmental purposes only. 
+ 
 
 **Cloud.gov SSH tunnel**
 
-1. Log into cloud.gov
-2. Go to https://login.fr.cloud.gov/passcode 
-3. Enter in the temporary token code from your authentication app (Google Authenticator) to recieve a temporary authentication code
-3. In your terminal input the following:
+1. [Log in and set up the command line](https://cloud.gov/docs/getting-started/setup/#set-up-the-command-line) 
+
+2. Target the development org (you will need to be granted permission to access this):
 ```bash
-cf login -a api.fr.cloud.gov --sso
+cf target -o epa-easey -s dev
 ```
-4. Type in the authenthication code recieved earlier
-5. Target the development org (you will need to be granted permission for access to this):
+3. Open SSH tunnel
 ```bash
-cf target -o <ORGNAME> -s dev
+cf ssh monitor-plan-api -L <LOCAL_PORT>:<DB_HOST>:5432
 ```
-6. Open SSH tunnel
-7. Keep the SSH tunnel open while running the application
+4. Keep the SSH tunnel open while running the application
+
+> NOTE: For more information on cloud.gov, please refer to their [documentation](https://cloud.gov/docs/).
 
 ### Installing
 1. Open your terminal and navigate to the directory you wish to store this repository.
@@ -104,52 +104,13 @@ $ npm run test:cov
 ```
 ## API Endpoints
 
-**Monitor Plan** 
-
-### ​GET /api/monitor-plan-mgmt/monitor-plans/{orisCode}/configurations
-
-Gets all monitor plans for the facility with the specified orisCode.
-
-Parameters: 
-Name | Required | Type | Path/Query
--- | -- | -- | --
-orisCode | required | number | path
-<br />
-
-**Monitor Locations**
-
-### ​GET /api/monitor-plan-mgmt/monitor-locations
-> Note: Work In Progress
-
-<br />
-
-**Monitor Methods**
-
-### GET /api/monitor-plan-mgmt/monitor-locations/{id}/methods
-Gets all monitor methods for the specified monitor location. 
-
-Parameters:
-Name | Required | Type | Path/Query
--- | -- | -- | --
-id | required | string | path
-<br />
-
-**Supplemental Methods**
-
-### GET /api/monitor-plan-mgmt/monitor-locations/{id}/Supplementalmethods
-Gets all supplemental methods for the specified monitor location. 
-
-Parameters: 
-Name | Required | Type | Path/Query
--- | -- | -- | --
-id | required | string | path
-<br />
+Please refer to the [Monitor Plan Management API Swagger Documentation](https://easey-dev.app.cloud.gov/api/monitor-plan-mgmt/swagger/) for descriptions of the endpoints.
 
 ## Built With
 ​
 [NestJS](https://nestjs.com/) - server-side Node.js framework
 
-cloud.gov - Platform as a Service (PaaS)
+[Cloud.gov](https://cloud.gov/) - Platform as a Service (PaaS)
 ​ 
 ​
 ## License
