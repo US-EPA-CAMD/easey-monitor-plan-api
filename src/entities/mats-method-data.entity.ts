@@ -1,30 +1,19 @@
 import { BaseEntity, Entity, Column, PrimaryColumn} from 'typeorm';
 
-@Entity({ name: 'camdecmps.monitor_method' })
-export class MonitorMethodData extends BaseEntity {
-  @PrimaryColumn({ type: 'varchar', length: 45, name: 'mon_method_id' })
+@Entity({ name: 'camdecmps.mats_method_data' })
+export class MatsMethodData extends BaseEntity {
+  @PrimaryColumn({ type: 'varchar', length: 45, name: 'mats_method_data_id' })
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
   monLocId: string;
 
-  @Column({ type: 'varchar', length: 7, nullable: false, name: 'parameter_cd' })
-  parameterCode: string;
+  @Column({ type: 'varchar', length: 7, nullable: true, name: 'mats_method_cd' })
+  matsMethodCode: string;
 
-  @Column({ type: 'varchar', length: 7, nullable: true, name: 'sub_data_cd' })
-  subDataCode: string;
-
-  @Column({
-    type: 'varchar',
-    length: 7,
-    nullable: true,
-    name: 'bypass_approach_cd',
-  })
-  bypassApproachCode: string;
-
-  @Column({ type: 'varchar', length: 7, nullable: false, name: 'method_cd' })
-  methodCode: string;
-
+  @Column({ type: 'varchar', length: 7, nullable: false, name: 'mats_method_parameter_cd' })
+  matsMethodParameterCode: string;
+  
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;
 
