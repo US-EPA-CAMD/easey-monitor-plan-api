@@ -20,7 +20,7 @@ const routes: Routes = [
         module: MonitorMethodModule,
       },
       {
-        path: ':id/Supplemental-methods',
+        path: ':id/supplemental-methods',
         module: SupplementalMethodsModule,
       },
     ],
