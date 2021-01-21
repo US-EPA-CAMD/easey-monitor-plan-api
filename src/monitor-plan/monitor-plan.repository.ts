@@ -4,7 +4,6 @@ import {
 } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
-import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
 
 @EntityRepository(MonitorPlan)
 export class MonitorPlanRepository extends Repository<MonitorPlan> {
