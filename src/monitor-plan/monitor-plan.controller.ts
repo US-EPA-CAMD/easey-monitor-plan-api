@@ -12,7 +12,7 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 
-import { MonitorPlanDTO } from 'src/dtos/monitor-plan.dto';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanService } from './monitor-plan.service';
 
 @ApiTags('Monitor Plan')

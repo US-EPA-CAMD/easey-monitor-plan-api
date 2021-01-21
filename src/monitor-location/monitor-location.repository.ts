@@ -3,7 +3,7 @@ import {
   EntityRepository
 } from 'typeorm';
 
-import { MonitorLocation } from 'src/entities/monitor-location.entity';
+import { MonitorLocation } from '../entities/monitor-location.entity';
 
 @EntityRepository(MonitorLocation)
 export class MonitorLocationRepository extends Repository<MonitorLocation> {
