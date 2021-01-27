@@ -16,7 +16,7 @@ import {
   
   @ApiTags('Supplemental Methods')
   @Controller()
-  export class supplementalMethodsController {
+  export class SupplementalMethodsController {
     constructor(
       private service: SupplementalMethodsService,
     ) {}
