@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { supplementalMethodsController } from './supplemental-methods.controller';
+import { SupplementalMethodsController } from './supplemental-methods.controller';
 import { SupplementalMethodsService } from './supplemental-methods.service';
 import { MatsMethodRepository } from './supplemental-methods.repository';
 
@@ -11,7 +11,7 @@ import { MatsMethodMap } from '../maps/mats-method-data.map';
   imports: [
     TypeOrmModule.forFeature([MatsMethodRepository]),
   ],
-  controllers: [supplementalMethodsController],
+  controllers: [SupplementalMethodsController],
   providers: [
     MatsMethodMap,
     SupplementalMethodsService, 

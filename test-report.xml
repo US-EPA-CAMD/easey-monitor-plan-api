@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testExecutions version="1">
-  <file path="C:\Projects\US-EPA-CAMD\easey-monitor-plan-api\src\monitor-plan\monitor-plan.controller.spec.ts">
-    <testCase name="-- Monitor Plan Controller -- * getMonitorPlans should return a list of Monitor Plans" duration="2"/>
-  </file>
-</testExecutions>
