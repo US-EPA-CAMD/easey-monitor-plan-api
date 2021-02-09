@@ -43,6 +43,7 @@ export class MonitorPlanService {
     MonitoringPlanConfiguration.forEach(mp => {
       if(mp.endReportPeriodId == null){
         mp.active = true;
+        delete mp['endReportPeriodId'];
       }      
   });
   return MonitoringPlanConfiguration;
