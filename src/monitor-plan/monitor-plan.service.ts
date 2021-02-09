@@ -35,6 +35,16 @@ export class MonitorPlanService {
     results.sort((a, b) => {
       return (a.name < b.name) ? -1 : (a.name == b.name) ? 0 : 1
     });
-    return results;
-  }
+    return this.setMonitoringPlanStatus(results);
+    }
+
+
+ setMonitoringPlanStatus(MonitoringPlanConfiguration: MonitorPlanDTO[]): MonitorPlanDTO[] {
+    MonitoringPlanConfiguration.forEach(mp => {
+      if(mp.endReportPeriodId == null){
+        mp.active = true;
+      }      
+  });
+  return MonitoringPlanConfiguration;
+}
 }

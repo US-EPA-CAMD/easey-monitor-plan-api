@@ -41,4 +41,9 @@ export class MonitorPlan extends BaseEntity {
     }
   })
   locations: MonitorLocation[];
+
+  @Column({
+    name: 'end_rpt_period_id'
+  })
+  endReportPeriodId: number;  
 }

@@ -7,4 +7,6 @@ export class MonitorPlanDTO {
   name: string;
   locations: Array<MonitorLocationDTO>;
   links: Array<LinkDTO>;
+  endReportPeriodId: number;
+  active: boolean;
 }
