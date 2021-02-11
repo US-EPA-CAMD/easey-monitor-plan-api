@@ -3,8 +3,6 @@ import {
   Param,
   Controller,  
   ParseIntPipe,
-  UseInterceptors,
-  ClassSerializerInterceptor,
 } from '@nestjs/common';
 
 import {
@@ -23,7 +21,6 @@ export class MonitorPlanController {
   constructor(
     private service: MonitorPlanService
   ) {}
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/:orisCode/configurations')
   @ApiOkResponse({
     description: 'Retrieved Monitor Plans',

@@ -1,7 +1,6 @@
 import { MonitorLocation } from 'src/entities/monitor-location.entity';
-import { ClassSerializerInterceptor, Injectable, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { Injectable } from '@nestjs/common';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
