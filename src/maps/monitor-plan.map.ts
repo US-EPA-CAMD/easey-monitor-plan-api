@@ -24,6 +24,7 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       id: entity.id,
       name: locations.map(l => l.name).join(', '),
       locations: locations,
+      endReportPeriodId: entity.endReportPeriodId,
       active: false,
       links: [
         {
