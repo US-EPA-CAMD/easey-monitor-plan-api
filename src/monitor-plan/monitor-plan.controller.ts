@@ -21,7 +21,6 @@ export class MonitorPlanController {
   constructor(
     private service: MonitorPlanService
   ) {}
-
   @Get('/:orisCode/configurations')
   @ApiOkResponse({
     description: 'Retrieved Monitor Plans',

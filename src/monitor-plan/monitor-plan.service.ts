@@ -1,7 +1,6 @@
 import { MonitorLocation } from 'src/entities/monitor-location.entity';
-import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { Injectable } from '@nestjs/common';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
@@ -35,6 +34,17 @@ export class MonitorPlanService {
     results.sort((a, b) => {
       return (a.name < b.name) ? -1 : (a.name == b.name) ? 0 : 1
     });
-    return results;
-  }
+    return this.setMonitoringPlanStatus(results);
+    }
+
+
+ setMonitoringPlanStatus(MonitoringPlanConfiguration: MonitorPlanDTO[]): MonitorPlanDTO[] {
+    MonitoringPlanConfiguration.forEach(mp => {
+      if(mp.endReportPeriodId == null){
+        mp.active = true;
+       }      
+      delete mp['endReportPeriodId'];
+  });
+  return MonitoringPlanConfiguration;
+}
 }
