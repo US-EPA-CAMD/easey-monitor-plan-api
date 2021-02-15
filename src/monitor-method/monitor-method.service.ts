@@ -19,6 +19,16 @@ export class MonitorMethodService {
       where: { monLocId: monLocId }
     }
     const results = await this.repository.find(findOpts);
-    return this.map.many(results);
+    const monMethods = await this.map.many(results);
+    return this.setMonitoringMethodStatus(monMethods);
   }
+
+  setMonitoringMethodStatus(monitoringMethod:MonitorMethodDTO[]): MonitorMethodDTO[] {
+    monitoringMethod.forEach(m => {
+      if(m.endDate == null){
+        m.active = true;
+      }
+    })
+    return monitoringMethod;
+}
 }

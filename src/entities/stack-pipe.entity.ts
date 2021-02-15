@@ -25,6 +25,11 @@ export class StackPipe extends BaseEntity {
   name: string;
 
   @Column({
+    name: 'retire_date',
+  })
+  retireDate: Date;
+
+  @Column({
     name: 'fac_id'
   })
   facId: number;  
