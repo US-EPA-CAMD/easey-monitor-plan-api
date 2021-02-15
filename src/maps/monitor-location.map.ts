@@ -20,6 +20,9 @@ export class MonitorLocationMap extends BaseMap<MonitorLocation, MonitorLocation
       id: entity.id,
       name: entity.unit ? entity.unit.name : entity.stackPipe.name,
       type: entity.unit ? 'Unit' : 'Stack',
+      active :false,
+      retireDate: entity.stackPipe? entity.stackPipe.retireDate: null,
+
       links: [
         {
           rel: "self",

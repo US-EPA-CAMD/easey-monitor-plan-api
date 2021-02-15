@@ -18,6 +18,7 @@ export class MonitorMethodMap extends BaseMap<MonitorMethodData, MonitorMethodDT
       beginHour: entity.beginHour,
       endDate: entity.endDate,
       endHour: entity.endHour,
+      active: false,
     };
   }
 }
