@@ -9,6 +9,7 @@ import { MonitorLocationDTO } from 'src/dtos/monitor-location.dto';
 import { UnitOpStatusRepository} from '../monitor-location/unit-op-status.repository'
 import { UnitOpStatusDTO } from 'src/dtos/unit-op-status.dto';
 import { UnitOpStatusMap } from 'src/maps/unit-op-status.map';
+import { UnitOpStatus } from 'src/entities/unit-op-status.entity';
 
 @Injectable()
 export class MonitorPlanService {
@@ -25,6 +26,7 @@ export class MonitorPlanService {
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
     const plans = await this.monitorPlanRepository.getMonitorPlansByOrisCode(orisCode);
+    const unitStatuses = await this.unitOpStatusRepository.getUnitStatuses();
     //TODO: error handling here in case no plans returned
     const locations = await this.monitorLocationRepository.getMonitorLocationsByFacId(plans[0].facId);
     plans.forEach(p => {
@@ -42,27 +44,26 @@ export class MonitorPlanService {
     results.sort((a, b) => {
       return (a.name < b.name) ? -1 : (a.name == b.name) ? 0 : 1
     });
-    return this.setMonitoringPlanStatus(results);
+    return this.setMonitoringPlanStatus(results, unitStatuses);
     }
 
 
- setMonitoringPlanStatus(MonitoringPlanConfiguration: MonitorPlanDTO[]): MonitorPlanDTO[] {
+ setMonitoringPlanStatus(MonitoringPlanConfiguration: MonitorPlanDTO[],unitStatuses: UnitOpStatus[] ): MonitorPlanDTO[] {
      MonitoringPlanConfiguration.forEach(mp => {
       if(mp.endReportPeriodId == null){
         mp.active = true;
        }      
-       mp.locations = this.setUnitAndStackStatus(mp.locations);
+       mp.locations = this.setUnitAndStackStatus(mp.locations,unitStatuses);
       delete mp['endReportPeriodId'];
-      delete mp['retireDate'];
+      
   });
   return MonitoringPlanConfiguration;
 }
 
-setUnitAndStackStatus(monLocation: MonitorLocationDTO[]): MonitorLocationDTO[] {
-  monLocation.forEach(loc => {
+setUnitAndStackStatus(monLocation: MonitorLocationDTO[],unitStatuses: UnitOpStatus[]): MonitorLocationDTO[] {
+   monLocation.forEach(loc => {
     if(loc.type == 'Unit' ){
-    loc.active = false;
-    this.checkUnitStatus(loc);
+      loc.active =  this.setUnitStatus(unitStatuses,loc);
     }
 
     if(loc.type == 'Stack' ){
@@ -70,12 +71,24 @@ setUnitAndStackStatus(monLocation: MonitorLocationDTO[]): MonitorLocationDTO[] {
         loc.active = true; 
       }
     }
-  });
+    delete loc['retireDate'];
+  }
+ 
+  );
   return monLocation;
 }
 
-async checkUnitStatus(monLocation: MonitorLocationDTO){
-  //to be implemented  
+
+ setUnitStatus(unitStatuses:UnitOpStatus[],monLocation: MonitorLocationDTO): boolean{
+  const unitId = parseInt(monLocation.id)
+  unitStatuses.forEach(unitstatus => {
+    if(unitstatus.unitId == unitId) {
+      if(unitstatus.endDate == null && unitstatus.opStatusCode =="RET"){
+        return false;
+      }
+    }
+ })
+ return true;
 }
 
 }
