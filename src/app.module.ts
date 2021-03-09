@@ -11,6 +11,7 @@ import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { MonitorMethodModule } from './monitor-method/monitor-method.module'
 import { SupplementalMethodsModule} from "./supplemental-methods/supplemental-methods.module"
+import { MonitorSystemModule} from "./monitor-system/monitor-system.module"
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { SupplementalMethodsModule} from "./supplemental-methods/supplemental-me
     MonitorPlanModule,
     MonitorLocationModule,    
     MonitorMethodModule,
-    SupplementalMethodsModule
+    SupplementalMethodsModule,
+    MonitorSystemModule
   ],
 })
 export class AppModule {}
