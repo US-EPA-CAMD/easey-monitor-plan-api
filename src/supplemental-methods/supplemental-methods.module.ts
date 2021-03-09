@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SupplementalMethodsController } from './supplemental-methods.controller';
 import { SupplementalMethodsService } from './supplemental-methods.service';
-import { MatsMethodRepository } from './supplemental-methods.repository';
+import { MatsMethodRepository} from './supplemental-methods.repository';
 
 import { MatsMethodMap } from '../maps/mats-method-data.map';
 
