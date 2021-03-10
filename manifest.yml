@@ -1,12 +1,15 @@
 applications:
-  - name: monitor-plan-api
+  - name: ((name))
     path: .
     command: npm run start
-    memory: 512M
+    memory: ((memory))
     env:
-      EASEY_API_HOST: ((host))
       OPTIMIZE_MEMORY: true
+      EASEY_MONITOR_PLAN_API_TITLE: ((title))
+      EASEY_MONITOR_PLAN_API_HOST: ((host))
+      EASEY_MONITOR_PLAN_API_PATH: ((path))
+      EASEY_MONITOR_PLAN_API_ENV: ((environment))
     routes:
-      - route: ((host))/api/monitor-plan-mgmt
+      - route: ((host))/((path))
     services:
       - camd-pg-db
