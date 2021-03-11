@@ -15,7 +15,7 @@ export class MonitorSystemService {
 
   async getSystems(monLocId: string): Promise<MonitorSystemDTO[]> {
     const findOpts: FindManyOptions = {
-      select: [ "id", "monLocId", "systemType","systemDesignationCode","fuelCode", "beginDate","endDate"],
+      select: [ "id", "monLocId", "systemType","systemDesignationCode","fuelCode", "beginDate","endDate","beginHour","endHour"],
       where: { monLocId: monLocId }
     }
     const results = await this.repository.find(findOpts);

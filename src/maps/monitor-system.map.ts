@@ -15,6 +15,8 @@ export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
       fuelCode: entity.fuelCode,
       beginDate: entity.beginDate,
       endDate: entity.endDate,
+      beginHour: entity.beginHour,
+      endHour: entity.endHour
     };
   }
 }

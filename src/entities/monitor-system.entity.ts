@@ -22,5 +22,11 @@ export class MonitorSystem extends BaseEntity {
 
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
+
+  @Column({name: 'begin_hour' })
+  beginHour: number;
+
+  @Column({name: 'end_hour' })
+  endHour: number;
  
 }
