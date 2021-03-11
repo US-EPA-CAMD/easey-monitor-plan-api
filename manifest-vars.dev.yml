@@ -1,6 +1,0 @@
-name: monitor-plan-api
-title: Monitor Plan Management
-path: api/monitor-plan-mgmt
-environment: development
-host: easey-dev.app.cloud.gov
-memory: 512M
