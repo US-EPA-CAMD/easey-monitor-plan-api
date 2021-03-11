@@ -6,4 +6,6 @@ export class MonitorSystemDTO {
     fuelCode: string;
     beginDate: Date;
     endDate: Date;
+    beginHour: number;
+    endHour: number;
   }
