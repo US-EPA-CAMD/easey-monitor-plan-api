@@ -18,7 +18,7 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       hgConverterInd: entity.hgConverterInd,
       acquisitionMethodCode: entity.acquisitionMethodCode,
       componentIdentifier: entity.componentIdentifier,
-      beginDate: null,
+      beginDate: null ,
       beginHour: null,
       endDate: null,
       endHour: null,
