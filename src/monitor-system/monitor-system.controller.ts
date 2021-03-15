@@ -47,7 +47,6 @@ import { ComponentDTO } from 'src/dtos/component.dto';
       description: 'Resource Not Found',
     })
     getSystemComponents(@Param('id') systemId: string): Promise<ComponentDTO[]>  {
-      console.log("sdsd");
       return this.service.getComponents(systemId);
     }
 
