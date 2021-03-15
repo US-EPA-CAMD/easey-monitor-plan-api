@@ -6,6 +6,7 @@ export class ComponentDTO {
     modelVersion: string;
     manufacturer: string;
     acquisitionMethodCode: string;
+    componentIdentifier: string;
     serialNumber: string;
     hgConverterInd: number;
     beginDate: Date;

@@ -17,6 +17,9 @@ export class Component extends BaseEntity {
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'acq_cd' })
   acquisitionMethodCode: string;
 
+  @Column({ type: 'varchar', length: 3, nullable: true, name: 'component_identifier' })
+  componentIdentifier: string;
+
   @Column({ type: 'varchar', length: 15, nullable: false, name: 'model_version' })
   modelVersion: string;
 
