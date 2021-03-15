@@ -8,8 +8,11 @@ export class MonitorSystem extends BaseEntity {
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
   monLocId: string;
 
-  @Column({ type: 'varchar', length: 7, nullable: true, name: 'system_identifier' })
+  @Column({ type: 'varchar', length: 7, nullable: true, name: 'sys_type_cd' })
   systemType: string;
+
+  @Column({ type: 'varchar', length: 3, nullable: true, name: 'system_identifier' })
+  systemIdentifier: string;
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'sys_designation_cd' })
   systemDesignationCode: string;

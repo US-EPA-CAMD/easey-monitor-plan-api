@@ -16,6 +16,8 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       manufacturer: entity.manufacturer,
       serialNumber : entity.serialNumber,
       hgConverterInd: entity.hgConverterInd,
+      acquisitionMethodCode: entity.acquisitionMethodCode,
+      componentIdentifier: entity.componentIdentifier,
       beginDate: null,
       beginHour: null,
       endDate: null,
