@@ -13,6 +13,7 @@ import {
   
   import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
   import { MonitorSystemService } from './monitor-system.service';
+import { ComponentDTO } from 'src/dtos/component.dto';
   
   @ApiTags('Systems')
   @Controller()
@@ -34,5 +35,23 @@ import {
     getSystems(@Param('id') monLocId: string): Promise<MonitorSystemDTO[]> {
       return this.service.getSystems(monLocId);
     }
+
+    @Get(':id/components')
+    @ApiOkResponse({
+      description: 'Retrieved Methods',
+    })
+    @ApiBadRequestResponse({
+      description: 'Invalid Request',
+    })
+    @ApiNotFoundResponse({
+      description: 'Resource Not Found',
+    })
+    getSystemComponents(@Param('id') systemId: string): Promise<ComponentDTO[]>  {
+      console.log("sdsd");
+      return this.service.getComponents(systemId);
+    }
+
+
+
   }
   
