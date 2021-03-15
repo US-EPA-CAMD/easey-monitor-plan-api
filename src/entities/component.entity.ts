@@ -13,7 +13,7 @@ export class Component extends BaseEntity {
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'basis_cd' })
   basisCode: string;
-  
+
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'acq_cd' })
   acquisitionMethodCode: string;
 

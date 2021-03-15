@@ -8,7 +8,4 @@ export class MonitorSystemComponentRepository extends Repository<MonitorSystemCo
     const components = this.createQueryBuilder("MonitorSystemComponent") 
        return await components.getMany();
       }
-
-
-      
 }
