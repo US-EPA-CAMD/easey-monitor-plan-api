@@ -5,6 +5,7 @@ import { MonitorLocationModule } from "./monitor-location/monitor-location.modul
 import { MonitorMethodModule } from "./monitor-method/monitor-method.module";
 import { SupplementalMethodsModule} from "./supplemental-methods/supplemental-methods.module"
 import { MonitorSystemModule} from "./monitor-system/monitor-system.module"
+import { ComponentModule } from "./component/component.module";
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
       {
         path: ':id/systems',
         module: MonitorSystemModule,
+      },
+      {
+        path: ':id/components',
+        module: ComponentModule,
       },
     ],
   },
