@@ -21,7 +21,7 @@ export class ComponentService {
 
   async getComponentsByLocation(monLocId: string): Promise<ComponentDTO[]> {
     const findOpts: FindManyOptions = {
-      select: [ "id","monLocId","componentTypeCode","basisCode", "modelVersion","manufacturer","serialNumber","hgConverterInd"],
+      select: [ "id","monLocId","componentTypeCode","basisCode","acquisitionMethodCode", "modelVersion","manufacturer","serialNumber","hgConverterInd"],
       where: { monLocId: monLocId }
     }
     const systemComponents = await this.repositoryMonComponents.getSystemComponents();
