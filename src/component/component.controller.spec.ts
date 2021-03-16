@@ -38,7 +38,7 @@ const mockConfigService = () => ({
     });
   
     describe('* getsComponents', () => {
-      it('should return a list of Components', async () => {
+      it('should return a list of Components ', async () => {
         const monLocId = '123';
         const expectedResult: ComponentDTO[] = [];
   
