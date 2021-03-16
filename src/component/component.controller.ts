@@ -31,7 +31,7 @@ import {
     @ApiNotFoundResponse({
       description: 'Resource Not Found',
     })
-    getUnits(@Param('id') monLocId: string): Promise<ComponentDTO[]> {
+    getComponentsbyLoc(@Param('id') monLocId: string): Promise<ComponentDTO[]> {
       return this.service.getComponentsByLocation(monLocId);
     }
   }
