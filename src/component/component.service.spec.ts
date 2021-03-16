@@ -54,6 +54,23 @@ const mockConfigService = () => ({
           expect(result).toBe(result);
         });
       });
+
+      
+    describe('* setComponentDate', () => {
+        it('should return a list of components', async () => {
+          const monLocId = '123';
+          const expectedResult: ComponentDTO[] = [];
+    
+          const serviceSpy = jest
+            .spyOn(supplementalMethodsService, 'setComponentDate')
+    
+          const result = await supplementalMethodsController.getComponentsbyLoc(monLocId);
+    
+          expect(serviceSpy).toHaveBeenCalledWith(monLocId);
+          expect(result).toBe(result);
+        });
+      });
+
   }
   );
   

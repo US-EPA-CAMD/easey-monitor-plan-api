@@ -141,4 +141,62 @@ describe('-- Monitor Plan Service --', () => {
       ]);
     });
   });
-});
+
+  describe('* setMonitoringPlanStatus', () => {
+    it('should return all monitor plan configuration data for the specified oris code', async () => {
+      monitorPlanRepository.getMonitorPlansByOrisCode.mockResolvedValue([
+        monitorPlanEntity,
+      ]);
+      monitorLocationRepository.getMonitorLocationsByFacId.mockResolvedValue([
+        monitorLocationEntity1,
+        monitorLocationEntity2,
+      ]);
+
+      map.many.mockReturnValue(['location 1', 'location 2']);
+
+      const orisCode = 7;
+
+      let result = await monitorPlanService.getConfigurations(orisCode);
+
+      expect(result).toBe(result);
+  });
+
+  describe('* setUnitAndStackStatus', () => {
+    it('should return all monitor plan configuration data for the specified oris code', async () => {
+      monitorPlanRepository.getMonitorPlansByOrisCode.mockResolvedValue([
+        monitorPlanEntity,
+      ]);
+      monitorLocationRepository.getMonitorLocationsByFacId.mockResolvedValue([
+        monitorLocationEntity1,
+        monitorLocationEntity2,
+      ]);
+
+      map.many.mockReturnValue(['location 1', 'location 2']);
+
+      const orisCode = 7;
+
+      let result = await monitorPlanService.getConfigurations(orisCode);
+
+      expect(result).toBe(result);
+  });
+  describe('* setUnitAndStackStatus', () => {
+    it('should return all monitor plan configuration data for the specified oris code', async () => {
+      monitorPlanRepository.getMonitorPlansByOrisCode.mockResolvedValue([
+        monitorPlanEntity,
+      ]);
+      monitorLocationRepository.getMonitorLocationsByFacId.mockResolvedValue([
+        monitorLocationEntity1,
+        monitorLocationEntity2,
+      ]);
+
+      map.many.mockReturnValue(['location 1', 'location 2']);
+
+      const orisCode = 7;
+
+      let result = await monitorPlanService.getConfigurations(orisCode);
+
+      expect(result).toBe(result);
+  });
+
+
+})})})})
