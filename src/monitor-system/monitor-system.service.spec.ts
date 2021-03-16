@@ -11,7 +11,7 @@ const mockMatsMethodRepository = () => ({
     many: jest.fn(),
   });
   
-  describe('-- Supplemental Methods Service --', () => {
+  describe('-- Monitoring system Service --', () => {
     let supplementalMethodsService;
     let matsMethodRepository;
     let map;
@@ -34,8 +34,8 @@ const mockMatsMethodRepository = () => ({
       map = module.get(MonitorSystemMap);
     });
   
-    describe('* getMatsMethods', () => {
-      it('should return all the supplemental methods with the specified monLocId', async () => {
+    describe('* getMonitoringSystems', () => {
+      it('should return all the Monitoring Systems with the specified monLocId', async () => {
         map.many.mockReturnValue('mockSupplementalMethods');
   
         const monLocId = '123';
@@ -46,5 +46,18 @@ const mockMatsMethodRepository = () => ({
         expect(map.many).toHaveBeenCalled();
         expect(result).toEqual('mockSupplementalMethods');
       });
-    });
+    }); 
+    
+    describe('* getComponents', () => {
+        it('should return all the components with the specified system ID', async () => {
+          map.many.mockReturnValue('mockSupplementalMethods');
+    
+          const monLocId = '123';
+    
+          let result = await supplementalMethodsService.getComponents(monLocId);
+    
+          expect(result).toBe(result);
+        });
+      });
+
   });
