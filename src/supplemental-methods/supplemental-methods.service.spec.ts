@@ -48,4 +48,6 @@ describe('-- Supplemental Methods Service --', () => {
       expect(result).toEqual('mockSupplementalMethods');
     });
   });
+
+  
 });
