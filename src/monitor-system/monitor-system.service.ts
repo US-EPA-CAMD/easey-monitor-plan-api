@@ -9,7 +9,6 @@ import { ComponentRepository } from 'src/component/component.repository';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentDTO } from 'src/dtos/component.dto';
 import { MonitorSystemComponentRepository } from './monitor-system-component.repository';
-import { systemComponentMap } from 'src/maps/monitor-system-component.map';
 import { MonitorSystemComponent } from 'src/entities/monitor-system-component.entity';
 
 @Injectable()
@@ -19,7 +18,6 @@ export class MonitorSystemService {
     private map: MonitorSystemMap,
     @InjectRepository(MonitorSystemComponentRepository)
     private repositoryMonSysComponents:MonitorSystemComponentRepository,
-    private monComponentsMap: systemComponentMap,
     @InjectRepository(ComponentRepository)
     private repositoryComponents: ComponentRepository,
     private mapComponents: ComponentMap,
