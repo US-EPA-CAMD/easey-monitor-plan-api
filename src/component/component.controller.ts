@@ -13,6 +13,7 @@ import {
   
   import { ComponentDTO } from '../dtos/component.dto';
   import { ComponentService } from './component.service';
+  import{AnalyzerRangeDTO} from '../dtos/analyzer-range.dto'
   
   @ApiTags('Components')
   @Controller()
@@ -33,6 +34,19 @@ import {
     })
     getComponentsbyLoc(@Param('id') monLocId: string): Promise<ComponentDTO[]> {
       return this.service.getComponentsByLocation(monLocId);
+    }
+    @Get(":id/analyzer-range")
+    @ApiOkResponse({
+      description: 'Retrieved Methods',
+    })
+    @ApiBadRequestResponse({
+      description: 'Invalid Request',
+    })
+    @ApiNotFoundResponse({
+      description: 'Resource Not Found',
+    })
+    getAnalyzerRangesByComponent(@Param('id') componentId: string): Promise<AnalyzerRangeDTO[]> {
+      return this.service.getAnalyzerRangesByComponent(componentId);
     }
   }
   
