@@ -7,7 +7,10 @@ import { ComponentRepository } from './component.repository';
 import { MonitorSystemComponentRepository} from "../monitor-system/monitor-system-component.repository"
 import { ComponentMap } from '../maps/component.map';
 import { MonitorSystemComponent } from 'src/entities/monitor-system-component.entity';
-import{systemComponentMap} from '../maps/monitor-system-component.map'
+import{systemComponentMap} from '../maps/monitor-system-component.map';
+import{AnalyzerRangeDTO} from '../dtos/analyzer-range.dto';
+import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
+import { AnalyzerRangeRepository } from './analyzer-range.repository';
 
 @Injectable()
 export class ComponentService {
@@ -16,7 +19,11 @@ export class ComponentService {
     private map: ComponentMap,
     @InjectRepository(MonitorSystemComponentRepository)
     private repositoryMonComponents:MonitorSystemComponentRepository,
-    private monComponentsMap: systemComponentMap
+    private monComponentsMap: systemComponentMap,
+    @InjectRepository(AnalyzerRangeRepository)
+    private repositoryAnalyzerRange : AnalyzerRangeRepository,
+    private AnalyzerRangeMap: AnalyzerRangeMap
+  
   ) {}
 
   async getComponentsByLocation(monLocId: string): Promise<ComponentDTO[]> {
@@ -29,6 +36,13 @@ export class ComponentService {
     const components = await this.map.many(results);
     return this.setComponentDate(components,systemComponents);
   }
+
+  async getAnalyzerRangesByComponent(componentId: string): Promise<AnalyzerRangeDTO[]> {
+    const systemComponents = (await this.repositoryAnalyzerRange.AnalyzerRange()).filter(x => x.componentId == componentId);
+    const result = await this.AnalyzerRangeMap.many(systemComponents);
+    return result;
+  }
+
 
 
   setComponentDate(components:ComponentDTO[], monitorSystemComponent: MonitorSystemComponent[] ): ComponentDTO[] {
