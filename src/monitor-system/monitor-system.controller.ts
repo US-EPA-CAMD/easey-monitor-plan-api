@@ -14,6 +14,8 @@ import {
   import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
   import { MonitorSystemService } from './monitor-system.service';
 import { ComponentDTO } from 'src/dtos/component.dto';
+
+import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
   
   @ApiTags('Systems')
   @Controller()
@@ -48,6 +50,20 @@ import { ComponentDTO } from 'src/dtos/component.dto';
     })
     getSystemComponents(@Param('id') systemId: string): Promise<ComponentDTO[]>  {
       return this.service.getComponents(systemId);
+    }
+
+    @Get(':id/system-fuel-flows')
+    @ApiOkResponse({
+      description: 'Retrieved Methods',
+    })
+    @ApiBadRequestResponse({
+      description: 'Invalid Request',
+    })
+    @ApiNotFoundResponse({
+      description: 'Resource Not Found',
+    })
+    getSystemFuelFlows(@Param('id') systemId: string): Promise<SystemFuelFlowDTO[]>  {
+      return this.service.getSysFuelFlow(systemId);
     }
 
 

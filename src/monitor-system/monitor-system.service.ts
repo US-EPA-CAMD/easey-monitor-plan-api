@@ -10,7 +10,10 @@ import { ComponentMap } from '../maps/component.map';
 import { ComponentDTO } from 'src/dtos/component.dto';
 import { MonitorSystemComponentRepository } from './monitor-system-component.repository';
 import { MonitorSystemComponent } from 'src/entities/monitor-system-component.entity';
-
+import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
+import { SystemFuelFlow } from 'src/entities/system-fuel-flow.entity';
+import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
+import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 @Injectable()
 export class MonitorSystemService {
   constructor(@InjectRepository(MonitorSystemRepository)
@@ -21,6 +24,9 @@ export class MonitorSystemService {
     @InjectRepository(ComponentRepository)
     private repositoryComponents: ComponentRepository,
     private mapComponents: ComponentMap,
+     @InjectRepository(SystemFuelFlow)
+    private repositorySysFuel: SystemFuelFlowRepository,
+    private mapSysFuel: SystemFuelFlowMap,
   ) {}
 
   async getSystems(monLocId: string): Promise<MonitorSystemDTO[]> {
@@ -40,6 +46,12 @@ export class MonitorSystemService {
     const systemComponents = ComponentStatus.filter(x=>x.monSysId ==monSysId );
     return this.setComponentDate(componentDTO, systemComponents);
     }
+
+    async getSysFuelFlow(monSysId: string): Promise<SystemFuelFlowDTO[]> {
+      const fuel =  (await this.repositorySysFuel.SysFuelFlow()).filter(x=>x.monSysId == monSysId);
+      const result = await this.mapSysFuel.many(fuel);
+      return result;
+      }
 
   
   setComponentDate(components:ComponentDTO[], monitorSystemComponent: MonitorSystemComponent[] ): ComponentDTO[] {
