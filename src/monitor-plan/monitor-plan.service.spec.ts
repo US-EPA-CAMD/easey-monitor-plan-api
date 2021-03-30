@@ -6,7 +6,10 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorLocationMap } from '../maps/monitor-location.map';
+import { UnitOpStatusMap } from '../maps/unit-op-status.map';
+import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
+import { UnitOpStatusDTO } from '../dtos/unit-op-status.dto';
 
 const mockMonitorPlanRepository = () => ({
   getMonitorPlansByOrisCode: jest.fn(),
@@ -65,19 +68,24 @@ describe('-- Monitor Plan Service --', () => {
   });
 
   describe('* getConfigurations', () => {
-   return true;
+    it('should return a list of Configurations', async () => {
+        return true;
+    });
+  
   });
 
   describe('* setMonitoringPlanStatus', () => {
-    return true;
+    it('should setMonitoringPlanStatus', async () => {
+      return true;
+  });
   });
 
   describe('* setUnitAndStackStatus', () => {
-    return true;
+      it('should setUnitAndStackStatus', async () => {
+      return true;
   });
-  describe('* setUnitAndStackStatus', () => {
-    return true;
   });
+  
 
 
 });
