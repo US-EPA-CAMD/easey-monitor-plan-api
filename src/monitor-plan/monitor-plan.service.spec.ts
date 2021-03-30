@@ -56,6 +56,11 @@ describe('-- Monitor Plan Service --', () => {
           useFactory: mockMonitorLocationRepository,
         },
         { provide: MonitorPlanMap, useFactory: mockMap },
+        MonitorLocationMap,
+        UnitOpStatusMap,
+        UnitOpStatusRepository,
+        UnitOpStatusDTO,
+
       ],
     }).compile();
 
