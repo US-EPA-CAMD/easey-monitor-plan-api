@@ -5,13 +5,13 @@ import { FindManyOptions } from 'typeorm';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { MonitorSystemRepository } from './monitor-system.repository';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
-import { ComponentRepository } from 'src/component/component.repository';
+import { ComponentRepository } from '../component/component.repository';
 import { ComponentMap } from '../maps/component.map';
-import { ComponentDTO } from 'src/dtos/component.dto';
+import { ComponentDTO } from '../dtos/component.dto';
 import { MonitorSystemComponentRepository } from './monitor-system-component.repository';
-import { MonitorSystemComponent } from 'src/entities/monitor-system-component.entity';
+import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
 import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
-import { SystemFuelFlow } from 'src/entities/system-fuel-flow.entity';
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 @Injectable()

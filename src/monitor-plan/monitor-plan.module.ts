@@ -7,9 +7,9 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { UnitOpStatusMap } from 'src/maps/unit-op-status.map';
-import { UnitOpStatusRepository } from 'src/monitor-location/unit-op-status.repository';
-import { UnitOpStatusDTO } from 'src/dtos/unit-op-status.dto';
+import { UnitOpStatusMap } from '../maps/unit-op-status.map';
+import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
+import { UnitOpStatusDTO } from '../dtos/unit-op-status.dto';
 
 @Module({
   imports: [

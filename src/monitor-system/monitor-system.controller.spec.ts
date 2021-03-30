@@ -4,7 +4,7 @@ import { MonitorSystemController } from './monitor-system.controller';
 import { MonitorSystemService } from './monitor-system.service';
 import { MonitorSystemRepository } from './monitor-system.repository';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
-import { MonitorSystemDTO } from 'src/dtos/monitor-system.dto';
+import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 
 
 const mockConfigService = () => ({
