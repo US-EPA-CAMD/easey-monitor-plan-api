@@ -158,7 +158,66 @@ describe('-- Monitor Plan Service --', () => {
 
       let result = await monitorPlanService.getConfigurations(orisCode);
 
-      expect(result).toBe(result);
+      expect(
+        monitorPlanRepository.getMonitorPlansByOrisCode,
+      ).toHaveBeenCalledWith(orisCode);
+      expect(
+        monitorLocationRepository.getMonitorLocationsByFacId,
+      ).toHaveBeenCalledWith(monitorPlanEntity.facId);
+      expect(map.many).toHaveBeenCalled();
+      expect(result).toEqual(['location 1', 'location 2']);
+    });
+
+    it('should return all sorted monitor plan configuration data for the specified oris code', async () => {
+      let monitorPlanDTO1: MonitorPlanDTO = new MonitorPlanDTO();
+      monitorPlanDTO1.id = '1';
+      monitorPlanDTO1.name = 'monitorPlan1';
+      monitorPlanDTO1.locations = [];
+      monitorPlanDTO1.links = [];
+
+      let monitorPlanDTO2: MonitorPlanDTO = new MonitorPlanDTO();
+      monitorPlanDTO2.id = '2';
+      monitorPlanDTO2.name = 'monitorPlan2';
+      monitorPlanDTO2.locations = [];
+      monitorPlanDTO2.links = [];
+
+      let monitorPlanDTO3: MonitorPlanDTO = new MonitorPlanDTO();
+      monitorPlanDTO3.id = '3';
+      monitorPlanDTO3.name = 'monitorPlan3';
+      monitorPlanDTO3.locations = [];
+      monitorPlanDTO3.links = [];
+
+      monitorPlanRepository.getMonitorPlansByOrisCode.mockResolvedValue([
+        monitorPlanEntity,
+      ]);
+      monitorLocationRepository.getMonitorLocationsByFacId.mockResolvedValue([
+        monitorLocationEntity1,
+        monitorLocationEntity2,
+      ]);
+
+      map.many.mockReturnValue([
+        monitorPlanDTO3,
+        monitorPlanDTO1,
+        monitorPlanDTO2,
+      ]);
+
+      const orisCode = 7;
+
+      let result = await monitorPlanService.getConfigurations(orisCode);
+
+      expect(
+        monitorPlanRepository.getMonitorPlansByOrisCode,
+      ).toHaveBeenCalledWith(orisCode);
+      expect(
+        monitorLocationRepository.getMonitorLocationsByFacId,
+      ).toHaveBeenCalledWith(monitorPlanEntity.facId);
+      expect(map.many).toHaveBeenCalled();
+      expect(result).toEqual([
+        monitorPlanDTO1,
+        monitorPlanDTO2,
+        monitorPlanDTO3,
+      ]);
+    });
   });
 
   describe('* setUnitAndStackStatus', () => {
@@ -177,10 +236,35 @@ describe('-- Monitor Plan Service --', () => {
 
       let result = await monitorPlanService.getConfigurations(orisCode);
 
-      expect(result).toBe(result);
-  });
-  describe('* setUnitAndStackStatus', () => {
-    it('should return all monitor plan configuration data for the specified oris code', async () => {
+      expect(
+        monitorPlanRepository.getMonitorPlansByOrisCode,
+      ).toHaveBeenCalledWith(orisCode);
+      expect(
+        monitorLocationRepository.getMonitorLocationsByFacId,
+      ).toHaveBeenCalledWith(monitorPlanEntity.facId);
+      expect(map.many).toHaveBeenCalled();
+      expect(result).toEqual(['location 1', 'location 2']);
+    });
+
+    it('should return all sorted monitor plan configuration data for the specified oris code', async () => {
+      let monitorPlanDTO1: MonitorPlanDTO = new MonitorPlanDTO();
+      monitorPlanDTO1.id = '1';
+      monitorPlanDTO1.name = 'monitorPlan1';
+      monitorPlanDTO1.locations = [];
+      monitorPlanDTO1.links = [];
+
+      let monitorPlanDTO2: MonitorPlanDTO = new MonitorPlanDTO();
+      monitorPlanDTO2.id = '2';
+      monitorPlanDTO2.name = 'monitorPlan2';
+      monitorPlanDTO2.locations = [];
+      monitorPlanDTO2.links = [];
+
+      let monitorPlanDTO3: MonitorPlanDTO = new MonitorPlanDTO();
+      monitorPlanDTO3.id = '3';
+      monitorPlanDTO3.name = 'monitorPlan3';
+      monitorPlanDTO3.locations = [];
+      monitorPlanDTO3.links = [];
+
       monitorPlanRepository.getMonitorPlansByOrisCode.mockResolvedValue([
         monitorPlanEntity,
       ]);
@@ -189,14 +273,30 @@ describe('-- Monitor Plan Service --', () => {
         monitorLocationEntity2,
       ]);
 
-      map.many.mockReturnValue(['location 1', 'location 2']);
+      map.many.mockReturnValue([
+        monitorPlanDTO3,
+        monitorPlanDTO1,
+        monitorPlanDTO2,
+      ]);
 
       const orisCode = 7;
 
       let result = await monitorPlanService.getConfigurations(orisCode);
 
-      expect(result).toBe(result);
+      expect(
+        monitorPlanRepository.getMonitorPlansByOrisCode,
+      ).toHaveBeenCalledWith(orisCode);
+      expect(
+        monitorLocationRepository.getMonitorLocationsByFacId,
+      ).toHaveBeenCalledWith(monitorPlanEntity.facId);
+      expect(map.many).toHaveBeenCalled();
+      expect(result).toEqual([
+        monitorPlanDTO1,
+        monitorPlanDTO2,
+        monitorPlanDTO3,
+      ]);
+    });
   });
+});
 
-
-})})})})
+  
