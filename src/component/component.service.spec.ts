@@ -42,8 +42,6 @@ const mockConfigService = () => ({
         ],
       }).compile();
   
-      supplementalMethodsController = module.get(ComponentController);
-      supplementalMethodsService = module.get(ComponentService);
     });
   
     afterEach(() => {
