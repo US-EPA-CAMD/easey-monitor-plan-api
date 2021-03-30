@@ -14,6 +14,9 @@ import{systemComponentMap} from '../maps/monitor-system-component.map';
 import { ComponentRepository } from '../component/component.repository';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
+import { UnitOpStatusMap } from '../maps/unit-op-status.map';
+import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
+import { UnitOpStatusDTO } from '../dtos/unit-op-status.dto';
 
 
 const mockConfigService = () => ({
@@ -39,6 +42,9 @@ describe('-- Monitor Plan Controller --', () => {
           ComponentMap,
           SystemFuelFlowMap,
           ComponentRepository,
+          UnitOpStatusMap,
+          UnitOpStatusDTO,
+          UnitOpStatusRepository,
           
           {
             provide: ConfigService,

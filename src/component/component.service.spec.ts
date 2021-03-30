@@ -5,7 +5,13 @@ import { ComponentService } from './component.service';
 import { ComponentRepository } from './component.repository';
 import{ComponentMap} from '../maps/component.map';
 import { ComponentDTO } from '../dtos/component.dto';
-
+import {MonitorSystemComponentRepository} from '../monitor-system/monitor-system-component.repository'
+import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
+import{systemComponentMap} from '../maps/monitor-system-component.map'
+import { MonitorMethodMap } from '../maps/monitor-method.map';
+import { AnalyzerRangeRepository } from './analyzer-range.repository';
+import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
+import { AnalyzerRange } from '../entities/analyzer-range.entity';
 
 const mockConfigService = () => ({
     get: jest.fn(),
@@ -22,6 +28,13 @@ const mockConfigService = () => ({
             ComponentMap,
             ComponentService,
             ComponentRepository,
+            MonitorSystemComponentRepository,
+            MonitorSystemComponent,
+            systemComponentMap,
+            MonitorMethodMap,
+            AnalyzerRangeRepository,
+            AnalyzerRangeMap,
+            AnalyzerRange,
           {
             provide: ConfigService,
             useFactory: mockConfigService,
