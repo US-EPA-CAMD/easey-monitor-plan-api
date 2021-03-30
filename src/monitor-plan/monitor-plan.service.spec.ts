@@ -65,18 +65,18 @@ describe('-- Monitor Plan Service --', () => {
   });
 
   describe('* getConfigurations', () => {
-   
+   return true;
   });
 
   describe('* setMonitoringPlanStatus', () => {
-    
+    return true;
   });
 
   describe('* setUnitAndStackStatus', () => {
-   
+    return true;
   });
   describe('* setUnitAndStackStatus', () => {
-   
+    return true;
   });
 
 
