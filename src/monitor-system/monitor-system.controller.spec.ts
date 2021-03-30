@@ -48,7 +48,7 @@ const mockConfigService = () => ({
     });
 
     describe('* getsSystemComponent', () => {
-        it('should return a list of Monitoring Systems', async () => {
+        it('should return a list of Monitoring components', async () => {
           const monLocId = '123';
           const expectedResult: MonitorSystemDTO[] = [];
     
@@ -56,6 +56,18 @@ const mockConfigService = () => ({
           expect(1).toBe(1);
         });
       });
-  }
+  
+
+
+  describe('* getsSystemFuelFlow', () => {
+    it('should return a list of Monitoring fuel flows', async () => {
+      const monLocId = '123';
+      const expectedResult: MonitorSystemDTO[] = [];
+
+
+      expect(1).toBe(1);
+    });
+  });
+}
   );
   
