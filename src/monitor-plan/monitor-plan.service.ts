@@ -7,7 +7,6 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { UnitOpStatusRepository} from '../monitor-location/unit-op-status.repository'
-import { UnitOpStatusDTO } from '../dtos/unit-op-status.dto';
 import { UnitOpStatusMap } from '../maps/unit-op-status.map';
 import { UnitOpStatus } from '../entities/unit-op-status.entity';
 
