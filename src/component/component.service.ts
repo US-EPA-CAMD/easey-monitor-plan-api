@@ -6,7 +6,7 @@ import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentRepository } from './component.repository';
 import { MonitorSystemComponentRepository} from "../monitor-system/monitor-system-component.repository"
 import { ComponentMap } from '../maps/component.map';
-import { MonitorSystemComponent } from 'src/entities/monitor-system-component.entity';
+import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
 import{systemComponentMap} from '../maps/monitor-system-component.map';
 import{AnalyzerRangeDTO} from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';

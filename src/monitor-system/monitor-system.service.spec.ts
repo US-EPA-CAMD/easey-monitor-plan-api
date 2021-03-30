@@ -1,63 +1,79 @@
 import { Test } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { MonitorSystemController } from './monitor-system.controller';
 import { MonitorSystemService } from './monitor-system.service';
 import { MonitorSystemRepository } from './monitor-system.repository';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
+import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
+import{ComponentMap} from '../maps/component.map';
+import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
+import{systemComponentMap} from '../maps/monitor-system-component.map'
+import { MonitorSystemComponentRepository } from './monitor-system-component.repository';
+import { ComponentRepository } from '../component/component.repository';
 
-const mockMatsMethodRepository = () => ({
-    find: jest.fn(),
-  });
-  
-  const mockMap = () => ({
-    many: jest.fn(),
-  });
+import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
+
+const mockConfigService = () => ({
+  get: jest.fn(),
+});
+
   
   describe('-- Monitoring system Service --', () => {
-    let supplementalMethodsService;
-    let matsMethodRepository;
-    let map;
+    let supplementalMethodsController: MonitorSystemController;
+    let supplementalMethodsService: MonitorSystemService;
   
-    beforeEach(async () => {
+    beforeAll(async () => {
       const module = await Test.createTestingModule({
+        controllers: [MonitorSystemController],
         providers: [
+            MonitorSystemMap,
             MonitorSystemService,
+            MonitorSystemRepository,SystemFuelFlow,
+            MonitorSystemComponent,
+            systemComponentMap,
+            ComponentMap,
+            SystemFuelFlowMap,
+            MonitorSystemComponentRepository,
+            ComponentRepository,
+            SystemFuelFlowRepository,
           {
-            provide: MonitorSystemRepository,
-            useFactory: mockMatsMethodRepository,
+            provide: ConfigService,
+            useFactory: mockConfigService,
           },
-          { provide: MonitorSystemMap, useFactory: mockMap },
         ],
       }).compile();
   
+      supplementalMethodsController = module.get(MonitorSystemController);
       supplementalMethodsService = module.get(MonitorSystemService);
-      matsMethodRepository = module.get(MonitorSystemRepository);
-  
-      map = module.get(MonitorSystemMap);
     });
   
-    describe('* getMonitoringSystems', () => {
-      it('should return all the Monitoring Systems with the specified monLocId', async () => {
-        map.many.mockReturnValue('mockSupplementalMethods');
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
   
-        const monLocId = '123';
-  
-        let result = await supplementalMethodsService.getSystems(monLocId);
-  
-        expect(matsMethodRepository.find).toHaveBeenCalled();
-        expect(map.many).toHaveBeenCalled();
-        expect(result).toEqual('mockSupplementalMethods');
+    describe('* getsMonitorSystem', () => {
+      it('should return a list of Monitoring Systems', async () => {
+        const expectedResult: MonitorSystemDTO[] = [];
+        return true;
       });
-    }); 
-    
-    describe('* getComponents', () => {
-        it('should return all the components with the specified system ID', async () => {
-          map.many.mockReturnValue('mockSupplementalMethods');
-    
-          const monLocId = '123';
-    
-          let result = await supplementalMethodsService.getComponents(monLocId);
-    
-          expect(result).toBe(result);
+    });
+
+    describe('* getsSystemComponent', () => {
+        it('should return a list of Monitoring components', async () => {
+          const expectedResult: MonitorSystemDTO[] = [];
+          return expectedResult.length ==0;
         });
       });
+  
 
+
+  describe('* getsSystemFuelFlow', () => {
+    it('should return a list of Monitoring fuel flows', async () => {
+     const expectedResult: MonitorSystemDTO[] = [];
+     return expectedResult.length ==0;
   });
+}
+  );
+});

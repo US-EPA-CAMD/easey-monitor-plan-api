@@ -52,4 +52,19 @@ describe('-- Monitor Method Controller --', () => {
       expect(result).toBe(expectedResult);
     });
   });
+  describe('* getMethods', () => {
+    it('should return a list of Monitor Methods', async () => {
+      const monLocId = '123';
+      const expectedResult: MonitorMethodDTO[] = [];
+
+      const serviceSpy = jest
+        .spyOn(monitorMethodService, 'getMonitorMethods')
+        .mockResolvedValue(expectedResult);
+
+      const result = await monitorMethodController.getUnits(monLocId);
+
+      expect(serviceSpy).toHaveBeenCalledWith(monLocId);
+      expect(result).toBe(expectedResult);
+    });
+  });
 });

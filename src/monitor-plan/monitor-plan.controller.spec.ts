@@ -8,6 +8,16 @@ import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
+import{ComponentMap} from '../maps/component.map';
+import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
+import{systemComponentMap} from '../maps/monitor-system-component.map';
+import { ComponentRepository } from '../component/component.repository';
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
+import { UnitOpStatusMap } from '../maps/unit-op-status.map';
+import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
+import { UnitOpStatusDTO } from '../dtos/unit-op-status.dto';
+
 
 const mockConfigService = () => ({
   get: jest.fn(),
@@ -26,6 +36,16 @@ describe('-- Monitor Plan Controller --', () => {
           MonitorPlanService,
           MonitorPlanRepository,
           MonitorLocationRepository,
+          SystemFuelFlow,
+          MonitorSystemComponent,
+          systemComponentMap,
+          ComponentMap,
+          SystemFuelFlowMap,
+          ComponentRepository,
+          UnitOpStatusMap,
+          UnitOpStatusDTO,
+          UnitOpStatusRepository,
+          
           {
             provide: ConfigService,
             useFactory: mockConfigService,

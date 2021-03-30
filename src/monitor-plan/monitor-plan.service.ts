@@ -1,15 +1,14 @@
-import { MonitorLocation } from 'src/entities/monitor-location.entity';
+import { MonitorLocation } from '../entities/monitor-location.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorLocationDTO } from 'src/dtos/monitor-location.dto';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { UnitOpStatusRepository} from '../monitor-location/unit-op-status.repository'
-import { UnitOpStatusDTO } from 'src/dtos/unit-op-status.dto';
-import { UnitOpStatusMap } from 'src/maps/unit-op-status.map';
-import { UnitOpStatus } from 'src/entities/unit-op-status.entity';
+import { UnitOpStatusMap } from '../maps/unit-op-status.map';
+import { UnitOpStatus } from '../entities/unit-op-status.entity';
 
 @Injectable()
 export class MonitorPlanService {

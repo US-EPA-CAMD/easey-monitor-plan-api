@@ -13,7 +13,7 @@ import {
   
   import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
   import { MonitorSystemService } from './monitor-system.service';
-import { ComponentDTO } from 'src/dtos/component.dto';
+import { ComponentDTO } from '../dtos/component.dto';
 
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
   
