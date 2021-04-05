@@ -53,6 +53,13 @@ export class ComponentService {
         c.endHour = sysComponent.endHour;
         c.beginDate = sysComponent.beginDate;
         c.endDate = sysComponent.endDate;
+        if(c.endDate == null){
+          c['Active']= true;
+        } 
+        else{
+          c['Active']= false;
+
+        }
       }
     })
     return components;
