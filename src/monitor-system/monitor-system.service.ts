@@ -29,7 +29,7 @@ export class MonitorSystemService {
     private mapSysFuel: SystemFuelFlowMap,
   ) {}
 
-  async getSystems(monLocId: string): Promise<MonitorSystemDTO[]> {
+  async getSystems(monLocId: string): Promise<MonitorSystemDTO[]>{
     const findOpts: FindManyOptions = {
       select: [ "id", "monLocId", "systemType","systemDesignationCode","systemIdentifier","fuelCode", "beginDate","endDate","beginHour","endHour"],
       where: { monLocId: monLocId }
