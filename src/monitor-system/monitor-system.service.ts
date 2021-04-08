@@ -64,6 +64,13 @@ export class MonitorSystemService {
         component.endHour = msc.endHour;
         component.beginDate = msc.beginDate;
         component.endDate = msc.endDate;
+        if(component.endDate == null){
+          component['Active']= true;
+        } 
+        else{
+          component['Active']= false;
+
+        }
         mactchedcomponents.push(component)
       }
     })
