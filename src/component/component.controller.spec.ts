@@ -12,6 +12,7 @@ import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { AnalyzerRangeRepository } from './analyzer-range.repository';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRange } from '../entities/analyzer-range.entity';
+import { AnalyzerRangeDTO } from 'src/dtos/analyzer-range.dto';
 
 
 const mockConfigService = () => ({
@@ -68,6 +69,22 @@ const mockConfigService = () => ({
         expect(result).toBe(result);
       });
     });
-  }
+
+    describe('* getAnalyzerRangesByComponent', () => {
+      it('should return a list of Components ', async () => {
+        const monLocId = '123';
+        const expectedResult: AnalyzerRangeDTO[] = [];
+  
+        const serviceSpy = jest
+          .spyOn(supplementalMethodsService, 'getAnalyzerRangesByComponent')
+          .mockResolvedValue(expectedResult);
+  
+        const result = await supplementalMethodsController.getAnalyzerRangesByComponent(monLocId);
+  
+        expect(serviceSpy).toHaveBeenCalledWith(monLocId);
+        expect(result).toBe(result);
+      });
+    });
+  }   
   );
   

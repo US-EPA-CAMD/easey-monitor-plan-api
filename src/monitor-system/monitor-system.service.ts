@@ -29,7 +29,7 @@ export class MonitorSystemService {
     private mapSysFuel: SystemFuelFlowMap,
   ) {}
 
-  async getSystems(monLocId: string): Promise<MonitorSystemDTO[]> {
+  async getSystems(monLocId: string): Promise<MonitorSystemDTO[]>{
     const findOpts: FindManyOptions = {
       select: [ "id", "monLocId", "systemType","systemDesignationCode","systemIdentifier","fuelCode", "beginDate","endDate","beginHour","endHour"],
       where: { monLocId: monLocId }
@@ -65,10 +65,10 @@ export class MonitorSystemService {
         component.beginDate = msc.beginDate;
         component.endDate = msc.endDate;
         if(component.endDate == null){
-          component['Active']= true;
+          component['active']= true;
         } 
         else{
-          component['Active']= false;
+          component['active']= false;
 
         }
         mactchedcomponents.push(component)
