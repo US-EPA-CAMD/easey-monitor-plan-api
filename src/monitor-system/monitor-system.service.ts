@@ -65,10 +65,10 @@ export class MonitorSystemService {
         component.beginDate = msc.beginDate;
         component.endDate = msc.endDate;
         if(component.endDate == null){
-          component['Active']= true;
+          component['active']= true;
         } 
         else{
-          component['Active']= false;
+          component['active']= false;
 
         }
         mactchedcomponents.push(component)

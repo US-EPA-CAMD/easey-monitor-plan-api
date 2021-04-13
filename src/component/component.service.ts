@@ -54,10 +54,10 @@ export class ComponentService {
         c.beginDate = sysComponent.beginDate;
         c.endDate = sysComponent.endDate;
         if(c.endDate == null){
-          c['Active']= true;
+          c['active']= true;
         } 
         else{
-          c['Active']= false;
+          c['active']= false;
 
         }
       }
