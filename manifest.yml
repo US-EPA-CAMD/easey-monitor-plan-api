@@ -5,10 +5,10 @@ applications:
       - nodejs_buildpack
     env:
       OPTIMIZE_MEMORY: true
-      EASEY_MDM_API_TITLE: ((title))
-      EASEY_MDM_API_HOST: ((host))
-      EASEY_MDM_API_PATH: ((path))
-      EASEY_MDM_API_ENV: ((environment))
+      EASEY_MONITOR_PLAN_API_TITLE: ((title))
+      EASEY_MONITOR_PLAN_API_HOST: ((host))
+      EASEY_MONITOR_PLAN_API_PATH: ((path))
+      EASEY_MONITOR_PLAN_API_ENV: ((environment))
     routes:
       - route: ((host))/((path))
     services:
