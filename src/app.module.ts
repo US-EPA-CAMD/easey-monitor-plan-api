@@ -8,6 +8,7 @@ import dbConfig from './config/db.config'
 import appConfig from './config/app.config'
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
+import { MonitorSpanModule } from './monitor-span/monitor-span.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { MonitorMethodModule } from './monitor-method/monitor-method.module'
 import { SupplementalMethodsModule} from "./supplemental-methods/supplemental-methods.module"
@@ -28,6 +29,7 @@ import{ComponentModule} from"./component/component.module"
       useClass: TypeOrmConfigService,
     }),
     MonitorPlanModule,
+    MonitorSpanModule,
     MonitorLocationModule,    
     MonitorMethodModule,
     SupplementalMethodsModule,
