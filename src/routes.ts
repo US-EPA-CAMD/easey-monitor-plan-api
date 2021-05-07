@@ -20,33 +20,32 @@ const routes: Routes = [
     module: MonitorLocationModule,
     children: [
       {
-        path: ':id/components',
-        module: ComponentModule,
-      },
-      {
-        path: ':id/formulas',
-        module: MonitorFormulaModule,
-      },
-      {
-        path: ':id/loads',
-        module: MonitorLoadModule,
-      },
-      {
         path: ':id/methods',
         module: MonitorMethodModule,
-      },
+      },      
       {
-        path: ':id/spans',
-        module: MonitorSpanModule,
+        path: ':id/supplemental-methods',
+        module: SupplementalMethodsModule,
       },
       {
         path: ':id/systems',
         module: MonitorSystemModule,
       },
-
       {
-        path: ':id/supplemental-methods',
-        module: SupplementalMethodsModule,
+        path: ':id/components',
+        module: ComponentModule,
+      },
+      {
+        path: ':id/spans',
+        module: MonitorSpanModule,
+      },      
+      {
+        path: ':id/loads',
+        module: MonitorLoadModule,
+      },
+      {
+        path: ':id/formulas',
+        module: MonitorFormulaModule,
       },
     ],
   },
