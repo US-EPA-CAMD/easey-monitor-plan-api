@@ -40,14 +40,13 @@ describe('-- Monitor Span Service --', () => {
 
       const monLocId = '123';
 
-      let result = await monitorSpanService.getMonitorSpans(monLocId);
+      const result = await monitorSpanService.getMonitorSpans(monLocId);
 
       expect(monitorSpanRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();
       expect(result).toEqual('mockMonitorSpans');
     });
   });
-
 
   describe('* getMonitorSpans', () => {
     it('should return all monitor spans with the specified monLocId', async () => {
@@ -55,15 +54,11 @@ describe('-- Monitor Span Service --', () => {
 
       const monLocId = '123';
 
-      let result = await monitorSpanService.getMonitorSpans(monLocId);
+      const result = await monitorSpanService.getMonitorSpans(monLocId);
 
       expect(monitorSpanRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();
       expect(result).toEqual('mockMonitorSpans');
     });
   });
-
-
-
-
 });
