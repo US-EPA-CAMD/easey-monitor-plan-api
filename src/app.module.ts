@@ -15,6 +15,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
 /***** internal modules *****/
 import { ComponentModule } from './component/component.module';
 import { MonitorFormulaModule } from './monitor-formula/monitor-formula.module';
+import { MonitorLoadModule } from './monitor-load/monitor-load.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { MonitorMethodModule } from './monitor-method/monitor-method.module';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
@@ -34,6 +35,7 @@ import { SupplementalMethodsModule } from './supplemental-methods/supplemental-m
     }),
     ComponentModule,
     MonitorFormulaModule,
+    MonitorLoadModule,
     MonitorLocationModule,
     MonitorMethodModule,
     MonitorPlanModule,
