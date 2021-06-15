@@ -13,7 +13,7 @@ describe('-- Monitor Plan Repository --', () => {
   let monitorPlanRepository;
   let queryBuilder;
 
-  beforeEach(async () => {
+ beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         MonitorPlanRepository,
@@ -24,7 +24,7 @@ describe('-- Monitor Plan Repository --', () => {
     monitorPlanRepository = module.get(MonitorPlanRepository);
     queryBuilder = module.get<SelectQueryBuilder<MonitorPlan>>(
       SelectQueryBuilder,
-    );
+    ); 
   });
 
   describe('* getMonitorPlansByOrisCode', () => {

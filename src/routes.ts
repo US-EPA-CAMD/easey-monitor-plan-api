@@ -22,7 +22,7 @@ const routes: Routes = [
       {
         path: ':id/methods',
         module: MonitorMethodModule,
-      },      
+      },
       {
         path: ':id/supplemental-methods',
         module: SupplementalMethodsModule,
@@ -38,7 +38,7 @@ const routes: Routes = [
       {
         path: ':id/spans',
         module: MonitorSpanModule,
-      },      
+      },
       {
         path: ':id/loads',
         module: MonitorLoadModule,

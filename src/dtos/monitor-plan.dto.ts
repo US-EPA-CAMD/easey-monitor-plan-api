@@ -9,6 +9,6 @@ export class MonitorPlanDTO {
   locations: Array<MonitorLocationDTO>;
   links: Array<LinkDTO>;
   @Exclude()
-  endReportPeriodId: number;  
+  endReportPeriodId: number;
   active: boolean;
 }
