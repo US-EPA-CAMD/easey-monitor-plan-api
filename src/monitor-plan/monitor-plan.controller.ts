@@ -14,7 +14,7 @@ import {
   ApiNotFoundResponse,
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
-import { UserCheckOutDTO } from 'src/dtos/user-check-out.dto';
+import { UserCheckOut } from 'src/entities/user-check-out.entity';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanService } from './monitor-plan.service';
@@ -23,6 +23,7 @@ import { MonitorPlanService } from './monitor-plan.service';
 @Controller()
 export class MonitorPlanController {
   constructor(private service: MonitorPlanService) {}
+
   @Get('/:orisCode/configurations')
   @ApiOkResponse({
     description: 'Retrieved Monitor Plans',
@@ -45,15 +46,17 @@ export class MonitorPlanController {
   })
   checkOutPlanConfiguration(
     @Param('id') id: string,
-    @Body('user') user: UserCheckOutDTO,
+    @Body('username') username: string,
   ) {
-    return this.service.getUserCheckOut(id, user);
+    console.log(username);
+    return this.service.getUserCheckOut(id, username);
   }
 
-  // TODO: Update checkout expiration by 15 mins.
   @Put('/:id/check-out')
   @ApiOkResponse({
-    description: 'Updates the lock expiration',
+    description: 'Updates the lock expiration by 15 mins',
   })
-  updateUserCheckOut() {}
+  updateUserCheckOut(@Param('id') id: string): Promise<UserCheckOut> {
+    return this.service.updateLockExpiration(id);
+  }
 }

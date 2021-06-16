@@ -8,12 +8,12 @@ export class UserCheckOut {
   @Column({ type: 'text', nullable: true, name: 'mon_plan_id' })
   monPlanId: string;
 
-  @Column({ type: 'date', name: 'checked_out_on' })
+  @Column({ type: 'timestamp without time zone', name: 'checked_out_on' })
   checkedOutOn: Date;
 
   @Column({ type: 'text', nullable: true, name: 'checked_out_by' })
   checkedOutBy: string;
 
-  @Column({ type: 'date', name: 'expiration' })
+  @Column({ type: 'timestamp without time zone', name: 'expiration' })
   expiration: Date;
 }

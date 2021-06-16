@@ -1,6 +1,6 @@
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
@@ -10,7 +10,7 @@ import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repos
 import { UnitOpStatusMap } from '../maps/unit-op-status.map';
 import { UnitOpStatus } from '../entities/unit-op-status.entity';
 import { UserCheckOutRepository } from './user-check-out.repository';
-import { UserCheckOutDTO } from 'src/dtos/user-check-out.dto';
+import { UserCheckOut } from 'src/entities/user-check-out.entity';
 
 @Injectable()
 export class MonitorPlanService {
@@ -101,36 +101,33 @@ export class MonitorPlanService {
     return true;
   }
 
-  // async getUserCheckOut(): Promise<UserCheckOut> {
-  //   // const found;
-  // }
+  getUserCheckOutByMonPlanId(monPlanId: string): Promise<UserCheckOut> {
+    const data = this.userCheckOutRepository.getUserCheckOutByMonPlanId(
+      monPlanId,
+    );
 
-  async getUserCheckOut(monPlanId: string, userCheckOutDTO: UserCheckOutDTO) {
-    const { user } = userCheckOutDTO;
-
-    const result = await this.userCheckOutRepository.getUserCheckOut(monPlanId);
-
-    if (!result) {
-      //  If no other plan checked out then check to see if a workspace record exists
-      //  If no workspace record then copy entire plan from camdecmps schema over to the camdecmpswks schema
-      //  If workspace copy exists then return successful message (successful message indicates that a workspace copy exists)
-    }
-
-    //  This method will need to check the lock table to see if the facility is already locked by another user or not
-    //  If locked by another user then return an error
-
-    if (result && result.checkedOutBy !== user) {
-      throw new ForbiddenException(
-        'This configuration is currently checked-out by another user.',
-      );
-    }
-
-    //  If not locked by another user then check to see if the user already has another plan checked out
-    //  If another plan is checked out return an error
+    return data;
   }
 
-  // checkOutPlanConfiguration(id: number, userName: string) {}
+  async getUserCheckOut(monPlanId: string, username: string) {
+    const record = this.userCheckOutRepository.checkOutMonitorPlan(
+      monPlanId,
+      username,
+    );
 
-  // getLockStatus(id: string): Promise<MonitorPlanLock> {
-  // }
+    return record;
+  }
+
+  async updateLockExpiration(monPlanId: string): Promise<UserCheckOut> {
+    const data = await this.getUserCheckOutByMonPlanId(monPlanId);
+
+    const newExp = new Date(+data.expiration.getTime() + 15 * 60 * 1000);
+
+    const record = await this.userCheckOutRepository.updateCheckOutExpiration(
+      monPlanId,
+      newExp,
+    );
+
+    return record.raw;
+  }
 }
