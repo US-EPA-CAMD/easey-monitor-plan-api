@@ -5,12 +5,7 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-import {
-  Get,
-  Param,
-  Controller,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Get, Controller } from '@nestjs/common';
 
 import { MonitorLocationService } from './monitor-location.service';
 

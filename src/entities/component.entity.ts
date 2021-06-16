@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, Column, PrimaryColumn} from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmps.component' })
 export class Component extends BaseEntity {
@@ -8,7 +8,12 @@ export class Component extends BaseEntity {
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
   monLocId: string;
 
-  @Column({ type: 'varchar', length: 7, nullable: true, name: 'component_type_cd' })
+  @Column({
+    type: 'varchar',
+    length: 7,
+    nullable: true,
+    name: 'component_type_cd',
+  })
   componentTypeCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'basis_cd' })
@@ -17,19 +22,43 @@ export class Component extends BaseEntity {
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'acq_cd' })
   acquisitionMethodCode: string;
 
-  @Column({ type: 'varchar', length: 3, nullable: true, name: 'component_identifier' })
+  @Column({
+    type: 'varchar',
+    length: 3,
+    nullable: true,
+    name: 'component_identifier',
+  })
   componentIdentifier: string;
 
-  @Column({ type: 'varchar', length: 15, nullable: false, name: 'model_version' })
+  @Column({
+    type: 'varchar',
+    length: 15,
+    nullable: false,
+    name: 'model_version',
+  })
   modelVersion: string;
 
-  @Column({ type: 'varchar', length: 15, nullable: false, name: 'manufacturer' })
+  @Column({
+    type: 'varchar',
+    length: 15,
+    nullable: false,
+    name: 'manufacturer',
+  })
   manufacturer: string;
 
-  @Column({ type: 'varchar', length: 20, nullable: false, name: 'serial_number' })
+  @Column({
+    type: 'varchar',
+    length: 20,
+    nullable: false,
+    name: 'serial_number',
+  })
   serialNumber: string;
 
-  @Column({ type: 'varchar', length: 20, nullable: false, name: 'hg_converter_ind' })
+  @Column({
+    type: 'varchar',
+    length: 20,
+    nullable: false,
+    name: 'hg_converter_ind',
+  })
   hgConverterInd: number;
-
 }

@@ -60,7 +60,6 @@ describe('-- Monitor Plan Service --', () => {
         UnitOpStatusMap,
         UnitOpStatusRepository,
         UnitOpStatusDTO,
-
       ],
     }).compile();
 
@@ -74,23 +73,19 @@ describe('-- Monitor Plan Service --', () => {
 
   describe('* getConfigurations', () => {
     it('should return a list of Configurations', async () => {
-        return true;
+      return true;
     });
-  
   });
 
   describe('* setMonitoringPlanStatus', () => {
     it('should setMonitoringPlanStatus', async () => {
       return true;
-  });
+    });
   });
 
   describe('* setUnitAndStackStatus', () => {
-      it('should setUnitAndStackStatus', async () => {
+    it('should setUnitAndStackStatus', async () => {
       return true;
+    });
   });
-  });
-  
-
-
 });

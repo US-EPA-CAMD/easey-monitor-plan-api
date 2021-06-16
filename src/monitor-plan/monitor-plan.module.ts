@@ -10,24 +10,24 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 import { UnitOpStatusMap } from '../maps/unit-op-status.map';
 import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
 import { UnitOpStatusDTO } from '../dtos/unit-op-status.dto';
+import { UserCheckOutRepository } from './user-check-out.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       MonitorPlanRepository,
       MonitorLocationRepository,
-      UnitOpStatusRepository
-    ])
+      UnitOpStatusRepository,
+      UserCheckOutRepository,
+    ]),
   ],
-  controllers: [
-    MonitorPlanController
-  ],
+  controllers: [MonitorPlanController],
   providers: [
     MonitorPlanService,
     MonitorLocationMap,
     MonitorPlanMap,
     UnitOpStatusMap,
-    UnitOpStatusDTO
+    UnitOpStatusDTO,
   ],
 })
 export class MonitorPlanModule {}

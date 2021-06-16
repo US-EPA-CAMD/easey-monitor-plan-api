@@ -8,5 +8,5 @@ export class MonitorLocationService {
   getMonitorLocations(): string {
     console.log(`${this.configService.get('app.uri')}/monitor-locations`);
     return 'Hello getMonitorLocations!';
-  }  
+  }
 }
