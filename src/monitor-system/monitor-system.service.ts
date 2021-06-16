@@ -32,20 +32,9 @@ export class MonitorSystemService {
 
   async getSystems(monLocId: string): Promise<MonitorSystemDTO[]> {
     const findOpts: FindManyOptions = {
-      select: [
-        'id',
-        'monLocId',
-        'systemType',
-        'systemDesignationCode',
-        'systemIdentifier',
-        'fuelCode',
-        'beginDate',
-        'endDate',
-        'beginHour',
-        'endHour',
-      ],
-      where: { monLocId: monLocId },
-    };
+      select: [ "id", "monLocId", "systemTypeCode","systemDesignationCode","systemIdentifier","fuelCode", "beginDate","endDate","beginHour","endHour"],
+      where: { monLocId: monLocId }
+    }
     const results = await this.repository.find(findOpts);
     return this.map.many(results);
   }
@@ -61,9 +50,7 @@ export class MonitorSystemService {
   }
 
   async getSysFuelFlow(monSysId: string): Promise<SystemFuelFlowDTO[]> {
-    const fuel = (await this.repositorySysFuel.SysFuelFlow()).filter(
-      x => x.monSysId == monSysId,
-    );
+    const fuel =  (await this.repositorySysFuel.SysFuelFlow(monSysId));
     const result = await this.mapSysFuel.many(fuel);
     return result;
   }
