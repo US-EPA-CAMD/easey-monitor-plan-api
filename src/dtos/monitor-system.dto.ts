@@ -1,7 +1,7 @@
 export class MonitorSystemDTO {
     id: string;
     monLocId: string;
-    systemType: string;
+    systemTypeCode: string;
     systemDesignationCode: string;
     systemIdentifier: string;
     fuelCode: string;

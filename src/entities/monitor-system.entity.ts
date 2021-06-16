@@ -1,4 +1,5 @@
-import { BaseEntity, Entity, Column, PrimaryColumn} from 'typeorm';
+import { SystemFuelFlow } from './system-fuel-flow.entity';
+import { BaseEntity, Entity, Column, PrimaryColumn, OneToMany, JoinColumn} from 'typeorm';
 
 @Entity({ name: 'camdecmps.monitor_system' })
 export class MonitorSystem extends BaseEntity {
@@ -9,7 +10,7 @@ export class MonitorSystem extends BaseEntity {
   monLocId: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'sys_type_cd' })
-  systemType: string;
+  systemTypeCode: string;
 
   @Column({ type: 'varchar', length: 3, nullable: true, name: 'system_identifier' })
   systemIdentifier: string;
@@ -31,5 +32,7 @@ export class MonitorSystem extends BaseEntity {
 
   @Column({name: 'end_hour' })
   endHour: number;
- 
+
+  @OneToMany(() => SystemFuelFlow, p => p.system)
+  fuelFlows: SystemFuelFlow[];
 }

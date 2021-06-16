@@ -10,7 +10,7 @@ export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
     return {
       id: entity.id,
       monLocId: entity.monLocId,
-      systemType: entity.systemType,
+      systemTypeCode: entity.systemTypeCode,
       systemDesignationCode: entity.systemDesignationCode,
       systemIdentifier: entity.systemIdentifier,
       fuelCode: entity.fuelCode,

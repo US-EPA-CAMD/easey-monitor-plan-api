@@ -10,6 +10,8 @@ export class SystemFuelFlowMap extends BaseMap<SystemFuelFlow, SystemFuelFlowDTO
     return {
       id: entity.id,
       monSysId: entity.monSysId,
+      fuelCode: entity.system.fuelCode,
+      systemTypeCode: entity.system.systemTypeCode,
       maxRate: entity.maxRate,
       maxRateSourceCode: entity.maxRateSourceCode,
       sysFuelUomCode: entity.sysFuelUomCode,
