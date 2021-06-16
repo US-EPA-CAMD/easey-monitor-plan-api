@@ -1,4 +1,5 @@
-import { BaseEntity, Entity, Column, PrimaryColumn} from 'typeorm';
+import { MonitorSystem } from './monitor-system.entity';
+import { BaseEntity, Entity, Column, PrimaryColumn, OneToOne, JoinColumn} from 'typeorm';
 
 @Entity({ name: 'camdecmps.system_fuel_flow' })
 export class SystemFuelFlow extends BaseEntity {
@@ -28,5 +29,8 @@ export class SystemFuelFlow extends BaseEntity {
 
   @Column({name: 'end_hour' })
   endHour: number;
- 
+
+  @OneToOne(() => MonitorSystem, p => p.fuelFlows)
+  @JoinColumn({ name: 'mon_sys_id' })
+  system: MonitorSystem;
 }

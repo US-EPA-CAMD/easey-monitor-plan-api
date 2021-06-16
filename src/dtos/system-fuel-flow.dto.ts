@@ -1,6 +1,8 @@
 export class SystemFuelFlowDTO {
     id: string;
     monSysId: string;
+    fuelCode: string;
+    systemTypeCode: string;
     maxRate: number;
     maxRateSourceCode: string;
     sysFuelUomCode: string;
