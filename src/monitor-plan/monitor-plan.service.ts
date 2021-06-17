@@ -109,7 +109,10 @@ export class MonitorPlanService {
     return data;
   }
 
-  async getUserCheckOut(monPlanId: string, username: string) {
+  async getUserCheckOut(
+    monPlanId: string,
+    username: string,
+  ): Promise<UserCheckOut> {
     const record = this.userCheckOutRepository.checkOutMonitorPlan(
       monPlanId,
       username,
