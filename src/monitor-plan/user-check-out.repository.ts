@@ -30,14 +30,11 @@ export class UserCheckOutRepository extends Repository<UserCheckOut> {
     }
   }
 
-  async updateCheckOutExpiration(
-    id: string,
-    newExp: Date,
-  ): Promise<UpdateResult> {
+  async updateLockActivity(id: string): Promise<UpdateResult> {
     const updatedData = await this.createQueryBuilder()
       .update(UserCheckOut)
       .set({
-        expiration: newExp,
+        lastActivity: new Date(Date.now()),
       })
       .where('monPlanId =:id', { id })
       .returning([
@@ -45,7 +42,7 @@ export class UserCheckOutRepository extends Repository<UserCheckOut> {
         'monPlanId',
         'checkedOutOn',
         'checkedOutBy',
-        'expiration',
+        'lastActivity',
       ])
       .updateEntity(true)
       .execute();

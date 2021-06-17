@@ -121,14 +121,11 @@ export class MonitorPlanService {
     return record;
   }
 
-  async updateLockExpiration(monPlanId: string): Promise<UserCheckOut> {
-    const data = await this.getUserCheckOutByMonPlanId(monPlanId);
+  async updateLockActivity(monPlanId: string): Promise<UserCheckOut> {
+    await this.getUserCheckOutByMonPlanId(monPlanId);
 
-    const newExp = new Date(+data.expiration.getTime() + 15 * 60 * 1000);
-
-    const record = await this.userCheckOutRepository.updateCheckOutExpiration(
+    const record = await this.userCheckOutRepository.updateLockActivity(
       monPlanId,
-      newExp,
     );
 
     return record.raw;

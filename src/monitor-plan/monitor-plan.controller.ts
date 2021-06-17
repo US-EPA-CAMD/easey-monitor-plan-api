@@ -55,7 +55,7 @@ export class MonitorPlanController {
   @ApiOkResponse({
     description: 'Updates the lock expiration by 15 mins',
   })
-  updateUserCheckOut(@Param('id') id: string): Promise<UserCheckOut> {
-    return this.service.updateLockExpiration(id);
+  updateLockActivity(@Param('id') id: string): Promise<UserCheckOut> {
+    return this.service.updateLockActivity(id);
   }
 }
