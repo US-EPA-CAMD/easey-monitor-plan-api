@@ -14,6 +14,6 @@ export class UserCheckOut {
   @Column({ type: 'text', nullable: true, name: 'checked_out_by' })
   checkedOutBy: string;
 
-  @Column({ type: 'timestamp without time zone', name: 'expiration' })
-  expiration: Date;
+  @Column({ type: 'timestamp without time zone', name: 'last_activity' })
+  lastActivity: Date;
 }
