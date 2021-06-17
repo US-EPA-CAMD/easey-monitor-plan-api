@@ -47,8 +47,7 @@ export class MonitorPlanController {
   checkOutPlanConfiguration(
     @Param('id') id: string,
     @Body('username') username: string,
-  ) {
-    console.log(username);
+  ): Promise<UserCheckOut> {
     return this.service.getUserCheckOut(id, username);
   }
 

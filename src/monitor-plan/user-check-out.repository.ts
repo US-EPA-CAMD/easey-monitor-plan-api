@@ -14,14 +14,17 @@ export class UserCheckOutRepository extends Repository<UserCheckOut> {
     return record;
   }
 
-  async checkOutMonitorPlan(id: string, username: string) {
+  async checkOutMonitorPlan(
+    id: string,
+    username: string,
+  ): Promise<UserCheckOut> {
     try {
-      const record = await this.query(
-        'SELECT camdecmpswks.check_out_monitor_plan($1, $2)',
-        [id, username],
-      );
+      await this.query('SELECT camdecmpswks.check_out_monitor_plan($1, $2)', [
+        id,
+        username,
+      ]);
 
-      return record;
+      return await this.getUserCheckOutByMonPlanId(id);
     } catch (error) {
       throw new BadRequestException(error['message']);
     }
@@ -31,7 +34,7 @@ export class UserCheckOutRepository extends Repository<UserCheckOut> {
     id: string,
     newExp: Date,
   ): Promise<UpdateResult> {
-    const updatedData = this.createQueryBuilder()
+    const updatedData = await this.createQueryBuilder()
       .update(UserCheckOut)
       .set({
         expiration: newExp,
