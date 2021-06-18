@@ -49,6 +49,40 @@ const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'workspace',
+    module: MonitorLocationModule,
+    children: [
+      {
+        path: ':id/methods',
+        module: MonitorMethodModule,
+      },
+      {
+        path: ':id/supplemental-methods',
+        module: SupplementalMethodsModule,
+      },
+      {
+        path: ':id/systems',
+        module: MonitorSystemModule,
+      },
+      {
+        path: ':id/components',
+        module: ComponentModule,
+      },
+      {
+        path: ':id/spans',
+        module: MonitorSpanModule,
+      },
+      {
+        path: ':id/loads',
+        module: MonitorLoadModule,
+      },
+      {
+        path: ':id/formulas',
+        module: MonitorFormulaModule,
+      },
+    ],
+  },
 ];
 
 export default routes;

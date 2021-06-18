@@ -44,4 +44,11 @@ export class MonitorMethodService {
     });
     return monitoringMethod;
   }
+
+  createMonitorMethod() {}
+
+  async updateMonitorMethod(
+    id: string,
+    updateMonitorMethod: MonitorMethodDTO,
+  ) {}
 }

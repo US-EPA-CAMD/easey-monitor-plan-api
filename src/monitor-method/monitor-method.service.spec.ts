@@ -40,14 +40,13 @@ describe('-- Monitor Method Service --', () => {
 
       const monLocId = '123';
 
-      let result = await monitorMethodService.getMonitorMethods(monLocId);
+      const result = await monitorMethodService.getMonitorMethods(monLocId);
 
       expect(monitorMethodRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();
       expect(result).toEqual('mockMonitorMethods');
     });
   });
-
 
   describe('* getMonitorMethods', () => {
     it('should return all monitor methods with the specified monLocId', async () => {
@@ -55,15 +54,11 @@ describe('-- Monitor Method Service --', () => {
 
       const monLocId = '123';
 
-      let result = await monitorMethodService.getMonitorMethods(monLocId);
+      const result = await monitorMethodService.getMonitorMethods(monLocId);
 
       expect(monitorMethodRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();
       expect(result).toEqual('mockMonitorMethods');
     });
   });
-
-
-
-
 });

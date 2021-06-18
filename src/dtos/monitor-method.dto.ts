@@ -1,5 +1,7 @@
+import { IsNotEmpty } from 'class-validator';
+
 export class MonitorMethodDTO {
-  id: string;
+  @IsNotEmpty()
   monLocId: string;
   parameterCode: string;
   methodCode: string;
