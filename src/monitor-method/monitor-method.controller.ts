@@ -31,8 +31,8 @@ import {
     @ApiNotFoundResponse({
       description: 'Resource Not Found',
     })
-    getUnits(@Param('id') monLocId: string): Promise<MonitorMethodDTO[]> {
-      return this.service.getMonitorMethods(monLocId);
+    getMethods(@Param('id') monLocId: string): Promise<MonitorMethodDTO[]> {
+      return this.service.getMethods(monLocId);
     }
   }
   

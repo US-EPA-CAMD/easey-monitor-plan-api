@@ -1,3 +1,4 @@
+import { UserCheckOutDTO } from './../dtos/user-check-out.dto';
 import {
   Get,
   Param,
@@ -26,6 +27,8 @@ export class MonitorPlanController {
 
   @Get('/:orisCode/configurations')
   @ApiOkResponse({
+    isArray: true,
+    type: MonitorPlanDTO,
     description: 'Retrieved Monitor Plans',
   })
   @ApiBadRequestResponse({
@@ -42,18 +45,20 @@ export class MonitorPlanController {
 
   @Post('/:id/check-out')
   @ApiOkResponse({
+    type: UserCheckOut,    
     description: 'Checks Out a Monitor Plan configuration',
   })
   checkOutPlanConfiguration(
     @Param('id') id: string,
-    @Body('username') username: string,
+    @Body() payload: UserCheckOutDTO,
   ): Promise<UserCheckOut> {
-    return this.service.getUserCheckOut(id, username);
+    return this.service.getUserCheckOut(id, payload.username);
   }
 
   @Put('/:id/check-out')
   @ApiOkResponse({
-    description: 'Updates the lock expiration by 15 mins',
+    type: UserCheckOut,
+    description: 'Updates last activity for a checked out Monitor Plan',
   })
   updateLockActivity(@Param('id') id: string): Promise<UserCheckOut> {
     return this.service.updateLockActivity(id);

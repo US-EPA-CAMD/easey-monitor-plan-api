@@ -11,10 +11,12 @@ import { MonitorMethodMap } from '../maps/monitor-method.map';
   imports: [
     TypeOrmModule.forFeature([MonitorMethodRepository]),
   ],
-  controllers: [MonitorMethodController],
+  controllers: [
+    MonitorMethodController,
+  ],
   providers: [
     MonitorMethodMap,
-    MonitorMethodService, 
+    MonitorMethodService,
   ],
 })
 
