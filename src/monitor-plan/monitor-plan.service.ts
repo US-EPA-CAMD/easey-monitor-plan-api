@@ -122,12 +122,8 @@ export class MonitorPlanService {
   }
 
   async updateLockActivity(monPlanId: string): Promise<UserCheckOut> {
-    await this.getUserCheckOutByMonPlanId(monPlanId);
-
-    const record = await this.userCheckOutRepository.updateLockActivity(
-      monPlanId,
-    );
-
-    return record.raw;
+    const entity = await this.getUserCheckOutByMonPlanId(monPlanId);
+    entity.lastActivity = new Date(Date.now());
+    return this.userCheckOutRepository.save(entity);
   }
 }

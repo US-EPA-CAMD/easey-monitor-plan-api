@@ -5,11 +5,10 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 
-import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
+import { Get, Param, Controller, Put, Post, Body } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodService } from './monitor-method.service';
-import { CreateMonitorMethodDTO } from 'src/dtos/create-monitor-method.dto';
 
 @ApiTags('Monitor Methods')
 @Controller()
@@ -26,8 +25,8 @@ export class MonitorMethodController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getUnits(@Param('id') monLocId: string): Promise<MonitorMethodDTO[]> {
-    return this.service.getMonitorMethods(monLocId);
+  getMethods(@Param('id') monLocId: string): Promise<MonitorMethodDTO[]> {
+    return this.service.getMethods(monLocId);
   }
 
   @Get(':/locId/methods')

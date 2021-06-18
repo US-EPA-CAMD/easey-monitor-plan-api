@@ -3,18 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions } from 'typeorm';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorMethodRepository } from './monitor-method.repository';
+import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 
 @Injectable()
-export class MonitorMethodService {
+export class MonitorMethodWorkspaceService {
   constructor(
-    @InjectRepository(MonitorMethodRepository)
-    private repository: MonitorMethodRepository,
+    @InjectRepository(MonitorMethodWorkspaceRepository)
+    private repository: MonitorMethodWorkspaceRepository,
     private map: MonitorMethodMap,
   ) {}
 
-  async getMethods(monLocId: string): Promise<MonitorMethodDTO[]> {
+  async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
     const findOpts: FindManyOptions = {
       select: [
         'id',
@@ -27,14 +27,16 @@ export class MonitorMethodService {
         'endDate',
         'endHour',
       ],
-      where: { monLocId: monLocId },
+      where: { monLocId: locId },
     };
     const results = await this.repository.find(findOpts);
     const monMethods = await this.map.many(results);
     return this.setStatus(monMethods);
   }
 
-  setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
+  setStatus(
+    monitoringMethod: MonitorMethodDTO[],
+  ): MonitorMethodDTO[] {
     monitoringMethod.forEach(m => {
       if (m.endDate == null) {
         m.active = true;
@@ -43,10 +45,21 @@ export class MonitorMethodService {
     return monitoringMethod;
   }
 
-  createMonitorMethod() {}
+  createMethod(
+    locId: string,
+    payload: MonitorMethodDTO,
+  ): Promise<MonitorMethodDTO> {
+    //need actual logic here
+    return this.repository.save(new MonitorMethodDTO());
+  }
 
-  async updateMonitorMethod(
-    id: string,
-    updateMonitorMethod: MonitorMethodDTO,
-  ) {}
+  updateMethod(
+    locId: string,
+    methodId: string,    
+    payload: MonitorMethodDTO,
+  ): Promise<MonitorMethodDTO> {
+    //need actual logic here
+    return this.repository.save(new MonitorMethodDTO());
+  }
+
 }

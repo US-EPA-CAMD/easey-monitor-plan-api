@@ -2,7 +2,6 @@ import { Repository, EntityRepository } from 'typeorm';
 
 import { MonitorMethod } from '../entities/monitor-method.entity';
 import { MonitorMethodDTO } from 'src/dtos/monitor-method.dto';
-import { MonitorMethod as MonitorMethodWks } from 'src/entities/workspace/monitor-method.entity';
 
 @EntityRepository(MonitorMethod)
 export class MonitorMethodRepository extends Repository<MonitorMethod> {
@@ -21,21 +20,24 @@ export class MonitorMethodRepository extends Repository<MonitorMethod> {
       active,
     } = createMonitorMethodDTO;
 
-    const monMethod = this.create({
-      monLocId,
-      parameterCode,
-      methodCode,
-      subDataCode,
-      bypassApproachCode,
-      beginDate,
-      beginHour,
-      endDate,
-      endHour,
-      active,
-    });
+@EntityRepository(MonitorMethod)
+export class MonitorMethodRepository extends Repository<MonitorMethod>{
 
-    await this.save(monMethod);
+  //   const monMethod = this.create({
+  //     monLocId,
+  //     parameterCode,
+  //     methodCode,
+  //     subDataCode,
+  //     bypassApproachCode,
+  //     beginDate,
+  //     beginHour,
+  //     endDate,
+  //     endHour,
+  //     active,
+  //   });
 
-    return monMethod;
-  }
+  //   await this.save(monMethod);
+
+  //   return monMethod;
+  // }
 }

@@ -17,7 +17,9 @@ import { ComponentModule } from './component/component.module';
 import { MonitorFormulaModule } from './monitor-formula/monitor-formula.module';
 import { MonitorLoadModule } from './monitor-load/monitor-load.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
+import { MonitorLocationWorkspaceModule } from './monitor-location-workspace/monitor-location.module';
 import { MonitorMethodModule } from './monitor-method/monitor-method.module';
+import { MonitorMethodWorkspaceModule } from './monitor-method-workspace/monitor-method.module';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorSpanModule } from './monitor-span/monitor-span.module';
 import { MonitorSystemModule } from './monitor-system/monitor-system.module';
@@ -37,7 +39,9 @@ import { SupplementalMethodsModule } from './supplemental-methods/supplemental-m
     MonitorFormulaModule,
     MonitorLoadModule,
     MonitorLocationModule,
+    MonitorLocationWorkspaceModule,
     MonitorMethodModule,
+    MonitorMethodWorkspaceModule,
     MonitorPlanModule,
     MonitorSpanModule,
     MonitorSystemModule,
