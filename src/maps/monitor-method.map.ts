@@ -8,7 +8,6 @@ import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 export class MonitorMethodMap extends BaseMap<MonitorMethod, MonitorMethodDTO> {
   public async one(entity: MonitorMethod): Promise<MonitorMethodDTO> {
     return {
-      id: entity.id,
       monLocId: entity.monLocId,
       parameterCode: entity.parameterCode,
       methodCode: entity.methodCode,
@@ -18,6 +17,9 @@ export class MonitorMethodMap extends BaseMap<MonitorMethod, MonitorMethodDTO> {
       beginHour: entity.beginHour,
       endDate: entity.endDate,
       endHour: entity.endHour,
+      userId: entity.userId,
+      addDate: entity.addDate,
+      updateDate: entity.updateDate,
       active: false,
     };
   }

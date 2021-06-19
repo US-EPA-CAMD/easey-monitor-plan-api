@@ -1,26 +1,15 @@
-import {
-  ApiTags,
-  ApiOkResponse
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 
-import {
-  Get,
-  Put,
-  Post,
-  Body,
-  Param,
-  Controller,
-} from '@nestjs/common';
+import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
+import { MonitorMethod } from 'src/entities/workspace/monitor-method.entity';
 
 @ApiTags('Monitor Methods')
 @Controller()
 export class MonitorMethodWorkspaceController {
-  constructor(
-    private service: MonitorMethodWorkspaceService
-  ) {}
+  constructor(private service: MonitorMethodWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -28,9 +17,7 @@ export class MonitorMethodWorkspaceController {
     type: MonitorMethodDTO,
     description: 'Retrieves workspace Monitor Method records',
   })
-  getMethods(
-    @Param('locId') locId: string,
-  ) : Promise<MonitorMethodDTO[]> {
+  getMethods(@Param('locId') locId: string): Promise<MonitorMethodDTO[]> {
     return this.service.getMethods(locId);
   }
 
@@ -39,11 +26,8 @@ export class MonitorMethodWorkspaceController {
     type: MonitorMethodDTO,
     description: 'Creates workspace Monitor Method record',
   })
-  createMethod(
-    @Param('locId') locId: string,
-    @Body() payload: MonitorMethodDTO,
-  ): Promise<MonitorMethodDTO> {
-    return this.service.createMethod(locId, payload);
+  createMethod(@Body() payload: MonitorMethodDTO): Promise<MonitorMethod> {
+    return this.service.createMethod(payload);
   }
 
   @Put(':methodId')
@@ -53,9 +37,9 @@ export class MonitorMethodWorkspaceController {
   })
   updateMethod(
     @Param('locId') locId: string,
-    @Param('methodId') methodId: string,    
+    @Param('methodId') methodId: string,
     @Body() payload: MonitorMethodDTO,
-  ): Promise<MonitorMethodDTO> {
-    return this.service.updateMethod(locId, methodId, payload);
+  ): Promise<MonitorMethod> {
+    return this.service.updateMethod(methodId, payload);
   }
 }
