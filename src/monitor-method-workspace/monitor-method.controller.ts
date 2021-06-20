@@ -17,7 +17,9 @@ export class MonitorMethodWorkspaceController {
     type: MonitorMethodDTO,
     description: 'Retrieves workspace Monitor Method records',
   })
-  getMethods(@Param('locId') locId: string): Promise<MonitorMethodDTO[]> {
+  getMethods(
+    @Param('locId') locId: string
+  ): Promise<MonitorMethodDTO[]> {
     return this.service.getMethods(locId);
   }
 
@@ -26,8 +28,11 @@ export class MonitorMethodWorkspaceController {
     type: MonitorMethodDTO,
     description: 'Creates workspace Monitor Method record',
   })
-  createMethod(@Body() payload: MonitorMethodDTO): Promise<MonitorMethod> {
-    return this.service.createMethod(payload);
+  createMethod(
+    @Param('locId') locId: string,
+    @Body() payload: MonitorMethodDTO
+  ): Promise<MonitorMethod> {
+    return this.service.createMethod(locId, payload);
   }
 
   @Put(':methodId')
@@ -40,6 +45,6 @@ export class MonitorMethodWorkspaceController {
     @Param('methodId') methodId: string,
     @Body() payload: MonitorMethodDTO,
   ): Promise<MonitorMethod> {
-    return this.service.updateMethod(methodId, payload);
+    return this.service.updateMethod(locId, methodId, payload);
   }
 }

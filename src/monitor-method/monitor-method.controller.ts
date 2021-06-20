@@ -17,7 +17,7 @@ export class MonitorMethodController {
 
   @Get()
   @ApiOkResponse({
-    description: 'Retrieved Methods',
+    description: 'Retrieves official Monitor Method records',
   })
   @ApiBadRequestResponse({
     description: 'Invalid Request',

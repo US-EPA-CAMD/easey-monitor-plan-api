@@ -15,7 +15,7 @@ import { MonitorLoadService } from './monitor-load.service';
 export class MonitorLoadController {
   constructor(private service: MonitorLoadService) {}
 
-  @Get('/monitor-locations/:id/loads')
+  @Get()
   @ApiOkResponse({
     description: 'Retrieved Methods',
   })
@@ -25,7 +25,7 @@ export class MonitorLoadController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getUnits(@Param('id') monLocId: string): Promise<MonitorLoadDTO[]> {
+  getLoads(@Param('id') monLocId: string): Promise<MonitorLoadDTO[]> {
     return this.service.getMonitorLoads(monLocId);
   }
 }

@@ -21,6 +21,7 @@ import { MonitorLocationWorkspaceModule } from './monitor-location-workspace/mon
 import { MonitorMethodModule } from './monitor-method/monitor-method.module';
 import { MonitorMethodWorkspaceModule } from './monitor-method-workspace/monitor-method.module';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
+import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
 import { MonitorSpanModule } from './monitor-span/monitor-span.module';
 import { MonitorSystemModule } from './monitor-system/monitor-system.module';
 import { SupplementalMethodsModule } from './supplemental-methods/supplemental-methods.module';
@@ -43,6 +44,7 @@ import { SupplementalMethodsModule } from './supplemental-methods/supplemental-m
     MonitorMethodModule,
     MonitorMethodWorkspaceModule,
     MonitorPlanModule,
+    MonitorPlanWorkspaceModule,    
     MonitorSpanModule,
     MonitorSystemModule,
     SupplementalMethodsModule,

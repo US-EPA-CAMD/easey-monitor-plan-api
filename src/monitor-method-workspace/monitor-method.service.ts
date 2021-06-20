@@ -36,91 +36,70 @@ export class MonitorMethodWorkspaceService {
     return this.setStatus(monMethods);
   }
 
-  async getMethod(methodId: string) {
-    const method = await this.repository.findOne(methodId);
-
-    return method;
+  async getMethod(methodId: string) : Promise<MonitorMethod> {
+    return this.repository.findOne(methodId);
   }
 
-  setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
+  async createMethod(locId: string, payload: MonitorMethodDTO): Promise<MonitorMethod> {
+    const monMethod = this.repository.create({
+      id: uuid(),
+
+      // TODO: need to use the locId from path and validate
+      monLocId: payload.monLocId,
+      parameterCode: payload.parameterCode,
+      subDataCode: payload.subDataCode,
+      bypassApproachCode: payload.bypassApproachCode,
+      methodCode: payload.methodCode,
+      beginDate: payload.beginDate,
+      beginHour: payload.beginHour,
+      endDate: payload.endDate,
+      endHour: payload.endHour,
+
+      // TODO: this needs to be the actual user that is logged in
+      // how are we going to get this from CDX as this is an id NOT a username      
+      userId: payload.userId,
+
+      addDate: new Date(Date.now()),
+      updateDate: new Date(Date.now()),
+    });
+
+    return this.repository.save(monMethod);
+  }
+
+  async updateMethod(
+    locId: string,    
+    methodId: string,
+    payload: MonitorMethodDTO,
+  ): Promise<MonitorMethod> {
+
+    // TODO: need to use the locId from path and validate
+    const method = await this.getMethod(methodId);
+
+    // not updating these fields...
+    // mon_method_id, mon_loc_id, begin_date, begin_hour, add_date
+
+    method.parameterCode = payload.parameterCode;
+    method.subDataCode = payload.subDataCode;
+    method.bypassApproachCode = payload.bypassApproachCode;
+    method.methodCode = payload.methodCode;
+    method.endDate = payload.endDate;
+    method.endHour = payload.endHour;
+
+    // TODO: this needs to be the actual user that is logged in
+    // how are we going to get this from CDX as this is an id NOT a username
+    //method.userId = payload.userId;
+
+    method.updateDate = new Date(Date.now());
+    
+    return this.repository.save(method);
+  }
+
+  private setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
     monitoringMethod.forEach(m => {
       if (m.endDate == null) {
         m.active = true;
       }
     });
     return monitoringMethod;
-  }
-
-  async createMethod(payload: MonitorMethodDTO): Promise<MonitorMethod> {
-    const {
-      monLocId,
-      parameterCode,
-      subDataCode,
-      bypassApproachCode,
-      methodCode,
-      beginDate,
-      beginHour,
-      endDate,
-      endHour,
-      userId,
-      addDate,
-      updateDate,
-    } = payload;
-
-    const monMethod = this.repository.create({
-      id: uuid(),
-      monLocId,
-      parameterCode,
-      subDataCode,
-      bypassApproachCode,
-      methodCode,
-      beginDate,
-      beginHour,
-      endDate,
-      endHour,
-      userId,
-      addDate,
-      updateDate,
-    });
-
-    return await this.repository.save(monMethod);
-  }
-
-  async updateMethod(
-    methodId: string,
-    payload: MonitorMethodDTO,
-  ): Promise<MonitorMethod> {
-    const method = await this.getMethod(methodId);
-
-    const {
-      monLocId,
-      parameterCode,
-      subDataCode,
-      bypassApproachCode,
-      methodCode,
-      beginDate,
-      beginHour,
-      endDate,
-      endHour,
-      userId,
-      addDate,
-      updateDate,
-    } = payload;
-
-    (method.monLocId = monLocId),
-      (method.parameterCode = parameterCode),
-      (method.subDataCode = subDataCode),
-      (method.bypassApproachCode = bypassApproachCode),
-      (method.methodCode = methodCode),
-      (method.beginDate = beginDate),
-      (method.beginHour = beginHour),
-      (method.endDate = endDate),
-      (method.endHour = endHour),
-      (method.userId = userId),
-      (method.addDate = addDate),
-      (method.updateDate = updateDate),
-      await this.repository.save(method);
-
-    return method;
-  }
+  }  
 }
