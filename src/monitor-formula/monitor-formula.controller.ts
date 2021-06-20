@@ -15,7 +15,7 @@ import { MonitorFormulaService } from './monitor-formula.service';
 export class MonitorFormulaController {
   constructor(private service: MonitorFormulaService) {}
 
-  @Get('/monitor-locations/:id/formulas')
+  @Get()
   @ApiOkResponse({
     description: 'Retrieved Methods',
   })
@@ -25,7 +25,7 @@ export class MonitorFormulaController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getUnits(@Param('id') monLocId: string): Promise<MonitorFormulaDTO[]> {
+  getFormulas(@Param('id') monLocId: string): Promise<MonitorFormulaDTO[]> {
     return this.service.getMonitorFormulas(monLocId);
   }
 }

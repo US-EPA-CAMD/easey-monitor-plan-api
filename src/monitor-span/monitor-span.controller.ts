@@ -21,7 +21,7 @@ export class MonitorSpanController {
     private service: MonitorSpanService,
   ) {}
 
-  @Get('/monitor-locations/:id/spans')
+  @Get()
   @ApiOkResponse({
     description: 'Retrieved Methods',
   })
@@ -31,7 +31,7 @@ export class MonitorSpanController {
   @ApiNotFoundResponse({
     description: 'Resource Not Found',
   })
-  getUnits(@Param('id') monLocId: string): Promise<MonitorSpanDTO[]> {
+  getSpans(@Param('id') monLocId: string): Promise<MonitorSpanDTO[]> {
     return this.service.getMonitorSpans(monLocId);
   }
 }

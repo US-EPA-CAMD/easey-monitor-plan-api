@@ -1,9 +1,9 @@
 import { Repository, EntityRepository } from 'typeorm';
 
-import { MonitorLocation } from '../entities/monitor-location.entity';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 
 @EntityRepository(MonitorLocation)
-export class MonitorLocationRepository extends Repository<MonitorLocation> {
+export class MonitorLocationWorkspaceRepository extends Repository<MonitorLocation> {
   async getMonitorLocationsByFacId(facId: number): Promise<MonitorLocation[]> {
     const query = this.createQueryBuilder('location')
       .innerJoinAndSelect('location.plans', 'plan', 'plan.facId = :facId', {

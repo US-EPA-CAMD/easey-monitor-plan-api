@@ -10,7 +10,6 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 import { UnitOpStatusMap } from '../maps/unit-op-status.map';
 import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
 import { UnitOpStatusDTO } from '../dtos/unit-op-status.dto';
-import { UserCheckOutRepository } from './user-check-out.repository';
 
 @Module({
   imports: [
@@ -18,7 +17,6 @@ import { UserCheckOutRepository } from './user-check-out.repository';
       MonitorPlanRepository,
       MonitorLocationRepository,
       UnitOpStatusRepository,
-      UserCheckOutRepository,
     ]),
   ],
   controllers: [MonitorPlanController],

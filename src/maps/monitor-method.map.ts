@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from './base.map';
-import { MonitorMethodData } from '../entities/monitor-method.entity';
+import { MonitorMethod } from '../entities/monitor-method.entity';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 
 @Injectable()
-export class MonitorMethodMap extends BaseMap<MonitorMethodData, MonitorMethodDTO> {
-  public async one(entity: MonitorMethodData): Promise<MonitorMethodDTO> {
+export class MonitorMethodMap extends BaseMap<MonitorMethod, MonitorMethodDTO> {
+  public async one(entity: MonitorMethod): Promise<MonitorMethodDTO> {
     return {
-      id: entity.id,
       monLocId: entity.monLocId,
       parameterCode: entity.parameterCode,
       methodCode: entity.methodCode,
@@ -18,6 +17,9 @@ export class MonitorMethodMap extends BaseMap<MonitorMethodData, MonitorMethodDT
       beginHour: entity.beginHour,
       endDate: entity.endDate,
       endHour: entity.endHour,
+      userId: entity.userId,
+      addDate: entity.addDate,
+      updateDate: entity.updateDate,
       active: false,
     };
   }

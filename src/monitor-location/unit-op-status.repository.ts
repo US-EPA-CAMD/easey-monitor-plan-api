@@ -6,6 +6,6 @@ import { UnitOpStatus } from '../entities/unit-op-status.entity';
 export class UnitOpStatusRepository extends Repository<UnitOpStatus> {
   async getUnitStatuses(): Promise<UnitOpStatus[]> {
     const unitStatus = this.createQueryBuilder('UnitOpStatus');
-    return await unitStatus.getMany();
+    return unitStatus.getMany();
   }
 }

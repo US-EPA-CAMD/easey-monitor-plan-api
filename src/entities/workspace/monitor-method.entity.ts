@@ -1,6 +1,6 @@
 import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'camdecmps.monitor_method' })
+@Entity({ name: 'camdecmpswks.monitor_method' })
 export class MonitorMethod extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'mon_method_id' })
   id: string;

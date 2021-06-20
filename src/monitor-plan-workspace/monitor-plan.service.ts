@@ -1,24 +1,32 @@
-import { MonitorLocation } from '../entities/monitor-location.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { MonitorPlanRepository } from './monitor-plan.repository';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
+import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
+import { UserCheckOutRepository } from './user-check-out.repository';
+
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+
+import { MonitorPlanMap } from '../maps/monitor-plan.map';
+
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
+import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 import { UnitOpStatus } from '../entities/unit-op-status.entity';
 
 @Injectable()
-export class MonitorPlanService {
+export class MonitorPlanWorkspaceService {
   constructor(
-    @InjectRepository(MonitorPlanRepository)
-    private monitorPlanRepository: MonitorPlanRepository,
-    @InjectRepository(MonitorLocationRepository)
-    private monitorLocationRepository: MonitorLocationRepository,
+    @InjectRepository(MonitorPlanWorkspaceRepository)
+    private monitorPlanRepository: MonitorPlanWorkspaceRepository,
+    @InjectRepository(MonitorLocationWorkspaceRepository)
+    private monitorLocationRepository: MonitorLocationWorkspaceRepository,
     private map: MonitorPlanMap,
     @InjectRepository(UnitOpStatusRepository)
     private unitOpStatusRepository: UnitOpStatusRepository,
+    @InjectRepository(UserCheckOutRepository)
+    private userCheckOutRepository: UserCheckOutRepository,
   ) {}
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
@@ -101,5 +109,25 @@ export class MonitorPlanService {
       }
     });
     return true;
+  }
+
+  // async getUserCheckOutByMonPlanId(monPlanId: string): Promise<UserCheckOut> {
+  //   return this.userCheckOutRepository.findOne({ monPlanId: monPlanId });
+  // }
+
+  async getUserCheckOut(
+    monPlanId: string,
+    username: string,
+  ): Promise<UserCheckOut> {
+    return this.userCheckOutRepository.checkOutMonitorPlan(monPlanId, username);
+  }
+
+  async updateLastActivity(monPlanId: string): Promise<UserCheckOut> {
+    console.log(monPlanId);
+    const entity = await this.userCheckOutRepository.findOne({ monPlanId: monPlanId });
+    console.log(entity);
+    entity.lastActivity = new Date(Date.now());
+    console.log(entity);    
+    return this.userCheckOutRepository.save(entity);
   }
 }

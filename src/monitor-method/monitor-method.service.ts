@@ -14,7 +14,7 @@ export class MonitorMethodService {
     private map: MonitorMethodMap,
   ) {}
 
-  async getMonitorMethods(monLocId: string): Promise<MonitorMethodDTO[]> {
+  async getMethods(monLocId: string): Promise<MonitorMethodDTO[]> {
     const findOpts: FindManyOptions = {
       select: [
         'id',
@@ -31,12 +31,10 @@ export class MonitorMethodService {
     };
     const results = await this.repository.find(findOpts);
     const monMethods = await this.map.many(results);
-    return this.setMonitoringMethodStatus(monMethods);
+    return this.setStatus(monMethods);
   }
 
-  setMonitoringMethodStatus(
-    monitoringMethod: MonitorMethodDTO[],
-  ): MonitorMethodDTO[] {
+  setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
     monitoringMethod.forEach(m => {
       if (m.endDate == null) {
         m.active = true;
