@@ -67,7 +67,7 @@ export class MonitorMethodWorkspaceService {
   }
 
   async updateMethod(
-    locId: string,    
+    locId: string,
     methodId: string,
     payload: MonitorMethodDTO,
   ): Promise<MonitorMethod> {
@@ -90,7 +90,7 @@ export class MonitorMethodWorkspaceService {
     //method.userId = payload.userId;
 
     method.updateDate = new Date(Date.now());
-    
+
     return this.repository.save(method);
   }
 

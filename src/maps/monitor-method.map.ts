@@ -8,6 +8,7 @@ import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 export class MonitorMethodMap extends BaseMap<MonitorMethod, MonitorMethodDTO> {
   public async one(entity: MonitorMethod): Promise<MonitorMethodDTO> {
     return {
+      id: entity.id,
       monLocId: entity.monLocId,
       parameterCode: entity.parameterCode,
       methodCode: entity.methodCode,
