@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
@@ -53,9 +53,9 @@ export class MonitorPlanWorkspaceService {
       if (a.name < b.name) {
         return -1;
       }
-      
+
       if (a.name === b.name) {
-        return 0
+        return 0;
       }
 
       return 1;
@@ -111,11 +111,17 @@ export class MonitorPlanWorkspaceService {
     return true;
   }
 
-  // async getUserCheckOutByMonPlanId(monPlanId: string): Promise<UserCheckOut> {
-  //   return this.userCheckOutRepository.findOne({ monPlanId: monPlanId });
-  // }
+  async getCheckOutConfiguration(monPlanId: string) {
+    const record = await this.userCheckOutRepository.findOne({ monPlanId });
 
-  async getUserCheckOut(
+    if (!record) {
+      throw new NotFoundException(`Checkout configuration not found.`);
+    }
+
+    return record;
+  }
+
+  async checkOutConfiguration(
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOut> {
@@ -123,11 +129,8 @@ export class MonitorPlanWorkspaceService {
   }
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOut> {
-    console.log(monPlanId);
-    const entity = await this.userCheckOutRepository.findOne({ monPlanId: monPlanId });
-    console.log(entity);
-    entity.lastActivity = new Date(Date.now());
-    console.log(entity);    
-    return this.userCheckOutRepository.save(entity);
+    const record = await this.getCheckOutConfiguration(monPlanId);
+    record.lastActivity = new Date(Date.now());
+    return this.userCheckOutRepository.save(record);
   }
 }
