@@ -1,11 +1,9 @@
 import {
   BaseEntity,
   Entity,
-  Column,
   PrimaryColumn,
   ManyToOne,
   ManyToMany,
-  JoinTable,
   JoinColumn,
 } from 'typeorm';
 

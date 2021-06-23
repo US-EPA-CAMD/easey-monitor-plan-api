@@ -21,7 +21,7 @@ const routes: Routes = [
   {
     path: '/workspace/plans',
     module: MonitorPlanWorkspaceModule,
-  },  
+  },
   {
     path: '/monitor-locations',
     module: MonitorLocationModule,

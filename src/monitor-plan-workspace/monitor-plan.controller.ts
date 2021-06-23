@@ -8,10 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 
-import {
-  ApiTags,
-  ApiOkResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
@@ -21,9 +18,7 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 @ApiTags('Monitor Plan')
 @Controller()
 export class MonitorPlanWorkspaceController {
-  constructor(
-    private service: MonitorPlanWorkspaceService
-  ) {}
+  constructor(private service: MonitorPlanWorkspaceService) {}
 
   @Get('/:orisCode/configurations')
   @ApiOkResponse({
@@ -39,14 +34,14 @@ export class MonitorPlanWorkspaceController {
 
   @Post('/:id/check-out')
   @ApiOkResponse({
-    type: UserCheckOut,    
+    type: UserCheckOut,
     description: 'Checks Out a Monitor Plan configuration',
   })
   checkOutConfiguration(
     @Param('id') id: string,
     @Body() payload: UserCheckOutDTO,
   ): Promise<UserCheckOut> {
-    return this.service.getUserCheckOut(id, payload.username);
+    return this.service.checkOutConfiguration(id, payload.username);
   }
 
   @Put('/:id/check-out')
