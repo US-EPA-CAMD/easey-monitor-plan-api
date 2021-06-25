@@ -35,7 +35,7 @@ export class MonitorMethodWorkspaceController {
 
   @Put(':methodId')
   @ApiOkResponse({
-    type: UpdateMonitorMethodDTO,
+    type: MonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',
   })
   updateMethod(
