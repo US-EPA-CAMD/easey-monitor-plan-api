@@ -8,16 +8,8 @@ import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([MonitorMethodWorkspaceRepository]),
-  ],
-  controllers: [
-    MonitorMethodWorkspaceController,
-  ],
-  providers: [
-    MonitorMethodMap,
-    MonitorMethodWorkspaceService,
-  ],
+  imports: [TypeOrmModule.forFeature([MonitorMethodWorkspaceRepository])],
+  controllers: [MonitorMethodWorkspaceController],
+  providers: [MonitorMethodMap, MonitorMethodWorkspaceService],
 })
-
 export class MonitorMethodWorkspaceModule {}

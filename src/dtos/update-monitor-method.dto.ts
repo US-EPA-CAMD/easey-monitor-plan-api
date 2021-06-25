@@ -2,7 +2,7 @@ export class UpdateMonitorMethodDTO {
   methodCode: string;
   parameterCode: string;
   subDataCode: string;
-  byPassApproachCode: string;
+  bypassApproachCode: string;
   beginDate: Date;
   beginHour: number;
   endDate: Date;

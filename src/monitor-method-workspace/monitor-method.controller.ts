@@ -28,8 +28,8 @@ export class MonitorMethodWorkspaceController {
   })
   createMethod(
     @Param('locId') locId: string,
-    @Body() payload: MonitorMethodDTO,
-  ): Promise<UpdateMonitorMethodDTO> {
+    @Body() payload: UpdateMonitorMethodDTO,
+  ): Promise<MonitorMethodDTO> {
     return this.service.createMethod(locId, payload);
   }
 
@@ -41,8 +41,8 @@ export class MonitorMethodWorkspaceController {
   updateMethod(
     @Param('locId') locId: string,
     @Param('methodId') methodId: string,
-    @Body() payload: MonitorMethodDTO,
-  ): Promise<UpdateMonitorMethodDTO> {
-    return this.service.updateMethod(locId, methodId, payload);
+    @Body() payload: UpdateMonitorMethodDTO,
+  ): Promise<MonitorMethodDTO> {
+    return this.service.updateMethod(methodId, payload);
   }
 }
