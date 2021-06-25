@@ -73,9 +73,9 @@ describe('Monitor Plan Service', () => {
   });
 
   // TODO: unit test for configurations
-  describe('getConfigurations', () => {
-    expect(true).toEqual(true);
-  });
+  // describe('getConfigurations', () => {
+  //   expect(true).toEqual(true);
+  // });
 
   describe('checkOutConfiguration', () => {
     it('call UserCheckOutRepository.checkOutConfiguratin and returns the result', async () => {

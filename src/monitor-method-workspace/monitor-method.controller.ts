@@ -4,7 +4,7 @@ import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
-import { MonitorMethod } from 'src/entities/workspace/monitor-method.entity';
+import { UpdateMonitorMethodDTO } from 'src/dtos/update-monitor-method.dto';
 
 @ApiTags('Monitor Methods')
 @Controller()
@@ -17,9 +17,7 @@ export class MonitorMethodWorkspaceController {
     type: MonitorMethodDTO,
     description: 'Retrieves workspace Monitor Method records',
   })
-  getMethods(
-    @Param('locId') locId: string
-  ): Promise<MonitorMethodDTO[]> {
+  getMethods(@Param('locId') locId: string): Promise<MonitorMethodDTO[]> {
     return this.service.getMethods(locId);
   }
 
@@ -30,21 +28,21 @@ export class MonitorMethodWorkspaceController {
   })
   createMethod(
     @Param('locId') locId: string,
-    @Body() payload: MonitorMethodDTO
-  ): Promise<MonitorMethod> {
+    @Body() payload: MonitorMethodDTO,
+  ): Promise<UpdateMonitorMethodDTO> {
     return this.service.createMethod(locId, payload);
   }
 
   @Put(':methodId')
   @ApiOkResponse({
-    type: MonitorMethodDTO,
+    type: UpdateMonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',
   })
   updateMethod(
     @Param('locId') locId: string,
     @Param('methodId') methodId: string,
     @Body() payload: MonitorMethodDTO,
-  ): Promise<MonitorMethod> {
+  ): Promise<UpdateMonitorMethodDTO> {
     return this.service.updateMethod(locId, methodId, payload);
   }
 }
