@@ -2,6 +2,9 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class MonitorMethodDTO {
   @IsNotEmpty()
+  id: string;
+
+  @IsNotEmpty()
   monLocId: string;
 
   @IsNotEmpty()

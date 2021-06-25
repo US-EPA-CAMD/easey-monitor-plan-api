@@ -5,6 +5,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Body,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
@@ -12,6 +13,7 @@ import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
+import { UserCheckOutDTO } from 'src/dtos/user-check-out.dto';
 
 @ApiTags('Monitor Plan')
 @Controller()
@@ -35,8 +37,11 @@ export class MonitorPlanWorkspaceController {
     type: UserCheckOut,
     description: 'Checks Out a Monitor Plan configuration',
   })
-  checkOutConfiguration(@Param('id') id: string): Promise<UserCheckOut> {
-    return this.service.checkOutConfiguration(id, 'testuser');
+  checkOutConfiguration(
+    @Param('id') id: string,
+    @Body() payload: UserCheckOutDTO,
+  ): Promise<UserCheckOut> {
+    return this.service.checkOutConfiguration(id, payload.username);
   }
 
   @Put('/:id/check-out')

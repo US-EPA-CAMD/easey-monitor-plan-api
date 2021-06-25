@@ -137,7 +137,6 @@ export class MonitorPlanWorkspaceService {
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOut> {
     const record = await this.getCheckOutConfiguration(monPlanId);
-
     record.lastActivity = new Date(Date.now());
     return this.userCheckOutRepository.save(record);
   }
