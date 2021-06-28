@@ -4,16 +4,16 @@ import {
   Controller,
   ParseIntPipe,
   Post,
-  Body,
   Put,
+  Body,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 
-import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
+import { UserCheckOutDTO } from 'src/dtos/user-check-out.dto';
 
 @ApiTags('Monitor Plan')
 @Controller()

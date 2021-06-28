@@ -111,21 +111,28 @@ export class MonitorPlanWorkspaceService {
     return true;
   }
 
-  async getCheckOutConfiguration(monPlanId: string) {
-    const record = await this.userCheckOutRepository.findOne({ monPlanId });
-
-    if (!record) {
-      throw new NotFoundException(`Checkout configuration not found.`);
-    }
-
-    return record;
-  }
-
   async checkOutConfiguration(
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOut> {
-    return this.userCheckOutRepository.checkOutMonitorPlan(monPlanId, username);
+    return this.userCheckOutRepository.checkOutConfiguration(
+      monPlanId,
+      username,
+    );
+  }
+
+  async getCheckOutConfiguration(monPlanId: string): Promise<UserCheckOut> {
+    const record = await this.userCheckOutRepository.findOne({
+      monPlanId,
+    });
+
+    if (!record) {
+      throw new NotFoundException(
+        `Check-out configuration with monitor-plan ID "${monPlanId}" not found`,
+      );
+    }
+
+    return record;
   }
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOut> {

@@ -1,10 +1,11 @@
 import { Repository, EntityRepository } from 'typeorm';
-import { MonitorMethodDTO } from 'src/dtos/monitor-method.dto';
 
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 
 @EntityRepository(MonitorMethod)
-export class MonitorMethodWorkspaceRepository extends Repository<MonitorMethod> {
+export class MonitorMethodWorkspaceRepository extends Repository<
+  MonitorMethod
+> {
   // async createUpadteMethod(createMethodDTO: MonitorMethodDTO) {
   //   const {
   //     monLocId,
@@ -17,7 +18,6 @@ export class MonitorMethodWorkspaceRepository extends Repository<MonitorMethod> 
   //     endDate,
   //     endHour,
   //   } = createMethodDTO;
-
   //   const monMethod = this.create({
   //     monLocId,
   //     parameterCode,
@@ -29,9 +29,7 @@ export class MonitorMethodWorkspaceRepository extends Repository<MonitorMethod> 
   //     endDate,
   //     endHour,
   //   });
-
   //   await this.save(monMethod);
-
   //   return monMethod;
   // }
 }

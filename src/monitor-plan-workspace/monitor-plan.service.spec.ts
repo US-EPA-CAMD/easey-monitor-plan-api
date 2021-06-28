@@ -5,7 +5,6 @@ import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspac
 import { UnitOpStatusRepository } from '../monitor-location/unit-op-status.repository';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { NotFoundException } from '@nestjs/common';
 
 const mockMonitorPlanWksRepository = () => ({});
 const mockMonitorLocationWksRepository = () => ({});
@@ -73,6 +72,11 @@ describe('Monitor Plan Service', () => {
     map = module.get(MonitorPlanMap);
   });
 
+  // TODO: unit test for configurations
+  // describe('getConfigurations', () => {
+  //   expect(true).toEqual(true);
+  // });
+
   describe('checkOutConfiguration', () => {
     it('call UserCheckOutRepository.checkOutConfiguratin and returns the result', async () => {
       userCheckOutRepository.checkOutConfiguration.mockResolvedValue(
@@ -92,37 +96,13 @@ describe('Monitor Plan Service', () => {
       const record = await monitorPlanWksService.getCheckOutConfiguration('id');
       expect(record).toEqual(mockUserCheckOut);
     });
-
-    it('call UserCheckOutRepository.findOne and handles an error', () => {
-      userCheckOutRepository.findOne.mockResolvedValue(null);
-      expect(
-        monitorPlanWksService.getCheckOutConfiguration('id'),
-      ).rejects.toThrow(NotFoundException);
-    });
   });
 
   describe('updateLastActivity', () => {
-    it('calls monitorPlanService.getCheckOutConfiguration and returns a record', async () => {
-      userCheckOutRepository.findOne.mockResolvedValue(mockUserCheckOut);
-      const record = await monitorPlanWksService.getCheckOutConfiguration('id');
-
-      expect(record).toEqual(mockUserCheckOut);
-    });
-
-    it('calls monitorPlanService.getCheckOutConfiguration and handles an error', () => {
-      userCheckOutRepository.findOne.mockResolvedValue(null);
-
-      expect(
-        monitorPlanWksService.getCheckOutConfiguration('id'),
-      ).rejects.toThrow(NotFoundException);
-    });
-
-    it('updates the last activity of the record to the current time', async () => {
-      userCheckOutRepository.findOne.mockResolvedValue(mockUserCheckOut);
+    it('calls the service.getCheckOutConfiguration and updates the last activity to the current time', async () => {
       const now = new Date(Date.now());
       const record = await monitorPlanWksService.getCheckOutConfiguration('id');
       record.lastActivity = now;
-
       expect(record.lastActivity).toEqual(now);
     });
   });

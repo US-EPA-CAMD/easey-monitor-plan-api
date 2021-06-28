@@ -11,8 +11,8 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
   private path = `${this.configService.get<string>('app.uri')}/monitor-plans`;
 
   constructor(
-    private configService: ConfigService,    
-    private locationMap: MonitorLocationMap
+    private configService: ConfigService,
+    private locationMap: MonitorLocationMap,
   ) {
     super();
   }
@@ -29,9 +29,9 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       links: [
         {
           rel: 'self',
-          href: `${this.path}/${entity.id}`
-        }
-      ]
+          href: `${this.path}/${entity.id}`,
+        },
+      ],
     };
   }
 }

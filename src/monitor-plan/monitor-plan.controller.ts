@@ -1,17 +1,6 @@
-import {
-  Get,
-  Param,
-  Controller,
-  ParseIntPipe,
-  Post,
-  Body,
-  Put,
-} from '@nestjs/common';
+import { Get, Param, Controller, ParseIntPipe } from '@nestjs/common';
 
-import {
-  ApiTags,
-  ApiOkResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanService } from './monitor-plan.service';
