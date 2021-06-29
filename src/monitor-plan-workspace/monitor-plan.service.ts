@@ -140,4 +140,12 @@ export class MonitorPlanWorkspaceService {
     record.lastActivity = new Date(Date.now());
     return this.userCheckOutRepository.save(record);
   }
+
+  async checkInConfiguration(monPlanId: string): Promise<void> {
+    const result = await this.userCheckOutRepository.delete({ monPlanId });
+
+    if (result.affected === 0) {
+      throw new NotFoundException();
+    }
+  }
 }
