@@ -15,7 +15,7 @@ import { SupplementalMethodsModule } from './supplemental-methods/supplemental-m
 
 const routes: Routes = [
   {
-    path: '/monitor-plans',
+    path: '/plans',
     module: MonitorPlanModule,
   },
   {
