@@ -81,10 +81,13 @@ export class MonitorMethodWorkspaceService {
     payload: UpdateMonitorMethodDTO,
   ): Promise<MonitorMethodDTO> {
     const method = await this.getMethod(methodId);
+
     method.parameterCode = payload.parameterCode;
     method.subDataCode = payload.subDataCode;
     method.bypassApproachCode = payload.bypassApproachCode;
     method.methodCode = payload.methodCode;
+    method.beginDate = payload.beginDate;
+    method.beginHour = payload.beginHour;
     method.endDate = payload.endDate;
     method.endHour = payload.endHour;
 
