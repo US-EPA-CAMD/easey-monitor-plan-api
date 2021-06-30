@@ -38,12 +38,11 @@ export class MonitorMethodWorkspaceController {
     type: MonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',
   })
-  async updateMethod(
+  updateMethod(
     @Param('locId') locId: string,
     @Param('methodId') methodId: string,
     @Body() payload: UpdateMonitorMethodDTO,
   ): Promise<MonitorMethodDTO> {
-    const result = await this.service.updateMethod(methodId, payload);
-    return result;
+    return this.service.updateMethod(methodId, payload);
   }
 }
