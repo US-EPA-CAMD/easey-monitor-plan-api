@@ -6,6 +6,7 @@ import {
   Post,
   Put,
   Body,
+  Delete,
 } from '@nestjs/common';
 
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
@@ -51,5 +52,13 @@ export class MonitorPlanWorkspaceController {
   })
   updateLastActivity(@Param('id') id: string): Promise<UserCheckOut> {
     return this.service.updateLastActivity(id);
+  }
+
+  @Delete('/:id/check-in')
+  @ApiOkResponse({
+    description: 'Check-In a Monitor Plan configuration',
+  })
+  checkInConfiguration(@Param('id') id: string): Promise<void> {
+    return this.service.checkInConfiguration(id);
   }
 }

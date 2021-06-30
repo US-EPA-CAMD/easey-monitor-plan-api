@@ -23,7 +23,7 @@ const routes: Routes = [
     module: MonitorPlanWorkspaceModule,
   },
   {
-    path: '/monitor-locations',
+    path: '/locations',
     module: MonitorLocationModule,
     children: [
       {
