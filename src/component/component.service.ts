@@ -13,7 +13,8 @@ import { AnalyzerRangeRepository } from './analyzer-range.repository';
 
 @Injectable()
 export class ComponentService {
-  constructor(@InjectRepository(ComponentRepository)
+  constructor(
+    @InjectRepository(ComponentRepository)
     private repository: ComponentRepository,
     private map: ComponentMap,
     @InjectRepository(MonitorSystemComponentRepository)
@@ -37,8 +38,8 @@ export class ComponentService {
         'serialNumber',
         'hgConverterInd',
       ],
-      where: { monLocId: monLocId }
-    }
+      where: { monLocId: monLocId },
+    };
     const systemComponents = await this.repositoryMonComponents.getSystemComponents();
     const results = await this.repository.find(findOpts);
     const components = await this.map.many(results);
@@ -77,5 +78,5 @@ export class ComponentService {
     });
 
     return components;
-}
+  }
 }

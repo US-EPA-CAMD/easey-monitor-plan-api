@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
-import { MonitorMethod } from 'src/entities/monitor-method.entity';
+import { MonitorMethod } from 'src/entities/workspace/monitor-method.entity';
 import { UpdateMonitorMethodDTO } from 'src/dtos/update-monitor-method.dto';
 
 @Injectable()
@@ -79,6 +79,8 @@ export class MonitorMethodWorkspaceService {
     payload: UpdateMonitorMethodDTO,
   ): Promise<MonitorMethodDTO> {
     const method = await this.getMethod(methodId);
+
+    console.log('Method', method);
 
     method.parameterCode = payload.parameterCode;
     method.subDataCode = payload.subDataCode;
