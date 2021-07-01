@@ -7,5 +7,4 @@ export class MonitorLocationDTO {
   links: Array<LinkDTO>;
   active: boolean;
   retireDate: Date;
-  
 }

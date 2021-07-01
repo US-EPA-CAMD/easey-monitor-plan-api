@@ -9,4 +9,5 @@ export class MonitorSystemDTO {
   endDate: Date;
   beginHour: number;
   endHour: number;
+  active: boolean;
 }

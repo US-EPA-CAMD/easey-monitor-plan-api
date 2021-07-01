@@ -25,6 +25,7 @@ export class MonitorLoadMap extends BaseMap<MonitorLoad, MonitorLoadDTO> {
       addDate: entity.addDate,
       updateDate: entity.updateDate,
       maxLoadUomCd: entity.maxLoadUomCd,
+      active: entity.endDate === null,
     };
   }
 }

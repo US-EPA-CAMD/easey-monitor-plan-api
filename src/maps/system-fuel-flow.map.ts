@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from './base.map';
-import {SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 
 @Injectable()
@@ -18,7 +18,8 @@ export class SystemFuelFlowMap extends BaseMap<SystemFuelFlow, SystemFuelFlowDTO
       beginDate: entity.beginDate,
       endDate: entity.endDate,
       beginHour: entity.beginHour,
-      endHour: entity.endHour
+      endHour: entity.endHour,
+      active: entity.endDate === null,
     };
   }
 }

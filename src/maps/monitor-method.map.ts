@@ -21,7 +21,7 @@ export class MonitorMethodMap extends BaseMap<MonitorMethod, MonitorMethodDTO> {
       userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
-      active: false,
+      active: entity.endDate === null,
     };
   }
 }

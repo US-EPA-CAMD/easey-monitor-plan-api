@@ -12,4 +12,5 @@ export class MonitorFormulaDTO {
   userId: string;
   addDate: Date;
   updateDate: Date;
+  active: boolean;
 }

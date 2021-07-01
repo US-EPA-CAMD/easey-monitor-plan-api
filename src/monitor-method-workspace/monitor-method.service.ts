@@ -33,8 +33,8 @@ export class MonitorMethodWorkspaceService {
       where: { monLocId: locId },
     };
     const results = await this.repository.find(findOpts);
-    const monMethods = await this.map.many(results);
-    return this.setStatus(monMethods);
+    return this.map.many(results);
+    //return this.setStatus(monMethods);
   }
 
   async getMethod(methodId: string): Promise<MonitorMethod> {
@@ -71,9 +71,7 @@ export class MonitorMethodWorkspaceService {
     });
 
     const entity = await this.repository.save(monMethod);
-    const result = await this.map.one(entity);
-
-    return result;
+    return this.map.one(entity);
   }
 
   async updateMethod(
@@ -97,17 +95,15 @@ export class MonitorMethodWorkspaceService {
     method.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(method);
-    const monMethod = await this.map.one(result);
-
-    return monMethod;
+    return this.map.one(result);
   }
 
-  private setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
-    monitoringMethod.forEach(m => {
-      if (m.endDate == null) {
-        m.active = true;
-      }
-    });
-    return monitoringMethod;
-  }
+  // private setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
+  //   monitoringMethod.forEach(m => {
+  //     if (m.endDate == null) {
+  //       m.active = true;
+  //     }
+  //   });
+  //   return monitoringMethod;
+  // }
 }

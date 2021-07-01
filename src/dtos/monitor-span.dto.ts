@@ -19,4 +19,5 @@ export class MonitorSpanDTO {
   userid: string;
   updateDate: Date;
   spanUomCd: string;
+  active: boolean;
 }

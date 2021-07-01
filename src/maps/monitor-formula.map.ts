@@ -24,6 +24,7 @@ export class MonitorFormulaMap extends BaseMap<
       userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
+      active: entity.endDate === null,
     };
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from './base.map';
-import {MonitorSystem } from '../entities/monitor-system.entity';
+import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 
 @Injectable()
@@ -17,7 +17,8 @@ export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
       beginDate: entity.beginDate,
       endDate: entity.endDate,
       beginHour: entity.beginHour,
-      endHour: entity.endHour
+      endHour: entity.endHour,
+      active: entity.endDate === null,
     };
   }
 }

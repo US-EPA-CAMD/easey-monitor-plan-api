@@ -16,4 +16,5 @@ export class MonitorLoadDTO {
   addDate: Date;
   updateDate: Date;
   maxLoadUomCd: string;
+  active: boolean;
 }

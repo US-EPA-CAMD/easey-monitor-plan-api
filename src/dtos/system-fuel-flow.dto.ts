@@ -10,4 +10,5 @@ export class SystemFuelFlowDTO {
   endDate: Date;
   beginHour: number;
   endHour: number;
+  active: boolean;
 }

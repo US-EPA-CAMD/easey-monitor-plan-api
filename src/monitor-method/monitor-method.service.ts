@@ -30,16 +30,16 @@ export class MonitorMethodService {
       where: { monLocId: monLocId },
     };
     const results = await this.repository.find(findOpts);
-    const monMethods = await this.map.many(results);
-    return this.setStatus(monMethods);
+    return this.map.many(results);
+    //return this.setStatus(monMethods);
   }
 
-  setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
-    monitoringMethod.forEach(m => {
-      if (m.endDate == null) {
-        m.active = true;
-      }
-    });
-    return monitoringMethod;
-  }
+  // setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
+  //   monitoringMethod.forEach(m => {
+  //     if (m.endDate == null) {
+  //       m.active = true;
+  //     }
+  //   });
+  //   return monitoringMethod;
+  // }
 }

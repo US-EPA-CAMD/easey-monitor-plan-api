@@ -6,4 +6,5 @@ export class MonitorSystemComponentDTO {
   endDate: Date;
   beginHour: number;
   endHour: number;
+  active: boolean;
 }
