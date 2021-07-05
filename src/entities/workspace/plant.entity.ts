@@ -1,10 +1,4 @@
-import {
-  BaseEntity,
-  Entity,
-  Column,
-  PrimaryColumn,
-  OneToMany,
-} from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 
 import { Unit } from './unit.entity';
 import { StackPipe } from './stack-pipe.entity';
@@ -35,12 +29,21 @@ export class Plant extends BaseEntity {
   })
   region: number;
 
-  @OneToMany(() => Unit, unit => unit.plant)
+  @OneToMany(
+    () => Unit,
+    unit => unit.plant,
+  )
   units: Unit[];
 
-  @OneToMany(() => StackPipe, stackPipe => stackPipe.plant)
+  @OneToMany(
+    () => StackPipe,
+    stackPipe => stackPipe.plant,
+  )
   stackPipes: StackPipe[];
 
-  @OneToMany(() => MonitorPlan, plan => plan.plant)
+  @OneToMany(
+    () => MonitorPlan,
+    plan => plan.plant,
+  )
   plans: MonitorPlan[];
 }

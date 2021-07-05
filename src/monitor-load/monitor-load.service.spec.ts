@@ -40,7 +40,7 @@ describe('-- Monitor Load Service --', () => {
 
       const monLocId = '123';
 
-      const result = await monitorLoadService.getMonitorLoads(monLocId);
+      const result = await monitorLoadService.getLoads(monLocId);
 
       expect(monitorLoadRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();
@@ -54,7 +54,7 @@ describe('-- Monitor Load Service --', () => {
 
       const monLocId = '123';
 
-      const result = await monitorLoadService.getMonitorLoads(monLocId);
+      const result = await monitorLoadService.getLoads(monLocId);
 
       expect(monitorLoadRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();

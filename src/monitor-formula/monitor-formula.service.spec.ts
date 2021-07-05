@@ -40,7 +40,7 @@ describe('-- Monitor Formula Service --', () => {
 
       const monLocId = '123';
 
-      const result = await monitorFormulaService.getMonitorFormulas(monLocId);
+      const result = await monitorFormulaService.getFormulas(monLocId);
 
       expect(monitorFormulaRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();
@@ -54,7 +54,7 @@ describe('-- Monitor Formula Service --', () => {
 
       const monLocId = '123';
 
-      const result = await monitorFormulaService.getMonitorFormulas(monLocId);
+      const result = await monitorFormulaService.getFormulas(monLocId);
 
       expect(monitorFormulaRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();

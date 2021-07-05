@@ -1,6 +1,7 @@
 import { Routes } from 'nest-router';
 
 import { ComponentModule } from './component/component.module';
+import { AnalyzerRangeModule } from './analyzer-range/analyzer-range.module';
 import { MonitorFormulaModule } from './monitor-formula/monitor-formula.module';
 import { MonitorLoadModule } from './monitor-load/monitor-load.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
@@ -11,7 +12,9 @@ import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
 import { MonitorSpanModule } from './monitor-span/monitor-span.module';
 import { MonitorSystemModule } from './monitor-system/monitor-system.module';
-import { SupplementalMethodsModule } from './supplemental-methods/supplemental-methods.module';
+import { SystemComponentModule } from './system-component/system-component.module';
+import { SystemFuelFlowModule } from './system-fuel-flow/system-fuel-flow.module';
+import { MatsMethodModule } from './mats-method/mats-method.module';
 
 const routes: Routes = [
   {
@@ -27,31 +30,47 @@ const routes: Routes = [
     module: MonitorLocationModule,
     children: [
       {
-        path: ':id/methods',
+        path: ':locId/methods',
         module: MonitorMethodModule,
       },
       {
-        path: ':id/supplemental-methods',
-        module: SupplementalMethodsModule,
+        path: ':locId/mats-methods',
+        module: MatsMethodModule,
       },
       {
-        path: ':id/systems',
+        path: ':locId/systems',
         module: MonitorSystemModule,
+        children: [
+          {
+            path: ':sysId/components',
+            module: SystemComponentModule,
+          },
+          {
+            path: ':sysId/fuel-flows',
+            module: SystemFuelFlowModule,
+          },
+        ],
       },
       {
-        path: ':id/components',
+        path: ':locId/components',
         module: ComponentModule,
+        children: [
+          {
+            path: ':compId/analyzer-ranges',
+            module: AnalyzerRangeModule,
+          },
+        ],
       },
       {
-        path: ':id/spans',
+        path: ':locId/spans',
         module: MonitorSpanModule,
       },
       {
-        path: ':id/loads',
+        path: ':locId/loads',
         module: MonitorLoadModule,
       },
       {
-        path: ':id/formulas',
+        path: ':locId/formulas',
         module: MonitorFormulaModule,
       },
     ],

@@ -1,4 +1,6 @@
-export class MonitorSystemComponentDTO {
+import { ComponentDTO } from './component.dto';
+
+export class SystemComponentDTO extends ComponentDTO {
   id: string;
   monSysId: string;
   componentId: string;

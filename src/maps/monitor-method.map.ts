@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from './base.map';
-import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
+import { MonitorMethod } from '../entities/monitor-method.entity';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 
 @Injectable()

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from './base.map';
-import { MatsMethodData } from '../entities/mats-method-data.entity';
-import { MatsMethodDataDTO } from '../dtos/mats-method-data.dto';
+import { MatsMethod } from '../entities/mats-method.entity';
+import { MatsMethodDTO } from '../dtos/mats-method.dto';
 
 @Injectable()
-export class MatsMethodMap extends BaseMap<MatsMethodData, MatsMethodDataDTO> {
-  public async one(entity: MatsMethodData): Promise<MatsMethodDataDTO> {
+export class MatsMethodMap extends BaseMap<MatsMethod, MatsMethodDTO> {
+  public async one(entity: MatsMethod): Promise<MatsMethodDTO> {
     return {
       id: entity.id,
       monLocId: entity.monLocId,

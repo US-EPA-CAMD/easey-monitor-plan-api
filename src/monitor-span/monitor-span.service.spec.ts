@@ -40,7 +40,7 @@ describe('-- Monitor Span Service --', () => {
 
       const monLocId = '123';
 
-      const result = await monitorSpanService.getMonitorSpans(monLocId);
+      const result = await monitorSpanService.getSpans(monLocId);
 
       expect(monitorSpanRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();
@@ -54,7 +54,7 @@ describe('-- Monitor Span Service --', () => {
 
       const monLocId = '123';
 
-      const result = await monitorSpanService.getMonitorSpans(monLocId);
+      const result = await monitorSpanService.getSpans(monLocId);
 
       expect(monitorSpanRepository.find).toHaveBeenCalled();
       expect(map.many).toHaveBeenCalled();

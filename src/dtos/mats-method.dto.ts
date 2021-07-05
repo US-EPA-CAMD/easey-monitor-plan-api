@@ -1,4 +1,4 @@
-export class MatsMethodDataDTO {
+export class MatsMethodDTO {
   id: string;
   monLocId: string;
   matsMethodCode: string;
