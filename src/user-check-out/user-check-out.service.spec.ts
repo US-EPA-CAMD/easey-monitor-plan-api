@@ -41,10 +41,31 @@ describe('UserCheckOutService', () => {
     expect(service).toBeDefined();
   });
 
+  // describe('getCheckedOutConfiguration', () => {
+  //   it('should return a single checked out configuration', async () => {
+  //     const result = await service.getCheckedOutConfiguration(null);
+  //     expect(result).toEqual('');
+  //   });
+  // });
+
   describe('getCheckedOutConfigurations', () => {
     it('should return array of checked out configurations', async () => {
       const result = await service.getCheckedOutConfigurations();
       expect(result).toEqual('');
     });
   });
+
+  describe('checkOutConfiguration', () => {
+    it('should check out a configuration and return it', async () => {
+      const result = await service.checkOutConfiguration(null, null);
+      expect(result).toEqual('');
+    });
+  });
+
+  // describe('updateLastActivity', () => {
+  //   it('should update last activity for a checked out configuration', async () => {
+  //     const result = await service.updateLastActivity(null);
+  //     expect(result).toEqual('');
+  //   });
+  // });
 });

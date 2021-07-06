@@ -24,7 +24,9 @@ export class UserCheckOutService {
     return this.repository.checkOutConfiguration(monPlanId, username);
   }
 
-  async getCheckOutConfiguration(monPlanId: string): Promise<UserCheckOutDTO> {
+  async getCheckedOutConfiguration(
+    monPlanId: string,
+  ): Promise<UserCheckOutDTO> {
     const record = await this.repository.findOne({
       monPlanId,
     });
@@ -39,7 +41,7 @@ export class UserCheckOutService {
   }
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOutDTO> {
-    const record = await this.getCheckOutConfiguration(monPlanId);
+    const record = await this.getCheckedOutConfiguration(monPlanId);
     record.lastActivity = new Date(Date.now());
     return this.repository.save(record);
   }
