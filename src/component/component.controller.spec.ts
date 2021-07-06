@@ -1,90 +1,39 @@
-// import { Test } from '@nestjs/testing';
-// import { ConfigService } from '@nestjs/config';
-// import { ComponentController } from './component.controller';
-// import { ComponentService } from './component.service';
-// import { ComponentRepository } from './component.repository';
-// import { ComponentMap } from '../maps/component.map';
-// import { ComponentDTO } from '../dtos/component.dto';
-// import { MonitorSystemComponentRepository } from '../monitor-system/monitor-system-component.repository';
-// import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
-// import { SystemComponentMap } from '../maps/monitor-system-component.map';
-// import { MonitorMethodMap } from '../maps/monitor-method.map';
-// import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
-// import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
-// import { AnalyzerRange } from '../entities/analyzer-range.entity';
-// import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
+import { Test, TestingModule } from '@nestjs/testing';
 
-// const mockConfigService = () => ({
-//   get: jest.fn(),
-// });
+import { ComponentDTO } from '../dtos/component.dto';
+import { ComponentService } from './component.service';
+import { ComponentController } from './component.controller';
 
-// describe('-- components Controller --', () => {
-//   let supplementalMethodsController: ComponentController;
-//   let supplementalMethodsService: ComponentService;
+jest.mock('./component.service');
 
-//   beforeAll(async () => {
-//     const module = await Test.createTestingModule({
-//       controllers: [ComponentController],
-//       providers: [
-//         ComponentMap,
-//         ComponentService,
-//         ComponentRepository,
-//         MonitorSystemComponentRepository,
-//         MonitorSystemComponent,
-//         SystemComponentMap,
-//         MonitorMethodMap,
-//         AnalyzerRangeRepository,
-//         AnalyzerRangeMap,
-//         AnalyzerRange,
+const locId = 'some location id';
 
-//         {
-//           provide: ConfigService,
-//           useFactory: mockConfigService,
-//         },
-//       ],
-//     }).compile();
+const data: ComponentDTO[] = [];
+data.push(new ComponentDTO());
+data.push(new ComponentDTO());
 
-//     supplementalMethodsController = module.get(ComponentController);
-//     supplementalMethodsService = module.get(ComponentService);
-//   });
+describe('ComponentController', () => {
+  let controller: ComponentController;
+  let service: ComponentService;
 
-//   afterEach(() => {
-//     jest.resetAllMocks();
-//   });
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ComponentController],
+      providers: [ComponentService],
+    }).compile();
 
-//   describe('* getsComponents', () => {
-//     it('should return a list of Components ', async () => {
-//       const monLocId = '123';
-//       const expectedResult: ComponentDTO[] = [];
+    controller = module.get(ComponentController);
+    service = module.get(ComponentService);
+  });
 
-//       const serviceSpy = jest
-//         .spyOn(supplementalMethodsService, 'getComponentsByLocation')
-//         .mockResolvedValue(expectedResult);
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 
-//       const result = await supplementalMethodsController.getComponents(
-//         monLocId,
-//       );
-
-//       expect(serviceSpy).toHaveBeenCalledWith(monLocId);
-//       expect(result).toBe(result);
-//     });
-//   });
-
-//   describe('* getAnalyzerRangesByComponent', () => {
-//     it('should return a list of Components ', async () => {
-//       const monLocId = '123';
-//       const expectedResult: AnalyzerRangeDTO[] = [];
-
-//       const serviceSpy = jest
-//         .spyOn(supplementalMethodsService, 'getAnalyzerRangesByComponent')
-//         .mockResolvedValue(expectedResult);
-
-//       const result = await supplementalMethodsController.getAnalyzerRangesByComponent(
-//         monLocId,
-//       );
-
-//       expect(serviceSpy).toHaveBeenCalledWith(monLocId);
-//       expect(result).toBe(result);
-//     });
-//   });
-// });
+  describe('getComponents', () => {
+    it('should return array of components', async () => {
+      jest.spyOn(service, 'getComponents').mockResolvedValue(data);
+      expect(await controller.getComponents(locId)).toBe(data);
+    });
+  });
+});

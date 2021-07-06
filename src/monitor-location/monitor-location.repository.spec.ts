@@ -7,11 +7,13 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 const mockQueryBuilder = () => ({
   innerJoinAndSelect: jest.fn(),
   leftJoinAndSelect: jest.fn(),
+  where: jest.fn(),
+  andWhere: jest.fn(),
   addOrderBy: jest.fn(),
   getMany: jest.fn(),
 });
 
-describe('-- Monitor Locations Repository --', () => {
+describe('MonitorLocationRepository', () => {
   let monitorLocationRepository;
   let queryBuilder;
 
@@ -36,6 +38,8 @@ describe('-- Monitor Locations Repository --', () => {
         .mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.addOrderBy.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue('mockMonitorLocations');
 

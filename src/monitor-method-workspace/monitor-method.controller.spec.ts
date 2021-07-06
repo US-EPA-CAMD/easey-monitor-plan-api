@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorMethodService } from './monitor-method.service';
-import { MonitorMethodController } from './monitor-method.controller';
+import { MonitorMethodWorkspaceService } from './monitor-method.service';
+import { MonitorMethodWorkspaceController } from './monitor-method.controller';
 
 jest.mock('./monitor-method.service');
 
@@ -13,17 +13,17 @@ data.push(new MonitorMethodDTO());
 data.push(new MonitorMethodDTO());
 
 describe('MonitorMethodController', () => {
-  let controller: MonitorMethodController;
-  let service: MonitorMethodService;
+  let controller: MonitorMethodWorkspaceController;
+  let service: MonitorMethodWorkspaceService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [MonitorMethodController],
-      providers: [MonitorMethodService],
+      controllers: [MonitorMethodWorkspaceController],
+      providers: [MonitorMethodWorkspaceService],
     }).compile();
 
-    controller = module.get(MonitorMethodController);
-    service = module.get(MonitorMethodService);
+    controller = module.get(MonitorMethodWorkspaceController);
+    service = module.get(MonitorMethodWorkspaceService);
   });
 
   it('should be defined', () => {

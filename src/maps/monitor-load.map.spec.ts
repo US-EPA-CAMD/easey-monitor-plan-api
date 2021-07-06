@@ -1,0 +1,64 @@
+import { MonitorLoad } from '../entities/monitor-load.entity';
+import { MonitorLoadMap } from './monitor-load.map';
+
+const id = '';
+const monLocId = '';
+const loadAnalysisDate = new Date(Date.now());
+const beginDate = new Date(Date.now());
+const beginHour = 12;
+const endDate = new Date(Date.now());
+const endHour = 12;
+const maxLoadValue = 0;
+const secondNormalInd = 0;
+const upOpBoundary = 0;
+const lowOpBoundary = 0;
+const normalLevelCd = '';
+const secondLevelCd = '';
+const userId = '';
+const addDate = new Date(Date.now());
+const updateDate = new Date(Date.now());
+const maxLoadUomCd = '';
+
+const entity = new MonitorLoad();
+entity.id = id;
+entity.monLocId = monLocId;
+entity.loadAnalysisDate = loadAnalysisDate;
+entity.beginDate = beginDate;
+entity.beginHour = beginHour;
+entity.endDate = endDate;
+entity.endHour = endHour;
+entity.maxLoadValue = maxLoadValue;
+entity.secondNormalInd = secondNormalInd;
+entity.upOpBoundary = upOpBoundary;
+entity.lowOpBoundary = lowOpBoundary;
+entity.normalLevelCd = normalLevelCd;
+entity.secondLevelCd = secondLevelCd;
+entity.userId = userId;
+entity.addDate = addDate;
+entity.updateDate = updateDate;
+entity.maxLoadUomCd = maxLoadUomCd;
+
+describe('MonitorLoadMap', () => {
+  it('maps an entity to a dto', async () => {
+    const map = new MonitorLoadMap();
+    const result = await map.one(entity);
+    expect(result.id).toEqual(id);
+    expect(result.monLocId).toEqual(monLocId);
+    expect(result.loadAnalysisDate).toEqual(loadAnalysisDate);
+    expect(result.beginDate).toEqual(beginDate);
+    expect(result.beginHour).toEqual(beginHour);
+    expect(result.endDate).toEqual(endDate);
+    expect(result.endHour).toEqual(endHour);
+    expect(result.maxLoadValue).toEqual(maxLoadValue);
+    expect(result.secondNormalInd).toEqual(secondNormalInd);
+    expect(result.upOpBoundary).toEqual(upOpBoundary);
+    expect(result.lowOpBoundary).toEqual(lowOpBoundary);
+    expect(result.normalLevelCd).toEqual(normalLevelCd);
+    expect(result.secondLevelCd).toEqual(secondLevelCd);
+    expect(result.userId).toEqual(userId);
+    expect(result.addDate).toEqual(addDate);
+    expect(result.updateDate).toEqual(updateDate);
+    expect(result.maxLoadUomCd).toEqual(maxLoadUomCd);
+    expect(result.active).toEqual(false);
+  });
+});

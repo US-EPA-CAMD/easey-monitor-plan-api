@@ -15,7 +15,7 @@ export class AnalyzerRangeController {
     type: AnalyzerRangeDTO,
     description: 'Retrieves official analyzer range records for a component',
   })
-  getComponents(
+  getAnalyzerRanges(
     @Param('locId') locId: string,
     @Param('compId') compId: string,
   ): Promise<AnalyzerRangeDTO[]> {

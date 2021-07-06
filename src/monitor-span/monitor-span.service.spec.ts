@@ -1,64 +1,46 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import { MonitorSpanMap } from '../maps/monitor-span.map';
-import { MonitorSpanRepository } from './monitor-span.repository';
 import { MonitorSpanService } from './monitor-span.service';
+import { MonitorSpanRepository } from './monitor-span.repository';
 
-const mockMonitorSpanRepository = () => ({
-  find: jest.fn(),
+const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({
-  many: jest.fn(),
+  many: jest.fn().mockResolvedValue(''),
 });
 
-describe('-- Monitor Span Service --', () => {
-  let monitorSpanService;
-  let monitorSpanRepository;
-  let map;
+describe('MonitorSpanService', () => {
+  let service: MonitorSpanService;
 
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         MonitorSpanService,
         {
           provide: MonitorSpanRepository,
-          useFactory: mockMonitorSpanRepository,
+          useFactory: mockRepository,
         },
-        { provide: MonitorSpanMap, useFactory: mockMap },
+        {
+          provide: MonitorSpanMap,
+          useFactory: mockMap,
+        },
       ],
     }).compile();
 
-    monitorSpanService = module.get(MonitorSpanService);
-    monitorSpanRepository = module.get(MonitorSpanRepository);
-    map = module.get(MonitorSpanMap);
+    service = module.get(MonitorSpanService);
   });
 
-  describe('* getMonitorSpans', () => {
-    it('should return all monitor spans with the specified monLocId', async () => {
-      map.many.mockReturnValue('mockMonitorSpans');
-
-      const monLocId = '123';
-
-      const result = await monitorSpanService.getSpans(monLocId);
-
-      expect(monitorSpanRepository.find).toHaveBeenCalled();
-      expect(map.many).toHaveBeenCalled();
-      expect(result).toEqual('mockMonitorSpans');
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
-  describe('* getMonitorSpans', () => {
-    it('should return all monitor spans with the specified monLocId', async () => {
-      map.many.mockReturnValue('mockMonitorSpans');
-
-      const monLocId = '123';
-
-      const result = await monitorSpanService.getSpans(monLocId);
-
-      expect(monitorSpanRepository.find).toHaveBeenCalled();
-      expect(map.many).toHaveBeenCalled();
-      expect(result).toEqual('mockMonitorSpans');
+  describe('getSpans', () => {
+    it('should return array of monitor spans', async () => {
+      const result = await service.getSpans(null);
+      expect(result).toEqual('');
     });
   });
 });

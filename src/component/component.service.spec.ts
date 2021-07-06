@@ -1,67 +1,46 @@
-// import { Test } from '@nestjs/testing';
-// import { ConfigService } from '@nestjs/config';
-// import { ComponentController } from './component.controller';
-// import { ComponentService } from './component.service';
-// import { ComponentRepository } from './component.repository';
-// import { ComponentMap } from '../maps/component.map';
-// import { ComponentDTO } from '../dtos/component.dto';
-// import { MonitorSystemComponentRepository } from '../monitor-system/monitor-system-component.repository';
-// import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
-// import { SystemComponentMap } from '../maps/monitor-system-component.map';
-// import { MonitorMethodMap } from '../maps/monitor-method.map';
-// import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
-// import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
-// import { AnalyzerRange } from '../entities/analyzer-range.entity';
+import { Test, TestingModule } from '@nestjs/testing';
 
-// const mockConfigService = () => ({
-//   get: jest.fn(),
-// });
+import { ComponentMap } from '../maps/component.map';
+import { ComponentService } from './component.service';
+import { ComponentRepository } from './component.repository';
 
-// describe('-- Supplemental Methods Controller --', () => {
-//   let supplementalMethodsController: ComponentController;
-//   let supplementalMethodsService: ComponentService;
+const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue(''),
+});
 
-//   beforeAll(async () => {
-//     const module = await Test.createTestingModule({
-//       controllers: [ComponentController],
-//       providers: [
-//         ComponentMap,
-//         ComponentService,
-//         ComponentRepository,
-//         MonitorSystemComponentRepository,
-//         MonitorSystemComponent,
-//         SystemComponentMap,
-//         MonitorMethodMap,
-//         AnalyzerRangeRepository,
-//         AnalyzerRangeMap,
-//         AnalyzerRange,
-//         {
-//           provide: ConfigService,
-//           useFactory: mockConfigService,
-//         },
-//       ],
-//     }).compile();
-//   });
+const mockMap = () => ({
+  many: jest.fn().mockResolvedValue(''),
+});
 
-//   afterEach(() => {
-//     jest.resetAllMocks();
-//   });
+describe('ComponentService', () => {
+  let service: ComponentService;
 
-//   describe('* getSystemComponent', () => {
-//     it('should return a list of components', async () => {
-//       const monLocId = '123';
-//       const expectedResult: ComponentDTO[] = [];
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ComponentService,
+        {
+          provide: ComponentRepository,
+          useFactory: mockRepository,
+        },
+        {
+          provide: ComponentMap,
+          useFactory: mockMap,
+        },
+      ],
+    }).compile();
 
-//       return true;
-//     });
-//   });
+    service = module.get(ComponentService);
+  });
 
-//   describe('* setComponentDate', () => {
-//     it('should return a list of components', async () => {
-//       const monLocId = '123';
-//       const expectedResult: ComponentDTO[] = [];
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 
-//       return true;
-//     });
-//   });
-// });
+  describe('getComponents', () => {
+    it('should return array of components', async () => {
+      const result = await service.getComponents(null);
+      expect(result).toEqual('');
+    });
+  });
+});

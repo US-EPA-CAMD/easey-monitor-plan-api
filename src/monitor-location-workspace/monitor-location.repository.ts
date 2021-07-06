@@ -7,14 +7,14 @@ export class MonitorLocationWorkspaceRepository extends Repository<
   MonitorLocation
 > {
   async getMonitorLocationsByFacId(facId: number): Promise<MonitorLocation[]> {
-    const query = this.createQueryBuilder('ml')
+    return this.createQueryBuilder('ml')
       .innerJoinAndSelect('ml.plans', 'p')
       .leftJoinAndSelect('ml.unit', 'u')
       .leftJoinAndSelect('ml.stackPipe', 'stp')
       .leftJoinAndSelect('u.opStatuses', 'uos')
       .where('p.facId = :facId', { facId })
       .andWhere('uos.endDate IS NULL')
-      .addOrderBy('u.name, stp.name');
-    return query.getMany();
+      .addOrderBy('u.name, stp.name')
+      .getMany();
   }
 }

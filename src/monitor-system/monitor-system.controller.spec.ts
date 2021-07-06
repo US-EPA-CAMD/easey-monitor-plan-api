@@ -1,79 +1,39 @@
-// import { Test } from '@nestjs/testing';
-// import { ConfigService } from '@nestjs/config';
-// import { MonitorSystemController } from './monitor-system.controller';
-// import { MonitorSystemService } from './monitor-system.service';
-// import { MonitorSystemRepository } from './monitor-system.repository';
-// import { MonitorSystemMap } from '../maps/monitor-system.map';
-// import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
-// import { ComponentMap } from '../maps/component.map';
-// import { SystemComponent } from '../entities/system-component.entity';
-// import { SystemComponentMap } from '../maps/system-component.map';
-// import { SystemComponentRepository } from './system-component.repository';
-// import { ComponentRepository } from '../component/component.repository';
+import { Test, TestingModule } from '@nestjs/testing';
 
-// import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
-// import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
-// import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
+import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
+import { MonitorSystemService } from './monitor-system.service';
+import { MonitorSystemController } from './monitor-system.controller';
 
-// const mockConfigService = () => ({
-//   get: jest.fn(),
-// });
+jest.mock('./monitor-system.service');
 
-// describe('-- Monistor System Controller --', () => {
-//   let supplementalMethodsController: MonitorSystemController;
-//   let supplementalMethodsService: MonitorSystemService;
+const locId = 'some location id';
 
-//   beforeAll(async () => {
-//     const module = await Test.createTestingModule({
-//       controllers: [MonitorSystemController],
-//       providers: [
-//         MonitorSystemMap,
-//         MonitorSystemService,
-//         MonitorSystemRepository,
-//         SystemFuelFlow,
-//         MonitorSystemComponent,
-//         SystemComponentMap,
-//         ComponentMap,
-//         SystemFuelFlowMap,
-//         MonitorSystemComponentRepository,
-//         ComponentRepository,
-//         SystemFuelFlowRepository,
-//         {
-//           provide: ConfigService,
-//           useFactory: mockConfigService,
-//         },
-//       ],
-//     }).compile();
+const data: MonitorSystemDTO[] = [];
+data.push(new MonitorSystemDTO());
+data.push(new MonitorSystemDTO());
 
-//     supplementalMethodsController = module.get(MonitorSystemController);
-//     supplementalMethodsService = module.get(MonitorSystemService);
-//   });
+describe('MonitorSystemController', () => {
+  let controller: MonitorSystemController;
+  let service: MonitorSystemService;
 
-//   afterEach(() => {
-//     jest.resetAllMocks();
-//   });
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [MonitorSystemController],
+      providers: [MonitorSystemService],
+    }).compile();
 
-//   describe('* getsMonitorSystem', () => {
-//     it('should return a list of Monitoring Systems', async () => {
-//       const monLocId = '123';
-//       const expectedResult: MonitorSystemDTO[] = [];
-//       return true;
-//     });
-//   });
+    controller = module.get(MonitorSystemController);
+    service = module.get(MonitorSystemService);
+  });
 
-//   describe('* getsSystemComponent', () => {
-//     it('should return a list of Monitoring components', async () => {
-//       const monLocId = '123';
-//       const expectedResult: MonitorSystemDTO[] = [];
-//       return true;
-//     });
-//   });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 
-//   describe('* getsSystemFuelFlow', () => {
-//     it('should return a list of Monitoring fuel flows', async () => {
-//       const monLocId = '123';
-//       const expectedResult: MonitorSystemDTO[] = [];
-//       return true;
-//     });
-//   });
-// });
+  describe('getSystems', () => {
+    it('should return array of monitor systems', async () => {
+      jest.spyOn(service, 'getSystems').mockResolvedValue(data);
+      expect(await controller.getSystems(locId)).toBe(data);
+    });
+  });
+});

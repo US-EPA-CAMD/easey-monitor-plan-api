@@ -1,55 +1,39 @@
-// import { Test } from '@nestjs/testing';
-// import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 
-// import { MatsMethodDataDTO } from '../dtos/mats-method-data.dto';
-// import { MatsMethodMap } from '../maps/mats-method.map';
-// import { SupplementalMethodsController } from './mats-method.controller';
-// import { MatsMethodRepository } from './mats-method.repository';
-// import { SupplementalMethodsService } from './mats-method.service';
+import { MatsMethodDTO } from '../dtos/mats-method.dto';
+import { MatsMethodService } from './mats-method.service';
+import { MatsMethodController } from './mats-method.controller';
 
-// const mockConfigService = () => ({
-//   get: jest.fn(),
-// });
+jest.mock('./mats-method.service');
 
-// describe('-- Supplemental Methods Controller --', () => {
-//   let supplementalMethodsController: SupplementalMethodsController;
-//   let supplementalMethodsService: SupplementalMethodsService;
+const locId = 'some location id';
 
-//   beforeAll(async () => {
-//     const module = await Test.createTestingModule({
-//       controllers: [SupplementalMethodsController],
-//       providers: [
-//         MatsMethodMap,
-//         SupplementalMethodsService,
-//         MatsMethodRepository,
-//         {
-//           provide: ConfigService,
-//           useFactory: mockConfigService,
-//         },
-//       ],
-//     }).compile();
+const data: MatsMethodDTO[] = [];
+data.push(new MatsMethodDTO());
+data.push(new MatsMethodDTO());
 
-//     supplementalMethodsController = module.get(SupplementalMethodsController);
-//     supplementalMethodsService = module.get(SupplementalMethodsService);
-//   });
+describe('MatsMethodController', () => {
+  let controller: MatsMethodController;
+  let service: MatsMethodService;
 
-//   afterEach(() => {
-//     jest.resetAllMocks();
-//   });
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [MatsMethodController],
+      providers: [MatsMethodService],
+    }).compile();
 
-//   describe('* getsSupplementalMethods', () => {
-//     it('should return a list of Supplemental Methods', async () => {
-//       const monLocId = '123';
-//       const expectedResult: MatsMethodDataDTO[] = [];
+    controller = module.get(MatsMethodController);
+    service = module.get(MatsMethodService);
+  });
 
-//       const serviceSpy = jest
-//         .spyOn(supplementalMethodsService, 'getMatsMethods')
-//         .mockResolvedValue(expectedResult);
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 
-//       const result = await supplementalMethodsController.getMethods(monLocId);
-
-//       expect(serviceSpy).toHaveBeenCalledWith(monLocId);
-//       expect(result).toBe(expectedResult);
-//     });
-//   });
-// });
+  describe('getMethods', () => {
+    it('should return array of mats methods', async () => {
+      jest.spyOn(service, 'getMethods').mockResolvedValue(data);
+      expect(await controller.getMethods(locId)).toBe(data);
+    });
+  });
+});
