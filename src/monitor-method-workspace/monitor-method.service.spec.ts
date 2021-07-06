@@ -12,7 +12,7 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue(''),
 });
 
-describe('MonitorMethodService', () => {
+describe('MonitorMethodWorkspaceService', () => {
   let service: MonitorMethodWorkspaceService;
 
   beforeAll(async () => {

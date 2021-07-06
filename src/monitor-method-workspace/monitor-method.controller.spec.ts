@@ -12,7 +12,7 @@ const data: MonitorMethodDTO[] = [];
 data.push(new MonitorMethodDTO());
 data.push(new MonitorMethodDTO());
 
-describe('MonitorMethodController', () => {
+describe('MonitorMethodWorkspaceController', () => {
   let controller: MonitorMethodWorkspaceController;
   let service: MonitorMethodWorkspaceService;
 

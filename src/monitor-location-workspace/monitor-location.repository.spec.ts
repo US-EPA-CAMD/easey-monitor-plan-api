@@ -13,7 +13,7 @@ const mockQueryBuilder = () => ({
   getMany: jest.fn(),
 });
 
-describe('MonitorLocationRepository', () => {
+describe('MonitorLocationWorkspaceRepository', () => {
   let monitorLocationRepository;
   let queryBuilder;
 
