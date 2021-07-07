@@ -19,7 +19,6 @@ export class MonitorLocationMap extends BaseMap<
   private getStatus(type: string, entity: MonitorLocation): boolean {
     if (type === 'Unit') {
       const unitStatus = entity.unit.opStatuses[0];
-      console.log(unitStatus);
       if (unitStatus.endDate == null && unitStatus.opStatusCode == 'RET') {
         return false;
       }

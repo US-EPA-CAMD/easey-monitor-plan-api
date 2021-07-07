@@ -64,8 +64,6 @@ export class MonitorMethodWorkspaceService {
   ): Promise<MonitorMethodDTO> {
     const method = await this.getMethod(methodId);
 
-    console.log('Method', method);
-
     method.parameterCode = payload.parameterCode;
     method.subDataCode = payload.subDataCode;
     method.bypassApproachCode = payload.bypassApproachCode;
