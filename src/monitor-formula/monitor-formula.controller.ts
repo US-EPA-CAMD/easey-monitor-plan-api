@@ -1,31 +1,21 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBadRequestResponse,
-  ApiNotFoundResponse,
-} from '@nestjs/swagger';
-
+import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaService } from './monitor-formula.service';
 
-@ApiTags('Monitor Formulas')
+@ApiTags('Formulas')
 @Controller()
 export class MonitorFormulaController {
   constructor(private service: MonitorFormulaService) {}
 
   @Get()
   @ApiOkResponse({
-    description: 'Retrieved Methods',
+    isArray: true,
+    type: MonitorFormulaDTO,
+    description: 'Retrieves official formula records for a monitor location',
   })
-  @ApiBadRequestResponse({
-    description: 'Invalid Request',
-  })
-  @ApiNotFoundResponse({
-    description: 'Resource Not Found',
-  })
-  getFormulas(@Param('id') monLocId: string): Promise<MonitorFormulaDTO[]> {
-    return this.service.getMonitorFormulas(monLocId);
+  getFormulas(@Param('locId') monLocId: string): Promise<MonitorFormulaDTO[]> {
+    return this.service.getFormulas(monLocId);
   }
 }

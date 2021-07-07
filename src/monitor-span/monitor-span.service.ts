@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions } from 'typeorm';
 
-import { MonitorSpanRepository } from './monitor-span.repository';
-import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
+import { MonitorSpanMap } from '../maps/monitor-span.map';
+import { MonitorSpanRepository } from './monitor-span.repository';
 
 @Injectable()
 export class MonitorSpanService {
@@ -14,32 +13,8 @@ export class MonitorSpanService {
     private map: MonitorSpanMap,
   ) {}
 
-  async getMonitorSpans(monLocId: string): Promise<MonitorSpanDTO[]> {
-    const findOpts: FindManyOptions = {
-      select: [
-        'id',
-        'mpcValue',
-        'mecValue',
-        'maxLowRange',
-        'spanValue',
-        'fullScaleRange',
-        'beginDate',
-        'beginHour',
-        'endDate',
-        'endHour',
-        'defaultHighRange',
-        'flowSpanValue',
-        'flowFullScaleRange',
-        'componentTypeCd',
-        'spanScaleCd',
-        'spanMethodCd',
-        'userid',
-        'updateDate',
-        'spanUomCd',
-      ],
-      where: { monLocId: monLocId },
-    };
-
-    return await this.map.many(await this.repository.find(findOpts));
+  async getSpans(monLocId: string): Promise<MonitorSpanDTO[]> {
+    const results = await this.repository.find({ monLocId: monLocId });
+    return this.map.many(results);
   }
 }

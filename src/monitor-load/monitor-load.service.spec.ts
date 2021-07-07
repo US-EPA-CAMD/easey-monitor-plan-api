@@ -1,64 +1,46 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import { MonitorLoadMap } from '../maps/monitor-load.map';
-import { MonitorLoadRepository } from './monitor-load.repository';
 import { MonitorLoadService } from './monitor-load.service';
+import { MonitorLoadRepository } from './monitor-load.repository';
 
-const mockMonitorLoadRepository = () => ({
-  find: jest.fn(),
+const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({
-  many: jest.fn(),
+  many: jest.fn().mockResolvedValue(''),
 });
 
-describe('-- Monitor Load Service --', () => {
-  let monitorLoadService;
-  let monitorLoadRepository;
-  let map;
+describe('MonitorLoadService', () => {
+  let service: MonitorLoadService;
 
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         MonitorLoadService,
         {
           provide: MonitorLoadRepository,
-          useFactory: mockMonitorLoadRepository,
+          useFactory: mockRepository,
         },
-        { provide: MonitorLoadMap, useFactory: mockMap },
+        {
+          provide: MonitorLoadMap,
+          useFactory: mockMap,
+        },
       ],
     }).compile();
 
-    monitorLoadService = module.get(MonitorLoadService);
-    monitorLoadRepository = module.get(MonitorLoadRepository);
-    map = module.get(MonitorLoadMap);
+    service = module.get(MonitorLoadService);
   });
 
-  describe('* getMonitorLoads', () => {
-    it('should return all monitor loads with the specified monLocId', async () => {
-      map.many.mockReturnValue('mockMonitorLoads');
-
-      const monLocId = '123';
-
-      const result = await monitorLoadService.getMonitorLoads(monLocId);
-
-      expect(monitorLoadRepository.find).toHaveBeenCalled();
-      expect(map.many).toHaveBeenCalled();
-      expect(result).toEqual('mockMonitorLoads');
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
-  describe('* getMonitorLoads', () => {
-    it('should return all monitor spans with the specified monLocId', async () => {
-      map.many.mockReturnValue('mockMonitorLoads');
-
-      const monLocId = '123';
-
-      const result = await monitorLoadService.getMonitorLoads(monLocId);
-
-      expect(monitorLoadRepository.find).toHaveBeenCalled();
-      expect(map.many).toHaveBeenCalled();
-      expect(result).toEqual('mockMonitorLoads');
+  describe('getLoads', () => {
+    it('should return array of monitor loads', async () => {
+      const result = await service.getLoads(null);
+      expect(result).toEqual('');
     });
   });
 });

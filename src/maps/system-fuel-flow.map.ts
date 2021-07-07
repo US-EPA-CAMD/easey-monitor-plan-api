@@ -5,7 +5,10 @@ import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 
 @Injectable()
-export class SystemFuelFlowMap extends BaseMap<SystemFuelFlow, SystemFuelFlowDTO> {
+export class SystemFuelFlowMap extends BaseMap<
+  SystemFuelFlow,
+  SystemFuelFlowDTO
+> {
   public async one(entity: SystemFuelFlow): Promise<SystemFuelFlowDTO> {
     return {
       id: entity.id,

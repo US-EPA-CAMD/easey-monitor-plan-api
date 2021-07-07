@@ -1,64 +1,46 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 
 import { MonitorMethodMap } from '../maps/monitor-method.map';
-import { MonitorMethodRepository } from './monitor-method.repository';
 import { MonitorMethodService } from './monitor-method.service';
+import { MonitorMethodRepository } from './monitor-method.repository';
 
-const mockMonitorMethodRepository = () => ({
-  find: jest.fn(),
+const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({
-  many: jest.fn(),
+  many: jest.fn().mockResolvedValue(''),
 });
 
-describe('-- Monitor Method Service --', () => {
-  let monitorMethodService;
-  let monitorMethodRepository;
-  let map;
+describe('MonitorMethodService', () => {
+  let service: MonitorMethodService;
 
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         MonitorMethodService,
         {
           provide: MonitorMethodRepository,
-          useFactory: mockMonitorMethodRepository,
+          useFactory: mockRepository,
         },
-        { provide: MonitorMethodMap, useFactory: mockMap },
+        {
+          provide: MonitorMethodMap,
+          useFactory: mockMap,
+        },
       ],
     }).compile();
 
-    monitorMethodService = module.get(MonitorMethodService);
-    monitorMethodRepository = module.get(MonitorMethodRepository);
-    map = module.get(MonitorMethodMap);
+    service = module.get(MonitorMethodService);
   });
 
-  describe('* getMonitorMethods', () => {
-    it('should return all monitor methods with the specified monLocId', async () => {
-      map.many.mockReturnValue('mockMonitorMethods');
-
-      const monLocId = '123';
-
-      const result = await monitorMethodService.getMonitorMethods(monLocId);
-
-      expect(monitorMethodRepository.find).toHaveBeenCalled();
-      expect(map.many).toHaveBeenCalled();
-      expect(result).toEqual('mockMonitorMethods');
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
-  describe('* getMonitorMethods', () => {
-    it('should return all monitor methods with the specified monLocId', async () => {
-      map.many.mockReturnValue('mockMonitorMethods');
-
-      const monLocId = '123';
-
-      const result = await monitorMethodService.getMonitorMethods(monLocId);
-
-      expect(monitorMethodRepository.find).toHaveBeenCalled();
-      expect(map.many).toHaveBeenCalled();
-      expect(result).toEqual('mockMonitorMethods');
+  describe('getMethods', () => {
+    it('should return array of monitor methods', async () => {
+      const result = await service.getMethods(null);
+      expect(result).toEqual('');
     });
   });
 });

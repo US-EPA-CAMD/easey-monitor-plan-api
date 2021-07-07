@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions } from 'typeorm';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorMethodRepository } from './monitor-method.repository';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
+import { MonitorMethodRepository } from './monitor-method.repository';
 
 @Injectable()
 export class MonitorMethodService {
@@ -15,31 +14,7 @@ export class MonitorMethodService {
   ) {}
 
   async getMethods(monLocId: string): Promise<MonitorMethodDTO[]> {
-    const findOpts: FindManyOptions = {
-      select: [
-        'id',
-        'parameterCode',
-        'methodCode',
-        'subDataCode',
-        'bypassApproachCode',
-        'beginDate',
-        'beginHour',
-        'endDate',
-        'endHour',
-      ],
-      where: { monLocId: monLocId },
-    };
-    const results = await this.repository.find(findOpts);
+    const results = await this.repository.find({ monLocId: monLocId });
     return this.map.many(results);
-    //return this.setStatus(monMethods);
   }
-
-  // setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
-  //   monitoringMethod.forEach(m => {
-  //     if (m.endDate == null) {
-  //       m.active = true;
-  //     }
-  //   });
-  //   return monitoringMethod;
-  // }
 }

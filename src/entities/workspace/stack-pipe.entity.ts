@@ -5,7 +5,6 @@ import {
   PrimaryColumn,
   OneToMany,
   ManyToOne,
-  JoinTable,
   JoinColumn,
 } from 'typeorm';
 
@@ -30,14 +29,20 @@ export class StackPipe extends BaseEntity {
   retireDate: Date;
 
   @Column({
-    name: 'fac_id'
+    name: 'fac_id',
   })
-  facId: number;  
+  facId: number;
 
-  @ManyToOne(() => Plant, plant => plant.stackPipes)
+  @ManyToOne(
+    () => Plant,
+    plant => plant.stackPipes,
+  )
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
 
-  @OneToMany(() => MonitorLocation, location => location.stackPipe)
+  @OneToMany(
+    () => MonitorLocation,
+    location => location.stackPipe,
+  )
   locations: MonitorLocation[];
 }

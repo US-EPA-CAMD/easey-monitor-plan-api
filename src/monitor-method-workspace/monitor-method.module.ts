@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MonitorMethodWorkspaceController } from './monitor-method.controller';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
-
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 
 @Module({

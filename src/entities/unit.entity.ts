@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { Plant } from './plant.entity';
+import { UnitOpStatus } from './unit-op-status.entity';
 import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camd.unit' })
@@ -40,4 +41,11 @@ export class Unit extends BaseEntity {
     location => location.unit,
   )
   locations: MonitorLocation[];
+
+  @OneToMany(
+    () => UnitOpStatus,
+    uos => uos.unit,
+    { eager: true },
+  )
+  opStatuses: UnitOpStatus[];
 }

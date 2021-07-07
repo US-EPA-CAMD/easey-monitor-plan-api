@@ -1,74 +1,46 @@
-import { Test } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
-import { ComponentController } from './component.controller';
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { ComponentMap } from '../maps/component.map';
 import { ComponentService } from './component.service';
 import { ComponentRepository } from './component.repository';
-import{ComponentMap} from '../maps/component.map';
-import { ComponentDTO } from '../dtos/component.dto';
-import {MonitorSystemComponentRepository} from '../monitor-system/monitor-system-component.repository'
-import { MonitorSystemComponent } from '../entities/monitor-system-component.entity';
-import{systemComponentMap} from '../maps/monitor-system-component.map'
-import { MonitorMethodMap } from '../maps/monitor-method.map';
-import { AnalyzerRangeRepository } from './analyzer-range.repository';
-import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
-import { AnalyzerRange } from '../entities/analyzer-range.entity';
 
-const mockConfigService = () => ({
-    get: jest.fn(),
+const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue(''),
+});
+
+const mockMap = () => ({
+  many: jest.fn().mockResolvedValue(''),
+});
+
+describe('ComponentService', () => {
+  let service: ComponentService;
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ComponentService,
+        {
+          provide: ComponentRepository,
+          useFactory: mockRepository,
+        },
+        {
+          provide: ComponentMap,
+          useFactory: mockMap,
+        },
+      ],
+    }).compile();
+
+    service = module.get(ComponentService);
   });
-  
-  describe('-- Supplemental Methods Controller --', () => {
-    let supplementalMethodsController: ComponentController;
-    let supplementalMethodsService: ComponentService;
-  
-    beforeAll(async () => {
-      const module = await Test.createTestingModule({
-        controllers: [ComponentController],
-        providers: [
-            ComponentMap,
-            ComponentService,
-            ComponentRepository,
-            MonitorSystemComponentRepository,
-            MonitorSystemComponent,
-            systemComponentMap,
-            MonitorMethodMap,
-            AnalyzerRangeRepository,
-            AnalyzerRangeMap,
-            AnalyzerRange,
-          {
-            provide: ConfigService,
-            useFactory: mockConfigService,
-          },
-        ],
-      }).compile();
-  
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('getComponents', () => {
+    it('should return array of components', async () => {
+      const result = await service.getComponents(null);
+      expect(result).toEqual('');
     });
-  
-    afterEach(() => {
-      jest.resetAllMocks();
-    });
-  
-   
-
-    describe('* getSystemComponent', () => {
-        it('should return a list of components', async () => {
-          const monLocId = '123';
-          const expectedResult: ComponentDTO[] = [];
-    
-          return true;
-        });
-      });
-
-      
-    describe('* setComponentDate', () => {
-        it('should return a list of components', async () => {
-          const monLocId = '123';
-          const expectedResult: ComponentDTO[] = [];
-    
-          return true;
-        });
-      });
-
-  }
-  );
-  
+  });
+});

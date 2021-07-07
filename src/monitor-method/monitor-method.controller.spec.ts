@@ -1,70 +1,39 @@
-import { Test } from '@nestjs/testing';
-import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 
-import { MonitorMethodMap } from '../maps/monitor-method.map';
-import { MonitorMethodController } from './monitor-method.controller';
-import { MonitorMethodRepository } from './monitor-method.repository';
-import { MonitorMethodService } from './monitor-method.service';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
+import { MonitorMethodService } from './monitor-method.service';
+import { MonitorMethodController } from './monitor-method.controller';
 
-const mockConfigService = () => ({
-  get: jest.fn(),
-});
+jest.mock('./monitor-method.service');
 
-describe('-- Monitor Method Controller --', () => {
-  let monitorMethodController: MonitorMethodController;
-  let monitorMethodService: MonitorMethodService;
+const locId = 'some location id';
+
+const data: MonitorMethodDTO[] = [];
+data.push(new MonitorMethodDTO());
+data.push(new MonitorMethodDTO());
+
+describe('MonitorMethodController', () => {
+  let controller: MonitorMethodController;
+  let service: MonitorMethodService;
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       controllers: [MonitorMethodController],
-      providers: [
-        MonitorMethodMap,
-        MonitorMethodService,
-        MonitorMethodRepository,
-        {
-          provide: ConfigService,
-          useFactory: mockConfigService,
-        },
-      ],
+      providers: [MonitorMethodService],
     }).compile();
 
-    monitorMethodController = module.get(MonitorMethodController);
-    monitorMethodService = module.get(MonitorMethodService);
+    controller = module.get(MonitorMethodController);
+    service = module.get(MonitorMethodService);
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
-  describe('* getMonitorMethods', () => {
-    it('should return a list of Monitor Methods', async () => {
-      const monLocId = '123';
-      const expectedResult: MonitorMethodDTO[] = [];
-
-      const serviceSpy = jest
-        .spyOn(monitorMethodService, 'getMonitorMethods')
-        .mockResolvedValue(expectedResult);
-
-      const result = await monitorMethodController.getUnits(monLocId);
-
-      expect(serviceSpy).toHaveBeenCalledWith(monLocId);
-      expect(result).toBe(expectedResult);
-    });
-  });
-  describe('* getMethods', () => {
-    it('should return a list of Monitor Methods', async () => {
-      const monLocId = '123';
-      const expectedResult: MonitorMethodDTO[] = [];
-
-      const serviceSpy = jest
-        .spyOn(monitorMethodService, 'getMonitorMethods')
-        .mockResolvedValue(expectedResult);
-
-      const result = await monitorMethodController.getUnits(monLocId);
-
-      expect(serviceSpy).toHaveBeenCalledWith(monLocId);
-      expect(result).toBe(expectedResult);
+  describe('getMethods', () => {
+    it('should return array of monitor methods', async () => {
+      jest.spyOn(service, 'getMethods').mockResolvedValue(data);
+      expect(await controller.getMethods(locId)).toBe(data);
     });
   });
 });

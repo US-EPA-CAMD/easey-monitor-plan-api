@@ -13,6 +13,7 @@ import routes from './routes';
 import { TypeOrmConfigService } from './config/typeorm.config';
 
 /***** internal modules *****/
+import { AnalyzerRangeModule } from './analyzer-range/analyzer-range.module';
 import { ComponentModule } from './component/component.module';
 import { MonitorFormulaModule } from './monitor-formula/monitor-formula.module';
 import { MonitorLoadModule } from './monitor-load/monitor-load.module';
@@ -24,7 +25,9 @@ import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
 import { MonitorSpanModule } from './monitor-span/monitor-span.module';
 import { MonitorSystemModule } from './monitor-system/monitor-system.module';
-import { SupplementalMethodsModule } from './supplemental-methods/supplemental-methods.module';
+import { MatsMethodModule } from './mats-method/mats-method.module';
+import { SystemComponentModule } from './system-component/system-component.module';
+import { SystemFuelFlowModule } from './system-fuel-flow/system-fuel-flow.module';
 
 @Module({
   imports: [
@@ -36,18 +39,21 @@ import { SupplementalMethodsModule } from './supplemental-methods/supplemental-m
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    ComponentModule,
-    MonitorFormulaModule,
-    MonitorLoadModule,
+    MonitorPlanModule,
+    MonitorPlanWorkspaceModule,
     MonitorLocationModule,
     MonitorLocationWorkspaceModule,
     MonitorMethodModule,
     MonitorMethodWorkspaceModule,
-    MonitorPlanModule,
-    MonitorPlanWorkspaceModule,    
-    MonitorSpanModule,
+    MatsMethodModule,
+    ComponentModule,
+    AnalyzerRangeModule,
     MonitorSystemModule,
-    SupplementalMethodsModule,
+    SystemComponentModule,
+    SystemFuelFlowModule,
+    MonitorSpanModule,
+    MonitorLoadModule,
+    MonitorFormulaModule,
   ],
 })
 export class AppModule {}

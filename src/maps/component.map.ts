@@ -10,6 +10,7 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
     return {
       id: entity.id,
       monLocId: entity.monLocId,
+      componentIdentifier: entity.componentIdentifier,
       componentTypeCode: entity.componentTypeCode,
       basisCode: entity.basisCode,
       modelVersion: entity.modelVersion,
@@ -17,11 +18,6 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       serialNumber: entity.serialNumber,
       hgConverterInd: entity.hgConverterInd,
       acquisitionMethodCode: entity.acquisitionMethodCode,
-      componentIdentifier: entity.componentIdentifier,
-      beginDate: null,
-      beginHour: null,
-      endDate: null,
-      endHour: null,
     };
   }
 }

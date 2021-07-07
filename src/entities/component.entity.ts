@@ -1,4 +1,6 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn, ManyToMany } from 'typeorm';
+
+import { MonitorSystem } from './monitor-system.entity';
 
 @Entity({ name: 'camdecmps.component' })
 export class Component extends BaseEntity {
@@ -61,4 +63,11 @@ export class Component extends BaseEntity {
     name: 'hg_converter_ind',
   })
   hgConverterInd: number;
+
+  @ManyToMany(
+    () => MonitorSystem,
+    ms => ms.components,
+    { eager: true },
+  )
+  systems: MonitorSystem[];
 }

@@ -1,13 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
+import { UpdateMonitorMethodDTO } from '../dtos/update-monitor-method.dto';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
-import { MonitorMethod } from 'src/entities/workspace/monitor-method.entity';
-import { UpdateMonitorMethodDTO } from 'src/dtos/update-monitor-method.dto';
+import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
+import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
@@ -18,23 +17,8 @@ export class MonitorMethodWorkspaceService {
   ) {}
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
-    const findOpts: FindManyOptions = {
-      select: [
-        'id',
-        'parameterCode',
-        'methodCode',
-        'subDataCode',
-        'bypassApproachCode',
-        'beginDate',
-        'beginHour',
-        'endDate',
-        'endHour',
-      ],
-      where: { monLocId: locId },
-    };
-    const results = await this.repository.find(findOpts);
+    const results = await this.repository.find({ monLocId: locId });
     return this.map.many(results);
-    //return this.setStatus(monMethods);
   }
 
   async getMethod(methodId: string): Promise<MonitorMethod> {
@@ -80,8 +64,6 @@ export class MonitorMethodWorkspaceService {
   ): Promise<MonitorMethodDTO> {
     const method = await this.getMethod(methodId);
 
-    console.log('Method', method);
-
     method.parameterCode = payload.parameterCode;
     method.subDataCode = payload.subDataCode;
     method.bypassApproachCode = payload.bypassApproachCode;
@@ -99,13 +81,4 @@ export class MonitorMethodWorkspaceService {
     const result = await this.repository.save(method);
     return this.map.one(result);
   }
-
-  // private setStatus(monitoringMethod: MonitorMethodDTO[]): MonitorMethodDTO[] {
-  //   monitoringMethod.forEach(m => {
-  //     if (m.endDate == null) {
-  //       m.active = true;
-  //     }
-  //   });
-  //   return monitoringMethod;
-  // }
 }

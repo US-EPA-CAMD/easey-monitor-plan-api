@@ -1,6 +1,7 @@
-import { IsNotEmpty } from 'class-validator';
-
 export class UserCheckOutDTO {
-  @IsNotEmpty()
-  username: string;
+  facId: number;
+  monPlanId: string;
+  checkedOutOn: Date;
+  checkedOutBy: string;
+  lastActivity: Date;
 }

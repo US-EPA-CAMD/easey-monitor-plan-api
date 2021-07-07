@@ -1,12 +1,11 @@
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-
 import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
+import { UpdateMonitorMethodDTO } from '../dtos/update-monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
-import { UpdateMonitorMethodDTO } from 'src/dtos/update-monitor-method.dto';
 
-@ApiTags('Monitor Methods')
+@ApiTags('Methods')
 @Controller()
 export class MonitorMethodWorkspaceController {
   constructor(private service: MonitorMethodWorkspaceService) {}

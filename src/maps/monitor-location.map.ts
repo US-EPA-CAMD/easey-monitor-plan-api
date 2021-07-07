@@ -10,22 +10,38 @@ export class MonitorLocationMap extends BaseMap<
   MonitorLocation,
   MonitorLocationDTO
 > {
-  private path = `${this.configService.get<string>(
-    'app.uri',
-  )}/monitor-locations`;
+  private path = `${this.configService.get<string>('app.uri')}/locations`;
 
   constructor(private configService: ConfigService) {
     super();
   }
 
+  private getStatus(type: string, entity: MonitorLocation): boolean {
+    if (type === 'Unit') {
+      const unitStatus = entity.unit.opStatuses[0];
+      if (unitStatus.endDate == null && unitStatus.opStatusCode == 'RET') {
+        return false;
+      }
+      return true;
+    }
+
+    if (type === 'Stack') {
+      if (entity.stackPipe.retireDate == null) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public async one(entity: MonitorLocation): Promise<MonitorLocationDTO> {
+    const type = entity.unit ? 'Unit' : 'Stack';
     return {
       id: entity.id,
       name: entity.unit ? entity.unit.name : entity.stackPipe.name,
-      type: entity.unit ? 'Unit' : 'Stack',
-      active: false,
+      type: type,
+      active: this.getStatus(type, entity),
       retireDate: entity.stackPipe ? entity.stackPipe.retireDate : null,
-
       links: [
         {
           rel: 'self',
