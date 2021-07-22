@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MatsMethodRepository } from './mats-method.repository';
@@ -18,7 +18,16 @@ export class MatsMethodService {
     return this.map.many(results);
   }
 
-  async createMatsMethod(
+  async getMethod(methodId: string): Promise<MatsMethodDTO> {
+    const result = await this.repository.findOne(methodId);
+
+    if (!result) {
+      throw new NotFoundException('Mats Method not found.');
+    }
+    return this.map.one(result);
+  }
+
+  async createMethod(
     monLocId: string,
     payload: MatsMethodDTO,
   ): Promise<MatsMethodDTO> {
@@ -31,6 +40,28 @@ export class MatsMethodService {
       endDate: payload.endDate,
       endHour: payload.endHour,
     });
+
+    const result = await this.repository.save(method);
+    return this.map.one(result);
+  }
+
+  async updateMethod(
+    methodId: string,
+    payload: MatsMethodDTO,
+  ): Promise<MatsMethodDTO> {
+    const method = await this.getMethod(methodId);
+
+    method.monLocId = payload.monLocId;
+    method.matsMethodCode = payload.matsMethodCode;
+    method.matsMethodParameterCode = payload.matsMethodParameterCode;
+    method.beginDate = payload.beginDate;
+    method.beginHour = payload.beginHour;
+    method.endDate = payload.endDate;
+    method.endHour = payload.endHour;
+
+    // TODO: find out about user payload
+    method['userId'] = 'testuser';
+    method['updateDate'] = new Date(Date.now());
 
     const result = await this.repository.save(method);
     return this.map.one(result);
