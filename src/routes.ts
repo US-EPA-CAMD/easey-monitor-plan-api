@@ -16,6 +16,8 @@ import { SystemComponentModule } from './system-component/system-component.modul
 import { SystemFuelFlowModule } from './system-fuel-flow/system-fuel-flow.module';
 import { MatsMethodModule } from './mats-method/mats-method.module';
 import { MatsMethodWorkspaceModule } from './mats-method-workspace/mats-method.module';
+import { ComponentWorkspaceModule } from './component/workspace/component.module';
+import { AnalyzerRangeWorkspaceModule } from './analyzer-range-workspace/analyzer-range.module';
 
 const routes: Routes = [
   {
@@ -87,6 +89,16 @@ const routes: Routes = [
       {
         path: ':locId/mats-methods',
         module: MatsMethodWorkspaceModule,
+      },
+      {
+        path: ':locId/components',
+        module: ComponentWorkspaceModule,
+        children: [
+          {
+            path: ':compId/analyzer-ranges',
+            module: AnalyzerRangeWorkspaceModule,
+          },
+        ],
       },
     ],
   },

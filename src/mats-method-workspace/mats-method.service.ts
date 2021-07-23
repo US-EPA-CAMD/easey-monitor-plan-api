@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { MatsMethodRepository } from './mats-method.repository';
+import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
 
 @Injectable()
-export class MatsMethodService {
+export class MatsMethodWorkspaceService {
   constructor(
-    @InjectRepository(MatsMethodRepository)
-    private repository: MatsMethodRepository,
+    @InjectRepository(MatsMethodWorkspaceRepository)
+    private repository: MatsMethodWorkspaceRepository,
     private map: MatsMethodMap,
   ) {}
 
