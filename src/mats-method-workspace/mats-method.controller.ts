@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
-import { MatsMethodService } from './mats-method.service';
+import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 
 @ApiTags('MATS Methods')
 @Controller()
-export class MatsMethodController {
-  constructor(private service: MatsMethodService) {}
+export class MatsMethodWorkspaceController {
+  constructor(private service: MatsMethodWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
