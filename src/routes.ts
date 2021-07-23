@@ -15,6 +15,7 @@ import { MonitorSystemModule } from './monitor-system/monitor-system.module';
 import { SystemComponentModule } from './system-component/system-component.module';
 import { SystemFuelFlowModule } from './system-fuel-flow/system-fuel-flow.module';
 import { MatsMethodModule } from './mats-method/mats-method.module';
+import { MatsMethodWorkspaceModule } from './mats-method-workspace/mats-method.module';
 
 const routes: Routes = [
   {
@@ -82,6 +83,10 @@ const routes: Routes = [
       {
         path: ':locId/methods',
         module: MonitorMethodWorkspaceModule,
+      },
+      {
+        path: ':locId/mats-methods',
+        module: MatsMethodWorkspaceModule,
       },
     ],
   },
