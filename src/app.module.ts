@@ -28,6 +28,8 @@ import { MonitorSystemModule } from './monitor-system/monitor-system.module';
 import { MatsMethodModule } from './mats-method/mats-method.module';
 import { SystemComponentModule } from './system-component/system-component.module';
 import { SystemFuelFlowModule } from './system-fuel-flow/system-fuel-flow.module';
+import { AnalyzerRangeWorkspaceModule } from './analyzer-range-workspace/analyzer-range.module';
+import { MatsMethodWorkspaceModule } from './mats-method-workspace/mats-method.module';
 
 @Module({
   imports: [
@@ -46,8 +48,10 @@ import { SystemFuelFlowModule } from './system-fuel-flow/system-fuel-flow.module
     MonitorMethodModule,
     MonitorMethodWorkspaceModule,
     MatsMethodModule,
+    MatsMethodWorkspaceModule,
     ComponentModule,
     AnalyzerRangeModule,
+    AnalyzerRangeWorkspaceModule,
     MonitorSystemModule,
     SystemComponentModule,
     SystemFuelFlowModule,
