@@ -48,4 +48,10 @@ export class MonitorPlanWorkspaceService {
     });
     return results;
   }
+
+  async deletePlan(planId: string): Promise<void> {
+    planId;
+    // TODO - create a function/procedure to delete all workspace records
+    return Promise.resolve();
+  }
 }
