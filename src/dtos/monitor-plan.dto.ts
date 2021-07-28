@@ -5,6 +5,7 @@ import { MonitorLocationDTO } from './monitor-location.dto';
 
 export class MonitorPlanDTO {
   id: string;
+  facId: number;
   name: string;
   locations: Array<MonitorLocationDTO>;
   links: Array<LinkDTO>;
