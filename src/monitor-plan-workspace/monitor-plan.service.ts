@@ -48,4 +48,8 @@ export class MonitorPlanWorkspaceService {
     });
     return results;
   }
+
+  async revertToOfficialRecord(monPlanId: string): Promise<void> {
+    return await this.repository.revertToOfficialRecord(monPlanId);
+  }
 }

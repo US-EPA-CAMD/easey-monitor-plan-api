@@ -77,11 +77,12 @@ export class MonitorPlanWorkspaceController {
     return this.ucoService.checkInConfiguration(id);
   }
 
-  @Get(':id')
+  @Delete(':id/revert')
   @ApiOkResponse({
-    description: 'Retrieves all Monitor Plan instruction in JSON',
+    description:
+      'Revert workspace monitor plan back to official submitted record',
   })
-  getMonPlanInJson(@Param('id') id: string) {
-    return id;
+  revertToOfficialRecord(@Param('id') id: string): Promise<void> {
+    return this.service.revertToOfficialRecord(id);
   }
 }
