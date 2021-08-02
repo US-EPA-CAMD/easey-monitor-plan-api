@@ -76,4 +76,12 @@ export class MonitorPlanWorkspaceController {
   checkInConfiguration(@Param('id') id: string): Promise<void> {
     return this.ucoService.checkInConfiguration(id);
   }
+
+  @Get(':id')
+  @ApiOkResponse({
+    description: 'Retrieves all Monitor Plan instruction in JSON',
+  })
+  getMonPlanInJson(@Param('id') id: string) {
+    return id;
+  }
 }
