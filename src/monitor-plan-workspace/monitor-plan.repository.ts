@@ -13,7 +13,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .getMany();
   }
 
-  async deletePlan(monPlanId: number) {
+  async deletePlan(monPlanId: string) {
     try {
       await this.query('SELECT revert_to_official_record($1)'), [monPlanId];
     } catch (error) {

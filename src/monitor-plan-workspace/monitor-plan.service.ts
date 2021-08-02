@@ -50,6 +50,6 @@ export class MonitorPlanWorkspaceService {
   }
 
   async deletePlan(monPlanId: string): Promise<void> {
-    return await this.repository.deletePlan(+monPlanId);
+    return await this.repository.deletePlan(monPlanId);
   }
 }
