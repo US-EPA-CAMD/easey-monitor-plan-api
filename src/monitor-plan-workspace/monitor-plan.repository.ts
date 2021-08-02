@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
@@ -10,5 +11,13 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
         orisCode: orisCode,
       })
       .getMany();
+  }
+
+  async deletePlan(monPlanId: number) {
+    try {
+      await this.query('SELECT revert_to_official_record($1)'), [monPlanId];
+    } catch (error) {
+      throw new BadRequestException(error['message']);
+    }
   }
 }
