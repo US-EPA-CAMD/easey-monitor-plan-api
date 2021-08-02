@@ -8,7 +8,6 @@ import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 
-
 @Injectable()
 export class MonitorPlanService {
   constructor(
@@ -49,4 +48,6 @@ export class MonitorPlanService {
     });
     return results;
   }
+
+  get;
 }
