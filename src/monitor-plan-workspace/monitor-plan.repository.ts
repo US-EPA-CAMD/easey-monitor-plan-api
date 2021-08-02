@@ -13,9 +13,9 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .getMany();
   }
 
-  async deletePlan(monPlanId: string) {
+  async revertToOfficialRecord(monPlanId: string) {
     try {
-      await this.query('SELECT revert_to_official_record($1)', [monPlanId]);
+      await this.query('CALL camdecmpswks.revert_to_official_record($1)', [monPlanId]);
     } catch (error) {
       throw new BadRequestException(error['message']);
     }

@@ -49,7 +49,7 @@ export class MonitorPlanWorkspaceService {
     return results;
   }
 
-  async deletePlan(monPlanId: string): Promise<void> {
-    return await this.repository.deletePlan(monPlanId);
+  async revertToOfficialRecord(monPlanId: string): Promise<void> {
+    return await this.repository.revertToOfficialRecord(monPlanId);
   }
 }

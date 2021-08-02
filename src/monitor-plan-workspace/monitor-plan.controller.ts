@@ -77,12 +77,12 @@ export class MonitorPlanWorkspaceController {
     return this.ucoService.checkInConfiguration(id);
   }
 
-  @Delete(':id')
+  @Delete(':id/revert')
   @ApiOkResponse({
     description:
-      'Delete all workspace records for a specific plan and reinsert them from the official record',
+      'Revert workspace monitor plan back to official submitted record',
   })
-  deletePlan(@Param('id') id: string): Promise<void> {
-    return this.service.deletePlan(id);
+  revertToOfficialRecord(@Param('id') id: string): Promise<void> {
+    return this.service.revertToOfficialRecord(id);
   }
 }
