@@ -80,47 +80,35 @@ export class MonitorPlanService {
       monPlanId,
     );
 
-    // const monLocIds = mp.locations.map(i => i.id);
-    // const methods = await this.methodRepository.find({
-    //   where: { monLocId: In(monLocIds) },
-    // });
-    // const matsMethods = await this.matsMethodRepository.find({
-    //   where: { monLocId: In(monLocIds) },
-    // });
-    // const formulas = await this.formulaRepository.find({
-    //   where: { monLocId: In(monLocIds) },
-    // });
-    // const spans = await this.spanRepository.find({
-    //   where: { monLocId: In(monLocIds) },
-    // });
-    // const loads = await this.loadRepository.find({
-    //   where: { monLocId: In(monLocIds) },
-    // });
-    // const systems = await this.systemRepository.find({
-    //   where: { monLocId: In(monLocIds) },
-    // });
+    const monLocIds = mp.locations.map(i => i.id);
+    const methods = await this.methodRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
+    const matsMethods = await this.matsMethodRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
+    const formulas = await this.formulaRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
+    const spans = await this.spanRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
+    const loads = await this.loadRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
+    const systems = await this.systemRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
 
-    // mp.locations.forEach(l => {
-    //   const monLocId = l.id;
-    //   l.methods = methods.filter(i => i.monLocId === monLocId);
-    //   l.matsMethods = matsMethods.filter(i => i.monLocId === monLocId);
-    //   l.formulas = formulas.filter(i => i.monLocId === monLocId);
-    //   l.spans = spans.filter(i => i.monLocId === monLocId);
-    //   l.loads = loads.filter(i => i.monLocId === monLocId);
-    //   l.systems = systems.filter(i => i.monLocId === monLocId);
-    // });
-
-    await Promise.all(
-      mp.locations.map(async l => {
-        const monLocId = l.id;
-        l.methods = await this.methodRepository.find({ monLocId });
-        l.matsMethods = await this.matsMethodRepository.find({ monLocId });
-        l.formulas = await this.formulaRepository.find({ monLocId });
-        l.spans = await this.spanRepository.find({ monLocId });
-        l.loads = await this.loadRepository.find({ monLocId });
-        l.systems = await this.systemRepository.find({ monLocId });
-      }),
-    );
+    mp.locations.forEach(l => {
+      const monLocId = l.id;
+      l.methods = methods.filter(i => i.monLocId === monLocId);
+      l.matsMethods = matsMethods.filter(i => i.monLocId === monLocId);
+      l.formulas = formulas.filter(i => i.monLocId === monLocId);
+      l.spans = spans.filter(i => i.monLocId === monLocId);
+      l.loads = loads.filter(i => i.monLocId === monLocId);
+      l.systems = systems.filter(i => i.monLocId === monLocId);
+    });
 
     return this.map.one(mp);
   }
