@@ -9,7 +9,7 @@ import {
 
 import { MonitorLocation } from './monitor-location.entity';
 
-@Entity({ name: 'camdecmps.monitor_load' })
+@Entity({ name: 'camdecmpswks.monitor_load' })
 export class MonitorLoad extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'load_id' })
   id: string;

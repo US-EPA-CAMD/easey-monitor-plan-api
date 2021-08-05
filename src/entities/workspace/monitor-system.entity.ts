@@ -14,7 +14,7 @@ import { Component } from './component.entity';
 import { SystemFuelFlow } from './system-fuel-flow.entity';
 import { MonitorLocation } from './monitor-location.entity';
 
-@Entity({ name: 'camdecmps.monitor_system' })
+@Entity({ name: 'camdecmpswks.monitor_system' })
 export class MonitorSystem extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'mon_sys_id' })
   id: string;

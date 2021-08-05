@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.mats_method_data' })
 export class MatsMethod extends BaseEntity {
@@ -44,4 +53,11 @@ export class MatsMethod extends BaseEntity {
 
   @Column({ type: 'date', nullable: true, name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.matsMethods,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }
