@@ -24,6 +24,11 @@ export class MonitorPlan extends BaseEntity {
   })
   facId: number;
 
+  @Column({
+    name: 'end_rpt_period_id',
+  })
+  endReportPeriodId: number;
+
   @ManyToOne(
     () => Plant,
     plant => plant.plans,
@@ -47,9 +52,4 @@ export class MonitorPlan extends BaseEntity {
     },
   })
   locations: MonitorLocation[];
-
-  @Column({
-    name: 'end_rpt_period_id',
-  })
-  endReportPeriodId: number;
 }

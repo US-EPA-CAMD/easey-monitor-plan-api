@@ -1,5 +1,4 @@
-import { Exclude } from 'class-transformer';
-import { LinkDTO } from './link.dto';
+//import { LinkDTO } from './link.dto';
 
 import { MonitorLocationDTO } from './monitor-location.dto';
 
@@ -7,9 +6,8 @@ export class MonitorPlanDTO {
   id: string;
   facId: number;
   name: string;
-  locations: Array<MonitorLocationDTO>;
-  links: Array<LinkDTO>;
-  @Exclude()
   endReportPeriodId: number;
   active: boolean;
+  locations: MonitorLocationDTO[];
+  //links: LinkDTO[];
 }

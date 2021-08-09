@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_method' })
 export class MonitorMethod extends BaseEntity {
@@ -45,4 +54,11 @@ export class MonitorMethod extends BaseEntity {
 
   @Column({ type: 'date', nullable: true, name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.methods,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }

@@ -9,7 +9,7 @@ import {
 
 import { MonitorLocation } from './monitor-location.entity';
 
-@Entity({ name: 'camdecmps.monitor_span' })
+@Entity({ name: 'camdecmpswks.monitor_span' })
 export class MonitorSpan extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'span_id' })
   id: string;

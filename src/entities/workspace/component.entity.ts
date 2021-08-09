@@ -11,7 +11,7 @@ import {
 import { MonitorSystem } from './monitor-system.entity';
 import { MonitorLocation } from './monitor-location.entity';
 
-@Entity({ name: 'camdecmps.component' })
+@Entity({ name: 'camdecmpswks.component' })
 export class Component extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'component_id' })
   id: string;
