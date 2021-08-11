@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
-import { MatsMethodMap } from '../maps/mats-method.map';
+import { MatsMethodMap } from '../maps/workspace/mats-method.map';
 
 @Injectable()
 export class MatsMethodWorkspaceService {

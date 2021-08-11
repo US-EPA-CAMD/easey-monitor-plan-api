@@ -21,6 +21,8 @@ import { MonitorFormulaRepository } from '../monitor-formula/monitor-formula.rep
 import { MonitorSpanRepository } from '../monitor-span/monitor-span.repository';
 import { MonitorLoadRepository } from '../monitor-load/monitor-load.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
+import { DuctWafMap } from '../maps/workspace/duct-waf.map';
 
 @Module({
   imports: [
@@ -33,6 +35,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
       MonitorSpanRepository,
       MonitorLoadRepository,
       MonitorSystemRepository,
+      DuctWafRepository,
     ]),
   ],
   controllers: [MonitorPlanController],
@@ -46,6 +49,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
     MonitorSpanMap,
     MonitorLoadMap,
     MonitorSystemMap,
+    DuctWafMap,
   ],
 })
 export class MonitorPlanModule {}

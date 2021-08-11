@@ -20,7 +20,9 @@ import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
-import { UserCheckOutMap } from 'src/maps/user-check-out.map';
+import { UserCheckOutMap } from '../maps/user-check-out.map';
+import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
+import { DuctWafMap } from 'src/maps/workspace/duct-waf.map';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { UserCheckOutMap } from 'src/maps/user-check-out.map';
       MatsMethodWorkspaceRepository,
       MonitorMethodWorkspaceRepository,
       UserCheckOutRepository,
+      DuctWafWorkspaceRepository,
     ]),
   ],
   controllers: [MonitorPlanWorkspaceController],
@@ -45,6 +48,7 @@ import { UserCheckOutMap } from 'src/maps/user-check-out.map';
     MonitorPlanMap,
     MonitorSystemMap,
     UserCheckOutMap,
+    DuctWafMap,
   ],
 })
 export class MonitorPlanWorkspaceModule {}

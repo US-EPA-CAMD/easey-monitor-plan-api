@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { MonitorLocation } from '../entities/monitor-location.entity';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
+import { MonitorLocationDTO } from '../../dtos/monitor-location.dto';
 
-import { BaseMap } from './base.map';
-import { MatsMethodMap } from '../maps/mats-method.map';
-import { MonitorMethodMap } from '../maps/monitor-method.map';
-import { MonitorFormulaMap } from '../maps/monitor-formula.map';
-import { MonitorSpanMap } from '../maps/monitor-span.map';
-import { MonitorLoadMap } from '../maps/monitor-load.map';
-import { MonitorSystemMap } from '../maps/monitor-system.map';
+import { BaseMap } from '../base.map';
+import { MatsMethodMap } from './mats-method.map';
+import { MonitorMethodMap } from './monitor-method.map';
+import { MonitorFormulaMap } from './monitor-formula.map';
+import { MonitorSpanMap } from './monitor-span.map';
+import { MonitorLoadMap } from './monitor-load.map';
+import { MonitorSystemMap } from './monitor-system.map';
 import { DuctWafMap } from './duct-waf.map';
 
 @Injectable()

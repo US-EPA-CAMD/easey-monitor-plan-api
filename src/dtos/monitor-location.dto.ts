@@ -6,6 +6,7 @@ import { MonitorFormulaDTO } from './monitor-formula.dto';
 import { MonitorSpanDTO } from './monitor-span.dto';
 import { MonitorLoadDTO } from './monitor-load.dto';
 import { MonitorSystemDTO } from './monitor-system.dto';
+import { DuctWafDTO } from './duct-waf.dto';
 
 export class MonitorLocationDTO {
   id: string;
@@ -20,5 +21,6 @@ export class MonitorLocationDTO {
   spans: MonitorSpanDTO[];
   loads: MonitorLoadDTO[];
   systems: MonitorSystemDTO[];
+  ductWafs: DuctWafDTO[];
   //links: LinkDTO[];
 }

@@ -18,6 +18,7 @@ import { MonitorSpan } from './monitor-span.entity';
 import { MonitorMethod } from './monitor-method.entity';
 import { MonitorSystem } from './monitor-system.entity';
 import { MonitorFormula } from './monitor-formula.entity';
+import { DuctWaf } from './duct-waf.entity';
 
 @Entity({
   name: 'camdecmpswks.monitor_location',
@@ -92,4 +93,10 @@ export class MonitorLocation extends BaseEntity {
     system => system.location,
   )
   systems: MonitorSystem[];
+
+  @OneToMany(
+    () => DuctWaf,
+    ductWaf => ductWaf.location,
+  )
+  ductWafs: DuctWaf[];
 }

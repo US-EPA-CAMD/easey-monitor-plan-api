@@ -14,6 +14,10 @@ import { MonitorFormulaRepository } from '../monitor-formula/monitor-formula.rep
 import { MonitorSpanRepository } from '../monitor-span/monitor-span.repository';
 import { MonitorLoadRepository } from '../monitor-load/monitor-load.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
+import { SystemFuelFlow } from 'src/entities/system-fuel-flow.entity';
+import { SystemFuelFlowRepository } from 'src/system-fuel-flow/system-fuel-flow.repository';
+import { resolve } from 'path';
 
 @Injectable()
 export class MonitorPlanService {
@@ -34,6 +38,10 @@ export class MonitorPlanService {
     private loadRepository: MonitorLoadRepository,
     @InjectRepository(MonitorSystemRepository)
     private systemRepository: MonitorSystemRepository,
+    @InjectRepository(DuctWafRepository)
+    private ductWafRepository: DuctWafRepository,
+    @InjectRepository(SystemFuelFlow)
+    private systemFuelFlowRepository: SystemFuelFlowRepository,
     private map: MonitorPlanMap,
   ) {}
 
@@ -68,6 +76,17 @@ export class MonitorPlanService {
     return results;
   }
 
+  async getMonSystemFuelFlow(
+    monSysId: string,
+    monSysIds: string[],
+  ): Promise<SystemFuelFlow[]> {
+    const sysFuelFlows = await this.systemFuelFlowRepository.find({
+      monSysId: In(monSysIds),
+    });
+    const fuelFlows = sysFuelFlows.filter(i => i.monSysId === monSysId);
+    return fuelFlows;
+  }
+
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
     const mp = await this.repository.findOne({
       where: {
@@ -99,6 +118,9 @@ export class MonitorPlanService {
     const systems = await this.systemRepository.find({
       where: { monLocId: In(monLocIds) },
     });
+    const ductWafs = await this.ductWafRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
 
     mp.locations.forEach(l => {
       const monLocId = l.id;
@@ -108,6 +130,15 @@ export class MonitorPlanService {
       l.spans = spans.filter(i => i.monLocId === monLocId);
       l.loads = loads.filter(i => i.monLocId === monLocId);
       l.systems = systems.filter(i => i.monLocId === monLocId);
+      l.ductWafs = ductWafs.filter(i => i.monLocId === monLocId);
+
+      const monSysIds = l.systems.map(sys => sys.id);
+      l.systems.forEach(sys => {
+        const monSysId = sys.id;
+        sys.fuelCode = this.getMonSystemFuelFlow(monSysId, monSysIds).then(
+          result => result,
+        );
+      });
     });
 
     return this.map.one(mp);

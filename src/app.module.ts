@@ -30,6 +30,8 @@ import { SystemComponentModule } from './system-component/system-component.modul
 import { SystemFuelFlowModule } from './system-fuel-flow/system-fuel-flow.module';
 import { AnalyzerRangeWorkspaceModule } from './analyzer-range-workspace/analyzer-range.module';
 import { MatsMethodWorkspaceModule } from './mats-method-workspace/mats-method.module';
+import { DuctWafModule } from './duct-waf/duct-waf.module';
+import { DuctWafWorkspaceModule } from './duct-waf-workspace/duct-waf.module';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { MatsMethodWorkspaceModule } from './mats-method-workspace/mats-method.m
     MonitorSpanModule,
     MonitorLoadModule,
     MonitorFormulaModule,
+    DuctWafModule,
+    DuctWafWorkspaceModule,
   ],
 })
 export class AppModule {}
