@@ -6,6 +6,7 @@ import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { UpdateMatsMethodDTO } from 'src/dtos/update-mats-method.dto';
+import { CreateMatsMethodDTO } from 'src/dtos/create-mats-method.dto';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -32,7 +33,7 @@ export class MatsMethodWorkspaceService {
 
   async createMethod(
     monLocId: string,
-    payload: UpdateMatsMethodDTO,
+    payload: CreateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
     const method = this.repository.create({
       id: uuid(),
@@ -62,8 +63,6 @@ export class MatsMethodWorkspaceService {
     const method = await this.getMethod(methodId);
 
     method.monLocId = monLocId;
-    method.matsMethodCode = payload.matsMethodCode;
-    method.matsMethodParameterCode = payload.matsMethodParameterCode;
     method.beginDate = payload.beginDate;
     method.beginHour = payload.beginHour;
     method.endDate = payload.endDate;

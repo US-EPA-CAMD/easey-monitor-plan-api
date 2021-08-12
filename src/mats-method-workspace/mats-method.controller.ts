@@ -4,6 +4,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { UpdateMatsMethodDTO } from 'src/dtos/update-mats-method.dto';
+import { CreateMatsMethodDTO } from 'src/dtos/create-mats-method.dto';
 
 @ApiTags('MATS Methods')
 @Controller()
@@ -28,7 +29,7 @@ export class MatsMethodWorkspaceController {
   })
   createMethod(
     @Param('locId') monLocId: string,
-    @Body() payload: UpdateMatsMethodDTO,
+    @Body() payload: CreateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
     return this.service.createMethod(monLocId, payload);
   }
