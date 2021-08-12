@@ -2,7 +2,12 @@ import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmpswks.mats_method_data' })
 export class MatsMethod extends BaseEntity {
-  @PrimaryColumn({ type: 'varchar', length: 45, name: 'mats_method_data_id' })
+  @PrimaryColumn({
+    type: 'varchar',
+    length: 45,
+    nullable: false,
+    name: 'mats_method_data_id',
+  })
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
