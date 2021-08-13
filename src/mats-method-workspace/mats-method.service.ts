@@ -1,9 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
+import { CreateMatsMethodDTO } from '../dtos/create-mats-method.dto';
+import { UpdateMatsMethodDTO } from '../dtos/update-mats-method.dto';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -24,14 +27,16 @@ export class MatsMethodWorkspaceService {
     if (!result) {
       throw new NotFoundException('Mats Method not found.');
     }
+
     return this.map.one(result);
   }
 
   async createMethod(
     monLocId: string,
-    payload: MatsMethodDTO,
+    payload: CreateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
-    const method = await this.repository.create({
+    const method = this.repository.create({
+      id: uuid(),
       monLocId,
       matsMethodCode: payload.matsMethodCode,
       matsMethodParameterCode: payload.matsMethodParameterCode,
@@ -39,6 +44,11 @@ export class MatsMethodWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
+
+      // TODO: userId to be determined
+      userId: 'testuser',
+      addDate: new Date(Date.now()),
+      updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(method);
@@ -47,21 +57,20 @@ export class MatsMethodWorkspaceService {
 
   async updateMethod(
     methodId: string,
-    payload: MatsMethodDTO,
+    monLocId: string,
+    payload: UpdateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
     const method = await this.getMethod(methodId);
 
-    method.monLocId = payload.monLocId;
-    method.matsMethodCode = payload.matsMethodCode;
-    method.matsMethodParameterCode = payload.matsMethodParameterCode;
+    method.monLocId = monLocId;
     method.beginDate = payload.beginDate;
     method.beginHour = payload.beginHour;
     method.endDate = payload.endDate;
     method.endHour = payload.endHour;
 
-    // TODO: find out about user payload
-    method['userId'] = 'testuser';
-    method['updateDate'] = new Date(Date.now());
+    // TODO: userId to be determined
+    method.userId = 'testuser';
+    method.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(method);
     return this.map.one(result);

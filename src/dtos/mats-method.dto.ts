@@ -7,5 +7,8 @@ export class MatsMethodDTO {
   beginHour: number;
   endDate: Date;
   endHour: number;
+  addDate: Date;
+  userId: string;
+  updateDate: Date;
   active: boolean;
 }
