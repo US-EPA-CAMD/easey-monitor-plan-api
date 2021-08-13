@@ -5,8 +5,8 @@ import { v4 as uuid } from 'uuid';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
-import { UpdateMatsMethodDTO } from 'src/dtos/update-mats-method.dto';
-import { CreateMatsMethodDTO } from 'src/dtos/create-mats-method.dto';
+import { CreateMatsMethodDTO } from '../dtos/create-mats-method.dto';
+import { UpdateMatsMethodDTO } from '../dtos/update-mats-method.dto';
 
 @Injectable()
 export class MatsMethodWorkspaceService {

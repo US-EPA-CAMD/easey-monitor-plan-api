@@ -3,8 +3,8 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
-import { UpdateMatsMethodDTO } from 'src/dtos/update-mats-method.dto';
-import { CreateMatsMethodDTO } from 'src/dtos/create-mats-method.dto';
+import { CreateMatsMethodDTO } from '../dtos/create-mats-method.dto';
+import { UpdateMatsMethodDTO } from '../dtos/update-mats-method.dto';
 
 @ApiTags('MATS Methods')
 @Controller()
