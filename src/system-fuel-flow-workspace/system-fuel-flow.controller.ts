@@ -23,10 +23,10 @@ export class SystemFuelFlowWorkspaceController {
     return this.service.getFuelFlows(monSysId);
   }
 
-  @Put('id')
+  @Put(':fuelFlowId')
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
-    description: 'Updates system flow record',
+    description: 'Updates Workspace System Fuel Flow record',
   })
   updateSystemFlow(
     @Param('locId') locId: string,
