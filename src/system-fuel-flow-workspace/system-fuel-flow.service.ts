@@ -10,8 +10,8 @@ import { UpdateSystemFuelFlowDTO } from '../dtos/update-system-fuel-flow.dto';
 export class SystemFuelFlowWorkspaceService {
   constructor(
     @InjectRepository(SystemFuelFlowWorkspaceRepository)
-    private repository: SystemFuelFlowWorkspaceRepository,
-    private map: SystemFuelFlowMap,
+    private readonly repository: SystemFuelFlowWorkspaceRepository,
+    private readonly map: SystemFuelFlowMap,
   ) {}
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlowDTO[]> {

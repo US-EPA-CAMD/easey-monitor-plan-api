@@ -8,7 +8,7 @@ import { UpdateSystemFuelFlowDTO } from 'src/dtos/update-system-fuel-flow.dto';
 @ApiTags('System Fuel Flows')
 @Controller()
 export class SystemFuelFlowWorkspaceController {
-  constructor(private service: SystemFuelFlowWorkspaceService) {}
+  constructor(private readonly service: SystemFuelFlowWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
