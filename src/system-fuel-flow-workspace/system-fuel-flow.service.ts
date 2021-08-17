@@ -19,8 +19,8 @@ export class SystemFuelFlowWorkspaceService {
     return this.map.many(results);
   }
 
-  async getFuelFlow(id: string): Promise<SystemFuelFlowDTO> {
-    const result = await this.repository.findOne(id);
+  async getFuelFlow(fuelFlowId: string): Promise<SystemFuelFlowDTO> {
+    const result = await this.repository.findOne(fuelFlowId);
 
     if (!result) {
       throw new NotFoundException('Fuel Flow not found.');
@@ -30,10 +30,10 @@ export class SystemFuelFlowWorkspaceService {
   }
 
   async updateFuelFlow(
-    id: string,
+    fuelFlowId: string,
     payload: UpdateSystemFuelFlowDTO,
   ): Promise<SystemFuelFlowDTO> {
-    const fuelFlow = await this.getFuelFlow(id);
+    const fuelFlow = await this.getFuelFlow(fuelFlowId);
 
     fuelFlow.maxRate = payload.maxRate;
     fuelFlow.maxRateSourceCode = payload.maxRateSourceCode;
