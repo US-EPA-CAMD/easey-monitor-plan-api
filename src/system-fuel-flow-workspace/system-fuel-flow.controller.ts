@@ -1,8 +1,9 @@
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller } from '@nestjs/common';
+import { Get, Param, Controller, Put, Body } from '@nestjs/common';
 
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
+import { UpdateSystemFuelFlowDTO } from 'src/dtos/update-system-fuel-flow.dto';
 
 @ApiTags('System Fuel Flows')
 @Controller()
@@ -21,4 +22,16 @@ export class SystemFuelFlowWorkspaceController {
   ): Promise<SystemFuelFlowDTO[]> {
     return this.service.getFuelFlows(monSysId);
   }
+
+  @Put('id')
+  @ApiOkResponse({
+    type: SystemFuelFlowDTO,
+    description: 'Updates system flow record',
+  })
+  updateSystemFlow(
+    @Param('locId') locId: string,
+    @Param('systemId') systemId: string,
+    @Param('fuelFlowId') id: string,
+    @Body() payload: UpdateSystemFuelFlowDTO,
+  ) {}
 }
