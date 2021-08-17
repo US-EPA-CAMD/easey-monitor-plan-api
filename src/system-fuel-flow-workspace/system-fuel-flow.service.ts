@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
-import { UpdateSystemFuelFlowDTO } from 'src/dtos/update-system-fuel-flow.dto';
+import { UpdateSystemFuelFlowDTO } from '../dtos/update-system-fuel-flow.dto';
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {
