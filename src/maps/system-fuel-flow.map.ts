@@ -22,6 +22,9 @@ export class SystemFuelFlowMap extends BaseMap<
       endDate: entity.endDate,
       beginHour: entity.beginHour,
       endHour: entity.endHour,
+      userId: entity.userId,
+      addDate: entity.addDate,
+      updateDate: entity.updateDate,
       active: entity.endDate === null,
     };
   }

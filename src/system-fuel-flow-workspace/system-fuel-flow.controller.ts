@@ -33,5 +33,7 @@ export class SystemFuelFlowWorkspaceController {
     @Param('systemId') systemId: string,
     @Param('fuelFlowId') id: string,
     @Body() payload: UpdateSystemFuelFlowDTO,
-  ) {}
+  ): Promise<SystemFuelFlowDTO> {
+    return this.service.updateFuelFlow(id, payload);
+  }
 }
