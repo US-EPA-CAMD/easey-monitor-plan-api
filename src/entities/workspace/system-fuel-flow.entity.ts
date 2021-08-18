@@ -9,7 +9,7 @@ import {
 
 import { MonitorSystem } from './monitor-system.entity';
 
-@Entity({ name: 'camdecmps.system_fuel_flow' })
+@Entity({ name: 'camdecmpswks.system_fuel_flow' })
 export class SystemFuelFlow extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'sys_fuel_id' })
   id: string;
