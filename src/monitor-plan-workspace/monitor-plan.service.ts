@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorPlanMap } from '../maps/workspace/monitor-plan.map';
+import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
