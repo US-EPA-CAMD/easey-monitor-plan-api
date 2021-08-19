@@ -33,6 +33,9 @@ import { MatsMethodWorkspaceModule } from './mats-method-workspace/mats-method.m
 import { DuctWafModule } from './duct-waf/duct-waf.module';
 import { DuctWafWorkspaceModule } from './duct-waf-workspace/duct-waf.module';
 import { MonitorDefaultModule } from './monitor-default/monitor-default.module';
+import { SystemFuelFlowWorkspaceModule } from './system-fuel-flow-workspace/system-fuel-flow.module';
+import { SystemComponentWorkspaceModule } from './system-component-workspace/system.component.module';
+import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor-system.module';
 
 @Module({
   imports: [
@@ -56,8 +59,11 @@ import { MonitorDefaultModule } from './monitor-default/monitor-default.module';
     AnalyzerRangeModule,
     AnalyzerRangeWorkspaceModule,
     MonitorSystemModule,
+    MonitorSystemWorkspaceModule,
     SystemComponentModule,
+    SystemComponentWorkspaceModule,
     SystemFuelFlowModule,
+    SystemFuelFlowWorkspaceModule,
     MonitorSpanModule,
     MonitorLoadModule,
     MonitorFormulaModule,
