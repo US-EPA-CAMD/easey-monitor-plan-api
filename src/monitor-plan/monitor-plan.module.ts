@@ -12,6 +12,8 @@ import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
+import { DuctWafMap } from '../maps/workspace/duct-waf.map';
+import { MonitorDefaultMap } from '../maps/monitor-default.map';
 
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
@@ -22,7 +24,7 @@ import { MonitorSpanRepository } from '../monitor-span/monitor-span.repository';
 import { MonitorLoadRepository } from '../monitor-load/monitor-load.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
-import { DuctWafMap } from '../maps/workspace/duct-waf.map';
+import { MonitorDefaultRepository } from '../monitor-default/monitor-default.repository';
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { DuctWafMap } from '../maps/workspace/duct-waf.map';
       MonitorLoadRepository,
       MonitorSystemRepository,
       DuctWafRepository,
+      MonitorDefaultRepository,
     ]),
   ],
   controllers: [MonitorPlanController],
@@ -50,6 +53,7 @@ import { DuctWafMap } from '../maps/workspace/duct-waf.map';
     MonitorLoadMap,
     MonitorSystemMap,
     DuctWafMap,
+    MonitorDefaultMap,
   ],
 })
 export class MonitorPlanModule {}

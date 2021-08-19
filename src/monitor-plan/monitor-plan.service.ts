@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorLocation } from '../entities/monitor-location.entity';
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
@@ -15,9 +16,8 @@ import { MonitorSpanRepository } from '../monitor-span/monitor-span.repository';
 import { MonitorLoadRepository } from '../monitor-load/monitor-load.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
-import { SystemFuelFlow } from 'src/entities/system-fuel-flow.entity';
-import { SystemFuelFlowRepository } from 'src/system-fuel-flow/system-fuel-flow.repository';
-import { resolve } from 'path';
+import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.repository';
+import { MonitorDefaultRepository } from '../monitor-default/monitor-default.repository';
 
 @Injectable()
 export class MonitorPlanService {
@@ -40,8 +40,10 @@ export class MonitorPlanService {
     private systemRepository: MonitorSystemRepository,
     @InjectRepository(DuctWafRepository)
     private ductWafRepository: DuctWafRepository,
-    @InjectRepository(SystemFuelFlow)
+    @InjectRepository(SystemFuelFlowRepository)
     private systemFuelFlowRepository: SystemFuelFlowRepository,
+    @InjectRepository(MonitorDefaultRepository)
+    private defaultRepository: MonitorDefaultRepository,
     private map: MonitorPlanMap,
   ) {}
 
@@ -121,6 +123,9 @@ export class MonitorPlanService {
     const ductWafs = await this.ductWafRepository.find({
       where: { monLocId: In(monLocIds) },
     });
+    const defaults = await this.defaultRepository.find({
+      where: { monLocId: In(monLocIds) },
+    });
 
     mp.locations.forEach(l => {
       const monLocId = l.id;
@@ -131,13 +136,12 @@ export class MonitorPlanService {
       l.loads = loads.filter(i => i.monLocId === monLocId);
       l.systems = systems.filter(i => i.monLocId === monLocId);
       l.ductWafs = ductWafs.filter(i => i.monLocId === monLocId);
+      l.defaults = defaults.filter(i => i.monLocId === monLocId);
 
       const monSysIds = l.systems.map(sys => sys.id);
-      l.systems.forEach(sys => {
+      l.systems.forEach(async sys => {
         const monSysId = sys.id;
-        sys.fuelCode = this.getMonSystemFuelFlow(monSysId, monSysIds).then(
-          result => result,
-        );
+        sys.fuelFlows = await this.getMonSystemFuelFlow(monSysId, monSysIds);
       });
     });
 

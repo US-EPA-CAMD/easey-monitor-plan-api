@@ -32,6 +32,7 @@ import { AnalyzerRangeWorkspaceModule } from './analyzer-range-workspace/analyze
 import { MatsMethodWorkspaceModule } from './mats-method-workspace/mats-method.module';
 import { DuctWafModule } from './duct-waf/duct-waf.module';
 import { DuctWafWorkspaceModule } from './duct-waf-workspace/duct-waf.module';
+import { MonitorDefaultModule } from './monitor-default/monitor-default.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { DuctWafWorkspaceModule } from './duct-waf-workspace/duct-waf.module';
     MonitorFormulaModule,
     DuctWafModule,
     DuctWafWorkspaceModule,
+    MonitorDefaultModule,
   ],
 })
 export class AppModule {}

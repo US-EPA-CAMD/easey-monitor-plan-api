@@ -1,0 +1,34 @@
+import { Injectable } from '@nestjs/common';
+
+import { BaseMap } from './base.map';
+import { MonitorDefault } from '../entities/monitor-default.entity';
+import { MonitorDefaultDTO } from 'src/dtos/monitor-default.dto';
+
+@Injectable()
+export class MonitorDefaultMap extends BaseMap<
+  MonitorDefault,
+  MonitorDefaultDTO
+> {
+  public async one(entity: MonitorDefault): Promise<MonitorDefaultDTO> {
+    return {
+      id: entity.id,
+      monLocId: entity.monLocId,
+      parameterCode: entity.parameterCode,
+      defaultValue: entity.defaultValue,
+      defaultUnitsOfMeasureCode: entity.defaultUnitsOfMeasureCode,
+      defaultPurposeCode: entity.defaultPurposeCode,
+      fuelCode: entity.fuelCode,
+      operatingConditionCode: entity.operatingConditionCode,
+      defaultSourceCode: entity.defaultSourceCode,
+      groupId: entity.groupId,
+      beginDate: entity.beginDate,
+      beginHour: entity.beginHour,
+      endDate: entity.beginDate,
+      endHour: entity.endHour,
+      userId: entity.userId,
+      addDate: entity.addDate,
+      updateDate: entity.updateDate,
+      active: entity.endDate === null,
+    };
+  }
+}

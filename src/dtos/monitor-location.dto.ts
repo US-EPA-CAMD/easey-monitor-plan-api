@@ -2,7 +2,7 @@
 import { MatsMethodDTO } from './mats-method.dto';
 import { MonitorMethodDTO } from './monitor-method.dto';
 import { MonitorFormulaDTO } from './monitor-formula.dto';
-//import { MonitorDefaultDTO } from './monitor-default.dto';
+import { MonitorDefaultDTO } from './monitor-default.dto';
 import { MonitorSpanDTO } from './monitor-span.dto';
 import { MonitorLoadDTO } from './monitor-load.dto';
 import { MonitorSystemDTO } from './monitor-system.dto';
@@ -17,7 +17,7 @@ export class MonitorLocationDTO {
   methods: MonitorMethodDTO[];
   matsMethods: MatsMethodDTO[];
   formulas: MonitorFormulaDTO[];
-  //defaults: MonitorDefaultDTO[];
+  defaults: MonitorDefaultDTO[];
   spans: MonitorSpanDTO[];
   loads: MonitorLoadDTO[];
   systems: MonitorSystemDTO[];
