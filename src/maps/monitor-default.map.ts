@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from './base.map';
 import { MonitorDefault } from '../entities/monitor-default.entity';
-import { MonitorDefaultDTO } from 'src/dtos/monitor-default.dto';
+import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 
 @Injectable()
 export class MonitorDefaultMap extends BaseMap<

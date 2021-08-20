@@ -23,27 +23,27 @@ import { MonitorDefaultRepository } from '../monitor-default/monitor-default.rep
 export class MonitorPlanService {
   constructor(
     @InjectRepository(MonitorPlanRepository)
-    private repository: MonitorPlanRepository,
+    private readonly repository: MonitorPlanRepository,
     @InjectRepository(MonitorLocationRepository)
-    private locationRepository: MonitorLocationRepository,
+    private readonly locationRepository: MonitorLocationRepository,
     @InjectRepository(MonitorMethodRepository)
-    private methodRepository: MonitorMethodRepository,
+    private readonly methodRepository: MonitorMethodRepository,
     @InjectRepository(MatsMethodRepository)
-    private matsMethodRepository: MatsMethodRepository,
+    private readonly matsMethodRepository: MatsMethodRepository,
     @InjectRepository(MonitorFormulaRepository)
-    private formulaRepository: MonitorFormulaRepository,
+    private readonly formulaRepository: MonitorFormulaRepository,
     @InjectRepository(MonitorSpanRepository)
-    private spanRepository: MonitorSpanRepository,
+    private readonly spanRepository: MonitorSpanRepository,
     @InjectRepository(MonitorLoadRepository)
-    private loadRepository: MonitorLoadRepository,
+    private readonly loadRepository: MonitorLoadRepository,
     @InjectRepository(MonitorSystemRepository)
-    private systemRepository: MonitorSystemRepository,
+    private readonly systemRepository: MonitorSystemRepository,
     @InjectRepository(DuctWafRepository)
-    private ductWafRepository: DuctWafRepository,
+    private readonly ductWafRepository: DuctWafRepository,
     @InjectRepository(SystemFuelFlowRepository)
-    private systemFuelFlowRepository: SystemFuelFlowRepository,
+    private readonly systemFuelFlowRepository: SystemFuelFlowRepository,
     @InjectRepository(MonitorDefaultRepository)
-    private defaultRepository: MonitorDefaultRepository,
+    private readonly defaultRepository: MonitorDefaultRepository,
     private map: MonitorPlanMap,
   ) {}
 
@@ -85,8 +85,7 @@ export class MonitorPlanService {
     const sysFuelFlows = await this.systemFuelFlowRepository.find({
       monSysId: In(monSysIds),
     });
-    const fuelFlows = sysFuelFlows.filter(i => i.monSysId === monSysId);
-    return fuelFlows;
+    return sysFuelFlows.filter(i => i.monSysId === monSysId);
   }
 
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {

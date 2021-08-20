@@ -23,15 +23,15 @@ export class MonitorLocationMap extends BaseMap<
   private path = `${this.configService.get<string>('app.uri')}/locations`;
 
   constructor(
-    private configService: ConfigService,
-    private methodMap: MonitorMethodMap,
-    private matsMethodMap: MatsMethodMap,
-    private formulaMap: MonitorFormulaMap,
-    private spanMap: MonitorSpanMap,
-    private loadMap: MonitorLoadMap,
-    private systemMap: MonitorSystemMap,
-    private ductWafMap: DuctWafMap,
-    private defaultMap: MonitorDefaultMap,
+    private readonly configService: ConfigService,
+    private readonly methodMap: MonitorMethodMap,
+    private readonly matsMethodMap: MatsMethodMap,
+    private readonly formulaMap: MonitorFormulaMap,
+    private readonly spanMap: MonitorSpanMap,
+    private readonly loadMap: MonitorLoadMap,
+    private readonly systemMap: MonitorSystemMap,
+    private readonly ductWafMap: DuctWafMap,
+    private readonly defaultMap: MonitorDefaultMap,
   ) {
     super();
   }
