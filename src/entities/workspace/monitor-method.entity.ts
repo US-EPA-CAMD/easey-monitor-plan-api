@@ -21,7 +21,7 @@ export class MonitorMethod extends BaseEntity {
   parameterCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'sub_data_cd' })
-  subDataCode: string;
+  substituteDataCode: string;
 
   @Column({
     type: 'varchar',
@@ -32,7 +32,7 @@ export class MonitorMethod extends BaseEntity {
   bypassApproachCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'method_cd' })
-  methodCode: string;
+  monitoringMethodCode: string;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;

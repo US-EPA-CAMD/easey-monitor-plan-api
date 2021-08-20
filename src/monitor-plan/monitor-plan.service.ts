@@ -137,6 +137,7 @@ export class MonitorPlanService {
       l.systems = systems.filter(i => i.monLocId === monLocId);
       l.ductWafs = ductWafs.filter(i => i.monLocId === monLocId);
       l.defaults = defaults.filter(i => i.monLocId === monLocId);
+      l.stackPipe;
 
       const monSysIds = l.systems.map(sys => sys.id);
       l.systems.forEach(async sys => {

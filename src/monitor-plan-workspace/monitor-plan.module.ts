@@ -11,6 +11,7 @@ import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
+import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
 
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
@@ -21,8 +22,8 @@ import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { UserCheckOutMap } from '../maps/user-check-out.map';
-import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { DuctWafMap } from 'src/maps/workspace/duct-waf.map';
+import { DuctWafMap } from '../maps/duct-waf.map';
+import { MonitorDefaultMap } from '../maps/monitor-default.map';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { DuctWafMap } from 'src/maps/workspace/duct-waf.map';
     MonitorSystemMap,
     UserCheckOutMap,
     DuctWafMap,
+    MonitorDefaultMap,
   ],
 })
 export class MonitorPlanWorkspaceModule {}

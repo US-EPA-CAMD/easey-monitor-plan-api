@@ -18,10 +18,10 @@ export class MonitorFormula extends BaseEntity {
   monLocId: string;
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'parameter_cd' })
-  parameterCd: string;
+  parameterCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'equation_cd' })
-  equationCd: string;
+  equationCode: string;
 
   @Column({
     type: 'varchar',
@@ -29,7 +29,7 @@ export class MonitorFormula extends BaseEntity {
     nullable: true,
     name: 'formula_identifier',
   })
-  formulaIdentifier: string;
+  formulaId: string;
 
   @Column({ type: 'date', nullable: true, name: 'begin_date' })
   beginDate: Date;
@@ -49,7 +49,7 @@ export class MonitorFormula extends BaseEntity {
     nullable: false,
     name: 'formula_equation',
   })
-  formulaEquation: string;
+  formulaText: string;
 
   @Column({ type: 'varchar', length: 8, nullable: false, name: 'userid' })
   userId: string;

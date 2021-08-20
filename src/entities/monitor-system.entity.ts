@@ -31,7 +31,7 @@ export class MonitorSystem extends BaseEntity {
     nullable: true,
     name: 'system_identifier',
   })
-  systemIdentifier: string;
+  monitoringSystemId: string;
 
   @Column({
     type: 'varchar',

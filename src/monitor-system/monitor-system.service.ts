@@ -19,7 +19,7 @@ export class MonitorSystemService {
         monLocId: monLocId,
       },
       order: {
-        systemIdentifier: 'ASC',
+        monitoringSystemId: 'ASC',
       },
     });
     return this.map.many(results);

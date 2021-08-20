@@ -31,7 +31,7 @@ export class Component extends BaseEntity {
   basisCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'acq_cd' })
-  acquisitionMethodCode: string;
+  sampleAcquisitionMethodCode: string;
 
   @Column({
     type: 'varchar',
@@ -71,7 +71,7 @@ export class Component extends BaseEntity {
     nullable: false,
     name: 'hg_converter_ind',
   })
-  hgConverterInd: number;
+  hgConverterIndicator: number;
 
   @ManyToMany(
     () => MonitorSystem,

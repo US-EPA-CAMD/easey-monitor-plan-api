@@ -1,14 +1,14 @@
 export class MonitorFormulaDTO {
   id: string;
   monLocId: string;
-  parameterCd: string;
-  equationCd: string;
-  formulaIdentifier: string;
+  parameterCode: string;
+  equationCode: string;
+  formulaId: string;
   beginDate: Date;
   beginHour: number;
   endDate: Date;
   endHour: number;
-  formulaEquation: string;
+  formulaText: string;
   userId: string;
   addDate: Date;
   updateDate: Date;

@@ -1,11 +1,11 @@
 import { IsOptional } from 'class-validator';
 
 export class UpdateMonitorMethodDTO {
-  methodCode: string;
+  monitoringMethodCode: string;
   parameterCode: string;
 
   @IsOptional()
-  subDataCode: string;
+  substituteDataCode: string;
 
   @IsOptional()
   bypassApproachCode: string;

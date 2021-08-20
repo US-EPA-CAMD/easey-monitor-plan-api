@@ -16,8 +16,8 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       modelVersion: entity.modelVersion,
       manufacturer: entity.manufacturer,
       serialNumber: entity.serialNumber,
-      hgConverterInd: entity.hgConverterInd,
-      acquisitionMethodCode: entity.acquisitionMethodCode,
+      hgConverterIndicator: entity.hgConverterIndicator,
+      sampleAcquisitionMethodCode: entity.sampleAcquisitionMethodCode,
     };
   }
 }

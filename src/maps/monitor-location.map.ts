@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { MonitorLocation } from '../entities/monitor-location.entity';
+
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
 import { BaseMap } from './base.map';
@@ -12,6 +13,7 @@ import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { DuctWafMap } from './duct-waf.map';
+import { MonitorDefaultMap } from './monitor-default.map';
 
 @Injectable()
 export class MonitorLocationMap extends BaseMap<
@@ -29,6 +31,7 @@ export class MonitorLocationMap extends BaseMap<
     private loadMap: MonitorLoadMap,
     private systemMap: MonitorSystemMap,
     private ductWafMap: DuctWafMap,
+    private defaultMap: MonitorDefaultMap,
   ) {
     super();
   }
@@ -70,6 +73,9 @@ export class MonitorLocationMap extends BaseMap<
     const ductWafs = entity.ductWafs
       ? await this.ductWafMap.many(entity.ductWafs)
       : null;
+    const defaults = entity.defaults
+      ? await this.defaultMap.many(entity.defaults)
+      : null;
 
     return {
       id: entity.id,
@@ -84,6 +90,7 @@ export class MonitorLocationMap extends BaseMap<
       loads,
       systems,
       ductWafs,
+      defaults,
       // links: [
       //   {
       //     rel: 'self',

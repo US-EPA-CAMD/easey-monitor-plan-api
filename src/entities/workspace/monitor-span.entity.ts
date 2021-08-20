@@ -62,10 +62,10 @@ export class MonitorSpan extends BaseEntity {
     nullable: true,
     name: 'component_type_cd',
   })
-  componentTypeCd: string;
+  componentTypeCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'span_scale_cd' })
-  spanScaleCd: string;
+  spanScaleCode: string;
 
   @Column({
     type: 'varchar',
@@ -73,7 +73,7 @@ export class MonitorSpan extends BaseEntity {
     nullable: true,
     name: 'span_method_cd',
   })
-  spanMethodCd: string;
+  spanMethodCode: string;
 
   @Column({ type: 'varchar', length: 8, nullable: true, name: 'userid' })
   userid: string;
@@ -82,7 +82,7 @@ export class MonitorSpan extends BaseEntity {
   updateDate: Date;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'span_uom_cd' })
-  spanUomCd: string;
+  spanUnitsOfMeausureCode: string;
 
   @ManyToOne(
     () => MonitorLocation,

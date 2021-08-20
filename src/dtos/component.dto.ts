@@ -5,8 +5,8 @@ export class ComponentDTO {
   basisCode: string;
   modelVersion: string;
   manufacturer: string;
-  acquisitionMethodCode: string;
+  sampleAcquisitionMethodCode: string;
   componentIdentifier: string;
   serialNumber: string;
-  hgConverterInd: number;
+  hgConverterIndicator: number;
 }

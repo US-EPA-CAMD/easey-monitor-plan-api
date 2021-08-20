@@ -3,7 +3,7 @@ export class MonitorSystemDTO {
   monLocId: string;
   systemTypeCode: string;
   systemDesignationCode: string;
-  systemIdentifier: string;
+  monitoringSystemId: string;
   fuelCode: string;
   beginDate: Date;
   endDate: Date;

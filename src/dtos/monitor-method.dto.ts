@@ -11,13 +11,13 @@ export class MonitorMethodDTO {
   parameterCode: string;
 
   @IsOptional()
-  subDataCode: string;
+  substituteDataCode: string;
 
   @IsOptional()
   bypassApproachCode: string;
 
   @IsNotEmpty()
-  methodCode: string;
+  monitoringMethodCode: string;
 
   @IsNotEmpty()
   beginDate: Date;

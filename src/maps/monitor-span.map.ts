@@ -10,8 +10,9 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
     return {
       id: entity.id,
       monLocId: entity.monLocId,
-      mpcValue: entity.mpcValue,
       mecValue: entity.mecValue,
+      mpcValue: entity.mpcValue,
+      mpfValue: entity.mpfValue,
       maxLowRange: entity.maxLowRange,
       spanValue: entity.spanValue,
       fullScaleRange: entity.fullScaleRange,
@@ -22,12 +23,12 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
       defaultHighRange: entity.defaultHighRange,
       flowSpanValue: entity.flowSpanValue,
       flowFullScaleRange: entity.flowFullScaleRange,
-      componentTypeCd: entity.componentTypeCd,
-      spanScaleCd: entity.spanScaleCd,
-      spanMethodCd: entity.spanMethodCd,
+      componentTypeCode: entity.componentTypeCode,
+      spanScaleCode: entity.spanScaleCode,
+      spanMethodCode: entity.spanMethodCode,
       userid: entity.userid,
       updateDate: entity.updateDate,
-      spanUomCd: entity.spanUomCd,
+      spanUnitsOfMeausureCode: entity.spanUnitsOfMeausureCode,
       active: entity.endDate === null,
     };
   }

@@ -33,16 +33,16 @@ export class MonitorLoad extends BaseEntity {
   endHour: number;
 
   @Column({ nullable: true, name: 'max_load_value' })
-  maxLoadValue: number;
+  maximumLoadValue: number;
 
   @Column({ nullable: true, name: 'second_normal_ind' })
-  secondNormalInd: number;
+  secondNormalIndicator: number;
 
   @Column({ nullable: true, name: 'up_op_boundary' })
-  upOpBoundary: number;
+  upperOperationBoundary: number;
 
   @Column({ nullable: true, name: 'low_op_boundary' })
-  lowOpBoundary: number;
+  lowerOperationBoundary: number;
 
   @Column({
     type: 'varchar',
@@ -50,7 +50,7 @@ export class MonitorLoad extends BaseEntity {
     nullable: false,
     name: 'normal_level_cd',
   })
-  normalLevelCd: string;
+  normalLevelCode: string;
 
   @Column({
     type: 'varchar',
@@ -58,7 +58,7 @@ export class MonitorLoad extends BaseEntity {
     nullable: false,
     name: 'second_level_cd',
   })
-  secondLevelCd: string;
+  secondLevelCode: string;
 
   @Column({ type: 'varchar', length: 8, nullable: false, name: 'userid' })
   userId: string;
@@ -75,7 +75,7 @@ export class MonitorLoad extends BaseEntity {
     nullable: false,
     name: 'max_load_uom_cd',
   })
-  maxLoadUomCd: string;
+  maximumLoadUnitsOfMeasureCode: string;
 
   @ManyToOne(
     () => MonitorLocation,
