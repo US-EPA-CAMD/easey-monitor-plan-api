@@ -82,7 +82,7 @@ export class MonitorSpan extends BaseEntity {
   updateDate: Date;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'span_uom_cd' })
-  spanUnitsOfMeausureCode: string;
+  spanUnitsOfMeasureCode: string;
 
   @ManyToOne(
     () => MonitorLocation,

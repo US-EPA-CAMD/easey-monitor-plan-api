@@ -28,7 +28,7 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
       spanMethodCode: entity.spanMethodCode,
       userid: entity.userid,
       updateDate: entity.updateDate,
-      spanUnitsOfMeausureCode: entity.spanUnitsOfMeausureCode,
+      spanUnitsOfMeasureCode: entity.spanUnitsOfMeasureCode,
       active: entity.endDate === null,
     };
   }
