@@ -15,7 +15,9 @@ export class MonitorFormulaController {
     type: MonitorFormulaDTO,
     description: 'Retrieves official formula records for a monitor location',
   })
-  getFormulas(@Param('locId') monLocId: string): Promise<MonitorFormulaDTO[]> {
-    return this.service.getFormulas(monLocId);
+  getFormulas(
+    @Param('locId') locationId: string,
+  ): Promise<MonitorFormulaDTO[]> {
+    return this.service.getFormulas(locationId);
   }
 }

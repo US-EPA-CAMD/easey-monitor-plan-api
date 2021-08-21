@@ -17,7 +17,7 @@ export class MonitorMethodWorkspaceService {
   ) {}
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
-    const results = await this.repository.find({ monLocId: locId });
+    const results = await this.repository.find({ locationId: locId });
     return this.map.many(results);
   }
 
@@ -32,12 +32,12 @@ export class MonitorMethodWorkspaceService {
   }
 
   async createMethod(
-    locId: string,
+    locationId: string,
     payload: UpdateMonitorMethodDTO,
   ): Promise<MonitorMethodDTO> {
     const monMethod = this.repository.create({
       id: uuid(),
-      monLocId: locId,
+      locationId,
       parameterCode: payload.parameterCode,
       substituteDataCode: payload.substituteDataCode,
       bypassApproachCode: payload.bypassApproachCode,

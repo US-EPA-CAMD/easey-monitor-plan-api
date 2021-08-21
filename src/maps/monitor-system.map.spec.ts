@@ -2,8 +2,8 @@ import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemMap } from './monitor-system.map';
 
 const id = '';
-const monLocId = '';
-const systemIdentifier = '';
+const locationId = '';
+const monitoringSystemId = '';
 const systemTypeCode = '';
 const systemDesignationCode = '';
 const fuelCode = '';
@@ -14,8 +14,8 @@ const endHour = 12;
 
 const entity = new MonitorSystem();
 entity.id = id;
-entity.monLocId = monLocId;
-entity.systemIdentifier = systemIdentifier;
+entity.locationId = locationId;
+entity.monitoringSystemId = monitoringSystemId;
 entity.systemTypeCode = systemTypeCode;
 entity.systemDesignationCode = systemDesignationCode;
 entity.fuelCode = fuelCode;
@@ -29,8 +29,8 @@ describe('MonitorSystemMap', () => {
     const map = new MonitorSystemMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(id);
-    expect(result.monLocId).toEqual(monLocId);
-    expect(result.systemIdentifier).toEqual(systemIdentifier);
+    expect(result.locationId).toEqual(locationId);
+    expect(result.monitoringSystemId).toEqual(monitoringSystemId);
     expect(result.systemTypeCode).toEqual(systemTypeCode);
     expect(result.systemDesignationCode).toEqual(systemDesignationCode);
     expect(result.fuelCode).toEqual(fuelCode);

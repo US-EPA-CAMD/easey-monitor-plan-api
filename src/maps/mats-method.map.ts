@@ -9,7 +9,7 @@ export class MatsMethodMap extends BaseMap<MatsMethod, MatsMethodDTO> {
   public async one(entity: MatsMethod): Promise<MatsMethodDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       matsMethodParameterCode: entity.matsMethodParameterCode,
       matsMethodCode: entity.matsMethodCode,
       beginDate: entity.beginDate,

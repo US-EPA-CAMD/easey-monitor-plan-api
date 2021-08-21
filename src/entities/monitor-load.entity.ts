@@ -15,7 +15,7 @@ export class MonitorLoad extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ type: 'date', nullable: true, name: 'load_analysis_date' })
   loadAnalysisDate: Date;

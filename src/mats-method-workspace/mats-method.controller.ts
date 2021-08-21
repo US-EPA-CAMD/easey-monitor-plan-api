@@ -18,8 +18,8 @@ export class MatsMethodWorkspaceController {
     description:
       'Retrieves workspace copy MATS Method records for a monitor location',
   })
-  getMethods(@Param('locId') monLocId: string): Promise<MatsMethodDTO[]> {
-    return this.service.getMethods(monLocId);
+  getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
+    return this.service.getMethods(locationId);
   }
 
   @Post()
@@ -28,10 +28,10 @@ export class MatsMethodWorkspaceController {
     description: 'Creates workspace MATS Method record',
   })
   createMethod(
-    @Param('locId') monLocId: string,
+    @Param('locId') locationId: string,
     @Body() payload: CreateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
-    return this.service.createMethod(monLocId, payload);
+    return this.service.createMethod(locationId, payload);
   }
 
   @Put(':methodId')
@@ -40,10 +40,10 @@ export class MatsMethodWorkspaceController {
     description: 'Updates workspace MATS Method record',
   })
   updateMethod(
-    @Param('locId') monLocId: string,
+    @Param('locId') locationId: string,
     @Param('methodId') methodId: string,
     @Body() payload: UpdateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
-    return this.service.updateMethod(methodId, monLocId, payload);
+    return this.service.updateMethod(methodId, locationId, payload);
   }
 }

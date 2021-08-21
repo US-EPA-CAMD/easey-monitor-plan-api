@@ -15,7 +15,7 @@ export class MonitorSpan extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ nullable: true, name: 'mpc_value' })
   mpcValue: number;
@@ -82,7 +82,7 @@ export class MonitorSpan extends BaseEntity {
   updateDate: Date;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'span_uom_cd' })
-  spanUnitsOfMeausureCode: string;
+  spanUnitsOfMeasureCode: string;
 
   @ManyToOne(
     () => MonitorLocation,

@@ -2,7 +2,7 @@ import { MonitorFormula } from '../entities/monitor-formula.entity';
 import { MonitorFormulaMap } from './monitor-formula.map';
 
 const id = '';
-const monLocId = '';
+const locationId = '';
 const parameterCode = '';
 const equationCode = '';
 const formulaId = '';
@@ -17,7 +17,7 @@ const updateDate = new Date(Date.now());
 
 const entity = new MonitorFormula();
 entity.id = id;
-entity.monLocId = monLocId;
+entity.locationId = locationId;
 entity.parameterCode = parameterCode;
 entity.equationCode = equationCode;
 entity.formulaId = formulaId;
@@ -35,7 +35,7 @@ describe('MonitorFormulaMap', () => {
     const map = new MonitorFormulaMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(id);
-    expect(result.monLocId).toEqual(monLocId);
+    expect(result.locationId).toEqual(locationId);
     expect(result.parameterCode).toEqual(parameterCode);
     expect(result.equationCode).toEqual(equationCode);
     expect(result.formulaId).toEqual(formulaId);

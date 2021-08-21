@@ -1,18 +1,20 @@
 export class DuctWafDTO {
   id: string;
-  monLocId: string;
-  wafDeterminedDate: Date;
-  wafEffectiveDate: Date;
-  wafEffectiveHour: number;
-  wafMethodCd: string;
+  locationId: string;
+  wafDeterminationDate: Date;
+  wafBeginDate: Date;
+  wafBeginHour: number;
+  wafMethodCode: string;
   wafValue: number;
-  numTestRuns: number;
-  numTraversePointsRef: number;
+  numberOfTestRuns: number;
+  numberOfTraversePointsWaf: number;
+  numberOfTestPorts: number;
+  numberOfTraversePointsRef: number;
   ductWidth: number;
   ductDepth: number;
-  endDate: Date;
-  endHour: number;
+  wafEndDate: Date;
+  wafEndHour: number;
+  userId: string;
   addDate: Date;
   updateDate: Date;
-  userId: string;
 }

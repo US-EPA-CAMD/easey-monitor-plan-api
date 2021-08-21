@@ -16,7 +16,7 @@ export class MatsMethodController {
     description:
       'Retrieves official MATS Method records for a monitor location',
   })
-  getMethods(@Param('locId') monLocId: string): Promise<MatsMethodDTO[]> {
-    return this.service.getMethods(monLocId);
+  getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
+    return this.service.getMethods(locationId);
   }
 }

@@ -9,7 +9,7 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
   public async one(entity: MonitorSpan): Promise<MonitorSpanDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       mecValue: entity.mecValue,
       mpcValue: entity.mpcValue,
       mpfValue: entity.mpfValue,

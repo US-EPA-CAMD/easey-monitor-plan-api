@@ -1,6 +1,6 @@
 export class MonitorDefaultDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   parameterCode: string;
   defaultValue: number;
   defaultUnitsOfMeasureCode: string;

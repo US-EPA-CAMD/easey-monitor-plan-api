@@ -14,10 +14,10 @@ export class SystemComponentService {
   ) {}
 
   async getComponents(
-    monLocId: string,
+    locationId: string,
     monSysId: string,
   ): Promise<SystemComponentDTO[]> {
-    const results = await this.repository.getComponents(monLocId, monSysId);
+    const results = await this.repository.getComponents(locationId, monSysId);
     return this.map.many(results);
   }
 }

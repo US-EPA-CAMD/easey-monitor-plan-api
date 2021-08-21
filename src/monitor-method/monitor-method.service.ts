@@ -13,8 +13,8 @@ export class MonitorMethodService {
     private map: MonitorMethodMap,
   ) {}
 
-  async getMethods(monLocId: string): Promise<MonitorMethodDTO[]> {
-    const results = await this.repository.find({ monLocId: monLocId });
+  async getMethods(locationId: string): Promise<MonitorMethodDTO[]> {
+    const results = await this.repository.find({ locationId });
     return this.map.many(results);
   }
 }

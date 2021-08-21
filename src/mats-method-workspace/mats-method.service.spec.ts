@@ -19,7 +19,7 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([]),
 });
 
-const monLocId = '5770';
+const locationId = '5770';
 const methodId = 'someId';
 
 const createMatsMethodDTO: CreateMatsMethodDTO = {
@@ -60,8 +60,8 @@ describe('MonitorMethodWorkspaceService', () => {
   });
 
   describe('getMethods', () => {
-    it('calls the MatsMehtodWorkspaceRepository.find() gets all mats method codes for monLocId', async () => {
-      const result = await service.getMethods(monLocId);
+    it('calls the MatsMehtodWorkspaceRepository.find() gets all mats method codes for locationId', async () => {
+      const result = await service.getMethods(locationId);
       expect(result).toEqual([]);
     });
   });
@@ -74,17 +74,20 @@ describe('MonitorMethodWorkspaceService', () => {
   });
 
   describe('createMethod', () => {
-    it('creates a matsMethodCode data for a specified monLocId', async () => {
-      const result = await service.createMethod(monLocId, createMatsMethodDTO);
+    it('creates a matsMethodCode data for a specified locationId', async () => {
+      const result = await service.createMethod(
+        locationId,
+        createMatsMethodDTO,
+      );
       expect(result).toEqual({});
     });
   });
 
   describe('updateMetod', () => {
-    it('updates a matsMethodCode data for a specified monLocId', async () => {
+    it('updates a matsMethodCode data for a specified locationId', async () => {
       const result = await service.updateMethod(
         methodId,
-        monLocId,
+        locationId,
         updateMatsMethodDTO,
       );
       expect(result).toEqual({ ...result });

@@ -13,8 +13,8 @@ export class MonitorLoadService {
     private map: MonitorLoadMap,
   ) {}
 
-  async getLoads(monLocId: string): Promise<MonitorLoadDTO[]> {
-    const results = await this.repository.find({ monLocId: monLocId });
+  async getLoads(locationId: string): Promise<MonitorLoadDTO[]> {
+    const results = await this.repository.find({ locationId });
     return this.map.many(results);
   }
 }

@@ -13,10 +13,10 @@ export class ComponentService {
     private map: ComponentMap,
   ) {}
 
-  async getComponents(monLocId: string): Promise<ComponentDTO[]> {
+  async getComponents(locationId: string): Promise<ComponentDTO[]> {
     const results = await this.repository.find({
       where: {
-        monLocId: monLocId,
+        locationId,
       },
       order: {
         componentIdentifier: 'ASC',

@@ -8,21 +8,23 @@ export class DuctWafMap extends BaseMap<DuctWaf, DuctWafDTO> {
   public async one(entity: DuctWaf): Promise<DuctWafDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
-      wafDeterminedDate: entity.wafDeterminedDate,
-      wafEffectiveDate: entity.wafEffectiveDate,
-      wafEffectiveHour: entity.wafEffectiveHour,
-      wafMethodCd: entity.wafMethodCd,
+      locationId: entity.locationId,
+      wafDeterminationDate: entity.wafDeterminationDate,
+      wafBeginDate: entity.wafBeginDate,
+      wafBeginHour: entity.wafBeginHour,
+      wafMethodCode: entity.wafMethodCode,
       wafValue: entity.wafValue,
-      numTestRuns: entity.numTestRuns,
-      numTraversePointsRef: entity.numTraversePointsRef,
+      numberOfTestRuns: entity.numberOfTestRuns,
+      numberOfTraversePointsWaf: entity.numberOfTraversePointsWaf,
+      numberOfTestPorts: entity.numberOfTestPorts,
+      numberOfTraversePointsRef: entity.numberOfTraversePointsRef,
       ductWidth: entity.ductWidth,
       ductDepth: entity.ductWidth,
-      endDate: entity.endDate,
-      endHour: entity.endHour,
+      wafEndDate: entity.wafEndDate,
+      wafEndHour: entity.wafEndHour,
+      userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
-      userId: entity.userId,
     };
   }
 }

@@ -12,7 +12,7 @@ export class MonitorDefaultMap extends BaseMap<
   public async one(entity: MonitorDefault): Promise<MonitorDefaultDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       parameterCode: entity.parameterCode,
       defaultValue: entity.defaultValue,
       defaultUnitsOfMeasureCode: entity.defaultUnitsOfMeasureCode,

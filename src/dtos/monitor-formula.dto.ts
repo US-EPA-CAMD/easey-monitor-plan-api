@@ -1,6 +1,6 @@
 export class MonitorFormulaDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   parameterCode: string;
   equationCode: string;
   formulaId: string;

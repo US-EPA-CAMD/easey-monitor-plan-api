@@ -2,7 +2,7 @@ import { MatsMethod } from '../entities/mats-method.entity';
 import { MatsMethodMap } from './mats-method.map';
 
 const id = '';
-const monLocId = '';
+const locationId = '';
 const matsMethodParameterCode = '';
 const matsMethodCode = '';
 const beginDate = new Date(Date.now());
@@ -12,7 +12,7 @@ const endHour = 12;
 
 const entity = new MatsMethod();
 entity.id = id;
-entity.monLocId = monLocId;
+entity.locationId = locationId;
 entity.matsMethodParameterCode = matsMethodParameterCode;
 entity.matsMethodCode = matsMethodCode;
 entity.beginDate = beginDate;
@@ -25,7 +25,7 @@ describe('MatsMethodMap', () => {
     const map = new MatsMethodMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(id);
-    expect(result.monLocId).toEqual(monLocId);
+    expect(result.locationId).toEqual(locationId);
     expect(result.matsMethodParameterCode).toEqual(matsMethodParameterCode);
     expect(result.matsMethodCode).toEqual(matsMethodCode);
     expect(result.beginDate).toEqual(beginDate);

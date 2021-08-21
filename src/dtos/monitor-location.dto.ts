@@ -1,4 +1,4 @@
-//import { LinkDTO } from './link.dto';
+import { MonitorAttributeDTO } from './monitor-attribute.dto';
 import { MatsMethodDTO } from './mats-method.dto';
 import { MonitorMethodDTO } from './monitor-method.dto';
 import { MonitorFormulaDTO } from './monitor-formula.dto';
@@ -14,6 +14,7 @@ export class MonitorLocationDTO {
   type: string;
   active: boolean;
   retireDate: Date;
+  attributes: MonitorAttributeDTO[];
   methods: MonitorMethodDTO[];
   matsMethods: MatsMethodDTO[];
   formulas: MonitorFormulaDTO[];
@@ -22,5 +23,4 @@ export class MonitorLocationDTO {
   loads: MonitorLoadDTO[];
   systems: MonitorSystemDTO[];
   ductWafs: DuctWafDTO[];
-  //links: LinkDTO[];
 }

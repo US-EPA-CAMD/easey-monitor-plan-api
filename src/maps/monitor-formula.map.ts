@@ -12,7 +12,7 @@ export class MonitorFormulaMap extends BaseMap<
   public async one(entity: MonitorFormula): Promise<MonitorFormulaDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       parameterCode: entity.parameterCode,
       equationCode: entity.equationCode,
       formulaId: entity.formulaId,

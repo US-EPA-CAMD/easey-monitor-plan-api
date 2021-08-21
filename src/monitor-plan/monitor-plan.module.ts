@@ -14,6 +14,7 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
+import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
 
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
@@ -26,6 +27,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
 import { MonitorDefaultRepository } from '../monitor-default/monitor-default.repository';
 import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.repository';
+import { MonitorAttributeRepository } from '../monitor-attribute/monitor-attribute.repository';
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.r
       DuctWafRepository,
       MonitorDefaultRepository,
       SystemFuelFlowRepository,
+      MonitorAttributeRepository,
     ]),
   ],
   controllers: [MonitorPlanController],
@@ -56,6 +59,7 @@ import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.r
     MonitorSystemMap,
     DuctWafMap,
     MonitorDefaultMap,
+    MonitorAttributeMap,
   ],
 })
 export class MonitorPlanModule {}

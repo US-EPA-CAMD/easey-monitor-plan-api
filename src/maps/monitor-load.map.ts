@@ -9,7 +9,7 @@ export class MonitorLoadMap extends BaseMap<MonitorLoad, MonitorLoadDTO> {
   public async one(entity: MonitorLoad): Promise<MonitorLoadDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       loadAnalysisDate: entity.loadAnalysisDate,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,

@@ -6,8 +6,8 @@ import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 
-import { UserCheckOutRepository } from '../user-check-out/user-check-out.repository';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
+import { UserCheckOutRepository } from '../user-check-out/user-check-out.repository';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
@@ -24,6 +24,7 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
+import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { MonitorDefaultMap } from '../maps/monitor-default.map';
     UserCheckOutMap,
     DuctWafMap,
     MonitorDefaultMap,
+    MonitorAttributeMap,
   ],
 })
 export class MonitorPlanWorkspaceModule {}

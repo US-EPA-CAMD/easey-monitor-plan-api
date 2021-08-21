@@ -14,13 +14,13 @@ export class DuctWaf extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ type: 'date', name: 'waf_determined_date' })
-  wafDeterminedDate: Date;
+  wafDeterminationDate: Date;
 
   @Column({ type: 'date', nullable: false, name: 'waf_effective_date' })
-  wafEffectiveDate: Date;
+  wafBeginDate: Date;
 
   @Column({
     type: 'numeric',
@@ -29,10 +29,10 @@ export class DuctWaf extends BaseEntity {
     nullable: false,
     name: 'waf_effective_hour',
   })
-  wafEffectiveHour: number;
+  wafBeginHour: number;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'waf_method_cd' })
-  wafMethodCd: string;
+  wafMethodCode: string;
 
   @Column({
     type: 'numeric',
@@ -47,10 +47,25 @@ export class DuctWaf extends BaseEntity {
     type: 'numeric',
     precision: 2,
     scale: 0,
-    nullable: true,
     name: 'num_test_runs',
   })
-  numTestRuns: number;
+  numberOfTestRuns: number;
+
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    name: 'num_traverse_points_waf',
+  })
+  numberOfTraversePointsWaf: number;
+
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    name: 'num_test_ports',
+  })
+  numberOfTestPorts: number;
 
   @Column({
     type: 'numeric',
@@ -58,7 +73,7 @@ export class DuctWaf extends BaseEntity {
     scale: 0,
     name: 'num_traverse_points_ref',
   })
-  numTraversePointsRef: number;
+  numberOfTraversePointsRef: number;
 
   @Column({
     type: 'numeric',
@@ -76,8 +91,8 @@ export class DuctWaf extends BaseEntity {
   })
   ductDepth: number;
 
-  @Column({ type: 'date', nullable: true, name: 'end_date' })
-  endDate: Date;
+  @Column({ type: 'date', name: 'end_date' })
+  wafEndDate: Date;
 
   @Column({
     type: 'numeric',
@@ -86,16 +101,16 @@ export class DuctWaf extends BaseEntity {
     nullable: true,
     name: 'end_hour',
   })
-  endHour: number;
+  wafEndHour: number;
 
-  @Column({ type: 'date', nullable: true, name: 'add_date' })
+  @Column({ type: 'varchar', length: 8, name: 'userid' })
+  userId: string;
+
+  @Column({ type: 'date', name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
-
-  @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })
-  userId: string;
 
   @ManyToOne(
     () => MonitorLocation,

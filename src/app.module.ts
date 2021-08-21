@@ -36,6 +36,7 @@ import { MonitorDefaultModule } from './monitor-default/monitor-default.module';
 import { SystemFuelFlowWorkspaceModule } from './system-fuel-flow-workspace/system-fuel-flow.module';
 import { SystemComponentWorkspaceModule } from './system-component-workspace/system.component.module';
 import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor-system.module';
+import { MonitorAttributeModule } from './monitor-attribute/monitor-attribute.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor
     DuctWafModule,
     DuctWafWorkspaceModule,
     MonitorDefaultModule,
+    MonitorAttributeModule,
   ],
 })
 export class AppModule {}

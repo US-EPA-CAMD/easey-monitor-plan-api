@@ -1,6 +1,6 @@
 export class MonitorSystemDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   systemTypeCode: string;
   systemDesignationCode: string;
   monitoringSystemId: string;

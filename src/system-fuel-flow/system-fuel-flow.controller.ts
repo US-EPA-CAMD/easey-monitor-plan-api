@@ -16,7 +16,7 @@ export class SystemFuelFlowController {
     description: 'Retrieves official fuel flow records for a monitor system',
   })
   getFuelFlows(
-    @Param('locId') monLocId: string,
+    @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
   ): Promise<SystemFuelFlowDTO[]> {
     return this.service.getFuelFlows(monSysId);

@@ -1,6 +1,6 @@
 export class MonitorSpanDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   mecValue: number;
   mpcValue: number;
   mpfValue: number;
@@ -19,6 +19,6 @@ export class MonitorSpanDTO {
   spanMethodCode: string;
   userid: string;
   updateDate: Date;
-  spanUnitsOfMeausureCode: string;
+  spanUnitsOfMeasureCode: string;
   active: boolean;
 }

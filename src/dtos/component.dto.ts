@@ -1,6 +1,6 @@
 export class ComponentDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   componentTypeCode: string;
   basisCode: string;
   modelVersion: string;

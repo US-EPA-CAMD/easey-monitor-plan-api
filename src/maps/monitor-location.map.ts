@@ -14,6 +14,7 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { DuctWafMap } from './duct-waf.map';
 import { MonitorDefaultMap } from './monitor-default.map';
+import { MonitorAttributeMap } from './montitor-attribute.map';
 
 @Injectable()
 export class MonitorLocationMap extends BaseMap<
@@ -32,6 +33,7 @@ export class MonitorLocationMap extends BaseMap<
     private readonly systemMap: MonitorSystemMap,
     private readonly ductWafMap: DuctWafMap,
     private readonly defaultMap: MonitorDefaultMap,
+    private readonly attributeMap: MonitorAttributeMap,
   ) {
     super();
   }
@@ -76,6 +78,9 @@ export class MonitorLocationMap extends BaseMap<
     const defaults = entity.defaults
       ? await this.defaultMap.many(entity.defaults)
       : null;
+    const attributes = entity.attributes
+      ? await this.attributeMap.many(entity.attributes)
+      : null;
 
     return {
       id: entity.id,
@@ -91,6 +96,7 @@ export class MonitorLocationMap extends BaseMap<
       systems,
       ductWafs,
       defaults,
+      attributes,
       // links: [
       //   {
       //     rel: 'self',

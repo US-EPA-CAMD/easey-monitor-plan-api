@@ -18,6 +18,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
 import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.repository';
 import { MonitorDefaultRepository } from '../monitor-default/monitor-default.repository';
+import { MonitorAttributeRepository } from '../monitor-attribute/monitor-attribute.repository';
 
 @Injectable()
 export class MonitorPlanService {
@@ -44,6 +45,8 @@ export class MonitorPlanService {
     private readonly systemFuelFlowRepository: SystemFuelFlowRepository,
     @InjectRepository(MonitorDefaultRepository)
     private readonly defaultRepository: MonitorDefaultRepository,
+    @InjectRepository(MonitorAttributeRepository)
+    private readonly attributeRepository: MonitorAttributeRepository,
     private map: MonitorPlanMap,
   ) {}
 
@@ -100,42 +103,46 @@ export class MonitorPlanService {
       monPlanId,
     );
 
-    const monLocIds = mp.locations.map(i => i.id);
+    const locationIds = mp.locations.map(i => i.id);
+    const attributes = await this.attributeRepository.find({
+      where: { locationId: In(locationIds) },
+    });
     const methods = await this.methodRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
     const matsMethods = await this.matsMethodRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
     const formulas = await this.formulaRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
     const spans = await this.spanRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
     const loads = await this.loadRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
     const systems = await this.systemRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
     const ductWafs = await this.ductWafRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
     const defaults = await this.defaultRepository.find({
-      where: { monLocId: In(monLocIds) },
+      where: { locationId: In(locationIds) },
     });
 
     mp.locations.forEach(l => {
-      const monLocId = l.id;
-      l.methods = methods.filter(i => i.monLocId === monLocId);
-      l.matsMethods = matsMethods.filter(i => i.monLocId === monLocId);
-      l.formulas = formulas.filter(i => i.monLocId === monLocId);
-      l.spans = spans.filter(i => i.monLocId === monLocId);
-      l.loads = loads.filter(i => i.monLocId === monLocId);
-      l.systems = systems.filter(i => i.monLocId === monLocId);
-      l.ductWafs = ductWafs.filter(i => i.monLocId === monLocId);
-      l.defaults = defaults.filter(i => i.monLocId === monLocId);
+      const locationId = l.id;
+      l.attributes = attributes.filter(i => i.locationId === locationId);
+      l.methods = methods.filter(i => i.locationId === locationId);
+      l.matsMethods = matsMethods.filter(i => i.locationId === locationId);
+      l.formulas = formulas.filter(i => i.locationId === locationId);
+      l.spans = spans.filter(i => i.locationId === locationId);
+      l.loads = loads.filter(i => i.locationId === locationId);
+      l.systems = systems.filter(i => i.locationId === locationId);
+      l.ductWafs = ductWafs.filter(i => i.locationId === locationId);
+      l.defaults = defaults.filter(i => i.locationId === locationId);
 
       const monSysIds = l.systems.map(sys => sys.id);
       l.systems.forEach(async sys => {

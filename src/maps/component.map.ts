@@ -9,7 +9,7 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
   public async one(entity: Component): Promise<ComponentDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       componentIdentifier: entity.componentIdentifier,
       componentTypeCode: entity.componentTypeCode,
       basisCode: entity.basisCode,

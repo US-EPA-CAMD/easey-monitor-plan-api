@@ -1,6 +1,6 @@
 export class MonitorLoadDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   loadAnalysisDate: Date;
   beginDate: Date;
   beginHour: number;
