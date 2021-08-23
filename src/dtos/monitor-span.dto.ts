@@ -1,8 +1,9 @@
 export class MonitorSpanDTO {
   id: string;
-  monLocId: string;
-  mpcValue: number;
+  locationId: string;
   mecValue: number;
+  mpcValue: number;
+  mpfValue: number;
   maxLowRange: number;
   spanValue: number;
   fullScaleRange: number;
@@ -13,11 +14,11 @@ export class MonitorSpanDTO {
   defaultHighRange: number;
   flowSpanValue: number;
   flowFullScaleRange: number;
-  componentTypeCd: string;
-  spanScaleCd: string;
-  spanMethodCd: string;
+  componentTypeCode: string;
+  spanScaleCode: string;
+  spanMethodCode: string;
   userid: string;
   updateDate: Date;
-  spanUomCd: string;
+  spanUnitsOfMeasureCode: string;
   active: boolean;
 }

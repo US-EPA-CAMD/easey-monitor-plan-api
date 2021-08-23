@@ -15,7 +15,7 @@ export class MonitorLoadController {
     type: MonitorLoadDTO,
     description: 'Retrieves official load records for a monitor location',
   })
-  getLoads(@Param('locId') monLocId: string): Promise<MonitorLoadDTO[]> {
-    return this.service.getLoads(monLocId);
+  getLoads(@Param('locId') locationId: string): Promise<MonitorLoadDTO[]> {
+    return this.service.getLoads(locationId);
   }
 }

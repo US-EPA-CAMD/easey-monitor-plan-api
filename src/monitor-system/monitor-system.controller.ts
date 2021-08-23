@@ -15,7 +15,7 @@ export class MonitorSystemController {
     type: MonitorSystemDTO,
     description: 'Retrieves official system records for a monitor location',
   })
-  getSystems(@Param('locId') monLocId: string): Promise<MonitorSystemDTO[]> {
-    return this.service.getSystems(monLocId);
+  getSystems(@Param('locId') locationId: string): Promise<MonitorSystemDTO[]> {
+    return this.service.getSystems(locationId);
   }
 }

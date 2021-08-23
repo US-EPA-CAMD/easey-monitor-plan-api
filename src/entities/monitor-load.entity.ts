@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.monitor_load' })
 export class MonitorLoad extends BaseEntity {
@@ -6,7 +15,7 @@ export class MonitorLoad extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ type: 'date', nullable: true, name: 'load_analysis_date' })
   loadAnalysisDate: Date;
@@ -24,16 +33,16 @@ export class MonitorLoad extends BaseEntity {
   endHour: number;
 
   @Column({ nullable: true, name: 'max_load_value' })
-  maxLoadValue: number;
+  maximumLoadValue: number;
 
   @Column({ nullable: true, name: 'second_normal_ind' })
-  secondNormalInd: number;
+  secondNormalIndicator: number;
 
   @Column({ nullable: true, name: 'up_op_boundary' })
-  upOpBoundary: number;
+  upperOperationBoundary: number;
 
   @Column({ nullable: true, name: 'low_op_boundary' })
-  lowOpBoundary: number;
+  lowerOperationBoundary: number;
 
   @Column({
     type: 'varchar',
@@ -41,7 +50,7 @@ export class MonitorLoad extends BaseEntity {
     nullable: false,
     name: 'normal_level_cd',
   })
-  normalLevelCd: string;
+  normalLevelCode: string;
 
   @Column({
     type: 'varchar',
@@ -49,7 +58,7 @@ export class MonitorLoad extends BaseEntity {
     nullable: false,
     name: 'second_level_cd',
   })
-  secondLevelCd: string;
+  secondLevelCode: string;
 
   @Column({ type: 'varchar', length: 8, nullable: false, name: 'userid' })
   userId: string;
@@ -66,5 +75,12 @@ export class MonitorLoad extends BaseEntity {
     nullable: false,
     name: 'max_load_uom_cd',
   })
-  maxLoadUomCd: string;
+  maximumLoadUnitsOfMeasureCode: string;
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.loads,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }

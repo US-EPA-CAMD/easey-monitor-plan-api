@@ -9,10 +9,10 @@ export class MonitorMethodMap extends BaseMap<MonitorMethod, MonitorMethodDTO> {
   public async one(entity: MonitorMethod): Promise<MonitorMethodDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       parameterCode: entity.parameterCode,
-      methodCode: entity.methodCode,
-      subDataCode: entity.subDataCode,
+      monitoringMethodCode: entity.monitoringMethodCode,
+      substituteDataCode: entity.substituteDataCode,
       bypassApproachCode: entity.bypassApproachCode,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,

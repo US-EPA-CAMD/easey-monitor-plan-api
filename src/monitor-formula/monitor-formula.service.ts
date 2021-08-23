@@ -13,8 +13,8 @@ export class MonitorFormulaService {
     private map: MonitorFormulaMap,
   ) {}
 
-  async getFormulas(monLocId: string): Promise<MonitorFormulaDTO[]> {
-    const results = await this.repository.find({ monLocId: monLocId });
+  async getFormulas(locationId: string): Promise<MonitorFormulaDTO[]> {
+    const results = await this.repository.find({ locationId });
     return this.map.many(results);
   }
 }

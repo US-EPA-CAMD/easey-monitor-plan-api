@@ -20,4 +20,13 @@ export class MonitorPlanController {
   ): Promise<MonitorPlanDTO[]> {
     return this.service.getConfigurations(orisCode);
   }
+
+  @Get('/:id')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves official Monitor Plan record',
+  })
+  getMonitorPlan(@Param('id') monPlanId: string): Promise<MonitorPlanDTO> {
+    return this.service.getMonitorPlan(monPlanId);
+  }
 }

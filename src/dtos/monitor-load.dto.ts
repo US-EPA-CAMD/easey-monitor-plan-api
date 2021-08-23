@@ -1,20 +1,20 @@
 export class MonitorLoadDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   loadAnalysisDate: Date;
   beginDate: Date;
   beginHour: number;
   endDate: Date;
   endHour: number;
-  maxLoadValue: number;
-  secondNormalInd: number;
-  upOpBoundary: number;
-  lowOpBoundary: number;
-  normalLevelCd: string;
-  secondLevelCd: string;
+  maximumLoadValue: number;
+  secondNormalIndicator: number;
+  upperOperationBoundary: number;
+  lowerOperationBoundary: number;
+  normalLevelCode: string;
+  secondLevelCode: string;
   userId: string;
   addDate: Date;
   updateDate: Date;
-  maxLoadUomCd: string;
+  maximumLoadUnitsOfMeasureCode: string;
   active: boolean;
 }

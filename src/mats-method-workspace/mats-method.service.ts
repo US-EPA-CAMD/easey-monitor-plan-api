@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
-import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
+import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { CreateMatsMethodDTO } from '../dtos/create-mats-method.dto';
 import { UpdateMatsMethodDTO } from '../dtos/update-mats-method.dto';
 
@@ -16,8 +16,8 @@ export class MatsMethodWorkspaceService {
     private map: MatsMethodMap,
   ) {}
 
-  async getMethods(monLocId: string): Promise<MatsMethodDTO[]> {
-    const results = await this.repository.find({ monLocId });
+  async getMethods(locationId: string): Promise<MatsMethodDTO[]> {
+    const results = await this.repository.find({ locationId });
     return this.map.many(results);
   }
 
@@ -32,12 +32,12 @@ export class MatsMethodWorkspaceService {
   }
 
   async createMethod(
-    monLocId: string,
+    locationId: string,
     payload: CreateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
     const method = this.repository.create({
       id: uuid(),
-      monLocId,
+      locationId,
       matsMethodCode: payload.matsMethodCode,
       matsMethodParameterCode: payload.matsMethodParameterCode,
       beginDate: payload.beginDate,
@@ -57,12 +57,12 @@ export class MatsMethodWorkspaceService {
 
   async updateMethod(
     methodId: string,
-    monLocId: string,
+    locationId: string,
     payload: UpdateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
     const method = await this.getMethod(methodId);
 
-    method.monLocId = monLocId;
+    method.locationId = locationId;
     method.beginDate = payload.beginDate;
     method.beginHour = payload.beginHour;
     method.endDate = payload.endDate;

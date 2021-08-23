@@ -13,8 +13,8 @@ export class MonitorSpanService {
     private map: MonitorSpanMap,
   ) {}
 
-  async getSpans(monLocId: string): Promise<MonitorSpanDTO[]> {
-    const results = await this.repository.find({ monLocId: monLocId });
+  async getSpans(locationId: string): Promise<MonitorSpanDTO[]> {
+    const results = await this.repository.find({ locationId });
     return this.map.many(results);
   }
 }

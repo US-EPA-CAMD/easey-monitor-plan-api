@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.monitor_method' })
 export class MonitorMethod extends BaseEntity {
@@ -6,13 +15,13 @@ export class MonitorMethod extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'parameter_cd' })
   parameterCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'sub_data_cd' })
-  subDataCode: string;
+  substituteDataCode: string;
 
   @Column({
     type: 'varchar',
@@ -23,7 +32,7 @@ export class MonitorMethod extends BaseEntity {
   bypassApproachCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'method_cd' })
-  methodCode: string;
+  monitoringMethodCode: string;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;
@@ -45,4 +54,11 @@ export class MonitorMethod extends BaseEntity {
 
   @Column({ type: 'date', nullable: true, name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.methods,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }

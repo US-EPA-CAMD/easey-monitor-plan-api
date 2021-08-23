@@ -6,10 +6,13 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 import { Component } from './component.entity';
 import { SystemFuelFlow } from './system-fuel-flow.entity';
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_system' })
 export class MonitorSystem extends BaseEntity {
@@ -17,7 +20,7 @@ export class MonitorSystem extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'sys_type_cd' })
   systemTypeCode: string;
@@ -28,7 +31,7 @@ export class MonitorSystem extends BaseEntity {
     nullable: true,
     name: 'system_identifier',
   })
-  systemIdentifier: string;
+  monitoringSystemId: string;
 
   @Column({
     type: 'varchar',
@@ -75,4 +78,11 @@ export class MonitorSystem extends BaseEntity {
     sff => sff.system,
   )
   fuelFlows: SystemFuelFlow[];
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.systems,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }

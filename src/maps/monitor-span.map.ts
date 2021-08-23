@@ -9,9 +9,10 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
   public async one(entity: MonitorSpan): Promise<MonitorSpanDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
-      mpcValue: entity.mpcValue,
+      locationId: entity.locationId,
       mecValue: entity.mecValue,
+      mpcValue: entity.mpcValue,
+      mpfValue: entity.mpfValue,
       maxLowRange: entity.maxLowRange,
       spanValue: entity.spanValue,
       fullScaleRange: entity.fullScaleRange,
@@ -22,12 +23,12 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
       defaultHighRange: entity.defaultHighRange,
       flowSpanValue: entity.flowSpanValue,
       flowFullScaleRange: entity.flowFullScaleRange,
-      componentTypeCd: entity.componentTypeCd,
-      spanScaleCd: entity.spanScaleCd,
-      spanMethodCd: entity.spanMethodCd,
+      componentTypeCode: entity.componentTypeCode,
+      spanScaleCode: entity.spanScaleCode,
+      spanMethodCode: entity.spanMethodCode,
       userid: entity.userid,
       updateDate: entity.updateDate,
-      spanUomCd: entity.spanUomCd,
+      spanUnitsOfMeasureCode: entity.spanUnitsOfMeasureCode,
       active: entity.endDate === null,
     };
   }

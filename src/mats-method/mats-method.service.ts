@@ -13,8 +13,8 @@ export class MatsMethodService {
     private map: MatsMethodMap,
   ) {}
 
-  async getMethods(monLocId: string): Promise<MatsMethodDTO[]> {
-    const results = await this.repository.find({ monLocId: monLocId });
+  async getMethods(locationId: string): Promise<MatsMethodDTO[]> {
+    const results = await this.repository.find({ locationId });
     return this.map.many(results);
   }
 }

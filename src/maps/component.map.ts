@@ -9,15 +9,15 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
   public async one(entity: Component): Promise<ComponentDTO> {
     return {
       id: entity.id,
-      monLocId: entity.monLocId,
+      locationId: entity.locationId,
       componentIdentifier: entity.componentIdentifier,
       componentTypeCode: entity.componentTypeCode,
       basisCode: entity.basisCode,
       modelVersion: entity.modelVersion,
       manufacturer: entity.manufacturer,
       serialNumber: entity.serialNumber,
-      hgConverterInd: entity.hgConverterInd,
-      acquisitionMethodCode: entity.acquisitionMethodCode,
+      hgConverterIndicator: entity.hgConverterIndicator,
+      sampleAcquisitionMethodCode: entity.sampleAcquisitionMethodCode,
     };
   }
 }

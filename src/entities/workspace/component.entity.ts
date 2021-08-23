@@ -1,6 +1,15 @@
-import { BaseEntity, Entity, Column, PrimaryColumn, ManyToMany } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 import { MonitorSystem } from './monitor-system.entity';
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.component' })
 export class Component extends BaseEntity {
@@ -8,7 +17,7 @@ export class Component extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({
     type: 'varchar',
@@ -22,7 +31,7 @@ export class Component extends BaseEntity {
   basisCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'acq_cd' })
-  acquisitionMethodCode: string;
+  sampleAcquisitionMethodCode: string;
 
   @Column({
     type: 'varchar',
@@ -62,7 +71,7 @@ export class Component extends BaseEntity {
     nullable: false,
     name: 'hg_converter_ind',
   })
-  hgConverterInd: number;
+  hgConverterIndicator: number;
 
   @ManyToMany(
     () => MonitorSystem,
@@ -70,4 +79,11 @@ export class Component extends BaseEntity {
     { eager: true },
   )
   systems: MonitorSystem[];
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.components,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }

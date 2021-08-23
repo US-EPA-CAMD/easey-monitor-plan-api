@@ -1,6 +1,6 @@
 export class MatsMethodDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   matsMethodCode: string;
   matsMethodParameterCode: string;
   beginDate: Date;

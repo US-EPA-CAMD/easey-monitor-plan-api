@@ -13,13 +13,13 @@ export class MonitorSystemService {
     private map: MonitorSystemMap,
   ) {}
 
-  async getSystems(monLocId: string): Promise<MonitorSystemDTO[]> {
+  async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
     const results = await this.repository.find({
       where: {
-        monLocId: monLocId,
+        locationId,
       },
       order: {
-        systemIdentifier: 'ASC',
+        monitoringSystemId: 'ASC',
       },
     });
     return this.map.many(results);

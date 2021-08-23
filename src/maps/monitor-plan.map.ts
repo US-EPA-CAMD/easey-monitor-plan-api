@@ -24,15 +24,15 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       id: entity.id,
       facId: entity.facId,
       name: locations.map(l => l.name).join(', '),
-      locations: locations,
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
-      links: [
-        {
-          rel: 'self',
-          href: `${this.path}/${entity.id}`,
-        },
-      ],
+      locations: locations,
+      // links: [
+      //   {
+      //     rel: 'self',
+      //     href: `${this.path}/${entity.id}`,
+      //   },
+      // ],
     };
   }
 }

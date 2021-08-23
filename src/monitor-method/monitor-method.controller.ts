@@ -15,7 +15,7 @@ export class MonitorMethodController {
     type: MonitorMethodDTO,
     description: 'Retrieves official method records for a monitor location',
   })
-  getMethods(@Param('locId') monLocId: string): Promise<MonitorMethodDTO[]> {
-    return this.service.getMethods(monLocId);
+  getMethods(@Param('locId') locationId: string): Promise<MonitorMethodDTO[]> {
+    return this.service.getMethods(locationId);
   }
 }

@@ -1,44 +1,16 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
-
 export class MonitorMethodDTO {
-  @IsNotEmpty()
   id: string;
-
-  @IsNotEmpty()
-  monLocId: string;
-
-  @IsNotEmpty()
+  locationId: string;
   parameterCode: string;
-
-  @IsOptional()
-  subDataCode: string;
-
-  @IsOptional()
+  substituteDataCode: string;
   bypassApproachCode: string;
-
-  @IsNotEmpty()
-  methodCode: string;
-
-  @IsNotEmpty()
+  monitoringMethodCode: string;
   beginDate: Date;
-
-  @IsNotEmpty()
   beginHour: number;
-
-  @IsOptional()
   endDate: Date;
-
-  @IsOptional()
   endHour: number;
-
-  @IsOptional()
   userId: string;
-
-  @IsOptional()
   addDate: Date;
-
-  @IsOptional()
   updateDate: Date;
-
   active: boolean;
 }

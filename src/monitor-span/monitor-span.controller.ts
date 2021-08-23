@@ -15,7 +15,7 @@ export class MonitorSpanController {
     type: MonitorSpanDTO,
     description: 'Retrieves official span records for a monitor location',
   })
-  getSpans(@Param('locId') monLocId: string): Promise<MonitorSpanDTO[]> {
-    return this.service.getSpans(monLocId);
+  getSpans(@Param('locId') locationId: string): Promise<MonitorSpanDTO[]> {
+    return this.service.getSpans(locationId);
   }
 }

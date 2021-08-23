@@ -15,7 +15,7 @@ export class ComponentController {
     type: ComponentDTO,
     description: 'Retrieves official component records for a monitor location',
   })
-  getComponents(@Param('locId') monLocId: string): Promise<ComponentDTO[]> {
-    return this.service.getComponents(monLocId);
+  getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
+    return this.service.getComponents(locationId);
   }
 }

@@ -4,7 +4,7 @@ import { UpdateMatsMethodDTO } from '../dtos/update-mats-method.dto';
 import { MatsMethodWorkspaceController } from './mats-method.controller';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 
-const monLocId = 'string';
+const locationId = 'string';
 const methodId = 'string';
 const createMatsMethodPayload: CreateMatsMethodDTO = {
   matsMethodCode: 'string',
@@ -22,10 +22,10 @@ const upadateMatsMethodPayload: UpdateMatsMethodDTO = {
 };
 
 const mockMatsMethodWorkspaceService = () => ({
-  getMethods: jest.fn(mocLocId => []),
-  getMethod: jest.fn(methodId => ({})),
-  createMethod: jest.fn((monLocId, createMatsMethodPayload) => ({})),
-  updateMethod: jest.fn((methodId, monLocId, upadateMatsMethodPayload) => ({})),
+  getMethods: jest.fn(() => []),
+  getMethod: jest.fn(() => ({})),
+  createMethod: jest.fn(() => ({})),
+  updateMethod: jest.fn(() => ({})),
 });
 
 describe('MatsMethodWorkspaceController', () => {
@@ -53,7 +53,7 @@ describe('MatsMethodWorkspaceController', () => {
 
   describe('getMethods', () => {
     it('should call the MatsMethodWorkspaceService.getMethods', () => {
-      expect(controller.getMethods(monLocId)).toEqual([]);
+      expect(controller.getMethods(locationId)).toEqual([]);
       expect(service.getMethods).toHaveBeenCalled();
     });
   });
@@ -61,7 +61,7 @@ describe('MatsMethodWorkspaceController', () => {
   describe('createMethod', () => {
     it('should call the MatsMethodWorkspaceService.createMethod', () => {
       expect(
-        controller.createMethod(monLocId, createMatsMethodPayload),
+        controller.createMethod(locationId, createMatsMethodPayload),
       ).toEqual({});
       expect(service.createMethod).toHaveBeenCalled();
     });
@@ -70,7 +70,7 @@ describe('MatsMethodWorkspaceController', () => {
   describe('createMethods', () => {
     it('should call the MatsMethodWorkspaceService.updateMethod', () => {
       expect(
-        controller.updateMethod(methodId, monLocId, upadateMatsMethodPayload),
+        controller.updateMethod(methodId, locationId, upadateMatsMethodPayload),
       ).toEqual({});
       expect(service.updateMethod).toHaveBeenCalled();
     });

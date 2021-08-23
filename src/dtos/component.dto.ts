@@ -1,12 +1,12 @@
 export class ComponentDTO {
   id: string;
-  monLocId: string;
+  locationId: string;
   componentTypeCode: string;
   basisCode: string;
   modelVersion: string;
   manufacturer: string;
-  acquisitionMethodCode: string;
+  sampleAcquisitionMethodCode: string;
   componentIdentifier: string;
   serialNumber: string;
-  hgConverterInd: number;
+  hgConverterIndicator: number;
 }

@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.monitor_formula' })
 export class MonitorFormula extends BaseEntity {
@@ -6,13 +15,13 @@ export class MonitorFormula extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ type: 'varchar', length: 7, nullable: false, name: 'parameter_cd' })
-  parameterCd: string;
+  parameterCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'equation_cd' })
-  equationCd: string;
+  equationCode: string;
 
   @Column({
     type: 'varchar',
@@ -20,7 +29,7 @@ export class MonitorFormula extends BaseEntity {
     nullable: true,
     name: 'formula_identifier',
   })
-  formulaIdentifier: string;
+  formulaId: string;
 
   @Column({ type: 'date', nullable: true, name: 'begin_date' })
   beginDate: Date;
@@ -40,7 +49,7 @@ export class MonitorFormula extends BaseEntity {
     nullable: false,
     name: 'formula_equation',
   })
-  formulaEquation: string;
+  formulaText: string;
 
   @Column({ type: 'varchar', length: 8, nullable: false, name: 'userid' })
   userId: string;
@@ -50,4 +59,11 @@ export class MonitorFormula extends BaseEntity {
 
   @Column({ type: 'date', nullable: true, name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.formulas,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }

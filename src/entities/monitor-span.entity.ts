@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.monitor_span' })
 export class MonitorSpan extends BaseEntity {
@@ -6,7 +15,7 @@ export class MonitorSpan extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
-  monLocId: string;
+  locationId: string;
 
   @Column({ nullable: true, name: 'mpc_value' })
   mpcValue: number;
@@ -53,10 +62,10 @@ export class MonitorSpan extends BaseEntity {
     nullable: true,
     name: 'component_type_cd',
   })
-  componentTypeCd: string;
+  componentTypeCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'span_scale_cd' })
-  spanScaleCd: string;
+  spanScaleCode: string;
 
   @Column({
     type: 'varchar',
@@ -64,7 +73,7 @@ export class MonitorSpan extends BaseEntity {
     nullable: true,
     name: 'span_method_cd',
   })
-  spanMethodCd: string;
+  spanMethodCode: string;
 
   @Column({ type: 'varchar', length: 8, nullable: true, name: 'userid' })
   userid: string;
@@ -73,5 +82,12 @@ export class MonitorSpan extends BaseEntity {
   updateDate: Date;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'span_uom_cd' })
-  spanUomCd: string;
+  spanUnitsOfMeasureCode: string;
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.spans,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 }
