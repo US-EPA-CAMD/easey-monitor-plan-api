@@ -11,7 +11,7 @@ export class AnalyzerRange extends BaseEntity {
     nullable: false,
     name: 'component_id',
   })
-  componentId: string;
+  componentRecordId: string;
 
   @Column({
     type: 'varchar',

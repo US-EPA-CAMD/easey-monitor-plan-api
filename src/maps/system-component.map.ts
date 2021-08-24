@@ -12,21 +12,15 @@ export class SystemComponentMap extends BaseMap<
   public async one(entity: SystemComponent): Promise<SystemComponentDTO> {
     return {
       id: entity.id,
-      componentId: entity.componentId,
-      monSysId: entity.monSysId,
-      locationId: entity.component.locationId,
-      componentIdentifier: entity.component.componentIdentifier,
-      componentTypeCode: entity.component.componentTypeCode,
-      basisCode: entity.component.basisCode,
-      modelVersion: entity.component.modelVersion,
-      manufacturer: entity.component.manufacturer,
-      serialNumber: entity.component.serialNumber,
-      hgConverterIndicator: entity.component.hgConverterIndicator,
-      sampleAcquisitionMethodCode: entity.component.sampleAcquisitionMethodCode,
+      monitoringSystemRecordId: entity.monitoringSystemRecordId,
+      componentRecordId: entity.componentRecordId,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,
       endDate: entity.endDate,
       endHour: entity.endHour,
+      userId: entity.userId,
+      addDate: entity.addDate,
+      updateDate: entity.updateDate,
       active: entity.endDate === null,
     };
   }

@@ -1,17 +1,15 @@
 export class SystemFuelFlowDTO {
   id: string;
-  monSysId: string;
-  fuelCode: string;
-  systemTypeCode: string;
-  maxRate: number;
-  maxRateSourceCode: string;
-  sysFuelUomCode: string;
+  monitoringSystemRecordId: string;
+  maximumFuelFlowRate: number;
+  systemFuelFlowUOMCode: string;
+  maximumFuelFlowRateSourceCode: string;
   beginDate: Date;
-  endDate: Date;
   beginHour: number;
+  endDate: Date;
   endHour: number;
-  addDate: Date;
   userId: string;
+  addDate: Date;
   updateDate: Date;
   active: boolean;
 }

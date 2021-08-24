@@ -1,7 +1,7 @@
 export class UpdateSystemFuelFlowDTO {
-  maxRate: number;
-  maxRateSourceCode: string;
-  sysFuelUomCode: string;
+  maximumFuelFlowRate: number;
+  systemFuelFlowUOMCode: string;
+  maximumFuelFlowRateSourceCode: string;
   beginDate: Date;
   endDate: Date;
   beginHour: number;

@@ -19,6 +19,7 @@ import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
 import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.repository';
 import { MonitorDefaultRepository } from '../monitor-default/monitor-default.repository';
 import { MonitorAttributeRepository } from '../monitor-attribute/monitor-attribute.repository';
+import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 
 @Injectable()
 export class MonitorPlanService {
@@ -47,6 +48,8 @@ export class MonitorPlanService {
     private readonly defaultRepository: MonitorDefaultRepository,
     @InjectRepository(MonitorAttributeRepository)
     private readonly attributeRepository: MonitorAttributeRepository,
+    @InjectRepository(UnitCapacityRepository)
+    private readonly unitCapacityRepository: UnitCapacityRepository,
     private map: MonitorPlanMap,
   ) {}
 
@@ -86,9 +89,9 @@ export class MonitorPlanService {
     monSysIds: string[],
   ): Promise<SystemFuelFlow[]> {
     const sysFuelFlows = await this.systemFuelFlowRepository.find({
-      monSysId: In(monSysIds),
+      monitoringSystemRecordId: In(monSysIds),
     });
-    return sysFuelFlows.filter(i => i.monSysId === monSysId);
+    return sysFuelFlows.filter(i => i.monitoringSystemRecordId === monSysId);
   }
 
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
@@ -104,6 +107,9 @@ export class MonitorPlanService {
     );
 
     const locationIds = mp.locations.map(i => i.id);
+    const unit = mp.locations.map(l => l.unit);
+    const unitIds = unit.map(u => u.id);
+
     const attributes = await this.attributeRepository.find({
       where: { locationId: In(locationIds) },
     });

@@ -16,7 +16,7 @@ export class SystemComponent extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_sys_id' })
-  monSysId: string;
+  monitoringSystemRecordId: string;
 
   @Column({
     type: 'varchar',
@@ -24,19 +24,38 @@ export class SystemComponent extends BaseEntity {
     nullable: false,
     name: 'component_id',
   })
-  componentId: string;
+  componentRecordId: string;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'end_date' })
-  endDate: Date;
-
-  @Column({ name: 'begin_hour' })
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    nullable: false,
+    name: 'begin_hour',
+  })
   beginHour: number;
 
-  @Column({ name: 'end_hour' })
+  @Column({ type: 'date', name: 'end_date' })
+  endDate: Date;
+
+  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'end_hour' })
   endHour: number;
+
+  @Column({
+    type: 'varchar',
+    length: 8,
+    name: 'userid',
+  })
+  userId: string;
+
+  @Column({ type: 'date', name: 'add_date' })
+  addDate: Date;
+
+  @Column({ type: 'date', name: 'update_date' })
+  updateDate: Date;
 
   @ManyToOne(
     () => Component,

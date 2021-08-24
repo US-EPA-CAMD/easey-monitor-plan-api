@@ -21,57 +21,67 @@ export class Component extends BaseEntity {
 
   @Column({
     type: 'varchar',
+    length: 3,
+    nullable: false,
+    name: 'component_identifier',
+  })
+  componentId: string;
+
+  @Column({
+    type: 'varchar',
     length: 7,
-    nullable: true,
+    nullable: false,
     name: 'component_type_cd',
   })
   componentTypeCode: string;
 
-  @Column({ type: 'varchar', length: 7, nullable: false, name: 'basis_cd' })
-  basisCode: string;
-
-  @Column({ type: 'varchar', length: 7, nullable: true, name: 'acq_cd' })
+  @Column({ type: 'varchar', length: 7, name: 'acq_cd' })
   sampleAcquisitionMethodCode: string;
 
-  @Column({
-    type: 'varchar',
-    length: 3,
-    nullable: true,
-    name: 'component_identifier',
-  })
-  componentIdentifier: string;
+  @Column({ type: 'varchar', length: 7, name: 'basis_cd' })
+  basisCode: string;
 
   @Column({
     type: 'varchar',
-    length: 15,
-    nullable: false,
-    name: 'model_version',
-  })
-  modelVersion: string;
-
-  @Column({
-    type: 'varchar',
-    length: 15,
-    nullable: false,
+    length: 25,
     name: 'manufacturer',
   })
   manufacturer: string;
 
   @Column({
     type: 'varchar',
+    length: 15,
+    name: 'model_version',
+  })
+  modelVersion: string;
+
+  @Column({
+    type: 'varchar',
     length: 20,
-    nullable: false,
     name: 'serial_number',
   })
   serialNumber: string;
 
   @Column({
-    type: 'varchar',
-    length: 20,
-    nullable: false,
+    type: 'numeric',
+    precision: 1,
+    scale: 0,
     name: 'hg_converter_ind',
   })
   hgConverterIndicator: number;
+
+  @Column({
+    type: 'varchar',
+    length: 8,
+    name: 'userid',
+  })
+  userId: string;
+
+  @Column({ type: 'date', name: 'add_date' })
+  addDate: Date;
+
+  @Column({ type: 'date', name: 'update_date' })
+  updateDate: Date;
 
   @ManyToMany(
     () => MonitorSystem,

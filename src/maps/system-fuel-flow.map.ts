@@ -12,12 +12,10 @@ export class SystemFuelFlowMap extends BaseMap<
   public async one(entity: SystemFuelFlow): Promise<SystemFuelFlowDTO> {
     return {
       id: entity.id,
-      monSysId: entity.monSysId,
-      fuelCode: entity.system.fuelCode,
-      systemTypeCode: entity.system.systemTypeCode,
-      maxRate: entity.maxRate,
-      maxRateSourceCode: entity.maxRateSourceCode,
-      sysFuelUomCode: entity.sysFuelUomCode,
+      monitoringSystemRecordId: entity.monitoringSystemRecordId,
+      maximumFuelFlowRate: entity.maximumFuelFlowRate,
+      systemFuelFlowUOMCode: entity.systemFuelFlowUOMCode,
+      maximumFuelFlowRateSourceCode: entity.maximumFuelFlowRateSourceCode,
       beginDate: entity.beginDate,
       endDate: entity.endDate,
       beginHour: entity.beginHour,

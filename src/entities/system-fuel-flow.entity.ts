@@ -15,46 +15,51 @@ export class SystemFuelFlow extends BaseEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_sys_id' })
-  monSysId: string;
+  monitoringSystemRecordId: string;
 
-  @Column({ name: 'max_rate' })
-  maxRate: number;
+  @Column({
+    type: 'numeric',
+    precision: 9,
+    scale: 1,
+    nullable: false,
+    name: 'max_rate',
+  })
+  maximumFuelFlowRate: number;
 
   @Column({
     type: 'varchar',
     length: 7,
-    nullable: true,
     name: 'max_rate_source_cd',
   })
-  maxRateSourceCode: string;
+  maximumFuelFlowRateSourceCode: string;
 
   @Column({
     type: 'varchar',
     length: 7,
-    nullable: true,
+    nullable: false,
     name: 'sys_fuel_uom_cd',
   })
-  sysFuelUomCode: string;
+  systemFuelFlowUOMCode: string;
 
-  @Column({ type: 'date', nullable: false, name: 'begin_date' })
+  @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'end_date' })
-  endDate: Date;
-
-  @Column({ name: 'begin_hour' })
+  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'begin_hour' })
   beginHour: number;
 
-  @Column({ name: 'end_hour' })
+  @Column({ type: 'date', name: 'end_date' })
+  endDate: Date;
+
+  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'end_hour' })
   endHour: number;
 
-  @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })
+  @Column({ type: 'varchar', length: 8, name: 'userid' })
   userId: string;
 
-  @Column({ type: 'date', nullable: true, name: 'add_date' })
+  @Column({ type: 'date', name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
 
   @ManyToOne(

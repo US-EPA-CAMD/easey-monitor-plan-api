@@ -12,7 +12,7 @@ const endHour = 12;
 
 const entity = new AnalyzerRange();
 entity.id = id;
-entity.componentId = componentId;
+entity.componentRecordId = componentId;
 entity.analyzerRangeCode = analyzerRangeCode;
 entity.dualRangeIndicator = dualRangeIndicator;
 entity.beginDate = beginDate;
@@ -25,7 +25,7 @@ describe('AnalyzerRangeMap', () => {
     const map = new AnalyzerRangeMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(id);
-    expect(result.componentId).toEqual(componentId);
+    expect(result.componentRecordId).toEqual(componentId);
     expect(result.analyzerRangeCode).toEqual(analyzerRangeCode);
     expect(result.dualRangeIndicator).toEqual(dualRangeIndicator);
     expect(result.beginDate).toEqual(beginDate);

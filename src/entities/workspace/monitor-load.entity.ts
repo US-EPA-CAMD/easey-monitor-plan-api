@@ -63,10 +63,10 @@ export class MonitorLoad extends BaseEntity {
   @Column({ type: 'varchar', length: 8, nullable: false, name: 'userid' })
   userId: string;
 
-  @Column({ type: 'date', nullable: true, name: 'add_date' })
+  @Column({ type: 'date', name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
 
   @Column({
