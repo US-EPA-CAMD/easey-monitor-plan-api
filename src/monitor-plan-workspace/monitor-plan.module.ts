@@ -25,7 +25,7 @@ import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
-import { UnitCapacityMap } from 'src/maps/unit-capacity.map';
+import { UnitCapacityMap } from '../maps/unit-capacity.map';
 
 @Module({
   imports: [

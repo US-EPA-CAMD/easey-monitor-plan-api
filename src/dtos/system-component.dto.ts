@@ -1,5 +1,3 @@
-import { ComponentDTO } from './component.dto';
-
 export class SystemComponentDTO {
   id: string;
   monitoringSystemRecordId: string;
