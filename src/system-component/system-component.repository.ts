@@ -11,8 +11,8 @@ export class SystemComponentRepository extends Repository<SystemComponent> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('c.locationId = :locationId', { locationId })
-      .andWhere('msc.monSysId = :monSysId', { monSysId })
-      .orderBy('c.componentIdentifier', 'ASC')
+      .andWhere('msc.monitoringSystemRecordId = :monSysId', { monSysId })
+      .orderBy('c.componentId', 'ASC')
       .getMany();
   }
 }
