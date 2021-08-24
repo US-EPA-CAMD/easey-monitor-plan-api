@@ -14,7 +14,7 @@ export class AnalyzerRangeService {
   ) {}
 
   async getAnalyzerRanges(compId: string): Promise<AnalyzerRangeDTO[]> {
-    const results = await this.repository.find({ componentId: compId });
+    const results = await this.repository.find({ componentRecordId: compId });
     return this.map.many(results);
   }
 }

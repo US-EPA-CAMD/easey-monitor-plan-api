@@ -25,6 +25,7 @@ import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
+import { UnitCapacityMap } from '../maps/unit-capacity.map';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
     DuctWafMap,
     MonitorDefaultMap,
     MonitorAttributeMap,
+    UnitCapacityMap,
   ],
 })
 export class MonitorPlanWorkspaceModule {}

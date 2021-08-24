@@ -1,6 +1,6 @@
 export class AnalyzerRangeDTO {
   id: string;
-  componentId: string;
+  componentRecordId: string;
   analyzerRangeCode: string;
   dualRangeIndicator: number;
   beginDate: Date;

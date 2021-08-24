@@ -9,7 +9,7 @@ export class AnalyzerRangeMap extends BaseMap<AnalyzerRange, AnalyzerRangeDTO> {
   public async one(entity: AnalyzerRange): Promise<AnalyzerRangeDTO> {
     return {
       id: entity.id,
-      componentId: entity.componentId,
+      componentRecordId: entity.componentRecordId,
       analyzerRangeCode: entity.analyzerRangeCode,
       dualRangeIndicator: entity.dualRangeIndicator,
       beginDate: entity.beginDate,

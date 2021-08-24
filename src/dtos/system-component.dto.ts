@@ -1,12 +1,13 @@
-import { ComponentDTO } from './component.dto';
-
-export class SystemComponentDTO extends ComponentDTO {
+export class SystemComponentDTO {
   id: string;
-  monSysId: string;
-  componentId: string;
+  monitoringSystemRecordId: string;
+  componentRecordId: string;
   beginDate: Date;
-  endDate: Date;
   beginHour: number;
+  endDate: Date;
   endHour: number;
+  userId: string;
+  addDate: Date;
+  updateDate: Date;
   active: boolean;
 }

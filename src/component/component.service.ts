@@ -19,7 +19,7 @@ export class ComponentService {
         locationId,
       },
       order: {
-        componentIdentifier: 'ASC',
+        componentId: 'ASC',
       },
     });
     return this.map.many(results);

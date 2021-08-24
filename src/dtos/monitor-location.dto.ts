@@ -7,6 +7,7 @@ import { MonitorSpanDTO } from './monitor-span.dto';
 import { MonitorLoadDTO } from './monitor-load.dto';
 import { MonitorSystemDTO } from './monitor-system.dto';
 import { DuctWafDTO } from './duct-waf.dto';
+import { UnitCapacityDTO } from './unit-capacity.dto';
 
 export class MonitorLocationDTO {
   id: string;
@@ -15,6 +16,7 @@ export class MonitorLocationDTO {
   active: boolean;
   retireDate: Date;
   attributes: MonitorAttributeDTO[];
+  unitCapacity: UnitCapacityDTO[];
   methods: MonitorMethodDTO[];
   matsMethods: MatsMethodDTO[];
   formulas: MonitorFormulaDTO[];

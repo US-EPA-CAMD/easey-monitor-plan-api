@@ -35,9 +35,10 @@ export class SystemFuelFlowWorkspaceService {
   ): Promise<SystemFuelFlowDTO> {
     const fuelFlow = await this.getFuelFlow(fuelFlowId);
 
-    fuelFlow.maxRate = payload.maxRate;
-    fuelFlow.maxRateSourceCode = payload.maxRateSourceCode;
-    fuelFlow.sysFuelUomCode = payload.sysFuelUomCode;
+    fuelFlow.maximumFuelFlowRate = payload.maximumFuelFlowRate;
+    fuelFlow.systemFuelFlowUOMCode = payload.systemFuelFlowUOMCode;
+    fuelFlow.maximumFuelFlowRateSourceCode =
+      payload.maximumFuelFlowRateSourceCode;
     fuelFlow.beginDate = payload.beginDate;
     fuelFlow.endDate = payload.endDate;
     fuelFlow.beginHour = payload.beginHour;
