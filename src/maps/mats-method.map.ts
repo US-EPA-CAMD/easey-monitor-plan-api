@@ -10,8 +10,9 @@ export class MatsMethodMap extends BaseMap<MatsMethod, MatsMethodDTO> {
     return {
       id: entity.id,
       locationId: entity.locationId,
-      matsMethodParameterCode: entity.matsMethodParameterCode,
-      matsMethodCode: entity.matsMethodCode,
+      supplementalMATSParameterCode: entity.supplementalMATSParameterCode,
+      supplementalMATSMonitoringMethodCode:
+        entity.supplementalMATSMonitoringMethodCode,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,
       endDate: entity.endDate,

@@ -23,7 +23,7 @@ export class MatsMethod extends BaseEntity {
     nullable: true,
     name: 'mats_method_cd',
   })
-  matsMethodCode: string;
+  supplementalMATSParameterCode: string;
 
   @Column({
     type: 'varchar',
@@ -31,7 +31,7 @@ export class MatsMethod extends BaseEntity {
     nullable: false,
     name: 'mats_method_parameter_cd',
   })
-  matsMethodParameterCode: string;
+  supplementalMATSMonitoringMethodCode: string;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;

@@ -13,6 +13,8 @@ export class SystemFuelFlowMap extends BaseMap<
     return {
       id: entity.id,
       monitoringSystemRecordId: entity.monitoringSystemRecordId,
+      fuelCode: entity.system.fuelCode,
+      systemTypeCode: entity.system.systemTypeCode,
       maximumFuelFlowRate: entity.maximumFuelFlowRate,
       systemFuelFlowUOMCode: entity.systemFuelFlowUOMCode,
       maximumFuelFlowRateSourceCode: entity.maximumFuelFlowRateSourceCode,

@@ -2,10 +2,10 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateMatsMethodDTO {
   @IsNotEmpty()
-  matsMethodCode: string;
+  supplementalMATSMonitoringMethodCode: string;
 
   @IsNotEmpty()
-  matsMethodParameterCode: string;
+  supplementalMATSParameterCode: string;
 
   @IsNotEmpty()
   beginDate: Date;

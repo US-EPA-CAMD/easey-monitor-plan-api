@@ -11,12 +11,7 @@ import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.mats_method_data' })
 export class MatsMethod extends BaseEntity {
-  @PrimaryColumn({
-    type: 'varchar',
-    length: 45,
-    nullable: false,
-    name: 'mats_method_data_id',
-  })
+  @PrimaryColumn({ type: 'varchar', length: 45, name: 'mats_method_data_id' })
   id: string;
 
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
@@ -28,7 +23,7 @@ export class MatsMethod extends BaseEntity {
     nullable: true,
     name: 'mats_method_cd',
   })
-  matsMethodCode: string;
+  supplementalMATSParameterCode: string;
 
   @Column({
     type: 'varchar',
@@ -36,7 +31,7 @@ export class MatsMethod extends BaseEntity {
     nullable: false,
     name: 'mats_method_parameter_cd',
   })
-  matsMethodParameterCode: string;
+  supplementalMATSMonitoringMethodCode: string;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;
