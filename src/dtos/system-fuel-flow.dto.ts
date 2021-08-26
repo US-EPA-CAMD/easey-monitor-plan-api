@@ -1,6 +1,8 @@
 export class SystemFuelFlowDTO {
   id: string;
   monitoringSystemRecordId: string;
+  fuelCode: string;
+  systemTypeCode: string;
   maximumFuelFlowRate: number;
   systemFuelFlowUOMCode: string;
   maximumFuelFlowRateSourceCode: string;

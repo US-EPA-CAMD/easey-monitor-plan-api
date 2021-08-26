@@ -38,8 +38,9 @@ export class MatsMethodWorkspaceService {
     const method = this.repository.create({
       id: uuid(),
       locationId,
-      matsMethodCode: payload.matsMethodCode,
-      matsMethodParameterCode: payload.matsMethodParameterCode,
+      supplementalMATSParameterCode: payload.supplementalMATSParameterCode,
+      supplementalMATSMonitoringMethodCode:
+        payload.supplementalMATSMonitoringMethodCode,
       beginDate: payload.beginDate,
       beginHour: payload.beginHour,
       endDate: payload.endDate,

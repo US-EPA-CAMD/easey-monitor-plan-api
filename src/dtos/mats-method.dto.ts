@@ -1,8 +1,8 @@
 export class MatsMethodDTO {
   id: string;
   locationId: string;
-  matsMethodCode: string;
-  matsMethodParameterCode: string;
+  supplementalMATSParameterCode: string;
+  supplementalMATSMonitoringMethodCode: string;
   beginDate: Date;
   beginHour: number;
   endDate: Date;
