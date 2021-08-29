@@ -19,8 +19,6 @@ import { UserDTO } from '../dtos/user.dto';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 
-import { CurrentUser } from './../decorators/current-user.decorator';
-
 @ApiTags('Plans & Configurations')
 @Controller()
 export class MonitorPlanWorkspaceController {
@@ -29,13 +27,13 @@ export class MonitorPlanWorkspaceController {
     private ucoService: UserCheckOutService,
   ) {}
 
-  @Get('/:id')
+  @Get(':planId')
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'Retrieves workspace Monitor Plan record',
   })
-  getMonitorPlan(@Param('id') monPlanId: string): Promise<MonitorPlanDTO> {
-    return this.service.getMonitorPlan(monPlanId);
+  getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
+    return this.service.getMonitorPlan(planId);
   }
 
   @Get(':orisCode/configurations')
@@ -56,6 +54,7 @@ export class MonitorPlanWorkspaceController {
     description: 'imports an entire monitor plan from JSON payload',
   })
   importPlan(@Body() plan: UpdateMonitorPlanDTO): Promise<MonitorPlanDTO> {
+    console.log(plan);
     throw new NotImplementedException(
       'Monitor Plan Import not supported at this time. Coming Soon!',
     );
@@ -72,42 +71,43 @@ export class MonitorPlanWorkspaceController {
     return this.ucoService.getCheckedOutConfigurations();
   }
 
-  @Post(':id/check-outs')
+  @Post(':planId/check-outs')
   @ApiOkResponse({
     type: UserCheckOutDTO,
     description: 'Checks Out a Monitor Plan configuration',
   })
   checkOutConfiguration(
-    @Param('id') id: string,
+    @Param('planId') planId: string,
     @Body() payload: UserDTO,
-    @CurrentUser() user: UserDTO,
   ): Promise<UserCheckOutDTO> {
-    return this.ucoService.checkOutConfiguration(id, user.id);
+    return this.ucoService.checkOutConfiguration(planId, payload.username);
   }
 
-  @Put(':id/check-outs')
+  @Put(':planId/check-outs')
   @ApiOkResponse({
     type: UserCheckOutDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
   })
-  updateLastActivity(@Param('id') id: string): Promise<UserCheckOutDTO> {
-    return this.ucoService.updateLastActivity(id);
+  updateLastActivity(
+    @Param('planId') planId: string,
+  ): Promise<UserCheckOutDTO> {
+    return this.ucoService.updateLastActivity(planId);
   }
 
-  @Delete(':id/check-outs')
+  @Delete(':planId/check-outs')
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
-  checkInConfiguration(@Param('id') id: string): Promise<void> {
-    return this.ucoService.checkInConfiguration(id);
+  checkInConfiguration(@Param('planId') planId: string): Promise<void> {
+    return this.ucoService.checkInConfiguration(planId);
   }
 
-  @Delete(':id/revert')
+  @Delete(':planId/revert')
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',
   })
-  revertToOfficialRecord(@Param('id') id: string): Promise<void> {
-    return this.service.revertToOfficialRecord(id);
+  revertToOfficialRecord(@Param('planId') planId: string): Promise<void> {
+    return this.service.revertToOfficialRecord(planId);
   }
 }

@@ -3,6 +3,9 @@ import { Routes } from 'nest-router';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
 
+import { MonitorPlanCommentModule } from './monitor-plan-comment/monitor-plan-comment.module';
+import { MonitorPlanCommentWorkspaceModule } from './monitor-plan-comment-workspace/monitor-plan-comment.module';
+
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { MonitorLocationWorkspaceModule } from './monitor-location-workspace/monitor-location.module';
 
@@ -61,10 +64,22 @@ const routes: Routes = [
   {
     path: '/plans',
     module: MonitorPlanModule,
+    children: [
+      {
+        path: ':planId/comments',
+        module: MonitorPlanCommentModule,
+      },
+    ],
   },
   {
     path: '/workspace/plans',
     module: MonitorPlanWorkspaceModule,
+    children: [
+      {
+        path: ':planId/comments',
+        module: MonitorPlanCommentWorkspaceModule,
+      },
+    ],
   },
   {
     path: '/locations',
