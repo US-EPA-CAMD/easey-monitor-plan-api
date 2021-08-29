@@ -17,9 +17,9 @@ export class MatsMethodMap extends BaseMap<MatsMethod, MatsMethodDTO> {
       beginHour: entity.beginHour,
       endDate: entity.endDate,
       endHour: entity.endHour,
+      userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
-      userId: entity.userId,
       active: entity.endDate === null,
     };
   }

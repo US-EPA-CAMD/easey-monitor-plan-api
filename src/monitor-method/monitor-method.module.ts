@@ -9,6 +9,7 @@ import { MonitorMethodMap } from '../maps/monitor-method.map';
 @Module({
   imports: [TypeOrmModule.forFeature([MonitorMethodRepository])],
   controllers: [MonitorMethodController],
-  providers: [MonitorMethodMap, MonitorMethodService],
+  providers: [MonitorMethodService, MonitorMethodMap],
+  exports: [TypeOrmModule, MonitorMethodService, MonitorMethodMap],
 })
 export class MonitorMethodModule {}

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
-import { SystemFuelFlowService } from './system-fuel-flow.service';
-import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
+import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
+import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 
 const mockRepository = () => ({
   getFuelFlows: jest.fn().mockResolvedValue(''),
@@ -12,15 +12,15 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue(''),
 });
 
-describe('SystemFuelFlowService', () => {
-  let service: SystemFuelFlowService;
+describe('SystemFuelFlowWorkspaceService', () => {
+  let service: SystemFuelFlowWorkspaceService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SystemFuelFlowService,
+        SystemFuelFlowWorkspaceService,
         {
-          provide: SystemFuelFlowRepository,
+          provide: SystemFuelFlowWorkspaceRepository,
           useFactory: mockRepository,
         },
         {
@@ -30,7 +30,7 @@ describe('SystemFuelFlowService', () => {
       ],
     }).compile();
 
-    service = module.get(SystemFuelFlowService);
+    service = module.get(SystemFuelFlowWorkspaceService);
   });
 
   it('should be defined', () => {

@@ -99,7 +99,7 @@ export class MonitorSpan extends BaseEntity {
   endHour: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })
-  userid: string;
+  userId: string;
 
   @Column({ type: 'date', name: 'add_date' })
   addDate: Date;

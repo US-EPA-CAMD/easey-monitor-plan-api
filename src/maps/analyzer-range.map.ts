@@ -16,6 +16,9 @@ export class AnalyzerRangeMap extends BaseMap<AnalyzerRange, AnalyzerRangeDTO> {
       endDate: entity.endDate,
       beginHour: entity.beginHour,
       endHour: entity.endHour,
+      userId: entity.userId,
+      addDate: entity.addDate,
+      updateDate: entity.updateDate,
       active: entity.endDate === null,
     };
   }

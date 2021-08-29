@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { Component } from './component.entity';
 
 @Entity({ name: 'camdecmpswks.analyzer_range' })
 export class AnalyzerRange extends BaseEntity {
@@ -35,4 +44,24 @@ export class AnalyzerRange extends BaseEntity {
 
   @Column({ name: 'end_hour' })
   endHour: number;
+
+  @Column({
+    type: 'varchar',
+    length: 8,
+    name: 'userid',
+  })
+  userId: string;
+
+  @Column({ type: 'date', name: 'add_date' })
+  addDate: Date;
+
+  @Column({ type: 'date', name: 'update_date' })
+  updateDate: Date;
+
+  @ManyToOne(
+    () => Component,
+    c => c.analyzerRanges,
+  )
+  @JoinColumn({ name: 'component_id' })
+  component: Component;
 }

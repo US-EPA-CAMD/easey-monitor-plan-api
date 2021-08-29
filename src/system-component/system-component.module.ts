@@ -10,5 +10,6 @@ import { SystemComponentMap } from '../maps/system-component.map';
   imports: [TypeOrmModule.forFeature([SystemComponentRepository])],
   controllers: [SystemComponentController],
   providers: [SystemComponentService, SystemComponentMap],
+  exports: [TypeOrmModule, SystemComponentService, SystemComponentMap],
 })
 export class SystemComponentModule {}

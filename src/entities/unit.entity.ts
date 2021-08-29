@@ -25,6 +25,16 @@ export class Unit extends BaseEntity {
   name: string;
 
   @Column({
+    name: 'unit_description',
+  })
+  description: string;
+
+  @Column({
+    name: 'non_load_based_ind',
+  })
+  nonLoadBasedIndicator: number;
+
+  @Column({
     name: 'fac_id',
   })
   facId: number;

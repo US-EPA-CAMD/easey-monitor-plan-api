@@ -1,47 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import { MonitorLocation } from '../entities/monitor-location.entity';
-
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
 import { BaseMap } from './base.map';
-import { MatsMethodMap } from '../maps/mats-method.map';
-import { MonitorMethodMap } from '../maps/monitor-method.map';
-import { MonitorFormulaMap } from '../maps/monitor-formula.map';
-import { MonitorSpanMap } from '../maps/monitor-span.map';
-import { MonitorLoadMap } from '../maps/monitor-load.map';
-import { MonitorSystemMap } from '../maps/monitor-system.map';
-import { DuctWafMap } from './duct-waf.map';
-import { MonitorDefaultMap } from './monitor-default.map';
 import { MonitorAttributeMap } from './montitor-attribute.map';
-import { UnitCapacityMap } from './unit-capacity.map';
+import { MonitorMethodMap } from '../maps/monitor-method.map';
+import { MatsMethodMap } from '../maps/mats-method.map';
+import { MonitorFormulaMap } from '../maps/monitor-formula.map';
+import { MonitorDefaultMap } from './monitor-default.map';
+import { MonitorSpanMap } from '../maps/monitor-span.map';
+import { DuctWafMap } from './duct-waf.map';
+import { MonitorLoadMap } from '../maps/monitor-load.map';
+import { ComponentMap } from '../maps/component.map';
+import { MonitorSystemMap } from '../maps/monitor-system.map';
+import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 
 @Injectable()
 export class MonitorLocationMap extends BaseMap<
   MonitorLocation,
   MonitorLocationDTO
 > {
-  private path = `${this.configService.get<string>('app.uri')}/locations`;
-
   constructor(
-    private readonly configService: ConfigService,
+    private readonly attributeMap: MonitorAttributeMap,
     private readonly methodMap: MonitorMethodMap,
     private readonly matsMethodMap: MatsMethodMap,
     private readonly formulaMap: MonitorFormulaMap,
-    private readonly spanMap: MonitorSpanMap,
-    private readonly loadMap: MonitorLoadMap,
-    private readonly systemMap: MonitorSystemMap,
-    private readonly ductWafMap: DuctWafMap,
     private readonly defaultMap: MonitorDefaultMap,
-    private readonly attributeMap: MonitorAttributeMap,
-    private readonly unitCapacityMap: UnitCapacityMap,
+    private readonly spanMap: MonitorSpanMap,
+    private readonly ductWafMap: DuctWafMap,
+    private readonly loadMap: MonitorLoadMap,
+    private readonly componentMap: ComponentMap,
+    private readonly systemMap: MonitorSystemMap,
+    private readonly qualificationMap: MonitorQualificationMap,
   ) {
     super();
   }
 
-  private getStatus(type: string, entity: MonitorLocation): boolean {
-    if (type === 'Unit') {
+  private getStatus(entity: MonitorLocation): boolean {
+    if (entity.unit) {
       const unitStatus = entity.unit.opStatuses[0];
       if (unitStatus.endDate == null && unitStatus.opStatusCode == 'RET') {
         return false;
@@ -49,7 +46,7 @@ export class MonitorLocationMap extends BaseMap<
       return true;
     }
 
-    if (type === 'Stack') {
+    if (entity.stackPipe) {
       if (entity.stackPipe.retireDate == null) {
         return true;
       }
@@ -59,7 +56,18 @@ export class MonitorLocationMap extends BaseMap<
   }
 
   public async one(entity: MonitorLocation): Promise<MonitorLocationDTO> {
-    const type = entity.unit ? 'Unit' : 'Stack';
+    let name: string;
+    let type: string;
+    let unitId: string;
+    let activeDate: Date;
+    let retireDate: Date;
+    let stackPipeId: string;
+    let unitRecordId: number;
+    let nonLoadBasedIndicator: number;
+
+    const attributes = entity.attributes
+      ? await this.attributeMap.many(entity.attributes)
+      : null;
     const methods = entity.methods
       ? await this.methodMap.many(entity.methods)
       : null;
@@ -69,58 +77,65 @@ export class MonitorLocationMap extends BaseMap<
     const formulas = entity.formulas
       ? await this.formulaMap.many(entity.formulas)
       : null;
-    const spans = entity.spans ? await this.spanMap.many(entity.spans) : null;
-    const loads = entity.loads ? await this.loadMap.many(entity.loads) : null;
-    const systems = entity.systems
-      ? await this.systemMap.many(entity.systems)
-      : null;
-    const ductWafs = entity.ductWafs
-      ? await this.ductWafMap.many(entity.ductWafs)
-      : null;
     const defaults = entity.defaults
       ? await this.defaultMap.many(entity.defaults)
       : null;
-    const attributes = entity.attributes
-      ? await this.attributeMap.many(entity.attributes)
+    const spans = entity.spans ? await this.spanMap.many(entity.spans) : null;
+    const ductWafs = entity.ductWafs
+      ? await this.ductWafMap.many(entity.ductWafs)
       : null;
-    const unitCapacity = entity.unitCapacity
-      ? await this.unitCapacityMap.many(entity.unitCapacity)
+    const loads = entity.loads ? await this.loadMap.many(entity.loads) : null;
+    const components = entity.components
+      ? await this.componentMap.many(entity.components)
       : null;
+    const systems = entity.systems
+      ? await this.systemMap.many(entity.systems)
+      : null;
+    const qualifications = entity.qualifications
+      ? await this.qualificationMap.many(entity.qualifications)
+      : null;
+
+    if (entity.unit) {
+      type = 'unit';
+      name = entity.unit.name;
+      unitId = entity.unit.name;
+      unitRecordId = entity.unit.id;
+      nonLoadBasedIndicator = entity.unit.nonLoadBasedIndicator;
+    }
+
+    if (entity.stackPipe) {
+      type = 'stack';
+      name = entity.stackPipe.name;
+      stackPipeId = entity.stackPipe.name;
+      activeDate = entity.stackPipe.activeDate;
+      retireDate = entity.stackPipe.retireDate;
+    }
 
     return {
       id: entity.id,
-      name: entity.unit ? entity.unit.name : entity.stackPipe.name,
+      unitRecordId,
+      unitId,
+      stackPipeId,
+      name,
       type,
-      active: this.getStatus(type, entity),
-      retireDate: entity.stackPipe ? entity.stackPipe.retireDate : null,
+      active: this.getStatus(entity),
+      activeDate,
+      retireDate,
+      nonLoadBasedIndicator,
       attributes,
-      unitCapacity,
+      unitCapacity: null,
+      unitControls: null,
+      unitFuels: null,
       methods,
       matsMethods,
       formulas,
-      spans,
-      loads,
-      systems,
-      ductWafs,
       defaults,
-      // links: [
-      //   {
-      //     rel: 'self',
-      //     href: `${this.path}/${entity.id}`,
-      //   },
-      //   {
-      //     rel: 'methods',
-      //     href: `${this.path}/${entity.id}/methods`,
-      //   },
-      //   {
-      //     rel: 'systems',
-      //     href: `${this.path}/${entity.id}/systems`,
-      //   },
-      //   {
-      //     rel: 'spans',
-      //     href: `${this.path}/${entity.id}/spans`,
-      //   },
-      // ],
+      spans,
+      ductWafs,
+      loads,
+      components,
+      systems,
+      qualifications,
     };
   }
 }

@@ -3,7 +3,7 @@ import { Get, Param, Controller, Put, Body } from '@nestjs/common';
 
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
-import { UpdateSystemFuelFlowDTO } from '../dtos/update-system-fuel-flow.dto';
+import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
 
 @ApiTags('System Fuel Flows')
 @Controller()

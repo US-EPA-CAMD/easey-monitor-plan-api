@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { UpdateMonitorMethodDTO } from '../dtos/update-monitor-method.dto';
+import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';

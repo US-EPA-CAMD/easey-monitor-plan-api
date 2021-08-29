@@ -1,13 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-} from 'typeorm';
-
-import { MonitorLocation } from './monitor-location.entity';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmpswks.unit_capacity' })
 export class UnitCapacity extends BaseEntity {
@@ -50,11 +41,4 @@ export class UnitCapacity extends BaseEntity {
 
   @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
-
-  @ManyToOne(
-    () => MonitorLocation,
-    location => location.unitCapacity,
-  )
-  @JoinColumn({ name: 'unit_id' })
-  location: MonitorLocation;
 }

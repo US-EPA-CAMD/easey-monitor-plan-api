@@ -12,9 +12,9 @@ export class SystemComponentMap extends BaseMap<
   public async one(entity: SystemComponent): Promise<SystemComponentDTO> {
     return {
       id: entity.id,
+      locationId: entity.component.locationId,
       monitoringSystemRecordId: entity.monitoringSystemRecordId,
       componentRecordId: entity.componentRecordId,
-      locationId: entity.component.locationId,
       componentId: entity.component.componentId,
       componentTypeCode: entity.component.componentTypeCode,
       basisCode: entity.component.basisCode,

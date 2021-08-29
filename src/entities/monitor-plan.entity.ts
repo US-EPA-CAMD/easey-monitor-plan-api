@@ -3,6 +3,7 @@ import {
   Entity,
   Column,
   PrimaryColumn,
+  OneToMany,
   ManyToMany,
   ManyToOne,
   JoinTable,
@@ -11,6 +12,7 @@ import {
 
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { MonitorPlanComment } from './monitor-plan-comment.entity';
 
 @Entity({ name: 'camdecmps.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -52,4 +54,10 @@ export class MonitorPlan extends BaseEntity {
     },
   })
   locations: MonitorLocation[];
+
+  @OneToMany(
+    () => MonitorPlanComment,
+    comment => comment.plan,
+  )
+  comments: MonitorPlanComment[];
 }

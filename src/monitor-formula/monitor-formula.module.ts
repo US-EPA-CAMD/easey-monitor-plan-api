@@ -10,5 +10,6 @@ import { MonitorFormulaMap } from '../maps/monitor-formula.map';
   imports: [TypeOrmModule.forFeature([MonitorFormulaRepository])],
   controllers: [MonitorFormulaController],
   providers: [MonitorFormulaService, MonitorFormulaMap],
+  exports: [TypeOrmModule, MonitorFormulaService, MonitorFormulaMap],
 })
 export class MonitorFormulaModule {}

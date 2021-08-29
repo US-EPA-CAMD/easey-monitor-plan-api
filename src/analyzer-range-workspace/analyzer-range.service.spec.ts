@@ -1,0 +1,46 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
+import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
+import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
+import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
+
+const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue(''),
+});
+
+const mockMap = () => ({
+  many: jest.fn().mockResolvedValue(''),
+});
+
+describe('AnalyzerRangeWorkspaceService', () => {
+  let service: AnalyzerRangeWorkspaceService;
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AnalyzerRangeWorkspaceService,
+        {
+          provide: AnalyzerRangeWorkspaceRepository,
+          useFactory: mockRepository,
+        },
+        {
+          provide: AnalyzerRangeMap,
+          useFactory: mockMap,
+        },
+      ],
+    }).compile();
+
+    service = module.get(AnalyzerRangeWorkspaceService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('getAnalyzerRanges', () => {
+    it('should return array of analyzer ranges', async () => {
+      const result = await service.getAnalyzerRanges(null);
+      expect(result).toEqual('');
+    });
+  });
+});

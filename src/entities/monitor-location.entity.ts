@@ -21,7 +21,7 @@ import { MonitorFormula } from './monitor-formula.entity';
 import { DuctWaf } from './duct-waf.entity';
 import { MonitorDefault } from './monitor-default.entity';
 import { MonitorAttribute } from './monitor-attribute.entity';
-import { UnitCapacity } from './workspace/unit-capacity.entity';
+import { MonitorQualification } from './monitor-qualification.entity';
 
 @Entity({
   name: 'camdecmps.monitor_location',
@@ -116,8 +116,8 @@ export class MonitorLocation extends BaseEntity {
   attributes: MonitorAttribute[];
 
   @OneToMany(
-    () => UnitCapacity,
-    unitCapacity => unitCapacity.location,
+    () => MonitorQualification,
+    mq => mq.location,
   )
-  unitCapacity: UnitCapacity[];
+  qualifications: MonitorQualification[];
 }

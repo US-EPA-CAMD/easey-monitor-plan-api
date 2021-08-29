@@ -21,7 +21,7 @@ export class MatsMethod extends BaseEntity {
     type: 'varchar',
     length: 7,
     nullable: true,
-    name: 'mats_method_cd',
+    name: 'mats_method_parameter_cd',
   })
   supplementalMATSMonitoringMethodCode: string;
 
@@ -29,7 +29,7 @@ export class MatsMethod extends BaseEntity {
     type: 'varchar',
     length: 7,
     nullable: false,
-    name: 'mats_method_parameter_cd',
+    name: 'mats_method_cd',
   })
   supplementalMATSParameterCode: string;
 

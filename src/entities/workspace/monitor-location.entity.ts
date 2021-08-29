@@ -9,8 +9,9 @@ import {
 } from 'typeorm';
 
 import { Unit } from './unit.entity';
-import { Component } from './component.entity';
+import { DuctWaf } from './duct-waf.entity';
 import { StackPipe } from './stack-pipe.entity';
+import { Component } from './component.entity';
 import { MatsMethod } from './mats-method.entity';
 import { MonitorPlan } from './monitor-plan.entity';
 import { MonitorLoad } from './monitor-load.entity';
@@ -18,10 +19,9 @@ import { MonitorSpan } from './monitor-span.entity';
 import { MonitorMethod } from './monitor-method.entity';
 import { MonitorSystem } from './monitor-system.entity';
 import { MonitorFormula } from './monitor-formula.entity';
-import { DuctWaf } from './duct-waf.entity';
 import { MonitorDefault } from './monitor-default.entity';
 import { MonitorAttribute } from './monitor-attribute.entity';
-import { UnitCapacity } from './unit-capacity.entity';
+import { MonitorQualification } from './monitor-qualification.entity';
 
 @Entity({
   name: 'camdecmpswks.monitor_location',
@@ -116,8 +116,8 @@ export class MonitorLocation extends BaseEntity {
   attributes: MonitorAttribute[];
 
   @OneToMany(
-    () => UnitCapacity,
-    unitCapacity => unitCapacity.location,
+    () => MonitorQualification,
+    qualification => qualification.location,
   )
-  unitCapacity: UnitCapacity[];
+  qualifications: MonitorQualification[];
 }

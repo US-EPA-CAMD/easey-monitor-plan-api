@@ -1,13 +1,14 @@
-export class MonitorSystemDTO {
+import { MonitorSystemBaseDTO } from './monitor-system-base.dto';
+import { SystemComponentDTO } from './system-component.dto';
+import { SystemFuelFlowDTO } from './system-fuel-flow.dto';
+
+export class MonitorSystemDTO extends MonitorSystemBaseDTO {
   id: string;
   locationId: string;
-  systemTypeCode: string;
-  systemDesignationCode: string;
-  monitoringSystemId: string;
-  fuelCode: string;
-  beginDate: Date;
-  endDate: Date;
-  beginHour: number;
-  endHour: number;
+  userId: string;
+  addDate: Date;
+  updateDate: Date;
   active: boolean;
+  components: SystemComponentDTO[];
+  fuelFlows: SystemFuelFlowDTO[];
 }

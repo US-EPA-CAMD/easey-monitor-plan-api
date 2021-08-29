@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { UpdateAnalyzerRangeDTO } from '../dtos/update-analyzer-range.dto';
+import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 
 @ApiTags('Analyzer Ranges')
 @Controller()
-export class AnalyzerRangeWorkspacController {
+export class AnalyzerRangeWorkspaceController {
   constructor(private service: AnalyzerRangeWorkspaceService) {}
 
   @Get()

@@ -10,5 +10,6 @@ import { MatsMethodMap } from '../maps/mats-method.map';
   imports: [TypeOrmModule.forFeature([MatsMethodWorkspaceRepository])],
   controllers: [MatsMethodWorkspaceController],
   providers: [MatsMethodWorkspaceService, MatsMethodMap],
+  exports: [TypeOrmModule, MatsMethodWorkspaceService, MatsMethodMap],
 })
 export class MatsMethodWorkspaceModule {}

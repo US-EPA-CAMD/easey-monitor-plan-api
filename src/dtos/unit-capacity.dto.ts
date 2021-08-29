@@ -1,9 +1,8 @@
-export class UnitCapacityDTO {
+import { UnitCapacityBaseDTO } from './unit-capacity-base.dto';
+
+export class UnitCapacityDTO extends UnitCapacityBaseDTO {
   id: string;
   unitId: number;
-  beginDate: Date;
-  endDate: Date;
-  maximumHourlyHeatInputCapacity: number;
   userId: string;
   addDate: Date;
   updateDate: Date;

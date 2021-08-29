@@ -3,5 +3,5 @@ import { UnitCapacityService } from './unit-capacity.service';
 
 @Controller()
 export class UnitCapacityController {
-  constructor(private readonly unitCapacityService: UnitCapacityService) {}
+  constructor(private readonly service: UnitCapacityService) {}
 }

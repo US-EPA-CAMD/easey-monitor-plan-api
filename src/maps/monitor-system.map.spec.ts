@@ -1,5 +1,9 @@
+import { Test, TestingModule } from '@nestjs/testing';
+
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemMap } from './monitor-system.map';
+import { SystemComponentMap } from './system-component.map';
+import { SystemFuelFlowMap } from './system-fuel-flow.map';
 
 const id = '';
 const locationId = '';
@@ -25,8 +29,18 @@ entity.endDate = endDate;
 entity.endHour = endHour;
 
 describe('MonitorSystemMap', () => {
+  let map: MonitorSystemMap;
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [],
+      providers: [MonitorSystemMap, SystemFuelFlowMap, SystemComponentMap],
+    }).compile();
+
+    map = module.get(MonitorSystemMap);
+  });
+
   it('maps an entity to a dto', async () => {
-    const map = new MonitorSystemMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(id);
     expect(result.locationId).toEqual(locationId);

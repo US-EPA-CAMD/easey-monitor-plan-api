@@ -1,15 +1,11 @@
-export class ComponentDTO {
+import { ComponentBaseDTO } from './component-base.dto';
+import { AnalyzerRangeDTO } from './analyzer-range.dto';
+
+export class ComponentDTO extends ComponentBaseDTO {
   id: string;
   locationId: string;
-  componentId: string;
-  componentTypeCode: string;
-  sampleAcquisitionMethodCode: string;
-  basisCode: string;
-  manufacturer: string;
-  modelVersion: string;
-  serialNumber: string;
-  hgConverterIndicator: number;
   userId: string;
   addDate: Date;
   updateDate: Date;
+  analyzerRanges: AnalyzerRangeDTO[];
 }
