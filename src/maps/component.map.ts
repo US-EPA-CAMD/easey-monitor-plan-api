@@ -3,10 +3,19 @@ import { Injectable } from '@nestjs/common';
 import { BaseMap } from './base.map';
 import { Component } from '../entities/component.entity';
 import { ComponentDTO } from '../dtos/component.dto';
+import { AnalyzerRangeMap } from './analyzer-range.map';
 
 @Injectable()
 export class ComponentMap extends BaseMap<Component, ComponentDTO> {
+  constructor(private rangeMap: AnalyzerRangeMap) {
+    super();
+  }
+
   public async one(entity: Component): Promise<ComponentDTO> {
+    const analyzerRanges = entity.analyzerRanges
+      ? await this.rangeMap.many(entity.analyzerRanges)
+      : null;
+
     return {
       id: entity.id,
       locationId: entity.locationId,
@@ -21,6 +30,7 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
+      analyzerRanges: analyzerRanges,
     };
   }
 }

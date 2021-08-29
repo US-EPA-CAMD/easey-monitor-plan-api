@@ -9,6 +9,15 @@ import { MonitorPlanService } from './monitor-plan.service';
 export class MonitorPlanController {
   constructor(private service: MonitorPlanService) {}
 
+  @Get('/:id')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves official Monitor Plan record',
+  })
+  getMonitorPlan(@Param('id') monPlanId: string): Promise<MonitorPlanDTO> {
+    return this.service.getMonitorPlan(monPlanId);
+  }
+
   @Get('/:orisCode/configurations')
   @ApiOkResponse({
     isArray: true,
@@ -19,14 +28,5 @@ export class MonitorPlanController {
     @Param('orisCode', ParseIntPipe) orisCode: number,
   ): Promise<MonitorPlanDTO[]> {
     return this.service.getConfigurations(orisCode);
-  }
-
-  @Get('/:id')
-  @ApiOkResponse({
-    type: MonitorPlanDTO,
-    description: 'Retrieves official Monitor Plan record',
-  })
-  getMonitorPlan(@Param('id') monPlanId: string): Promise<MonitorPlanDTO> {
-    return this.service.getMonitorPlan(monPlanId);
   }
 }

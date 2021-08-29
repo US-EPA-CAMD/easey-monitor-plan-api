@@ -21,7 +21,7 @@ export class MonitorFormula extends BaseEntity {
   parameterCode: string;
 
   @Column({ type: 'varchar', length: 7, nullable: true, name: 'equation_cd' })
-  equationCode: string;
+  formulaCode: string;
 
   @Column({
     type: 'varchar',

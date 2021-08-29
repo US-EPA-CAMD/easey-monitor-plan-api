@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { Component } from './component.entity';
+import { SystemComponent } from './system-component.entity';
 import { SystemFuelFlow } from './system-fuel-flow.entity';
 import { MonitorLocation } from './monitor-location.entity';
 
@@ -56,12 +57,21 @@ export class MonitorSystem extends BaseEntity {
   @Column({ name: 'end_hour' })
   endHour: number;
 
+  @Column({ type: 'varchar', length: 8, name: 'userid' })
+  userId: string;
+
+  @Column({ type: 'date', name: 'add_date' })
+  addDate: Date;
+
+  @Column({ type: 'date', name: 'update_date' })
+  updateDate: Date;
+
   @ManyToMany(
     () => Component,
     c => c.systems,
   )
   @JoinTable({
-    name: 'camdecmps.monitor_system_component',
+    name: 'camdecmpswks.monitor_system_component',
     joinColumn: {
       name: 'mon_sys_id',
       referencedColumnName: 'id',
@@ -71,7 +81,7 @@ export class MonitorSystem extends BaseEntity {
       referencedColumnName: 'id',
     },
   })
-  components: Component[];
+  components: SystemComponent[];
 
   @OneToMany(
     () => SystemFuelFlow,

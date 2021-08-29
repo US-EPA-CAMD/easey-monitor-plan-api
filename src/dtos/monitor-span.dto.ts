@@ -1,24 +1,10 @@
-export class MonitorSpanDTO {
+import { MonitorSpanBaseDTO } from './monitor-span-base.dto';
+
+export class MonitorSpanDTO extends MonitorSpanBaseDTO {
   id: string;
   locationId: string;
-  mecValue: number;
-  mpcValue: number;
-  mpfValue: number;
-  maxLowRange: number;
-  spanValue: number;
-  fullScaleRange: number;
-  beginDate: Date;
-  beginHour: number;
-  endDate: Date;
-  endHour: number;
-  defaultHighRange: number;
-  flowSpanValue: number;
-  flowFullScaleRange: number;
-  componentTypeCode: string;
-  spanScaleCode: string;
-  spanMethodCode: string;
   userid: string;
+  addDate: Date;
   updateDate: Date;
-  spanUnitsOfMeasureCode: string;
   active: boolean;
 }

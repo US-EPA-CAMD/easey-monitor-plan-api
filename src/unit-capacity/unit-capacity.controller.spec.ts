@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { UnitCapacityController } from './unit-capacity.controller';
 import { UnitCapacityService } from './unit-capacity.service';
+
+jest.mock('./unit-capacity.service');
 
 describe('UnitCapacityController', () => {
   let controller: UnitCapacityController;

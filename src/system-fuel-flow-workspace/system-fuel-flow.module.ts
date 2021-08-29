@@ -10,5 +10,6 @@ import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
   imports: [TypeOrmModule.forFeature([SystemFuelFlowWorkspaceRepository])],
   controllers: [SystemFuelFlowWorkspaceController],
   providers: [SystemFuelFlowWorkspaceService, SystemFuelFlowMap],
+  exports: [TypeOrmModule, SystemFuelFlowWorkspaceService, SystemFuelFlowMap],
 })
 export class SystemFuelFlowWorkspaceModule {}

@@ -7,15 +7,19 @@ import {
   Param,
   Controller,
   ParseIntPipe,
+  NotImplementedException,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
 import { UserDTO } from '../dtos/user.dto';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
+
+import { CurrentUser } from './../decorators/current-user.decorator';
 
 @ApiTags('Plans & Configurations')
 @Controller()
@@ -24,6 +28,15 @@ export class MonitorPlanWorkspaceController {
     private service: MonitorPlanWorkspaceService,
     private ucoService: UserCheckOutService,
   ) {}
+
+  @Get('/:id')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves workspace Monitor Plan record',
+  })
+  getMonitorPlan(@Param('id') monPlanId: string): Promise<MonitorPlanDTO> {
+    return this.service.getMonitorPlan(monPlanId);
+  }
 
   @Get(':orisCode/configurations')
   @ApiOkResponse({
@@ -35,6 +48,17 @@ export class MonitorPlanWorkspaceController {
     @Param('orisCode', ParseIntPipe) orisCode: number,
   ): Promise<MonitorPlanDTO[]> {
     return this.service.getConfigurations(orisCode);
+  }
+
+  @Post('import')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'imports an entire monitor plan from JSON payload',
+  })
+  importPlan(@Body() plan: UpdateMonitorPlanDTO): Promise<MonitorPlanDTO> {
+    throw new NotImplementedException(
+      'Monitor Plan Import not supported at this time. Coming Soon!',
+    );
   }
 
   @Get('check-outs')
@@ -56,8 +80,9 @@ export class MonitorPlanWorkspaceController {
   checkOutConfiguration(
     @Param('id') id: string,
     @Body() payload: UserDTO,
+    @CurrentUser() user: UserDTO,
   ): Promise<UserCheckOutDTO> {
-    return this.ucoService.checkOutConfiguration(id, payload.username);
+    return this.ucoService.checkOutConfiguration(id, user.id);
   }
 
   @Put(':id/check-outs')

@@ -1,18 +1,8 @@
-export class MonitorDefaultDTO {
+import { MonitorDefaultBaseDTO } from './monitor-default-base.dto';
+
+export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
   id: string;
   locationId: string;
-  parameterCode: string;
-  defaultValue: number;
-  defaultUnitsOfMeasureCode: string;
-  defaultPurposeCode: string;
-  fuelCode: string;
-  operatingConditionCode: string;
-  defaultSourceCode: string;
-  groupId: string;
-  beginDate: Date;
-  beginHour: number;
-  endDate: Date;
-  endHour: number;
   userId: string;
   addDate: Date;
   updateDate: Date;

@@ -16,12 +16,17 @@ export class StackPipe extends BaseEntity {
   @PrimaryColumn({
     name: 'stack_pipe_id',
   })
-  id: number;
+  id: string;
 
   @Column({
     name: 'stack_name',
   })
   name: string;
+
+  @Column({
+    name: 'active_date',
+  })
+  activeDate: Date;
 
   @Column({
     name: 'retire_date',

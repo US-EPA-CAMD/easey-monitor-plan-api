@@ -1,19 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { MonitorAttributeBaseDTO } from './monitor-attribute-base.dto';
 
-@Injectable()
-export class MonitorAttributeDTO {
+export class MonitorAttributeDTO extends MonitorAttributeBaseDTO {
   id: string;
   locationId: string;
-  ductIndicator: number;
-  bypassIndicator: number;
-  groundElevation: number;
-  stackHeight: number;
-  materialCode: string;
-  shapeCode: string;
-  crossAreaFlow: number;
-  crossAreaStackExit: number;
-  beginDate: Date;
-  endDate: Date;
   userId: string;
   addDate: Date;
   updateDate: Date;

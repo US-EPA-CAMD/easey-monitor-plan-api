@@ -4,8 +4,7 @@ import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { MatsMethodMap } from '../maps/mats-method.map';
-import { CreateMatsMethodDTO } from '../dtos/create-mats-method.dto';
-import { UpdateMatsMethodDTO } from '../dtos/update-mats-method.dto';
+import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([]),
@@ -22,16 +21,9 @@ const mockMap = () => ({
 const locationId = '5770';
 const methodId = 'someId';
 
-const createMatsMethodDTO: CreateMatsMethodDTO = {
-  matsMethodCode: 'string',
-  matsMethodParameterCode: 'string',
-  beginDate: new Date(Date.now()),
-  beginHour: 1,
-  endDate: new Date(Date.now()),
-  endHour: 1,
-};
-
-const updateMatsMethodDTO: UpdateMatsMethodDTO = {
+const matsMethodDTO: UpdateMatsMethodDTO = {
+  supplementalMATSMonitoringMethodCode: 'string',
+  supplementalMATSParameterCode: 'string',
   beginDate: new Date(Date.now()),
   beginHour: 1,
   endDate: new Date(Date.now()),
@@ -75,10 +67,7 @@ describe('MonitorMethodWorkspaceService', () => {
 
   describe('createMethod', () => {
     it('creates a matsMethodCode data for a specified locationId', async () => {
-      const result = await service.createMethod(
-        locationId,
-        createMatsMethodDTO,
-      );
+      const result = await service.createMethod(locationId, matsMethodDTO);
       expect(result).toEqual({});
     });
   });
@@ -88,7 +77,7 @@ describe('MonitorMethodWorkspaceService', () => {
       const result = await service.updateMethod(
         methodId,
         locationId,
-        updateMatsMethodDTO,
+        matsMethodDTO,
       );
       expect(result).toEqual({ ...result });
     });

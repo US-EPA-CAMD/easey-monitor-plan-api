@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { MonitorDefaultController } from './monitor-default.controller';
 import { MonitorDefaultService } from './monitor-default.service';
+
+jest.mock('./monitor-default.service');
 
 describe('MonitorDefaultController', () => {
   let controller: MonitorDefaultController;

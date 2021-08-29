@@ -1,20 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateMatsMethodDTO } from '../dtos/create-mats-method.dto';
-import { UpdateMatsMethodDTO } from '../dtos/update-mats-method.dto';
+import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
 import { MatsMethodWorkspaceController } from './mats-method.controller';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 
 const locationId = 'string';
 const methodId = 'string';
-const createMatsMethodPayload: CreateMatsMethodDTO = {
-  matsMethodCode: 'string',
-  matsMethodParameterCode: 'string',
-  beginDate: new Date(Date.now()),
-  beginHour: 1,
-  endDate: new Date(Date.now()),
-  endHour: 1,
-};
-const upadateMatsMethodPayload: UpdateMatsMethodDTO = {
+const matsMethodPayload: UpdateMatsMethodDTO = {
+  supplementalMATSMonitoringMethodCode: 'string',
+  supplementalMATSParameterCode: 'string',
   beginDate: new Date(Date.now()),
   beginHour: 1,
   endDate: new Date(Date.now()),
@@ -60,9 +53,9 @@ describe('MatsMethodWorkspaceController', () => {
 
   describe('createMethod', () => {
     it('should call the MatsMethodWorkspaceService.createMethod', () => {
-      expect(
-        controller.createMethod(locationId, createMatsMethodPayload),
-      ).toEqual({});
+      expect(controller.createMethod(locationId, matsMethodPayload)).toEqual(
+        {},
+      );
       expect(service.createMethod).toHaveBeenCalled();
     });
   });
@@ -70,7 +63,7 @@ describe('MatsMethodWorkspaceController', () => {
   describe('createMethods', () => {
     it('should call the MatsMethodWorkspaceService.updateMethod', () => {
       expect(
-        controller.updateMethod(methodId, locationId, upadateMatsMethodPayload),
+        controller.updateMethod(locationId, methodId, matsMethodPayload),
       ).toEqual({});
       expect(service.updateMethod).toHaveBeenCalled();
     });

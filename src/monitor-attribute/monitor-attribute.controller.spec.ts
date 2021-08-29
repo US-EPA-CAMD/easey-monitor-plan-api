@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { MonitorAttributeController } from './monitor-attribute.controller';
 import { MonitorAttributeService } from './monitor-attribute.service';
+
+jest.mock('./monitor-attribute.service');
 
 describe('MonitorAttributeController', () => {
   let controller: MonitorAttributeController;
@@ -11,7 +14,9 @@ describe('MonitorAttributeController', () => {
       providers: [MonitorAttributeService],
     }).compile();
 
-    controller = module.get<MonitorAttributeController>(MonitorAttributeController);
+    controller = module.get<MonitorAttributeController>(
+      MonitorAttributeController,
+    );
   });
 
   it('should be defined', () => {

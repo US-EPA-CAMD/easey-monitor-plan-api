@@ -14,7 +14,7 @@ export class MonitorFormulaMap extends BaseMap<
       id: entity.id,
       locationId: entity.locationId,
       parameterCode: entity.parameterCode,
-      equationCode: entity.equationCode,
+      formulaCode: entity.formulaCode,
       formulaId: entity.formulaId,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,

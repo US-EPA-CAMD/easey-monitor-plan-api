@@ -6,10 +6,12 @@ import {
   ManyToMany,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { MonitorSystem } from './monitor-system.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { AnalyzerRange } from './analyzer-range.entity';
 
 @Entity({ name: 'camdecmpswks.component' })
 export class Component extends BaseEntity {
@@ -96,4 +98,10 @@ export class Component extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
+
+  @OneToMany(
+    () => AnalyzerRange,
+    ar => ar.component,
+  )
+  analyzerRanges: AnalyzerRange[];
 }

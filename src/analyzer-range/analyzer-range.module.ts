@@ -10,5 +10,6 @@ import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
   imports: [TypeOrmModule.forFeature([AnalyzerRangeRepository])],
   controllers: [AnalyzerRangeController],
   providers: [AnalyzerRangeService, AnalyzerRangeMap],
+  exports: [TypeOrmModule, AnalyzerRangeMap],
 })
 export class AnalyzerRangeModule {}

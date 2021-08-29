@@ -10,5 +10,6 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
   imports: [TypeOrmModule.forFeature([MonitorLoadRepository])],
   controllers: [MonitorLoadController],
   providers: [MonitorLoadService, MonitorLoadMap],
+  exports: [TypeOrmModule, MonitorLoadService, MonitorLoadMap],
 })
 export class MonitorLoadModule {}

@@ -40,7 +40,7 @@ entity.flowFullScaleRange = flowFullScaleRange;
 entity.componentTypeCode = componentTypeCode;
 entity.spanScaleCode = spanScaleCode;
 entity.spanMethodCode = spanMethodCode;
-entity.userid = userId;
+entity.userId = userId;
 entity.updateDate = updateDate;
 entity.spanUnitsOfMeasureCode = spanUnitsOfMeasureCode;
 
@@ -52,7 +52,6 @@ describe('MonitorSpanMap', () => {
     expect(result.locationId).toEqual(locationId);
     expect(result.mpcValue).toEqual(mpcValue);
     expect(result.mecValue).toEqual(mecValue);
-    expect(result.maxLowRange).toEqual(maxLowRange);
     expect(result.spanValue).toEqual(spanValue);
     expect(result.fullScaleRange).toEqual(fullScaleRange);
     expect(result.beginDate).toEqual(beginDate);

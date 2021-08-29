@@ -2,7 +2,7 @@ import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { UpdateMonitorMethodDTO } from '../dtos/update-monitor-method.dto';
+import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 
 @ApiTags('Methods')

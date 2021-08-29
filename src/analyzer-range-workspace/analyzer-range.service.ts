@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
-import { UpdateAnalyzerRangeDTO } from '../dtos/update-analyzer-range.dto';
+import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
