@@ -50,10 +50,11 @@ export class MonitorPlanWorkspaceService {
   }
 
   async revertToOfficialRecord(monPlanId: string): Promise<void> {
-    return await this.repository.revertToOfficialRecord(monPlanId);
+    return this.repository.revertToOfficialRecord(monPlanId);
   }
 
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
+    console.log(monPlanId);
     return new MonitorPlanDTO();
   }
 }
