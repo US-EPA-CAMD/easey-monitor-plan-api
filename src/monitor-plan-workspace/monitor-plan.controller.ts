@@ -27,14 +27,16 @@ export class MonitorPlanWorkspaceController {
     private ucoService: UserCheckOutService,
   ) {}
 
-  @Get(':planId')
-  @ApiOkResponse({
-    type: MonitorPlanDTO,
-    description: 'Retrieves workspace Monitor Plan record',
-  })
-  getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
-    return this.service.getMonitorPlan(planId);
-  }
+  // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable
+  // really need to move check-outs to a controller of its own but that requires url changes
+  // @Get(':planId')
+  // @ApiOkResponse({
+  //   type: MonitorPlanDTO,
+  //   description: 'Retrieves workspace Monitor Plan record',
+  // })
+  // getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
+  //   return this.service.getMonitorPlan(planId);
+  // }
 
   @Get(':orisCode/configurations')
   @ApiOkResponse({
