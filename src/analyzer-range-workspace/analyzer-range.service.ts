@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
+import { v4 as uuid } from 'uuid';
+
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
+
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
@@ -26,6 +30,28 @@ export class AnalyzerRangeWorkspaceService {
       throw new NotFoundException('Analyzer Range not found.');
     }
 
+    return this.map.one(result);
+  }
+
+  async createAnalyzerRange(
+    componentRecordId: string,
+    payload: UpdateAnalyzerRangeDTO,
+  ): Promise<AnalyzerRangeDTO> {
+    const analyzerRange = this.repository.create({
+      id: uuid(),
+      componentRecordId,
+      analyzerRangeCode: payload.analyzerRangeCode,
+      dualRangeIndicator: payload.dualRangeIndicator,
+      beginDate: payload.beginDate,
+      beginHour: payload.beginHour,
+      endDate: payload.endDate,
+      endHour: payload.endHour,
+      userId: 'testuser',
+      addDate: new Date(Date.now()),
+      updateDate: new Date(Date.now()),
+    });
+
+    const result = await this.repository.save(analyzerRange);
     return this.map.one(result);
   }
 
