@@ -3,7 +3,6 @@ import { Get, Param, Controller, Put, Body } from '@nestjs/common';
 
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
-import { MonitorSystemBaseDTO } from '../dtos/monitor-system-base.dto';
 import { UpdateMonitorSystemDTO } from '../dtos/monitor-system-update.dto';
 
 @ApiTags('Systems')

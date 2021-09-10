@@ -5,7 +5,7 @@ import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { UpdateMonitorSystemDTO } from '../dtos/monitor-system-update.dto';
-import { MonitorSystem } from 'src/entities/monitor-system.entity';
+import { MonitorSystem } from '../entities/monitor-system.entity';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
