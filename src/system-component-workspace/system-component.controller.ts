@@ -32,5 +32,7 @@ export class SystemComponentWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @Body() payload: UpdateSystemComponentDTO,
-  ) {}
+  ): Promise<SystemComponentDTO> {
+    return this.service.createSystemComponents(locationId, monSysId, payload);
+  }
 }
