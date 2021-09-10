@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
@@ -26,6 +27,31 @@ export class SystemFuelFlowWorkspaceService {
       throw new NotFoundException('Fuel Flow not found.');
     }
 
+    return this.map.one(result);
+  }
+
+  async createFuelFlow(
+    monitoringSystemRecordId: string,
+    payload: UpdateSystemFuelFlowDTO,
+  ): Promise<SystemFuelFlowDTO> {
+    const fuelFlow = this.repository.create({
+      id: uuid(),
+      monitoringSystemRecordId,
+      maximumFuelFlowRate: payload.maximumFuelFlowRate,
+      maximumFuelFlowRateSourceCode: payload.maximumFuelFlowRateSourceCode,
+      systemFuelFlowUOMCode: payload.systemFuelFlowUOMCode,
+      beginDate: payload.beginDate,
+      beginHour: payload.beginHour,
+      endDate: payload.endDate,
+      endHour: payload.endHour,
+
+      // TODO: userId to be determined
+      userId: 'testuser',
+      addDate: new Date(Date.now()),
+      updateDate: new Date(Date.now()),
+    });
+
+    const result = await this.repository.save(fuelFlow);
     return this.map.one(result);
   }
 
