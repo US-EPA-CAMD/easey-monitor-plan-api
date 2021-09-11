@@ -38,6 +38,8 @@ export class SystemComponentWorkspaceService {
   }
 
   async updateComponent(
+    locationId: string,
+    sysId: string,
     componentId: string,
     payload: UpdateSystemComponentDTO,
   ): Promise<SystemComponentDTO> {
