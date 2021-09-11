@@ -3,7 +3,7 @@ import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
-import { UpdateSystemComponentDTO } from 'src/dtos/system-component-update.dto';
+import { UpdateSystemComponentDTO } from '../dtos/system-component-update.dto';
 
 @ApiTags('System Components')
 @Controller()
