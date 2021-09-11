@@ -1,9 +1,9 @@
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller, Post, Body } from '@nestjs/common';
+import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
-import { UpdateSystemComponentDTO } from 'src/dtos/system-component-update.dto';
+import { UpdateSystemComponentDTO } from '../dtos/system-component-update.dto';
 
 @ApiTags('System Components')
 @Controller()
@@ -16,11 +16,25 @@ export class SystemComponentWorkspaceController {
     type: SystemComponentDTO,
     description: 'Retrieves workspace component records for a monitor system',
   })
-  getComponents(
+  async getComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
   ): Promise<SystemComponentDTO[]> {
     return this.service.getComponents(locationId, monSysId);
+  }
+
+  @Put()
+  @ApiOkResponse({
+    type: SystemComponentDTO,
+    description: 'Updates workspace component records for a monitor system',
+  })
+  async upDateComponent(
+    @Param('locId') locatonId: string,
+    @Param('sysId') monSysId: string,
+    @Param('compId') componentId: string,
+    @Body() payload: UpdateSystemComponentDTO,
+  ): Promise<SystemComponentDTO> {
+    return this.service.updateComponent(componentId, payload);
   }
 
   @Post()
