@@ -29,12 +29,17 @@ export class SystemComponentWorkspaceController {
     description: 'Updates workspace component records for a monitor system',
   })
   async upDateComponent(
-    @Param('locId') locatonId: string,
+    @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @Param('compId') componentId: string,
     @Body() payload: UpdateSystemComponentDTO,
   ): Promise<SystemComponentDTO> {
-    return this.service.updateComponent(componentId, payload);
+    return this.service.updateComponent(
+      locationId,
+      monSysId,
+      componentId,
+      payload,
+    );
   }
 
   @Post()
