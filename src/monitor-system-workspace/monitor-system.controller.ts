@@ -1,5 +1,5 @@
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller, Put, Body } from '@nestjs/common';
+import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
@@ -19,6 +19,18 @@ export class MonitorSystemWorkspaceController {
   })
   getSystems(@Param('locId') locationId: string): Promise<MonitorSystemDTO[]> {
     return this.service.getSystems(locationId);
+  }
+
+  @Post()
+  @ApiOkResponse({
+    type: MonitorSystemDTO,
+    description: 'Creates a workspace system record for a give location',
+  })
+  createSystem(
+    @Param('locId') locationId: string,
+    @Body() payload: UpdateMonitorSystemDTO,
+  ): Promise<MonitorSystemDTO> {
+    return this.service.createSystem(locationId, payload);
   }
 
   @Put(':sysId')
