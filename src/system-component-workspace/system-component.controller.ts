@@ -23,7 +23,7 @@ export class SystemComponentWorkspaceController {
     return this.service.getComponents(locationId, monSysId);
   }
 
-  @Put()
+  @Put(':compId')
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
