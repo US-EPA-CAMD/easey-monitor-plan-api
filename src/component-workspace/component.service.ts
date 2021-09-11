@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
 
+import { UpdateComponentDTO } from '../dtos/component-update.dto';
 import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
@@ -23,5 +25,41 @@ export class ComponentWorkspaceService {
       },
     });
     return this.map.many(results);
+  }
+
+  async getComponentByIdentifier(locationId: string, componentId: string) {
+    const result = await this.repository.findOne({
+      where: {
+        locationId,
+        componentId,
+      },
+    });
+    return this.map.one(result);
+  }
+
+  async createComponent(
+    locationId: string,
+    payload: UpdateComponentDTO,
+  ): Promise<ComponentDTO> {
+    const component = this.repository.create({
+      id: uuid(),
+      locationId,
+      componentId: payload.componentId,
+      modelVersion: payload.modelVersion,
+      serialNumber: payload.serialNumber,
+      manufacturer: payload.manufacturer,
+      componentTypeCode: payload.componentTypeCode,
+      sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
+      basisCode: payload.basisCode,
+      hgConverterIndicator: payload.hgConverterIndicator,
+      // TODO: change userId to use actual user from CDX
+      userId: 'testuser',
+      addDate: new Date(Date.now()),
+      updateDate: new Date(Date.now()),
+    });
+
+    const result = await this.repository.save(component);
+
+    return this.map.one(result);
   }
 }
