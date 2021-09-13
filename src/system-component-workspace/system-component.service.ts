@@ -94,7 +94,7 @@ export class SystemComponentWorkspaceService {
     systemComponent = this.repository.create({
       id: uuid(),
       monitoringSystemRecordId,
-      componentRecordId: component.componentId,
+      componentRecordId: component.id,
       beginDate: payload.beginDate,
       beginHour: payload.beginHour,
       endDate: payload.endDate,
