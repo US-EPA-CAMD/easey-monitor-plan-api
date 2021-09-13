@@ -87,7 +87,6 @@ export class MonitorSystem extends BaseEntity {
     () => SystemFuelFlow,
     sff => sff.system,
   )
-  @JoinColumn({ name: 'mon_sys_id' })
   fuelFlows: SystemFuelFlow[];
 
   @ManyToOne(
