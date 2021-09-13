@@ -34,7 +34,12 @@ export class ComponentWorkspaceService {
         componentId,
       },
     });
-    return this.map.one(result);
+
+    if (result) {
+      return this.map.one(result);
+    }
+
+    return null;
   }
 
   async createComponent(
