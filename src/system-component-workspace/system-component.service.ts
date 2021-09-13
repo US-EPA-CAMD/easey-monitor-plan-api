@@ -27,8 +27,11 @@ export class SystemComponentWorkspaceService {
     return this.map.many(results);
   }
 
-  async getComponent(componentId: string): Promise<SystemComponentDTO> {
-    const result = await this.repository.findOne(componentId);
+  async getComponent(
+    sysId: string,
+    componentId: string,
+  ): Promise<SystemComponentDTO> {
+    const result = await this.repository.getComponent(sysId, componentId);
 
     if (!result) {
       throw new NotFoundException('System Component not found');
@@ -43,7 +46,7 @@ export class SystemComponentWorkspaceService {
     componentId: string,
     payload: UpdateSystemComponentDTO,
   ): Promise<SystemComponentDTO> {
-    const systemComponent = await this.getComponent(componentId);
+    const systemComponent = await this.getComponent(sysId, componentId);
 
     systemComponent.beginDate = payload.beginDate;
     systemComponent.beginHour = payload.beginHour;
@@ -53,9 +56,9 @@ export class SystemComponentWorkspaceService {
     systemComponent.userId = 'testuser';
     systemComponent.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(systemComponent);
+    await this.repository.save(systemComponent);
 
-    return this.map.one(result);
+    return this.getComponent(sysId, componentId);
   }
 
   async createSystemComponent(
@@ -102,8 +105,8 @@ export class SystemComponentWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(systemComponent);
+    await this.repository.save(systemComponent);
 
-    return this.map.one(result);
+    return this.getComponent(monitoringSystemRecordId, component.id);
   }
 }

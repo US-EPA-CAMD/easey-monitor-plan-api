@@ -17,4 +17,17 @@ export class SystemComponentWorkspaceRepository extends Repository<
       .orderBy('c.componentId', 'ASC')
       .getMany();
   }
+
+  async getComponent(
+    monSysId: string,
+    componentId: string,
+  ): Promise<SystemComponent> {
+    return this.createQueryBuilder('msc')
+      .innerJoinAndSelect('msc.component', 'c')
+      .where('msc.monitoringSystemRecordId = :monSysId', {
+        monSysId,
+      })
+      .andWhere('msc.componentRecordId = :componentId', { componentId })
+      .getOne();
+  }
 }

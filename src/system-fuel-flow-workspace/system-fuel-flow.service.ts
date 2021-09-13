@@ -51,8 +51,9 @@ export class SystemFuelFlowWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(fuelFlow);
-    return this.map.one(result);
+    await this.repository.save(fuelFlow);
+
+    return this.getFuelFlow(fuelFlow.id);
   }
 
   async updateFuelFlow(
