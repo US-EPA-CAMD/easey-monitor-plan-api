@@ -1,6 +1,6 @@
 import { Repository, EntityRepository } from 'typeorm';
 
-import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
 
 @EntityRepository(SystemFuelFlow)
 export class SystemFuelFlowWorkspaceRepository extends Repository<
