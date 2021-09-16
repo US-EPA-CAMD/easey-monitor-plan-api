@@ -20,8 +20,8 @@ export class MonitorSpanWorkspaceService {
     return this.map.many(results);
   }
 
-  async getSpan(spanId: string): Promise<MonitorSpanDTO> {
-    const result = await this.repository.findOne(spanId);
+  async getSpan(locationId: string, spanId: string): Promise<MonitorSpanDTO> {
+    const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
       throw new NotFoundException('Monitor Span not found');
