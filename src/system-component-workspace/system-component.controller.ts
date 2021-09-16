@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { SystemComponentWorkspaceService } from './system-component.service';
@@ -24,6 +24,7 @@ export class SystemComponentWorkspaceController {
   }
 
   @Put(':compId')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
@@ -43,6 +44,7 @@ export class SystemComponentWorkspaceController {
   }
 
   @Post()
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Creates a workspace system component for a monitor system',

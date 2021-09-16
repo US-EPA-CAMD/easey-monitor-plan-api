@@ -19,4 +19,9 @@ export default registerAs('app', () => ({
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
   version: process.env.EASEY_MONITOR_PLAN_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
+  naasSvcs:
+    process.env.EASEY_NAAS_SERVICES ||
+    'https://naasdev.epacdxnode.net/xml/securitytoken_v30.wsdl',
+  naasAppId: process.env.EASEY_AUTH_API_NAASID || 'easey.camd.oar.dev@epa.gov',
+  nassAppPwd: process.env.EASEY_AUTH_API_NAASPWD || 'DEVeasey01!',
 }));

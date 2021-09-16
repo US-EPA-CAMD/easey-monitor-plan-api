@@ -8,8 +8,9 @@ import {
   Controller,
   ParseIntPipe,
   NotImplementedException,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
@@ -18,6 +19,9 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { UserDTO } from '../dtos/user.dto';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
+
+import { AuthGuard } from '../guards/auth.guard';
+import CurrentUser from '../decorators/current-user.decorator';
 
 @ApiTags('Plans & Configurations')
 @Controller()
@@ -51,6 +55,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Post('import')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
@@ -74,18 +79,21 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Post(':planId/check-outs')
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserCheckOutDTO,
     description: 'Checks Out a Monitor Plan configuration',
   })
   checkOutConfiguration(
     @Param('planId') planId: string,
-    @Body() payload: UserDTO,
+    @CurrentUser() userId: string,
   ): Promise<UserCheckOutDTO> {
-    return this.ucoService.checkOutConfiguration(planId, payload.username);
+    return this.ucoService.checkOutConfiguration(planId, userId);
   }
 
   @Put(':planId/check-outs')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: UserCheckOutDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
@@ -97,6 +105,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Delete(':planId/check-outs')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
@@ -105,6 +114,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Delete(':planId/revert')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',
