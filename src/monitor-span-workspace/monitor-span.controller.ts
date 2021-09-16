@@ -1,5 +1,5 @@
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller, Post } from '@nestjs/common';
+import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
@@ -20,16 +20,17 @@ export class MonitorSpanWorkspaceController {
     return this.service.getSpans(locationId);
   }
 
-  @Get(':spanId')
+  @Put(':spanId')
   @ApiOkResponse({
     type: MonitorSpanDTO,
-    description: 'View a workspace span record for a monintor location',
+    description: 'Updates a workspace span record for a monintor location',
   })
   async getSpan(
     @Param('locId') locationId: string,
     @Param('spanId') spanId: string,
+    @Body() payload: UpdateMonitorSpanDTO,
   ): Promise<MonitorSpanDTO> {
-    return this.service.getSpan(locationId, spanId);
+    return this.service.updateSpan(locationId, spanId, payload);
   }
 
   @Post()
