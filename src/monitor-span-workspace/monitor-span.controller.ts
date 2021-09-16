@@ -29,7 +29,7 @@ export class MonitorSpanWorkspaceController {
     @Param('locId') locationId: string,
     @Param('spanId') spanId: string,
   ): Promise<MonitorSpanDTO> {
-    return await this.service.getSpan(locationId, spanId);
+    return this.service.getSpan(locationId, spanId);
   }
 
   @Post()
