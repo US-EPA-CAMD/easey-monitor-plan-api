@@ -20,6 +20,18 @@ export class MonitorSpanWorkspaceController {
     return this.service.getSpans(locationId);
   }
 
+  @Get(':spanId')
+  @ApiOkResponse({
+    type: MonitorSpanDTO,
+    description: 'View a workspace span record for a monintor location',
+  })
+  async getSpan(
+    @Param('locId') locationId: string,
+    @Param('spanId') spanId: string,
+  ): Promise<MonitorSpanDTO> {
+    return this.service.getSpan(locationId, spanId);
+  }
+
   @Post()
   @ApiOkResponse({
     isArray: true,
