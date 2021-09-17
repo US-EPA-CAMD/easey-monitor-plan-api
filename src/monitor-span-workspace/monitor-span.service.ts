@@ -62,4 +62,37 @@ export class MonitorSpanWorkspaceService {
 
     return this.map.one(result);
   }
+
+  async updateSpan(
+    locationId: string,
+    spanId: string,
+    payload: UpdateMonitorSpanDTO,
+  ): Promise<MonitorSpanDTO> {
+    const span = await this.getSpan(locationId, spanId);
+
+    span.componentTypeCode = payload.componentTypeCode;
+    span.spanScaleCode = payload.spanScaleCode;
+    span.spanMethodCode = payload.spanMethodCode;
+    span.mecValue = payload.mecValue;
+    span.mpcValue = payload.mpcValue;
+    span.mpfValue = payload.mpfValue;
+    span.spanValue = payload.spanValue;
+    span.fullScaleRange = payload.fullScaleRange;
+    span.spanUnitsOfMeasureCode = payload.spanUnitsOfMeasureCode;
+    span.scaleTransitionPoint = payload.scaleTransitionPoint;
+    span.defaultHighRange = payload.defaultHighRange;
+    span.flowSpanValue = payload.flowSpanValue;
+    span.flowFullScaleRange = payload.flowFullScaleRange;
+    span.beginDate = payload.beginDate;
+    span.beginHour = payload.beginHour;
+    span.endDate = payload.endDate;
+    span.endHour = payload.endHour;
+    // TODO
+    span.userid = 'testuser';
+    span.updateDate = new Date(Date.now());
+
+    await this.repository.save(span);
+
+    return this.getSpan(locationId, spanId);
+  }
 }
