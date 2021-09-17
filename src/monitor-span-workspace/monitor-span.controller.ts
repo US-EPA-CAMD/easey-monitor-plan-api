@@ -23,9 +23,9 @@ export class MonitorSpanWorkspaceController {
   @Put(':spanId')
   @ApiOkResponse({
     type: MonitorSpanDTO,
-    description: 'Updates a workspace span record for a monintor location',
+    description: 'Updates a workspace span record for a monitor location',
   })
-  async getSpan(
+  async updateSpan(
     @Param('locId') locationId: string,
     @Param('spanId') spanId: string,
     @Body() payload: UpdateMonitorSpanDTO,
