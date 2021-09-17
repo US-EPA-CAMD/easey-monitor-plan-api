@@ -36,6 +36,7 @@ export class MonitorSpanWorkspaceService {
   ): Promise<MonitorSpanDTO> {
     const span = this.repository.create({
       id: uuid(),
+      locationId,
       componentTypeCode: payload.componentTypeCode,
       spanScaleCode: payload.spanScaleCode,
       spanMethodCode: payload.spanMethodCode,

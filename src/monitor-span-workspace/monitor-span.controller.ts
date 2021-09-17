@@ -41,7 +41,7 @@ export class MonitorSpanWorkspaceController {
   })
   createSpan(
     @Param('locId') locationId: string,
-    payload: UpdateMonitorSpanDTO,
+    @Body() payload: UpdateMonitorSpanDTO,
   ): Promise<MonitorSpanDTO> {
     return this.service.createSpan(locationId, payload);
   }

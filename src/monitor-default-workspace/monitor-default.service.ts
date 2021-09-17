@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
@@ -28,6 +29,36 @@ export class MonitorDefaultWorkspaceService {
     if (!result) {
       throw new NotFoundException('Monitor Default not found');
     }
+
+    return this.map.one(result);
+  }
+
+  async createDefault(
+    locationId: string,
+    payload: UpdateMonitorDefaultDTO,
+  ): Promise<MonitorDefaultDTO> {
+    const monDefault = this.repository.create({
+      id: uuid(),
+      locationId,
+      parameterCode: payload.parameterCode,
+      defaultValue: payload.defaultValue,
+      defaultUnitsOfMeasureCode: payload.defaultUnitsOfMeasureCode,
+      defaultPurposeCode: payload.defaultPurposeCode,
+      fuelCode: payload.fuelCode,
+      operatingConditionCode: payload.operatingConditionCode,
+      defaultSourceCode: payload.defaultSourceCode,
+      groupId: payload.groupId,
+      beginDate: payload.beginDate,
+      beginHour: payload.beginHour,
+      endDate: payload.endDate,
+      endHour: payload.endHour,
+      // TODO
+      userId: 'testuser',
+      addDate: new Date(Date.now()),
+      updateDate: new Date(Date.now()),
+    });
+
+    const result = await this.repository.save(monDefault);
 
     return this.map.one(result);
   }
