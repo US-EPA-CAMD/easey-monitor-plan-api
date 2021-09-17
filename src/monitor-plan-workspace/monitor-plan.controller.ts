@@ -94,6 +94,7 @@ export class MonitorPlanWorkspaceController {
 
   @Put(':planId/check-outs')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: UserCheckOutDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
@@ -106,6 +107,7 @@ export class MonitorPlanWorkspaceController {
 
   @Delete(':planId/check-outs')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
