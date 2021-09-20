@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MonitorPlanCommentWorkspaceModule } from '../monitor-plan-comment-workspace/monitor-plan-comment.module';
@@ -44,6 +45,7 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
     UnitFuelWorkspaceModule,
     UserCheckOutModule,
     TypeOrmModule.forFeature([MonitorPlanWorkspaceRepository]),
+    HttpModule,
   ],
   controllers: [MonitorPlanWorkspaceController],
   providers: [MonitorPlanWorkspaceService, MonitorPlanMap],

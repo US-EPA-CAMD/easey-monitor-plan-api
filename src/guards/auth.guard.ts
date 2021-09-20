@@ -4,68 +4,48 @@ import {
   ExecutionContext,
   BadRequestException,
   InternalServerErrorException,
+  HttpService,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { UserSession } from '../entities/user-session.entity';
-import { createClientAsync } from 'soap';
 import { ConfigService } from '@nestjs/config';
-import { getManager } from 'typeorm';
 import { parseToken } from '../utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private httpService: HttpService,
+  ) {}
 
-  async validateToken(token: string, clientIp: string): Promise<any> {
-    const url = this.configService.get<string>('app.naasSvcs');
+  async validateToken(token: string, ip: string): Promise<any> {
+    const url = this.configService.get('app.authApi').uri + '/tokens/validate';
 
-    return createClientAsync(url)
-      .then(client => {
-        return client.ValidateAsync({
-          userId: this.configService.get<string>('app.naasAppId'),
-          credential: this.configService.get<string>('app.nassAppPwd'),
-          domain: 'default',
-          securityToken: token,
-          clientIp: clientIp,
-          resourceURI: null,
-        });
+    return this.httpService
+      .post(url, { token: token, ip: ip })
+      .toPromise()
+      .then(result => {
+        return result.data;
       })
-      .then(async res => {
-        return res[0].return;
-      })
-      .catch(err => {
-        throw new InternalServerErrorException(
-          err.root.Envelope.Body.Fault.detail.faultdetails,
-          'Security token validation failed!',
-        );
+      .catch(error => {
+        if (error.response) {
+          throw new InternalServerErrorException(error.response.data.message);
+        }
       });
   }
 
   async validateRequest(request): Promise<boolean> {
-    if (request.headers.authorization === undefined)
+    if (request.headers.authorization === undefined) {
       throw new BadRequestException('Prior Authorization token is required.');
+    }
 
     const splitString = request.headers.authorization.split(' ');
-    if (splitString.lenth !== 2 && splitString[0] !== 'Bearer')
+    if (splitString.lenth !== 2 && splitString[0] !== 'Bearer') {
       throw new BadRequestException('Prior Authorization token is required.');
+    }
 
     const validatedToken = await this.validateToken(splitString[1], request.ip);
     const parsedToken = parseToken(validatedToken);
-
-    const manager = getManager();
-
-    // Logic to determine if session exists and is valid
-    const sessionRecord = await manager.findOne(UserSession, {
-      sessionId: parsedToken.sessionId,
-    });
-    if (sessionRecord) {
-      if (new Date(Date.now()) > new Date(sessionRecord.tokenExpiration)) {
-        throw new BadRequestException('User session has expired.');
-      }
-    } else {
-      throw new BadRequestException('No session with token exists.');
-    }
 
     request.userId = parsedToken.userId; // Attach userId to request body
     return true;

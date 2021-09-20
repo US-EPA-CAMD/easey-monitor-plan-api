@@ -1,20 +1,7 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { AuthGuard } from './auth.guard';
 import { ConfigService } from '@nestjs/config';
-
-const client = {
-  ValidateAsync: jest.fn(() => Promise.resolve([{ return: '' }])),
-};
-
-let sessionRecord = {
-  tokenExpiration: '100000000000000000000000',
-};
-
-let managerReturn = jest.fn().mockResolvedValue(sessionRecord);
-
-jest.mock('soap', () => ({
-  createClientAsync: jest.fn(() => Promise.resolve(client)),
-}));
+import { HttpModule } from '@nestjs/common';
 
 jest.mock('../utils', () => ({
   parseToken: jest.fn(() =>
@@ -22,19 +9,12 @@ jest.mock('../utils', () => ({
   ),
 }));
 
-jest.mock('../entities/user-session.entity', jest.fn().mockReturnValue({}));
-
-jest.mock('typeorm', () => ({
-  getManager: () => {
-    return { findOne: managerReturn };
-  },
-}));
-
 describe('AuthGuard', () => {
   let guard;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       providers: [AuthGuard, ConfigService],
     }).compile();
 
@@ -46,28 +26,10 @@ describe('AuthGuard', () => {
   });
 
   it('should validate properly and return true given good input', async () => {
+    jest.spyOn(guard, 'validateToken').mockResolvedValue('');
+
     const request = { headers: { authorization: 'Bearer csm::nndifnd' } };
     expect(await guard.validateRequest(request)).toEqual(true);
-  });
-
-  it('should error given an expired existing session', async () => {
-    sessionRecord = {
-      tokenExpiration: '0',
-    };
-
-    const request = { headers: { authorization: 'Bearer csm::nndifnd' } };
-    expect(async () => {
-      await guard.validateRequest(request);
-    }).rejects.toThrowError();
-  });
-
-  it('should error given a non-existing session', async () => {
-    managerReturn = jest.fn().mockResolvedValue(false);
-
-    const request = { headers: { authorization: 'Bearer csm::nndifnd' } };
-    expect(async () => {
-      await guard.validateRequest(request);
-    }).rejects.toThrowError();
   });
 
   it('should error given no auth header', async () => {
