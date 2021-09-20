@@ -27,7 +27,7 @@ export class MonitorSpan extends BaseEntity {
   mpfValue: number;
 
   @Column({ type: 'numeric', precision: 6, scale: 1, name: 'max_low_range' })
-  maxLowRange: number;
+  scaleTransitionPoint: number;
 
   @Column({ type: 'numeric', precision: 13, scale: 3, name: 'span_value' })
   spanValue: number;

@@ -46,6 +46,7 @@ export class MonitorSpanWorkspaceService {
       spanValue: payload.spanValue,
       fullScaleRange: payload.flowFullScaleRange,
       spanUnitsOfMeasureCode: payload.spanUnitsOfMeasureCode,
+      scaleTransitionPoint: payload.scaleTransitionPoint,
       defaultHighRange: payload.defaultHighRange,
       flowSpanValue: payload.flowSpanValue,
       flowFullScaleRange: payload.flowFullScaleRange,

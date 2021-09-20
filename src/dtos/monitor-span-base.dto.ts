@@ -8,7 +8,7 @@ export class MonitorSpanBaseDTO {
   spanValue: number;
   fullScaleRange: number;
   spanUnitsOfMeasureCode: string;
-  scaleTransitionPoint: string;
+  scaleTransitionPoint: number;
   defaultHighRange: number;
   flowSpanValue: number;
   flowFullScaleRange: number;
