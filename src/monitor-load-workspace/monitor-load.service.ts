@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -18,6 +18,16 @@ export class MonitorLoadWorkspaceService {
   async getLoads(locationId: string): Promise<MonitorLoadDTO[]> {
     const results = await this.repository.find({ locationId });
     return this.map.many(results);
+  }
+
+  async getLoad(locationId: string, spanId: string): Promise<MonitorLoadDTO> {
+    const result = await this.repository.getLoad(locationId, spanId);
+
+    if (!result) {
+      throw new NotFoundException('Monitor Load not found');
+    }
+
+    return this.map.one(result);
   }
 
   async createLoad(
@@ -48,5 +58,33 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.save(load);
 
     return this.map.one(result);
+  }
+
+  async updateLoad(
+    locationId: string,
+    loadId: string,
+    payload: UpdateMonitorLoadDTO,
+  ): Promise<MonitorLoadDTO> {
+    const load = await this.getLoad(locationId, loadId);
+
+    load.loadAnalysisDate = payload.loadAnalysisDate;
+    load.beginDate = payload.beginDate;
+    load.beginHour = payload.beginHour;
+    load.endDate = payload.endDate;
+    load.endHour = payload.endHour;
+    load.maximumLoadValue = payload.maximumLoadValue;
+    load.secondNormalIndicator = payload.secondNormalIndicator;
+    load.upperOperationBoundary = payload.upperOperationBoundary;
+    load.lowerOperationBoundary = payload.lowerOperationBoundary;
+    load.normalLevelCode = payload.normalLevelCode;
+    load.secondLevelCode = payload.secondLevelCode;
+    load.maximumLoadUnitsOfMeasureCode = payload.maximumLoadUnitsOfMeasureCode;
+    // TODO
+    load.userId = 'testuser';
+    load.updateDate = new Date(Date.now());
+
+    await this.repository.save(load);
+
+    return this.getLoad(locationId, loadId);
   }
 }
