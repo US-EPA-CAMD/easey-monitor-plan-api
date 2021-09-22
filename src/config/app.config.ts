@@ -22,7 +22,6 @@ export default registerAs('app', () => ({
   authApi: {
     uri:
       process.env.REACT_APP_EASEY_AUTH_API ||
-      //'https://easey-dev.app.cloud.gov/api/auth-mgmt',
-      'http://localhost:8070/api/auth-mgmt',
+      'https://easey-dev.app.cloud.gov/api/auth-mgmt',
   },
 }));
