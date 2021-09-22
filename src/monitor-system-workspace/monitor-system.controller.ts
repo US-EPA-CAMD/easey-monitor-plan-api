@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
@@ -22,6 +22,7 @@ export class MonitorSystemWorkspaceController {
   }
 
   @Post()
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description: 'Creates a workspace system record for a give location',
@@ -34,6 +35,7 @@ export class MonitorSystemWorkspaceController {
   }
 
   @Put(':sysId')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description:
