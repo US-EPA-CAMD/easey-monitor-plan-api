@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
         },
         {
           headers: {
-            ip: ip,
+            'x-client-ip': ip,
           },
         },
       )

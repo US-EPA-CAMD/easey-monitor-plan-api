@@ -19,7 +19,7 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
       spanValue: entity.spanValue,
       fullScaleRange: entity.fullScaleRange,
       spanUnitsOfMeasureCode: entity.spanUnitsOfMeasureCode,
-      scaleTransitionPoint: null,
+      scaleTransitionPoint: entity.scaleTransitionPoint,
       defaultHighRange: entity.defaultHighRange,
       flowSpanValue: entity.flowSpanValue,
       flowFullScaleRange: entity.flowFullScaleRange,
