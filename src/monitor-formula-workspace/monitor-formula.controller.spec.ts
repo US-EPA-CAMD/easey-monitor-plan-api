@@ -1,39 +1,74 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
+import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
 
-jest.mock('./monitor-formula.service');
+const locationId = 'string';
+const methodId = 'string';
+const matsFormulaPayload: UpdateMonitorFormulaDTO = {
+  formulaId: 'string',
+  parameterCode: 'string',
+  formulaCode: 'string',
+  formulaText: 'string',
+  beginDate: new Date(Date.now()),
+  beginHour: 1,
+  endDate: new Date(Date.now()),
+  endHour: 1,
+};
 
-const locId = 'some location id';
-
-const data: MonitorFormulaDTO[] = [];
-data.push(new MonitorFormulaDTO());
-data.push(new MonitorFormulaDTO());
+const mockMonitorFormulaWorkspaceService = () => ({
+  getFormulas: jest.fn(() => []),
+  getFormula: jest.fn(() => ({})),
+  createFormula: jest.fn(() => ({})),
+  updateFormula: jest.fn(() => ({})),
+});
 
 describe('MonitorFormulaWorkspaceController', () => {
   let controller: MonitorFormulaWorkspaceController;
   let service: MonitorFormulaWorkspaceService;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MonitorFormulaWorkspaceController],
-      providers: [MonitorFormulaWorkspaceService],
+      providers: [
+        {
+          provide: MonitorFormulaWorkspaceService,
+          useFactory: mockMonitorFormulaWorkspaceService,
+        },
+      ],
     }).compile();
 
-    controller = module.get(MonitorFormulaWorkspaceController);
-    service = module.get(MonitorFormulaWorkspaceService);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+    controller = module.get<MonitorFormulaWorkspaceController>(
+      MonitorFormulaWorkspaceController,
+    );
+    service = module.get<MonitorFormulaWorkspaceService>(
+      MonitorFormulaWorkspaceService,
+    );
   });
 
   describe('getFormulas', () => {
-    it('should return array of monitor formulas', async () => {
-      jest.spyOn(service, 'getFormulas').mockResolvedValue(data);
-      expect(await controller.getFormulas(locId)).toBe(data);
+    it('should call the MonitorFormulaWorkspaceService.getFormulas', () => {
+      expect(controller.getFormulas(locationId)).toEqual([]);
+      expect(service.getFormulas).toHaveBeenCalled();
+    });
+  });
+
+  describe('createFormula', () => {
+    it('should call the MonitorFormulaWorkspaceService.createFormula', () => {
+      expect(controller.createFormula(locationId, matsFormulaPayload)).toEqual(
+        {},
+      );
+      expect(service.createFormula).toHaveBeenCalled();
+    });
+  });
+
+  describe('createFormulas', () => {
+    it('should call the MonitorFormulaWorkspaceService.updateFormula', () => {
+      expect(
+        controller.updateFormula(locationId, methodId, matsFormulaPayload),
+      ).toEqual({});
+      expect(service.updateFormula).toHaveBeenCalled();
     });
   });
 });
