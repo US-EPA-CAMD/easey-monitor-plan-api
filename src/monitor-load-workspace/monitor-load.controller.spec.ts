@@ -10,7 +10,6 @@ const locId = 'some location id';
 
 const data: MonitorLoadDTO[] = [];
 data.push(new MonitorLoadDTO());
-data.push(new MonitorLoadDTO());
 
 describe('MonitorLoadWorkspaceController', () => {
   let controller: MonitorLoadWorkspaceController;

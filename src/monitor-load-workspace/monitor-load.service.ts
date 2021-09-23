@@ -20,8 +20,8 @@ export class MonitorLoadWorkspaceService {
     return this.map.many(results);
   }
 
-  async getLoad(locationId: string, spanId: string): Promise<MonitorLoadDTO> {
-    const result = await this.repository.getLoad(locationId, spanId);
+  async getLoad(loadId: string): Promise<MonitorLoadDTO> {
+    const result = await this.repository.findOne(loadId);
 
     if (!result) {
       throw new NotFoundException('Monitor Load not found');
@@ -49,7 +49,6 @@ export class MonitorLoadWorkspaceService {
       normalLevelCode: payload.normalLevelCode,
       secondLevelCode: payload.secondLevelCode,
       maximumLoadUnitsOfMeasureCode: payload.maximumLoadUnitsOfMeasureCode,
-      // TODO
       userId: 'testuser',
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
@@ -65,7 +64,7 @@ export class MonitorLoadWorkspaceService {
     loadId: string,
     payload: UpdateMonitorLoadDTO,
   ): Promise<MonitorLoadDTO> {
-    const load = await this.getLoad(locationId, loadId);
+    const load = await this.getLoad(loadId);
 
     load.loadAnalysisDate = payload.loadAnalysisDate;
     load.beginDate = payload.beginDate;
@@ -85,6 +84,6 @@ export class MonitorLoadWorkspaceService {
 
     await this.repository.save(load);
 
-    return this.getLoad(locationId, loadId);
+    return this.getLoad(loadId);
   }
 }
