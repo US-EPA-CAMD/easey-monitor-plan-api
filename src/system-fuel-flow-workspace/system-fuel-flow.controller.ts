@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
@@ -24,6 +24,7 @@ export class SystemFuelFlowWorkspaceController {
   }
 
   @Post()
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description: 'Creates official fuel flow records for a monitor system',
@@ -37,6 +38,7 @@ export class SystemFuelFlowWorkspaceController {
   }
 
   @Put(':fuelFlowId')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description:

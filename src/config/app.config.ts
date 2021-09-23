@@ -19,4 +19,9 @@ export default registerAs('app', () => ({
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
   version: process.env.EASEY_MONITOR_PLAN_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
+  authApi: {
+    uri:
+      process.env.REACT_APP_EASEY_AUTH_API ||
+      'https://easey-dev.app.cloud.gov/api/auth-mgmt',
+  },
 }));

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
@@ -22,6 +22,7 @@ export class MatsMethodWorkspaceController {
   }
 
   @Post()
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
@@ -34,6 +35,7 @@ export class MatsMethodWorkspaceController {
   }
 
   @Put(':methodId')
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',
