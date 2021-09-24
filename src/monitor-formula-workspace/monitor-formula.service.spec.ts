@@ -3,19 +3,40 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
+import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
+import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  find: jest.fn().mockResolvedValue([]),
+  findOne: jest.fn().mockResolvedValue(new MonitorFormula()),
+  create: jest.fn().mockResolvedValue(new MonitorFormula()),
+  save: jest.fn().mockResolvedValue(new MonitorFormula()),
+  getFormula: jest.fn().mockResolvedValue(new MonitorFormula()),
 });
 
 const mockMap = () => ({
-  many: jest.fn().mockResolvedValue(''),
+  one: jest.fn().mockResolvedValue({}),
+  many: jest.fn().mockResolvedValue([]),
 });
+
+const locationId = '5770';
+const formulaId = 'someId';
+
+const monitorFormulaDTO: UpdateMonitorFormulaDTO = {
+  formulaId: 'string',
+  parameterCode: 'string',
+  formulaCode: 'string',
+  formulaText: 'string',
+  beginDate: new Date(Date.now()),
+  beginHour: 1,
+  endDate: new Date(Date.now()),
+  endHour: 1,
+};
 
 describe('MonitorFormulaWorkspaceService', () => {
   let service: MonitorFormulaWorkspaceService;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MonitorFormulaWorkspaceService,
@@ -33,14 +54,35 @@ describe('MonitorFormulaWorkspaceService', () => {
     service = module.get(MonitorFormulaWorkspaceService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('getFormulas', () => {
+    it('calls the MatsMehtodWorkspaceRepository.find() gets all formula codes for locationId', async () => {
+      const result = await service.getFormulas(locationId);
+      expect(result).toEqual([]);
+    });
   });
 
-  describe('getFormulas', () => {
-    it('should return array of monitor formulas', async () => {
-      const result = await service.getFormulas(null);
-      expect(result).toEqual('');
+  describe('getFormula', () => {
+    it('should return an array of formulas', async () => {
+      const result = await service.getFormula(locationId, formulaId);
+      expect(result).toEqual({});
+    });
+  });
+
+  describe('createFormula', () => {
+    it('creates a FormulaCode data for a specified locationId', async () => {
+      const result = await service.createFormula(locationId, monitorFormulaDTO);
+      expect(result).toEqual({});
+    });
+  });
+
+  describe('updateMetod', () => {
+    it('updates a FormulaCode data for a specified locationId', async () => {
+      const result = await service.updateFormula(
+        formulaId,
+        locationId,
+        monitorFormulaDTO,
+      );
+      expect(result).toEqual({ ...result });
     });
   });
 });
