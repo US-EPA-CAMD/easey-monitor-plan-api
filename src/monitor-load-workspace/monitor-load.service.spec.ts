@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
@@ -25,6 +26,7 @@ const payload: UpdateMonitorLoadDTO = {
 };
 
 const mockRepository = () => ({
+  getLoad: jest.fn().mockRejectedValue(new NotFoundException('Async error')),
   find: jest.fn().mockResolvedValue([]),
   findOne: jest.fn().mockResolvedValue(new MonitorLoad()),
   create: jest.fn().mockResolvedValue(new MonitorLoad()),

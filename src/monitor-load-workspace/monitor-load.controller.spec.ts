@@ -3,13 +3,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadWorkspaceController } from './monitor-load.controller';
+import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
 
 jest.mock('./monitor-load.service');
 
 const locId = 'some location id';
+const loadId = 'some load id';
+const payload = new UpdateMonitorLoadDTO();
 
-const data: MonitorLoadDTO[] = [];
-data.push(new MonitorLoadDTO());
+const returnedLoads: MonitorLoadDTO[] = [];
+returnedLoads.push(new MonitorLoadDTO());
+
+const returnedLoad = new MonitorLoadDTO();
 
 describe('MonitorLoadWorkspaceController', () => {
   let controller: MonitorLoadWorkspaceController;
@@ -31,8 +36,24 @@ describe('MonitorLoadWorkspaceController', () => {
 
   describe('getLoads', () => {
     it('should return array of monitor loads', async () => {
-      jest.spyOn(service, 'getLoads').mockResolvedValue(data);
-      expect(await controller.getLoads(locId)).toBe(data);
+      jest.spyOn(service, 'getLoads').mockResolvedValue(returnedLoads);
+      expect(await controller.getLoads(locId)).toBe(returnedLoads);
+    });
+  });
+
+  describe('updateLoad', () => {
+    it('should return array of monitor loads', async () => {
+      jest.spyOn(service, 'updateLoad').mockResolvedValue(returnedLoad);
+      expect(await controller.updateLoad(locId, loadId, payload)).toBe(
+        returnedLoad,
+      );
+    });
+  });
+
+  describe('createLoad', () => {
+    it('should return array of monitor loads', async () => {
+      jest.spyOn(service, 'createLoad').mockResolvedValue(returnedLoad);
+      expect(await controller.createLoad(locId, payload)).toBe(returnedLoad);
     });
   });
 });
