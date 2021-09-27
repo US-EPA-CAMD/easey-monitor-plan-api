@@ -52,7 +52,6 @@ export class MonitorDefaultWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      // TODO
       userId: 'testuser',
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
@@ -82,7 +81,6 @@ export class MonitorDefaultWorkspaceService {
     monDefault.beginHour = payload.beginHour;
     monDefault.endDate = payload.endDate;
     monDefault.endHour = payload.endHour;
-    // TODO
     monDefault.userId = 'testuser';
     monDefault.updateDate = new Date(Date.now());
 

@@ -50,7 +50,7 @@ export class AuthGuard implements CanActivate {
     }
 
     const splitString = request.headers.authorization.split(' ');
-    if (splitString.lenth !== 2 && splitString[0] !== 'Bearer') {
+    if (splitString.length !== 2 && splitString[0] !== 'Bearer') {
       throw new BadRequestException('Prior Authorization token is required.');
     }
 

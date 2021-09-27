@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
@@ -7,7 +7,10 @@ import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository'
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MonitorFormulaWorkspaceRepository])],
+  imports: [
+    TypeOrmModule.forFeature([MonitorFormulaWorkspaceRepository]),
+    HttpModule,
+  ],
   controllers: [MonitorFormulaWorkspaceController],
   providers: [MonitorFormulaWorkspaceService, MonitorFormulaMap],
   exports: [TypeOrmModule, MonitorFormulaWorkspaceService, MonitorFormulaMap],

@@ -23,7 +23,7 @@ export class MonitorDefaultMap extends BaseMap<
       groupId: entity.groupId,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,
-      endDate: entity.beginDate,
+      endDate: entity.endDate,
       endHour: entity.endHour,
       userId: entity.userId,
       addDate: entity.addDate,
