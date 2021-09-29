@@ -67,7 +67,7 @@ export class MonitorSystemWorkspaceService {
   ): Promise<MonitorSystemDTO> {
     const system = await this.getSystem(monitoringSystemId);
 
-    system.systemDesignationCode = payload.systemTypeCode;
+    system.systemTypeCode = payload.systemTypeCode;
     system.systemDesignationCode = payload.systemDesignationCode;
     system.fuelCode = payload.fuelCode;
     system.beginDate = payload.beginDate;
