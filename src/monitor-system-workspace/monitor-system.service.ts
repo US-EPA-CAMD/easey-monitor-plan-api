@@ -37,6 +37,7 @@ export class MonitorSystemWorkspaceService {
       locationId,
       monitoringSystemId: payload.monitoringSystemId,
       systemDesignationCode: payload.systemDesignationCode,
+      fuelCode: payload.fuelCode,
       systemTypeCode: payload.systemTypeCode,
       beginDate: payload.beginDate,
       beginHour: payload.beginHour,
