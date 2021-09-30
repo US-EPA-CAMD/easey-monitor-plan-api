@@ -22,17 +22,10 @@ export class AuthGuard implements CanActivate {
     const url = this.configService.get('app.authApi').uri + '/tokens/validate';
 
     return this.httpService
-      .post(
-        url,
-        {
-          token: token,
-        },
-        {
-          headers: {
-            'x-client-ip': ip,
-          },
-        },
-      )
+      .post(url, {
+        token: token,
+        clientIp: ip,
+      })
       .toPromise()
       .then(result => {
         return result.data;
