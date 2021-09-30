@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 
 import { ConfigService } from '@nestjs/config';
 import { parseToken } from '../utils';
-
+//
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
