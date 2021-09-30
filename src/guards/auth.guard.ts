@@ -54,10 +54,12 @@ export class AuthGuard implements CanActivate {
       throw new BadRequestException('Prior Authorization token is required.');
     }
 
-    const validatedToken = await this.validateToken(
-      splitString[1],
-      request.headers['x-forwarded-for'],
-    );
+    let ip = request.ip;
+    if (request.headers['x-forwarded-for']) {
+      ip = request.headers['x-forwarded-for'].split(',')[0];
+    }
+
+    const validatedToken = await this.validateToken(splitString[1], ip);
     const parsedToken = parseToken(validatedToken);
 
     request.userId = parsedToken.userId; // Attach userId to request body
