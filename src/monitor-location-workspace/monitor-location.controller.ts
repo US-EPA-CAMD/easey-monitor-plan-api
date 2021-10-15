@@ -12,7 +12,8 @@ export class MonitorLocationWorkspaceController {
   @ApiOkResponse({
     isArray: true,
     type: MonitorLocationDTO,
-    description: 'Retrieves official load records for a monitor location',
+    description:
+      'Retrieves workspace location record from specific location ID',
   })
   getLocation(@Param('locId') locationId: string): Promise<MonitorLocationDTO> {
     return this.service.getLocation(locationId);

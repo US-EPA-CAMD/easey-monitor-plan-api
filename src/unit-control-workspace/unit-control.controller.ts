@@ -9,11 +9,12 @@ import { UnitControlWorkspaceService } from './unit-control.service';
 export class UnitControlWorkspaceController {
   constructor(private readonly service: UnitControlWorkspaceService) {}
 
-  @Get(':unitId')
+  @Get()
   @ApiOkResponse({
     isArray: true,
     type: UnitControlDTO,
-    description: 'Retrieves official load records for a monitor location',
+    description:
+      'Retrieves workspace unit control records from a specific unit ID',
   })
   getUnitControls(@Param('unitId') unitId: number): Promise<UnitControlDTO[]> {
     return this.service.getUnitControls(unitId);
