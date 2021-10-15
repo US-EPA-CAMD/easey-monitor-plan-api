@@ -29,6 +29,7 @@ export class UnitControlWorkspaceService {
   }
 
   async createUnitControl(
+    userId: string,
     unitId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
@@ -42,7 +43,7 @@ export class UnitControlWorkspaceService {
       originalCode: payload.originalCode,
       retireDate: payload.retireDate,
       seasonalControlsIndicator: payload.seasonalControlsIndicator,
-      userId: 'testuser',
+      userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -52,6 +53,7 @@ export class UnitControlWorkspaceService {
   }
 
   async updateUnitControl(
+    userId: string,
     unitControlId: string,
     unitId: number,
     payload: UpdateUnitControlDTO,
@@ -65,7 +67,7 @@ export class UnitControlWorkspaceService {
     unitControl.originalCode = payload.originalCode;
     unitControl.retireDate = payload.retireDate;
     unitControl.seasonalControlsIndicator = payload.seasonalControlsIndicator;
-    unitControl.userId = 'testuser';
+    unitControl.userId = userId;
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
