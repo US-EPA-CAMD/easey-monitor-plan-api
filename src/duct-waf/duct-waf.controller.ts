@@ -2,7 +2,7 @@ import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { DuctWafService } from './duct-waf.service';
-import { DuctWafDTO } from 'src/dtos/duct-waf.dto';
+import { DuctWafDTO } from '../dtos/duct-waf.dto';
 
 @ApiTags('Rectangular Duct WAF')
 @Controller()
