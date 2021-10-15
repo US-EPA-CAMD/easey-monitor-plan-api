@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateUnitControlDTO } from 'src/dtos/unit-control-update.dto';
+import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { v4 as uuid } from 'uuid';
@@ -11,8 +11,8 @@ import { UnitControlWorkspaceRepository } from './unit-control.repository';
 export class UnitControlWorkspaceService {
   constructor(
     @InjectRepository(UnitControlWorkspaceRepository)
-    private repository: UnitControlWorkspaceRepository,
-    private map: UnitControlMap,
+    readonly repository: UnitControlWorkspaceRepository,
+    readonly map: UnitControlMap,
   ) {}
 
   async getUnitControls(unitId: number): Promise<UnitControlDTO[]> {

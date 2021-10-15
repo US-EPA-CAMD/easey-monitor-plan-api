@@ -8,8 +8,8 @@ import { MonitorLocationRepository } from './monitor-location.repository';
 export class MonitorLocationService {
   constructor(
     @InjectRepository(MonitorLocationRepository)
-    private repository: MonitorLocationRepository,
-    private map: MonitorLocationMap,
+    readonly repository: MonitorLocationRepository,
+    readonly map: MonitorLocationMap,
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {

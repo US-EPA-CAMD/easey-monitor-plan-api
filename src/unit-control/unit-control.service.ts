@@ -9,8 +9,8 @@ import { UnitControlRepository } from './unit-control.repository';
 export class UnitControlService {
   constructor(
     @InjectRepository(UnitControlRepository)
-    private repository: UnitControlRepository,
-    private map: UnitControlMap,
+    readonly repository: UnitControlRepository,
+    readonly map: UnitControlMap,
   ) {}
 
   async getUnitControls(unitId: number): Promise<UnitControlDTO[]> {

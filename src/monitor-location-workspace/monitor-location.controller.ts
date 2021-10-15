@@ -6,7 +6,7 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
 @ApiTags('Locations')
 @Controller('monitor-location')
 export class MonitorLocationWorkspaceController {
-  constructor(private service: MonitorLocationWorkspaceService) {}
+  constructor(readonly service: MonitorLocationWorkspaceService) {}
 
   @Get(':locId')
   @ApiOkResponse({
