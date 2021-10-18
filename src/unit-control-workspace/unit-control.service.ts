@@ -34,6 +34,8 @@ export class UnitControlWorkspaceService {
     unitId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
+    // temporary:
+    userId = 'testuser';
     const load = this.repository.create({
       id: uuid(),
       unitId,
@@ -68,7 +70,9 @@ export class UnitControlWorkspaceService {
     unitControl.originalCode = payload.originalCode;
     unitControl.retireDate = payload.retireDate;
     unitControl.seasonalControlsIndicator = payload.seasonalControlsIndicator;
-    unitControl.userId = userId;
+    // unitControl.userId = userId;
+    // temporary:
+    unitControl.userId = 'testuser';
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
