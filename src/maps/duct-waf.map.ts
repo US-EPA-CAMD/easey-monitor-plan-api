@@ -25,6 +25,7 @@ export class DuctWafMap extends BaseMap<DuctWaf, DuctWafDTO> {
       userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
+      active: entity.wafEndDate === null,
     };
   }
 }
