@@ -12,4 +12,5 @@ export class DuctWafBaseDTO {
   ductDepth: number;
   wafEndDate: Date;
   wafEndHour: number;
+  active: boolean;
 }
