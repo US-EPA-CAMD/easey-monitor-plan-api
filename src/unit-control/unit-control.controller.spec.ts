@@ -1,23 +1,38 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
+import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlController } from './unit-control.controller';
 import { UnitControlService } from './unit-control.service';
 
 jest.mock('./unit-control.service');
 
+const unitControlId = 123;
+
+const data: UnitControlDTO[] = [];
+data.push(new UnitControlDTO());
+data.push(new UnitControlDTO());
+
 describe('UnitControlController', () => {
   let controller: UnitControlController;
+  let service: UnitControlService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UnitControlController],
       providers: [UnitControlService],
     }).compile();
 
-    controller = module.get<UnitControlController>(UnitControlController);
+    controller = module.get(UnitControlController);
+    service = module.get(UnitControlService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('getUnitControls', () => {
+    it('should return array of unit controls', async () => {
+      jest.spyOn(service, 'getUnitControls').mockResolvedValue(data);
+      expect(await controller.getUnitControls(unitControlId)).toBe(data);
+    });
   });
 });

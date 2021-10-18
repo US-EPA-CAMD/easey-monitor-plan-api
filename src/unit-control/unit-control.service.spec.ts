@@ -15,7 +15,7 @@ const mockMap = () => ({
 describe('UnitControlService', () => {
   let service: UnitControlService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UnitControlService,
@@ -30,10 +30,17 @@ describe('UnitControlService', () => {
       ],
     }).compile();
 
-    service = module.get<UnitControlService>(UnitControlService);
+    service = module.get(UnitControlService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('getUnitControls', () => {
+    it('should return array of unit controls', async () => {
+      const result = await service.getUnitControls(null);
+      expect(result).toEqual('');
+    });
   });
 });
