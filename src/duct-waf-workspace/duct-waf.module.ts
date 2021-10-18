@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DuctWafWorkspaceController } from './duct-waf.controller';
@@ -7,7 +7,7 @@ import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { DuctWafMap } from '../maps/duct-waf.map';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DuctWafWorkspaceRepository])],
+  imports: [TypeOrmModule.forFeature([DuctWafWorkspaceRepository]), HttpModule],
   controllers: [DuctWafWorkspaceController],
   providers: [DuctWafWorkspaceService, DuctWafMap],
   exports: [TypeOrmModule, DuctWafWorkspaceService, DuctWafMap],
