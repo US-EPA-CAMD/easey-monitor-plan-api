@@ -63,6 +63,9 @@ import { LMEQualificationWorkspaceModule } from './lme-qualification-workspace/l
 import { PCTQualificationModule } from './pct-qualification/pct-qualification.module';
 import { PCTQualificationWorkspaceModule } from './pct-qualification-workspace/pct-qualification.module';
 
+import { UnitFuelModule } from './unit-fuel/unit-fuel.module';
+import { UnitFuelWorkspaceModule } from './unit-fuel-workspace/unit-fuel.module';
+
 const routes: Routes = [
   {
     path: '/plans',
@@ -166,6 +169,10 @@ const routes: Routes = [
         path: ':unitId/unit-controls',
         module: UnitControlModule,
       },
+      {
+        path: ':unitId/unit-fuels',
+        module: UnitFuelModule,
+      },
     ],
   },
   {
@@ -249,6 +256,10 @@ const routes: Routes = [
       {
         path: ':unitId/unit-controls',
         module: UnitControlWorkspaceModule,
+      },
+      {
+        path: ':unitId/unit-fuels',
+        module: UnitFuelWorkspaceModule,
       },
     ],
   },
