@@ -82,10 +82,7 @@ export class DuctWafWorkspaceService {
     ductWaf.ductDepth = payload.ductDepth;
     ductWaf.wafEndDate = payload.wafEndDate;
     ductWaf.wafEndHour = payload.wafEndHour;
-<<<<<<< HEAD
     // TODO - remove slice when userId constraints are fixed in the db
-=======
->>>>>>> 2ba882f444692d33bc9a2736076320fb421f51ce
     ductWaf.userId = userId.slice(0, 7);
     ductWaf.updateDate = new Date(Date.now());
 
