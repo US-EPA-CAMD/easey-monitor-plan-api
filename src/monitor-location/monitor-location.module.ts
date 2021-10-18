@@ -18,6 +18,8 @@ import { MonitorQualificationModule } from '../monitor-qualification/monitor-qua
 
 import { MonitorLocationRepository } from './monitor-location.repository';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
+import { MonitorLocationController } from './monitor-location.controller';
+import { MonitorLocationService } from './monitor-location.service';
 
 @Module({
   imports: [
@@ -37,8 +39,8 @@ import { MonitorLocationMap } from '../maps/monitor-location.map';
     MonitorQualificationModule,
     TypeOrmModule.forFeature([MonitorLocationRepository]),
   ],
-  controllers: [],
-  providers: [MonitorLocationMap],
+  controllers: [MonitorLocationController],
+  providers: [MonitorLocationMap, MonitorLocationService],
   exports: [TypeOrmModule, MonitorLocationMap],
 })
 export class MonitorLocationModule {}

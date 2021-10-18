@@ -18,6 +18,8 @@ import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-wo
 
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
+import { MonitorLocationWorkspaceController } from './monitor-location.controller';
+import { MonitorLocationWorkspaceService } from './monitor-location.service';
 
 @Module({
   imports: [
@@ -37,8 +39,8 @@ import { MonitorLocationMap } from '../maps/monitor-location.map';
     MonitorQualificationWorkspaceModule,
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
   ],
-  controllers: [],
-  providers: [MonitorLocationMap],
+  controllers: [MonitorLocationWorkspaceController],
+  providers: [MonitorLocationMap, MonitorLocationWorkspaceService],
   exports: [TypeOrmModule, MonitorLocationMap],
 })
 export class MonitorLocationWorkspaceModule {}

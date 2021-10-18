@@ -9,6 +9,9 @@ import { MonitorPlanCommentWorkspaceModule } from './monitor-plan-comment-worksp
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { MonitorLocationWorkspaceModule } from './monitor-location-workspace/monitor-location.module';
 
+import { UnitControlModule } from './unit-control/unit-control.module';
+import { UnitControlWorkspaceModule } from './unit-control-workspace/unit-control.module';
+
 import { MonitorAttributeModule } from './monitor-attribute/monitor-attribute.module';
 import { MonitorAttributeWorkspaceModule } from './monitor-attribute-workspace/monitor-attribute.module';
 
@@ -159,6 +162,10 @@ const routes: Routes = [
           },
         ],
       },
+      {
+        path: ':unitId/unit-controls',
+        module: UnitControlModule,
+      },
     ],
   },
   {
@@ -238,6 +245,10 @@ const routes: Routes = [
             module: PCTQualificationWorkspaceModule,
           },
         ],
+      },
+      {
+        path: ':unitId/unit-controls',
+        module: UnitControlWorkspaceModule,
       },
     ],
   },
