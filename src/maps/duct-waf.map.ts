@@ -19,7 +19,7 @@ export class DuctWafMap extends BaseMap<DuctWaf, DuctWafDTO> {
       numberOfTestPorts: entity.numberOfTestPorts,
       numberOfTraversePointsRef: entity.numberOfTraversePointsRef,
       ductWidth: entity.ductWidth,
-      ductDepth: entity.ductWidth,
+      ductDepth: entity.ductDepth,
       wafEndDate: entity.wafEndDate,
       wafEndHour: entity.wafEndHour,
       userId: entity.userId,
