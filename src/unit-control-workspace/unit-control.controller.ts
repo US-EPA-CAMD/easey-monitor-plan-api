@@ -37,7 +37,7 @@ export class UnitControlWorkspaceController {
     type: UnitControlDTO,
     description: 'Updates a workspace unit control record by unit control ID',
   })
-  async updateLoad(
+  async updateUnitControl(
     @CurrentUser() userId: string,
     @Param('unitId') unitId: number,
     @Param('unitControlId') unitControlId: string,
@@ -59,7 +59,7 @@ export class UnitControlWorkspaceController {
     type: UnitControlDTO,
     description: 'Creates a workspace unit control record for a unit',
   })
-  createLoad(
+  createUnitControl(
     @CurrentUser() userId: string,
     @Param('unitId') unitId: number,
     @Body() payload: UpdateUnitControlDTO,

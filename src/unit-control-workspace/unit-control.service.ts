@@ -23,6 +23,7 @@ export class UnitControlWorkspaceService {
   async getUnitControl(id: string): Promise<UnitControlDTO> {
     const result = await this.repository.findOne(id);
     if (!result) {
+      console.log('test');
       throw new NotFoundException('Monitor Load not found');
     }
     return this.map.one(result);
