@@ -15,7 +15,7 @@ const mockMap = () => ({
 describe('UnitFuelService', () => {
   let service: UnitFuelService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UnitFuelService,
@@ -30,10 +30,17 @@ describe('UnitFuelService', () => {
       ],
     }).compile();
 
-    service = module.get<UnitFuelService>(UnitFuelService);
+    service = module.get(UnitFuelService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('getUnitFuels', () => {
+    it('should return array of unit fuels', async () => {
+      const result = await service.getUnitFuels(null);
+      expect(result).toEqual('');
+    });
   });
 });

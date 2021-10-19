@@ -2,7 +2,7 @@ import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmps.unit_fuel' })
 export class UnitFuel extends BaseEntity {
-  @PrimaryColumn({ name: 'ctl_id' })
+  @PrimaryColumn({ name: 'uf_id' })
   id: string;
 
   @Column({ name: 'unit_id' })

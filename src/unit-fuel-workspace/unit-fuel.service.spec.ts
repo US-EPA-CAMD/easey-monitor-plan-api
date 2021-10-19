@@ -1,21 +1,46 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
+import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
+import { UnitFuel } from '../entities/workspace/unit-fuel.entity';
+
+const unitId = 6;
+const UnitFuelId = 'some unit fuel id';
+const userId = 'testuser';
+
+const payload: UpdateUnitFuelDTO = {
+  fuelCode: '',
+  indicatorCode: '',
+  ozoneSeasonIndicator: 1,
+  demGCV: null,
+  demSO2: null,
+  beginDate: new Date(Date.now()),
+  endDate: new Date(Date.now()),
+};
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  getUnitFuel: jest
+    .fn()
+    .mockRejectedValue(new NotFoundException('Async error')),
+  find: jest.fn().mockResolvedValue([]),
+  findOne: jest.fn().mockResolvedValue(new UnitFuel()),
+  create: jest.fn().mockResolvedValue(new UnitFuel()),
+  save: jest.fn().mockResolvedValue(new UnitFuel()),
 });
 
 const mockMap = () => ({
-  many: jest.fn().mockResolvedValue(''),
+  one: jest.fn().mockResolvedValue({}),
+  many: jest.fn().mockResolvedValue([]),
 });
 
-describe('UnitFuelWorkspaceService', () => {
-  let service: UnitFuelWorkspaceService;
+describe('UnitFuelService', () => {
+  let loadService: UnitFuelWorkspaceService;
+  let loadRepository: UnitFuelWorkspaceRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UnitFuelWorkspaceService,
@@ -30,10 +55,48 @@ describe('UnitFuelWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get<UnitFuelWorkspaceService>(UnitFuelWorkspaceService);
+    loadService = module.get(UnitFuelWorkspaceService);
+    loadRepository = module.get(UnitFuelWorkspaceRepository);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(loadService).toBeDefined();
+  });
+
+  describe('getUnitFuels', () => {
+    it('should return array of unit fuels', async () => {
+      const result = await loadService.getUnitFuels(unitId);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getUnitFuel', () => {
+    it('should return unit fuel record for a specific unit fuel ID', async () => {
+      const result = await loadService.getUnitFuel(UnitFuelId);
+      expect(result).toEqual({});
+    });
+    it('should return a NotFoundException due when a unit fuel is not found from the database', async () => {
+      const result = await loadService.getUnitFuel(null);
+      expect(result).toEqual({});
+    });
+  });
+
+  describe('createUnitFuel', () => {
+    it('creates a unit fuel record for a specified unit ID', async () => {
+      const result = await loadService.createUnitFuel(userId, unitId, payload);
+      expect(result).toEqual({ ...result });
+    });
+  });
+
+  describe('updateUnitFuel', () => {
+    it('updates a unit fuel record for a specified unit fuel ID', async () => {
+      const result = await loadService.updateUnitFuel(
+        userId,
+        UnitFuelId,
+        unitId,
+        payload,
+      );
+      expect(result).toEqual({ ...result });
+    });
   });
 });
