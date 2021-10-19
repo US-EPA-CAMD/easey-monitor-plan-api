@@ -23,8 +23,7 @@ export class UnitFuelWorkspaceService {
   async getUnitFuel(id: string): Promise<UnitFuelDTO> {
     const result = await this.repository.findOne(id);
     if (!result) {
-      console.log('test');
-      throw new NotFoundException('Monitor Load not found');
+      throw new NotFoundException('Unit Fuel not found');
     }
     return this.map.one(result);
   }
