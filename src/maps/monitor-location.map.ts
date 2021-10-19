@@ -101,6 +101,9 @@ export class MonitorLocationMap extends BaseMap<
       unitId = entity.unit.name;
       unitRecordId = entity.unit.id;
       nonLoadBasedIndicator = entity.unit.nonLoadBasedIndicator;
+      stackPipeId = null;
+      activeDate = null;
+      retireDate = null;
     }
 
     if (entity.stackPipe) {
@@ -109,6 +112,9 @@ export class MonitorLocationMap extends BaseMap<
       stackPipeId = entity.stackPipe.name;
       activeDate = entity.stackPipe.activeDate;
       retireDate = entity.stackPipe.retireDate;
+      unitId = null;
+      unitRecordId = null;
+      nonLoadBasedIndicator = null;
     }
 
     return {
