@@ -11,6 +11,7 @@ if (host == 'localhost') {
 }
 
 export default registerAs('app', () => ({
+  name: 'monitor-plan-api',
   title: process.env.EASEY_MONITOR_PLAN_API_TITLE || 'Monitor Plan Management',
   path,
   host,
