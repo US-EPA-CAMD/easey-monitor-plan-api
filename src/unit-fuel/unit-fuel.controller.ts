@@ -15,7 +15,10 @@ export class UnitFuelController {
     type: UnitFuelDTO,
     description: 'Retrieves official unit fuel records from a specific unit ID',
   })
-  getUnitFuels(@Param('unitId') unitId: number): Promise<UnitFuelDTO[]> {
-    return this.service.getUnitFuels(unitId);
+  getUnitFuels(
+    @Param('locId') locId: string,
+    @Param('unitRecordId') unitRecordId: number,
+  ): Promise<UnitFuelDTO[]> {
+    return this.service.getUnitFuels(locId, unitRecordId);
   }
 }

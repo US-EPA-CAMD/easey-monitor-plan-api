@@ -15,8 +15,11 @@ export class UnitFuelWorkspaceService {
     readonly map: UnitFuelMap,
   ) {}
 
-  async getUnitFuels(unitId: number): Promise<UnitFuelDTO[]> {
-    const results = await this.repository.find({ unitId });
+  async getUnitFuels(
+    locId: string,
+    unitRecordId: number,
+  ): Promise<UnitFuelDTO[]> {
+    const results = await this.repository.getUnitFuels(locId, unitRecordId);
     return this.map.many(results);
   }
 

@@ -29,7 +29,7 @@ export class UnitControl extends BaseEntity {
   @Column({ name: 'retire_date' })
   retireDate: Date;
 
-  @Column({ name: 'indicator_cd' })
+  @Column({ name: 'seas_cd' })
   seasonalControlsIndicator: string;
 
   @Column({ name: 'userid' })

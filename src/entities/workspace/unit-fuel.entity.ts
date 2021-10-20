@@ -1,4 +1,14 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { MonitorLocation } from './monitor-location.entity';
+import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmpswks.unit_fuel' })
 export class UnitFuel extends BaseEntity {
@@ -43,4 +53,11 @@ export class UnitFuel extends BaseEntity {
 
   @Column({ name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => Unit,
+    u => u.unitFuels,
+  )
+  @JoinColumn({ name: 'unit_id' })
+  unit: Unit;
 }
