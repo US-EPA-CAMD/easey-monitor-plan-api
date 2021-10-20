@@ -43,14 +43,16 @@ export class UnitControlWorkspaceController {
   })
   async updateUnitControl(
     @CurrentUser() userId: string,
-    @Param('unitId') unitId: number,
+    @Param('locId') locId: string,
+    @Param('unitRecordId') unitRecordId: number,
     @Param('unitControlId') unitControlId: string,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
     return this.service.updateUnitControl(
       userId,
+      locId,
+      unitRecordId,
       unitControlId,
-      unitId,
       payload,
     );
   }
@@ -65,9 +67,10 @@ export class UnitControlWorkspaceController {
   })
   createUnitControl(
     @CurrentUser() userId: string,
-    @Param('unitId') unitId: number,
+    @Param('locId') locId: string,
+    @Param('unitRecordId') unitRecordId: number,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    return this.service.createUnitControl(userId, unitId, payload);
+    return this.service.createUnitControl(userId, locId, unitRecordId, payload);
   }
 }

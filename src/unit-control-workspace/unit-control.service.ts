@@ -23,25 +23,33 @@ export class UnitControlWorkspaceService {
     return this.map.many(results);
   }
 
-  async getUnitControl(id: string): Promise<UnitControlDTO> {
-    const result = await this.repository.findOne(id);
+  async getUnitControl(
+    locId: string,
+    unitRecordId: number,
+    unitControlId: string,
+  ): Promise<UnitControlDTO> {
+    const result = await this.repository.getUnitControl(
+      locId,
+      unitRecordId,
+      unitControlId,
+    );
     if (!result) {
-      console.log('test');
-      throw new NotFoundException('Monitor Load not found');
+      throw new NotFoundException('Unit Control not found');
     }
     return this.map.one(result);
   }
 
   async createUnitControl(
     userId: string,
-    unitId: number,
+    locId: string,
+    unitRecordId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
     // temporary:
     const testUserId = 'testuser';
     const load = this.repository.create({
       id: uuid(),
-      unitId,
+      unitId: unitRecordId,
       controlCode: payload.controlCode,
       parameterCode: payload.parameterCode,
       installDate: payload.installDate,
@@ -60,11 +68,16 @@ export class UnitControlWorkspaceService {
 
   async updateUnitControl(
     userId: string,
+    locId: string,
+    unitRecordId: number,
     unitControlId: string,
-    unitId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.getUnitControl(unitControlId);
+    const unitControl = await this.getUnitControl(
+      locId,
+      unitRecordId,
+      unitControlId,
+    );
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;
@@ -79,6 +92,6 @@ export class UnitControlWorkspaceService {
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
-    return this.getUnitControl(unitControlId);
+    return this.getUnitControl(locId, unitRecordId, unitControlId);
   }
 }

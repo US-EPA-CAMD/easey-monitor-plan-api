@@ -23,7 +23,7 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
       .innerJoinAndSelect('u.location', 'l')
       .where('l.id = :locId', { locId })
       .andWhere('u.id = :unitRecordId', { unitRecordId })
-      .andWhere('uf.id = :unitRecordId', { unitFuelId })
+      .andWhere('uf.id = :unitFuelId', { unitFuelId })
       .getOne();
   }
 }

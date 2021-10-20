@@ -13,4 +13,17 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       .andWhere('u.id = :unitRecordId', { unitRecordId })
       .getMany();
   }
+  async getUnitControl(
+    locId: string,
+    unitRecordId: number,
+    unitControlId: string,
+  ): Promise<UnitControl> {
+    return this.createQueryBuilder('uf')
+      .innerJoinAndSelect('uf.unit', 'u')
+      .innerJoinAndSelect('u.location', 'l')
+      .where('l.id = :locId', { locId })
+      .andWhere('u.id = :unitRecordId', { unitRecordId })
+      .andWhere('uf.id = :unitControlId', { unitControlId })
+      .getOne();
+  }
 }
