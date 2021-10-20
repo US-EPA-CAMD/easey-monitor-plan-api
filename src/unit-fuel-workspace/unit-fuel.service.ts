@@ -23,8 +23,17 @@ export class UnitFuelWorkspaceService {
     return this.map.many(results);
   }
 
-  async getUnitFuel(id: string): Promise<UnitFuelDTO> {
-    const result = await this.repository.findOne(id);
+  async getUnitFuel(
+    locId: string,
+    unitRecordId: number,
+    unitFuelId: string,
+  ): Promise<UnitFuelDTO> {
+    // const result = await this.repository.findOne(id);
+    const result = await this.repository.getUnitFuel(
+      locId,
+      unitRecordId,
+      unitFuelId,
+    );
     if (!result) {
       throw new NotFoundException('Unit Fuel not found');
     }
@@ -33,14 +42,15 @@ export class UnitFuelWorkspaceService {
 
   async createUnitFuel(
     userId: string,
-    unitId: number,
+    locId: string,
+    unitRecordId: number,
     payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
     // temporary:
     const testUserId = 'testuser';
-    const load = this.repository.create({
+    const unitFuel = this.repository.create({
       id: uuid(),
-      unitId,
+      unitId: unitRecordId,
       fuelCode: payload.fuelCode,
       indicatorCode: payload.indicatorCode,
       ozoneSeasonIndicator: payload.ozoneSeasonIndicator,
@@ -53,17 +63,18 @@ export class UnitFuelWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(load);
+    const result = await this.repository.save(unitFuel);
     return this.map.one(result);
   }
 
   async updateUnitFuel(
     userId: string,
+    locId: string,
+    unitRecordId: number,
     unitFuelId: string,
-    unitId: number,
     payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    const unitFuel = await this.getUnitFuel(unitFuelId);
+    const unitFuel = await this.getUnitFuel(locId, unitRecordId, unitFuelId);
 
     unitFuel.fuelCode = payload.fuelCode;
     unitFuel.indicatorCode = payload.indicatorCode;
@@ -78,6 +89,6 @@ export class UnitFuelWorkspaceService {
     unitFuel.updateDate = new Date(Date.now());
 
     await this.repository.save(unitFuel);
-    return this.getUnitFuel(unitFuelId);
+    return this.getUnitFuel(locId, unitRecordId, unitFuelId);
   }
 }

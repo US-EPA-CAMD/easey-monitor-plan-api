@@ -4,7 +4,7 @@ import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationService } from './monitor-location.service';
 
 @ApiTags('Locations')
-@Controller('monitor-location')
+@Controller()
 export class MonitorLocationController {
   constructor(readonly service: MonitorLocationService) {}
 

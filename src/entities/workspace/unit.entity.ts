@@ -67,7 +67,6 @@ export class Unit extends BaseEntity {
     uf => uf.unit,
     { eager: true },
   )
-  @JoinColumn({ name: 'unit_id' })
   unitFuels: UnitFuel[];
 
   @OneToMany(
@@ -75,6 +74,5 @@ export class Unit extends BaseEntity {
     uf => uf.unit,
     { eager: true },
   )
-  @JoinColumn({ name: 'unit_id' })
   unitControls: UnitControl[];
 }
