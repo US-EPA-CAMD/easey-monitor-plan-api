@@ -28,7 +28,6 @@ export class UnitFuelWorkspaceService {
     unitRecordId: number,
     unitFuelId: string,
   ): Promise<UnitFuelDTO> {
-    // const result = await this.repository.findOne(id);
     const result = await this.repository.getUnitFuel(
       locId,
       unitRecordId,

@@ -4,10 +4,8 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { MonitorLocation } from './monitor-location.entity';
 import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmps.unit_fuel' })
