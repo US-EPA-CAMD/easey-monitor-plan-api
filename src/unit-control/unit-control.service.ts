@@ -13,8 +13,11 @@ export class UnitControlService {
     readonly map: UnitControlMap,
   ) {}
 
-  async getUnitControls(unitId: number): Promise<UnitControlDTO[]> {
-    const results = await this.repository.find({ unitId });
+  async getUnitControls(
+    locId: string,
+    unitRecordId: number,
+  ): Promise<UnitControlDTO[]> {
+    const results = await this.repository.getUnitControls(locId, unitRecordId);
     return this.map.many(results);
   }
 }

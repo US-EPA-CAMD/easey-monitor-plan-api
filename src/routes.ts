@@ -259,7 +259,7 @@ const routes: Routes = [
       },
       {
         path: ':locId/units/:unitRecordId/unit-controls',
-        module: UnitControlModule,
+        module: UnitControlWorkspaceModule,
       },
     ],
   },

@@ -13,6 +13,7 @@ import { Plant } from './plant.entity';
 import { UnitOpStatus } from './unit-op-status.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { UnitFuel } from './unit-fuel.entity';
+import { UnitControl } from './unit-control.entity';
 
 @Entity({ name: 'camd.unit' })
 export class Unit extends BaseEntity {
@@ -68,4 +69,12 @@ export class Unit extends BaseEntity {
   )
   @JoinColumn({ name: 'unit_id' })
   unitFuels: UnitFuel[];
+
+  @OneToMany(
+    () => UnitControl,
+    uf => uf.unit,
+    { eager: true },
+  )
+  @JoinColumn({ name: 'unit_id' })
+  unitControls: UnitControl[];
 }

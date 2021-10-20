@@ -27,9 +27,13 @@ export class UnitControlWorkspaceController {
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })
-  getUnitControls(@Param('unitId') unitId: number): Promise<UnitControlDTO[]> {
-    return this.service.getUnitControls(unitId);
+  getUnitControls(
+    @Param('locId') locId: string,
+    @Param('unitRecordId') unitRecordId: number,
+  ): Promise<UnitControlDTO[]> {
+    return this.service.getUnitControls(locId, unitRecordId);
   }
+
   @Put(':unitControlId')
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
