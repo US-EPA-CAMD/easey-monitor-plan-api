@@ -16,7 +16,7 @@ export class MonitorLocationService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      throw new NotFoundException('Monitor Load not found');
+      throw new NotFoundException('Monitor Location not found');
     }
 
     return this.map.one(result);
