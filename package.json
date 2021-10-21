@@ -28,13 +28,14 @@
     "class-validator": "^0.13.1",
     "dotenv": "^8.2.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "helmet": "^4.6.0",
     "nest-router": "^1.0.9",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "swagger-ui-express": "^4.1.4",
-    "typeorm": "^0.2.31",
+    "typeorm": "^0.2.38",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
