@@ -31,9 +31,6 @@ export class UnitControl extends BaseEntity {
   @Column({ name: 'orig_cd' })
   originalCode: string;
 
-  @Column({ name: 'seas_cd' })
-  seasonalControlCode: string;
-
   @Column({ name: 'retire_date' })
   retireDate: Date;
 
