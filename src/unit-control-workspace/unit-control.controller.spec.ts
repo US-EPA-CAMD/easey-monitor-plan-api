@@ -10,7 +10,8 @@ import { ConfigService } from '@nestjs/config';
 
 jest.mock('./unit-control.service');
 
-const unitId = 6;
+const locId = '6';
+const unitRecordId = 1;
 const unitControlId = 'some unit control id';
 const currentUser = 'testuser';
 const payload = new UpdateUnitControlDTO();
@@ -44,7 +45,7 @@ describe('UnitControlWorkspaceController', () => {
       jest
         .spyOn(service, 'getUnitControls')
         .mockResolvedValue(returnedUnitControls);
-      expect(await controller.getUnitControls(unitId)).toBe(
+      expect(await controller.getUnitControls(locId, unitRecordId)).toBe(
         returnedUnitControls,
       );
     });
@@ -56,7 +57,8 @@ describe('UnitControlWorkspaceController', () => {
       expect(
         await controller.updateUnitControl(
           currentUser,
-          unitId,
+          locId,
+          unitRecordId,
           unitControlId,
           payload,
         ),
@@ -68,7 +70,12 @@ describe('UnitControlWorkspaceController', () => {
     it('should return the created unit control record', async () => {
       jest.spyOn(service, 'createUnitControl').mockResolvedValue(returnedLoad);
       expect(
-        await controller.createUnitControl(currentUser, unitId, payload),
+        await controller.createUnitControl(
+          currentUser,
+          locId,
+          unitRecordId,
+          payload,
+        ),
       ).toBe(returnedLoad);
     });
   });
