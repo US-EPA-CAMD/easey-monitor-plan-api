@@ -3,8 +3,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { UnitControlService } from './unit-control.service';
 import { UnitControlRepository } from './unit-control.repository';
+import { UnitControlDTO } from '../dtos/unit-control.dto';
+
+const locId = '1';
+const unitRecordId = 6;
+
+const returnedUnitControls: UnitControlDTO[] = [];
 
 const mockRepository = () => ({
+  getUnitControls: jest.fn().mockResolvedValue(returnedUnitControls),
   find: jest.fn().mockResolvedValue(''),
 });
 
@@ -39,7 +46,7 @@ describe('UnitControlService', () => {
 
   describe('getUnitControls', () => {
     it('should return array of unit controls', async () => {
-      const result = await service.getUnitControls(null);
+      const result = await service.getUnitControls(locId, unitRecordId);
       expect(result).toEqual('');
     });
   });

@@ -6,10 +6,15 @@ import { UnitFuelWorkspaceService } from './unit-fuel.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
 import { UnitFuel } from '../entities/workspace/unit-fuel.entity';
+import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
-const unitId = 6;
-const UnitFuelId = 'some unit fuel id';
+const locId = '6';
+const unitRecordId = 1;
+const unitFuelId = 'some unit fuel id';
 const userId = 'testuser';
+
+const returnedUnitFuels: UnitFuelDTO[] = [];
+const returnedUnitFuel: UnitFuelDTO = new UnitFuelDTO();
 
 const payload: UpdateUnitFuelDTO = {
   fuelCode: '',
@@ -22,9 +27,8 @@ const payload: UpdateUnitFuelDTO = {
 };
 
 const mockRepository = () => ({
-  getUnitFuel: jest
-    .fn()
-    .mockRejectedValue(new NotFoundException('Async error')),
+  getUnitFuels: jest.fn().mockResolvedValue(returnedUnitFuels),
+  getUnitFuel: jest.fn().mockResolvedValue(returnedUnitFuel),
   find: jest.fn().mockResolvedValue([]),
   findOne: jest.fn().mockResolvedValue(new UnitFuel()),
   create: jest.fn().mockResolvedValue(new UnitFuel()),
@@ -65,25 +69,30 @@ describe('UnitFuelService', () => {
 
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
-      const result = await loadService.getUnitFuels(unitId);
+      const result = await loadService.getUnitFuels(locId, unitRecordId);
       expect(result).toEqual([]);
     });
   });
 
   describe('getUnitFuel', () => {
     it('should return unit fuel record for a specific unit fuel ID', async () => {
-      const result = await loadService.getUnitFuel(UnitFuelId);
-      expect(result).toEqual({});
-    });
-    it('should return a NotFoundException due when a unit fuel is not found from the database', async () => {
-      const result = await loadService.getUnitFuel(null);
+      const result = await loadService.getUnitFuel(
+        locId,
+        unitRecordId,
+        unitFuelId,
+      );
       expect(result).toEqual({});
     });
   });
 
   describe('createUnitFuel', () => {
     it('creates a unit fuel record for a specified unit ID', async () => {
-      const result = await loadService.createUnitFuel(userId, unitId, payload);
+      const result = await loadService.createUnitFuel(
+        userId,
+        locId,
+        unitRecordId,
+        payload,
+      );
       expect(result).toEqual({ ...result });
     });
   });
@@ -92,8 +101,9 @@ describe('UnitFuelService', () => {
     it('updates a unit fuel record for a specified unit fuel ID', async () => {
       const result = await loadService.updateUnitFuel(
         userId,
-        UnitFuelId,
-        unitId,
+        locId,
+        unitRecordId,
+        unitFuelId,
         payload,
       );
       expect(result).toEqual({ ...result });
