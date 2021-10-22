@@ -6,10 +6,15 @@ import { UnitControlWorkspaceService } from './unit-control.service';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
+import { UnitControlDTO } from '../dtos/unit-control.dto';
 
-const unitId = 6;
+const locId = '6';
+const unitRecordId = 1;
 const unitControlId = 'some unit control id';
 const userId = 'testuser';
+
+const returnedUnitControls: UnitControlDTO[] = [];
+const returnedUnitControl: UnitControlDTO = new UnitControlDTO();
 
 const payload: UpdateUnitControlDTO = {
   controlCode: 'PAX',
@@ -22,9 +27,8 @@ const payload: UpdateUnitControlDTO = {
 };
 
 const mockRepository = () => ({
-  getUnitControl: jest
-    .fn()
-    .mockRejectedValue(new NotFoundException('Async error')),
+  getUnitControls: jest.fn().mockResolvedValue(returnedUnitControls),
+  getUnitControl: jest.fn().mockResolvedValue(returnedUnitControl),
   find: jest.fn().mockResolvedValue([]),
   findOne: jest.fn().mockResolvedValue(new UnitControl()),
   create: jest.fn().mockResolvedValue(new UnitControl()),
@@ -65,14 +69,18 @@ describe('UnitControlService', () => {
 
   describe('getUnitControls', () => {
     it('should return array of unit controls', async () => {
-      const result = await loadService.getUnitControls(unitId);
+      const result = await loadService.getUnitControls(locId, unitRecordId);
       expect(result).toEqual([]);
     });
   });
 
   describe('getUnitControl', () => {
     it('should return unit control record for a specific unit control ID', async () => {
-      const result = await loadService.getUnitControl(unitControlId);
+      const result = await loadService.getUnitControl(
+        locId,
+        unitRecordId,
+        unitControlId,
+      );
       expect(result).toEqual({});
     });
   });
@@ -81,7 +89,8 @@ describe('UnitControlService', () => {
     it('creates a unit control record for a specified unit ID', async () => {
       const result = await loadService.createUnitControl(
         userId,
-        unitId,
+        locId,
+        unitRecordId,
         payload,
       );
       expect(result).toEqual({ ...result });
@@ -92,8 +101,9 @@ describe('UnitControlService', () => {
     it('updates a unit control record for a specified unit control ID', async () => {
       const result = await loadService.updateUnitControl(
         userId,
+        locId,
+        unitRecordId,
         unitControlId,
-        unitId,
         payload,
       );
       expect(result).toEqual({ ...result });
