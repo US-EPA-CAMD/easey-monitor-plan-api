@@ -22,16 +22,16 @@ export class UnitControl extends BaseEntity {
   @Column({ name: 'ce_param' })
   parameterCode: string;
 
-  @Column({ name: 'install_date' })
+  @Column({ type: 'date', name: 'install_date' })
   installDate: Date;
 
-  @Column({ name: 'opt_date' })
+  @Column({ type: 'date', name: 'opt_date' })
   optimizationDate: Date;
 
   @Column({ name: 'orig_cd' })
   originalCode: string;
 
-  @Column({ name: 'retire_date' })
+  @Column({ type: 'date', name: 'retire_date' })
   retireDate: Date;
 
   @Column({ name: 'seas_cd' })
@@ -40,10 +40,10 @@ export class UnitControl extends BaseEntity {
   @Column({ name: 'userid' })
   userId: string;
 
-  @Column({ name: 'add_date' })
+  @Column({ type: 'date', name: 'add_date' })
   addDate: Date;
 
-  @Column({ name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
 
   @ManyToOne(
