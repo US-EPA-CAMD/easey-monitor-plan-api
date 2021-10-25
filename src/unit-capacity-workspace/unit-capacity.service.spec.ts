@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
@@ -17,6 +18,7 @@ describe('UnitCapacityWorkspaceService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         UnitCapacityWorkspaceService,
         {

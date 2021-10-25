@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodService } from './mats-method.service';
@@ -17,6 +18,7 @@ describe('MatsMethodService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         MatsMethodService,
         {

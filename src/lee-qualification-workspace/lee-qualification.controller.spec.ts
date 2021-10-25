@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { LEEQualificationWorkspaceController } from './lee-qualification.controller';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
@@ -10,6 +11,7 @@ describe('LEEQualificationWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [LEEQualificationWorkspaceController],
       providers: [LEEQualificationWorkspaceService],
     }).compile();

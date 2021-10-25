@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanService } from './monitor-span.service';
@@ -18,6 +19,7 @@ describe('MonitorSpanController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [MonitorSpanController],
       providers: [MonitorSpanService],
     }).compile();

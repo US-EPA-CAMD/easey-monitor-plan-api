@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRangeService } from './analyzer-range.service';
 import { AnalyzerRangeRepository } from './analyzer-range.repository';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
@@ -17,6 +18,7 @@ describe('AnalyzerRangeService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         AnalyzerRangeService,
         {

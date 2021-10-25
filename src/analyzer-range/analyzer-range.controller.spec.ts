@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeService } from './analyzer-range.service';
 import { AnalyzerRangeController } from './analyzer-range.controller';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 jest.mock('./analyzer-range.service');
 
@@ -19,6 +20,7 @@ describe('AnalyzerRangeController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [AnalyzerRangeController],
       providers: [AnalyzerRangeService],
     }).compile();

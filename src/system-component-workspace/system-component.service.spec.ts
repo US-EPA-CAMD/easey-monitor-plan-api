@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { SystemComponentMap } from '../maps/system-component.map';
 import { SystemComponentWorkspaceService } from './system-component.service';
@@ -17,6 +18,7 @@ describe('SystemComponentWorkspaceService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         SystemComponentWorkspaceService,
         {

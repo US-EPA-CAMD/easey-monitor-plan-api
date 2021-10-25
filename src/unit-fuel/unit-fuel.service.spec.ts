@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { UnitFuelService } from './unit-fuel.service';
@@ -24,6 +25,7 @@ describe('UnitFuelService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         UnitFuelService,
         {

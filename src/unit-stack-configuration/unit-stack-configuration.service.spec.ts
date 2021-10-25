@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { UnitStackConfigurationService } from './unit-stack-configuration.service';
@@ -17,6 +18,7 @@ describe('UnitStackConfigurationService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         UnitStackConfigurationService,
         {

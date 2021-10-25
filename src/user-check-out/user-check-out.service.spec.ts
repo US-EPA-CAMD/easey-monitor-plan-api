@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { UserCheckOutService } from './user-check-out.service';
@@ -21,6 +22,7 @@ describe('UserCheckOutService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         UserCheckOutService,
         {

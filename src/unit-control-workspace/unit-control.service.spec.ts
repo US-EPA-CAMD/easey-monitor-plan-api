@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitControlMap } from '../maps/unit-control.map';
 import { UnitControlWorkspaceService } from './unit-control.service';
@@ -46,6 +47,7 @@ describe('UnitControlService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         UnitControlWorkspaceService,
         {
