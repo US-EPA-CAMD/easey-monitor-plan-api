@@ -10,8 +10,9 @@ import { ConfigService } from '@nestjs/config';
 
 jest.mock('./unit-fuel.service');
 
-const unitId = 6;
-const UnitFuelId = 'some unit fuel id';
+const locId = '6';
+const unitRecordId = 1;
+const unitFuelId = 'some unit fuel id';
 const currentUser = 'testuser';
 const payload = new UpdateUnitFuelDTO();
 
@@ -42,7 +43,9 @@ describe('UnitFuelWorkspaceController', () => {
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
       jest.spyOn(service, 'getUnitFuels').mockResolvedValue(returnedUnitFuels);
-      expect(await controller.getUnitFuels(unitId)).toBe(returnedUnitFuels);
+      expect(await controller.getUnitFuels(locId, unitRecordId)).toBe(
+        returnedUnitFuels,
+      );
     });
   });
 
@@ -52,8 +55,9 @@ describe('UnitFuelWorkspaceController', () => {
       expect(
         await controller.updateUnitFuel(
           currentUser,
-          unitId,
-          UnitFuelId,
+          locId,
+          unitRecordId,
+          unitFuelId,
           payload,
         ),
       ).toBe(returnedLoad);
@@ -64,7 +68,12 @@ describe('UnitFuelWorkspaceController', () => {
     it('should return the created unit fuel record', async () => {
       jest.spyOn(service, 'createUnitFuel').mockResolvedValue(returnedLoad);
       expect(
-        await controller.createUnitFuel(currentUser, unitId, payload),
+        await controller.createUnitFuel(
+          currentUser,
+          locId,
+          unitRecordId,
+          payload,
+        ),
       ).toBe(returnedLoad);
     });
   });

@@ -17,13 +17,24 @@ export class UnitControlWorkspaceService {
     private Logger: Logger,
   ) {}
 
-  async getUnitControls(unitId: number): Promise<UnitControlDTO[]> {
-    const results = await this.repository.find({ unitId });
+  async getUnitControls(
+    locId: string,
+    unitRecordId: number,
+  ): Promise<UnitControlDTO[]> {
+    const results = await this.repository.getUnitControls(locId, unitRecordId);
     return this.map.many(results);
   }
 
-  async getUnitControl(id: string): Promise<UnitControlDTO> {
-    const result = await this.repository.findOne(id);
+  async getUnitControl(
+    locId: string,
+    unitRecordId: number,
+    unitControlId: string,
+  ): Promise<UnitControlDTO> {
+    const result = await this.repository.getUnitControl(
+      locId,
+      unitRecordId,
+      unitControlId,
+    );
     if (!result) {
       this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
         id: id,
@@ -34,14 +45,15 @@ export class UnitControlWorkspaceService {
 
   async createUnitControl(
     userId: string,
-    unitId: number,
+    locId: string,
+    unitRecordId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
     // temporary:
     const testUserId = 'testuser';
     const load = this.repository.create({
       id: uuid(),
-      unitId,
+      unitId: unitRecordId,
       controlCode: payload.controlCode,
       parameterCode: payload.parameterCode,
       installDate: payload.installDate,
@@ -60,11 +72,16 @@ export class UnitControlWorkspaceService {
 
   async updateUnitControl(
     userId: string,
+    locId: string,
+    unitRecordId: number,
     unitControlId: string,
-    unitId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.getUnitControl(unitControlId);
+    const unitControl = await this.getUnitControl(
+      locId,
+      unitRecordId,
+      unitControlId,
+    );
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;
@@ -79,6 +96,6 @@ export class UnitControlWorkspaceService {
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
-    return this.getUnitControl(unitControlId);
+    return this.getUnitControl(locId, unitRecordId, unitControlId);
   }
 }

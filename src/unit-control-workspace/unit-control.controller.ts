@@ -31,9 +31,13 @@ export class UnitControlWorkspaceController {
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })
-  getUnitControls(@Param('unitId') unitId: number): Promise<UnitControlDTO[]> {
-    return this.service.getUnitControls(unitId);
+  getUnitControls(
+    @Param('locId') locId: string,
+    @Param('unitRecordId') unitRecordId: number,
+  ): Promise<UnitControlDTO[]> {
+    return this.service.getUnitControls(locId, unitRecordId);
   }
+
   @Put(':unitControlId')
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
@@ -43,7 +47,8 @@ export class UnitControlWorkspaceController {
   })
   async updateUnitControl(
     @CurrentUser() userId: string,
-    @Param('unitId') unitId: number,
+    @Param('locId') locId: string,
+    @Param('unitRecordId') unitRecordId: number,
     @Param('unitControlId') unitControlId: string,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
@@ -55,8 +60,9 @@ export class UnitControlWorkspaceController {
     });
     return this.service.updateUnitControl(
       userId,
+      locId,
+      unitRecordId,
       unitControlId,
-      unitId,
       payload,
     );
   }
@@ -71,7 +77,8 @@ export class UnitControlWorkspaceController {
   })
   createUnitControl(
     @CurrentUser() userId: string,
-    @Param('unitId') unitId: number,
+    @Param('locId') locId: string,
+    @Param('unitRecordId') unitRecordId: number,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
     this.Logger.info('Creating Unit Control', {

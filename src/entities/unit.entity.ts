@@ -6,11 +6,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 import { Plant } from './plant.entity';
 import { UnitOpStatus } from './unit-op-status.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { UnitFuel } from './unit-fuel.entity';
+import { UnitControl } from './unit-control.entity';
 
 @Entity({ name: 'camd.unit' })
 export class Unit extends BaseEntity {
@@ -46,11 +49,11 @@ export class Unit extends BaseEntity {
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
 
-  @OneToMany(
+  @OneToOne(
     () => MonitorLocation,
     location => location.unit,
   )
-  locations: MonitorLocation[];
+  location: MonitorLocation;
 
   @OneToMany(
     () => UnitOpStatus,
@@ -58,4 +61,18 @@ export class Unit extends BaseEntity {
     { eager: true },
   )
   opStatuses: UnitOpStatus[];
+
+  @OneToMany(
+    () => UnitFuel,
+    uf => uf.unit,
+    { eager: true },
+  )
+  unitFuels: UnitFuel[];
+
+  @OneToMany(
+    () => UnitControl,
+    uf => uf.unit,
+    { eager: true },
+  )
+  unitControls: UnitControl[];
 }
