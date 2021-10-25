@@ -6,6 +6,7 @@ import {
   ManyToOne,
   ManyToMany,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 import { Unit } from './unit.entity';
@@ -40,9 +41,9 @@ export class MonitorLocation extends BaseEntity {
   @JoinColumn({ name: 'stack_pipe_id' })
   stackPipe: StackPipe;
 
-  @ManyToOne(
+  @OneToOne(
     () => Unit,
-    unit => unit.locations,
+    unit => unit.location,
     { eager: true },
   )
   @JoinColumn({ name: 'unit_id' })

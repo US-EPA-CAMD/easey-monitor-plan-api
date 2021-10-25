@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmpswks.unit_fuel' })
 export class UnitFuel extends BaseEntity {
@@ -11,10 +19,10 @@ export class UnitFuel extends BaseEntity {
   @Column({ name: 'fuel_type' })
   fuelCode: string;
 
-  @Column({ name: 'begin_date' })
+  @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ name: 'end_date' })
+  @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
   @Column({ name: 'indicator_cd' })
@@ -38,9 +46,16 @@ export class UnitFuel extends BaseEntity {
   @Column({ name: 'userid' })
   userId: string;
 
-  @Column({ name: 'add_date' })
+  @Column({ type: 'date', name: 'add_date' })
   addDate: Date;
 
-  @Column({ name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => Unit,
+    u => u.unitFuels,
+  )
+  @JoinColumn({ name: 'unit_id' })
+  unit: Unit;
 }

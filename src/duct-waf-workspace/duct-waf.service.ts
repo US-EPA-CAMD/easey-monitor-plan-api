@@ -79,7 +79,8 @@ export class DuctWafWorkspaceService {
     ductWaf.wafValue = payload.wafValue;
     ductWaf.numberOfTestRuns = payload.numberOfTestRuns;
     ductWaf.numberOfTraversePointsWaf = payload.numberOfTraversePointsWaf;
-    ductWaf.numberOfTraversePointsRef = payload.numberOfTraversePointsRef;
+    (ductWaf.numberOfTestPorts = payload.numberOfTestPorts),
+      (ductWaf.numberOfTraversePointsRef = payload.numberOfTraversePointsRef);
     ductWaf.ductWidth = payload.ductWidth;
     ductWaf.ductDepth = payload.ductDepth;
     ductWaf.wafEndDate = payload.wafEndDate;

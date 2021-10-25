@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmps.unit_control' })
 export class UnitControl extends BaseEntity {
@@ -14,30 +22,34 @@ export class UnitControl extends BaseEntity {
   @Column({ name: 'ce_param' })
   parameterCode: string;
 
-  @Column({ name: 'install_date' })
+  @Column({ type: 'date', name: 'install_date' })
   installDate: Date;
 
-  @Column({ name: 'opt_date' })
+  @Column({ type: 'date', name: 'opt_date' })
   optimizationDate: Date;
 
   @Column({ name: 'orig_cd' })
   originalCode: string;
 
-  @Column({ name: 'seas_cd' })
-  seasonalControlCode: string;
-
-  @Column({ name: 'retire_date' })
+  @Column({ type: 'date', name: 'retire_date' })
   retireDate: Date;
 
-  @Column({ name: 'indicator_cd' })
+  @Column({ name: 'seas_cd' })
   seasonalControlsIndicator: string;
 
   @Column({ name: 'userid' })
   userId: string;
 
-  @Column({ name: 'add_date' })
+  @Column({ type: 'date', name: 'add_date' })
   addDate: Date;
 
-  @Column({ name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => Unit,
+    u => u.unitControls,
+  )
+  @JoinColumn({ name: 'unit_id' })
+  unit: Unit;
 }
