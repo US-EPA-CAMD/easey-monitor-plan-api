@@ -1,14 +1,28 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Get,
+  Param,
+  Controller,
+  Post,
+  Body,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('Loads')
 @Controller()
 export class MonitorLoadWorkspaceController {
-  constructor(private service: MonitorLoadWorkspaceService) {}
+  constructor(
+    private service: MonitorLoadWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -21,6 +35,8 @@ export class MonitorLoadWorkspaceController {
   }
 
   @Put(':loadId')
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorLoadDTO,
     description: 'Updates a workspace load record for a monitor location',
@@ -29,11 +45,20 @@ export class MonitorLoadWorkspaceController {
     @Param('locId') locationId: string,
     @Param('loadId') spanId: string,
     @Body() payload: UpdateMonitorLoadDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorLoadDTO> {
+    this.Logger.info('Updating Load', {
+      locationId: locationId,
+      spanId: spanId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.updateLoad(locationId, spanId, payload);
   }
 
   @Post()
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     isArray: true,
     type: MonitorLoadDTO,
@@ -42,7 +67,13 @@ export class MonitorLoadWorkspaceController {
   createLoad(
     @Param('locId') locationId: string,
     @Body() payload: UpdateMonitorLoadDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorLoadDTO> {
+    this.Logger.info('Creating Load', {
+      locationId: locationId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.createLoad(locationId, payload);
   }
 }

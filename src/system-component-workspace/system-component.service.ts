@@ -9,6 +9,7 @@ import { SystemComponentMap } from '../maps/system-component.map';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { SystemComponent } from '../entities/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
@@ -17,6 +18,7 @@ export class SystemComponentWorkspaceService {
     private repository: SystemComponentWorkspaceRepository,
     private componentService: ComponentWorkspaceService,
     private map: SystemComponentMap,
+    private Logger: Logger,
   ) {}
 
   async getComponents(
@@ -34,7 +36,10 @@ export class SystemComponentWorkspaceService {
     const result = await this.repository.getComponent(sysId, componentId);
 
     if (!result) {
-      throw new NotFoundException('System Component not found');
+      this.Logger.error(NotFoundException, 'System component was not found', {
+        sysId: sysId,
+        componentId: componentId,
+      });
     }
 
     return this.map.one(result);

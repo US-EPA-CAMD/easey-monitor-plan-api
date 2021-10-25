@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorPlanComment } from '../entities/monitor-plan-comment.entity';
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 
 @Injectable()
-export class MonitorPlanCommentMap extends BaseMap<MonitorPlanComment, MonitorPlanCommentDTO> {
+export class MonitorPlanCommentMap extends BaseMap<
+  MonitorPlanComment,
+  MonitorPlanCommentDTO
+> {
   public async one(entity: MonitorPlanComment): Promise<MonitorPlanCommentDTO> {
     return {
       id: entity.id,

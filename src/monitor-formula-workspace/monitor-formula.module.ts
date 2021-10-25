@@ -1,5 +1,6 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';

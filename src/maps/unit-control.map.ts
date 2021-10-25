@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { UnitControl } from '../entities/unit-control.entity';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 

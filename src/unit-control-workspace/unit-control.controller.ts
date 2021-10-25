@@ -12,13 +12,17 @@ import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 
 import { UnitControlWorkspaceService } from './unit-control.service';
-import { AuthGuard } from '../guards/auth.guard';
-import CurrentUser from '../decorators/current-user.decorator';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('Unit Controls')
 @Controller()
 export class UnitControlWorkspaceController {
-  constructor(private readonly service: UnitControlWorkspaceService) {}
+  constructor(
+    private readonly service: UnitControlWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -43,6 +47,12 @@ export class UnitControlWorkspaceController {
     @Param('unitControlId') unitControlId: string,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
+    this.Logger.info('Updating Unit Control', {
+      userId: userId,
+      unitId: unitId,
+      unitControlId: unitControlId,
+      payload: payload,
+    });
     return this.service.updateUnitControl(
       userId,
       unitControlId,
@@ -64,6 +74,11 @@ export class UnitControlWorkspaceController {
     @Param('unitId') unitId: number,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
+    this.Logger.info('Creating Unit Control', {
+      userId: userId,
+      unitId: unitId,
+      payload: payload,
+    });
     return this.service.createUnitControl(userId, unitId, payload);
   }
 }

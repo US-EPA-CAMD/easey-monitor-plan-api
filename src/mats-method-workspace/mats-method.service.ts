@@ -6,6 +6,7 @@ import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -13,6 +14,7 @@ export class MatsMethodWorkspaceService {
     @InjectRepository(MatsMethodWorkspaceRepository)
     private repository: MatsMethodWorkspaceRepository,
     private map: MatsMethodMap,
+    private Logger: Logger,
   ) {}
 
   async getMethods(locationId: string): Promise<MatsMethodDTO[]> {
@@ -24,7 +26,9 @@ export class MatsMethodWorkspaceService {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
-      throw new NotFoundException('Mats Method not found.');
+      this.Logger.error(NotFoundException, 'Mats Method not found.', {
+        methodId: methodId,
+      });
     }
 
     return this.map.one(result);

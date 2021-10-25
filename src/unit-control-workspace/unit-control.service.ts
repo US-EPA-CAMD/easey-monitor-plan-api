@@ -6,6 +6,7 @@ import { UnitControlMap } from '../maps/unit-control.map';
 import { v4 as uuid } from 'uuid';
 
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class UnitControlWorkspaceService {
@@ -13,6 +14,7 @@ export class UnitControlWorkspaceService {
     @InjectRepository(UnitControlWorkspaceRepository)
     readonly repository: UnitControlWorkspaceRepository,
     readonly map: UnitControlMap,
+    private Logger: Logger,
   ) {}
 
   async getUnitControls(unitId: number): Promise<UnitControlDTO[]> {
@@ -23,8 +25,9 @@ export class UnitControlWorkspaceService {
   async getUnitControl(id: string): Promise<UnitControlDTO> {
     const result = await this.repository.findOne(id);
     if (!result) {
-      console.log('test');
-      throw new NotFoundException('Monitor Load not found');
+      this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
+        id: id,
+      });
     }
     return this.map.one(result);
   }

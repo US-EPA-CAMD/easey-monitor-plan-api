@@ -1,14 +1,28 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Get,
+  Param,
+  Controller,
+  Put,
+  Body,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
 import { MonitorDefaultWorkspaceService } from './monitor-default.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 @ApiTags('Defaults')
 @Controller()
 export class MonitorDefaultWorkspaceController {
-  constructor(private readonly service: MonitorDefaultWorkspaceService) {}
+  constructor(
+    private readonly service: MonitorDefaultWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -23,6 +37,8 @@ export class MonitorDefaultWorkspaceController {
   }
 
   @Put(':defaultId')
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Updates a workspace default record for a monitor location',
@@ -31,11 +47,20 @@ export class MonitorDefaultWorkspaceController {
     @Param('locId') locationId: string,
     @Param('defaultId') defaultId: string,
     @Body() payload: UpdateMonitorDefaultDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorDefaultDTO> {
+    this.Logger.info('Updating Monitor Default', {
+      locationId: locationId,
+      defaultId: defaultId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.updateDefault(locationId, defaultId, payload);
   }
 
   @Post()
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     isArray: true,
     type: MonitorDefaultDTO,
@@ -44,7 +69,13 @@ export class MonitorDefaultWorkspaceController {
   createDefault(
     @Param('locId') locationId: string,
     @Body() payload: UpdateMonitorDefaultDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorDefaultDTO> {
+    this.Logger.info('Creating new monitor default', {
+      locationId: locationId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.createDefault(locationId, payload);
   }
 }

@@ -1,13 +1,27 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 @ApiTags('Analyzer Ranges')
 @Controller()
 export class AnalyzerRangeWorkspaceController {
-  constructor(private service: AnalyzerRangeWorkspaceService) {}
+  constructor(
+    private service: AnalyzerRangeWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -24,6 +38,7 @@ export class AnalyzerRangeWorkspaceController {
 
   @Post()
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -32,14 +47,20 @@ export class AnalyzerRangeWorkspaceController {
   createAnalyzerRange(
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
+    @CurrentUser() userId: string,
     @Body() payload: UpdateAnalyzerRangeDTO,
   ) {
-    console.log('I RUN');
+    this.Logger.info('Creating analyzer range', {
+      userId: userId,
+      componentRecordId: componentRecordId,
+      payload: payload,
+    });
     return this.service.createAnalyzerRange(componentRecordId, payload);
   }
 
   @Put(':analyzerRangeId')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -49,8 +70,14 @@ export class AnalyzerRangeWorkspaceController {
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
     @Param('analyzerRangeId') analyzerRangeId: string,
+    @CurrentUser() userId: string,
     @Body() payload: UpdateAnalyzerRangeDTO,
   ) {
+    this.Logger.info('Updating analyzer range', {
+      userId: userId,
+      analyzerRangeId: analyzerRangeId,
+      payload: payload,
+    });
     return this.service.updateAnalyzerRangd(analyzerRangeId, payload);
   }
 }

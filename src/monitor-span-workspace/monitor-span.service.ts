@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
 
 import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
@@ -13,6 +14,7 @@ export class MonitorSpanWorkspaceService {
     @InjectRepository(MonitorSpanWorkspaceRepository)
     private repository: MonitorSpanWorkspaceRepository,
     private map: MonitorSpanMap,
+    private Logger: Logger,
   ) {}
 
   async getSpans(locationId: string): Promise<MonitorSpanDTO[]> {
@@ -24,7 +26,10 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      throw new NotFoundException('Monitor Span not found');
+      this.Logger.error(NotFoundException, 'Monitor Span not found', {
+        locationId: locationId,
+        spanId: spanId,
+      });
     }
 
     return this.map.one(result);

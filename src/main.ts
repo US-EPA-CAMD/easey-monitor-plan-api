@@ -31,8 +31,8 @@ async function bootstrap() {
   }
 
   app.use(helmet());
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix(appPath);
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors(async (req, callback) => {
     await corsOptionsService.configure(req, appName, callback);
   });

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWaf } from '../entities/duct-waf.entity';
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 
 @Injectable()
 export class DuctWafMap extends BaseMap<DuctWaf, DuctWafDTO> {

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { PCTQualificationWorkspaceController } from './pct-qualification.controller';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
@@ -7,7 +8,10 @@ import { PCTQualificationWorkspaceRepository } from './pct-qualification.reposit
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PCTQualificationWorkspaceRepository])],
+  imports: [
+    TypeOrmModule.forFeature([PCTQualificationWorkspaceRepository]),
+    HttpModule,
+  ],
   controllers: [PCTQualificationWorkspaceController],
   providers: [PCTQualificationWorkspaceService, PCTQualificationMap],
   exports: [

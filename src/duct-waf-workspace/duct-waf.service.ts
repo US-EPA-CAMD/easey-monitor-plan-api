@@ -6,6 +6,7 @@ import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class DuctWafWorkspaceService {
@@ -13,6 +14,7 @@ export class DuctWafWorkspaceService {
     @InjectRepository(DuctWafWorkspaceRepository)
     private repository: DuctWafWorkspaceRepository,
     private map: DuctWafMap,
+    private Logger: Logger,
   ) {}
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
@@ -24,7 +26,7 @@ export class DuctWafWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new NotFoundException();
+      this.Logger.error(NotFoundException, 'Duct Waf Not Found', { id: id });
     }
 
     return this.map.one(result);

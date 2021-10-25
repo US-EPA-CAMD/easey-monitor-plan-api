@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { AnalyzerRangeWorkspaceModule } from './../analyzer-range-workspace/analyzer-range.module';
 
@@ -12,6 +13,7 @@ import { ComponentMap } from '../maps/component.map';
   imports: [
     AnalyzerRangeWorkspaceModule,
     TypeOrmModule.forFeature([ComponentWorkspaceRepository]),
+    HttpModule,
   ],
   controllers: [ComponentWorkspaceController],
   providers: [ComponentWorkspaceService, ComponentMap],

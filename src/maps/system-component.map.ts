@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { SystemComponent } from '../entities/system-component.entity';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 

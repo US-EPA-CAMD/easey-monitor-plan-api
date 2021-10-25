@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { LEEQualification } from '../entities/lee-qualification.entity';
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 
