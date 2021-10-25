@@ -36,7 +36,11 @@ export class UnitFuelWorkspaceService {
       unitFuelId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', { id: id });
+      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', {
+        locId: locId,
+        unitRecordId: unitRecordId,
+        unitFuelId: unitFuelId,
+      });
     }
     return this.map.one(result);
   }
