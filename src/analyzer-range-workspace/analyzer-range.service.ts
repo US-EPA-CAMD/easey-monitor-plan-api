@@ -9,6 +9,7 @@ import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class AnalyzerRangeWorkspaceService {
@@ -16,6 +17,7 @@ export class AnalyzerRangeWorkspaceService {
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private repository: AnalyzerRangeWorkspaceRepository,
     private map: AnalyzerRangeMap,
+    private Logger: Logger,
   ) {}
 
   async getAnalyzerRanges(compId: string): Promise<AnalyzerRangeDTO[]> {
@@ -27,7 +29,9 @@ export class AnalyzerRangeWorkspaceService {
     const result = await this.repository.findOne(analyzerRangeId);
 
     if (!result) {
-      throw new NotFoundException('Analyzer Range not found.');
+      this.Logger.error(NotFoundException, 'Analyzer Range Not Found', {
+        analyzerRangeId: analyzerRangeId,
+      });
     }
 
     return this.map.one(result);

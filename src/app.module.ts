@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RouterModule } from 'nest-router';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { CorsOptionsModule } from '@us-epa-camd/easey-common/cors-options';
+import { HttpModule } from '@nestjs/axios';
 
 /***** routes / config *****/
 import appConfig from './config/app.config';
@@ -28,10 +29,12 @@ import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-pla
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
+    HttpModule,
     LoggerModule,
     CorsOptionsModule,
     MonitorPlanModule,
     MonitorPlanWorkspaceModule,
   ],
+  providers: [],
 })
 export class AppModule {}

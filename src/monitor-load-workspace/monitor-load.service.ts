@@ -6,6 +6,7 @@ import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -13,6 +14,7 @@ export class MonitorLoadWorkspaceService {
     @InjectRepository(MonitorLoadWorkspaceRepository)
     private repository: MonitorLoadWorkspaceRepository,
     private map: MonitorLoadMap,
+    private Logger: Logger,
   ) {}
 
   async getLoads(locationId: string): Promise<MonitorLoadDTO[]> {
@@ -24,7 +26,9 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
-      throw new NotFoundException('Monitor Load not found');
+      this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
+        loadId: loadId,
+      });
     }
 
     return this.map.one(result);

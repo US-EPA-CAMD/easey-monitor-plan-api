@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { MonitorAttributeWorkspaceModule } from '../monitor-attribute-workspace/monitor-attribute.module';
 import { UnitCapacityWorkspaceModule } from '../unit-capacity-workspace/unit-capacity.module';
@@ -38,6 +39,7 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     MonitorSystemWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
+    HttpModule,
   ],
   controllers: [MonitorLocationWorkspaceController],
   providers: [MonitorLocationMap, MonitorLocationWorkspaceService],

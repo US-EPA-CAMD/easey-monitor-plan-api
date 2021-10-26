@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorAttributeMap } from './montitor-attribute.map';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MatsMethodMap } from '../maps/mats-method.map';

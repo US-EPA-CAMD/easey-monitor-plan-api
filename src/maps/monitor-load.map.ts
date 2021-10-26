@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorLoad } from '../entities/monitor-load.entity';
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 

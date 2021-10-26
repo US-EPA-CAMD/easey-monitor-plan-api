@@ -1,9 +1,18 @@
 import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
+import {
+  Get,
+  Put,
+  Post,
+  Body,
+  Param,
+  Controller,
+  UseGuards,
+} from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 @ApiTags('Methods')
 @Controller()
@@ -22,6 +31,7 @@ export class MonitorMethodWorkspaceController {
 
   @Post()
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Creates workspace Monitor Method record',
@@ -35,6 +45,7 @@ export class MonitorMethodWorkspaceController {
 
   @Put(':methodId')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',

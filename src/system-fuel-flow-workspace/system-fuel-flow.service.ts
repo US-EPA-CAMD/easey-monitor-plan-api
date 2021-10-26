@@ -6,6 +6,7 @@ import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {
@@ -13,6 +14,7 @@ export class SystemFuelFlowWorkspaceService {
     @InjectRepository(SystemFuelFlowWorkspaceRepository)
     private readonly repository: SystemFuelFlowWorkspaceRepository,
     private readonly map: SystemFuelFlowMap,
+    private Logger: Logger,
   ) {}
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlowDTO[]> {
@@ -24,7 +26,9 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      throw new NotFoundException('Fuel Flow not found.');
+      this.Logger.error(NotFoundException, 'Fuel Flow not found.', {
+        fuelFlowId: fuelFlowId,
+      });
     }
 
     return this.map.one(result);

@@ -4,8 +4,8 @@ import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlWorkspaceController } from './unit-control.controller';
 import { UnitControlWorkspaceService } from './unit-control.service';
 import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
-import { HttpModule } from '@nestjs/common';
-import { AuthGuard } from '../guards/auth.guard';
+import { HttpModule } from '@nestjs/axios';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 
 jest.mock('./unit-control.service');

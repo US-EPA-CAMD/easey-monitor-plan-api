@@ -12,13 +12,17 @@ import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
-import { AuthGuard } from '../guards/auth.guard';
-import CurrentUser from '../decorators/current-user.decorator';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('Unit Fuels')
 @Controller()
 export class UnitFuelWorkspaceController {
-  constructor(private readonly service: UnitFuelWorkspaceService) {}
+  constructor(
+    private readonly service: UnitFuelWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -48,13 +52,13 @@ export class UnitFuelWorkspaceController {
     @Param('unitFuelId') unitFuelId: string,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    return this.service.updateUnitFuel(
-      userId,
-      locId,
-      unitRecordId,
-      unitFuelId,
-      payload,
-    );
+    this.Logger.info('Updating unit fuel', {
+      unitId: unitId,
+      unitFuelId: unitFuelId,
+      payload: payload,
+      userId: userId,
+    });
+    return this.service.updateUnitFuel(userId, unitFuelId, unitId, payload);
   }
 
   @Post()
@@ -71,6 +75,11 @@ export class UnitFuelWorkspaceController {
     @Param('unitRecordId') unitRecordId: number,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    return this.service.createUnitFuel(userId, locId, unitRecordId, payload);
+    this.Logger.info('Creating unit fuel', {
+      unitId: unitId,
+      payload: payload,
+      userId: userId,
+    });
+    return this.service.createUnitFuel(userId, unitId, payload);
   }
 }

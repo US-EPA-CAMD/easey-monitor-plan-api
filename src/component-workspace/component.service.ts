@@ -6,6 +6,7 @@ import { UpdateComponentDTO } from '../dtos/component-update.dto';
 import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -13,6 +14,7 @@ export class ComponentWorkspaceService {
     @InjectRepository(ComponentWorkspaceRepository)
     private repository: ComponentWorkspaceRepository,
     private map: ComponentMap,
+    private Logger: Logger,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
@@ -61,6 +63,11 @@ export class ComponentWorkspaceService {
       userId: 'testuser',
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
+    });
+
+    this.Logger.info('Creating component', {
+      locationId: locationId,
+      payload: payload,
     });
 
     const result = await this.repository.save(component);

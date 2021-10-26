@@ -5,7 +5,7 @@ import { UnitFuelWorkspaceController } from './unit-fuel.controller';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
 import { HttpModule } from '@nestjs/common';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 
 jest.mock('./unit-fuel.service');

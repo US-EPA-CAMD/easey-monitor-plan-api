@@ -6,6 +6,7 @@ import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { v4 as uuid } from 'uuid';
 
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class UnitFuelWorkspaceService {
@@ -13,6 +14,7 @@ export class UnitFuelWorkspaceService {
     @InjectRepository(UnitFuelWorkspaceRepository)
     readonly repository: UnitFuelWorkspaceRepository,
     readonly map: UnitFuelMap,
+    private Logger: Logger,
   ) {}
 
   async getUnitFuels(
@@ -34,7 +36,7 @@ export class UnitFuelWorkspaceService {
       unitFuelId,
     );
     if (!result) {
-      throw new NotFoundException('Unit Fuel not found');
+      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', { id: id });
     }
     return this.map.one(result);
   }

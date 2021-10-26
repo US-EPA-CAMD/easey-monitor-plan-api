@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { UserCheckOut } from './../entities/workspace/user-check-out.entity';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 

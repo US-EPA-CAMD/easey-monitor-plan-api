@@ -16,12 +16,12 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
-import { UserDTO } from '../dtos/user.dto';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 
-import { AuthGuard } from '../guards/auth.guard';
-import CurrentUser from '../decorators/current-user.decorator';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('Plans & Configurations')
 @Controller()
@@ -29,6 +29,7 @@ export class MonitorPlanWorkspaceController {
   constructor(
     private service: MonitorPlanWorkspaceService,
     private ucoService: UserCheckOutService,
+    private Logger: Logger,
   ) {}
 
   // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable
@@ -56,15 +57,18 @@ export class MonitorPlanWorkspaceController {
 
   @Post('import')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
   })
   importPlan(@Body() plan: UpdateMonitorPlanDTO): Promise<MonitorPlanDTO> {
-    console.log(plan);
-    throw new NotImplementedException(
-      'Monitor Plan Import not supported at this time. Coming Soon!',
+    this.Logger.error(
+      NotImplementedException,
+      'Monitor Plan Import not supported at htis time. Coming Soon!',
     );
+
+    return;
   }
 
   @Get('check-outs')
@@ -117,6 +121,7 @@ export class MonitorPlanWorkspaceController {
 
   @Delete(':planId/revert')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',

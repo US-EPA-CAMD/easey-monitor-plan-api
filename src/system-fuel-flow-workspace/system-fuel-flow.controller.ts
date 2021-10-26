@@ -1,14 +1,28 @@
 import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
+import {
+  Get,
+  Param,
+  Controller,
+  Put,
+  Body,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('System Fuel Flows')
 @Controller()
 export class SystemFuelFlowWorkspaceController {
-  constructor(private readonly service: SystemFuelFlowWorkspaceService) {}
+  constructor(
+    private readonly service: SystemFuelFlowWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -25,6 +39,7 @@ export class SystemFuelFlowWorkspaceController {
 
   @Post()
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description: 'Creates official fuel flow records for a monitor system',
@@ -33,12 +48,20 @@ export class SystemFuelFlowWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemRecordId: string,
     @Body() payload: UpdateSystemFuelFlowDTO,
+    @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
+    this.Logger.info('Creating Fuel Flow', {
+      locationId: locationId,
+      monitoringSystemRecordId: monitoringSystemRecordId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.createFuelFlow(monitoringSystemRecordId, payload);
   }
 
   @Put(':fuelFlowId')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description:
@@ -49,7 +72,15 @@ export class SystemFuelFlowWorkspaceController {
     @Param('sysId') monitoringSystemRecordId: string,
     @Param('fuelFlowId') id: string,
     @Body() payload: UpdateSystemFuelFlowDTO,
+    @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
+    this.Logger.info('Updating fuel flow', {
+      locationId: locationId,
+      monitoringSystemRecordId: monitoringSystemRecordId,
+      id: id,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.updateFuelFlow(id, payload);
   }
 }

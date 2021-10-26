@@ -44,7 +44,7 @@ describe('MonitorLoadWorkspaceController', () => {
   describe('updateLoad', () => {
     it('should return array of monitor loads', async () => {
       jest.spyOn(service, 'updateLoad').mockResolvedValue(returnedLoad);
-      expect(await controller.updateLoad(locId, loadId, payload)).toBe(
+      expect(await controller.updateLoad(locId, loadId, payload, '')).toBe(
         returnedLoad,
       );
     });
@@ -53,7 +53,9 @@ describe('MonitorLoadWorkspaceController', () => {
   describe('createLoad', () => {
     it('should return array of monitor loads', async () => {
       jest.spyOn(service, 'createLoad').mockResolvedValue(returnedLoad);
-      expect(await controller.createLoad(locId, payload)).toBe(returnedLoad);
+      expect(await controller.createLoad(locId, payload, '')).toBe(
+        returnedLoad,
+      );
     });
   });
 });

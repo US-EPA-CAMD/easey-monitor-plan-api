@@ -9,16 +9,20 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
-import CurrentUser from '../decorators/current-user.decorator';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('Rectangular Duct WAF')
 @Controller()
 export class DuctWafWorkspaceController {
-  constructor(private readonly service: DuctWafWorkspaceService) {}
+  constructor(
+    private readonly service: DuctWafWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -42,6 +46,11 @@ export class DuctWafWorkspaceController {
     @Body() payload: UpdateDuctWafDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
+    this.Logger.info('Creating duct waf', {
+      locationId: locationId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.createDuctWaf(locationId, payload, userId);
   }
 
@@ -58,6 +67,12 @@ export class DuctWafWorkspaceController {
     @Body() payload: UpdateDuctWafDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
+    this.Logger.info('Updating duct waf', {
+      locationId: locationId,
+      payload: payload,
+      ductWafId: ductWafId,
+      userId: userId,
+    });
     return await this.service.updateDuctWaf(
       locationId,
       ductWafId,

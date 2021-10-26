@@ -1,9 +1,18 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Get,
+  Param,
+  Controller,
+  Post,
+  Put,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 @ApiTags('Spans')
 @Controller()
@@ -21,6 +30,8 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Put(':spanId')
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorSpanDTO,
     description: 'Updates a workspace span record for a monitor location',
@@ -34,6 +45,8 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Post()
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,

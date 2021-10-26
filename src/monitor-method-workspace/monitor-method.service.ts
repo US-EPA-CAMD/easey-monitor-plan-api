@@ -7,6 +7,7 @@ import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
@@ -14,6 +15,7 @@ export class MonitorMethodWorkspaceService {
     @InjectRepository(MonitorMethodWorkspaceRepository)
     private repository: MonitorMethodWorkspaceRepository,
     private map: MonitorMethodMap,
+    private Logger: Logger,
   ) {}
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
@@ -25,7 +27,9 @@ export class MonitorMethodWorkspaceService {
     const result = this.repository.findOne(methodId);
 
     if (!result) {
-      throw new NotFoundException('Monitor method not found');
+      this.Logger.error(NotFoundException, 'Monitor Method Not Found', {
+        methodId: methodId,
+      });
     }
 
     return result;
