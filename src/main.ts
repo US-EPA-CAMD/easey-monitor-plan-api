@@ -4,11 +4,15 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { CorsOptionsService } from '@us-epa-camd/easey-common/cors-options';
+import * as helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+  const corsOptionsService = app.get(CorsOptionsService);
 
+  const appName = configService.get<string>('app.name');
   const appTitle = configService.get<string>('app.title');
   const appPath = configService.get<string>('app.path');
   const appEnv = configService.get<string>('app.env');
@@ -26,9 +30,12 @@ async function bootstrap() {
     };
   }
 
+  app.use(helmet());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix(appPath);
-  app.enableCors();
+  app.enableCors(async (req, callback) => {
+    await corsOptionsService.configure(req, appName, callback);
+  });
 
   const swaggerDocOptions = new DocumentBuilder()
     .setTitle(`${appTitle} OpenAPI Specification`)
