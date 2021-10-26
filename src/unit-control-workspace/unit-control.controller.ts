@@ -86,10 +86,6 @@ export class UnitControlWorkspaceController {
       unitRecordId: unitRecordId,
       payload: payload,
     });
-<<<<<<< HEAD
-    return this.service.createUnitControl(userId, unitId, payload);
-=======
     return this.service.createUnitControl(userId, locId, unitRecordId, payload);
->>>>>>> 68b225055840230155d417c9de094f2a4950bd18
   }
 }
