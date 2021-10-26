@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationController } from './monitor-location.controller';
 import { MonitorLocationService } from './monitor-location.service';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 jest.mock('./monitor-location.service');
 
@@ -14,6 +15,7 @@ describe('MonitorLocationController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [MonitorLocationController],
       providers: [MonitorLocationService],
     }).compile();

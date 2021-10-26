@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
 import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 const locationId = 'string';
 const methodId = 'string';
@@ -30,8 +33,10 @@ describe('MonitorFormulaWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule, HttpModule],
       controllers: [MonitorFormulaWorkspaceController],
       providers: [
+        ConfigService,
         {
           provide: MonitorFormulaWorkspaceService,
           useFactory: mockMonitorFormulaWorkspaceService,
@@ -56,9 +61,9 @@ describe('MonitorFormulaWorkspaceController', () => {
 
   describe('createFormula', () => {
     it('should call the MonitorFormulaWorkspaceService.createFormula', () => {
-      expect(controller.createFormula(locationId, matsFormulaPayload)).toEqual(
-        {},
-      );
+      expect(
+        controller.createFormula(locationId, matsFormulaPayload, ''),
+      ).toEqual({});
       expect(service.createFormula).toHaveBeenCalled();
     });
   });
@@ -66,7 +71,7 @@ describe('MonitorFormulaWorkspaceController', () => {
   describe('createFormulas', () => {
     it('should call the MonitorFormulaWorkspaceService.updateFormula', () => {
       expect(
-        controller.updateFormula(locationId, methodId, matsFormulaPayload),
+        controller.updateFormula(locationId, methodId, matsFormulaPayload, ''),
       ).toEqual({});
       expect(service.updateFormula).toHaveBeenCalled();
     });

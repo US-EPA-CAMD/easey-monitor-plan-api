@@ -54,7 +54,7 @@ export class UnitControlWorkspaceController {
   ): Promise<UnitControlDTO> {
     this.Logger.info('Updating Unit Control', {
       userId: userId,
-      unitId: unitId,
+      unitRecordId: unitRecordId,
       unitControlId: unitControlId,
       payload: payload,
     });
@@ -83,9 +83,13 @@ export class UnitControlWorkspaceController {
   ): Promise<UnitControlDTO> {
     this.Logger.info('Creating Unit Control', {
       userId: userId,
-      unitId: unitId,
+      unitRecordId: unitRecordId,
       payload: payload,
     });
+<<<<<<< HEAD
     return this.service.createUnitControl(userId, unitId, payload);
+=======
+    return this.service.createUnitControl(userId, locId, unitRecordId, payload);
+>>>>>>> 68b225055840230155d417c9de094f2a4950bd18
   }
 }

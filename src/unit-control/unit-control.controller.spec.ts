@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlController } from './unit-control.controller';
 import { UnitControlService } from './unit-control.service';
@@ -18,6 +20,7 @@ describe('UnitControlController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [UnitControlController],
       providers: [UnitControlService],
     }).compile();

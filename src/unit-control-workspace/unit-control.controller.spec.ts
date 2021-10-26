@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlWorkspaceController } from './unit-control.controller';
@@ -27,7 +28,7 @@ describe('UnitControlWorkspaceController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, LoggerModule],
       controllers: [UnitControlWorkspaceController],
       providers: [UnitControlWorkspaceService, ConfigService, AuthGuard],
     }).compile();

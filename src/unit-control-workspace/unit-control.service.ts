@@ -37,7 +37,8 @@ export class UnitControlWorkspaceService {
     );
     if (!result) {
       this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
-        id: id,
+        unitRecordId: unitRecordId,
+        unitControlId: unitControlId,
       });
     }
     return this.map.one(result);

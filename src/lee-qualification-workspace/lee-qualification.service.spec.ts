@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
@@ -17,6 +18,7 @@ describe('LEEQualificationWorkspaceService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         LEEQualificationWorkspaceService,
         {

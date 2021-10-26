@@ -53,12 +53,26 @@ export class UnitFuelWorkspaceController {
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
     this.Logger.info('Updating unit fuel', {
+<<<<<<< HEAD
       unitId: unitId,
+=======
+      unitRecordId: unitRecordId,
+>>>>>>> 68b225055840230155d417c9de094f2a4950bd18
       unitFuelId: unitFuelId,
       payload: payload,
       userId: userId,
     });
+<<<<<<< HEAD
     return this.service.updateUnitFuel(userId, unitFuelId, unitId, payload);
+=======
+    return this.service.updateUnitFuel(
+      userId,
+      locId,
+      unitRecordId,
+      unitFuelId,
+      payload,
+    );
+>>>>>>> 68b225055840230155d417c9de094f2a4950bd18
   }
 
   @Post()
@@ -76,10 +90,14 @@ export class UnitFuelWorkspaceController {
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
     this.Logger.info('Creating unit fuel', {
-      unitId: unitId,
+      unitRecordId: unitRecordId,
       payload: payload,
       userId: userId,
     });
+<<<<<<< HEAD
     return this.service.createUnitFuel(userId, unitId, payload);
+=======
+    return this.service.createUnitFuel(userId, locId, unitRecordId, payload);
+>>>>>>> 68b225055840230155d417c9de094f2a4950bd18
   }
 }

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowService } from './system-fuel-flow.service';
 import { SystemFuelFlowController } from './system-fuel-flow.controller';
+import { ConfigService } from '@nestjs/config';
 
 jest.mock('./system-fuel-flow.service');
 
@@ -19,8 +21,9 @@ describe('SystemFuelFlowController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [SystemFuelFlowController],
-      providers: [SystemFuelFlowService],
+      providers: [SystemFuelFlowService, ConfigService],
     }).compile();
 
     controller = module.get(SystemFuelFlowController);

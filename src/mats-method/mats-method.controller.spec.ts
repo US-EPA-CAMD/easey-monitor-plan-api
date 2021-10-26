@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodService } from './mats-method.service';
@@ -18,6 +19,7 @@ describe('MatsMethodController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [MatsMethodController],
       providers: [MatsMethodService],
     }).compile();

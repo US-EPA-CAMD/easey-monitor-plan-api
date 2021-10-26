@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentWorkspaceController } from './system-component.controller';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./system-component.service');
 
@@ -19,8 +22,9 @@ describe('SystemComponentWorkspaceController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule, HttpModule],
       controllers: [SystemComponentWorkspaceController],
-      providers: [SystemComponentWorkspaceService],
+      providers: [SystemComponentWorkspaceService, ConfigService],
     }).compile();
 
     controller = module.get(SystemComponentWorkspaceController);

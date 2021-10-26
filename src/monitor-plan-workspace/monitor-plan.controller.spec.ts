@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
@@ -6,6 +7,8 @@ import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutService } from './../user-check-out/user-check-out.service';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./monitor-plan.service');
 jest.mock('../user-check-out/user-check-out.service');
@@ -27,8 +30,13 @@ describe('MonitorPlanWorkspaceController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule, HttpModule],
       controllers: [MonitorPlanWorkspaceController],
-      providers: [MonitorPlanWorkspaceService, UserCheckOutService],
+      providers: [
+        MonitorPlanWorkspaceService,
+        UserCheckOutService,
+        ConfigService,
+      ],
     }).compile();
 
     controller = module.get(MonitorPlanWorkspaceController);

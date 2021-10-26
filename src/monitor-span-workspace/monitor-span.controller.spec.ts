@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanWorkspaceController } from './monitor-span.controller';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./monitor-span.service');
 
@@ -18,8 +21,9 @@ describe('MonitorSpanWorkspaceController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule, HttpModule],
       controllers: [MonitorSpanWorkspaceController],
-      providers: [MonitorSpanWorkspaceService],
+      providers: [MonitorSpanWorkspaceService, ConfigService],
     }).compile();
 
     controller = module.get(MonitorSpanWorkspaceController);
