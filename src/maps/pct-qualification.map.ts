@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { PCTQualification } from '../entities/pct-qualification.entity';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 

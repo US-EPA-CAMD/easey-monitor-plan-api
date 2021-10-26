@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { PCTQualificationService } from './pct-qualification.service';
@@ -17,6 +18,7 @@ describe('PCTQualificationService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         PCTQualificationService,
         {

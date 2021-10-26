@@ -1,14 +1,15 @@
+import * as helmet from 'helmet';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { CorsOptionsService } from '@us-epa-camd/easey-common/cors-options';
 
 import { AppModule } from './app.module';
-import { CorsOptionsService } from '@us-epa-camd/easey-common/cors-options';
-import * as helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   const configService = app.get(ConfigService);
   const corsOptionsService = app.get(CorsOptionsService);
 
@@ -31,8 +32,8 @@ async function bootstrap() {
   }
 
   app.use(helmet());
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix(appPath);
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors(async (req, callback) => {
     await corsOptionsService.configure(req, appName, callback);
   });

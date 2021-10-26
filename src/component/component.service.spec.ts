@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentService } from './component.service';
 import { ComponentRepository } from './component.repository';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
@@ -17,6 +18,7 @@ describe('ComponentService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         ComponentService,
         {

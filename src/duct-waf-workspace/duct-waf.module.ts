@@ -1,5 +1,6 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { DuctWafWorkspaceController } from './duct-waf.controller';
 import { DuctWafWorkspaceService } from './duct-waf.service';

@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
@@ -22,7 +23,7 @@ describe('MonitorLocationWorkspaceService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [NotFoundException],
+      imports: [NotFoundException, LoggerModule],
       providers: [
         MonitorLocationWorkspaceService,
         {

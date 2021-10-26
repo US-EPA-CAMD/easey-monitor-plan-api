@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { Component } from '../entities/component.entity';
 import { ComponentDTO } from '../dtos/component.dto';
 import { AnalyzerRangeMap } from './analyzer-range.map';

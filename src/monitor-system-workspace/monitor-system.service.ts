@@ -7,6 +7,7 @@ import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorSystem } from '../entities/monitor-system.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -14,6 +15,7 @@ export class MonitorSystemWorkspaceService {
     @InjectRepository(MonitorSystemWorkspaceRepository)
     private repository: MonitorSystemWorkspaceRepository,
     private map: MonitorSystemMap,
+    private Logger: Logger,
   ) {}
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
@@ -56,7 +58,9 @@ export class MonitorSystemWorkspaceService {
     const result = await this.repository.findOne(monitoringSystemId);
 
     if (!result) {
-      throw new NotFoundException('Monitor system not found');
+      this.Logger.error(NotFoundException, 'Monitor System Not Found', {
+        monitoringSystemId: monitoringSystemId,
+      });
     }
 
     return result;

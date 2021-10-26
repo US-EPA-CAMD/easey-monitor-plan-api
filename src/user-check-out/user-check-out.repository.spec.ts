@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UserCheckOutRepository } from './user-check-out.repository';
 
@@ -7,6 +8,7 @@ describe('UserCheckOutRepository', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [UserCheckOutRepository],
     }).compile();
 

@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWafWorkspaceService } from './duct-waf.service';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
@@ -17,6 +18,7 @@ describe('DuctWafWorkspaceService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         DuctWafWorkspaceService,
         {

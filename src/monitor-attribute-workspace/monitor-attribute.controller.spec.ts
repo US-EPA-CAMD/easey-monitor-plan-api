@@ -1,4 +1,7 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorAttributeWorkspaceController } from './monitor-attribute.controller';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
@@ -10,8 +13,9 @@ describe('MonitorAttributeWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule, HttpModule],
       controllers: [MonitorAttributeWorkspaceController],
-      providers: [MonitorAttributeWorkspaceService],
+      providers: [MonitorAttributeWorkspaceService, ConfigService],
     }).compile();
 
     controller = module.get<MonitorAttributeWorkspaceController>(

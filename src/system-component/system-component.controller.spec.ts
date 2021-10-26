@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { SystemComponentService } from './system-component.service';
@@ -19,6 +20,7 @@ describe('SystemComponentController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [SystemComponentController],
       providers: [SystemComponentService],
     }).compile();

@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentService } from './component.service';
 import { ComponentController } from './component.controller';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 jest.mock('./component.service');
 
@@ -18,6 +19,7 @@ describe('ComponentController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       controllers: [ComponentController],
       providers: [ComponentService],
     }).compile();

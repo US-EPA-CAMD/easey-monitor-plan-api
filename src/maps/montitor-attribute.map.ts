@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MonitorAttribute } from '../entities/monitor-attribute.entity';
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 
-import { BaseMap } from './base.map';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 
 @Injectable()
 export class MonitorAttributeMap extends BaseMap<

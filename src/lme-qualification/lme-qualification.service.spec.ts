@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { LMEQualificationService } from './lme-qualification.service';
 import { LMEQualificationRepository } from './lme-qualification.repository';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
@@ -17,6 +18,7 @@ describe('LMEQualificationService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         LMEQualificationService,
         {

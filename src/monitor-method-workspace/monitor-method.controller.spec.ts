@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { MonitorMethodWorkspaceController } from './monitor-method.controller';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./monitor-method.service');
 
@@ -18,8 +21,9 @@ describe('MonitorMethodWorkspaceController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule, HttpModule],
       controllers: [MonitorMethodWorkspaceController],
-      providers: [MonitorMethodWorkspaceService],
+      providers: [MonitorMethodWorkspaceService, ConfigService],
     }).compile();
 
     controller = module.get(MonitorMethodWorkspaceController);

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { SystemComponentWorkspaceController } from './system-component.controller';
 import { SystemComponentWorkspaceService } from './system-component.service';
@@ -11,6 +12,7 @@ import { ComponentWorkspaceModule } from '../component-workspace/component.modul
   imports: [
     ComponentWorkspaceModule,
     TypeOrmModule.forFeature([SystemComponentWorkspaceRepository]),
+    HttpModule,
   ],
   controllers: [SystemComponentWorkspaceController],
   providers: [SystemComponentWorkspaceService, SystemComponentMap],

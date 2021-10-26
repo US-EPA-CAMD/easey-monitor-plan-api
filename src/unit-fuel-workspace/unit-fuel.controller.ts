@@ -12,13 +12,17 @@ import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
-import { AuthGuard } from '../guards/auth.guard';
-import CurrentUser from '../decorators/current-user.decorator';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('Unit Fuels')
 @Controller()
 export class UnitFuelWorkspaceController {
-  constructor(private readonly service: UnitFuelWorkspaceService) {}
+  constructor(
+    private readonly service: UnitFuelWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -48,6 +52,19 @@ export class UnitFuelWorkspaceController {
     @Param('unitFuelId') unitFuelId: string,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
+    this.Logger.info('Updating unit fuel', {
+<<<<<<< HEAD
+      unitId: unitId,
+=======
+      unitRecordId: unitRecordId,
+>>>>>>> 68b225055840230155d417c9de094f2a4950bd18
+      unitFuelId: unitFuelId,
+      payload: payload,
+      userId: userId,
+    });
+<<<<<<< HEAD
+    return this.service.updateUnitFuel(userId, unitFuelId, unitId, payload);
+=======
     return this.service.updateUnitFuel(
       userId,
       locId,
@@ -55,6 +72,7 @@ export class UnitFuelWorkspaceController {
       unitFuelId,
       payload,
     );
+>>>>>>> 68b225055840230155d417c9de094f2a4950bd18
   }
 
   @Post()
@@ -71,6 +89,15 @@ export class UnitFuelWorkspaceController {
     @Param('unitRecordId') unitRecordId: number,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
+    this.Logger.info('Creating unit fuel', {
+      unitRecordId: unitRecordId,
+      payload: payload,
+      userId: userId,
+    });
+<<<<<<< HEAD
+    return this.service.createUnitFuel(userId, unitId, payload);
+=======
     return this.service.createUnitFuel(userId, locId, unitRecordId, payload);
+>>>>>>> 68b225055840230155d417c9de094f2a4950bd18
   }
 }

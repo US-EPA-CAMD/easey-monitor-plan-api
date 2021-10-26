@@ -1,14 +1,28 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 @ApiTags('MATS Methods')
 @Controller()
 export class MatsMethodWorkspaceController {
-  constructor(private service: MatsMethodWorkspaceService) {}
+  constructor(
+    private service: MatsMethodWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -23,6 +37,7 @@ export class MatsMethodWorkspaceController {
 
   @Post()
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
@@ -30,12 +45,19 @@ export class MatsMethodWorkspaceController {
   createMethod(
     @Param('locId') locationId: string,
     @Body() payload: UpdateMatsMethodDTO,
+    @CurrentUser() userId: string,
   ): Promise<MatsMethodDTO> {
+    this.Logger.info('Creating method', {
+      locationId: locationId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.createMethod(locationId, payload);
   }
 
   @Put(':methodId')
   @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',
@@ -43,8 +65,15 @@ export class MatsMethodWorkspaceController {
   updateMethod(
     @Param('locId') locationId: string,
     @Param('methodId') methodId: string,
+    @CurrentUser() userId: string,
     @Body() payload: UpdateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
+    this.Logger.info('Updating method', {
+      locationId: locationId,
+      methodId: methodId,
+      payload: payload,
+      userId: userId,
+    });
     return this.service.updateMethod(methodId, locationId, payload);
   }
 }

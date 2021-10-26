@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { SystemComponentWorkspaceModule } from '../system-component-workspace/system-component.module';
 import { SystemFuelFlowWorkspaceModule } from '../system-fuel-flow-workspace/system-fuel-flow.module';
@@ -14,6 +15,7 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
     SystemFuelFlowWorkspaceModule,
     SystemComponentWorkspaceModule,
     TypeOrmModule.forFeature([MonitorSystemWorkspaceRepository]),
+    HttpModule,
   ],
   controllers: [MonitorSystemWorkspaceController],
   providers: [MonitorSystemWorkspaceService, MonitorSystemMap],

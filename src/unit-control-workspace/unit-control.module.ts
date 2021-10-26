@@ -1,5 +1,6 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { UnitControlWorkspaceController } from './unit-control.controller';
 import { UnitControlWorkspaceService } from './unit-control.service';
@@ -8,8 +9,8 @@ import { UnitControlMap } from '../maps/unit-control.map';
 
 @Module({
   imports: [
-    HttpModule,
     TypeOrmModule.forFeature([UnitControlWorkspaceRepository]),
+    HttpModule,
   ],
   controllers: [UnitControlWorkspaceController],
   providers: [UnitControlWorkspaceService, UnitControlMap],

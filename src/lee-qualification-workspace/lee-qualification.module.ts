@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { LEEQualificationWorkspaceController } from './lee-qualification.controller';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
@@ -7,7 +8,10 @@ import { LEEQualificationWorkspaceRepository } from './lee-qualification.reposit
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LEEQualificationWorkspaceRepository])],
+  imports: [
+    TypeOrmModule.forFeature([LEEQualificationWorkspaceRepository]),
+    HttpModule,
+  ],
   controllers: [LEEQualificationWorkspaceController],
   providers: [LEEQualificationWorkspaceService, LEEQualificationMap],
   exports: [

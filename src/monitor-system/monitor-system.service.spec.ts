@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorSystemService } from './monitor-system.service';
@@ -17,6 +18,7 @@ describe('MonitorSystemService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         MonitorSystemService,
         {

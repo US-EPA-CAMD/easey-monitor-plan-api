@@ -6,6 +6,7 @@ import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository'
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
@@ -13,6 +14,7 @@ export class MonitorDefaultWorkspaceService {
     @InjectRepository(MonitorDefaultWorkspaceRepository)
     private repository: MonitorDefaultWorkspaceRepository,
     private map: MonitorDefaultMap,
+    private Logger: Logger,
   ) {}
 
   async getDefaults(locationId: string): Promise<MonitorDefaultDTO[]> {
@@ -27,7 +29,10 @@ export class MonitorDefaultWorkspaceService {
     const result = await this.repository.getDefault(locationId, defaultId);
 
     if (!result) {
-      throw new NotFoundException('Monitor Default not found');
+      this.Logger.error(NotFoundException, 'Monitor Default Not Found', {
+        locationId: locationId,
+        defaultId: defaultId,
+      });
     }
 
     return this.map.one(result);

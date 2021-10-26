@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
 
 import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
@@ -13,6 +14,7 @@ export class MonitorFormulaWorkspaceService {
     @InjectRepository(MonitorFormulaWorkspaceRepository)
     private repository: MonitorFormulaWorkspaceRepository,
     private map: MonitorFormulaMap,
+    private Logger: Logger,
   ) {}
 
   async getFormulas(locationId: string): Promise<MonitorFormulaDTO[]> {
@@ -30,7 +32,10 @@ export class MonitorFormulaWorkspaceService {
     );
 
     if (!result) {
-      throw new NotFoundException('Monitor Formula not found');
+      this.Logger.error(NotFoundException, 'Monitor Formula not found', {
+        locationId: locationId,
+        formulaRecordId: formulaRecordId,
+      });
     }
 
     return this.map.one(result);

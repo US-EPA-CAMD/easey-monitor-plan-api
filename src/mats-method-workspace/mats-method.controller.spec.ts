@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
 import { MatsMethodWorkspaceController } from './mats-method.controller';
 import { MatsMethodWorkspaceService } from './mats-method.service';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 const locationId = 'string';
 const methodId = 'string';
@@ -27,8 +30,10 @@ describe('MatsMethodWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule, HttpModule],
       controllers: [MatsMethodWorkspaceController],
       providers: [
+        ConfigService,
         {
           provide: MatsMethodWorkspaceService,
           useFactory: mockMatsMethodWorkspaceService,
@@ -53,9 +58,9 @@ describe('MatsMethodWorkspaceController', () => {
 
   describe('createMethod', () => {
     it('should call the MatsMethodWorkspaceService.createMethod', () => {
-      expect(controller.createMethod(locationId, matsMethodPayload)).toEqual(
-        {},
-      );
+      expect(
+        controller.createMethod(locationId, matsMethodPayload, ''),
+      ).toEqual({});
       expect(service.createMethod).toHaveBeenCalled();
     });
   });
@@ -63,7 +68,7 @@ describe('MatsMethodWorkspaceController', () => {
   describe('createMethods', () => {
     it('should call the MatsMethodWorkspaceService.updateMethod', () => {
       expect(
-        controller.updateMethod(locationId, methodId, matsMethodPayload),
+        controller.updateMethod(locationId, methodId, '', matsMethodPayload),
       ).toEqual({});
       expect(service.updateMethod).toHaveBeenCalled();
     });
