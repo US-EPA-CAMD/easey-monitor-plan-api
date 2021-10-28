@@ -1,25 +1,94 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
-import { Get, Param, Controller } from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Get,
+  Param,
+  Controller,
+  Post,
+  UseGuards,
+  Body,
+  Put,
+} from '@nestjs/common';
 
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('PCT Qualifications')
 @Controller()
 export class PCTQualificationWorkspaceController {
-  constructor(private readonly service: PCTQualificationWorkspaceService) {}
+  constructor(
+    private readonly service: PCTQualificationWorkspaceService,
+    private Logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
     isArray: true,
     type: PCTQualificationDTO,
     description:
-      'Retrieves workspace pct qualification records for a monitor location',
+      'Retrieves workspace PCT Qualification records for a qualification ID and location ID',
   })
   getPCTQualifications(
-    @Param('locId') locationId: string,
-    @Param('qualId') qualificationId: string,
+    @Param('locId') locId: string,
+    @Param('qualId') qualId: string,
   ): Promise<PCTQualificationDTO[]> {
-    return this.service.getPCTQualifications(qualificationId);
+    return this.service.getPCTQualifications(locId, qualId);
+  }
+
+  @Put(':pctQualId')
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: PCTQualificationDTO,
+    description:
+      'Updates a workspace PCT qualification by PCT qualification ID, qualification ID, and location ID',
+  })
+  async updatePCTQualification(
+    @CurrentUser() userId: string,
+    @Param('locId') locId: string,
+    @Param('qualId') qualId: string,
+    @Param('pctQualId') pctQualId: string,
+    @Body() payload: UpdatePCTQualificationDTO,
+  ): Promise<PCTQualificationDTO> {
+    this.Logger.info('Updating PCT qualification', {
+      qualId: qualId,
+      pctQualId: pctQualId,
+      payload: payload,
+      userId: userId,
+    });
+    return this.service.updatePCTQualification(
+      userId,
+      locId,
+      qualId,
+      pctQualId,
+      payload,
+    );
+  }
+
+  @Post()
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    isArray: true,
+    type: PCTQualificationDTO,
+    description:
+      'Creates a PCT Qualification record for a qualification and monitor location',
+  })
+  createPCTQualification(
+    @CurrentUser() userId: string,
+    @Param('locId') locId: string,
+    @Param('qualId') qualId: string,
+    @Body() payload: UpdatePCTQualificationDTO,
+  ): Promise<PCTQualificationDTO> {
+    this.Logger.info('Creating PCT Qualification', {
+      userId: userId,
+      locId: locId,
+      qualId: qualId,
+      payload: payload,
+    });
+    return this.service.createPCTQualification(userId, locId, qualId, payload);
   }
 }
