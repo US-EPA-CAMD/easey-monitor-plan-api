@@ -15,6 +15,7 @@ export class PCTQualificationWorkspaceRepository extends Repository<
       .innerJoinAndSelect('q.location', 'l')
       .where('l.id = :locId', { locId })
       .andWhere('q.id = :qualificationId', { qualificationId })
+      .addOrderBy('pctq.id')
       .getMany();
   }
 
@@ -29,6 +30,7 @@ export class PCTQualificationWorkspaceRepository extends Repository<
       .where('l.id = :locId', { locId })
       .andWhere('q.id = :qualificationId', { qualificationId })
       .andWhere('pctq.id = :pctQualId', { pctQualId })
+      .addOrderBy('pctq.id')
       .getOne();
   }
 }
