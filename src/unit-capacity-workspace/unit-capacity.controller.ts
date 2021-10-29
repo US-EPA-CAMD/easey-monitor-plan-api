@@ -21,7 +21,7 @@ import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 export class UnitCapacityWorkspaceController {
   constructor(
     private readonly service: UnitCapacityWorkspaceService,
-    private Logger: Logger,
+    private readonly Logger: Logger,
   ) {}
 
   @Get()

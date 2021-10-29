@@ -10,7 +10,7 @@ import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
 @Injectable()
 export class UnitCapacityWorkspaceService {
   constructor(
-    private Logger: Logger,
+    private readonly Logger: Logger,
     private readonly repository: UnitCapacityWorkspaceRepository,
     private readonly map: UnitCapacityMap,
   ) {}
