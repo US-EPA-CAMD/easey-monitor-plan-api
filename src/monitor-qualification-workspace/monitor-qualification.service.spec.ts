@@ -4,19 +4,49 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
+import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
+import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
+import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
+import { UpdateLEEQualificationDTO } from 'src/dtos/lee-qualification-update.dto';
+import { UpdateLMEQualificationDTO } from 'src/dtos/lme-qualification-update.dto';
+import { UpdatePCTQualificationDTO } from 'src/dtos/pct-qualification-update.dto';
+
+const locId = '6';
+const qualId = '1';
+const pctQualId = 'some pct qualification id';
+const userId = 'testuser';
+
+const returnedMonitorQualifications: MonitorQualificationDTO[] = [];
+const returnedMonitorQualification: MonitorQualificationDTO = new MonitorQualificationDTO();
+
+const payload: UpdateMonitorQualificationDTO = {
+  qualificationTypeCode: '',
+  beginDate: new Date(Date.now()),
+  endDate: new Date(Date.now()),
+  leeQualifications: [],
+  lmeQualifications: [],
+  pctQualifications: [],
+};
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  getQualifications: jest.fn().mockResolvedValue(returnedMonitorQualifications),
+  getQualification: jest.fn().mockResolvedValue(returnedMonitorQualification),
+  find: jest.fn().mockResolvedValue([]),
+  findOne: jest.fn().mockResolvedValue(new MonitorQualification()),
+  create: jest.fn().mockResolvedValue(new MonitorQualification()),
+  save: jest.fn().mockResolvedValue(new MonitorQualification()),
 });
 
 const mockMap = () => ({
-  many: jest.fn().mockResolvedValue(''),
+  one: jest.fn().mockResolvedValue({}),
+  many: jest.fn().mockResolvedValue([]),
 });
 
-describe('MonitorQualificationWorkspaceService', () => {
-  let service: MonitorQualificationWorkspaceService;
+describe('MonitorQualificationService', () => {
+  let loadService: MonitorQualificationWorkspaceService;
+  let loadRepository: MonitorQualificationWorkspaceRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
@@ -32,19 +62,48 @@ describe('MonitorQualificationWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get<MonitorQualificationWorkspaceService>(
-      MonitorQualificationWorkspaceService,
-    );
+    loadService = module.get(MonitorQualificationWorkspaceService);
+    loadRepository = module.get(MonitorQualificationWorkspaceRepository);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(loadService).toBeDefined();
   });
 
   describe('getQualifications', () => {
-    it('should return array of location qualifications', async () => {
-      const result = await service.getQualifications(null);
-      expect(result).toEqual('');
+    it('should return array of PCT qualifications', async () => {
+      const result = await loadService.getQualifications(locId);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getQualification', () => {
+    it('should return PCT qualification for a specific qualification ID and location ID', async () => {
+      const result = await loadService.getQualification(locId, qualId);
+      expect(result).toEqual({});
+    });
+  });
+
+  describe('createQualification', () => {
+    it('creates a PCT qualification for a specific qualification ID', async () => {
+      const result = await loadService.createQualification(
+        userId,
+        locId,
+        payload,
+      );
+      expect(result).toEqual({ ...result });
+    });
+  });
+
+  describe('updateQualification', () => {
+    it('updates a PCT qualification for a specific qualification ID and location ID', async () => {
+      const result = await loadService.updateQualification(
+        userId,
+        locId,
+        qualId,
+        payload,
+      );
+      expect(result).toEqual({ ...result });
     });
   });
 });
