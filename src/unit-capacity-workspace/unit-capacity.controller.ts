@@ -16,7 +16,7 @@ import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 
-@ApiTags('Unit Capacity')
+@ApiTags('Unit Capacities')
 @Controller()
 export class UnitCapacityWorkspaceController {
   constructor(
