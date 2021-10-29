@@ -21,7 +21,7 @@ import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 export class UnitCapacityWorkspaceController {
   constructor(
     private readonly service: UnitCapacityWorkspaceService,
-    private readonly Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -52,7 +52,7 @@ export class UnitCapacityWorkspaceController {
     @Param('unitRecordId') unitRecordId: number,
     @Body() payload: UpdateUnitCapacityDTO,
   ): Promise<UnitCapacityDTO> {
-    this.Logger.info('Creating Unit Capcity', {
+    this.logger.info('Creating Unit Capcity', {
       userId: userId,
       unitRecordId: unitRecordId,
       payload: payload,
@@ -79,7 +79,7 @@ export class UnitCapacityWorkspaceController {
     @Body() payload: UpdateUnitCapacityDTO,
     @CurrentUser() userId: string,
   ): Promise<UnitCapacityDTO> {
-    this.Logger.info('Updating Unit Capacity', {
+    this.logger.info('Updating Unit Capacity', {
       userId,
       unitRecordId,
       unitCapacityId,

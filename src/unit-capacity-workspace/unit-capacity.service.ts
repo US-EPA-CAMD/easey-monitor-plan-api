@@ -10,7 +10,7 @@ import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
 @Injectable()
 export class UnitCapacityWorkspaceService {
   constructor(
-    private readonly Logger: Logger,
+    private readonly logger: Logger,
     private readonly repository: UnitCapacityWorkspaceRepository,
     private readonly map: UnitCapacityMap,
   ) {}
@@ -38,7 +38,7 @@ export class UnitCapacityWorkspaceService {
       unitCapacityId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
+      this.logger.error(NotFoundException, 'Monitor Load Not Found', {
         unitRecordId: unitRecordId,
         unitCapacityId: unitCapacityId,
       });
