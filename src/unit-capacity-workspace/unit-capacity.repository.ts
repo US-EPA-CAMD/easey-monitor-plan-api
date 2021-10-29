@@ -14,4 +14,18 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
       .andWhere('u.id = :unitRecordId', { unitRecordId })
       .getMany();
   }
+
+  async getUnitCapacity(
+    locId: string,
+    unitRecordId: number,
+    unitCapacityId: string,
+  ): Promise<UnitCapacity> {
+    return this.createQueryBuilder('uc')
+      .innerJoinAndSelect('uc.unit', 'u')
+      .innerJoinAndSelect('u.location', 'l')
+      .where('l.id = :locId', { locId })
+      .andWhere('u.id = :unitRecordId', { unitRecordId })
+      .andWhere('uc.id = :unitCapacityId', { unitCapacityId })
+      .getOne();
+  }
 }
