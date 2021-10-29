@@ -1,7 +1,7 @@
 export class LEEQualificationBaseDTO {
   qualificationTestDate: Date;
   parameterCode: string;
-  qualificationTestType: string;
+  qualificationTestTypeCode: string;
   potentialAnnualMassEmissions: number;
   applicableEmissionStandard: number;
   unitsOfStandard: string;
