@@ -9,8 +9,8 @@ const updateDate = new Date(Date.now());
 
 const qualificationTestDate = new Date(Date.now());
 const parameterCode = 'HG';
-const qualificationTestTypeCode = 'INITIAL';
-const potentialAnnualMassEmissions = null;
+const qualificationTestType = 'INITIAL';
+const potentialAnnualHgMassEmissions = null;
 const applicableEmissionStandard = 1.2;
 const unitsOfStandard = 'LBTBTU';
 const percentageOfEmissionStandard = 1.4;
@@ -19,9 +19,9 @@ const entity = new LEEQualification();
 entity.id = id;
 entity.qualificationId = qualId;
 entity.parameterCode = parameterCode;
-entity.qualificationTestTypeCode = qualificationTestTypeCode;
+entity.qualificationTestType = qualificationTestType;
 entity.qualificationTestDate = qualificationTestDate;
-entity.potentialAnnualMassEmissions = potentialAnnualMassEmissions;
+entity.potentialAnnualHgMassEmissions = potentialAnnualHgMassEmissions;
 entity.applicableEmissionStandard = applicableEmissionStandard;
 entity.unitsOfStandard = unitsOfStandard;
 entity.percentageOfEmissionStandard = percentageOfEmissionStandard;
@@ -36,10 +36,10 @@ describe('LEEQualificationMap', () => {
     expect(result.id).toEqual(id);
     expect(result.qualificationId).toEqual(qualId);
     expect(result.parameterCode).toEqual(parameterCode);
-    expect(result.qualificationTestTypeCode).toEqual(qualificationTestTypeCode);
+    expect(result.qualificationTestType).toEqual(qualificationTestType);
     expect(result.qualificationTestDate).toEqual(qualificationTestDate);
-    expect(result.potentialAnnualMassEmissions).toEqual(
-      potentialAnnualMassEmissions,
+    expect(result.potentialAnnualHgMassEmissions).toEqual(
+      potentialAnnualHgMassEmissions,
     );
     expect(result.unitsOfStandard).toEqual(unitsOfStandard);
     expect(result.percentageOfEmissionStandard).toEqual(

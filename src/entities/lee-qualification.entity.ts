@@ -24,10 +24,10 @@ export class LEEQualification extends BaseEntity {
   parameterCode: string;
 
   @Column({ name: 'qual_lee_test_type_cd' })
-  qualificationTestTypeCode: string;
+  qualificationTestType: string;
 
   @Column({ name: 'potential_annual_emissions' })
-  potentialAnnualMassEmissions: number;
+  potentialAnnualHgMassEmissions: number;
 
   @Column({ name: 'applicable_emission_standard' })
   applicableEmissionStandard: number;
