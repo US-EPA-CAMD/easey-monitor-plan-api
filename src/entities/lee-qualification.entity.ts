@@ -17,7 +17,7 @@ export class LEEQualification extends BaseEntity {
   @Column({ name: 'mon_qual_id' })
   qualificationId: string;
 
-  @Column({ name: 'qual_test_date' })
+  @Column({ type: 'date', name: 'qual_test_date' })
   qualificationTestDate: Date;
 
   @Column({ name: 'parameter_cd' })
