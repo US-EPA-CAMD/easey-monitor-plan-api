@@ -65,6 +65,8 @@ import { PCTQualificationWorkspaceModule } from './pct-qualification-workspace/p
 
 import { UnitFuelModule } from './unit-fuel/unit-fuel.module';
 import { UnitFuelWorkspaceModule } from './unit-fuel-workspace/unit-fuel.module';
+import { UnitCapacityWorkspaceModule } from './unit-capacity-workspace/unit-capacity.module';
+import { UnitCapacityModule } from './unit-capacity/unit-capacity.module';
 
 const routes: Routes = [
   {
@@ -173,6 +175,10 @@ const routes: Routes = [
         path: ':locId/units/:unitRecordId/unit-controls',
         module: UnitControlModule,
       },
+      {
+        path: ':locId/units/:unitRecordId/unit-capacities',
+        module: UnitCapacityModule,
+      },
     ],
   },
   {
@@ -260,6 +266,10 @@ const routes: Routes = [
       {
         path: ':locId/units/:unitRecordId/unit-controls',
         module: UnitControlWorkspaceModule,
+      },
+      {
+        path: ':locId/units/:unitRecordId/unit-capacities',
+        module: UnitCapacityWorkspaceModule,
       },
     ],
   },

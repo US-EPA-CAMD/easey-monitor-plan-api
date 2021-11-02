@@ -14,6 +14,7 @@ import { UnitOpStatus } from './unit-op-status.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { UnitFuel } from './unit-fuel.entity';
 import { UnitControl } from './unit-control.entity';
+import { UnitCapacity } from './unit-capacity.entity';
 
 @Entity({ name: 'camd.unit' })
 export class Unit extends BaseEntity {
@@ -75,4 +76,11 @@ export class Unit extends BaseEntity {
     { eager: true },
   )
   unitControls: UnitControl[];
+
+  @OneToMany(
+    () => UnitCapacity,
+    uc => uc.unit,
+    { eager: true },
+  )
+  unitCapacities: UnitCapacity[];
 }

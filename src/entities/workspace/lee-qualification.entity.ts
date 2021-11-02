@@ -17,17 +17,17 @@ export class LEEQualification extends BaseEntity {
   @Column({ name: 'mon_qual_id' })
   qualificationId: string;
 
-  @Column({ name: 'qual_test_date' })
+  @Column({ type: 'date', name: 'qual_test_date' })
   qualificationTestDate: Date;
 
   @Column({ name: 'parameter_cd' })
   parameterCode: string;
 
   @Column({ name: 'qual_lee_test_type_cd' })
-  qualificationTestTypeCode: string;
+  qualificationTestType: string;
 
   @Column({ name: 'potential_annual_emissions' })
-  potentialAnnualMassEmissions: number;
+  potentialAnnualHgMassEmissions: number;
 
   @Column({ name: 'applicable_emission_standard' })
   applicableEmissionStandard: number;

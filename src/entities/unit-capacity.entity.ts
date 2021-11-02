@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmps.unit_capacity' })
 export class UnitCapacity extends BaseEntity {
@@ -41,4 +49,11 @@ export class UnitCapacity extends BaseEntity {
 
   @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
+
+  @ManyToOne(
+    () => Unit,
+    u => u.unitCapacities,
+  )
+  @JoinColumn({ name: 'unit_id' })
+  unit: Unit;
 }
