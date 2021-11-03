@@ -8,11 +8,13 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
     locId: string,
     unitRecordId: number,
   ): Promise<UnitCapacity[]> {
-    return this.createQueryBuilder('uc')
+    const query = this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
-      .innerJoinAndSelect('u.location', 'l')
-      .andWhere('u.id = :unitRecordId', { unitRecordId })
-      .getMany();
+      .innerJoin('u.location', 'l')
+      .where('l.id = :locId', { locId })
+      .andWhere('u.id = :unitRecordId', { unitRecordId });
+
+    return query.getMany();
   }
 
   async getUnitCapacity(

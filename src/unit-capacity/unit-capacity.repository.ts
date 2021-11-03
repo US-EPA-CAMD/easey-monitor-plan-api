@@ -6,12 +6,12 @@ import { UnitCapacity } from '../entities/unit-capacity.entity';
 export class UnitCapacityRepository extends Repository<UnitCapacity> {
   async getUnitCapacities(
     locId: string,
-    unitRecordId,
+    unitId: number,
   ): Promise<UnitCapacity[]> {
     return this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.location', 'l')
-      .andWhere('u.id = :unitRecordId', { unitRecordId })
+      .andWhere('u.id = :unitId', { unitId })
       .getMany();
   }
 }

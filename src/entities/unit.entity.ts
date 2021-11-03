@@ -15,6 +15,7 @@ import { MonitorLocation } from './monitor-location.entity';
 import { UnitFuel } from './unit-fuel.entity';
 import { UnitControl } from './unit-control.entity';
 import { UnitCapacity } from './unit-capacity.entity';
+import { UnitBoilerType } from './unit-boiler-type.entity';
 
 @Entity({ name: 'camd.unit' })
 export class Unit extends BaseEntity {
@@ -32,6 +33,18 @@ export class Unit extends BaseEntity {
     name: 'unit_description',
   })
   description: string;
+
+  @Column({
+    type: 'date',
+    name: 'comr_op_date',
+  })
+  commercialOperationDate: Date;
+
+  @Column({
+    type: 'date',
+    name: 'comm_op_date',
+  })
+  operationDate: Date;
 
   @Column({
     name: 'non_load_based_ind',
@@ -62,6 +75,13 @@ export class Unit extends BaseEntity {
     { eager: true },
   )
   opStatuses: UnitOpStatus[];
+
+  @OneToOne(
+    () => UnitBoilerType,
+    ubt => ubt.unit,
+    { eager: true },
+  )
+  unitBoilerType: UnitBoilerType;
 
   @OneToMany(
     () => UnitFuel,

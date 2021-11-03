@@ -268,7 +268,7 @@ const routes: Routes = [
         module: UnitControlWorkspaceModule,
       },
       {
-        path: ':locId/units/:unitRecordId/unit-capacities',
+        path: ':locId/units/:unitId/unit-capacities',
         module: UnitCapacityWorkspaceModule,
       },
     ],
