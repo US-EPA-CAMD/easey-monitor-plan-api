@@ -24,10 +24,10 @@ export class MonitorQualification extends BaseEntity {
   @Column({ name: 'qual_type_cd' })
   qualificationTypeCode: string;
 
-  @Column({ name: 'begin_date' })
+  @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ name: 'end_date' })
+  @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })
