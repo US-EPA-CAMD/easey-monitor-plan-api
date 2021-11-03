@@ -168,15 +168,15 @@ const routes: Routes = [
         ],
       },
       {
-        path: ':locId/units/:unitRecordId/unit-fuels',
+        path: ':locId/units/:unitId/unit-fuels',
         module: UnitFuelModule,
       },
       {
-        path: ':locId/units/:unitRecordId/unit-controls',
+        path: ':locId/units/:unitId/unit-controls',
         module: UnitControlModule,
       },
       {
-        path: ':locId/units/:unitRecordId/unit-capacities',
+        path: ':locId/units/:unitId/unit-capacities',
         module: UnitCapacityModule,
       },
     ],
@@ -260,11 +260,11 @@ const routes: Routes = [
         ],
       },
       {
-        path: ':locId/units/:unitRecordId/unit-fuels',
+        path: ':locId/units/:unitId/unit-fuels',
         module: UnitFuelWorkspaceModule,
       },
       {
-        path: ':locId/units/:unitRecordId/unit-controls',
+        path: ':locId/units/:unitId/unit-controls',
         module: UnitControlWorkspaceModule,
       },
       {
