@@ -28,7 +28,7 @@ export class MonitorQualificationWorkspaceService {
   async getQualification(
     locId: string,
     qualId: string,
-  ): Promise<MonitorQualificationDTO> {
+  ): Promise<MonitorQualification> {
     const result = await this.repository.getQualification(locId, qualId);
     if (!result) {
       this.Logger.error(NotFoundException, 'Qualification Not Found', {
@@ -36,7 +36,7 @@ export class MonitorQualificationWorkspaceService {
         qualId: qualId,
       });
     }
-    return this.map.one(result);
+    return result;
   }
 
   async createQualification(
