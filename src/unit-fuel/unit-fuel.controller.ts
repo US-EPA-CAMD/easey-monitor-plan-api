@@ -17,8 +17,8 @@ export class UnitFuelController {
   })
   getUnitFuels(
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
   ): Promise<UnitFuelDTO[]> {
-    return this.service.getUnitFuels(locId, unitRecordId);
+    return this.service.getUnitFuels(locId, unitId);
   }
 }

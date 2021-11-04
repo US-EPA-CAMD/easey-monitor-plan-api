@@ -18,8 +18,8 @@ export class UnitControlController {
   })
   getUnitControls(
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
   ): Promise<UnitControlDTO[]> {
-    return this.service.getUnitControls(locId, unitRecordId);
+    return this.service.getUnitControls(locId, unitId);
   }
 }

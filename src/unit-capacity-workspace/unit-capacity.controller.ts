@@ -33,9 +33,9 @@ export class UnitCapacityWorkspaceController {
   })
   getUnitCapacities(
     @Param('locId') locationId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
   ): Promise<UnitCapacityDTO[]> {
-    return this.service.getUnitCapacities(locationId, unitRecordId);
+    return this.service.getUnitCapacities(locationId, unitId);
   }
 
   @Post()
@@ -49,20 +49,15 @@ export class UnitCapacityWorkspaceController {
   createUnitCapcity(
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
     @Body() payload: UpdateUnitCapacityDTO,
   ): Promise<UnitCapacityDTO> {
     this.logger.info('Creating Unit Capcity', {
-      userId: userId,
-      unitRecordId: unitRecordId,
-      payload: payload,
-    });
-    return this.service.createUnitCapacity(
       userId,
-      locId,
-      unitRecordId,
+      unitId,
       payload,
-    );
+    });
+    return this.service.createUnitCapacity(userId, locId, unitId, payload);
   }
 
   @Put(':unitCapacityId')
@@ -74,21 +69,21 @@ export class UnitCapacityWorkspaceController {
   })
   async updateUnitCapacity(
     @Param('locId') locationId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
     @Param('unitCapacityId') unitCapacityId: string,
     @Body() payload: UpdateUnitCapacityDTO,
     @CurrentUser() userId: string,
   ): Promise<UnitCapacityDTO> {
     this.logger.info('Updating Unit Capacity', {
       userId,
-      unitRecordId,
+      unitId,
       unitCapacityId,
       payload,
     });
     return this.service.updateUnitCapacity(
       userId,
       locationId,
-      unitRecordId,
+      unitId,
       unitCapacityId,
       payload,
     );

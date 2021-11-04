@@ -8,13 +8,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @ApiTags('Unit Fuels')
 @Controller()
@@ -33,9 +35,9 @@ export class UnitFuelWorkspaceController {
   })
   getUnitFuels(
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
   ): Promise<UnitFuelDTO[]> {
-    return this.service.getUnitFuels(locId, unitRecordId);
+    return this.service.getUnitFuels(locId, unitId);
   }
 
   @Put(':unitFuelId')
@@ -48,20 +50,20 @@ export class UnitFuelWorkspaceController {
   async updateUnitFuel(
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
     @Param('unitFuelId') unitFuelId: string,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
     this.Logger.info('Updating unit fuel', {
-      unitRecordId: unitRecordId,
-      unitFuelId: unitFuelId,
-      payload: payload,
-      userId: userId,
+      unitId,
+      unitFuelId,
+      payload,
+      userId,
     });
     return this.service.updateUnitFuel(
       userId,
       locId,
-      unitRecordId,
+      unitId,
       unitFuelId,
       payload,
     );
@@ -78,14 +80,14 @@ export class UnitFuelWorkspaceController {
   createUnitFuel(
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
     this.Logger.info('Creating unit fuel', {
-      unitRecordId: unitRecordId,
-      payload: payload,
-      userId: userId,
+      unitId,
+      payload,
+      userId,
     });
-    return this.service.createUnitFuel(userId, locId, unitRecordId, payload);
+    return this.service.createUnitFuel(userId, locId, unitId, payload);
   }
 }
