@@ -33,9 +33,9 @@ export class UnitControlWorkspaceController {
   })
   getUnitControls(
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
   ): Promise<UnitControlDTO[]> {
-    return this.service.getUnitControls(locId, unitRecordId);
+    return this.service.getUnitControls(locId, unitId);
   }
 
   @Put(':unitControlId')
@@ -48,20 +48,20 @@ export class UnitControlWorkspaceController {
   async updateUnitControl(
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
     @Param('unitControlId') unitControlId: string,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
     this.Logger.info('Updating Unit Control', {
-      userId: userId,
-      unitRecordId: unitRecordId,
-      unitControlId: unitControlId,
-      payload: payload,
+      userId,
+      unitId,
+      unitControlId,
+      payload,
     });
     return this.service.updateUnitControl(
       userId,
       locId,
-      unitRecordId,
+      unitId,
       unitControlId,
       payload,
     );
@@ -78,14 +78,14 @@ export class UnitControlWorkspaceController {
   createUnitControl(
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
     this.Logger.info('Creating Unit Control', {
-      userId: userId,
-      unitRecordId: unitRecordId,
-      payload: payload,
+      userId,
+      unitId,
+      payload,
     });
-    return this.service.createUnitControl(userId, locId, unitRecordId, payload);
+    return this.service.createUnitControl(userId, locId, unitId, payload);
   }
 }

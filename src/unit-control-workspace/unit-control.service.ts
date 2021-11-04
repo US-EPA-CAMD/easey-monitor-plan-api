@@ -19,25 +19,25 @@ export class UnitControlWorkspaceService {
 
   async getUnitControls(
     locId: string,
-    unitRecordId: number,
+    unitId: number,
   ): Promise<UnitControlDTO[]> {
-    const results = await this.repository.getUnitControls(locId, unitRecordId);
+    const results = await this.repository.getUnitControls(locId, unitId);
     return this.map.many(results);
   }
 
   async getUnitControl(
     locId: string,
-    unitRecordId: number,
+    unitId: number,
     unitControlId: string,
   ): Promise<UnitControlDTO> {
     const result = await this.repository.getUnitControl(
       locId,
-      unitRecordId,
+      unitId,
       unitControlId,
     );
     if (!result) {
       this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
-        unitRecordId: unitRecordId,
+        unitId: unitId,
         unitControlId: unitControlId,
       });
     }
@@ -47,14 +47,12 @@ export class UnitControlWorkspaceService {
   async createUnitControl(
     userId: string,
     locId: string,
-    unitRecordId: number,
+    unitId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    // temporary:
-    const testUserId = 'testuser';
     const load = this.repository.create({
       id: uuid(),
-      unitId: unitRecordId,
+      unitId: unitId,
       controlCode: payload.controlCode,
       parameterCode: payload.parameterCode,
       installDate: payload.installDate,
@@ -62,7 +60,7 @@ export class UnitControlWorkspaceService {
       originalCode: payload.originalCode,
       retireDate: payload.retireDate,
       seasonalControlsIndicator: payload.seasonalControlsIndicator,
-      userId: testUserId,
+      userId: userId.slice(0, 8),
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -74,15 +72,11 @@ export class UnitControlWorkspaceService {
   async updateUnitControl(
     userId: string,
     locId: string,
-    unitRecordId: number,
+    unitId: number,
     unitControlId: string,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.getUnitControl(
-      locId,
-      unitRecordId,
-      unitControlId,
-    );
+    const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;
@@ -91,12 +85,10 @@ export class UnitControlWorkspaceService {
     unitControl.originalCode = payload.originalCode;
     unitControl.retireDate = payload.retireDate;
     unitControl.seasonalControlsIndicator = payload.seasonalControlsIndicator;
-    // unitControl.userId = userId;
-    // temporary:
-    unitControl.userId = 'testuser';
+    unitControl.userId = userId.slice(0, 8);
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
-    return this.getUnitControl(locId, unitRecordId, unitControlId);
+    return this.getUnitControl(locId, unitId, unitControlId);
   }
 }

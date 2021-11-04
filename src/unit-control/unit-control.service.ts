@@ -15,9 +15,9 @@ export class UnitControlService {
 
   async getUnitControls(
     locId: string,
-    unitRecordId: number,
+    unitId: number,
   ): Promise<UnitControlDTO[]> {
-    const results = await this.repository.getUnitControls(locId, unitRecordId);
+    const results = await this.repository.getUnitControls(locId, unitId);
     return this.map.many(results);
   }
 }
