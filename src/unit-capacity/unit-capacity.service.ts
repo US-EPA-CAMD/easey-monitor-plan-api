@@ -8,7 +8,7 @@ import { UnitCapacityRepository } from './unit-capacity.repository';
 export class UnitCapacityService {
   constructor(
     private readonly repository: UnitCapacityRepository,
-    readonly map: UnitCapacityMap,
+    private readonly map: UnitCapacityMap,
   ) {}
 
   async getUnitCapacities(

@@ -3,7 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { Unit } from './unit.entity';
@@ -25,7 +25,7 @@ export class UnitBoilerType extends BaseEntity {
     nullable: false,
     name: 'unit_id',
   })
-  unitId: number;
+  unitRecordId: number;
 
   @Column({
     type: 'varchar',
@@ -38,6 +38,7 @@ export class UnitBoilerType extends BaseEntity {
   @Column({
     type: 'date',
     nullable: false,
+    name: 'begin_date',
   })
   beginDate: Date;
 
@@ -61,7 +62,7 @@ export class UnitBoilerType extends BaseEntity {
   })
   updateDate: Date;
 
-  @ManyToOne(
+  @OneToOne(
     () => Unit,
     u => u.unitBoilerType,
   )

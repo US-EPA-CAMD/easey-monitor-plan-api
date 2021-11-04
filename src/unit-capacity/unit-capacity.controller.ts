@@ -17,8 +17,8 @@ export class UnitCapacityController {
   })
   getUnitCapacities(
     @Param('locId') locId: string,
-    @Param('unitRecordId') unitRecordId: number,
+    @Param('unitId') unitId: number,
   ): Promise<UnitCapacityDTO[]> {
-    return this.service.getUnitCapacities(locId, unitRecordId);
+    return this.service.getUnitCapacities(locId, unitId);
   }
 }

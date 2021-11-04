@@ -69,19 +69,19 @@ export class Unit extends BaseEntity {
   )
   location: MonitorLocation;
 
-  @OneToMany(
-    () => UnitOpStatus,
-    uos => uos.unit,
-    { eager: true },
-  )
-  opStatuses: UnitOpStatus[];
-
   @OneToOne(
     () => UnitBoilerType,
     ubt => ubt.unit,
     { eager: true },
   )
   unitBoilerType: UnitBoilerType;
+
+  @OneToMany(
+    () => UnitOpStatus,
+    uos => uos.unit,
+    { eager: true },
+  )
+  opStatuses: UnitOpStatus[];
 
   @OneToMany(
     () => UnitFuel,

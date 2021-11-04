@@ -25,7 +25,7 @@ export class UnitBoilerType extends BaseEntity {
     nullable: false,
     name: 'unit_id',
   })
-  unitId: number;
+  unitRecordId: number;
 
   @Column({
     type: 'varchar',

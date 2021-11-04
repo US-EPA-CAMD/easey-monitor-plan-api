@@ -17,12 +17,11 @@ export class UnitCapacityWorkspaceService {
 
   async getUnitCapacities(
     locId: string,
-    unitRecordId: number,
+    unitId: number,
   ): Promise<UnitCapacityDTO[]> {
-    const results = await this.repository.getUnitCapacities(
-      locId,
-      unitRecordId,
-    );
+    const results = await this.repository.getUnitCapacities(locId, unitId);
+
+    console.log(results);
 
     return this.map.many(results);
   }
@@ -49,12 +48,12 @@ export class UnitCapacityWorkspaceService {
   async createUnitCapacity(
     userId: string,
     locId: string,
-    unitRecordId: number,
+    unitId: number,
     payload: UpdateUnitCapacityDTO,
   ): Promise<UnitCapacityDTO> {
-    const load = this.repository.create({
+    const unitCapacity = this.repository.create({
       id: uuid(),
-      unitId: unitRecordId,
+      unitId,
       maximumHourlyHeatInputCapacity: payload.maximumHourlyHeatInputCapacity,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
@@ -63,7 +62,8 @@ export class UnitCapacityWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(load);
+    const result = await this.repository.save(unitCapacity);
+
     return this.map.one(result);
   }
 
@@ -84,8 +84,6 @@ export class UnitCapacityWorkspaceService {
       payload.maximumHourlyHeatInputCapacity;
     unitCapacity.beginDate = payload.beginDate;
     unitCapacity.endDate = payload.endDate;
-    // unitCapacity.userId = userId;
-    // temporary:
     unitCapacity.userId = userId.slice(0, 8);
     unitCapacity.updateDate = new Date(Date.now());
 
