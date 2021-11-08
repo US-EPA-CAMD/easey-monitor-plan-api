@@ -28,18 +28,18 @@ export class UnitCapacityWorkspaceService {
 
   async getUnitCapacity(
     locId: string,
-    unitRecordId: number,
+    unitId: number,
     unitCapacityId: string,
   ): Promise<UnitCapacityDTO> {
     const result = await this.repository.getUnitCapacity(
       locId,
-      unitRecordId,
+      unitId,
       unitCapacityId,
     );
     if (!result) {
       this.logger.error(NotFoundException, 'Monitor Load Not Found', {
-        unitRecordId: unitRecordId,
-        unitCapacityId: unitCapacityId,
+        unitId,
+        unitCapacityId,
       });
     }
     return this.map.one(result);
@@ -64,7 +64,7 @@ export class UnitCapacityWorkspaceService {
 
     const result = await this.repository.save(unitCapacity);
 
-    return this.map.one(result);
+    return this.getUnitCapacity(locId, unitId, result.id);
   }
 
   async updateUnitCapacity(
