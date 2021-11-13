@@ -14,7 +14,7 @@ export class MonitorAttributeWorkspaceService {
     @InjectRepository(MonitorAttributeWorkspaceRepository)
     private readonly repository: MonitorAttributeWorkspaceRepository,
     private readonly map: MonitorAttributeMap,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getAttributes(locationId: string): Promise<MonitorAttributeDTO[]> {
@@ -67,7 +67,7 @@ export class MonitorAttributeWorkspaceService {
 
     const result = await this.repository.save(attribute);
 
-    return await this.getAttribute(locationId, result.id);
+    return this.getAttribute(locationId, result.id);
   }
 
   async updateAttribute(
@@ -78,21 +78,21 @@ export class MonitorAttributeWorkspaceService {
   ): Promise<MonitorAttributeDTO> {
     const attribute = await this.getAttribute(locationId, id);
 
-    (attribute.ductIndicator = payload.ductIndicator),
-      (attribute.bypassIndicator = payload.bypassIndicator),
-      (attribute.groundElevation = payload.groundElevation),
-      (attribute.stackHeight = payload.stackHeight),
-      (attribute.materialCode = payload.materialCode),
-      (attribute.shapeCode = payload.shapeCode),
-      (attribute.crossAreaFlow = payload.crossAreaFlow),
-      (attribute.crossAreaStackExit = payload.crossAreaStackExit),
-      (attribute.beginDate = payload.beginDate),
-      (attribute.endDate = payload.endDate),
-      (attribute.userId = userId.slice(0, 8)),
-      (attribute.updateDate = new Date(Date.now()));
+    attribute.ductIndicator = payload.ductIndicator;
+    attribute.bypassIndicator = payload.bypassIndicator;
+    attribute.groundElevation = payload.groundElevation;
+    attribute.stackHeight = payload.stackHeight;
+    attribute.materialCode = payload.materialCode;
+    attribute.shapeCode = payload.shapeCode;
+    attribute.crossAreaFlow = payload.crossAreaFlow;
+    attribute.crossAreaStackExit = payload.crossAreaStackExit;
+    attribute.beginDate = payload.beginDate;
+    attribute.endDate = payload.endDate;
+    attribute.userId = userId.slice(0, 8);
+    attribute.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(attribute);
+    await this.repository.save(attribute);
 
-    return await this.getAttribute(locationId, id);
+    return this.getAttribute(locationId, id);
   }
 }

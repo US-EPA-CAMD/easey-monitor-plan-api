@@ -86,8 +86,8 @@ export class MonitorFormulaWorkspaceService {
     formula.userId = userId.slice(0, 8);
     formula.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(formula);
+    await this.repository.save(formula);
 
-    return await this.getFormula(locationId, formulaRecordId);
+    return this.getFormula(locationId, formulaRecordId);
   }
 }
