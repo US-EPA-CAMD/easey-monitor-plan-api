@@ -22,7 +22,7 @@ export class LEEQualificationWorkspaceController {
   constructor(
     private readonly service: LEEQualificationWorkspaceService,
     private Logger: Logger,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -44,7 +44,7 @@ export class LEEQualificationWorkspaceController {
   @ApiOkResponse({
     type: LEEQualificationDTO,
     description:
-      'Updates a workspace PCT qualification by PCT qualification ID, qualification ID, and location ID',
+      'Updates a workspace LEE qualification by LEE qualification ID, qualification ID, and location ID',
   })
   async updateLEEQualification(
     @CurrentUser() userId: string,
@@ -53,7 +53,7 @@ export class LEEQualificationWorkspaceController {
     @Param('leeQualId') leeQualId: string,
     @Body() payload: UpdateLEEQualificationDTO,
   ): Promise<LEEQualificationDTO> {
-    this.Logger.info('Updating PCT qualification', {
+    this.Logger.info('Updating LEE qualification', {
       qualId: qualId,
       leeQualId: leeQualId,
       payload: payload,
@@ -75,7 +75,7 @@ export class LEEQualificationWorkspaceController {
     isArray: true,
     type: LEEQualificationDTO,
     description:
-      'Creates a PCT Qualification record for a qualification and monitor location',
+      'Creates a LEE Qualification record for a qualification and monitor location',
   })
   createLEEQualification(
     @CurrentUser() userId: string,
@@ -83,7 +83,7 @@ export class LEEQualificationWorkspaceController {
     @Param('qualId') qualId: string,
     @Body() payload: UpdateLEEQualificationDTO,
   ): Promise<LEEQualificationDTO> {
-    this.Logger.info('Creating PCT Qualification', {
+    this.Logger.info('Creating LEE Qualification', {
       userId: userId,
       locId: locId,
       qualId: qualId,

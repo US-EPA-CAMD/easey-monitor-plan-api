@@ -11,7 +11,10 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 @ApiTags('LME Qualifications')
 @Controller()
 export class LMEQualificationWorkspaceController {
-  constructor(private readonly service: LMEQualificationWorkspaceService) { }
+  constructor(
+    private readonly service: LMEQualificationWorkspaceService,
+    private Logger: Logger,
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -66,7 +69,7 @@ export class LMEQualificationWorkspaceController {
     description:
       'Creates an LME Qualification record for a qualification and monitor location',
   })
-  createLEEQualification(
+  createLMEQualification(
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
