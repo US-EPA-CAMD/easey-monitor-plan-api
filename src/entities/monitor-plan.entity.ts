@@ -31,6 +31,12 @@ export class MonitorPlan extends BaseEntity {
   })
   endReportPeriodId: number;
 
+  // pointing to needs_eval_flag because there is no eval_status_cd column in global view
+  @Column({
+    name: 'needs_eval_flag',
+  })
+  evalStatusCode: string;
+
   @ManyToOne(
     () => Plant,
     plant => plant.plans,

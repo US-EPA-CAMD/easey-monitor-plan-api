@@ -31,6 +31,11 @@ export class MonitorPlan extends BaseEntity {
   })
   endReportPeriodId: number;
 
+  @Column({
+    name: 'eval_status_cd',
+  })
+  evalStatusCode: string;
+
   @ManyToOne(
     () => Plant,
     plant => plant.plans,
