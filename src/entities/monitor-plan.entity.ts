@@ -31,9 +31,9 @@ export class MonitorPlan extends BaseEntity {
   })
   endReportPeriodId: number;
 
-  // pointing to needs_eval_flag because there is no eval_status_cd column in global view
+  // pointing to needs_eval_flg because there is no eval_status_cd column in global view
   @Column({
-    name: 'needs_eval_flag',
+    name: 'needs_eval_flg',
   })
   evalStatusCode: string;
 
