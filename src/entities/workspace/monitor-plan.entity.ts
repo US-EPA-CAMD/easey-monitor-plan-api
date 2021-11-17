@@ -31,6 +31,22 @@ export class MonitorPlan extends BaseEntity {
   })
   endReportPeriodId: number;
 
+  @Column({
+    name: 'eval_status_cd',
+  })
+  evalStatusCode: string;
+
+  @Column({
+    name: 'userid',
+  })
+  userId: string;
+
+  @Column({ type: 'date', nullable: false, name: 'add_date' })
+  addDate: Date;
+
+  @Column({ type: 'date', name: 'update_date' })
+  updateDate: Date;
+
   @ManyToOne(
     () => Plant,
     plant => plant.plans,
