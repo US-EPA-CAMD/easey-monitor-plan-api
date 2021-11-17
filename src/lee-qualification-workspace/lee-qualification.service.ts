@@ -15,7 +15,7 @@ export class LEEQualificationWorkspaceService {
     private repository: LEEQualificationWorkspaceRepository,
     private map: LEEQualificationMap,
     private Logger: Logger,
-  ) {}
+  ) { }
 
   async getLEEQualifications(
     locId: string,
@@ -36,7 +36,7 @@ export class LEEQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'PCT Qualification Not Found', {
+      this.Logger.error(NotFoundException, 'LEE Qualification Not Found', {
         locId: locId,
         qualId: qualId,
         pctQualId: pctQualId,
