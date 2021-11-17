@@ -50,11 +50,11 @@ export class MonitorFormulaWorkspaceController {
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
     this.Logger.info('Creating Formula', {
-      locationId: locationId,
-      payload: payload,
-      userId: userId,
+      locationId,
+      payload,
+      userId,
     });
-    return this.service.createFormula(locationId, payload);
+    return this.service.createFormula(locationId, payload, userId);
   }
 
   @Put(':formulaId')
@@ -72,11 +72,16 @@ export class MonitorFormulaWorkspaceController {
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
     this.Logger.info('Updating Formula', {
-      locationId: locationId,
-      formulaRecordId: formulaRecordId,
-      payload: payload,
-      userId: userId,
+      locationId,
+      formulaRecordId,
+      payload,
+      userId,
     });
-    return this.service.updateFormula(locationId, formulaRecordId, payload);
+    return this.service.updateFormula(
+      locationId,
+      formulaRecordId,
+      payload,
+      userId,
+    );
   }
 }

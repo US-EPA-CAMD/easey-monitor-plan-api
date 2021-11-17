@@ -44,6 +44,7 @@ export class MonitorFormulaWorkspaceService {
   async createFormula(
     locationId: string,
     payload: UpdateMonitorFormulaDTO,
+    userId: string,
   ): Promise<MonitorFormulaDTO> {
     const formula = this.repository.create({
       id: uuid(),
@@ -56,20 +57,21 @@ export class MonitorFormulaWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: 'testuser',
+      userId: userId.slice(0, 8),
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(formula);
 
-    return this.map.one(result);
+    return this.getFormula(locationId, result.id);
   }
 
   async updateFormula(
     locationId: string,
     formulaRecordId: string,
     payload: UpdateMonitorFormulaDTO,
+    userId: string,
   ) {
     const formula = await this.getFormula(locationId, formulaRecordId);
 
@@ -81,11 +83,11 @@ export class MonitorFormulaWorkspaceService {
     formula.beginHour = payload.beginHour;
     formula.endDate = payload.endDate;
     formula.endHour = payload.endHour;
-    formula.userId = 'testuser';
+    formula.userId = userId.slice(0, 8);
     formula.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(formula);
+    await this.repository.save(formula);
 
-    return this.map.one(result);
+    return this.getFormula(locationId, formulaRecordId);
   }
 }
