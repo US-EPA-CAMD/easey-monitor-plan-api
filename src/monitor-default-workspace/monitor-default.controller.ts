@@ -62,7 +62,6 @@ export class MonitorDefaultWorkspaceController {
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    isArray: true,
     type: MonitorDefaultDTO,
     description: 'Creates a workspace defaults record for a monitor location',
   })
