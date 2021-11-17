@@ -25,6 +25,9 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       unitStackConfiguration: null,
       locations: locations,
       evalStatusCode: entity.evalStatusCode,
+      userId: entity.userId,
+      addDate: entity.addDate,
+      updateDate: entity.updateDate,
     };
   }
 }

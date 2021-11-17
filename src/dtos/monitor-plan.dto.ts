@@ -13,4 +13,7 @@ export class MonitorPlanDTO {
   unitStackConfiguration: UnitStackConfigurationDTO[];
   locations: MonitorLocationDTO[];
   evalStatusCode: string;
+  userId: string;
+  addDate: Date;
+  updateDate: Date;
 }
