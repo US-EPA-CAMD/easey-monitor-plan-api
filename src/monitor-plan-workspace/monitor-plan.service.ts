@@ -59,7 +59,6 @@ export class MonitorPlanWorkspaceService {
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
-    const currDate = new Date(Date.now());
     return this.repository.updateDateAndUserId(monPlanId, userId);
   }
 }
