@@ -115,7 +115,11 @@ export class MonitorPlanWorkspaceController {
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
-  checkInConfiguration(@Param('planId') planId: string): Promise<void> {
+  checkInConfiguration(
+    @Param('planId') planId: string,
+    @CurrentUser() userId: string,
+  ): Promise<void> {
+    this.service.updateDateAndUserId(planId, userId);
     return this.ucoService.checkInConfiguration(planId);
   }
 

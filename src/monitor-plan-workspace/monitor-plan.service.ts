@@ -57,4 +57,8 @@ export class MonitorPlanWorkspaceService {
     console.log(monPlanId);
     return new MonitorPlanDTO();
   }
+
+  async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
+    return this.repository.updateDateAndUserId(monPlanId, userId);
+  }
 }
