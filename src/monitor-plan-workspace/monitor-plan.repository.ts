@@ -25,10 +25,12 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
 
   async updateDateAndUserId(monPlanId: string, userId: string) {
     try {
+      // temporary fix for 8 character limit in database:
+      const shortUserId = userId.substring(0, 8);
       const currDate = new Date(Date.now());
       await this.query(
         'UPDATE camdecmpswks.monitor_plan SET update_date = $1, userid = $2 WHERE mon_plan_id = $3',
-        [currDate, userId, monPlanId],
+        [currDate, shortUserId, monPlanId],
       );
     } catch (error) {
       throw new BadRequestException(error['message']);
