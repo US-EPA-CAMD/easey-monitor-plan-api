@@ -22,4 +22,16 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       throw new BadRequestException(error['message']);
     }
   }
+
+  async updateDateAndUserId(monPlanId: string, userId: string) {
+    try {
+      const currDate = new Date(Date.now());
+      await this.query(
+        'UPDATE camdecmpswks.monitor_plan SET update_date = $1, userid = $2 WHERE mon_plan_id = $3',
+        [currDate, userId, monPlanId],
+      );
+    } catch (error) {
+      throw new BadRequestException(error['message']);
+    }
+  }
 }
