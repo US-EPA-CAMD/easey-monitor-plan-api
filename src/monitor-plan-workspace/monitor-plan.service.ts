@@ -54,8 +54,12 @@ export class MonitorPlanWorkspaceService {
   }
 
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
-    console.log(monPlanId);
-    return new MonitorPlanDTO();
+    const mp = await this.repository.getMonitorPlan(monPlanId);
+    let mpDTO = new MonitorPlanDTO();
+    mpDTO.id = mp.id;
+    mpDTO.updateDate = mp.updateDate;
+    mpDTO.userId = mp.userId;
+    return mpDTO;
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {

@@ -36,4 +36,11 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       throw new BadRequestException(error['message']);
     }
   }
+
+  async getMonitorPlan(planId: string): Promise<MonitorPlan> {
+    return this.createQueryBuilder('plan')
+      .innerJoinAndSelect('plan.plant', 'plant')
+      .where('plan.id = :planId', { planId })
+      .getOne();
+  }
 }
