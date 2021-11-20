@@ -121,8 +121,16 @@ export class MonitorPlanWorkspaceController {
     @Param('planId') planId: string,
     @CurrentUser() userId: string,
   ): Promise<void> {
-    this.service.updateDateAndUserId(planId, userId);
-    return this.ucoService.checkInConfiguration(planId);
+    this.ucoService.checkInConfiguration(planId).then(res => {
+      console.log('res', res);
+      if (res) {
+        this.service.updateDateAndUserId(planId, userId);
+        console.log(
+          'updated update date and user id for closed/checked-in plan.',
+        );
+      }
+    });
+    return;
   }
 
   @Delete(':planId/revert')
