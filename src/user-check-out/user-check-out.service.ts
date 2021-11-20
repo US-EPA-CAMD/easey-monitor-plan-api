@@ -54,11 +54,8 @@ export class UserCheckOutService {
     return this.repository.save(record);
   }
 
-  async checkInConfiguration(monPlanId: string): Promise<void> {
+  async checkInConfiguration(monPlanId: string): Promise<Boolean> {
     const result = await this.repository.delete({ monPlanId });
-
-    if (result.affected === 0) {
-      this.Logger.error(NotFoundException, 'No record found to check in');
-    }
+    return result.affected !== 0;
   }
 }
