@@ -20,6 +20,7 @@ import { MonitorLocationRepository } from './monitor-location.repository';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationController } from './monitor-location.controller';
 import { MonitorLocationService } from './monitor-location.service';
+import { UnitStackConfigurationModule } from '../unit-stack-configuration/unit-stack-configuration.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { MonitorLocationService } from './monitor-location.service';
     ComponentModule,
     MonitorSystemModule,
     MonitorQualificationModule,
+    UnitStackConfigurationModule,
     TypeOrmModule.forFeature([MonitorLocationRepository]),
   ],
   controllers: [MonitorLocationController],

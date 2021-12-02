@@ -18,4 +18,9 @@ export class MonitorLocationController {
   getLocation(@Param('locId') locationId: string): Promise<MonitorLocationDTO> {
     return this.service.getLocation(locationId);
   }
+
+  @Get('relationships')
+  async getLocationRelationships(@Param('locId') locId: string) {
+    return this.service.getLocationRelationships(locId);
+  }
 }

@@ -4,6 +4,7 @@ import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationRepository } from './monitor-location.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { UnitStackConfigurationService } from '../unit-stack-configuration/unit-stack-configuration.service';
 
 @Injectable()
 export class MonitorLocationService {
@@ -11,6 +12,7 @@ export class MonitorLocationService {
     @InjectRepository(MonitorLocationRepository)
     readonly repository: MonitorLocationRepository,
     readonly map: MonitorLocationMap,
+    private readonly uscServcie: UnitStackConfigurationService,
     private Logger: Logger,
   ) {}
 
@@ -24,5 +26,11 @@ export class MonitorLocationService {
     }
 
     return this.map.one(result);
+  }
+
+  async getLocationRelationships(locId: string) {
+    const location = await this.getLocation(locId);
+
+    return this.uscServcie.getUnitStackRelationships(location);
   }
 }
