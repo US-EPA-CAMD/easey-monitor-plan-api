@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
-import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
@@ -9,7 +8,7 @@ import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 export class UnitStackConfigurationWorkspaceService {
   constructor(
     private readonly repository: UnitStackConfigurationWorkspaceRepository,
-    private map: UnitStackConfigurationMap,
+    private readonly map: UnitStackConfigurationMap,
   ) {}
 
   async getUnitStackRelationships(location: MonitorLocationDTO) {

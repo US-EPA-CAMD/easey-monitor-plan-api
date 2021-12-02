@@ -67,7 +67,6 @@ import { UnitFuelModule } from './unit-fuel/unit-fuel.module';
 import { UnitFuelWorkspaceModule } from './unit-fuel-workspace/unit-fuel.module';
 import { UnitCapacityWorkspaceModule } from './unit-capacity-workspace/unit-capacity.module';
 import { UnitCapacityModule } from './unit-capacity/unit-capacity.module';
-import { UnitStackConfigurationWorkspaceModule } from './unit-stack-configuration-workspace/unit-stack-configuration.module';
 
 const routes: Routes = [
   {

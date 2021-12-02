@@ -31,6 +31,6 @@ export class MonitorLocationWorkspaceService {
   async getLocationRelationships(locId: string) {
     const location = await this.getLocation(locId);
 
-    return await this.uscServcie.getUnitStackRelationships(location);
+    return this.uscServcie.getUnitStackRelationships(location);
   }
 }
