@@ -94,6 +94,10 @@ const routes: Routes = [
     module: MonitorLocationModule,
     children: [
       {
+        path: ':locId',
+        module: MonitorLocationModule,
+      },
+      {
         path: ':locId/attributes',
         module: MonitorAttributeModule,
       },
@@ -185,6 +189,10 @@ const routes: Routes = [
     path: '/workspace/locations',
     module: MonitorLocationWorkspaceModule,
     children: [
+      {
+        path: ':locId',
+        module: MonitorLocationWorkspaceModule,
+      },
       {
         path: ':locId/attributes',
         module: MonitorAttributeWorkspaceModule,

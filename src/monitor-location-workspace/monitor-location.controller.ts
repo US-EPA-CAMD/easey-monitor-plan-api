@@ -8,7 +8,7 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
 export class MonitorLocationWorkspaceController {
   constructor(readonly service: MonitorLocationWorkspaceService) {}
 
-  @Get(':locId')
+  @Get()
   @ApiOkResponse({
     isArray: true,
     type: MonitorLocationDTO,
@@ -17,5 +17,10 @@ export class MonitorLocationWorkspaceController {
   })
   getLocation(@Param('locId') locationId: string): Promise<MonitorLocationDTO> {
     return this.service.getLocation(locationId);
+  }
+
+  @Get('relationships')
+  async getLocationRelationships(@Param('locId') locId: string) {
+    return this.service.getLocationRelationships(locId);
   }
 }

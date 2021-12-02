@@ -8,7 +8,7 @@ import { MonitorLocationService } from './monitor-location.service';
 export class MonitorLocationController {
   constructor(readonly service: MonitorLocationService) {}
 
-  @Get(':locId')
+  @Get()
   @ApiOkResponse({
     isArray: true,
     type: MonitorLocationDTO,
