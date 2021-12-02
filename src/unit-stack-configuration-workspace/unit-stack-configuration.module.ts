@@ -6,7 +6,6 @@ import { UnitStackConfigurationWorkspaceController } from './unit-stack-configur
 import { UnitStackConfigurationWorkspaceService } from './unit-stack-configuration.service';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([UnitStackConfigurationWorkspaceRepository]),

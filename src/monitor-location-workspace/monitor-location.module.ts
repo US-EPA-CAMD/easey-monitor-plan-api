@@ -16,6 +16,7 @@ import { MonitorLoadWorkspaceModule } from '../monitor-load-workspace/monitor-lo
 import { ComponentWorkspaceModule } from '../component-workspace/component.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
 import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-workspace/monitor-qualification.module';
+import { UnitStackConfigurationWorkspaceModule } from '../unit-stack-configuration-workspace/unit-stack-configuration.module';
 
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
@@ -38,11 +39,12 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     ComponentWorkspaceModule,
     MonitorSystemWorkspaceModule,
     MonitorQualificationWorkspaceModule,
+    UnitStackConfigurationWorkspaceModule,
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
     HttpModule,
   ],
   controllers: [MonitorLocationWorkspaceController],
   providers: [MonitorLocationMap, MonitorLocationWorkspaceService],
-  exports: [TypeOrmModule, MonitorLocationMap],
+  exports: [TypeOrmModule, MonitorLocationWorkspaceService, MonitorLocationMap],
 })
 export class MonitorLocationWorkspaceModule {}
