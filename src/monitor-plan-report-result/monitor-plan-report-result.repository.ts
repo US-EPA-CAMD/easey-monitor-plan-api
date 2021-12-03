@@ -10,13 +10,4 @@ export class MonitorPlanReportResultRepository extends Repository<
       .where('mppr.planId = :planId', { planId })
       .getMany();
   }
-
-  // ccd.process_cd=MP and the cs.mon_plan_id=[mon_plan_id passed to the API]
-
-  // async getMonitorPlan(planId: string): Promise<MonitorPlan> {
-  //   return this.createQueryBuilder('plan')
-  //     .innerJoinAndSelect('plan.plant', 'plant')
-  //     .where('plan.id = :planId', { planId })
-  //     .getOne();
-  // }
 }
