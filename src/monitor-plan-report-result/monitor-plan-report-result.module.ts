@@ -9,4 +9,4 @@ import { MonitorPlanReportResultService } from './monitor-plan-report-result.ser
   providers: [MonitorPlanReportResultService],
   exports: [TypeOrmModule, MonitorPlanReportResultService],
 })
-export class MonitorQualificationModule {}
+export class MonitorPlanReportResultModule {}

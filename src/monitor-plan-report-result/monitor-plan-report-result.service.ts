@@ -1,11 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { MonitorPlanReportResult } from "../entities/vw-monitor-plan-report-results.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MonitorPlanReportResultRepository } from './monitor-plan-report-result.repository';
 
 @Injectable()
 export class MonitorPlanReportResultService {
   constructor(
-    @InjectRepository(MonitorPlanReportResult)
-    private readonly repository: MonitorPlanReportResult
+    @InjectRepository(MonitorPlanReportResultRepository)
+    private readonly repository: MonitorPlanReportResultRepository,
   ) {}
+
+  async getMPReportResults(planId: string) {
+    return await this.repository.getMPReportResults(planId);
+  }
 }

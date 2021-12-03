@@ -10,6 +10,6 @@ export class MPEvaluationReportDTO {
   facilityName: string;
   facilityId: number;
   state: string;
-  county: string;
+  countyName: string;
   mpReportResults: MPReportResults[];
 }

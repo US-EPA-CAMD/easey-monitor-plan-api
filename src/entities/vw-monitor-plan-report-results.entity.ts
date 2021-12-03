@@ -4,18 +4,33 @@ import { ViewColumn, ViewEntity } from 'typeorm';
   name: 'camdecmpswks.vw_mp_evaluation_results',
 })
 export class MonitorPlanReportResult {
-  @ViewColumn()
+  @ViewColumn({
+    name: 'monitorplanid',
+  })
+  planId: string;
+
+  @ViewColumn({
+    name: 'unitstackinformation',
+  })
   unitStackInformation: string;
 
-  @ViewColumn()
+  @ViewColumn({
+    name: 'severitycode',
+  })
   severityCode: string;
 
-  @ViewColumn()
+  @ViewColumn({
+    name: 'categorycodedescription',
+  })
   categoryCodeDescription: string;
 
-  @ViewColumn()
+  @ViewColumn({
+    name: 'checkcode',
+  })
   checkCode: string;
 
-  @ViewColumn()
+  @ViewColumn({
+    name: 'resultmessage',
+  })
   resultMessage: string;
 }

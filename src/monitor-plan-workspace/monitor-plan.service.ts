@@ -8,7 +8,8 @@ import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { CountyCodeService } from '../county-code/county-code.service';
-import { MPEvaluationReportDTO } from 'src/dtos/mp-evaluation-report.dto';
+import { MonitorPlanReportResultService } from '../monitor-plan-report-result/monitor-plan-report-result.service';
+import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -18,6 +19,7 @@ export class MonitorPlanWorkspaceService {
     @InjectRepository(MonitorLocationWorkspaceRepository)
     private mlRepository: MonitorLocationWorkspaceRepository,
     private readonly countyCodeService: CountyCodeService,
+    private readonly mpReportResultService: MonitorPlanReportResultService,
     private map: MonitorPlanMap,
   ) {}
 
@@ -79,11 +81,18 @@ export class MonitorPlanWorkspaceService {
       mp.plant.countyCode,
     );
 
+    const mpReportResults = await this.mpReportResultService.getMPReportResults(
+      planId,
+    );
+
     mpEvalReport.facilityName = mp.plant.name;
     mpEvalReport.facilityId = mp.facId;
     mpEvalReport.state = county.stateCode;
-    mpEvalReport.county = mp.plant.countyCode;
+    mpEvalReport.countyName = county.countyName;
+    mpEvalReport.mpReportResults = mpReportResults;
 
     console.log('MP Eval Report', mpEvalReport);
+
+    return mpReportResults;
   }
 }
