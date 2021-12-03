@@ -57,6 +57,19 @@ export class MonitorPlanWorkspaceController {
     return this.service.getConfigurations(orisCode);
   }
 
+  @Get(':planId')
+  getPlan(@Param('planId') planId: string) {
+    return this.service.getMonitorPlan(planId);
+  }
+
+  @Get(':planId/evaluation-report')
+  @ApiOkResponse({
+    description: 'Retrieves facility information and evaluation results',
+  })
+  getEvaluationReport(@Param('planId') planId: string) {
+    return this.service.getEvaluationReport(planId);
+  }
+
   @Post('import')
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)

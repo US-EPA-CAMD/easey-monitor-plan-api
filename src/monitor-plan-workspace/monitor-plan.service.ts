@@ -7,6 +7,8 @@ import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { CountyCodeService } from '../county-code/county-code.service';
+import { MPEvaluationReportDTO } from 'src/dtos/mp-evaluation-report.dto';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -15,6 +17,7 @@ export class MonitorPlanWorkspaceService {
     private repository: MonitorPlanWorkspaceRepository,
     @InjectRepository(MonitorLocationWorkspaceRepository)
     private mlRepository: MonitorLocationWorkspaceRepository,
+    private readonly countyCodeService: CountyCodeService,
     private map: MonitorPlanMap,
   ) {}
 
@@ -55,6 +58,7 @@ export class MonitorPlanWorkspaceService {
 
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
     const mp = await this.repository.getMonitorPlan(monPlanId);
+    console.log(mp);
     let mpDTO = new MonitorPlanDTO();
     mpDTO.id = mp.id;
     mpDTO.updateDate = mp.updateDate;
@@ -64,5 +68,22 @@ export class MonitorPlanWorkspaceService {
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
     return this.repository.updateDateAndUserId(monPlanId, userId);
+  }
+
+  async getEvaluationReport(planId: string) {
+    let mpEvalReport: MPEvaluationReportDTO = new MPEvaluationReportDTO();
+
+    const mp = await this.repository.getMonitorPlan(planId);
+
+    const county = await this.countyCodeService.getCountyCode(
+      mp.plant.countyCode,
+    );
+
+    mpEvalReport.facilityName = mp.plant.name;
+    mpEvalReport.facilityId = mp.facId;
+    mpEvalReport.state = county.stateCode;
+    mpEvalReport.county = mp.plant.countyCode;
+
+    console.log('MP Eval Report', mpEvalReport);
   }
 }

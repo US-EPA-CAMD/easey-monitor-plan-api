@@ -19,6 +19,7 @@ import { UnitCapacityWorkspaceModule } from '../unit-capacity-workspace/unit-cap
 import { UnitControlWorkspaceModule } from '../unit-control-workspace/unit-control.module';
 import { UnitFuelWorkspaceModule } from '../unit-fuel-workspace/unit-fuel.module';
 import { UserCheckOutModule } from '../user-check-out/user-check-out.module';
+import { CountyCodeModule } from '../county-code/county-code.module';
 
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
@@ -44,6 +45,7 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
     UnitControlWorkspaceModule,
     UnitFuelWorkspaceModule,
     UserCheckOutModule,
+    CountyCodeModule,
     TypeOrmModule.forFeature([MonitorPlanWorkspaceRepository]),
     HttpModule,
   ],
