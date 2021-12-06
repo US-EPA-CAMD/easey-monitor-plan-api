@@ -6,4 +6,5 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
   addDate: Date;
   updateDate: Date;
   active: boolean;
+  stackName: string;
 }

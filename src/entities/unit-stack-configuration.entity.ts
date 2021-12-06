@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { StackPipe } from './stack-pipe.entity';
 
 @Entity({ name: 'camdecmps.unit_stack_configuration' })
 export class UnitStackConfiguration extends BaseEntity {
@@ -25,4 +33,12 @@ export class UnitStackConfiguration extends BaseEntity {
 
   @Column({ name: 'update_date' })
   updateDate: Date;
+
+  @OneToOne(
+    () => StackPipe,
+    stackPipe => stackPipe.unitStackConfig,
+    { eager: true },
+  )
+  @JoinColumn({ name: 'stack_pipe_id' })
+  stackPipe: StackPipe;
 }

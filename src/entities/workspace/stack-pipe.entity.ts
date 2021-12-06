@@ -6,10 +6,12 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { UnitStackConfiguration } from '../unit-stack-configuration.entity';
 
 @Entity({ name: 'camdecmpswks.stack_pipe' })
 export class StackPipe extends BaseEntity {
@@ -50,4 +52,10 @@ export class StackPipe extends BaseEntity {
     location => location.stackPipe,
   )
   locations: MonitorLocation[];
+
+  @OneToOne(
+    () => UnitStackConfiguration,
+    unitStackConfig => unitStackConfig.stackPipe,
+  )
+  unitStackConfig: UnitStackConfiguration;
 }
