@@ -57,10 +57,10 @@ export class MonitorPlanWorkspaceController {
     return this.service.getConfigurations(orisCode);
   }
 
-  @Get(':planId')
-  getPlan(@Param('planId') planId: string) {
-    return this.service.getMonitorPlan(planId);
-  }
+  // @Get(':planId')
+  // getPlan(@Param('planId') planId: string) {
+  //   return this.service.getMonitorPlan(planId);
+  // }
 
   @Get(':planId/evaluation-report')
   @ApiOkResponse({
