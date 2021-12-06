@@ -25,6 +25,11 @@ export class Plant extends BaseEntity {
   state: string;
 
   @Column({
+    name: 'county_cd',
+  })
+  countyCode: string;
+
+  @Column({
     name: 'epa_region',
   })
   region: number;

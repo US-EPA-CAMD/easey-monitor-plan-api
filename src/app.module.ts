@@ -18,6 +18,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
 /***** internal modules *****/
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
+import { CountyCodeModule } from './county-code/county-code.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-pla
     CorsOptionsModule,
     MonitorPlanModule,
     MonitorPlanWorkspaceModule,
+    CountyCodeModule,
   ],
   providers: [],
 })
