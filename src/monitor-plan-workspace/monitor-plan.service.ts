@@ -65,6 +65,7 @@ export class MonitorPlanWorkspaceService {
     mpDTO.id = mp.id;
     mpDTO.updateDate = mp.updateDate;
     mpDTO.userId = mp.userId;
+    mpDTO.evalStatusCode = mp.evalStatusCode;
     return mpDTO;
   }
 
