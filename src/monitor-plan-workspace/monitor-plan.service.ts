@@ -91,8 +91,6 @@ export class MonitorPlanWorkspaceService {
     mpEvalReport.countyName = county.countyName;
     mpEvalReport.mpReportResults = mpReportResults;
 
-    console.log('MP Eval Report', mpEvalReport);
-
-    return mpReportResults;
+    return mpEvalReport;
   }
 }
