@@ -1,8 +1,8 @@
 import { registerAs } from '@nestjs/config';
 
-const path = process.env.EASEY_MONITOR_PLAN_API_PATH || 'api/monitor-plan-mgmt';
+const path = process.env.EASEY_MONITOR_PLAN_API_PATH || 'monitor-plan-mgmt';
 const host = process.env.EASEY_MONITOR_PLAN_API_HOST || 'localhost';
-const port = process.env.EASEY_MONITOR_PLAN_API_PORT || 8080;
+const port = process.env.EASEY_MONITOR_PLAN_API_PORT || 8010;
 
 let uri = `https://${host}/${path}`;
 
@@ -15,14 +15,14 @@ export default registerAs('app', () => ({
   title: process.env.EASEY_MONITOR_PLAN_API_TITLE || 'Monitor Plan Management',
   path,
   host,
+  apiHost: process.env.EASEY_API_GATEWAY_HOST || 'api.epa.gov/easey/dev',
   port,
   uri,
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
   version: process.env.EASEY_MONITOR_PLAN_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
+  // AUTH API MUST BE RUN LOCALLY FOR LOCAL DEVELOPMENT
   authApi: {
-    uri:
-      process.env.REACT_APP_EASEY_AUTH_API ||
-      'https://easey-dev.app.cloud.gov/api/auth-mgmt',
+    uri: process.env.EASEY_AUTH_API || "https://localhost:8000/auth-mgmt",
   },
 }));
