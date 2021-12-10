@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 import {
   Get,
   Put,

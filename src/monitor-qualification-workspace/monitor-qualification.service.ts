@@ -31,7 +31,7 @@ export class MonitorQualificationWorkspaceService {
   ): Promise<MonitorQualification> {
     const result = await this.repository.getQualification(locId, qualId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Qualification Not Found', {
+      this.Logger.error(NotFoundException, 'Qualification Not Found', true,{
         locId: locId,
         qualId: qualId,
       });

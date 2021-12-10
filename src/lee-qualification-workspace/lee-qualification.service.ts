@@ -36,7 +36,7 @@ export class LEEQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'LEE Qualification Not Found', {
+      this.Logger.error(NotFoundException, 'LEE Qualification Not Found', true,{
         locId: locId,
         qualId: qualId,
         pctQualId: pctQualId,

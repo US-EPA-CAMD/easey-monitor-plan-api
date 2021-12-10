@@ -29,7 +29,7 @@ export class MonitorDefaultWorkspaceService {
     const result = await this.repository.getDefault(locationId, defaultId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Default Not Found', {
+      this.Logger.error(NotFoundException, 'Monitor Default Not Found', true,{
         locationId: locationId,
         defaultId: defaultId,
       });

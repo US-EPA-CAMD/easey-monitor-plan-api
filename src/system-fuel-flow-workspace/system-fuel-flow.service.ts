@@ -26,7 +26,7 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Fuel Flow not found.', {
+      this.Logger.error(NotFoundException, 'Fuel Flow not found.', true,{
         fuelFlowId: fuelFlowId,
       });
     }

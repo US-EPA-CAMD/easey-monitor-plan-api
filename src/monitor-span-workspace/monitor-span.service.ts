@@ -26,7 +26,7 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Span not found', {
+      this.Logger.error(NotFoundException, 'Monitor Span not found', true,{
         locationId: locationId,
         spanId: spanId,
       });

@@ -27,7 +27,7 @@ export class MonitorMethodWorkspaceService {
     const result = this.repository.findOne(methodId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Method Not Found', {
+      this.Logger.error(NotFoundException, 'Monitor Method Not Found', true,{
         methodId: methodId,
       });
     }

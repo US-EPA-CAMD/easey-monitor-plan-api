@@ -32,7 +32,7 @@ export class MonitorFormulaWorkspaceService {
     );
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Formula not found', {
+      this.Logger.error(NotFoundException, 'Monitor Formula not found', true,{
         locationId: locationId,
         formulaRecordId: formulaRecordId,
       });

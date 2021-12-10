@@ -2,7 +2,7 @@ import * as helmet from 'helmet';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder, ApiBasicAuth } from '@nestjs/swagger';
 import { CorsOptionsService } from '@us-epa-camd/easey-common/cors-options';
 
 import { AppModule } from './app.module';
@@ -44,6 +44,7 @@ async function bootstrap() {
     .setTitle(`${appTitle} OpenAPI Specification`)
     .setDescription(appDesc)
     .setVersion(`${appVersion} published: ${appPublished}`)
+    .addApiKey({type: "apiKey", name: 'x-api-key'}, 'x-api-key')
     .addBearerAuth(
       {
         in: 'header',

@@ -29,7 +29,7 @@ export class AnalyzerRangeWorkspaceService {
     const result = await this.repository.findOne(analyzerRangeId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Analyzer Range Not Found', {
+      this.Logger.error(NotFoundException, 'Analyzer Range Not Found', true, {
         analyzerRangeId: analyzerRangeId,
       });
     }

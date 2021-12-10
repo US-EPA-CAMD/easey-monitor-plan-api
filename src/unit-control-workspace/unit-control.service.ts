@@ -36,7 +36,7 @@ export class UnitControlWorkspaceService {
       unitControlId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
+      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true,{
         unitId: unitId,
         unitControlId: unitControlId,
       });

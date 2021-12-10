@@ -36,7 +36,7 @@ export class SystemComponentWorkspaceService {
     const result = await this.repository.getComponent(sysId, componentId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'System component was not found', {
+      this.Logger.error(NotFoundException, 'System component was not found', true,{
         sysId: sysId,
         componentId: componentId,
       });

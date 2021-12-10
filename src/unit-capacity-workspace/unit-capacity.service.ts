@@ -37,7 +37,7 @@ export class UnitCapacityWorkspaceService {
       unitCapacityId,
     );
     if (!result) {
-      this.logger.error(NotFoundException, 'Monitor Load Not Found', {
+      this.logger.error(NotFoundException, 'Monitor Load Not Found', true,{
         unitId,
         unitCapacityId,
       });
