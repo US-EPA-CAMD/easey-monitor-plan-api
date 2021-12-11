@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -16,8 +16,9 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
-@ApiTags('Defaults')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Defaults')
 export class MonitorDefaultWorkspaceController {
   constructor(
     private readonly service: MonitorDefaultWorkspaceService,

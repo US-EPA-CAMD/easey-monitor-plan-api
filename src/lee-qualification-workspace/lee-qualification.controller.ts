@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -16,8 +16,9 @@ import { UpdateLEEQualificationDTO } from '../dtos/lee-qualification-update.dto'
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('LEE Qualifications')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('LEE Qualifications')
 export class LEEQualificationWorkspaceController {
   constructor(
     private readonly service: LEEQualificationWorkspaceService,

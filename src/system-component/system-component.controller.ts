@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { SystemComponentService } from './system-component.service';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 
-@ApiTags('System Components')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('System Components')
 export class SystemComponentController {
   constructor(private service: SystemComponentService) {}
 

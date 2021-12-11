@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 
@@ -16,8 +16,9 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('Unit Controls')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Unit Controls')
 export class UnitControlWorkspaceController {
   constructor(
     private readonly service: UnitControlWorkspaceService,

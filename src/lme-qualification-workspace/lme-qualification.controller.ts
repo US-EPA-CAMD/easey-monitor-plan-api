@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, UseGuards, Body, Post, } from '@nestjs/common';
 
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
@@ -8,8 +8,9 @@ import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto'
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('LME Qualifications')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('LME Qualifications')
 export class LMEQualificationWorkspaceController {
   constructor(
     private readonly service: LMEQualificationWorkspaceService,
@@ -83,5 +84,4 @@ export class LMEQualificationWorkspaceController {
     });
     return this.service.createLMEQualification(userId, locId, qualId, payload);
   }
-
 }

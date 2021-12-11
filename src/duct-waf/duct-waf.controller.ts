@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { DuctWafService } from './duct-waf.service';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 
-@ApiTags('Rectangular Duct WAF')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Rectangular Duct WAF')
 export class DuctWafController {
   constructor(private readonly service: DuctWafService) {}
 

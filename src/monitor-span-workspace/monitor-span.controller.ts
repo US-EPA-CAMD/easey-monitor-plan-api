@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -14,8 +14,9 @@ import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
-@ApiTags('Spans')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Spans')
 export class MonitorSpanWorkspaceController {
   constructor(private service: MonitorSpanWorkspaceService) {}
 

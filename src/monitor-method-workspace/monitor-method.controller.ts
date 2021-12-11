@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Put,
@@ -14,8 +14,9 @@ import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
-@ApiTags('Methods')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Methods')
 export class MonitorMethodWorkspaceController {
   constructor(private service: MonitorMethodWorkspaceService) {}
 

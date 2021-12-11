@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
 
-@ApiTags('Comments')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Comments')
 export class MonitorPlanCommentWorkspaceController {
   constructor(private service: MonitorPlanCommentWorkspaceService) {}
 

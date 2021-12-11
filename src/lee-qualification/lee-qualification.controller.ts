@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationService } from './lee-qualification.service';
 
-@ApiTags('LEE Qualifications')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('LEE Qualifications')
 export class LEEQualificationController {
   constructor(private readonly service: LEEQualificationService) {}
 

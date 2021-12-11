@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Test
-      url: https://api-easey-tst.app.cloud.gov/monitor-plan-mgmt/swagger
+      url: https://api.epa.gov/easey/test/monitor-plan-mgmt/swagger
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -84,7 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Beta
-      url: https://api-easey-beta.app.cloud.gov/monitor-plan-mgmt/swagger
+      url: https://api.epa.gov/easey/beta/monitor-plan-mgmt/swagger
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Staging
-      url: https://api-easey-stg.app.cloud.gov/monitor-plan-mgmt/swagger
+      url: https://api.epa.gov/easey/staging/monitor-plan-mgmt/swagger
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2

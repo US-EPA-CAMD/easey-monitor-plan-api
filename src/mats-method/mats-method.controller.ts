@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodService } from './mats-method.service';
 
-@ApiTags('MATS Methods')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('MATS Methods')
 export class MatsMethodController {
   constructor(private service: MatsMethodService) {}
 

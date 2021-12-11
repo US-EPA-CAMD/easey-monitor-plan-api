@@ -1,11 +1,12 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 
 import { UnitControlService } from './unit-control.service';
 
-@ApiTags('Unit Controls')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Unit Controls')
 export class UnitControlController {
   constructor(private readonly service: UnitControlService) {}
 

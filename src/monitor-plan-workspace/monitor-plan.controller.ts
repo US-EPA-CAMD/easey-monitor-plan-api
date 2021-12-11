@@ -10,7 +10,7 @@ import {
   NotImplementedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
@@ -23,8 +23,9 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('Plans & Configurations')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Plans & Configurations')
 export class MonitorPlanWorkspaceController {
   constructor(
     private service: MonitorPlanWorkspaceService,

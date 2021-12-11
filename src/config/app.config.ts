@@ -19,6 +19,10 @@ export default registerAs('app', () => ({
   port,
   uri,
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
+  enableCors: process.env.EASEY_MONITOR_PLAN_API_ENABLE_CORS || true,
+  enableApiKey: process.env.EASEY_MONITOR_PLAN_API_ENABLE_API_KEY || true,
+  enableAuthToken: process.env.EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN || true,
+  enableGlobalValidationPipes: process.env.EASEY_MONITOR_PLAN_API_ENABLE_GLOBAL_VALIDATION_PIPE || true,
   version: process.env.EASEY_MONITOR_PLAN_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
   // AUTH API MUST BE RUN LOCALLY FOR LOCAL DEVELOPMENT

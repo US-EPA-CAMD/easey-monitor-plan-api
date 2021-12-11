@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeService } from './monitor-attribute.service';
 
-@ApiTags('Attributes')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Attributes')
 export class MonitorAttributeController {
   constructor(private readonly service: MonitorAttributeService) {}
 

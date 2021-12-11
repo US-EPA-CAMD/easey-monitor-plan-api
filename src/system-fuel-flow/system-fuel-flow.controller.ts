@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { SystemFuelFlowService } from './system-fuel-flow.service';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 
-@ApiTags('System Fuel Flows')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('System Fuel Flows')
 export class SystemFuelFlowController {
   constructor(private service: SystemFuelFlowService) {}
 

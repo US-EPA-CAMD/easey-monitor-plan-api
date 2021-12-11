@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -16,8 +16,9 @@ import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 
-@ApiTags('Unit Capacities')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Unit Capacities')
 export class UnitCapacityWorkspaceController {
   constructor(
     private readonly service: UnitCapacityWorkspaceService,

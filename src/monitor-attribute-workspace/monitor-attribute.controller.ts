@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -16,8 +16,9 @@ import { UpdateMonitorAttributeDTO } from '../dtos/monitor-attribute-update.dto'
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
-@ApiTags('Attributes')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Attributes')
 export class MonitorAttributeWorkspaceController {
   constructor(
     private readonly service: MonitorAttributeWorkspaceService,
