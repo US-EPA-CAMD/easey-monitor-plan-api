@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   NotImplementedException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 
@@ -108,7 +109,9 @@ export class MonitorPlanWorkspaceController {
   checkOutConfiguration(
     @Param('planId') planId: string,
     @CurrentUser() userId: string,
+    @Req() req: Request,
   ): Promise<UserCheckOutDTO> {
+    console.log(`X-Api-User-Id = ${req.headers['X-Api-User-Id']}`);
     return this.ucoService.checkOutConfiguration(planId, userId);
   }
 
