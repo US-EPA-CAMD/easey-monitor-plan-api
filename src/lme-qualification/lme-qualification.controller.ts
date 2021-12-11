@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationService } from './lme-qualification.service';
 
-@ApiTags('LME Qualifications')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('LME Qualifications')
 export class LMEQualificationController {
   constructor(private readonly service: LMEQualificationService) {}
 

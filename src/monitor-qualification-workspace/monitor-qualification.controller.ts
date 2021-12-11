@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -15,8 +15,9 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
-@ApiTags('Qualifications')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Qualifications')
 export class MonitorQualificationWorkspaceController {
   constructor(private readonly service: MonitorQualificationWorkspaceService) {}
 

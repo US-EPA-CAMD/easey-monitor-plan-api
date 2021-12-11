@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
 
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
@@ -16,8 +16,9 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
-@ApiTags('MATS Methods')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('MATS Methods')
 export class MatsMethodWorkspaceController {
   constructor(
     private service: MatsMethodWorkspaceService,

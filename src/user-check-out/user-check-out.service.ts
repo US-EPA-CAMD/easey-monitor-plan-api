@@ -40,7 +40,7 @@ export class UserCheckOutService {
     if (!record) {
       this.Logger.error(
         NotFoundException,
-        `Check-out configuration not found`,
+        `Check-out configuration not found`, true,
         { monPlanId: monPlanId },
       );
     }

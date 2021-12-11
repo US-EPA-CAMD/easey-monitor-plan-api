@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -16,8 +16,9 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('Formulas')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Formulas')
 export class MonitorFormulaWorkspaceController {
   constructor(
     private service: MonitorFormulaWorkspaceService,

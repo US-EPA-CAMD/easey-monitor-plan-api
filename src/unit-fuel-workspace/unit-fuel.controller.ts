@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
@@ -18,8 +18,9 @@ import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 
-@ApiTags('Unit Fuels')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Unit Fuels')
 export class UnitFuelWorkspaceController {
   constructor(
     private readonly service: UnitFuelWorkspaceService,

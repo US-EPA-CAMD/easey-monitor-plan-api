@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeService } from './analyzer-range.service';
 
-@ApiTags('Analyzer Ranges')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Analyzer Ranges')
 export class AnalyzerRangeController {
   constructor(private service: AnalyzerRangeService) {}
 

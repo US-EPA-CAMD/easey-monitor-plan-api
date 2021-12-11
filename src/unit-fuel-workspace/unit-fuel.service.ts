@@ -36,7 +36,7 @@ export class UnitFuelWorkspaceService {
       unitFuelId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', {
+      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', true,{
         locId: locId,
         unitId: unitId,
         unitFuelId: unitFuelId,

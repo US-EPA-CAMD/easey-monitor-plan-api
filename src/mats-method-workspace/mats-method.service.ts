@@ -26,7 +26,7 @@ export class MatsMethodWorkspaceService {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Mats Method not found.', {
+      this.Logger.error(NotFoundException, 'Mats Method not found.', true, {
         methodId: methodId,
       });
     }

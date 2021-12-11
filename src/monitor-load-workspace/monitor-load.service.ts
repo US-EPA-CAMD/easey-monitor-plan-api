@@ -26,7 +26,7 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
+      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true,{
         loadId: loadId,
       });
     }

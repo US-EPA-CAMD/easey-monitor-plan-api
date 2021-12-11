@@ -12,7 +12,11 @@ applications:
       EASEY_MONITOR_PLAN_API_PORT: ((port))      
       EASEY_MONITOR_PLAN_API_PATH: ((path))
       EASEY_MONITOR_PLAN_API_ENV: ((environment))
-      EASEY_AUTH_API: https://((apiHost))/((authApiPath))
+      EASEY_MONITOR_PLAN_API: https://((apiHost))/((authApiPath))
+      EASEY_MONITOR_PLAN_API_ENABLE_CORS: true
+      EASEY_MONITOR_PLAN_API_ENABLE_API_KEY: true
+      EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN: true
+      EASEY_MONITOR_PLAN_API_ENABLE_GLOBAL_VALIDATION_PIPE: true
     routes:
       - route: ((host))/((path))
     services:

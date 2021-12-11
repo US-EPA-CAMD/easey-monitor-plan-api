@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiSecurity, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
@@ -15,8 +15,9 @@ import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.d
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
-@ApiTags('Analyzer Ranges')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Analyzer Ranges')
 export class AnalyzerRangeWorkspaceController {
   constructor(
     private service: AnalyzerRangeWorkspaceService,

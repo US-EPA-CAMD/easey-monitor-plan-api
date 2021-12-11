@@ -36,7 +36,7 @@ export class LMEQualificationWorkspaceService {
       lmeQualId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'LME Qualification Not Found', {
+      this.Logger.error(NotFoundException, 'LME Qualification Not Found', true,{
         locId: locId,
         qualId: qualId,
         lmeQualId: lmeQualId,

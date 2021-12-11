@@ -1,10 +1,11 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityService } from './unit-capacity.service';
 
-@ApiTags('Unit Capacities')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Unit Capacities')
 export class UnitCapacityController {
   constructor(private readonly service: UnitCapacityService) {}
 

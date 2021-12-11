@@ -1,11 +1,12 @@
 import { Get, Param, Controller, ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanService } from './monitor-plan.service';
 
-@ApiTags('Plans & Configurations')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Plans & Configurations')
 export class MonitorPlanController {
   constructor(private service: MonitorPlanService) {}
 

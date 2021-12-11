@@ -32,6 +32,7 @@ export class MonitorAttributeWorkspaceService {
       this.logger.error(
         NotFoundException,
         'Monitor Location Attribute not found',
+        true,
         {
           locationId,
           id,

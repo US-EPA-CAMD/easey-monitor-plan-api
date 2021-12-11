@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanService } from './monitor-span.service';
 
-@ApiTags('Spans')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Spans')
 export class MonitorSpanController {
   constructor(private service: MonitorSpanService) {}
 

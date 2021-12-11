@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -14,8 +14,9 @@ import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { UpdateSystemComponentDTO } from '../dtos/system-component-update.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
-@ApiTags('System Components')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('System Components')
 export class SystemComponentWorkspaceController {
   constructor(private service: SystemComponentWorkspaceService) {}
 

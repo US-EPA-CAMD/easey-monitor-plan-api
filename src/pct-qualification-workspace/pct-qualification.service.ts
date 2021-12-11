@@ -36,7 +36,7 @@ export class PCTQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'PCT Qualification Not Found', {
+      this.Logger.error(NotFoundException, 'PCT Qualification Not Found', true,{
         locId: locId,
         qualId: qualId,
         pctQualId: pctQualId,

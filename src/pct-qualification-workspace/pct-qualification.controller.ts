@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -16,8 +16,9 @@ import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto'
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('PCT Qualifications')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('PCT Qualifications')
 export class PCTQualificationWorkspaceController {
   constructor(
     private readonly service: PCTQualificationWorkspaceService,

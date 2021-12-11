@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -16,8 +16,9 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('System Fuel Flows')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('System Fuel Flows')
 export class SystemFuelFlowWorkspaceController {
   constructor(
     private readonly service: SystemFuelFlowWorkspaceService,

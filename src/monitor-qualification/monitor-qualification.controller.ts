@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualificationService } from './monitor-qualification.service';
 
-@ApiTags('Qualifications')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Qualifications')
 export class MonitorQualificationController {
   constructor(private readonly service: MonitorQualificationService) {}
 

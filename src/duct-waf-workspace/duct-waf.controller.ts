@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
@@ -16,8 +16,9 @@ import { DuctWafWorkspaceService } from './duct-waf.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-@ApiTags('Rectangular Duct WAF')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Rectangular Duct WAF')
 export class DuctWafWorkspaceController {
   constructor(
     private readonly service: DuctWafWorkspaceService,
@@ -73,7 +74,7 @@ export class DuctWafWorkspaceController {
       ductWafId: ductWafId,
       userId: userId,
     });
-    return await this.service.updateDuctWaf(
+    return this.service.updateDuctWaf(
       locationId,
       ductWafId,
       payload,

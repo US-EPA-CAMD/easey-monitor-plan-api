@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentService } from './component.service';
 
-@ApiTags('Components')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Components')
 export class ComponentController {
   constructor(private service: ComponentService) {}
 

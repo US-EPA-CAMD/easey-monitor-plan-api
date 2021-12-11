@@ -1,11 +1,12 @@
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadService } from './monitor-load.service';
 
-@ApiTags('Loads')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Loads')
 export class MonitorLoadController {
   constructor(private service: MonitorLoadService) {}
 

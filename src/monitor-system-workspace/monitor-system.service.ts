@@ -58,7 +58,7 @@ export class MonitorSystemWorkspaceService {
     const result = await this.repository.findOne(monitoringSystemId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor System Not Found', {
+      this.Logger.error(NotFoundException, 'Monitor System Not Found', true,{
         monitoringSystemId: monitoringSystemId,
       });
     }

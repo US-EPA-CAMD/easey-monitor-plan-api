@@ -20,7 +20,7 @@ export class MonitorLocationService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', {
+      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true,{
         locationId: locationId,
       });
     }

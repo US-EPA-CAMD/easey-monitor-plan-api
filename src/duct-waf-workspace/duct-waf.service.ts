@@ -26,7 +26,7 @@ export class DuctWafWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Duct Waf Not Found', { id: id });
+      this.Logger.error(NotFoundException, 'Duct Waf Not Found', true, { id: id });
     }
 
     return this.map.one(result);
