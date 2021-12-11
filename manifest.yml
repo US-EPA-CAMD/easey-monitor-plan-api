@@ -7,12 +7,12 @@ applications:
     env:
       OPTIMIZE_MEMORY: true
       EASEY_API_GATEWAY_HOST: ((apiHost))
+      EASEY_AUTH_API: https://((apiHost))/((authApiPath))
       EASEY_MONITOR_PLAN_API_TITLE: ((title))
       EASEY_MONITOR_PLAN_API_HOST: ((host))
       EASEY_MONITOR_PLAN_API_PORT: ((port))      
       EASEY_MONITOR_PLAN_API_PATH: ((path))
       EASEY_MONITOR_PLAN_API_ENV: ((environment))
-      EASEY_MONITOR_PLAN_API: https://((apiHost))/((authApiPath))
       EASEY_MONITOR_PLAN_API_ENABLE_CORS: true
       EASEY_MONITOR_PLAN_API_ENABLE_API_KEY: true
       EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN: true
