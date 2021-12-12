@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import {
   Get,
   Post,
@@ -10,7 +9,6 @@ import {
   ParseIntPipe,
   NotImplementedException,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
 
@@ -32,7 +30,7 @@ export class MonitorPlanWorkspaceController {
   constructor(
     private service: MonitorPlanWorkspaceService,
     private ucoService: UserCheckOutService,
-    private Logger: Logger,
+    private logger: Logger,
   ) {}
 
   // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable
@@ -81,7 +79,7 @@ export class MonitorPlanWorkspaceController {
     description: 'imports an entire monitor plan from JSON payload',
   })
   importPlan(@Body() plan: UpdateMonitorPlanDTO): Promise<MonitorPlanDTO> {
-    this.Logger.error(
+    this.logger.error(
       NotImplementedException,
       'Monitor Plan Import not supported at this time. Coming Soon!',
     );
@@ -110,9 +108,7 @@ export class MonitorPlanWorkspaceController {
   checkOutConfiguration(
     @Param('planId') planId: string,
     @CurrentUser() userId: string,
-    @Req() req: Request,
   ): Promise<UserCheckOutDTO> {
-    console.log(`X-Api-User-Id = ${req.headers['X-Api-User-Id']}`);
     return this.ucoService.checkOutConfiguration(planId, userId);
   }
 
@@ -139,16 +135,17 @@ export class MonitorPlanWorkspaceController {
     @Param('planId') planId: string,
     @CurrentUser() userId: string,
   ): Promise<void> {
+    var returnVal;
     this.ucoService.checkInConfiguration(planId).then(res => {
-      console.log('res', res);
       if (res) {
-        this.service.updateDateAndUserId(planId, userId);
-        console.log(
+        returnVal = this.service.updateDateAndUserId(planId, userId);
+        this.logger.info(
           'updated update date and user id for closed/checked-in plan.',
         );
       }
     });
-    return;
+
+    return returnVal;
   }
 
   @Delete(':planId/revert')
