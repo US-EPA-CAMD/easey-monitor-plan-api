@@ -18,6 +18,7 @@ export default registerAs('app', () => ({
   apiHost: process.env.EASEY_API_GATEWAY_HOST || 'api.epa.gov/easey/dev',
   port,
   uri,
+  apiKey: process.env.EASEY_MONITOR_PLAN_API_KEY,
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
   enableCors: process.env.EASEY_MONITOR_PLAN_API_ENABLE_CORS || true,
   enableApiKey: process.env.EASEY_MONITOR_PLAN_API_ENABLE_API_KEY || true,

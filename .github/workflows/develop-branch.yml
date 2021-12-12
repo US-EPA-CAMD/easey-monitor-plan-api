@@ -52,5 +52,10 @@ jobs:
           CF_PASSWORD: ${{ secrets.CF_DEV_DEPLOYMENT_SVC_PWD }}
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
+      - name: Configure Env Vars (secrets)
+        run: |
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $EASEY_MONITOR_PLAN_API_KEY
+        env:
+          EASEY_MONITOR_PLAN_API_KEY: ${{ secrets.ECMPS_NON_PROD_API_KEY }}
       - name: Deploy
         run: devops/scripts/deploy.sh

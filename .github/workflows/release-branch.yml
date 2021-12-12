@@ -77,6 +77,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_STORAGE_SECRET_ACCESS_KEY }}
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
+      - name: Configure Env Vars (secrets)
+        run: |
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $EASEY_MONITOR_PLAN_API_KEY
+        env:
+          EASEY_MONITOR_PLAN_API_KEY: ${{ secrets.ECMPS_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
   Beta-Deployment:
@@ -113,6 +118,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_STORAGE_SECRET_ACCESS_KEY }}
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
+      - name: Configure Env Vars (secrets)
+        run: |
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $EASEY_MONITOR_PLAN_API_KEY
+        env:
+          EASEY_MONITOR_PLAN_API_KEY: ${{ secrets.ECMPS_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
   Stage-Deployment:
@@ -149,5 +159,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_STORAGE_SECRET_ACCESS_KEY }}
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
+      - name: Configure Env Vars (secrets)
+        run: |
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $EASEY_MONITOR_PLAN_API_KEY
+        env:
+          EASEY_MONITOR_PLAN_API_KEY: ${{ secrets.ECMPS_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
