@@ -10,7 +10,12 @@ import {
   NotImplementedException,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
@@ -37,10 +42,10 @@ export class MonitorPlanWorkspaceController {
   // really need to move check-outs to a controller of its own but that requires url changes
 
   // TEMP: unconventional route path to avoid messing with URL's before demo
-  @Get('information/:planId/')
+  @Get(':planId/refresh')
   @ApiOkResponse({
     type: MonitorPlanDTO,
-    description: 'Retrieves workspace Monitor Plan record',
+    description: 'Retrieves information needed to refresh a monitor plan',
   })
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
