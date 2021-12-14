@@ -95,4 +95,22 @@ export class MonitorPlanWorkspaceService {
 
     return mpEvalReport;
   }
+
+  async resetToNeedsEvaluation(planId: string, userId: string): Promise<void> {
+    const result = await this.repository.resetToNeedsEvaluation(planId, userId);
+    console.log('reset result:', result);
+    if (result) {
+      console.log(
+        'Monitor plan with ID: ' +
+          planId +
+          ' successfully reset to Needs Evaluation status.',
+      );
+    } else {
+      console.log(
+        'Failed to reset plan with ID: ' +
+          planId +
+          ' to Needs Evaluation status.',
+      );
+    }
+  }
 }

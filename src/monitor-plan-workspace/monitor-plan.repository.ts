@@ -1,6 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
-
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
 @EntityRepository(MonitorPlan)
@@ -25,12 +24,10 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
 
   async updateDateAndUserId(monPlanId: string, userId: string) {
     try {
-      // temporary fix for 8 character limit in database:
-      const shortUserId = userId.substring(0, 8);
       const currDate = new Date(Date.now());
       await this.query(
         'UPDATE camdecmpswks.monitor_plan SET update_date = $1, userid = $2 WHERE mon_plan_id = $3',
-        [currDate, shortUserId, monPlanId],
+        [currDate, userId, monPlanId],
       );
     } catch (error) {
       throw new BadRequestException(error['message']);
@@ -42,5 +39,19 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .innerJoinAndSelect('plan.plant', 'plant')
       .where('plan.id = :planId', { planId })
       .getOne();
+  }
+
+  async resetToNeedsEvaluation(planId: string, userId: string) {
+    try {
+      const currDate = new Date(Date.now());
+      const needsEvalStatus = 'EVAL';
+      await this.query(
+        'UPDATE camdecmpswks.monitor_plan SET eval_status_cd = $1, update_date = $2, userid = $3 WHERE mon_plan_id = $4',
+        [needsEvalStatus, currDate, userId, planId],
+      );
+      return this.findOne({ id: planId });
+    } catch (error) {
+      throw new BadRequestException(error['message']);
+    }
   }
 }
