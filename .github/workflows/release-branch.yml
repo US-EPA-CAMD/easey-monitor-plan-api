@@ -3,6 +3,8 @@ name: Release Branch Workflow
 on:
   push:
     branches: [release/v*]
+    paths-ignore:
+      - '.github/**'
 
 jobs:
   Build-Test-Package:
@@ -79,9 +81,9 @@ jobs:
         run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
         run: |
-          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $EASEY_MONITOR_PLAN_API_KEY
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
         env:
-          EASEY_MONITOR_PLAN_API_KEY: ${{ secrets.ECMPS_NON_PROD_API_KEY }}
+          API_KEY: ${{ secrets.MONITOR_PLAN_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
   Beta-Deployment:
@@ -120,9 +122,9 @@ jobs:
         run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
         run: |
-          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $EASEY_MONITOR_PLAN_API_KEY
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
         env:
-          EASEY_MONITOR_PLAN_API_KEY: ${{ secrets.ECMPS_NON_PROD_API_KEY }}
+          API_KEY: ${{ secrets.MONITOR_PLAN_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
   Stage-Deployment:
@@ -161,8 +163,8 @@ jobs:
         run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
         run: |
-          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $EASEY_MONITOR_PLAN_API_KEY
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
         env:
-          EASEY_MONITOR_PLAN_API_KEY: ${{ secrets.ECMPS_NON_PROD_API_KEY }}
+          API_KEY: ${{ secrets.MONITOR_PLAN_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
