@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Dev
-      url: https://api.epa.gov/easey/dev/auth-mgmt/swagger
+      url: https://api.epa.gov/easey/dev/monitor-plan-mgmt/swagger
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -56,6 +56,6 @@ jobs:
         run: |
           cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
         env:
-          API_KEY: ${{ secrets.MONITOR_PLAN_NON_PROD_API_KEY }}
+          API_KEY: ${{ secrets.MONITOR_PLAN_API_NON_PROD_API_KEY }}
       - name: Deploy
         run: devops/scripts/deploy.sh

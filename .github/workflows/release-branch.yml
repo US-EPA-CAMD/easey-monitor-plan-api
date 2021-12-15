@@ -83,7 +83,7 @@ jobs:
         run: |
           cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
         env:
-          API_KEY: ${{ secrets.MONITOR_PLAN_NON_PROD_API_KEY }}
+          API_KEY: ${{ secrets.MONITOR_PLAN_API_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
   Beta-Deployment:
@@ -124,7 +124,7 @@ jobs:
         run: |
           cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
         env:
-          API_KEY: ${{ secrets.MONITOR_PLAN_NON_PROD_API_KEY }}
+          API_KEY: ${{ secrets.MONITOR_PLAN_API_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
   Stage-Deployment:
@@ -165,6 +165,6 @@ jobs:
         run: |
           cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
         env:
-          API_KEY: ${{ secrets.MONITOR_PLAN_NON_PROD_API_KEY }}
+          API_KEY: ${{ secrets.MONITOR_PLAN_API_NON_PROD_API_KEY }}
       - name: Deployment
         run: devops/scripts/deploy.sh
