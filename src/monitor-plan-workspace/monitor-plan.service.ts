@@ -97,24 +97,9 @@ export class MonitorPlanWorkspaceService {
   }
 
   async resetToNeedsEvaluation(locId: string, userId: string): Promise<void> {
-    // get monitor plan by location ID
+    const plan = await this.repository.getActivePlanByLocation(locId);
+    const planId = plan.id;
 
-    // update plan's eval status to EVAL
-    // const result = await this.repository.resetToNeedsEvaluation(planId, userId);
-
-    // if (result) {
-    //   console.log(
-    //     'Monitor plan with ID: ' +
-    //       planId +
-    //       ' successfully reset to Needs Evaluation status.',
-    //   );
-    // } else {
-    //   console.log(
-    //     'Failed to reset plan with ID: ' +
-    //       planId +
-    //       ' to Needs Evaluation status.',
-    //   );
-    // }
-    console.log('resetToNeedsEvaluation called');
+    await this.repository.resetToNeedsEvaluation(planId, userId);
   }
 }

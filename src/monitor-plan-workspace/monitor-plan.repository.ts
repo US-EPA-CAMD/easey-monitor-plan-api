@@ -41,13 +41,36 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .getOne();
   }
 
+  async getActivePlanByLocation(locId: string): Promise<MonitorPlan> {
+    return this.createQueryBuilder('plan')
+      .innerJoinAndSelect('plan.locations', 'locations')
+      .where('locations.id = :locId', { locId })
+      .getOne();
+  }
+
   async resetToNeedsEvaluation(planId: string, userId: string) {
     try {
       const currDate = new Date(Date.now());
       const needsEvalStatus = 'EVAL';
+      const updatedStatusFlag = 'Y';
+      const needsEvalFlag = 'Y';
       await this.query(
-        'UPDATE camdecmpswks.monitor_plan SET eval_status_cd = $1, update_date = $2, userid = $3 WHERE mon_plan_id = $4',
-        [needsEvalStatus, currDate, userId, planId],
+        'UPDATE camdecmpswks.monitor_plan SET ' +
+          'eval_status_cd = $1, ' +
+          'last_updated = $2, ' +
+          'update_date = $2,' +
+          'updated_status_flg = $3, ' +
+          'needs_eval_flg = $4, ' +
+          'userid = $5 ' +
+          'WHERE mon_plan_id = $6',
+        [
+          needsEvalStatus,
+          currDate,
+          updatedStatusFlag,
+          needsEvalFlag,
+          userId,
+          planId,
+        ],
       );
       return this.findOne({ id: planId });
     } catch (error) {
