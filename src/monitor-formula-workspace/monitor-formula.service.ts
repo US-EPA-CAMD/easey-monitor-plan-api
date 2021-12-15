@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { v4 as uuid } from 'uuid';
 
 import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
@@ -15,6 +16,7 @@ export class MonitorFormulaWorkspaceService {
     private repository: MonitorFormulaWorkspaceRepository,
     private map: MonitorFormulaMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getFormulas(locationId: string): Promise<MonitorFormulaDTO[]> {
@@ -32,7 +34,7 @@ export class MonitorFormulaWorkspaceService {
     );
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Formula not found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Formula not found', true, {
         locationId: locationId,
         formulaRecordId: formulaRecordId,
       });
@@ -57,13 +59,13 @@ export class MonitorFormulaWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: userId.slice(0, 8),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(formula);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getFormula(locationId, result.id);
   }
 
@@ -83,11 +85,11 @@ export class MonitorFormulaWorkspaceService {
     formula.beginHour = payload.beginHour;
     formula.endDate = payload.endDate;
     formula.endHour = payload.endHour;
-    formula.userId = userId.slice(0, 8);
+    formula.userId = userId;
     formula.updateDate = new Date(Date.now());
 
     await this.repository.save(formula);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getFormula(locationId, formulaRecordId);
   }
 }

@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -56,7 +61,7 @@ export class MonitorDefaultWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.updateDefault(locationId, defaultId, payload);
+    return this.service.updateDefault(locationId, defaultId, payload, userId);
   }
 
   @Post()
@@ -76,6 +81,6 @@ export class MonitorDefaultWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.createDefault(locationId, payload);
+    return this.service.createDefault(locationId, payload, userId);
   }
 }

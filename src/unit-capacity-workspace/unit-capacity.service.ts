@@ -6,6 +6,7 @@ import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -13,6 +14,7 @@ export class UnitCapacityWorkspaceService {
     private readonly logger: Logger,
     private readonly repository: UnitCapacityWorkspaceRepository,
     private readonly map: UnitCapacityMap,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getUnitCapacities(
@@ -37,7 +39,7 @@ export class UnitCapacityWorkspaceService {
       unitCapacityId,
     );
     if (!result) {
-      this.logger.error(NotFoundException, 'Monitor Load Not Found', true,{
+      this.logger.error(NotFoundException, 'Monitor Load Not Found', true, {
         unitId,
         unitCapacityId,
       });
@@ -57,13 +59,13 @@ export class UnitCapacityWorkspaceService {
       maximumHourlyHeatInputCapacity: payload.maximumHourlyHeatInputCapacity,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      userId: userId.slice(0, 8),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(unitCapacity);
-
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getUnitCapacity(locId, unitId, result.id);
   }
 
@@ -84,10 +86,11 @@ export class UnitCapacityWorkspaceService {
       payload.maximumHourlyHeatInputCapacity;
     unitCapacity.beginDate = payload.beginDate;
     unitCapacity.endDate = payload.endDate;
-    unitCapacity.userId = userId.slice(0, 8);
+    unitCapacity.userId = userId;
     unitCapacity.updateDate = new Date(Date.now());
 
     await this.repository.save(unitCapacity);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getUnitCapacity(locId, unitRecordId, unitCapacityId);
   }
 }

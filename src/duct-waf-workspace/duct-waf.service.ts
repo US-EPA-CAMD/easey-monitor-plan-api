@@ -7,6 +7,7 @@ import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class DuctWafWorkspaceService {
@@ -15,6 +16,7 @@ export class DuctWafWorkspaceService {
     private repository: DuctWafWorkspaceRepository,
     private map: DuctWafMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
@@ -26,7 +28,9 @@ export class DuctWafWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Duct Waf Not Found', true, { id: id });
+      this.Logger.error(NotFoundException, 'Duct Waf Not Found', true, {
+        id: id,
+      });
     }
 
     return this.map.one(result);
@@ -53,14 +57,13 @@ export class DuctWafWorkspaceService {
       ductDepth: payload.ductDepth,
       wafEndDate: payload.wafEndDate,
       wafEndHour: payload.wafEndHour,
-      // TODO - remove slice when userId constraints are fixed in the db
-      userId: userId.slice(0, 7),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(ductWaf);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 
@@ -85,12 +88,11 @@ export class DuctWafWorkspaceService {
     ductWaf.ductDepth = payload.ductDepth;
     ductWaf.wafEndDate = payload.wafEndDate;
     ductWaf.wafEndHour = payload.wafEndHour;
-    // TODO - remove slice when userId constraints are fixed in the db
-    ductWaf.userId = userId.slice(0, 7);
+    ductWaf.userId = userId;
     ductWaf.updateDate = new Date(Date.now());
 
     await this.repository.save(ductWaf);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getDuctWaf(ductWafId);
   }
 }

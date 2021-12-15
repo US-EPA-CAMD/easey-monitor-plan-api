@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
@@ -10,6 +10,7 @@ import { MonitorQualificationWorkspaceController } from './monitor-qualification
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
+import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
     PCTQualificationWorkspaceModule,
     TypeOrmModule.forFeature([MonitorQualificationWorkspaceRepository]),
     HttpModule,
+    forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MonitorQualificationWorkspaceController],
   providers: [MonitorQualificationWorkspaceService, MonitorQualificationMap],

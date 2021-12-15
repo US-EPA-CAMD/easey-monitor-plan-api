@@ -7,6 +7,7 @@ import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
@@ -15,6 +16,7 @@ export class MonitorDefaultWorkspaceService {
     private repository: MonitorDefaultWorkspaceRepository,
     private map: MonitorDefaultMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getDefaults(locationId: string): Promise<MonitorDefaultDTO[]> {
@@ -29,7 +31,7 @@ export class MonitorDefaultWorkspaceService {
     const result = await this.repository.getDefault(locationId, defaultId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Default Not Found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Default Not Found', true, {
         locationId: locationId,
         defaultId: defaultId,
       });
@@ -41,6 +43,7 @@ export class MonitorDefaultWorkspaceService {
   async createDefault(
     locationId: string,
     payload: UpdateMonitorDefaultDTO,
+    userId: string,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = this.repository.create({
       id: uuid(),
@@ -57,13 +60,13 @@ export class MonitorDefaultWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(monDefault);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 
@@ -71,6 +74,7 @@ export class MonitorDefaultWorkspaceService {
     locationId: string,
     defaultId: string,
     payload: UpdateMonitorDefaultDTO,
+    userId: string,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = await this.getDefault(locationId, defaultId);
 
@@ -86,11 +90,11 @@ export class MonitorDefaultWorkspaceService {
     monDefault.beginHour = payload.beginHour;
     monDefault.endDate = payload.endDate;
     monDefault.endHour = payload.endHour;
-    monDefault.userId = 'testuser';
+    monDefault.userId = userId;
     monDefault.updateDate = new Date(Date.now());
 
     await this.repository.save(monDefault);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getDefault(locationId, defaultId);
   }
 }

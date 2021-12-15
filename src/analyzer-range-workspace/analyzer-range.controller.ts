@@ -7,7 +7,12 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiSecurity, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiSecurity,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
@@ -56,7 +61,12 @@ export class AnalyzerRangeWorkspaceController {
       componentRecordId: componentRecordId,
       payload: payload,
     });
-    return this.service.createAnalyzerRange(componentRecordId, payload);
+    return this.service.createAnalyzerRange(
+      componentRecordId,
+      payload,
+      locationId,
+      userId,
+    );
   }
 
   @Put(':analyzerRangeId')
@@ -79,6 +89,11 @@ export class AnalyzerRangeWorkspaceController {
       analyzerRangeId: analyzerRangeId,
       payload: payload,
     });
-    return this.service.updateAnalyzerRangd(analyzerRangeId, payload);
+    return this.service.updateAnalyzerRangd(
+      analyzerRangeId,
+      payload,
+      locationId,
+      userId,
+    );
   }
 }

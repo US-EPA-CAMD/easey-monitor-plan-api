@@ -1,6 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
-
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
 @EntityRepository(MonitorPlan)
@@ -25,12 +24,10 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
 
   async updateDateAndUserId(monPlanId: string, userId: string) {
     try {
-      // temporary fix for 8 character limit in database:
-      const shortUserId = userId.substring(0, 8);
       const currDate = new Date(Date.now());
       await this.query(
         'UPDATE camdecmpswks.monitor_plan SET update_date = $1, userid = $2 WHERE mon_plan_id = $3',
-        [currDate, shortUserId, monPlanId],
+        [currDate, userId, monPlanId],
       );
     } catch (error) {
       throw new BadRequestException(error['message']);
@@ -42,5 +39,42 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .innerJoinAndSelect('plan.plant', 'plant')
       .where('plan.id = :planId', { planId })
       .getOne();
+  }
+
+  async getActivePlanByLocation(locId: string): Promise<MonitorPlan> {
+    return this.createQueryBuilder('plan')
+      .innerJoinAndSelect('plan.locations', 'locations')
+      .where('locations.id = :locId', { locId })
+      .getOne();
+  }
+
+  async resetToNeedsEvaluation(planId: string, userId: string) {
+    try {
+      const currDate = new Date(Date.now());
+      const needsEvalStatus = 'EVAL';
+      const updatedStatusFlag = 'Y';
+      const needsEvalFlag = 'Y';
+      await this.query(
+        'UPDATE camdecmpswks.monitor_plan SET ' +
+          'eval_status_cd = $1, ' +
+          'last_updated = $2, ' +
+          'update_date = $2,' +
+          'updated_status_flg = $3, ' +
+          'needs_eval_flg = $4, ' +
+          'userid = $5 ' +
+          'WHERE mon_plan_id = $6',
+        [
+          needsEvalStatus,
+          currDate,
+          updatedStatusFlag,
+          needsEvalFlag,
+          userId,
+          planId,
+        ],
+      );
+      return this.findOne({ id: planId });
+    } catch (error) {
+      throw new BadRequestException(error['message']);
+    }
   }
 }

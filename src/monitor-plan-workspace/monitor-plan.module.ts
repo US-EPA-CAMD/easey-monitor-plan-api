@@ -53,5 +53,6 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
   ],
   controllers: [MonitorPlanWorkspaceController],
   providers: [MonitorPlanWorkspaceService, MonitorPlanMap],
+  exports: [TypeOrmModule, MonitorPlanWorkspaceService, MonitorPlanMap],
 })
 export class MonitorPlanWorkspaceModule {}

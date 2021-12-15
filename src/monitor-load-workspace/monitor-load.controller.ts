@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -54,7 +59,7 @@ export class MonitorLoadWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.updateLoad(locationId, spanId, payload);
+    return this.service.updateLoad(locationId, spanId, payload, userId);
   }
 
   @Post()
@@ -75,6 +80,6 @@ export class MonitorLoadWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.createLoad(locationId, payload);
+    return this.service.createLoad(locationId, payload, userId);
   }
 }
