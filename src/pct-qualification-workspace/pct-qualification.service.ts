@@ -7,6 +7,7 @@ import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class PCTQualificationWorkspaceService {
@@ -15,6 +16,7 @@ export class PCTQualificationWorkspaceService {
     private repository: PCTQualificationWorkspaceRepository,
     private map: PCTQualificationMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getPCTQualifications(
@@ -36,11 +38,16 @@ export class PCTQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'PCT Qualification Not Found', true,{
-        locId: locId,
-        qualId: qualId,
-        pctQualId: pctQualId,
-      });
+      this.Logger.error(
+        NotFoundException,
+        'PCT Qualification Not Found',
+        true,
+        {
+          locId: locId,
+          qualId: qualId,
+          pctQualId: pctQualId,
+        },
+      );
     }
     return this.map.one(result);
   }
@@ -71,7 +78,7 @@ export class PCTQualificationWorkspaceService {
     });
 
     const result = await this.repository.save(load);
-
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 
@@ -100,6 +107,7 @@ export class PCTQualificationWorkspaceService {
     pctQual.updateDate = new Date(Date.now());
 
     await this.repository.save(pctQual);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getPCTQualification(locId, qualId, pctQualId);
   }
 }

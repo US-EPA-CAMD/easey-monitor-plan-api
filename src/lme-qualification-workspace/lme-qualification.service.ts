@@ -7,6 +7,7 @@ import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class LMEQualificationWorkspaceService {
@@ -15,7 +16,8 @@ export class LMEQualificationWorkspaceService {
     private repository: LMEQualificationWorkspaceRepository,
     private map: LMEQualificationMap,
     private Logger: Logger,
-  ) { }
+    private readonly mpService: MonitorPlanWorkspaceService,
+  ) {}
 
   async getLMEQualifications(
     locId: string,
@@ -36,11 +38,16 @@ export class LMEQualificationWorkspaceService {
       lmeQualId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'LME Qualification Not Found', true,{
-        locId: locId,
-        qualId: qualId,
-        lmeQualId: lmeQualId,
-      });
+      this.Logger.error(
+        NotFoundException,
+        'LME Qualification Not Found',
+        true,
+        {
+          locId: locId,
+          qualId: qualId,
+          lmeQualId: lmeQualId,
+        },
+      );
     }
     return this.map.one(result);
   }
@@ -64,7 +71,7 @@ export class LMEQualificationWorkspaceService {
     });
 
     const result = await this.repository.save(lmeQual);
-
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 
@@ -85,7 +92,8 @@ export class LMEQualificationWorkspaceService {
     lmeQual.userId = 'testuser';
     lmeQual.updateDate = new Date(Date.now());
 
-    await this.repository.save(lmeQual);
-    return this.getLMEQualification(locId, qualId, lmeQualId);
+    const result = await this.repository.save(lmeQual);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
+    return this.map.one(result);
   }
 }
