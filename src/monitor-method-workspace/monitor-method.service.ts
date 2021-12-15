@@ -8,6 +8,7 @@ import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
@@ -16,6 +17,7 @@ export class MonitorMethodWorkspaceService {
     private repository: MonitorMethodWorkspaceRepository,
     private map: MonitorMethodMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
@@ -27,7 +29,7 @@ export class MonitorMethodWorkspaceService {
     const result = this.repository.findOne(methodId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Method Not Found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Method Not Found', true, {
         methodId: methodId,
       });
     }
@@ -59,6 +61,7 @@ export class MonitorMethodWorkspaceService {
     });
 
     const entity = await this.repository.save(monMethod);
+    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
     return this.map.one(entity);
   }
 
@@ -83,6 +86,7 @@ export class MonitorMethodWorkspaceService {
     method.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(method);
+    await this.mpService.resetToNeedsEvaluation('locationId', 'userId');
     return this.map.one(result);
   }
 }

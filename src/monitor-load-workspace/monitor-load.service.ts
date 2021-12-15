@@ -7,6 +7,7 @@ import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -15,6 +16,7 @@ export class MonitorLoadWorkspaceService {
     private repository: MonitorLoadWorkspaceRepository,
     private map: MonitorLoadMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getLoads(locationId: string): Promise<MonitorLoadDTO[]> {
@@ -26,7 +28,7 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true, {
         loadId: loadId,
       });
     }
@@ -59,7 +61,7 @@ export class MonitorLoadWorkspaceService {
     });
 
     const result = await this.repository.save(load);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
     return this.map.one(result);
   }
 
@@ -87,7 +89,7 @@ export class MonitorLoadWorkspaceService {
     load.updateDate = new Date(Date.now());
 
     await this.repository.save(load);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
     return this.getLoad(loadId);
   }
 }

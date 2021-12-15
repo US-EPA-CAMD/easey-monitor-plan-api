@@ -7,6 +7,7 @@ import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -15,6 +16,7 @@ export class MatsMethodWorkspaceService {
     private repository: MatsMethodWorkspaceRepository,
     private map: MatsMethodMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getMethods(locationId: string): Promise<MatsMethodDTO[]> {
@@ -56,6 +58,8 @@ export class MatsMethodWorkspaceService {
     });
 
     const result = await this.repository.save(method);
+    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+
     return this.map.one(result);
   }
 
@@ -77,6 +81,7 @@ export class MatsMethodWorkspaceService {
     method.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(method);
+    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
     return this.map.one(result);
   }
 }

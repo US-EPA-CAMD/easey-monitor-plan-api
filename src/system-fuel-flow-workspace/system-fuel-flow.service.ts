@@ -7,6 +7,7 @@ import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {
@@ -15,6 +16,7 @@ export class SystemFuelFlowWorkspaceService {
     private readonly repository: SystemFuelFlowWorkspaceRepository,
     private readonly map: SystemFuelFlowMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlowDTO[]> {
@@ -26,7 +28,7 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Fuel Flow not found.', true,{
+      this.Logger.error(NotFoundException, 'Fuel Flow not found.', true, {
         fuelFlowId: fuelFlowId,
       });
     }
@@ -56,7 +58,7 @@ export class SystemFuelFlowWorkspaceService {
     });
 
     await this.repository.save(fuelFlow);
-
+    await this.mpService.resetToNeedsEvaluation('locId', 'userId');
     return this.getFuelFlow(fuelFlow.id);
   }
 
@@ -76,7 +78,7 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.endHour = payload.endHour;
 
     await this.repository.save(fuelFlow);
-
+    await this.mpService.resetToNeedsEvaluation('locId', 'userId');
     return this.getFuelFlow(fuelFlowId);
   }
 }

@@ -96,9 +96,12 @@ export class MonitorPlanWorkspaceService {
     return mpEvalReport;
   }
 
-  async resetToNeedsEvaluation(planId: string, userId: string): Promise<void> {
+  async resetToNeedsEvaluation(locId: string, userId: string): Promise<void> {
+    // get monitor plan by location ID
+
+    // update plan's eval status to EVAL
     // const result = await this.repository.resetToNeedsEvaluation(planId, userId);
-    // console.log('reset result:', result);
+
     // if (result) {
     //   console.log(
     //     'Monitor plan with ID: ' +

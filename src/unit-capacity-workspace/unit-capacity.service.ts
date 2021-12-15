@@ -6,6 +6,7 @@ import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -13,6 +14,7 @@ export class UnitCapacityWorkspaceService {
     private readonly logger: Logger,
     private readonly repository: UnitCapacityWorkspaceRepository,
     private readonly map: UnitCapacityMap,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getUnitCapacities(
@@ -37,7 +39,7 @@ export class UnitCapacityWorkspaceService {
       unitCapacityId,
     );
     if (!result) {
-      this.logger.error(NotFoundException, 'Monitor Load Not Found', true,{
+      this.logger.error(NotFoundException, 'Monitor Load Not Found', true, {
         unitId,
         unitCapacityId,
       });
@@ -63,7 +65,7 @@ export class UnitCapacityWorkspaceService {
     });
 
     const result = await this.repository.save(unitCapacity);
-
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getUnitCapacity(locId, unitId, result.id);
   }
 
@@ -88,6 +90,7 @@ export class UnitCapacityWorkspaceService {
     unitCapacity.updateDate = new Date(Date.now());
 
     await this.repository.save(unitCapacity);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getUnitCapacity(locId, unitRecordId, unitCapacityId);
   }
 }

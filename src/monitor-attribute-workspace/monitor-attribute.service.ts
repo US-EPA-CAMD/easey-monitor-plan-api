@@ -7,6 +7,7 @@ import { UpdateMonitorAttributeDTO } from '../dtos/monitor-attribute-update.dto'
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {
@@ -15,6 +16,7 @@ export class MonitorAttributeWorkspaceService {
     private readonly repository: MonitorAttributeWorkspaceRepository,
     private readonly map: MonitorAttributeMap,
     private readonly logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getAttributes(locationId: string): Promise<MonitorAttributeDTO[]> {
@@ -67,7 +69,7 @@ export class MonitorAttributeWorkspaceService {
     });
 
     const result = await this.repository.save(attribute);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getAttribute(locationId, result.id);
   }
 
@@ -93,7 +95,7 @@ export class MonitorAttributeWorkspaceService {
     attribute.updateDate = new Date(Date.now());
 
     await this.repository.save(attribute);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getAttribute(locationId, id);
   }
 }

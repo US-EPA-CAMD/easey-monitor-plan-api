@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class UnitControlWorkspaceService {
@@ -15,6 +16,7 @@ export class UnitControlWorkspaceService {
     readonly repository: UnitControlWorkspaceRepository,
     readonly map: UnitControlMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getUnitControls(
@@ -36,7 +38,7 @@ export class UnitControlWorkspaceService {
       unitControlId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true, {
         unitId: unitId,
         unitControlId: unitControlId,
       });
@@ -66,6 +68,7 @@ export class UnitControlWorkspaceService {
     });
 
     const result = await this.repository.save(load);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 
@@ -89,6 +92,7 @@ export class UnitControlWorkspaceService {
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getUnitControl(locId, unitId, unitControlId);
   }
 }
