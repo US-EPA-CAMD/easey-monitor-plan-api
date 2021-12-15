@@ -46,8 +46,6 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    // temporary:
-    const testUserId = 'testuser';
     const unitFuel = this.repository.create({
       id: uuid(),
       unitId: unitId,
@@ -58,7 +56,7 @@ export class UnitFuelWorkspaceService {
       demSO2: payload.demSO2,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      userId: testUserId,
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -84,9 +82,7 @@ export class UnitFuelWorkspaceService {
     unitFuel.demSO2 = payload.demSO2;
     unitFuel.beginDate = payload.beginDate;
     unitFuel.endDate = payload.endDate;
-    // unitFuel.userId = userId;
-    // temporary:
-    unitFuel.userId = 'testuser';
+    unitFuel.userId = userId;
     unitFuel.updateDate = new Date(Date.now());
 
     await this.repository.save(unitFuel);

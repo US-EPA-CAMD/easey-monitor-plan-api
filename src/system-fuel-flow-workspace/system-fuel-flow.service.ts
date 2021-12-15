@@ -39,6 +39,8 @@ export class SystemFuelFlowWorkspaceService {
   async createFuelFlow(
     monitoringSystemRecordId: string,
     payload: UpdateSystemFuelFlowDTO,
+    locId: string,
+    userId: string,
   ): Promise<SystemFuelFlowDTO> {
     const fuelFlow = this.repository.create({
       id: uuid(),
@@ -50,21 +52,21 @@ export class SystemFuelFlowWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-
-      // TODO: userId to be determined
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     await this.repository.save(fuelFlow);
-    await this.mpService.resetToNeedsEvaluation('locId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getFuelFlow(fuelFlow.id);
   }
 
   async updateFuelFlow(
     fuelFlowId: string,
     payload: UpdateSystemFuelFlowDTO,
+    locId: string,
+    userId: string,
   ): Promise<SystemFuelFlowDTO> {
     const fuelFlow = await this.getFuelFlow(fuelFlowId);
 
@@ -78,7 +80,7 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.endHour = payload.endHour;
 
     await this.repository.save(fuelFlow);
-    await this.mpService.resetToNeedsEvaluation('locId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getFuelFlow(fuelFlowId);
   }
 }

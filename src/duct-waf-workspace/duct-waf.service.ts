@@ -57,8 +57,7 @@ export class DuctWafWorkspaceService {
       ductDepth: payload.ductDepth,
       wafEndDate: payload.wafEndDate,
       wafEndHour: payload.wafEndHour,
-      // TODO - remove slice when userId constraints are fixed in the db
-      userId: userId.slice(0, 7),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -89,8 +88,7 @@ export class DuctWafWorkspaceService {
     ductWaf.ductDepth = payload.ductDepth;
     ductWaf.wafEndDate = payload.wafEndDate;
     ductWaf.wafEndHour = payload.wafEndHour;
-    // TODO - remove slice when userId constraints are fixed in the db
-    ductWaf.userId = userId.slice(0, 7);
+    ductWaf.userId = userId;
     ductWaf.updateDate = new Date(Date.now());
 
     await this.repository.save(ductWaf);

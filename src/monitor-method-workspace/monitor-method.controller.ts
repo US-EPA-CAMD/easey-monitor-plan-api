@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Put,
@@ -13,6 +18,7 @@ import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -40,8 +46,9 @@ export class MonitorMethodWorkspaceController {
   createMethod(
     @Param('locId') locId: string,
     @Body() payload: UpdateMonitorMethodDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorMethodDTO> {
-    return this.service.createMethod(locId, payload);
+    return this.service.createMethod(locId, payload, userId);
   }
 
   @Put(':methodId')
@@ -55,7 +62,8 @@ export class MonitorMethodWorkspaceController {
     @Param('locId') locId: string,
     @Param('methodId') methodId: string,
     @Body() payload: UpdateMonitorMethodDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorMethodDTO> {
-    return this.service.updateMethod(methodId, payload);
+    return this.service.updateMethod(methodId, payload, locId, userId);
   }
 }

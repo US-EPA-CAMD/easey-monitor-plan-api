@@ -65,7 +65,7 @@ export class LMEQualificationWorkspaceService {
       operatingHours: payload.operatingHours,
       so2Tons: payload.so2Tons,
       noxTons: payload.noxTons,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -89,7 +89,7 @@ export class LMEQualificationWorkspaceService {
     lmeQual.operatingHours = payload.operatingHours;
     lmeQual.so2Tons = payload.so2Tons;
     lmeQual.noxTons = payload.noxTons;
-    lmeQual.userId = 'testuser';
+    lmeQual.userId = userId;
     lmeQual.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(lmeQual);

@@ -62,7 +62,7 @@ export class UnitControlWorkspaceService {
       originalCode: payload.originalCode,
       retireDate: payload.retireDate,
       seasonalControlsIndicator: payload.seasonalControlsIndicator,
-      userId: userId.slice(0, 8),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -88,7 +88,7 @@ export class UnitControlWorkspaceService {
     unitControl.originalCode = payload.originalCode;
     unitControl.retireDate = payload.retireDate;
     unitControl.seasonalControlsIndicator = payload.seasonalControlsIndicator;
-    unitControl.userId = userId.slice(0, 8);
+    unitControl.userId = userId;
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);

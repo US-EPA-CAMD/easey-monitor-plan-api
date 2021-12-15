@@ -57,6 +57,7 @@ export class SystemComponentWorkspaceService {
     sysId: string,
     componentId: string,
     payload: UpdateSystemComponentDTO,
+    userId: string,
   ): Promise<SystemComponentDTO> {
     const systemComponent = await this.getComponent(sysId, componentId);
 
@@ -65,11 +66,11 @@ export class SystemComponentWorkspaceService {
     systemComponent.endDate = payload.endDate;
     systemComponent.endHour = payload.endHour;
     // TODO: userId
-    systemComponent.userId = 'testuser';
+    systemComponent.userId = userId;
     systemComponent.updateDate = new Date(Date.now());
 
     await this.repository.save(systemComponent);
-    await this.mpService.resetToNeedsEvaluation('locId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getComponent(sysId, componentId);
   }
 
@@ -77,6 +78,7 @@ export class SystemComponentWorkspaceService {
     locationId: string,
     monitoringSystemRecordId: string,
     payload: UpdateSystemComponentDTO,
+    userId: string,
   ): Promise<SystemComponentDTO> {
     let component = await this.componentService.getComponentByIdentifier(
       locationId,
@@ -111,14 +113,13 @@ export class SystemComponentWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      // TODO
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     await this.repository.save(systemComponent);
-    await this.mpService.resetToNeedsEvaluation('locId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getComponent(monitoringSystemRecordId, component.id);
   }
 }

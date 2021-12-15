@@ -40,6 +40,7 @@ export class MonitorSpanWorkspaceService {
   async createSpan(
     locationId: string,
     payload: UpdateMonitorSpanDTO,
+    userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = this.repository.create({
       id: uuid(),
@@ -61,14 +62,13 @@ export class MonitorSpanWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      // TODO
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(span);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 
@@ -76,6 +76,7 @@ export class MonitorSpanWorkspaceService {
     locationId: string,
     spanId: string,
     payload: UpdateMonitorSpanDTO,
+    userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = await this.getSpan(locationId, spanId);
 
@@ -96,12 +97,11 @@ export class MonitorSpanWorkspaceService {
     span.beginHour = payload.beginHour;
     span.endDate = payload.endDate;
     span.endHour = payload.endHour;
-    // TODO
-    span.userid = 'testuser';
+    span.userid = userId;
     span.updateDate = new Date(Date.now());
 
     await this.repository.save(span);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getSpan(locationId, spanId);
   }
 }

@@ -72,7 +72,7 @@ export class PCTQualificationWorkspaceService {
       yr3QualificationDataYear: payload.yr3QualificationDataYear,
       yr3QualificationDataTypeCode: payload.yr3QualificationDataTypeCode,
       yr3PercentageValue: payload.yr3PercentageValue,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -103,7 +103,7 @@ export class PCTQualificationWorkspaceService {
     pctQual.yr3QualificationDataYear = payload.yr3QualificationDataYear;
     pctQual.yr3QualificationDataTypeCode = payload.yr3QualificationDataTypeCode;
     pctQual.yr3PercentageValue = payload.yr3PercentageValue;
-    pctQual.userId = 'testuser';
+    pctQual.userId = userId;
     pctQual.updateDate = new Date(Date.now());
 
     await this.repository.save(pctQual);

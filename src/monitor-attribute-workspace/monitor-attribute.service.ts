@@ -63,7 +63,7 @@ export class MonitorAttributeWorkspaceService {
       crossAreaStackExit: payload.crossAreaStackExit,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      userId: userId.slice(0, 8),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -91,7 +91,7 @@ export class MonitorAttributeWorkspaceService {
     attribute.crossAreaStackExit = payload.crossAreaStackExit;
     attribute.beginDate = payload.beginDate;
     attribute.endDate = payload.endDate;
-    attribute.userId = userId.slice(0, 8);
+    attribute.userId = userId;
     attribute.updateDate = new Date(Date.now());
 
     await this.repository.save(attribute);

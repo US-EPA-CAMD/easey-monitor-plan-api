@@ -39,6 +39,7 @@ export class MatsMethodWorkspaceService {
   async createMethod(
     locationId: string,
     payload: UpdateMatsMethodDTO,
+    userId: string,
   ): Promise<MatsMethodDTO> {
     const method = this.repository.create({
       id: uuid(),
@@ -52,13 +53,13 @@ export class MatsMethodWorkspaceService {
       endHour: payload.endHour,
 
       // TODO: userId to be determined
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
 
     return this.map.one(result);
   }
@@ -67,6 +68,7 @@ export class MatsMethodWorkspaceService {
     methodId: string,
     locationId: string,
     payload: UpdateMatsMethodDTO,
+    userId: string,
   ): Promise<MatsMethodDTO> {
     const method = await this.getMethod(methodId);
 
@@ -77,11 +79,11 @@ export class MatsMethodWorkspaceService {
     method.endHour = payload.endHour;
 
     // TODO: userId to be determined
-    method.userId = 'testuser';
+    method.userId = userId;
     method.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 }

@@ -59,7 +59,7 @@ export class UnitCapacityWorkspaceService {
       maximumHourlyHeatInputCapacity: payload.maximumHourlyHeatInputCapacity,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      userId: userId.slice(0, 8),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -86,7 +86,7 @@ export class UnitCapacityWorkspaceService {
       payload.maximumHourlyHeatInputCapacity;
     unitCapacity.beginDate = payload.beginDate;
     unitCapacity.endDate = payload.endDate;
-    unitCapacity.userId = userId.slice(0, 8);
+    unitCapacity.userId = userId;
     unitCapacity.updateDate = new Date(Date.now());
 
     await this.repository.save(unitCapacity);

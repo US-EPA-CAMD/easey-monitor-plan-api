@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -57,7 +62,12 @@ export class SystemFuelFlowWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.createFuelFlow(monitoringSystemRecordId, payload);
+    return this.service.createFuelFlow(
+      monitoringSystemRecordId,
+      payload,
+      locationId,
+      userId,
+    );
   }
 
   @Put(':fuelFlowId')
@@ -82,6 +92,6 @@ export class SystemFuelFlowWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.updateFuelFlow(id, payload);
+    return this.service.updateFuelFlow(id, payload, locationId, userId);
   }
 }

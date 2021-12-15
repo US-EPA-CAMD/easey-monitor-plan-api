@@ -68,7 +68,7 @@ export class LEEQualificationWorkspaceService {
       applicableEmissionStandard: payload.applicableEmissionStandard,
       unitsOfStandard: payload.unitsOfStandard,
       percentageOfEmissionStandard: payload.percentageOfEmissionStandard,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -96,7 +96,7 @@ export class LEEQualificationWorkspaceService {
     leeQual.applicableEmissionStandard = payload.applicableEmissionStandard;
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
-    leeQual.userId = 'testuser';
+    leeQual.userId = userId;
     leeQual.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(leeQual);

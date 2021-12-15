@@ -40,6 +40,7 @@ export class MonitorMethodWorkspaceService {
   async createMethod(
     locationId: string,
     payload: UpdateMonitorMethodDTO,
+    userId: string,
   ): Promise<MonitorMethodDTO> {
     const monMethod = this.repository.create({
       id: uuid(),
@@ -52,22 +53,21 @@ export class MonitorMethodWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      // TODO: this needs to be the actual user that is logged in
-      // how are we going to get this from CDX as this is an id NOT a username
-      userId: 'testuser',
-
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const entity = await this.repository.save(monMethod);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(entity);
   }
 
   async updateMethod(
     methodId: string,
     payload: UpdateMonitorMethodDTO,
+    locationId: string,
+    userId: string,
   ): Promise<MonitorMethodDTO> {
     const method = await this.getMethod(methodId);
 
@@ -79,14 +79,11 @@ export class MonitorMethodWorkspaceService {
     method.beginHour = payload.beginHour;
     method.endDate = payload.endDate;
     method.endHour = payload.endHour;
-
-    // TODO: this needs to be the actual user that is logged in
-    // how are we going to get this from CDX as this is an id NOT a username
-    method.userId = 'testuser';
+    method.userId = userId;
     method.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation('locationId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 }

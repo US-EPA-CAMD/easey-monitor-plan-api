@@ -39,6 +39,7 @@ export class MonitorLoadWorkspaceService {
   async createLoad(
     locationId: string,
     payload: UpdateMonitorLoadDTO,
+    userId: string,
   ): Promise<MonitorLoadDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -55,13 +56,13 @@ export class MonitorLoadWorkspaceService {
       normalLevelCode: payload.normalLevelCode,
       secondLevelCode: payload.secondLevelCode,
       maximumLoadUnitsOfMeasureCode: payload.maximumLoadUnitsOfMeasureCode,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 
@@ -69,6 +70,7 @@ export class MonitorLoadWorkspaceService {
     locationId: string,
     loadId: string,
     payload: UpdateMonitorLoadDTO,
+    userId: string,
   ): Promise<MonitorLoadDTO> {
     const load = await this.getLoad(loadId);
 
@@ -84,12 +86,11 @@ export class MonitorLoadWorkspaceService {
     load.normalLevelCode = payload.normalLevelCode;
     load.secondLevelCode = payload.secondLevelCode;
     load.maximumLoadUnitsOfMeasureCode = payload.maximumLoadUnitsOfMeasureCode;
-    // TODO
-    load.userId = 'testuser';
+    load.userId = userId;
     load.updateDate = new Date(Date.now());
 
     await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getLoad(loadId);
   }
 }

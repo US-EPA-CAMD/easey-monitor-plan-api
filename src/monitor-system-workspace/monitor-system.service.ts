@@ -35,6 +35,7 @@ export class MonitorSystemWorkspaceService {
   async createSystem(
     locationId: string,
     payload: UpdateMonitorSystemDTO,
+    userId: string,
   ): Promise<MonitorSystemDTO> {
     const system = this.repository.create({
       id: uuid(),
@@ -47,13 +48,13 @@ export class MonitorSystemWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(system);
   }
 
@@ -72,6 +73,8 @@ export class MonitorSystemWorkspaceService {
   async updateSystem(
     monitoringSystemId: string,
     payload: UpdateMonitorSystemDTO,
+    locId: string,
+    userId: string,
   ): Promise<MonitorSystemDTO> {
     const system = await this.getSystem(monitoringSystemId);
 
@@ -82,12 +85,11 @@ export class MonitorSystemWorkspaceService {
     system.beginHour = payload.beginHour;
     system.endDate = payload.endDate;
     system.endHour = payload.endHour;
-    // TODO: update to actual user logged in
-    system.userId = 'testuser';
+    system.userId = userId;
     system.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation('locId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 }

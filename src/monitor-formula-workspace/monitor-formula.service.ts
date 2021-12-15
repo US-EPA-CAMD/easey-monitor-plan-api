@@ -59,7 +59,7 @@ export class MonitorFormulaWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: userId.slice(0, 8),
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -85,7 +85,7 @@ export class MonitorFormulaWorkspaceService {
     formula.beginHour = payload.beginHour;
     formula.endDate = payload.endDate;
     formula.endHour = payload.endHour;
-    formula.userId = userId.slice(0, 8);
+    formula.userId = userId;
     formula.updateDate = new Date(Date.now());
 
     await this.repository.save(formula);

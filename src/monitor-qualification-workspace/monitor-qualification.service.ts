@@ -52,7 +52,7 @@ export class MonitorQualificationWorkspaceService {
       qualificationTypeCode: payload.qualificationTypeCode,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
@@ -74,7 +74,7 @@ export class MonitorQualificationWorkspaceService {
     qual.qualificationTypeCode = payload.qualificationTypeCode;
     qual.beginDate = payload.beginDate;
     qual.endDate = payload.endDate;
-    qual.userId = 'testuser';
+    qual.userId = userId;
     qual.addDate = new Date(Date.now());
     qual.updateDate = new Date(Date.now());
 

@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -13,6 +18,7 @@ import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { UpdateMonitorSystemDTO } from '../dtos/monitor-system-update.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
 @Controller()
 @ApiTags('Systems')
@@ -41,8 +47,9 @@ export class MonitorSystemWorkspaceController {
   createSystem(
     @Param('locId') locationId: string,
     @Body() payload: UpdateMonitorSystemDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorSystemDTO> {
-    return this.service.createSystem(locationId, payload);
+    return this.service.createSystem(locationId, payload, userId);
   }
 
   @Put(':sysId')
@@ -57,7 +64,13 @@ export class MonitorSystemWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemId: string,
     @Body() payload: UpdateMonitorSystemDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorSystemDTO> {
-    return this.service.updateSystem(monitoringSystemId, payload);
+    return this.service.updateSystem(
+      monitoringSystemId,
+      payload,
+      locationId,
+      userId,
+    );
   }
 }

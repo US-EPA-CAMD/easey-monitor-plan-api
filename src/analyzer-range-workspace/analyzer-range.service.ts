@@ -42,6 +42,8 @@ export class AnalyzerRangeWorkspaceService {
   async createAnalyzerRange(
     componentRecordId: string,
     payload: UpdateAnalyzerRangeDTO,
+    locationId: string,
+    userId: string,
   ): Promise<AnalyzerRangeDTO> {
     const analyzerRange = this.repository.create({
       id: uuid(),
@@ -58,13 +60,15 @@ export class AnalyzerRangeWorkspaceService {
     });
 
     const result = await this.repository.save(analyzerRange);
-    await this.mpService.resetToNeedsEvaluation('locationId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 
   async updateAnalyzerRangd(
     analyzerRangeId: string,
     payload: UpdateAnalyzerRangeDTO,
+    locationId: string,
+    userId: string,
   ): Promise<AnalyzerRangeDTO> {
     const analyzerRange = await this.getAnalyzerRange(analyzerRangeId);
 
@@ -76,7 +80,7 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.endHour = payload.endHour;
 
     const result = await this.repository.save(analyzerRange);
-    await this.mpService.resetToNeedsEvaluation('locationId', 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 }

@@ -43,6 +43,7 @@ export class MonitorDefaultWorkspaceService {
   async createDefault(
     locationId: string,
     payload: UpdateMonitorDefaultDTO,
+    userId: string,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = this.repository.create({
       id: uuid(),
@@ -59,13 +60,13 @@ export class MonitorDefaultWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 
@@ -73,6 +74,7 @@ export class MonitorDefaultWorkspaceService {
     locationId: string,
     defaultId: string,
     payload: UpdateMonitorDefaultDTO,
+    userId: string,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = await this.getDefault(locationId, defaultId);
 
@@ -88,11 +90,11 @@ export class MonitorDefaultWorkspaceService {
     monDefault.beginHour = payload.beginHour;
     monDefault.endDate = payload.endDate;
     monDefault.endHour = payload.endHour;
-    monDefault.userId = 'testuser';
+    monDefault.userId = userId;
     monDefault.updateDate = new Date(Date.now());
 
     await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, 'userId');
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getDefault(locationId, defaultId);
   }
 }
