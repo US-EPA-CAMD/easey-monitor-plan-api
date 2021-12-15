@@ -7,7 +7,12 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiSecurity,
+} from '@nestjs/swagger';
 
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
@@ -53,7 +58,7 @@ export class MatsMethodWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.createMethod(locationId, payload);
+    return this.service.createMethod(locationId, payload, userId);
   }
 
   @Put(':methodId')
@@ -75,6 +80,6 @@ export class MatsMethodWorkspaceController {
       payload: payload,
       userId: userId,
     });
-    return this.service.updateMethod(methodId, locationId, payload);
+    return this.service.updateMethod(methodId, locationId, payload, userId);
   }
 }

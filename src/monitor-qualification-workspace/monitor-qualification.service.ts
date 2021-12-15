@@ -8,6 +8,7 @@ import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -16,6 +17,7 @@ export class MonitorQualificationWorkspaceService {
     private repository: MonitorQualificationWorkspaceRepository,
     private map: MonitorQualificationMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getQualifications(
@@ -31,7 +33,7 @@ export class MonitorQualificationWorkspaceService {
   ): Promise<MonitorQualification> {
     const result = await this.repository.getQualification(locId, qualId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Qualification Not Found', true,{
+      this.Logger.error(NotFoundException, 'Qualification Not Found', true, {
         locId: locId,
         qualId: qualId,
       });
@@ -50,12 +52,13 @@ export class MonitorQualificationWorkspaceService {
       qualificationTypeCode: payload.qualificationTypeCode,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(qual);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(qual);
   }
 
@@ -71,11 +74,12 @@ export class MonitorQualificationWorkspaceService {
     qual.qualificationTypeCode = payload.qualificationTypeCode;
     qual.beginDate = payload.beginDate;
     qual.endDate = payload.endDate;
-    qual.userId = 'testuser';
+    qual.userId = userId;
     qual.addDate = new Date(Date.now());
     qual.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(qual);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 }

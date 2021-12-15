@@ -10,6 +10,7 @@ import { SystemComponentWorkspaceRepository } from './system-component.repositor
 import { SystemComponent } from '../entities/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
@@ -19,6 +20,7 @@ export class SystemComponentWorkspaceService {
     private componentService: ComponentWorkspaceService,
     private map: SystemComponentMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getComponents(
@@ -36,10 +38,15 @@ export class SystemComponentWorkspaceService {
     const result = await this.repository.getComponent(sysId, componentId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'System component was not found', true,{
-        sysId: sysId,
-        componentId: componentId,
-      });
+      this.Logger.error(
+        NotFoundException,
+        'System component was not found',
+        true,
+        {
+          sysId: sysId,
+          componentId: componentId,
+        },
+      );
     }
 
     return this.map.one(result);
@@ -50,6 +57,7 @@ export class SystemComponentWorkspaceService {
     sysId: string,
     componentId: string,
     payload: UpdateSystemComponentDTO,
+    userId: string,
   ): Promise<SystemComponentDTO> {
     const systemComponent = await this.getComponent(sysId, componentId);
 
@@ -58,11 +66,11 @@ export class SystemComponentWorkspaceService {
     systemComponent.endDate = payload.endDate;
     systemComponent.endHour = payload.endHour;
     // TODO: userId
-    systemComponent.userId = 'testuser';
+    systemComponent.userId = userId;
     systemComponent.updateDate = new Date(Date.now());
 
     await this.repository.save(systemComponent);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getComponent(sysId, componentId);
   }
 
@@ -70,6 +78,7 @@ export class SystemComponentWorkspaceService {
     locationId: string,
     monitoringSystemRecordId: string,
     payload: UpdateSystemComponentDTO,
+    userId: string,
   ): Promise<SystemComponentDTO> {
     let component = await this.componentService.getComponentByIdentifier(
       locationId,
@@ -104,14 +113,13 @@ export class SystemComponentWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      // TODO
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     await this.repository.save(systemComponent);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getComponent(monitoringSystemRecordId, component.id);
   }
 }

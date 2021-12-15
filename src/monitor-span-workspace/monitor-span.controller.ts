@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -13,6 +18,7 @@ import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -41,8 +47,9 @@ export class MonitorSpanWorkspaceController {
     @Param('locId') locationId: string,
     @Param('spanId') spanId: string,
     @Body() payload: UpdateMonitorSpanDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorSpanDTO> {
-    return this.service.updateSpan(locationId, spanId, payload);
+    return this.service.updateSpan(locationId, spanId, payload, userId);
   }
 
   @Post()
@@ -56,7 +63,8 @@ export class MonitorSpanWorkspaceController {
   createSpan(
     @Param('locId') locationId: string,
     @Body() payload: UpdateMonitorSpanDTO,
+    @CurrentUser() userId: string,
   ): Promise<MonitorSpanDTO> {
-    return this.service.createSpan(locationId, payload);
+    return this.service.createSpan(locationId, payload, userId);
   }
 }

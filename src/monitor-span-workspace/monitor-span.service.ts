@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { v4 as uuid } from 'uuid';
 
 import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
@@ -15,6 +16,7 @@ export class MonitorSpanWorkspaceService {
     private repository: MonitorSpanWorkspaceRepository,
     private map: MonitorSpanMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getSpans(locationId: string): Promise<MonitorSpanDTO[]> {
@@ -26,7 +28,7 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Span not found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Span not found', true, {
         locationId: locationId,
         spanId: spanId,
       });
@@ -38,6 +40,7 @@ export class MonitorSpanWorkspaceService {
   async createSpan(
     locationId: string,
     payload: UpdateMonitorSpanDTO,
+    userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = this.repository.create({
       id: uuid(),
@@ -59,14 +62,13 @@ export class MonitorSpanWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      // TODO
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(span);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 
@@ -74,6 +76,7 @@ export class MonitorSpanWorkspaceService {
     locationId: string,
     spanId: string,
     payload: UpdateMonitorSpanDTO,
+    userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = await this.getSpan(locationId, spanId);
 
@@ -94,12 +97,11 @@ export class MonitorSpanWorkspaceService {
     span.beginHour = payload.beginHour;
     span.endDate = payload.endDate;
     span.endHour = payload.endHour;
-    // TODO
-    span.userid = 'testuser';
+    span.userid = userId;
     span.updateDate = new Date(Date.now());
 
     await this.repository.save(span);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getSpan(locationId, spanId);
   }
 }

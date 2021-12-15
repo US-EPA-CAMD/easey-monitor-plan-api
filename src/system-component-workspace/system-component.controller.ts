@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -13,6 +18,7 @@ import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { UpdateSystemComponentDTO } from '../dtos/system-component-update.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -44,6 +50,7 @@ export class SystemComponentWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @Param('compId') componentId: string,
+    @CurrentUser() userId: string,
     @Body() payload: UpdateSystemComponentDTO,
   ): Promise<SystemComponentDTO> {
     return this.service.updateComponent(
@@ -51,6 +58,7 @@ export class SystemComponentWorkspaceController {
       monSysId,
       componentId,
       payload,
+      userId,
     );
   }
 
@@ -64,8 +72,14 @@ export class SystemComponentWorkspaceController {
   createSystemComponent(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
+    @CurrentUser() userId: string,
     @Body() payload: UpdateSystemComponentDTO,
   ): Promise<SystemComponentDTO> {
-    return this.service.createSystemComponent(locationId, monSysId, payload);
+    return this.service.createSystemComponent(
+      locationId,
+      monSysId,
+      payload,
+      userId,
+    );
   }
 }

@@ -7,6 +7,7 @@ import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class UnitFuelWorkspaceService {
@@ -15,12 +16,10 @@ export class UnitFuelWorkspaceService {
     readonly repository: UnitFuelWorkspaceRepository,
     readonly map: UnitFuelMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
-  async getUnitFuels(
-    locId: string,
-    unitId: number,
-  ): Promise<UnitFuelDTO[]> {
+  async getUnitFuels(locId: string, unitId: number): Promise<UnitFuelDTO[]> {
     const results = await this.repository.getUnitFuels(locId, unitId);
     return this.map.many(results);
   }
@@ -30,13 +29,9 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     unitFuelId: string,
   ): Promise<UnitFuelDTO> {
-    const result = await this.repository.getUnitFuel(
-      locId,
-      unitId,
-      unitFuelId,
-    );
+    const result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', true,{
+      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
         locId: locId,
         unitId: unitId,
         unitFuelId: unitFuelId,
@@ -51,8 +46,6 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    // temporary:
-    const testUserId = 'testuser';
     const unitFuel = this.repository.create({
       id: uuid(),
       unitId: unitId,
@@ -63,12 +56,13 @@ export class UnitFuelWorkspaceService {
       demSO2: payload.demSO2,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      userId: testUserId,
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(unitFuel);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 
@@ -88,12 +82,11 @@ export class UnitFuelWorkspaceService {
     unitFuel.demSO2 = payload.demSO2;
     unitFuel.beginDate = payload.beginDate;
     unitFuel.endDate = payload.endDate;
-    // unitFuel.userId = userId;
-    // temporary:
-    unitFuel.userId = 'testuser';
+    unitFuel.userId = userId;
     unitFuel.updateDate = new Date(Date.now());
 
     await this.repository.save(unitFuel);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getUnitFuel(locId, unitId, unitFuelId);
   }
 }

@@ -7,6 +7,7 @@ import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { UpdateLEEQualificationDTO } from '../dtos/lee-qualification-update.dto';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class LEEQualificationWorkspaceService {
@@ -15,7 +16,8 @@ export class LEEQualificationWorkspaceService {
     private repository: LEEQualificationWorkspaceRepository,
     private map: LEEQualificationMap,
     private Logger: Logger,
-  ) { }
+    private readonly mpService: MonitorPlanWorkspaceService,
+  ) {}
 
   async getLEEQualifications(
     locId: string,
@@ -36,11 +38,16 @@ export class LEEQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'LEE Qualification Not Found', true,{
-        locId: locId,
-        qualId: qualId,
-        pctQualId: pctQualId,
-      });
+      this.Logger.error(
+        NotFoundException,
+        'LEE Qualification Not Found',
+        true,
+        {
+          locId: locId,
+          qualId: qualId,
+          pctQualId: pctQualId,
+        },
+      );
     }
     return this.map.one(result);
   }
@@ -61,13 +68,13 @@ export class LEEQualificationWorkspaceService {
       applicableEmissionStandard: payload.applicableEmissionStandard,
       unitsOfStandard: payload.unitsOfStandard,
       percentageOfEmissionStandard: payload.percentageOfEmissionStandard,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(load);
-
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 
@@ -89,10 +96,11 @@ export class LEEQualificationWorkspaceService {
     leeQual.applicableEmissionStandard = payload.applicableEmissionStandard;
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
-    leeQual.userId = 'testuser';
+    leeQual.userId = userId;
     leeQual.updateDate = new Date(Date.now());
 
-    await this.repository.save(leeQual);
-    return this.getLEEQualification(locId, qualId, pctQualId);
+    const result = await this.repository.save(leeQual);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
+    return this.map.one(result);
   }
 }

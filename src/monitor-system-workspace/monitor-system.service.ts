@@ -8,6 +8,7 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -16,6 +17,7 @@ export class MonitorSystemWorkspaceService {
     private repository: MonitorSystemWorkspaceRepository,
     private map: MonitorSystemMap,
     private Logger: Logger,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
@@ -33,6 +35,7 @@ export class MonitorSystemWorkspaceService {
   async createSystem(
     locationId: string,
     payload: UpdateMonitorSystemDTO,
+    userId: string,
   ): Promise<MonitorSystemDTO> {
     const system = this.repository.create({
       id: uuid(),
@@ -45,12 +48,13 @@ export class MonitorSystemWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
     const result = await this.repository.save(system);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(system);
   }
 
@@ -58,7 +62,7 @@ export class MonitorSystemWorkspaceService {
     const result = await this.repository.findOne(monitoringSystemId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor System Not Found', true,{
+      this.Logger.error(NotFoundException, 'Monitor System Not Found', true, {
         monitoringSystemId: monitoringSystemId,
       });
     }
@@ -69,6 +73,8 @@ export class MonitorSystemWorkspaceService {
   async updateSystem(
     monitoringSystemId: string,
     payload: UpdateMonitorSystemDTO,
+    locId: string,
+    userId: string,
   ): Promise<MonitorSystemDTO> {
     const system = await this.getSystem(monitoringSystemId);
 
@@ -79,11 +85,11 @@ export class MonitorSystemWorkspaceService {
     system.beginHour = payload.beginHour;
     system.endDate = payload.endDate;
     system.endHour = payload.endHour;
-    // TODO: update to actual user logged in
-    system.userId = 'testuser';
+    system.userId = userId;
     system.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(system);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
 }

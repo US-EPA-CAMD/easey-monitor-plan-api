@@ -95,4 +95,11 @@ export class MonitorPlanWorkspaceService {
 
     return mpEvalReport;
   }
+
+  async resetToNeedsEvaluation(locId: string, userId: string): Promise<void> {
+    const plan = await this.repository.getActivePlanByLocation(locId);
+    const planId = plan.id;
+
+    await this.repository.resetToNeedsEvaluation(planId, userId);
+  }
 }
