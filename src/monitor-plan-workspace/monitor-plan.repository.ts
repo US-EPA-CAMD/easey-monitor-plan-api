@@ -45,6 +45,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     return this.createQueryBuilder('plan')
       .innerJoinAndSelect('plan.locations', 'locations')
       .where('locations.id = :locId', { locId })
+      .andWhere('plan.endReportPeriodId IS NULL')
       .getOne();
   }
 
