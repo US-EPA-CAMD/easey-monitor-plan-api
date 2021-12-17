@@ -64,6 +64,16 @@ export class SystemComponentWorkspaceService {
     // Saving System Component fields
     const systemComponent = await this.getComponent(sysId, componentId);
 
+    systemComponent.modelVersion = payload.modelVersion;
+    systemComponent.sampleAcquisitionMethodCode =
+      payload.sampleAcquisitionMethodCode;
+    systemComponent.componentTypeCode = payload.componentTypeCode;
+    systemComponent.basisCode = payload.basisCode;
+    systemComponent.manufacturer = payload.manufacturer;
+    systemComponent.modelVersion = payload.modelVersion;
+    systemComponent.serialNumber = payload.serialNumber;
+    systemComponent.hgConverterIndicator = payload.hgConverterIndicator;
+
     systemComponent.beginDate = payload.beginDate;
     systemComponent.beginHour = payload.beginHour;
     systemComponent.endDate = payload.endDate;
