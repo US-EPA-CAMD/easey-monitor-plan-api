@@ -1,3 +1,4 @@
+import { Component } from 'src/entities/workspace/component.entity';
 import { Repository, EntityRepository } from 'typeorm';
 
 import { SystemComponent } from '../entities/workspace/system-component.entity';
@@ -24,10 +25,10 @@ export class SystemComponentWorkspaceRepository extends Repository<
   ): Promise<SystemComponent> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
-      .where('msc.monitoringSystemRecordId = :monSysId', {
+      .where('msc.componentRecordId = :componentId', { componentId })
+      .andWhere('msc.monitoringSystemRecordId = :monSysId', {
         monSysId,
       })
-      .andWhere('msc.componentRecordId = :componentId', { componentId })
       .getOne();
   }
 }
