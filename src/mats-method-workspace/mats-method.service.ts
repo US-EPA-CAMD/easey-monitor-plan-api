@@ -72,7 +72,10 @@ export class MatsMethodWorkspaceService {
   ): Promise<MatsMethodDTO> {
     const method = await this.getMethod(methodId);
 
-    method.locationId = locationId;
+    method.supplementalMATSParameterCode =
+      payload.supplementalMATSParameterCode;
+    method.supplementalMATSMonitoringMethodCode =
+      payload.supplementalMATSMonitoringMethodCode;
     method.beginDate = payload.beginDate;
     method.beginHour = payload.beginHour;
     method.endDate = payload.endDate;
