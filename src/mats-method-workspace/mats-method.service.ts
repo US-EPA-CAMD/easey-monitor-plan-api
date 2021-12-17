@@ -51,8 +51,6 @@ export class MatsMethodWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-
-      // TODO: userId to be determined
       userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
@@ -80,8 +78,6 @@ export class MatsMethodWorkspaceService {
     method.beginHour = payload.beginHour;
     method.endDate = payload.endDate;
     method.endHour = payload.endHour;
-
-    // TODO: userId to be determined
     method.userId = userId;
     method.updateDate = new Date(Date.now());
 

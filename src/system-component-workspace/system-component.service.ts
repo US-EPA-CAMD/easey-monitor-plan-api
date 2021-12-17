@@ -75,7 +75,6 @@ export class SystemComponentWorkspaceService {
     systemComponent.beginHour = payload.beginHour;
     systemComponent.endDate = payload.endDate;
     systemComponent.endHour = payload.endHour;
-    // TODO: userId
     systemComponent.userId = userId;
     systemComponent.updateDate = new Date(Date.now());
 
