@@ -47,6 +47,7 @@ export class ComponentWorkspaceService {
   async createComponent(
     locationId: string,
     payload: UpdateComponentDTO,
+    userId: string,
   ): Promise<ComponentDTO> {
     const component = this.repository.create({
       id: uuid(),
@@ -59,8 +60,7 @@ export class ComponentWorkspaceService {
       sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
       basisCode: payload.basisCode,
       hgConverterIndicator: payload.hgConverterIndicator,
-      // TODO: change userId to use actual user from CDX
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });

@@ -11,6 +11,7 @@ import { SystemComponent } from '../entities/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { ComponentWorkspaceRepository } from 'src/component-workspace/component.repository';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
@@ -21,6 +22,7 @@ export class SystemComponentWorkspaceService {
     private map: SystemComponentMap,
     private Logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
+    private compRepository: ComponentWorkspaceRepository,
   ) {}
 
   async getComponents(
@@ -59,6 +61,7 @@ export class SystemComponentWorkspaceService {
     payload: UpdateSystemComponentDTO,
     userId: string,
   ): Promise<SystemComponentDTO> {
+    // Saving System Component fields
     const systemComponent = await this.getComponent(sysId, componentId);
 
     systemComponent.modelVersion = payload.modelVersion;
@@ -78,8 +81,26 @@ export class SystemComponentWorkspaceService {
     systemComponent.userId = userId;
     systemComponent.updateDate = new Date(Date.now());
 
+    // Saving Component fields
+    const component = await this.compRepository.getComponent(
+      systemComponent.componentRecordId,
+    );
+
+    component.componentId = payload.componentId;
+    component.sampleAcquisitionMethodCode = payload.sampleAcquisitionMethodCode;
+    component.componentTypeCode = payload.componentTypeCode;
+    component.basisCode = payload.basisCode;
+    component.manufacturer = payload.manufacturer;
+    component.modelVersion = payload.modelVersion;
+    component.serialNumber = payload.serialNumber;
+    component.hgConverterIndicator = payload.hgConverterIndicator;
+    component.userId = userId;
+    component.updateDate = new Date(Date.now());
+
     await this.repository.save(systemComponent);
+    await this.compRepository.save(component);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
     return this.getComponent(sysId, componentId);
   }
 
@@ -111,6 +132,7 @@ export class SystemComponentWorkspaceService {
       component = await this.componentService.createComponent(
         locationId,
         componentPayload,
+        userId,
       );
     }
 
