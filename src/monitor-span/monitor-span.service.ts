@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
@@ -11,10 +12,17 @@ export class MonitorSpanService {
     @InjectRepository(MonitorSpanRepository)
     private repository: MonitorSpanRepository,
     private map: MonitorSpanMap,
+    private readonly logger: Logger,
   ) {}
 
   async getSpans(locationId: string): Promise<MonitorSpanDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 }

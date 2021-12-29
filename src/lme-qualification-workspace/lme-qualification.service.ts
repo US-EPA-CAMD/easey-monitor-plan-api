@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
@@ -15,7 +19,7 @@ export class LMEQualificationWorkspaceService {
     @InjectRepository(LMEQualificationWorkspaceRepository)
     private repository: LMEQualificationWorkspaceRepository,
     private map: LMEQualificationMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -23,8 +27,14 @@ export class LMEQualificationWorkspaceService {
     locId: string,
     qualId: string,
   ): Promise<LMEQualificationDTO[]> {
-    const results = await this.repository.getLMEQualifications(locId, qualId);
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.getLMEQualifications(locId, qualId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getLMEQualification(
@@ -32,13 +42,19 @@ export class LMEQualificationWorkspaceService {
     qualId: string,
     lmeQualId: string,
   ): Promise<LMEQualificationDTO> {
-    const result = await this.repository.getLMEQualification(
-      locId,
-      qualId,
-      lmeQualId,
-    );
+    let result;
+    try {
+      result = await this.repository.getLMEQualification(
+        locId,
+        qualId,
+        lmeQualId,
+      );
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
     if (!result) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         'LME Qualification Not Found',
         true,
@@ -58,20 +74,25 @@ export class LMEQualificationWorkspaceService {
     qualId: string,
     payload: UpdateLMEQualificationDTO,
   ): Promise<LMEQualificationDTO> {
-    const lmeQual = this.repository.create({
-      id: uuid(),
-      qualificationId: qualId,
-      qualificationDataYear: payload.qualificationDataYear,
-      operatingHours: payload.operatingHours,
-      so2Tons: payload.so2Tons,
-      noxTons: payload.noxTons,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const lmeQual = this.repository.create({
+        id: uuid(),
+        qualificationId: qualId,
+        qualificationDataYear: payload.qualificationDataYear,
+        operatingHours: payload.operatingHours,
+        so2Tons: payload.so2Tons,
+        noxTons: payload.noxTons,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(lmeQual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      result = await this.repository.save(lmeQual);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 
@@ -82,18 +103,23 @@ export class LMEQualificationWorkspaceService {
     lmeQualId: string,
     payload: UpdateLMEQualificationDTO,
   ): Promise<LMEQualificationDTO> {
-    const lmeQual = await this.getLMEQualification(locId, qualId, lmeQualId);
+    let result;
+    try {
+      const lmeQual = await this.getLMEQualification(locId, qualId, lmeQualId);
 
-    lmeQual.qualificationId = qualId;
-    lmeQual.qualificationDataYear = payload.qualificationDataYear;
-    lmeQual.operatingHours = payload.operatingHours;
-    lmeQual.so2Tons = payload.so2Tons;
-    lmeQual.noxTons = payload.noxTons;
-    lmeQual.userId = userId;
-    lmeQual.updateDate = new Date(Date.now());
+      lmeQual.qualificationId = qualId;
+      lmeQual.qualificationDataYear = payload.qualificationDataYear;
+      lmeQual.operatingHours = payload.operatingHours;
+      lmeQual.so2Tons = payload.so2Tons;
+      lmeQual.noxTons = payload.noxTons;
+      lmeQual.userId = userId;
+      lmeQual.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(lmeQual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      result = await this.repository.save(lmeQual);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 }

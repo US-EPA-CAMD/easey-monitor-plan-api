@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -14,28 +14,47 @@ export class ComponentWorkspaceService {
     @InjectRepository(ComponentWorkspaceRepository)
     private repository: ComponentWorkspaceRepository,
     private map: ComponentMap,
-    private Logger: Logger,
+    private logger: Logger,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
-    const results = await this.repository.find({
-      where: {
-        locationId,
-      },
-      order: {
-        componentId: 'ASC',
-      },
-    });
+    this.logger.info('Getting components');
+
+    let results;
+    try {
+      results = await this.repository.find({
+        where: {
+          locationId,
+        },
+        order: {
+          componentId: 'ASC',
+        },
+      });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    this.logger.info('Got components');
+
     return this.map.many(results);
   }
 
   async getComponentByIdentifier(locationId: string, componentId: string) {
-    const result = await this.repository.findOne({
-      where: {
-        locationId,
-        componentId,
-      },
-    });
+    this.logger.info('Getting component by identifier');
+
+    let result;
+    try {
+      result = await this.repository.findOne({
+        where: {
+          locationId,
+          componentId,
+        },
+      });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    this.logger.info('Got component by identifier');
 
     if (result) {
       return this.map.one(result);
@@ -49,28 +68,33 @@ export class ComponentWorkspaceService {
     payload: UpdateComponentDTO,
     userId: string,
   ): Promise<ComponentDTO> {
-    const component = this.repository.create({
-      id: uuid(),
-      locationId,
-      componentId: payload.componentId,
-      modelVersion: payload.modelVersion,
-      serialNumber: payload.serialNumber,
-      manufacturer: payload.manufacturer,
-      componentTypeCode: payload.componentTypeCode,
-      sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
-      basisCode: payload.basisCode,
-      hgConverterIndicator: payload.hgConverterIndicator,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const component = this.repository.create({
+        id: uuid(),
+        locationId,
+        componentId: payload.componentId,
+        modelVersion: payload.modelVersion,
+        serialNumber: payload.serialNumber,
+        manufacturer: payload.manufacturer,
+        componentTypeCode: payload.componentTypeCode,
+        sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
+        basisCode: payload.basisCode,
+        hgConverterIndicator: payload.hgConverterIndicator,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    this.Logger.info('Creating component', {
-      locationId: locationId,
-      payload: payload,
-    });
+      this.logger.info('Creating component', {
+        locationId: locationId,
+        payload: payload,
+      });
 
-    const result = await this.repository.save(component);
+      result = await this.repository.save(component);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     return this.map.one(result);
   }

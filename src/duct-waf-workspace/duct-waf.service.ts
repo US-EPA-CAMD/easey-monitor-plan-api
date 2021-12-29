@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -15,20 +19,39 @@ export class DuctWafWorkspaceService {
     @InjectRepository(DuctWafWorkspaceRepository)
     private repository: DuctWafWorkspaceRepository,
     private map: DuctWafMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    this.logger.info('Getting duct wafs');
+
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    this.logger.info('Got duct wafs');
+
+    return this.map.many(result);
   }
 
   async getDuctWaf(id: string) {
-    const result = await this.repository.findOne(id);
+    this.logger.info('Getting duct waf');
+
+    let result;
+    try {
+      result = await this.repository.findOne(id);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    this.logger.info('Got duct wafs');
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Duct Waf Not Found', true, {
+      this.logger.error(NotFoundException, 'Duct Waf Not Found', true, {
         id: id,
       });
     }
@@ -41,29 +64,39 @@ export class DuctWafWorkspaceService {
     payload: UpdateDuctWafDTO,
     userId: string,
   ): Promise<DuctWafDTO> {
-    const ductWaf = this.repository.create({
-      id: uuid(),
-      locationId,
-      wafDeterminationDate: payload.wafDeterminationDate,
-      wafBeginDate: payload.wafBeginDate,
-      wafBeginHour: payload.wafBeginHour,
-      wafMethodCode: payload.wafMethodCode,
-      wafValue: payload.wafValue,
-      numberOfTestRuns: payload.numberOfTestRuns,
-      numberOfTraversePointsWaf: payload.numberOfTraversePointsRef,
-      numberOfTestPorts: payload.numberOfTestPorts,
-      numberOfTraversePointsRef: payload.numberOfTraversePointsRef,
-      ductWidth: payload.ductWidth,
-      ductDepth: payload.ductDepth,
-      wafEndDate: payload.wafEndDate,
-      wafEndHour: payload.wafEndHour,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    this.logger.info('Creating duct waf');
 
-    const result = await this.repository.save(ductWaf);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    let result;
+    try {
+      const ductWaf = this.repository.create({
+        id: uuid(),
+        locationId,
+        wafDeterminationDate: payload.wafDeterminationDate,
+        wafBeginDate: payload.wafBeginDate,
+        wafBeginHour: payload.wafBeginHour,
+        wafMethodCode: payload.wafMethodCode,
+        wafValue: payload.wafValue,
+        numberOfTestRuns: payload.numberOfTestRuns,
+        numberOfTraversePointsWaf: payload.numberOfTraversePointsRef,
+        numberOfTestPorts: payload.numberOfTestPorts,
+        numberOfTraversePointsRef: payload.numberOfTraversePointsRef,
+        ductWidth: payload.ductWidth,
+        ductDepth: payload.ductDepth,
+        wafEndDate: payload.wafEndDate,
+        wafEndHour: payload.wafEndHour,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
+
+      result = await this.repository.save(ductWaf);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    this.logger.info('Created duct waf');
+
     return this.map.one(result);
   }
 
@@ -73,26 +106,34 @@ export class DuctWafWorkspaceService {
     payload: UpdateDuctWafDTO,
     userId: string,
   ): Promise<DuctWafDTO> {
-    const ductWaf = await this.getDuctWaf(ductWafId);
+    this.logger.info('Updating duct waf');
 
-    ductWaf.wafDeterminationDate = payload.wafDeterminationDate;
-    ductWaf.wafBeginDate = payload.wafBeginDate;
-    ductWaf.wafBeginHour = payload.wafBeginHour;
-    ductWaf.wafMethodCode = payload.wafMethodCode;
-    ductWaf.wafValue = payload.wafValue;
-    ductWaf.numberOfTestRuns = payload.numberOfTestRuns;
-    ductWaf.numberOfTraversePointsWaf = payload.numberOfTraversePointsWaf;
-    (ductWaf.numberOfTestPorts = payload.numberOfTestPorts),
-      (ductWaf.numberOfTraversePointsRef = payload.numberOfTraversePointsRef);
-    ductWaf.ductWidth = payload.ductWidth;
-    ductWaf.ductDepth = payload.ductDepth;
-    ductWaf.wafEndDate = payload.wafEndDate;
-    ductWaf.wafEndHour = payload.wafEndHour;
-    ductWaf.userId = userId;
-    ductWaf.updateDate = new Date(Date.now());
+    try {
+      const ductWaf = await this.getDuctWaf(ductWafId);
 
-    await this.repository.save(ductWaf);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      ductWaf.wafDeterminationDate = payload.wafDeterminationDate;
+      ductWaf.wafBeginDate = payload.wafBeginDate;
+      ductWaf.wafBeginHour = payload.wafBeginHour;
+      ductWaf.wafMethodCode = payload.wafMethodCode;
+      ductWaf.wafValue = payload.wafValue;
+      ductWaf.numberOfTestRuns = payload.numberOfTestRuns;
+      ductWaf.numberOfTraversePointsWaf = payload.numberOfTraversePointsWaf;
+      (ductWaf.numberOfTestPorts = payload.numberOfTestPorts),
+        (ductWaf.numberOfTraversePointsRef = payload.numberOfTraversePointsRef);
+      ductWaf.ductWidth = payload.ductWidth;
+      ductWaf.ductDepth = payload.ductDepth;
+      ductWaf.wafEndDate = payload.wafEndDate;
+      ductWaf.wafEndHour = payload.wafEndHour;
+      ductWaf.userId = userId;
+      ductWaf.updateDate = new Date(Date.now());
+
+      await this.repository.save(ductWaf);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+    this.logger.info('Updated duct waf');
+
     return this.getDuctWaf(ductWafId);
   }
 }

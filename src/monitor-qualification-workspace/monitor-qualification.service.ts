@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { v4 as uuid } from 'uuid';
@@ -16,24 +20,36 @@ export class MonitorQualificationWorkspaceService {
     @InjectRepository(MonitorQualificationWorkspaceRepository)
     private repository: MonitorQualificationWorkspaceRepository,
     private map: MonitorQualificationMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getQualifications(
     locationId: string,
   ): Promise<MonitorQualificationDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getQualification(
     locId: string,
     qualId: string,
   ): Promise<MonitorQualification> {
-    const result = await this.repository.getQualification(locId, qualId);
+    let result;
+    try {
+      result = await this.repository.getQualification(locId, qualId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
     if (!result) {
-      this.Logger.error(NotFoundException, 'Qualification Not Found', true, {
+      this.logger.error(NotFoundException, 'Qualification Not Found', true, {
         locId: locId,
         qualId: qualId,
       });
@@ -46,19 +62,24 @@ export class MonitorQualificationWorkspaceService {
     locationId: string,
     payload: UpdateMonitorQualificationDTO,
   ): Promise<MonitorQualificationDTO> {
-    const qual = this.repository.create({
-      id: uuid(),
-      locationId,
-      qualificationTypeCode: payload.qualificationTypeCode,
-      beginDate: payload.beginDate,
-      endDate: payload.endDate,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let qual;
+    try {
+      qual = this.repository.create({
+        id: uuid(),
+        locationId,
+        qualificationTypeCode: payload.qualificationTypeCode,
+        beginDate: payload.beginDate,
+        endDate: payload.endDate,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(qual);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      const result = await this.repository.save(qual);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(qual);
   }
 
@@ -68,18 +89,23 @@ export class MonitorQualificationWorkspaceService {
     qualId: string,
     payload: UpdateMonitorQualificationDTO,
   ): Promise<MonitorQualificationDTO> {
-    const qual = await this.getQualification(locId, qualId);
+    let result;
+    try {
+      const qual = await this.getQualification(locId, qualId);
 
-    qual.userId = userId;
-    qual.qualificationTypeCode = payload.qualificationTypeCode;
-    qual.beginDate = payload.beginDate;
-    qual.endDate = payload.endDate;
-    qual.userId = userId;
-    qual.addDate = new Date(Date.now());
-    qual.updateDate = new Date(Date.now());
+      qual.userId = userId;
+      qual.qualificationTypeCode = payload.qualificationTypeCode;
+      qual.beginDate = payload.beginDate;
+      qual.endDate = payload.endDate;
+      qual.userId = userId;
+      qual.addDate = new Date(Date.now());
+      qual.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(qual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      result = await this.repository.save(qual);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -15,26 +19,34 @@ export class MonitorFormulaWorkspaceService {
     @InjectRepository(MonitorFormulaWorkspaceRepository)
     private repository: MonitorFormulaWorkspaceRepository,
     private map: MonitorFormulaMap,
-    private Logger: Logger,
+    private logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getFormulas(locationId: string): Promise<MonitorFormulaDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getFormula(
     locationId: string,
     formulaRecordId: string,
   ): Promise<MonitorFormulaDTO> {
-    const result = await this.repository.getFormula(
-      locationId,
-      formulaRecordId,
-    );
+    let result;
+    try {
+      result = await this.repository.getFormula(locationId, formulaRecordId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Formula not found', true, {
+      this.logger.error(NotFoundException, 'Monitor Formula not found', true, {
         locationId: locationId,
         formulaRecordId: formulaRecordId,
       });
@@ -48,24 +60,29 @@ export class MonitorFormulaWorkspaceService {
     payload: UpdateMonitorFormulaDTO,
     userId: string,
   ): Promise<MonitorFormulaDTO> {
-    const formula = this.repository.create({
-      id: uuid(),
-      locationId,
-      formulaId: payload.formulaId,
-      parameterCode: payload.parameterCode,
-      formulaCode: payload.formulaCode,
-      formulaText: payload.formulaText,
-      beginDate: payload.beginDate,
-      beginHour: payload.beginHour,
-      endDate: payload.endDate,
-      endHour: payload.endHour,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const formula = this.repository.create({
+        id: uuid(),
+        locationId,
+        formulaId: payload.formulaId,
+        parameterCode: payload.parameterCode,
+        formulaCode: payload.formulaCode,
+        formulaText: payload.formulaText,
+        beginDate: payload.beginDate,
+        beginHour: payload.beginHour,
+        endDate: payload.endDate,
+        endHour: payload.endHour,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(formula);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      result = await this.repository.save(formula);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getFormula(locationId, result.id);
   }
 
@@ -75,21 +92,25 @@ export class MonitorFormulaWorkspaceService {
     payload: UpdateMonitorFormulaDTO,
     userId: string,
   ) {
-    const formula = await this.getFormula(locationId, formulaRecordId);
+    try {
+      const formula = await this.getFormula(locationId, formulaRecordId);
 
-    formula.formulaId = payload.formulaId;
-    formula.parameterCode = payload.parameterCode;
-    formula.formulaCode = payload.formulaCode;
-    formula.formulaText = payload.formulaText;
-    formula.beginDate = payload.beginDate;
-    formula.beginHour = payload.beginHour;
-    formula.endDate = payload.endDate;
-    formula.endHour = payload.endHour;
-    formula.userId = userId;
-    formula.updateDate = new Date(Date.now());
+      formula.formulaId = payload.formulaId;
+      formula.parameterCode = payload.parameterCode;
+      formula.formulaCode = payload.formulaCode;
+      formula.formulaText = payload.formulaText;
+      formula.beginDate = payload.beginDate;
+      formula.beginHour = payload.beginHour;
+      formula.endDate = payload.endDate;
+      formula.endHour = payload.endHour;
+      formula.userId = userId;
+      formula.updateDate = new Date(Date.now());
 
-    await this.repository.save(formula);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.repository.save(formula);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getFormula(locationId, formulaRecordId);
   }
 }

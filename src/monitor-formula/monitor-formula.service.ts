@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
@@ -11,10 +12,17 @@ export class MonitorFormulaService {
     @InjectRepository(MonitorFormulaRepository)
     private repository: MonitorFormulaRepository,
     private map: MonitorFormulaMap,
+    private readonly logger: Logger,
   ) {}
 
   async getFormulas(locationId: string): Promise<MonitorFormulaDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 }

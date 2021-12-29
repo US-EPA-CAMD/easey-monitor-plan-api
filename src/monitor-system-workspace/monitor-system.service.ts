@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -16,20 +20,26 @@ export class MonitorSystemWorkspaceService {
     @InjectRepository(MonitorSystemWorkspaceRepository)
     private repository: MonitorSystemWorkspaceRepository,
     private map: MonitorSystemMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
-    const results = await this.repository.find({
-      where: {
-        locationId,
-      },
-      order: {
-        monitoringSystemId: 'ASC',
-      },
-    });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({
+        where: {
+          locationId,
+        },
+        order: {
+          monitoringSystemId: 'ASC',
+        },
+      });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async createSystem(
@@ -37,32 +47,42 @@ export class MonitorSystemWorkspaceService {
     payload: UpdateMonitorSystemDTO,
     userId: string,
   ): Promise<MonitorSystemDTO> {
-    const system = this.repository.create({
-      id: uuid(),
-      locationId,
-      monitoringSystemId: payload.monitoringSystemId,
-      systemDesignationCode: payload.systemDesignationCode,
-      fuelCode: payload.fuelCode,
-      systemTypeCode: payload.systemTypeCode,
-      beginDate: payload.beginDate,
-      beginHour: payload.beginHour,
-      endDate: payload.endDate,
-      endHour: payload.endHour,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let system;
+    try {
+      system = this.repository.create({
+        id: uuid(),
+        locationId,
+        monitoringSystemId: payload.monitoringSystemId,
+        systemDesignationCode: payload.systemDesignationCode,
+        fuelCode: payload.fuelCode,
+        systemTypeCode: payload.systemTypeCode,
+        beginDate: payload.beginDate,
+        beginHour: payload.beginHour,
+        endDate: payload.endDate,
+        endHour: payload.endHour,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      const result = await this.repository.save(system);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(system);
   }
 
   async getSystem(monitoringSystemId: string): Promise<MonitorSystem> {
-    const result = await this.repository.findOne(monitoringSystemId);
+    let result;
+    try {
+      result = await this.repository.findOne(monitoringSystemId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor System Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor System Not Found', true, {
         monitoringSystemId: monitoringSystemId,
       });
     }
@@ -76,20 +96,25 @@ export class MonitorSystemWorkspaceService {
     locId: string,
     userId: string,
   ): Promise<MonitorSystemDTO> {
-    const system = await this.getSystem(monitoringSystemId);
+    let result;
+    try {
+      const system = await this.getSystem(monitoringSystemId);
 
-    system.systemTypeCode = payload.systemTypeCode;
-    system.systemDesignationCode = payload.systemDesignationCode;
-    system.fuelCode = payload.fuelCode;
-    system.beginDate = payload.beginDate;
-    system.beginHour = payload.beginHour;
-    system.endDate = payload.endDate;
-    system.endHour = payload.endHour;
-    system.userId = userId;
-    system.updateDate = new Date(Date.now());
+      system.systemTypeCode = payload.systemTypeCode;
+      system.systemDesignationCode = payload.systemDesignationCode;
+      system.fuelCode = payload.fuelCode;
+      system.beginDate = payload.beginDate;
+      system.beginHour = payload.beginHour;
+      system.endDate = payload.endDate;
+      system.endHour = payload.endHour;
+      system.userId = userId;
+      system.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      result = await this.repository.save(system);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 }

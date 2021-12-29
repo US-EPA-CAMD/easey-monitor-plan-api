@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
@@ -11,10 +12,21 @@ export class DuctWafService {
     @InjectRepository(DuctWafRepository)
     private repository: DuctWafRepository,
     private map: DuctWafMap,
+    private readonly logger: Logger,
   ) {}
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    this.logger.info('Getting duct wafs');
+
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    this.logger.info('Got duct wafs');
+
+    return this.map.many(result);
   }
 }

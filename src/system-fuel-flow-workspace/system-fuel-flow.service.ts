@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -15,20 +19,31 @@ export class SystemFuelFlowWorkspaceService {
     @InjectRepository(SystemFuelFlowWorkspaceRepository)
     private readonly repository: SystemFuelFlowWorkspaceRepository,
     private readonly map: SystemFuelFlowMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlowDTO[]> {
-    const results = await this.repository.getFuelFlows(monSysId);
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.getFuelFlows(monSysId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getFuelFlow(fuelFlowId: string): Promise<SystemFuelFlowDTO> {
-    const result = await this.repository.getFuelFlow(fuelFlowId);
+    let result;
+    try {
+      result = await this.repository.getFuelFlow(fuelFlowId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Fuel Flow not found.', true, {
+      this.logger.error(NotFoundException, 'Fuel Flow not found.', true, {
         fuelFlowId: fuelFlowId,
       });
     }
@@ -42,23 +57,28 @@ export class SystemFuelFlowWorkspaceService {
     locId: string,
     userId: string,
   ): Promise<SystemFuelFlowDTO> {
-    const fuelFlow = this.repository.create({
-      id: uuid(),
-      monitoringSystemRecordId,
-      maximumFuelFlowRate: payload.maximumFuelFlowRate,
-      maximumFuelFlowRateSourceCode: payload.maximumFuelFlowRateSourceCode,
-      systemFuelFlowUOMCode: payload.systemFuelFlowUOMCode,
-      beginDate: payload.beginDate,
-      beginHour: payload.beginHour,
-      endDate: payload.endDate,
-      endHour: payload.endHour,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let fuelFlow;
+    try {
+      fuelFlow = this.repository.create({
+        id: uuid(),
+        monitoringSystemRecordId,
+        maximumFuelFlowRate: payload.maximumFuelFlowRate,
+        maximumFuelFlowRateSourceCode: payload.maximumFuelFlowRateSourceCode,
+        systemFuelFlowUOMCode: payload.systemFuelFlowUOMCode,
+        beginDate: payload.beginDate,
+        beginHour: payload.beginHour,
+        endDate: payload.endDate,
+        endHour: payload.endHour,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    await this.repository.save(fuelFlow);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      await this.repository.save(fuelFlow);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getFuelFlow(fuelFlow.id);
   }
 
@@ -68,19 +88,23 @@ export class SystemFuelFlowWorkspaceService {
     locId: string,
     userId: string,
   ): Promise<SystemFuelFlowDTO> {
-    const fuelFlow = await this.getFuelFlow(fuelFlowId);
+    try {
+      const fuelFlow = await this.getFuelFlow(fuelFlowId);
 
-    fuelFlow.maximumFuelFlowRate = payload.maximumFuelFlowRate;
-    fuelFlow.systemFuelFlowUOMCode = payload.systemFuelFlowUOMCode;
-    fuelFlow.maximumFuelFlowRateSourceCode =
-      payload.maximumFuelFlowRateSourceCode;
-    fuelFlow.beginDate = payload.beginDate;
-    fuelFlow.endDate = payload.endDate;
-    fuelFlow.beginHour = payload.beginHour;
-    fuelFlow.endHour = payload.endHour;
+      fuelFlow.maximumFuelFlowRate = payload.maximumFuelFlowRate;
+      fuelFlow.systemFuelFlowUOMCode = payload.systemFuelFlowUOMCode;
+      fuelFlow.maximumFuelFlowRateSourceCode =
+        payload.maximumFuelFlowRateSourceCode;
+      fuelFlow.beginDate = payload.beginDate;
+      fuelFlow.endDate = payload.endDate;
+      fuelFlow.beginHour = payload.beginHour;
+      fuelFlow.endHour = payload.endHour;
 
-    await this.repository.save(fuelFlow);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      await this.repository.save(fuelFlow);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getFuelFlow(fuelFlowId);
   }
 }

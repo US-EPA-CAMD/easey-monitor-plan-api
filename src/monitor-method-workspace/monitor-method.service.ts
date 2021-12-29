@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -16,20 +20,31 @@ export class MonitorMethodWorkspaceService {
     @InjectRepository(MonitorMethodWorkspaceRepository)
     private repository: MonitorMethodWorkspaceRepository,
     private map: MonitorMethodMap,
-    private Logger: Logger,
+    private logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
-    const results = await this.repository.find({ locationId: locId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId: locId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getMethod(methodId: string): Promise<MonitorMethod> {
-    const result = this.repository.findOne(methodId);
+    let result;
+    try {
+      result = await this.repository.findOne(methodId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Method Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Method Not Found', true, {
         methodId: methodId,
       });
     }
@@ -42,24 +57,29 @@ export class MonitorMethodWorkspaceService {
     payload: UpdateMonitorMethodDTO,
     userId: string,
   ): Promise<MonitorMethodDTO> {
-    const monMethod = this.repository.create({
-      id: uuid(),
-      locationId,
-      parameterCode: payload.parameterCode,
-      substituteDataCode: payload.substituteDataCode,
-      bypassApproachCode: payload.bypassApproachCode,
-      monitoringMethodCode: payload.monitoringMethodCode,
-      beginDate: payload.beginDate,
-      beginHour: payload.beginHour,
-      endDate: payload.endDate,
-      endHour: payload.endHour,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let entity;
+    try {
+      const monMethod = this.repository.create({
+        id: uuid(),
+        locationId,
+        parameterCode: payload.parameterCode,
+        substituteDataCode: payload.substituteDataCode,
+        bypassApproachCode: payload.bypassApproachCode,
+        monitoringMethodCode: payload.monitoringMethodCode,
+        beginDate: payload.beginDate,
+        beginHour: payload.beginHour,
+        endDate: payload.endDate,
+        endHour: payload.endHour,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const entity = await this.repository.save(monMethod);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      entity = await this.repository.save(monMethod);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(entity);
   }
 
@@ -69,21 +89,26 @@ export class MonitorMethodWorkspaceService {
     locationId: string,
     userId: string,
   ): Promise<MonitorMethodDTO> {
-    const method = await this.getMethod(methodId);
+    let result;
+    try {
+      const method = await this.getMethod(methodId);
 
-    method.parameterCode = payload.parameterCode;
-    method.substituteDataCode = payload.substituteDataCode;
-    method.bypassApproachCode = payload.bypassApproachCode;
-    method.monitoringMethodCode = payload.monitoringMethodCode;
-    method.beginDate = payload.beginDate;
-    method.beginHour = payload.beginHour;
-    method.endDate = payload.endDate;
-    method.endHour = payload.endHour;
-    method.userId = userId;
-    method.updateDate = new Date(Date.now());
+      method.parameterCode = payload.parameterCode;
+      method.substituteDataCode = payload.substituteDataCode;
+      method.bypassApproachCode = payload.bypassApproachCode;
+      method.monitoringMethodCode = payload.monitoringMethodCode;
+      method.beginDate = payload.beginDate;
+      method.beginHour = payload.beginHour;
+      method.endDate = payload.endDate;
+      method.endHour = payload.endHour;
+      method.userId = userId;
+      method.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      result = await this.repository.save(method);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 }

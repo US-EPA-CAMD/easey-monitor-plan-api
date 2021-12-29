@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -15,20 +19,31 @@ export class MonitorLoadWorkspaceService {
     @InjectRepository(MonitorLoadWorkspaceRepository)
     private repository: MonitorLoadWorkspaceRepository,
     private map: MonitorLoadMap,
-    private Logger: Logger,
+    private logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getLoads(locationId: string): Promise<MonitorLoadDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getLoad(loadId: string): Promise<MonitorLoadDTO> {
-    const result = await this.repository.findOne(loadId);
+    let result;
+    try {
+      result = await this.repository.findOne(loadId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Load Not Found', true, {
         loadId: loadId,
       });
     }
@@ -41,28 +56,33 @@ export class MonitorLoadWorkspaceService {
     payload: UpdateMonitorLoadDTO,
     userId: string,
   ): Promise<MonitorLoadDTO> {
-    const load = this.repository.create({
-      id: uuid(),
-      locationId,
-      loadAnalysisDate: payload.loadAnalysisDate,
-      beginDate: payload.beginDate,
-      beginHour: payload.beginHour,
-      endDate: payload.endDate,
-      endHour: payload.endHour,
-      maximumLoadValue: payload.maximumLoadValue,
-      secondNormalIndicator: payload.secondNormalIndicator,
-      upperOperationBoundary: payload.upperOperationBoundary,
-      lowerOperationBoundary: payload.lowerOperationBoundary,
-      normalLevelCode: payload.normalLevelCode,
-      secondLevelCode: payload.secondLevelCode,
-      maximumLoadUnitsOfMeasureCode: payload.maximumLoadUnitsOfMeasureCode,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const load = this.repository.create({
+        id: uuid(),
+        locationId,
+        loadAnalysisDate: payload.loadAnalysisDate,
+        beginDate: payload.beginDate,
+        beginHour: payload.beginHour,
+        endDate: payload.endDate,
+        endHour: payload.endHour,
+        maximumLoadValue: payload.maximumLoadValue,
+        secondNormalIndicator: payload.secondNormalIndicator,
+        upperOperationBoundary: payload.upperOperationBoundary,
+        lowerOperationBoundary: payload.lowerOperationBoundary,
+        normalLevelCode: payload.normalLevelCode,
+        secondLevelCode: payload.secondLevelCode,
+        maximumLoadUnitsOfMeasureCode: payload.maximumLoadUnitsOfMeasureCode,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      result = await this.repository.save(load);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 
@@ -72,25 +92,30 @@ export class MonitorLoadWorkspaceService {
     payload: UpdateMonitorLoadDTO,
     userId: string,
   ): Promise<MonitorLoadDTO> {
-    const load = await this.getLoad(loadId);
+    try {
+      const load = await this.getLoad(loadId);
 
-    load.loadAnalysisDate = payload.loadAnalysisDate;
-    load.beginDate = payload.beginDate;
-    load.beginHour = payload.beginHour;
-    load.endDate = payload.endDate;
-    load.endHour = payload.endHour;
-    load.maximumLoadValue = payload.maximumLoadValue;
-    load.secondNormalIndicator = payload.secondNormalIndicator;
-    load.upperOperationBoundary = payload.upperOperationBoundary;
-    load.lowerOperationBoundary = payload.lowerOperationBoundary;
-    load.normalLevelCode = payload.normalLevelCode;
-    load.secondLevelCode = payload.secondLevelCode;
-    load.maximumLoadUnitsOfMeasureCode = payload.maximumLoadUnitsOfMeasureCode;
-    load.userId = userId;
-    load.updateDate = new Date(Date.now());
+      load.loadAnalysisDate = payload.loadAnalysisDate;
+      load.beginDate = payload.beginDate;
+      load.beginHour = payload.beginHour;
+      load.endDate = payload.endDate;
+      load.endHour = payload.endHour;
+      load.maximumLoadValue = payload.maximumLoadValue;
+      load.secondNormalIndicator = payload.secondNormalIndicator;
+      load.upperOperationBoundary = payload.upperOperationBoundary;
+      load.lowerOperationBoundary = payload.lowerOperationBoundary;
+      load.normalLevelCode = payload.normalLevelCode;
+      load.secondLevelCode = payload.secondLevelCode;
+      load.maximumLoadUnitsOfMeasureCode =
+        payload.maximumLoadUnitsOfMeasureCode;
+      load.userId = userId;
+      load.updateDate = new Date(Date.now());
 
-    await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.repository.save(load);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getLoad(loadId);
   }
 }

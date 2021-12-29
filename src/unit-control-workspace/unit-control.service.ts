@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
@@ -15,7 +19,7 @@ export class UnitControlWorkspaceService {
     @InjectRepository(UnitControlWorkspaceRepository)
     readonly repository: UnitControlWorkspaceRepository,
     readonly map: UnitControlMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -23,8 +27,14 @@ export class UnitControlWorkspaceService {
     locId: string,
     unitId: number,
   ): Promise<UnitControlDTO[]> {
-    const results = await this.repository.getUnitControls(locId, unitId);
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.getUnitControls(locId, unitId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getUnitControl(
@@ -32,13 +42,19 @@ export class UnitControlWorkspaceService {
     unitId: number,
     unitControlId: string,
   ): Promise<UnitControlDTO> {
-    const result = await this.repository.getUnitControl(
-      locId,
-      unitId,
-      unitControlId,
-    );
+    let result;
+    try {
+      result = await this.repository.getUnitControl(
+        locId,
+        unitId,
+        unitControlId,
+      );
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Load Not Found', true, {
         unitId: unitId,
         unitControlId: unitControlId,
       });
@@ -52,23 +68,28 @@ export class UnitControlWorkspaceService {
     unitId: number,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    const load = this.repository.create({
-      id: uuid(),
-      unitId: unitId,
-      controlCode: payload.controlCode,
-      parameterCode: payload.parameterCode,
-      installDate: payload.installDate,
-      optimizationDate: payload.optimizationDate,
-      originalCode: payload.originalCode,
-      retireDate: payload.retireDate,
-      seasonalControlsIndicator: payload.seasonalControlsIndicator,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const load = this.repository.create({
+        id: uuid(),
+        unitId: unitId,
+        controlCode: payload.controlCode,
+        parameterCode: payload.parameterCode,
+        installDate: payload.installDate,
+        optimizationDate: payload.optimizationDate,
+        originalCode: payload.originalCode,
+        retireDate: payload.retireDate,
+        seasonalControlsIndicator: payload.seasonalControlsIndicator,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      result = await this.repository.save(load);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 
@@ -79,20 +100,28 @@ export class UnitControlWorkspaceService {
     unitControlId: string,
     payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
+    try {
+      const unitControl = await this.getUnitControl(
+        locId,
+        unitId,
+        unitControlId,
+      );
 
-    unitControl.controlCode = payload.controlCode;
-    unitControl.parameterCode = payload.parameterCode;
-    unitControl.installDate = payload.installDate;
-    unitControl.optimizationDate = payload.optimizationDate;
-    unitControl.originalCode = payload.originalCode;
-    unitControl.retireDate = payload.retireDate;
-    unitControl.seasonalControlsIndicator = payload.seasonalControlsIndicator;
-    unitControl.userId = userId;
-    unitControl.updateDate = new Date(Date.now());
+      unitControl.controlCode = payload.controlCode;
+      unitControl.parameterCode = payload.parameterCode;
+      unitControl.installDate = payload.installDate;
+      unitControl.optimizationDate = payload.optimizationDate;
+      unitControl.originalCode = payload.originalCode;
+      unitControl.retireDate = payload.retireDate;
+      unitControl.seasonalControlsIndicator = payload.seasonalControlsIndicator;
+      unitControl.userId = userId;
+      unitControl.updateDate = new Date(Date.now());
 
-    await this.repository.save(unitControl);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      await this.repository.save(unitControl);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getUnitControl(locId, unitId, unitControlId);
   }
 }

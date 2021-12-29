@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -15,23 +19,34 @@ export class MonitorDefaultWorkspaceService {
     @InjectRepository(MonitorDefaultWorkspaceRepository)
     private repository: MonitorDefaultWorkspaceRepository,
     private map: MonitorDefaultMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getDefaults(locationId: string): Promise<MonitorDefaultDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getDefault(
     locationId: string,
     defaultId: string,
   ): Promise<MonitorDefaultDTO> {
-    const result = await this.repository.getDefault(locationId, defaultId);
+    let result;
+    try {
+      result = await this.repository.getDefault(locationId, defaultId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Default Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Default Not Found', true, {
         locationId: locationId,
         defaultId: defaultId,
       });
@@ -45,28 +60,33 @@ export class MonitorDefaultWorkspaceService {
     payload: UpdateMonitorDefaultDTO,
     userId: string,
   ): Promise<MonitorDefaultDTO> {
-    const monDefault = this.repository.create({
-      id: uuid(),
-      locationId,
-      parameterCode: payload.parameterCode,
-      defaultValue: payload.defaultValue,
-      defaultUnitsOfMeasureCode: payload.defaultUnitsOfMeasureCode,
-      defaultPurposeCode: payload.defaultPurposeCode,
-      fuelCode: payload.fuelCode,
-      operatingConditionCode: payload.operatingConditionCode,
-      defaultSourceCode: payload.defaultSourceCode,
-      groupId: payload.groupId,
-      beginDate: payload.beginDate,
-      beginHour: payload.beginHour,
-      endDate: payload.endDate,
-      endHour: payload.endHour,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const monDefault = this.repository.create({
+        id: uuid(),
+        locationId,
+        parameterCode: payload.parameterCode,
+        defaultValue: payload.defaultValue,
+        defaultUnitsOfMeasureCode: payload.defaultUnitsOfMeasureCode,
+        defaultPurposeCode: payload.defaultPurposeCode,
+        fuelCode: payload.fuelCode,
+        operatingConditionCode: payload.operatingConditionCode,
+        defaultSourceCode: payload.defaultSourceCode,
+        groupId: payload.groupId,
+        beginDate: payload.beginDate,
+        beginHour: payload.beginHour,
+        endDate: payload.endDate,
+        endHour: payload.endHour,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      result = await this.repository.save(monDefault);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 
@@ -76,25 +96,29 @@ export class MonitorDefaultWorkspaceService {
     payload: UpdateMonitorDefaultDTO,
     userId: string,
   ): Promise<MonitorDefaultDTO> {
-    const monDefault = await this.getDefault(locationId, defaultId);
+    try {
+      const monDefault = await this.getDefault(locationId, defaultId);
 
-    monDefault.parameterCode = payload.parameterCode;
-    monDefault.defaultValue = payload.defaultValue;
-    monDefault.defaultUnitsOfMeasureCode = payload.defaultUnitsOfMeasureCode;
-    monDefault.defaultPurposeCode = payload.defaultPurposeCode;
-    monDefault.fuelCode = payload.fuelCode;
-    monDefault.operatingConditionCode = payload.operatingConditionCode;
-    monDefault.defaultSourceCode = payload.defaultSourceCode;
-    monDefault.groupId = payload.groupId;
-    monDefault.beginDate = payload.beginDate;
-    monDefault.beginHour = payload.beginHour;
-    monDefault.endDate = payload.endDate;
-    monDefault.endHour = payload.endHour;
-    monDefault.userId = userId;
-    monDefault.updateDate = new Date(Date.now());
+      monDefault.parameterCode = payload.parameterCode;
+      monDefault.defaultValue = payload.defaultValue;
+      monDefault.defaultUnitsOfMeasureCode = payload.defaultUnitsOfMeasureCode;
+      monDefault.defaultPurposeCode = payload.defaultPurposeCode;
+      monDefault.fuelCode = payload.fuelCode;
+      monDefault.operatingConditionCode = payload.operatingConditionCode;
+      monDefault.defaultSourceCode = payload.defaultSourceCode;
+      monDefault.groupId = payload.groupId;
+      monDefault.beginDate = payload.beginDate;
+      monDefault.beginHour = payload.beginHour;
+      monDefault.endDate = payload.endDate;
+      monDefault.endHour = payload.endHour;
+      monDefault.userId = userId;
+      monDefault.updateDate = new Date(Date.now());
 
-    await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.repository.save(monDefault);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getDefault(locationId, defaultId);
   }
 }

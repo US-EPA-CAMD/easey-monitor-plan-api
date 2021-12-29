@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -15,13 +19,19 @@ export class UnitFuelWorkspaceService {
     @InjectRepository(UnitFuelWorkspaceRepository)
     readonly repository: UnitFuelWorkspaceRepository,
     readonly map: UnitFuelMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getUnitFuels(locId: string, unitId: number): Promise<UnitFuelDTO[]> {
-    const results = await this.repository.getUnitFuels(locId, unitId);
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.getUnitFuels(locId, unitId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getUnitFuel(
@@ -29,9 +39,15 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     unitFuelId: string,
   ): Promise<UnitFuelDTO> {
-    const result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
+    let result;
+    try {
+      result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
+      this.logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
         locId: locId,
         unitId: unitId,
         unitFuelId: unitFuelId,
@@ -46,23 +62,28 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    const unitFuel = this.repository.create({
-      id: uuid(),
-      unitId: unitId,
-      fuelCode: payload.fuelCode,
-      indicatorCode: payload.indicatorCode,
-      ozoneSeasonIndicator: payload.ozoneSeasonIndicator,
-      demGCV: payload.demGCV,
-      demSO2: payload.demSO2,
-      beginDate: payload.beginDate,
-      endDate: payload.endDate,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const unitFuel = this.repository.create({
+        id: uuid(),
+        unitId: unitId,
+        fuelCode: payload.fuelCode,
+        indicatorCode: payload.indicatorCode,
+        ozoneSeasonIndicator: payload.ozoneSeasonIndicator,
+        demGCV: payload.demGCV,
+        demSO2: payload.demSO2,
+        beginDate: payload.beginDate,
+        endDate: payload.endDate,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(unitFuel);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      result = await this.repository.save(unitFuel);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 
@@ -73,20 +94,24 @@ export class UnitFuelWorkspaceService {
     unitFuelId: string,
     payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    const unitFuel = await this.getUnitFuel(locId, unitId, unitFuelId);
+    try {
+      const unitFuel = await this.getUnitFuel(locId, unitId, unitFuelId);
 
-    unitFuel.fuelCode = payload.fuelCode;
-    unitFuel.indicatorCode = payload.indicatorCode;
-    unitFuel.ozoneSeasonIndicator = payload.ozoneSeasonIndicator;
-    unitFuel.demGCV = payload.demGCV;
-    unitFuel.demSO2 = payload.demSO2;
-    unitFuel.beginDate = payload.beginDate;
-    unitFuel.endDate = payload.endDate;
-    unitFuel.userId = userId;
-    unitFuel.updateDate = new Date(Date.now());
+      unitFuel.fuelCode = payload.fuelCode;
+      unitFuel.indicatorCode = payload.indicatorCode;
+      unitFuel.ozoneSeasonIndicator = payload.ozoneSeasonIndicator;
+      unitFuel.demGCV = payload.demGCV;
+      unitFuel.demSO2 = payload.demSO2;
+      unitFuel.beginDate = payload.beginDate;
+      unitFuel.endDate = payload.endDate;
+      unitFuel.userId = userId;
+      unitFuel.updateDate = new Date(Date.now());
 
-    await this.repository.save(unitFuel);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+      await this.repository.save(unitFuel);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.getUnitFuel(locId, unitId, unitFuelId);
   }
 }

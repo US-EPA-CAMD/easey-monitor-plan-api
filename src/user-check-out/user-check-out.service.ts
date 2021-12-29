@@ -1,5 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutMap } from '../maps/user-check-out.map';
@@ -12,7 +16,7 @@ export class UserCheckOutService {
     @InjectRepository(UserCheckOutRepository)
     private repository: UserCheckOutRepository,
     private map: UserCheckOutMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getCheckedOutConfigurations(): Promise<UserCheckOutDTO[]> {
@@ -23,7 +27,7 @@ export class UserCheckOutService {
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOutDTO> {
-    this.Logger.info('Checked out location', {
+    this.logger.info('Checked out location', {
       userId: username,
       monPlanId: monPlanId,
     });
@@ -38,9 +42,10 @@ export class UserCheckOutService {
     });
 
     if (!record) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
-        `Check-out configuration not found`, true,
+        `Check-out configuration not found`,
+        true,
         { monPlanId: monPlanId },
       );
     }
@@ -49,13 +54,25 @@ export class UserCheckOutService {
   }
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOutDTO> {
-    const record = await this.getCheckedOutConfiguration(monPlanId);
-    record.lastActivity = new Date(Date.now());
+    let record;
+    try {
+      record = await this.getCheckedOutConfiguration(monPlanId);
+      record.lastActivity = new Date(Date.now());
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
     return this.repository.save(record);
   }
 
   async checkInConfiguration(monPlanId: string): Promise<Boolean> {
-    const result = await this.repository.delete({ monPlanId });
+    let result;
+    try {
+      result = await this.repository.delete({ monPlanId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
     return result.affected !== 0;
   }
 }

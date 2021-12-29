@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
@@ -13,14 +17,19 @@ export class MonitorLocationWorkspaceService {
     readonly repository: MonitorLocationWorkspaceRepository,
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
-    const result = await this.repository.findOne(locationId);
+    let result;
+    try {
+      result = await this.repository.findOne(locationId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true,{
+      this.logger.error(NotFoundException, 'Monitor Location Not Found', true, {
         locationId,
       });
     }
@@ -29,7 +38,12 @@ export class MonitorLocationWorkspaceService {
   }
 
   async getLocationRelationships(locId: string) {
-    const location = await this.getLocation(locId);
+    let location;
+    try {
+      location = await this.getLocation(locId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     return this.uscServcie.getUnitStackRelationships(location);
   }

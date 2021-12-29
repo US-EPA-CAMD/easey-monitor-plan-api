@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -15,20 +19,31 @@ export class MatsMethodWorkspaceService {
     @InjectRepository(MatsMethodWorkspaceRepository)
     private repository: MatsMethodWorkspaceRepository,
     private map: MatsMethodMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getMethods(locationId: string): Promise<MatsMethodDTO[]> {
-    const results = await this.repository.find({ locationId });
-    return this.map.many(results);
+    let result;
+    try {
+      result = await this.repository.find({ locationId });
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
+
+    return this.map.many(result);
   }
 
   async getMethod(methodId: string): Promise<MatsMethodDTO> {
-    const result = await this.repository.findOne(methodId);
+    let result;
+    try {
+      result = await this.repository.findOne(methodId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Mats Method not found.', true, {
+      this.logger.error(NotFoundException, 'Mats Method not found.', true, {
         methodId: methodId,
       });
     }
@@ -41,24 +56,28 @@ export class MatsMethodWorkspaceService {
     payload: UpdateMatsMethodDTO,
     userId: string,
   ): Promise<MatsMethodDTO> {
-    const method = this.repository.create({
-      id: uuid(),
-      locationId,
-      supplementalMATSParameterCode: payload.supplementalMATSParameterCode,
-      supplementalMATSMonitoringMethodCode:
-        payload.supplementalMATSMonitoringMethodCode,
-      beginDate: payload.beginDate,
-      beginHour: payload.beginHour,
-      endDate: payload.endDate,
-      endHour: payload.endHour,
-      userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
-    });
+    let result;
+    try {
+      const method = this.repository.create({
+        id: uuid(),
+        locationId,
+        supplementalMATSParameterCode: payload.supplementalMATSParameterCode,
+        supplementalMATSMonitoringMethodCode:
+          payload.supplementalMATSMonitoringMethodCode,
+        beginDate: payload.beginDate,
+        beginHour: payload.beginHour,
+        endDate: payload.endDate,
+        endHour: payload.endHour,
+        userId: userId,
+        addDate: new Date(Date.now()),
+        updateDate: new Date(Date.now()),
+      });
 
-    const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-
+      result = await this.repository.save(method);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 
@@ -68,21 +87,26 @@ export class MatsMethodWorkspaceService {
     payload: UpdateMatsMethodDTO,
     userId: string,
   ): Promise<MatsMethodDTO> {
-    const method = await this.getMethod(methodId);
+    let result;
+    try {
+      const method = await this.getMethod(methodId);
 
-    method.supplementalMATSParameterCode =
-      payload.supplementalMATSParameterCode;
-    method.supplementalMATSMonitoringMethodCode =
-      payload.supplementalMATSMonitoringMethodCode;
-    method.beginDate = payload.beginDate;
-    method.beginHour = payload.beginHour;
-    method.endDate = payload.endDate;
-    method.endHour = payload.endHour;
-    method.userId = userId;
-    method.updateDate = new Date(Date.now());
+      method.supplementalMATSParameterCode =
+        payload.supplementalMATSParameterCode;
+      method.supplementalMATSMonitoringMethodCode =
+        payload.supplementalMATSMonitoringMethodCode;
+      method.beginDate = payload.beginDate;
+      method.beginHour = payload.beginHour;
+      method.endDate = payload.endDate;
+      method.endHour = payload.endHour;
+      method.userId = userId;
+      method.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      result = await this.repository.save(method);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    } catch (e) {
+      this.logger.error(InternalServerErrorException, e.message, true);
+    }
     return this.map.one(result);
   }
 }
