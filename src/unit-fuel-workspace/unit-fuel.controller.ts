@@ -60,7 +60,7 @@ export class UnitFuelWorkspaceController {
     @Param('unitFuelId') unitFuelId: string,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    this.Logger.info('Updating unit fuel', {
+    this.logger.info('Updating unit fuel', {
       unitId,
       unitFuelId,
       payload,
@@ -89,7 +89,7 @@ export class UnitFuelWorkspaceController {
     @Param('unitId') unitId: number,
     @Body() payload: UpdateUnitFuelDTO,
   ): Promise<UnitFuelDTO> {
-    this.Logger.info('Creating unit fuel', {
+    this.logger.info('Creating unit fuel', {
       unitId,
       payload,
       userId,

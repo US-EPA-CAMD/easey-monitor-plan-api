@@ -59,7 +59,7 @@ export class LMEQualificationWorkspaceController {
     @Param('lmeQualId') lmeQualId: string,
     @Body() payload: UpdateLMEQualificationDTO,
   ): Promise<LMEQualificationDTO> {
-    this.Logger.info('Updating LME qualification', {
+    this.logger.info('Updating LME qualification', {
       qualId: qualId,
       lmeQualId: lmeQualId,
       payload: payload,
@@ -89,7 +89,7 @@ export class LMEQualificationWorkspaceController {
     @Param('qualId') qualId: string,
     @Body() payload: UpdateLMEQualificationDTO,
   ): Promise<LMEQualificationDTO> {
-    this.Logger.info('Creating LME Qualification', {
+    this.logger.info('Creating LME Qualification', {
       userId: userId,
       locId: locId,
       qualId: qualId,

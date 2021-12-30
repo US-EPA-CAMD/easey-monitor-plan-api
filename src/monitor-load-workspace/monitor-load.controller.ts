@@ -53,7 +53,7 @@ export class MonitorLoadWorkspaceController {
     @Body() payload: UpdateMonitorLoadDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorLoadDTO> {
-    this.Logger.info('Updating Load', {
+    this.logger.info('Updating Load', {
       locationId: locationId,
       spanId: spanId,
       payload: payload,
@@ -75,7 +75,7 @@ export class MonitorLoadWorkspaceController {
     @Body() payload: UpdateMonitorLoadDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorLoadDTO> {
-    this.Logger.info('Creating Load', {
+    this.logger.info('Creating Load', {
       locationId: locationId,
       payload: payload,
       userId: userId,

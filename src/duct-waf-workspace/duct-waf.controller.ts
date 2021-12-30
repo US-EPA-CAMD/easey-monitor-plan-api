@@ -52,7 +52,7 @@ export class DuctWafWorkspaceController {
     @Body() payload: UpdateDuctWafDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
-    this.Logger.info('Creating duct waf', {
+    this.logger.info('Creating duct waf', {
       locationId: locationId,
       payload: payload,
       userId: userId,
@@ -73,7 +73,7 @@ export class DuctWafWorkspaceController {
     @Body() payload: UpdateDuctWafDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
-    this.Logger.info('Updating duct waf', {
+    this.logger.info('Updating duct waf', {
       locationId: locationId,
       payload: payload,
       ductWafId: ductWafId,

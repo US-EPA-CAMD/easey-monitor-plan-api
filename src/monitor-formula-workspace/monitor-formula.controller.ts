@@ -55,7 +55,7 @@ export class MonitorFormulaWorkspaceController {
     payload: UpdateMonitorFormulaDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
-    this.Logger.info('Creating Formula', {
+    this.logger.info('Creating Formula', {
       locationId,
       payload,
       userId,
@@ -77,7 +77,7 @@ export class MonitorFormulaWorkspaceController {
     payload: UpdateMonitorFormulaDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
-    this.Logger.info('Updating Formula', {
+    this.logger.info('Updating Formula', {
       locationId,
       formulaRecordId,
       payload,

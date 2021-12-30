@@ -56,7 +56,7 @@ export class SystemFuelFlowWorkspaceController {
     @Body() payload: UpdateSystemFuelFlowDTO,
     @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
-    this.Logger.info('Creating Fuel Flow', {
+    this.logger.info('Creating Fuel Flow', {
       locationId: locationId,
       monitoringSystemRecordId: monitoringSystemRecordId,
       payload: payload,
@@ -85,7 +85,7 @@ export class SystemFuelFlowWorkspaceController {
     @Body() payload: UpdateSystemFuelFlowDTO,
     @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
-    this.Logger.info('Updating fuel flow', {
+    this.logger.info('Updating fuel flow', {
       locationId: locationId,
       monitoringSystemRecordId: monitoringSystemRecordId,
       id: id,

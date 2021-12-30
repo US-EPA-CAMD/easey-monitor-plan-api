@@ -59,7 +59,7 @@ export class PCTQualificationWorkspaceController {
     @Param('pctQualId') pctQualId: string,
     @Body() payload: UpdatePCTQualificationDTO,
   ): Promise<PCTQualificationDTO> {
-    this.Logger.info('Updating PCT qualification', {
+    this.logger.info('Updating PCT qualification', {
       qualId: qualId,
       pctQualId: pctQualId,
       payload: payload,
@@ -89,7 +89,7 @@ export class PCTQualificationWorkspaceController {
     @Param('qualId') qualId: string,
     @Body() payload: UpdatePCTQualificationDTO,
   ): Promise<PCTQualificationDTO> {
-    this.Logger.info('Creating PCT Qualification', {
+    this.logger.info('Creating PCT Qualification', {
       userId: userId,
       locId: locId,
       qualId: qualId,

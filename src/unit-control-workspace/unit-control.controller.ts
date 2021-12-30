@@ -58,7 +58,7 @@ export class UnitControlWorkspaceController {
     @Param('unitControlId') unitControlId: string,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    this.Logger.info('Updating Unit Control', {
+    this.logger.info('Updating Unit Control', {
       userId,
       unitId,
       unitControlId,
@@ -87,7 +87,7 @@ export class UnitControlWorkspaceController {
     @Param('unitId') unitId: number,
     @Body() payload: UpdateUnitControlDTO,
   ): Promise<UnitControlDTO> {
-    this.Logger.info('Creating Unit Control', {
+    this.logger.info('Creating Unit Control', {
       userId,
       unitId,
       payload,

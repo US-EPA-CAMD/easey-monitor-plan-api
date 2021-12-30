@@ -55,7 +55,7 @@ export class MonitorDefaultWorkspaceController {
     @Body() payload: UpdateMonitorDefaultDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorDefaultDTO> {
-    this.Logger.info('Updating Monitor Default', {
+    this.logger.info('Updating Monitor Default', {
       locationId: locationId,
       defaultId: defaultId,
       payload: payload,
@@ -76,7 +76,7 @@ export class MonitorDefaultWorkspaceController {
     @Body() payload: UpdateMonitorDefaultDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorDefaultDTO> {
-    this.Logger.info('Creating new monitor default', {
+    this.logger.info('Creating new monitor default', {
       locationId: locationId,
       payload: payload,
       userId: userId,
