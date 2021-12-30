@@ -20,7 +20,7 @@ export class MonitorMethodWorkspaceService {
     @InjectRepository(MonitorMethodWorkspaceRepository)
     private repository: MonitorMethodWorkspaceRepository,
     private map: MonitorMethodMap,
-    private logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 

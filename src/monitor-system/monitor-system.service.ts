@@ -12,7 +12,7 @@ export class MonitorSystemService {
     @InjectRepository(MonitorSystemRepository)
     private repository: MonitorSystemRepository,
     private map: MonitorSystemMap,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {

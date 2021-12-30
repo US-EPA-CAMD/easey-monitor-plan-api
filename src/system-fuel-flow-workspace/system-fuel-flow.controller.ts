@@ -27,7 +27,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class SystemFuelFlowWorkspaceController {
   constructor(
     private readonly service: SystemFuelFlowWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()

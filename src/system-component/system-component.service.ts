@@ -12,7 +12,7 @@ export class SystemComponentService {
     @InjectRepository(SystemComponentRepository)
     private repository: SystemComponentRepository,
     private map: SystemComponentMap,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getComponents(

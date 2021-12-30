@@ -35,7 +35,7 @@ export class MonitorPlanWorkspaceController {
   constructor(
     private service: MonitorPlanWorkspaceService,
     private ucoService: UserCheckOutService,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable

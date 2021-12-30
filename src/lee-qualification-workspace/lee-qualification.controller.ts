@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -22,8 +27,8 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class LEEQualificationWorkspaceController {
   constructor(
     private readonly service: LEEQualificationWorkspaceService,
-    private Logger: Logger,
-  ) { }
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({

@@ -14,7 +14,7 @@ export class ComponentWorkspaceService {
     @InjectRepository(ComponentWorkspaceRepository)
     private repository: ComponentWorkspaceRepository,
     private map: ComponentMap,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {

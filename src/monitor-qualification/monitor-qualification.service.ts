@@ -12,7 +12,7 @@ export class MonitorQualificationService {
     @InjectRepository(MonitorQualificationRepository)
     private repository: MonitorQualificationRepository,
     private map: MonitorQualificationMap,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getQualifications(

@@ -7,7 +7,12 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiSecurity,
+} from '@nestjs/swagger';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
@@ -22,7 +27,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class DuctWafWorkspaceController {
   constructor(
     private readonly service: DuctWafWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -74,11 +79,6 @@ export class DuctWafWorkspaceController {
       ductWafId: ductWafId,
       userId: userId,
     });
-    return this.service.updateDuctWaf(
-      locationId,
-      ductWafId,
-      payload,
-      userId,
-    );
+    return this.service.updateDuctWaf(locationId, ductWafId, payload, userId);
   }
 }

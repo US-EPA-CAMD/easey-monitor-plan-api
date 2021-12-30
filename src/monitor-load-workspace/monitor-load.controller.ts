@@ -27,7 +27,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class MonitorLoadWorkspaceController {
   constructor(
     private service: MonitorLoadWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()

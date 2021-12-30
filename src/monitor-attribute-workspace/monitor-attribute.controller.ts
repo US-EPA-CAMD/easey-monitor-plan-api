@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -22,7 +27,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 export class MonitorAttributeWorkspaceController {
   constructor(
     private readonly service: MonitorAttributeWorkspaceService,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()

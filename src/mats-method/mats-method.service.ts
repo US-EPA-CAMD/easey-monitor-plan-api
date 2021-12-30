@@ -12,7 +12,7 @@ export class MatsMethodService {
     @InjectRepository(MatsMethodRepository)
     private repository: MatsMethodRepository,
     private map: MatsMethodMap,
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getMethods(locationId: string): Promise<MatsMethodDTO[]> {

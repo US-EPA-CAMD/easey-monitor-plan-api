@@ -19,7 +19,7 @@ export class MonitorLoadWorkspaceService {
     @InjectRepository(MonitorLoadWorkspaceRepository)
     private repository: MonitorLoadWorkspaceRepository,
     private map: MonitorLoadMap,
-    private logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 

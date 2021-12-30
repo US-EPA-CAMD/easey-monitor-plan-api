@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -22,7 +27,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class MonitorFormulaWorkspaceController {
   constructor(
     private service: MonitorFormulaWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()

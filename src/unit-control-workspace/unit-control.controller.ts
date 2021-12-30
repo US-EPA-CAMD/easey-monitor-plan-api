@@ -7,7 +7,12 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 
@@ -22,7 +27,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class UnitControlWorkspaceController {
   constructor(
     private readonly service: UnitControlWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()

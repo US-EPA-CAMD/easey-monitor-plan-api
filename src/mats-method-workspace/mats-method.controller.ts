@@ -27,7 +27,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 export class MatsMethodWorkspaceController {
   constructor(
     private service: MatsMethodWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()

@@ -26,7 +26,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 export class AnalyzerRangeWorkspaceController {
   constructor(
     private service: AnalyzerRangeWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()

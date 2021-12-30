@@ -1,5 +1,18 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { Get, Param, Controller, Put, UseGuards, Body, Post, } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
+import {
+  Get,
+  Param,
+  Controller,
+  Put,
+  UseGuards,
+  Body,
+  Post,
+} from '@nestjs/common';
 
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
@@ -14,8 +27,8 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class LMEQualificationWorkspaceController {
   constructor(
     private readonly service: LMEQualificationWorkspaceService,
-    private Logger: Logger,
-  ) { }
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({

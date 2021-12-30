@@ -22,7 +22,7 @@ export class AnalyzerRangeWorkspaceService {
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private repository: AnalyzerRangeWorkspaceRepository,
     private map: AnalyzerRangeMap,
-    private logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
