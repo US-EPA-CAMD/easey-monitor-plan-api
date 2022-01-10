@@ -6,6 +6,7 @@ import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
+import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { validateObject } from '../utils';
@@ -25,7 +26,7 @@ export class MonitorLoadWorkspaceService {
     return this.map.many(results);
   }
 
-  async getLoad(loadId: string): Promise<MonitorLoadDTO> {
+  async getLoad(loadId: string): Promise<MonitorLoad> {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
@@ -34,7 +35,7 @@ export class MonitorLoadWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createLoad(
@@ -63,16 +64,10 @@ export class MonitorLoadWorkspaceService {
     });
 
     // Validate load
-    const passed = await validateObject(load);
-
-    // If load object passes...
-    if (passed) {
-      // Add the record to the database
-      const result = await this.repository.save(load);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(result);
-    }
-    return new MonitorLoadDTO();
+    await validateObject(load);
+    await this.repository.save(load);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(load);
   }
 
   async updateLoad(
@@ -98,16 +93,9 @@ export class MonitorLoadWorkspaceService {
     load.userId = userId;
     load.updateDate = new Date(Date.now());
 
-    // Validate load
-    const passed = await validateObject(load);
-
-    // If load object passes...
-    if (passed) {
-      // Update the record in the database
-      await this.repository.save(load);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.getLoad(loadId);
-    }
-    return new MonitorLoadDTO();
+    await validateObject(load);
+    await this.repository.save(load);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(load);
   }
 }

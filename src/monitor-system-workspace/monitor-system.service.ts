@@ -54,17 +54,10 @@ export class MonitorSystemWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate system
-    const passed = await validateObject(system);
-
-    // If system object passes...
-    if (passed) {
-      // Add the record to the database
-      const result = await this.repository.save(system);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(system);
-    }
-    return new MonitorSystemDTO();
+    await validateObject(system);
+    await this.repository.save(system);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(system);
   }
 
   async getSystem(monitoringSystemId: string): Promise<MonitorSystem> {
@@ -97,16 +90,9 @@ export class MonitorSystemWorkspaceService {
     system.userId = userId;
     system.updateDate = new Date(Date.now());
 
-    // Validate system
-    const passed = await validateObject(system);
-
-    // If system object passes...
-    if (passed) {
-      // Update the record in the database
-      const result = await this.repository.save(system);
-      await this.mpService.resetToNeedsEvaluation(locId, userId);
-      return this.map.one(result);
-    }
-    return new MonitorSystemDTO();
+    await validateObject(system);
+    await this.repository.save(system);
+    await this.mpService.resetToNeedsEvaluation(locId, userId);
+    return this.map.one(system);
   }
 }

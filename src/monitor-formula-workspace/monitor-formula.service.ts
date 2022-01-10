@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
+import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { validateObject } from '../utils';
 
@@ -28,7 +29,7 @@ export class MonitorFormulaWorkspaceService {
   async getFormula(
     locationId: string,
     formulaRecordId: string,
-  ): Promise<MonitorFormulaDTO> {
+  ): Promise<MonitorFormula> {
     const result = await this.repository.getFormula(
       locationId,
       formulaRecordId,
@@ -41,7 +42,7 @@ export class MonitorFormulaWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createFormula(
@@ -65,17 +66,10 @@ export class MonitorFormulaWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate formula
-    const passed = await validateObject(formula);
-
-    // If formula object passes...
-    if (passed) {
-      // Add the record to the database
-      const result = await this.repository.save(formula);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.getFormula(locationId, result.id);
-    }
-    return new MonitorFormulaDTO();
+    await validateObject(formula);
+    await this.repository.save(formula);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(formula);
   }
 
   async updateFormula(
@@ -97,16 +91,9 @@ export class MonitorFormulaWorkspaceService {
     formula.userId = userId;
     formula.updateDate = new Date(Date.now());
 
-    // Validate formula
-    const passed = await validateObject(formula);
-
-    // If formula object passes...
-    if (passed) {
-      // Update the record in the database
-      await this.repository.save(formula);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.getFormula(locationId, formulaRecordId);
-    }
-    return new MonitorFormulaDTO();
+    await validateObject(formula);
+    await this.repository.save(formula);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(formula);
   }
 }

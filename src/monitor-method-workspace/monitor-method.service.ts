@@ -59,17 +59,10 @@ export class MonitorMethodWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate method
-    const passed = await validateObject(monMethod);
-
-    // If method object passes...
-    if (passed) {
-      // Add the record to the database
-      const entity = await this.repository.save(monMethod);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(entity);
-    }
-    return new MonitorMethodDTO();
+    await validateObject(monMethod);
+    await this.repository.save(monMethod);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(monMethod);
   }
 
   async updateMethod(
@@ -91,16 +84,9 @@ export class MonitorMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = new Date(Date.now());
 
-    // Validate method
-    const passed = await validateObject(method);
-
-    // If method object passes...
-    if (passed) {
-      // Update the record in the database
-      const result = await this.repository.save(method);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(result);
-    }
-    return new MonitorMethodDTO();
+    await validateObject(method);
+    await this.repository.save(method);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(method);
   }
 }
