@@ -9,7 +9,7 @@ import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from 'src/utils';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -64,6 +64,7 @@ export class MonitorSystemWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.map.one(system);
     }
+    return new MonitorSystemDTO();
   }
 
   async getSystem(monitoringSystemId: string): Promise<MonitorSystem> {
@@ -106,5 +107,6 @@ export class MonitorSystemWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locId, userId);
       return this.map.one(result);
     }
+    return new MonitorSystemDTO();
   }
 }

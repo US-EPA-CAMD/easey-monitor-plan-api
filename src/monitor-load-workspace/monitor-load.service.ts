@@ -8,7 +8,7 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from 'src/utils';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -72,6 +72,7 @@ export class MonitorLoadWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.map.one(result);
     }
+    return new MonitorLoadDTO();
   }
 
   async updateLoad(
@@ -107,5 +108,6 @@ export class MonitorLoadWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.getLoad(loadId);
     }
+    return new MonitorLoadDTO();
   }
 }

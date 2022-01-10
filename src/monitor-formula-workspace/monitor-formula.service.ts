@@ -8,7 +8,7 @@ import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
-import { validateObject } from 'src/utils';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
@@ -75,6 +75,7 @@ export class MonitorFormulaWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.getFormula(locationId, result.id);
     }
+    return new MonitorFormulaDTO();
   }
 
   async updateFormula(
@@ -106,5 +107,6 @@ export class MonitorFormulaWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.getFormula(locationId, formulaRecordId);
     }
+    return new MonitorFormulaDTO();
   }
 }

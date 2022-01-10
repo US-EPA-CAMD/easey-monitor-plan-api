@@ -8,7 +8,7 @@ import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from 'src/utils';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class DuctWafWorkspaceService {
@@ -73,6 +73,7 @@ export class DuctWafWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.map.one(result);
     }
+    return new DuctWafDTO();
   }
 
   async updateDuctWaf(
@@ -109,5 +110,6 @@ export class DuctWafWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.getDuctWaf(ductWafId);
     }
+    return new DuctWafDTO();
   }
 }

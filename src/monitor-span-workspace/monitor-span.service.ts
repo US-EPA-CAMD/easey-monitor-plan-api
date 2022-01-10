@@ -8,7 +8,7 @@ import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
-import { validateObject } from 'src/utils';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorSpanWorkspaceService {
@@ -78,6 +78,7 @@ export class MonitorSpanWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.map.one(result);
     }
+    return new MonitorSpanDTO();
   }
 
   async updateSpan(
@@ -118,5 +119,6 @@ export class MonitorSpanWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.getSpan(locationId, spanId);
     }
+    return new MonitorSpanDTO();
   }
 }

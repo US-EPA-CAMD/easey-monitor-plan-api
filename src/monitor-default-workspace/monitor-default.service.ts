@@ -8,8 +8,7 @@ import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validate } from 'class-validator';
-import { validateObject } from 'src/utils';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
@@ -77,6 +76,7 @@ export class MonitorDefaultWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.map.one(result);
     }
+    return new MonitorDefaultDTO();
   }
 
   async updateDefault(
@@ -112,5 +112,6 @@ export class MonitorDefaultWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
       return this.getDefault(locationId, defaultId);
     }
+    return new MonitorDefaultDTO();
   }
 }
