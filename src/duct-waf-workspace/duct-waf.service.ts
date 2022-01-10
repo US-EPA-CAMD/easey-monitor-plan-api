@@ -8,6 +8,7 @@ import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class DuctWafWorkspaceService {
@@ -62,9 +63,17 @@ export class DuctWafWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(ductWaf);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    // Validate rectangular duct WAF
+    const passed = await validateObject(ductWaf);
+
+    // If rectangular duct WAF object passes...
+    if (passed) {
+      // Add the record to the database
+      const result = await this.repository.save(ductWaf);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(result);
+    }
+    return new DuctWafDTO();
   }
 
   async updateDuctWaf(
@@ -91,8 +100,16 @@ export class DuctWafWorkspaceService {
     ductWaf.userId = userId;
     ductWaf.updateDate = new Date(Date.now());
 
-    await this.repository.save(ductWaf);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getDuctWaf(ductWafId);
+    // Validate rectangular duct WAF
+    const passed = await validateObject(ductWaf);
+
+    // If rectangular duct WAF object passes...
+    if (passed) {
+      // Update the record in the database
+      await this.repository.save(ductWaf);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.getDuctWaf(ductWafId);
+    }
+    return new DuctWafDTO();
   }
 }

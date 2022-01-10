@@ -8,6 +8,7 @@ import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -56,10 +57,17 @@ export class MatsMethodWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    // Validate mats method
+    const passed = await validateObject(method);
 
-    return this.map.one(result);
+    // If mats method object passes...
+    if (passed) {
+      // Add the record to the database
+      const result = await this.repository.save(method);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(result);
+    }
+    return new MatsMethodDTO();
   }
 
   async updateMethod(
@@ -81,8 +89,16 @@ export class MatsMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    // Validate mats method
+    const passed = await validateObject(method);
+
+    // If mats method object passes...
+    if (passed) {
+      // Update the record in the database
+      const result = await this.repository.save(method);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(result);
+    }
+    return new MatsMethodDTO();
   }
 }

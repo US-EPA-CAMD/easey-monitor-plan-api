@@ -21,6 +21,7 @@ const mockMap = () => ({
 
 const locationId = '5770';
 const methodId = 'someId';
+const userId = 'testuser';
 
 const matsMethodDTO: UpdateMatsMethodDTO = {
   supplementalMATSMonitoringMethodCode: 'string',
@@ -69,7 +70,11 @@ describe('MonitorMethodWorkspaceService', () => {
 
   describe('createMethod', () => {
     it('creates a matsMethodCode data for a specified locationId', async () => {
-      const result = await service.createMethod(locationId, matsMethodDTO);
+      const result = await service.createMethod(
+        locationId,
+        matsMethodDTO,
+        userId,
+      );
       expect(result).toEqual({});
     });
   });
@@ -80,6 +85,7 @@ describe('MonitorMethodWorkspaceService', () => {
         methodId,
         locationId,
         matsMethodDTO,
+        userId,
       );
       expect(result).toEqual({ ...result });
     });

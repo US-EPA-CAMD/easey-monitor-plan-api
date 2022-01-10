@@ -8,6 +8,7 @@ import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
@@ -64,9 +65,17 @@ export class MonitorFormulaWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(formula);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getFormula(locationId, result.id);
+    // Validate formula
+    const passed = await validateObject(formula);
+
+    // If formula object passes...
+    if (passed) {
+      // Add the record to the database
+      const result = await this.repository.save(formula);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.getFormula(locationId, result.id);
+    }
+    return new MonitorFormulaDTO();
   }
 
   async updateFormula(
@@ -88,8 +97,16 @@ export class MonitorFormulaWorkspaceService {
     formula.userId = userId;
     formula.updateDate = new Date(Date.now());
 
-    await this.repository.save(formula);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getFormula(locationId, formulaRecordId);
+    // Validate formula
+    const passed = await validateObject(formula);
+
+    // If formula object passes...
+    if (passed) {
+      // Update the record in the database
+      await this.repository.save(formula);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.getFormula(locationId, formulaRecordId);
+    }
+    return new MonitorFormulaDTO();
   }
 }

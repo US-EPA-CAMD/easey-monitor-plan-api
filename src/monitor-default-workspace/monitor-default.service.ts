@@ -8,6 +8,7 @@ import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
@@ -65,9 +66,17 @@ export class MonitorDefaultWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    // Validate default
+    const passed = await validateObject(monDefault);
+
+    // If default object passes...
+    if (passed) {
+      // Add the record to the database
+      const result = await this.repository.save(monDefault);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(result);
+    }
+    return new MonitorDefaultDTO();
   }
 
   async updateDefault(
@@ -93,8 +102,16 @@ export class MonitorDefaultWorkspaceService {
     monDefault.userId = userId;
     monDefault.updateDate = new Date(Date.now());
 
-    await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getDefault(locationId, defaultId);
+    // Validate default
+    const passed = await validateObject(monDefault);
+
+    // If default object passes...
+    if (passed) {
+      // Update the record in the database
+      await this.repository.save(monDefault);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.getDefault(locationId, defaultId);
+    }
+    return new MonitorDefaultDTO();
   }
 }

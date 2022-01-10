@@ -1,3 +1,4 @@
+import { IsNotEmpty, ValidateIf } from 'class-validator';
 import {
   BaseEntity,
   Entity,
@@ -38,9 +39,13 @@ export class MonitorFormula extends BaseEntity {
   beginHour: number;
 
   @Column({ type: 'date', nullable: true, name: 'end_date' })
+  @IsNotEmpty()
+  @ValidateIf(o => o.endHour !== null)
   endDate: Date;
 
   @Column({ nullable: true, name: 'end_hour' })
+  @IsNotEmpty()
+  @ValidateIf(o => o.endDate !== null)
   endHour: number;
 
   @Column({

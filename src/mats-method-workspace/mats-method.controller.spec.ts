@@ -16,6 +16,7 @@ const matsMethodPayload: UpdateMatsMethodDTO = {
   endDate: new Date(Date.now()),
   endHour: 1,
 };
+const userId = 'testuser';
 
 const mockMatsMethodWorkspaceService = () => ({
   getMethods: jest.fn(() => []),
