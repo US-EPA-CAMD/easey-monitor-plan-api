@@ -8,6 +8,7 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validateObject } from 'src/utils';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -61,9 +62,16 @@ export class MonitorLoadWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    // Validate load
+    const passed = await validateObject(load);
+
+    // If load object passes...
+    if (passed) {
+      // Add the record to the database
+      const result = await this.repository.save(load);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(result);
+    }
   }
 
   async updateLoad(
@@ -89,8 +97,15 @@ export class MonitorLoadWorkspaceService {
     load.userId = userId;
     load.updateDate = new Date(Date.now());
 
-    await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getLoad(loadId);
+    // Validate load
+    const passed = await validateObject(load);
+
+    // If load object passes...
+    if (passed) {
+      // Update the record in the database
+      await this.repository.save(load);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.getLoad(loadId);
+    }
   }
 }

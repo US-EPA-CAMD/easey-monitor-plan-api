@@ -8,6 +8,7 @@ import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
+import { validateObject } from 'src/utils';
 
 @Injectable()
 export class MonitorSpanWorkspaceService {
@@ -67,9 +68,16 @@ export class MonitorSpanWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(span);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    // Validate span
+    const passed = await validateObject(span);
+
+    // If span object passes...
+    if (passed) {
+      // Add the record to the database
+      const result = await this.repository.save(span);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(result);
+    }
   }
 
   async updateSpan(
@@ -100,8 +108,15 @@ export class MonitorSpanWorkspaceService {
     span.userid = userId;
     span.updateDate = new Date(Date.now());
 
-    await this.repository.save(span);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getSpan(locationId, spanId);
+    // Validate span
+    const passed = await validateObject(span);
+
+    // If span object passes...
+    if (passed) {
+      // Update the record in the database
+      await this.repository.save(span);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.getSpan(locationId, spanId);
+    }
   }
 }

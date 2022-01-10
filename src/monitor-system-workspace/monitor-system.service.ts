@@ -9,6 +9,7 @@ import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validateObject } from 'src/utils';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -53,9 +54,16 @@ export class MonitorSystemWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(system);
+    // Validate system
+    const passed = await validateObject(system);
+
+    // If system object passes...
+    if (passed) {
+      // Add the record to the database
+      const result = await this.repository.save(system);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(system);
+    }
   }
 
   async getSystem(monitoringSystemId: string): Promise<MonitorSystem> {
@@ -88,8 +96,15 @@ export class MonitorSystemWorkspaceService {
     system.userId = userId;
     system.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.map.one(result);
+    // Validate system
+    const passed = await validateObject(system);
+
+    // If system object passes...
+    if (passed) {
+      // Update the record in the database
+      const result = await this.repository.save(system);
+      await this.mpService.resetToNeedsEvaluation(locId, userId);
+      return this.map.one(result);
+    }
   }
 }

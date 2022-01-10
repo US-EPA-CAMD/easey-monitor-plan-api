@@ -9,6 +9,8 @@ import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validate } from 'class-validator';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
@@ -58,9 +60,16 @@ export class MonitorMethodWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const entity = await this.repository.save(monMethod);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(entity);
+    // Validate method
+    const passed = await validateObject(monMethod);
+
+    // If method object passes...
+    if (passed) {
+      // Add the record to the database
+      const entity = await this.repository.save(monMethod);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(entity);
+    }
   }
 
   async updateMethod(
@@ -82,8 +91,15 @@ export class MonitorMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    // Validate method
+    const passed = await validateObject(method);
+
+    // If method object passes...
+    if (passed) {
+      // Update the record in the database
+      const result = await this.repository.save(method);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      return this.map.one(result);
+    }
   }
 }
