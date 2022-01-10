@@ -88,7 +88,7 @@ export class MonitorPlanWorkspaceService {
     );
 
     mpEvalReport.facilityName = mp.plant.name;
-    mpEvalReport.facilityId = mp.facId;
+    mpEvalReport.facilityId = mp.plant.orisCode;
     mpEvalReport.state = county.stateCode;
     mpEvalReport.countyName = county.countyName;
     mpEvalReport.mpReportResults = mpReportResults;
