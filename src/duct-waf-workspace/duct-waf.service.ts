@@ -5,6 +5,8 @@ import { v4 as uuid } from 'uuid';
 import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
+import { DuctWaf } from '../entities/duct-waf.entity';
+
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -25,7 +27,7 @@ export class DuctWafWorkspaceService {
     return this.map.many(results);
   }
 
-  async getDuctWaf(id: string) {
+  async getDuctWaf(id: string): Promise<DuctWaf> {
     const result = await this.repository.findOne(id);
 
     if (!result) {
