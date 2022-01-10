@@ -1,13 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid, validate } from 'uuid';
 
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+
 import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {
@@ -24,7 +27,7 @@ export class SystemFuelFlowWorkspaceService {
     return this.map.many(results);
   }
 
-  async getFuelFlow(fuelFlowId: string): Promise<SystemFuelFlowDTO> {
+  async getFuelFlow(fuelFlowId: string): Promise<SystemFuelFlow> {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
@@ -33,7 +36,7 @@ export class SystemFuelFlowWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createFuelFlow(
@@ -57,9 +60,10 @@ export class SystemFuelFlowWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
+    await validateObject(fuelFlow);
     await this.repository.save(fuelFlow);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getFuelFlow(fuelFlow.id);
+    return this.map.one(fuelFlow);
   }
 
   async updateFuelFlow(
@@ -79,8 +83,9 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.beginHour = payload.beginHour;
     fuelFlow.endHour = payload.endHour;
 
+    await validateObject(fuelFlow);
     await this.repository.save(fuelFlow);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getFuelFlow(fuelFlowId);
+    return this.map.one(fuelFlow);
   }
 }

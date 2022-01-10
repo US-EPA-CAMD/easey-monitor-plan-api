@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
+import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 import { validateObject } from '../utils';
 
@@ -25,7 +26,7 @@ export class MonitorSpanWorkspaceService {
     return this.map.many(results);
   }
 
-  async getSpan(locationId: string, spanId: string): Promise<MonitorSpanDTO> {
+  async getSpan(locationId: string, spanId: string): Promise<MonitorSpan> {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
@@ -35,7 +36,7 @@ export class MonitorSpanWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createSpan(
@@ -68,17 +69,10 @@ export class MonitorSpanWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate span
-    const passed = await validateObject(span);
-
-    // If span object passes...
-    if (passed) {
-      // Add the record to the database
-      const result = await this.repository.save(span);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(result);
-    }
-    return new MonitorSpanDTO();
+    await validateObject(span);
+    await this.repository.save(span);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(span);
   }
 
   async updateSpan(
@@ -106,19 +100,12 @@ export class MonitorSpanWorkspaceService {
     span.beginHour = payload.beginHour;
     span.endDate = payload.endDate;
     span.endHour = payload.endHour;
-    span.userid = userId;
+    span.userId = userId;
     span.updateDate = new Date(Date.now());
 
-    // Validate span
-    const passed = await validateObject(span);
-
-    // If span object passes...
-    if (passed) {
-      // Update the record in the database
-      await this.repository.save(span);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.getSpan(locationId, spanId);
-    }
-    return new MonitorSpanDTO();
+    await validateObject(span);
+    await this.repository.save(span);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(span);
   }
 }

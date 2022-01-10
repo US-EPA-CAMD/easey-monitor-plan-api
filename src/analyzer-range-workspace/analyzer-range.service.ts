@@ -5,12 +5,13 @@ import { v4 as uuid } from 'uuid';
 
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
-
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
+import { AnalyzerRange } from '../entities/analyzer-range.entity';
 
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { validateObject } from '../utils';
 
 @Injectable()
 export class AnalyzerRangeWorkspaceService {
@@ -27,7 +28,7 @@ export class AnalyzerRangeWorkspaceService {
     return this.map.many(results);
   }
 
-  async getAnalyzerRange(analyzerRangeId: string): Promise<AnalyzerRangeDTO> {
+  async getAnalyzerRange(analyzerRangeId: string): Promise<AnalyzerRange> {
     const result = await this.repository.findOne(analyzerRangeId);
 
     if (!result) {
@@ -36,7 +37,7 @@ export class AnalyzerRangeWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createAnalyzerRange(
@@ -54,14 +55,15 @@ export class AnalyzerRangeWorkspaceService {
       beginHour: payload.beginHour,
       endDate: payload.endDate,
       endHour: payload.endHour,
-      userId: 'testuser',
+      userId: userId,
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(analyzerRange);
+    await validateObject(analyzerRange);
+    await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    return this.map.one(analyzerRange);
   }
 
   async updateAnalyzerRangd(
@@ -79,8 +81,9 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.endDate = payload.endDate;
     analyzerRange.endHour = payload.endHour;
 
-    const result = await this.repository.save(analyzerRange);
+    await validateObject(analyzerRange);
+    await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(result);
+    return this.map.one(analyzerRange);
   }
 }

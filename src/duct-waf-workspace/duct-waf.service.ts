@@ -34,7 +34,7 @@ export class DuctWafWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createDuctWaf(
@@ -63,17 +63,10 @@ export class DuctWafWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate rectangular duct WAF
-    const passed = await validateObject(ductWaf);
-
-    // If rectangular duct WAF object passes...
-    if (passed) {
-      // Add the record to the database
-      const result = await this.repository.save(ductWaf);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(result);
-    }
-    return new DuctWafDTO();
+    await validateObject(ductWaf);
+    await this.repository.save(ductWaf);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(ductWaf);
   }
 
   async updateDuctWaf(
@@ -100,16 +93,9 @@ export class DuctWafWorkspaceService {
     ductWaf.userId = userId;
     ductWaf.updateDate = new Date(Date.now());
 
-    // Validate rectangular duct WAF
-    const passed = await validateObject(ductWaf);
-
-    // If rectangular duct WAF object passes...
-    if (passed) {
-      // Update the record in the database
-      await this.repository.save(ductWaf);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.getDuctWaf(ductWafId);
-    }
-    return new DuctWafDTO();
+    await validateObject(ductWaf);
+    await this.repository.save(ductWaf);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(ductWaf);
   }
 }

@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
+import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -28,7 +29,7 @@ export class MonitorDefaultWorkspaceService {
   async getDefault(
     locationId: string,
     defaultId: string,
-  ): Promise<MonitorDefaultDTO> {
+  ): Promise<MonitorDefault> {
     const result = await this.repository.getDefault(locationId, defaultId);
 
     if (!result) {
@@ -38,7 +39,7 @@ export class MonitorDefaultWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createDefault(
@@ -66,17 +67,10 @@ export class MonitorDefaultWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate default
-    const passed = await validateObject(monDefault);
-
-    // If default object passes...
-    if (passed) {
-      // Add the record to the database
-      const result = await this.repository.save(monDefault);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(result);
-    }
-    return new MonitorDefaultDTO();
+    await validateObject(monDefault);
+    await this.repository.save(monDefault);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(monDefault);
   }
 
   async updateDefault(
@@ -102,16 +96,9 @@ export class MonitorDefaultWorkspaceService {
     monDefault.userId = userId;
     monDefault.updateDate = new Date(Date.now());
 
-    // Validate default
-    const passed = await validateObject(monDefault);
-
-    // If default object passes...
-    if (passed) {
-      // Update the record in the database
-      await this.repository.save(monDefault);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.getDefault(locationId, defaultId);
-    }
-    return new MonitorDefaultDTO();
+    await validateObject(monDefault);
+    await this.repository.save(monDefault);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(monDefault);
   }
 }

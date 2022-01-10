@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
+import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -25,7 +26,7 @@ export class MatsMethodWorkspaceService {
     return this.map.many(results);
   }
 
-  async getMethod(methodId: string): Promise<MatsMethodDTO> {
+  async getMethod(methodId: string): Promise<MatsMethod> {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
@@ -34,7 +35,7 @@ export class MatsMethodWorkspaceService {
       });
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async createMethod(
@@ -57,17 +58,10 @@ export class MatsMethodWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate mats method
-    const passed = await validateObject(method);
-
-    // If mats method object passes...
-    if (passed) {
-      // Add the record to the database
-      const result = await this.repository.save(method);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(result);
-    }
-    return new MatsMethodDTO();
+    await validateObject(method);
+    await this.repository.save(method);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(method);
   }
 
   async updateMethod(
@@ -89,16 +83,9 @@ export class MatsMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = new Date(Date.now());
 
-    // Validate mats method
-    const passed = await validateObject(method);
-
-    // If mats method object passes...
-    if (passed) {
-      // Update the record in the database
-      const result = await this.repository.save(method);
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
-      return this.map.one(result);
-    }
-    return new MatsMethodDTO();
+    await validateObject(method);
+    await this.repository.save(method);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    return this.map.one(method);
   }
 }
