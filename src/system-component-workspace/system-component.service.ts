@@ -37,7 +37,7 @@ export class SystemComponentWorkspaceService {
   async getComponent(
     sysId: string,
     componentId: string,
-  ): Promise<SystemComponentDTO> {
+  ): Promise<SystemComponent> {
     const result = await this.repository.getComponent(sysId, componentId);
 
     if (!result) {
@@ -52,7 +52,7 @@ export class SystemComponentWorkspaceService {
       );
     }
 
-    return this.map.one(result);
+    return result;
   }
 
   async updateComponent(
@@ -65,15 +65,16 @@ export class SystemComponentWorkspaceService {
     // Saving System Component fields
     const systemComponent = await this.getComponent(sysId, componentId);
 
-    systemComponent.modelVersion = payload.modelVersion;
-    systemComponent.sampleAcquisitionMethodCode =
+    systemComponent.component.modelVersion = payload.modelVersion;
+    systemComponent.component.sampleAcquisitionMethodCode =
       payload.sampleAcquisitionMethodCode;
-    systemComponent.componentTypeCode = payload.componentTypeCode;
-    systemComponent.basisCode = payload.basisCode;
-    systemComponent.manufacturer = payload.manufacturer;
-    systemComponent.modelVersion = payload.modelVersion;
-    systemComponent.serialNumber = payload.serialNumber;
-    systemComponent.hgConverterIndicator = payload.hgConverterIndicator;
+    systemComponent.component.componentTypeCode = payload.componentTypeCode;
+    systemComponent.component.basisCode = payload.basisCode;
+    systemComponent.component.manufacturer = payload.manufacturer;
+    systemComponent.component.modelVersion = payload.modelVersion;
+    systemComponent.component.serialNumber = payload.serialNumber;
+    systemComponent.component.hgConverterIndicator =
+      payload.hgConverterIndicator;
 
     systemComponent.beginDate = payload.beginDate;
     systemComponent.beginHour = payload.beginHour;
@@ -102,7 +103,7 @@ export class SystemComponentWorkspaceService {
     await this.repository.save(systemComponent);
     await this.compRepository.save(component);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getComponent(sysId, componentId);
+    return this.map.one(systemComponent);
   }
 
   async createSystemComponent(
@@ -154,6 +155,6 @@ export class SystemComponentWorkspaceService {
     await this.repository.save(systemComponent);
     await this.compRepository.save(component);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.getComponent(monitoringSystemRecordId, component.id);
+    return this.map.one(systemComponent);
   }
 }
