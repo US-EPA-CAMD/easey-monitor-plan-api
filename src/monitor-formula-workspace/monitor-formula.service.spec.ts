@@ -22,6 +22,7 @@ const mockMap = () => ({
 
 const locationId = '5770';
 const formulaId = 'someId';
+const userId = 'testuser';
 
 const monitorFormulaDTO: UpdateMonitorFormulaDTO = {
   formulaId: 'string',
@@ -72,7 +73,11 @@ describe('MonitorFormulaWorkspaceService', () => {
 
   describe('createFormula', () => {
     it('creates a FormulaCode data for a specified locationId', async () => {
-      const result = await service.createFormula(locationId, monitorFormulaDTO);
+      const result = await service.createFormula(
+        locationId,
+        monitorFormulaDTO,
+        userId,
+      );
       expect(result).toEqual({});
     });
   });
@@ -83,6 +88,7 @@ describe('MonitorFormulaWorkspaceService', () => {
         formulaId,
         locationId,
         monitorFormulaDTO,
+        userId,
       );
       expect(result).toEqual({ ...result });
     });

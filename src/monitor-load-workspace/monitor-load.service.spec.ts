@@ -10,6 +10,7 @@ import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 
 const locationId = '1234';
 const loadId = '4321';
+const userId = 'testuser';
 
 const payload: UpdateMonitorLoadDTO = {
   maximumLoadValue: 0,
@@ -83,14 +84,19 @@ describe('MonitorLoadService', () => {
 
   describe('createLoad', () => {
     it('creates a monitor load record for a specified locationId', async () => {
-      const result = await loadService.createLoad(locationId, payload);
+      const result = await loadService.createLoad(locationId, payload, userId);
       expect(result).toEqual({ ...result });
     });
   });
 
   describe('updateLoad', () => {
     it('updates a monitor load record for a specified locationId', async () => {
-      const result = await loadService.updateLoad(locationId, loadId, payload);
+      const result = await loadService.updateLoad(
+        locationId,
+        loadId,
+        payload,
+        userId,
+      );
       expect(result).toEqual({ ...result });
     });
   });
