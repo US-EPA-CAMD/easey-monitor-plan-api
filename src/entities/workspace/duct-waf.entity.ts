@@ -94,7 +94,7 @@ export class DuctWaf extends BaseEntity {
 
   @Column({ type: 'date', name: 'end_date' })
   @IsNotEmpty()
-  @ValidateIf(o => o.endHour !== null)
+  @ValidateIf(o => o.wafEndHour !== null)
   wafEndDate: Date;
 
   @Column({
