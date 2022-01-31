@@ -13,9 +13,9 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 export class LMEQualificationWorkspaceService {
   constructor(
     @InjectRepository(LMEQualificationWorkspaceRepository)
-    private repository: LMEQualificationWorkspaceRepository,
-    private map: LMEQualificationMap,
-    private Logger: Logger,
+    private readonly repository: LMEQualificationWorkspaceRepository,
+    private readonly map: LMEQualificationMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -38,7 +38,7 @@ export class LMEQualificationWorkspaceService {
       lmeQualId,
     );
     if (!result) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         'LME Qualification Not Found',
         true,

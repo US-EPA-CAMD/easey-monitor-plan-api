@@ -1,4 +1,4 @@
-import { Component } from 'src/entities/workspace/component.entity';
+import { Component } from '../entities/workspace/component.entity';
 import { Repository, EntityRepository } from 'typeorm';
 
 import { SystemComponent } from '../entities/workspace/system-component.entity';
