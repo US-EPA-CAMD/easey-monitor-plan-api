@@ -9,8 +9,8 @@ import { LEEQualificationMap } from '../maps/lee-qualification.map';
 export class LEEQualificationService {
   constructor(
     @InjectRepository(LEEQualificationRepository)
-    private repository: LEEQualificationRepository,
-    private map: LEEQualificationMap,
+    private readonly repository: LEEQualificationRepository,
+    private readonly map: LEEQualificationMap,
   ) {}
 
   async getLEEQualifications(

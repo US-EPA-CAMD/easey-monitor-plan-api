@@ -12,9 +12,9 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class ComponentWorkspaceService {
   constructor(
     @InjectRepository(ComponentWorkspaceRepository)
-    private repository: ComponentWorkspaceRepository,
-    private map: ComponentMap,
-    private Logger: Logger,
+    private readonly repository: ComponentWorkspaceRepository,
+    private readonly map: ComponentMap,
+    private readonly logger: Logger,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
@@ -65,7 +65,7 @@ export class ComponentWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    this.Logger.info('Creating component', {
+    this.logger.info('Creating component', {
       locationId: locationId,
       payload: payload,
     });

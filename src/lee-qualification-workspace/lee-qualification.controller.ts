@@ -1,4 +1,9 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import {
   Get,
   Param,
@@ -22,8 +27,8 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class LEEQualificationWorkspaceController {
   constructor(
     private readonly service: LEEQualificationWorkspaceService,
-    private Logger: Logger,
-  ) { }
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -54,7 +59,7 @@ export class LEEQualificationWorkspaceController {
     @Param('leeQualId') leeQualId: string,
     @Body() payload: UpdateLEEQualificationDTO,
   ): Promise<LEEQualificationDTO> {
-    this.Logger.info('Updating LEE qualification', {
+    this.logger.info('Updating LEE qualification', {
       qualId: qualId,
       leeQualId: leeQualId,
       payload: payload,
@@ -84,7 +89,7 @@ export class LEEQualificationWorkspaceController {
     @Param('qualId') qualId: string,
     @Body() payload: UpdateLEEQualificationDTO,
   ): Promise<LEEQualificationDTO> {
-    this.Logger.info('Creating LEE Qualification', {
+    this.logger.info('Creating LEE Qualification', {
       userId: userId,
       locId: locId,
       qualId: qualId,

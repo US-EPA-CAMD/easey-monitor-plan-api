@@ -17,9 +17,9 @@ import { validateObject } from '../utils';
 export class AnalyzerRangeWorkspaceService {
   constructor(
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
-    private repository: AnalyzerRangeWorkspaceRepository,
-    private map: AnalyzerRangeMap,
-    private Logger: Logger,
+    private readonly repository: AnalyzerRangeWorkspaceRepository,
+    private readonly map: AnalyzerRangeMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -32,7 +32,7 @@ export class AnalyzerRangeWorkspaceService {
     const result = await this.repository.findOne(analyzerRangeId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Analyzer Range Not Found', true, {
+      this.logger.error(NotFoundException, 'Analyzer Range Not Found', true, {
         analyzerRangeId: analyzerRangeId,
       });
     }

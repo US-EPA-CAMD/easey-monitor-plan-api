@@ -16,9 +16,9 @@ import { validateObject } from '../utils';
 export class DuctWafWorkspaceService {
   constructor(
     @InjectRepository(DuctWafWorkspaceRepository)
-    private repository: DuctWafWorkspaceRepository,
-    private map: DuctWafMap,
-    private Logger: Logger,
+    private readonly repository: DuctWafWorkspaceRepository,
+    private readonly map: DuctWafMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -31,7 +31,7 @@ export class DuctWafWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Duct Waf Not Found', true, {
+      this.logger.error(NotFoundException, 'Duct Waf Not Found', true, {
         id: id,
       });
     }
@@ -86,8 +86,8 @@ export class DuctWafWorkspaceService {
     ductWaf.wafValue = payload.wafValue;
     ductWaf.numberOfTestRuns = payload.numberOfTestRuns;
     ductWaf.numberOfTraversePointsWaf = payload.numberOfTraversePointsWaf;
-    (ductWaf.numberOfTestPorts = payload.numberOfTestPorts),
-      (ductWaf.numberOfTraversePointsRef = payload.numberOfTraversePointsRef);
+    ductWaf.numberOfTestPorts = payload.numberOfTestPorts;
+    ductWaf.numberOfTraversePointsRef = payload.numberOfTraversePointsRef;
     ductWaf.ductWidth = payload.ductWidth;
     ductWaf.ductDepth = payload.ductDepth;
     ductWaf.wafEndDate = payload.wafEndDate;
