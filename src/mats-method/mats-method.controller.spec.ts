@@ -28,10 +28,6 @@ describe('MatsMethodController', () => {
     service = module.get(MatsMethodService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('getMethods', () => {
     it('should return array of mats methods', async () => {
       jest.spyOn(service, 'getMethods').mockResolvedValue(data);
