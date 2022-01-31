@@ -21,8 +21,8 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 @ApiTags('Formulas')
 export class MonitorFormulaWorkspaceController {
   constructor(
-    private service: MonitorFormulaWorkspaceService,
-    private Logger: Logger,
+    private readonly service: MonitorFormulaWorkspaceService,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -50,7 +50,7 @@ export class MonitorFormulaWorkspaceController {
     payload: UpdateMonitorFormulaDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
-    this.Logger.info('Creating Formula', {
+    this.logger.info('Creating Formula', {
       locationId,
       payload,
       userId,
@@ -72,7 +72,7 @@ export class MonitorFormulaWorkspaceController {
     payload: UpdateMonitorFormulaDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
-    this.Logger.info('Updating Formula', {
+    this.logger.info('Updating Formula', {
       locationId,
       formulaRecordId,
       payload,

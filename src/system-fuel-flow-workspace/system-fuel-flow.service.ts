@@ -18,7 +18,7 @@ export class SystemFuelFlowWorkspaceService {
     @InjectRepository(SystemFuelFlowWorkspaceRepository)
     private readonly repository: SystemFuelFlowWorkspaceRepository,
     private readonly map: SystemFuelFlowMap,
-    private Logger: Logger,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -31,7 +31,7 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Fuel Flow not found.', true, {
+      this.logger.error(NotFoundException, 'Fuel Flow not found.', true, {
         fuelFlowId: fuelFlowId,
       });
     }
