@@ -1,5 +1,18 @@
-import { ApiTags, ApiOkResponse, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { Get, Param, Controller, Put, UseGuards, Body, Post, } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiBearerAuth,
+  ApiSecurity,
+} from '@nestjs/swagger';
+import {
+  Get,
+  Param,
+  Controller,
+  Put,
+  UseGuards,
+  Body,
+  Post,
+} from '@nestjs/common';
 
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
@@ -14,8 +27,8 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class LMEQualificationWorkspaceController {
   constructor(
     private readonly service: LMEQualificationWorkspaceService,
-    private Logger: Logger,
-  ) { }
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -46,7 +59,7 @@ export class LMEQualificationWorkspaceController {
     @Param('lmeQualId') lmeQualId: string,
     @Body() payload: UpdateLMEQualificationDTO,
   ): Promise<LMEQualificationDTO> {
-    this.Logger.info('Updating LME qualification', {
+    this.logger.info('Updating LME qualification', {
       qualId: qualId,
       lmeQualId: lmeQualId,
       payload: payload,
@@ -76,7 +89,7 @@ export class LMEQualificationWorkspaceController {
     @Param('qualId') qualId: string,
     @Body() payload: UpdateLMEQualificationDTO,
   ): Promise<LMEQualificationDTO> {
-    this.Logger.info('Creating LME Qualification', {
+    this.logger.info('Creating LME Qualification', {
       userId: userId,
       locId: locId,
       qualId: qualId,

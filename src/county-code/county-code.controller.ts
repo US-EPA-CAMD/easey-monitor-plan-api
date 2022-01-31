@@ -3,5 +3,5 @@ import { CountyCodeService } from './county-code.service';
 
 @Controller()
 export class CountyCodeController {
-  constructor(private readonly countyCodeService: CountyCodeService) {}
+  constructor(private readonly service: CountyCodeService) {}
 }
