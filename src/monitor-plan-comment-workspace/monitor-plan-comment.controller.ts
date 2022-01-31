@@ -8,7 +8,7 @@ import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.servi
 @ApiSecurity('APIKey')
 @ApiTags('Comments')
 export class MonitorPlanCommentWorkspaceController {
-  constructor(private service: MonitorPlanCommentWorkspaceService) {}
+  constructor(private readonly service: MonitorPlanCommentWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({

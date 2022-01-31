@@ -27,7 +27,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class SystemFuelFlowWorkspaceController {
   constructor(
     private readonly service: SystemFuelFlowWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -56,7 +56,7 @@ export class SystemFuelFlowWorkspaceController {
     @Body() payload: UpdateSystemFuelFlowDTO,
     @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
-    this.Logger.info('Creating Fuel Flow', {
+    this.logger.info('Creating Fuel Flow', {
       locationId: locationId,
       monitoringSystemRecordId: monitoringSystemRecordId,
       payload: payload,
@@ -85,7 +85,7 @@ export class SystemFuelFlowWorkspaceController {
     @Body() payload: UpdateSystemFuelFlowDTO,
     @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
-    this.Logger.info('Updating fuel flow', {
+    this.logger.info('Updating fuel flow', {
       locationId: locationId,
       monitoringSystemRecordId: monitoringSystemRecordId,
       id: id,

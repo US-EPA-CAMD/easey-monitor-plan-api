@@ -15,9 +15,9 @@ import { validateObject } from '../utils';
 export class MonitorDefaultWorkspaceService {
   constructor(
     @InjectRepository(MonitorDefaultWorkspaceRepository)
-    private repository: MonitorDefaultWorkspaceRepository,
-    private map: MonitorDefaultMap,
-    private Logger: Logger,
+    private readonly repository: MonitorDefaultWorkspaceRepository,
+    private readonly map: MonitorDefaultMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -33,7 +33,7 @@ export class MonitorDefaultWorkspaceService {
     const result = await this.repository.getDefault(locationId, defaultId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Default Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Default Not Found', true, {
         locationId: locationId,
         defaultId: defaultId,
       });

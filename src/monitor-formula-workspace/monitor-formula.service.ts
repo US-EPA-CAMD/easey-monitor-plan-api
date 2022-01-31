@@ -15,9 +15,9 @@ import { validateObject } from '../utils';
 export class MonitorFormulaWorkspaceService {
   constructor(
     @InjectRepository(MonitorFormulaWorkspaceRepository)
-    private repository: MonitorFormulaWorkspaceRepository,
-    private map: MonitorFormulaMap,
-    private Logger: Logger,
+    private readonly repository: MonitorFormulaWorkspaceRepository,
+    private readonly map: MonitorFormulaMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -36,7 +36,7 @@ export class MonitorFormulaWorkspaceService {
     );
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Formula not found', true, {
+      this.logger.error(NotFoundException, 'Monitor Formula not found', true, {
         locationId: locationId,
         formulaRecordId: formulaRecordId,
       });

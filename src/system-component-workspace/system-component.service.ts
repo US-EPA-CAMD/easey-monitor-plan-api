@@ -117,8 +117,6 @@ export class SystemComponentWorkspaceService {
       payload.componentId,
     );
 
-    let systemComponent: SystemComponent;
-
     if (!component) {
       const componentPayload: UpdateComponentDTO = {
         componentId: payload.componentId,
@@ -138,7 +136,7 @@ export class SystemComponentWorkspaceService {
       );
     }
 
-    systemComponent = this.repository.create({
+    const systemComponent = this.repository.create({
       id: uuid(),
       monitoringSystemRecordId,
       componentRecordId: component.id,

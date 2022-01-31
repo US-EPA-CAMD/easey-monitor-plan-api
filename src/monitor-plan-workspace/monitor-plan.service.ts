@@ -61,7 +61,7 @@ export class MonitorPlanWorkspaceService {
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
     const mp = await this.repository.getMonitorPlan(monPlanId);
     console.log(mp);
-    let mpDTO = new MonitorPlanDTO();
+    const mpDTO = new MonitorPlanDTO();
     mpDTO.id = mp.id;
     mpDTO.updateDate = mp.updateDate;
     mpDTO.userId = mp.userId;
@@ -75,7 +75,7 @@ export class MonitorPlanWorkspaceService {
   }
 
   async getEvaluationReport(planId: string) {
-    let mpEvalReport: MPEvaluationReportDTO = new MPEvaluationReportDTO();
+    const mpEvalReport: MPEvaluationReportDTO = new MPEvaluationReportDTO();
 
     const mp = await this.repository.getMonitorPlan(planId);
 
