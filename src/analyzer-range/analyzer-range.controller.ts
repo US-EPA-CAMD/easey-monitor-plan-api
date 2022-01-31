@@ -8,7 +8,7 @@ import { AnalyzerRangeService } from './analyzer-range.service';
 @ApiSecurity('APIKey')
 @ApiTags('Analyzer Ranges')
 export class AnalyzerRangeController {
-  constructor(private service: AnalyzerRangeService) {}
+  constructor(private readonly service: AnalyzerRangeService) {}
 
   @Get()
   @ApiOkResponse({

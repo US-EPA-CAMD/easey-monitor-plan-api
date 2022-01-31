@@ -1,13 +1,12 @@
 import { AnalyzerRangeBaseDTO } from './analyzer-range-base.dto';
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
-  
   @ApiProperty({
     description: propertyMetadata.analyzerRangeDTOId.description,
     example: propertyMetadata.analyzerRangeDTOId.example,
-    name: propertyMetadata.analyzerRangeDTOId.fieldLabels.value
+    name: propertyMetadata.analyzerRangeDTOId.fieldLabels.value,
   })
   id: string;
 

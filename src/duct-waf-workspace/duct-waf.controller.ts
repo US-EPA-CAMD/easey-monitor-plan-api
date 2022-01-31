@@ -7,7 +7,12 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiSecurity,
+} from '@nestjs/swagger';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
@@ -22,7 +27,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class DuctWafWorkspaceController {
   constructor(
     private readonly service: DuctWafWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -47,7 +52,7 @@ export class DuctWafWorkspaceController {
     @Body() payload: UpdateDuctWafDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
-    this.Logger.info('Creating duct waf', {
+    this.logger.info('Creating duct waf', {
       locationId: locationId,
       payload: payload,
       userId: userId,
@@ -68,17 +73,12 @@ export class DuctWafWorkspaceController {
     @Body() payload: UpdateDuctWafDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
-    this.Logger.info('Updating duct waf', {
+    this.logger.info('Updating duct waf', {
       locationId: locationId,
       payload: payload,
       ductWafId: ductWafId,
       userId: userId,
     });
-    return this.service.updateDuctWaf(
-      locationId,
-      ductWafId,
-      payload,
-      userId,
-    );
+    return this.service.updateDuctWaf(locationId, ductWafId, payload, userId);
   }
 }

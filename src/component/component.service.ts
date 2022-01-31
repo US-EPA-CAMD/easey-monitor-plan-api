@@ -9,8 +9,8 @@ import { ComponentRepository } from './component.repository';
 export class ComponentService {
   constructor(
     @InjectRepository(ComponentRepository)
-    private repository: ComponentRepository,
-    private map: ComponentMap,
+    private readonly repository: ComponentRepository,
+    private readonly map: ComponentMap,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {

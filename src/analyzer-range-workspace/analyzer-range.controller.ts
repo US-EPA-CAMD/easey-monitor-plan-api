@@ -25,8 +25,8 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 @ApiTags('Analyzer Ranges')
 export class AnalyzerRangeWorkspaceController {
   constructor(
-    private service: AnalyzerRangeWorkspaceService,
-    private Logger: Logger,
+    private readonly service: AnalyzerRangeWorkspaceService,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -56,7 +56,7 @@ export class AnalyzerRangeWorkspaceController {
     @CurrentUser() userId: string,
     @Body() payload: UpdateAnalyzerRangeDTO,
   ) {
-    this.Logger.info('Creating analyzer range', {
+    this.logger.info('Creating analyzer range', {
       userId: userId,
       componentRecordId: componentRecordId,
       payload: payload,
@@ -84,7 +84,7 @@ export class AnalyzerRangeWorkspaceController {
     @CurrentUser() userId: string,
     @Body() payload: UpdateAnalyzerRangeDTO,
   ) {
-    this.Logger.info('Updating analyzer range', {
+    this.logger.info('Updating analyzer range', {
       userId: userId,
       analyzerRangeId: analyzerRangeId,
       payload: payload,

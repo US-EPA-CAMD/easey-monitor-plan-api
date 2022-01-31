@@ -13,9 +13,9 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 export class LEEQualificationWorkspaceService {
   constructor(
     @InjectRepository(LEEQualificationWorkspaceRepository)
-    private repository: LEEQualificationWorkspaceRepository,
-    private map: LEEQualificationMap,
-    private Logger: Logger,
+    private readonly repository: LEEQualificationWorkspaceRepository,
+    private readonly map: LEEQualificationMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -38,7 +38,7 @@ export class LEEQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         'LEE Qualification Not Found',
         true,

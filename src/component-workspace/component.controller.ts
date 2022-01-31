@@ -8,7 +8,7 @@ import { ComponentWorkspaceService } from './component.service';
 @ApiSecurity('APIKey')
 @ApiTags('Components')
 export class ComponentWorkspaceController {
-  constructor(private service: ComponentWorkspaceService) {}
+  constructor(private readonly service: ComponentWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({

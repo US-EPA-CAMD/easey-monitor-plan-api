@@ -9,8 +9,8 @@ import { DuctWafRepository } from './duct-waf.repository';
 export class DuctWafService {
   constructor(
     @InjectRepository(DuctWafRepository)
-    private repository: DuctWafRepository,
-    private map: DuctWafMap,
+    private readonly repository: DuctWafRepository,
+    private readonly map: DuctWafMap,
   ) {}
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {

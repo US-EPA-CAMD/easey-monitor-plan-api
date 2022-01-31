@@ -8,7 +8,7 @@ import { ComponentService } from './component.service';
 @ApiSecurity('APIKey')
 @ApiTags('Components')
 export class ComponentController {
-  constructor(private service: ComponentService) {}
+  constructor(private readonly service: ComponentService) {}
 
   @Get()
   @ApiOkResponse({

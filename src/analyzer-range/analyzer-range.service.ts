@@ -9,8 +9,8 @@ import { AnalyzerRangeRepository } from './analyzer-range.repository';
 export class AnalyzerRangeService {
   constructor(
     @InjectRepository(AnalyzerRangeRepository)
-    private repository: AnalyzerRangeRepository,
-    private map: AnalyzerRangeMap,
+    private readonly repository: AnalyzerRangeRepository,
+    private readonly map: AnalyzerRangeMap,
   ) {}
 
   async getAnalyzerRanges(compId: string): Promise<AnalyzerRangeDTO[]> {
