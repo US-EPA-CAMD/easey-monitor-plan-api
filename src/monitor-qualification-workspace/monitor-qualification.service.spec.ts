@@ -7,9 +7,9 @@ import { MonitorQualificationWorkspaceRepository } from './monitor-qualification
 import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
 import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
-import { UpdateLEEQualificationDTO } from 'src/dtos/lee-qualification-update.dto';
-import { UpdateLMEQualificationDTO } from 'src/dtos/lme-qualification-update.dto';
-import { UpdatePCTQualificationDTO } from 'src/dtos/pct-qualification-update.dto';
+import { UpdateLEEQualificationDTO } from '../dtos/lee-qualification-update.dto';
+import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
+import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
 
 const locId = '6';
 const qualId = '1';

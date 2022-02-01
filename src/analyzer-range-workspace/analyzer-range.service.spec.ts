@@ -1,15 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({
+  one: jest.fn().mockResolvedValue(''),
   many: jest.fn().mockResolvedValue(''),
 });
 
@@ -18,9 +23,10 @@ describe('AnalyzerRangeWorkspaceService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       providers: [
         AnalyzerRangeWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: AnalyzerRangeWorkspaceRepository,
           useFactory: mockRepository,

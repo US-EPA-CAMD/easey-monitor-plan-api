@@ -1,15 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { HttpModule } from '@nestjs/axios';
 
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({
+  one: jest.fn().mockResolvedValue(''),
   many: jest.fn().mockResolvedValue(''),
 });
 
@@ -18,9 +23,10 @@ describe('MonitorMethodWorkspaceService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       providers: [
         MonitorMethodWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: MonitorMethodWorkspaceRepository,
           useFactory: mockRepository,

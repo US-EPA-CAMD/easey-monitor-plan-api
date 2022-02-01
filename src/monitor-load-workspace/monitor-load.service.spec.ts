@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
 import { NotFoundException } from '@nestjs/common';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
@@ -7,6 +8,9 @@ import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const locationId = '1234';
 const loadId = '4321';
@@ -41,14 +45,15 @@ const mockMap = () => ({
 });
 
 describe('MonitorLoadService', () => {
-  let loadService: MonitorLoadWorkspaceService;
-  let loadRepository: MonitorLoadWorkspaceRepository;
+  let service: MonitorLoadWorkspaceService;
+  let repository: MonitorLoadWorkspaceRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       providers: [
         MonitorLoadWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: MonitorLoadWorkspaceRepository,
           useFactory: mockRepository,
@@ -60,38 +65,38 @@ describe('MonitorLoadService', () => {
       ],
     }).compile();
 
-    loadService = module.get(MonitorLoadWorkspaceService);
-    loadRepository = module.get(MonitorLoadWorkspaceRepository);
+    service = module.get(MonitorLoadWorkspaceService);
+    repository = module.get(MonitorLoadWorkspaceRepository);
   });
 
   it('should be defined', () => {
-    expect(loadService).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe('getLoads', () => {
     it('should return array of monitor loads', async () => {
-      const result = await loadService.getLoads(null);
+      const result = await service.getLoads(null);
       expect(result).toEqual([]);
     });
   });
 
   describe('getLoad', () => {
     it('should return monitor load record for a specific loadId', async () => {
-      const result = await loadService.getLoad(loadId);
+      const result = await service.getLoad(loadId);
       expect(result).toEqual({});
     });
   });
 
   describe('createLoad', () => {
     it('creates a monitor load record for a specified locationId', async () => {
-      const result = await loadService.createLoad(locationId, payload, userId);
+      const result = await service.createLoad(locationId, payload, userId);
       expect(result).toEqual({ ...result });
     });
   });
 
   describe('updateLoad', () => {
     it('updates a monitor load record for a specified locationId', async () => {
-      const result = await loadService.updateLoad(
+      const result = await service.updateLoad(
         locationId,
         loadId,
         payload,

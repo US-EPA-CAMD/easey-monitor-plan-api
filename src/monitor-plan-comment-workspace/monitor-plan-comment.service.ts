@@ -9,8 +9,8 @@ import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.re
 export class MonitorPlanCommentWorkspaceService {
   constructor(
     @InjectRepository(MonitorPlanCommentWorkspaceRepository)
-    private repository: MonitorPlanCommentWorkspaceRepository,
-    private map: MonitorPlanCommentMap,
+    private readonly repository: MonitorPlanCommentWorkspaceRepository,
+    private readonly map: MonitorPlanCommentMap,
   ) {}
 
   async getComments(planId: string): Promise<MonitorPlanCommentDTO[]> {

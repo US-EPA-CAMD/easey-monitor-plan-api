@@ -15,9 +15,9 @@ import { validateObject } from '../utils';
 export class MonitorLoadWorkspaceService {
   constructor(
     @InjectRepository(MonitorLoadWorkspaceRepository)
-    private repository: MonitorLoadWorkspaceRepository,
-    private map: MonitorLoadMap,
-    private Logger: Logger,
+    private readonly repository: MonitorLoadWorkspaceRepository,
+    private readonly map: MonitorLoadMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -30,7 +30,7 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Load Not Found', true, {
         loadId: loadId,
       });
     }

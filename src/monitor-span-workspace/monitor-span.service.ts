@@ -15,9 +15,9 @@ import { validateObject } from '../utils';
 export class MonitorSpanWorkspaceService {
   constructor(
     @InjectRepository(MonitorSpanWorkspaceRepository)
-    private repository: MonitorSpanWorkspaceRepository,
-    private map: MonitorSpanMap,
-    private Logger: Logger,
+    private readonly repository: MonitorSpanWorkspaceRepository,
+    private readonly map: MonitorSpanMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -30,7 +30,7 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Span not found', true, {
+      this.logger.error(NotFoundException, 'Monitor Span not found', true, {
         locationId: locationId,
         spanId: spanId,
       });

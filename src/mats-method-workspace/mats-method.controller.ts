@@ -26,8 +26,8 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 @ApiTags('MATS Methods')
 export class MatsMethodWorkspaceController {
   constructor(
-    private service: MatsMethodWorkspaceService,
-    private Logger: Logger,
+    private readonly service: MatsMethodWorkspaceService,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -53,7 +53,7 @@ export class MatsMethodWorkspaceController {
     @Body() payload: UpdateMatsMethodDTO,
     @CurrentUser() userId: string,
   ): Promise<MatsMethodDTO> {
-    this.Logger.info('Creating method', {
+    this.logger.info('Creating method', {
       locationId: locationId,
       payload: payload,
       userId: userId,
@@ -74,7 +74,7 @@ export class MatsMethodWorkspaceController {
     @CurrentUser() userId: string,
     @Body() payload: UpdateMatsMethodDTO,
   ): Promise<MatsMethodDTO> {
-    this.Logger.info('Updating method', {
+    this.logger.info('Updating method', {
       locationId: locationId,
       methodId: methodId,
       payload: payload,

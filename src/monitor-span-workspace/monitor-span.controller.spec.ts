@@ -6,10 +6,14 @@ import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanWorkspaceController } from './monitor-span.controller';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
 
 jest.mock('./monitor-span.service');
 
 const locId = 'some location id';
+const spanId = 'someId';
+const payload = new UpdateMonitorSpanDTO();
+const user = 'someUser';
 
 const data: MonitorSpanDTO[] = [];
 data.push(new MonitorSpanDTO());
@@ -30,14 +34,28 @@ describe('MonitorSpanWorkspaceController', () => {
     service = module.get(MonitorSpanWorkspaceService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('getSpans', () => {
     it('should return array of monitor spans', async () => {
       jest.spyOn(service, 'getSpans').mockResolvedValue(data);
       expect(await controller.getSpans(locId)).toBe(data);
+    });
+  });
+
+  describe('updateSpan', () => {
+    it('should return an updated monitor span', async () => {
+      jest.spyOn(service, 'updateSpan').mockResolvedValue(data[0]);
+
+      const result = await controller.updateSpan(locId, spanId, payload, user);
+      expect(result).toBe(data[0]);
+    });
+  });
+
+  describe('createSpan', () => {
+    it('should return a monitor span', async () => {
+      jest.spyOn(service, 'createSpan').mockResolvedValue(data[0]);
+
+      const result = await controller.createSpan(locId, payload, user);
+      expect(result).toBe(data[0]);
     });
   });
 });

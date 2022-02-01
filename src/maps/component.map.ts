@@ -7,7 +7,7 @@ import { AnalyzerRangeMap } from './analyzer-range.map';
 
 @Injectable()
 export class ComponentMap extends BaseMap<Component, ComponentDTO> {
-  constructor(private rangeMap: AnalyzerRangeMap) {
+  constructor(private readonly rangeMap: AnalyzerRangeMap) {
     super();
   }
 

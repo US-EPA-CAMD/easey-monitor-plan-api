@@ -9,8 +9,8 @@ import { MatsMethodRepository } from './mats-method.repository';
 export class MatsMethodService {
   constructor(
     @InjectRepository(MatsMethodRepository)
-    private repository: MatsMethodRepository,
-    private map: MatsMethodMap,
+    private readonly repository: MatsMethodRepository,
+    private readonly map: MatsMethodMap,
   ) {}
 
   async getMethods(locationId: string): Promise<MatsMethodDTO[]> {

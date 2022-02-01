@@ -8,7 +8,7 @@ import { MatsMethodService } from './mats-method.service';
 @ApiSecurity('APIKey')
 @ApiTags('MATS Methods')
 export class MatsMethodController {
-  constructor(private service: MatsMethodService) {}
+  constructor(private readonly service: MatsMethodService) {}
 
   @Get()
   @ApiOkResponse({
