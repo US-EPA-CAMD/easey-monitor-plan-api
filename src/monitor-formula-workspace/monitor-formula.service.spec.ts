@@ -1,11 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([]),
@@ -40,9 +44,10 @@ describe('MonitorFormulaWorkspaceService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       providers: [
         MonitorFormulaWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: MonitorFormulaWorkspaceRepository,
           useFactory: mockRepository,

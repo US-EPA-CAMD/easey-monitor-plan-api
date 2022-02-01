@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
@@ -10,15 +11,18 @@ const mockRepository = () => ({
 });
 
 const mockMap = () => ({
+  one: jest.fn().mockResolvedValue(''),
   many: jest.fn().mockResolvedValue(''),
 });
+
+const locId = 'string';
 
 describe('MonitorAttributeService', () => {
   let service: MonitorAttributeService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       providers: [
         MonitorAttributeService,
         {
@@ -41,7 +45,7 @@ describe('MonitorAttributeService', () => {
 
   describe('getAttributes', () => {
     it('should return array of location attributes', async () => {
-      const result = await service.getAttributes(null);
+      const result = await service.getAttributes(locId);
       expect(result).toEqual('');
     });
   });
