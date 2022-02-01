@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitFuelMap } from '../maps/unit-fuel.map';
@@ -8,6 +8,9 @@ import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
 import { UnitFuel } from '../entities/workspace/unit-fuel.entity';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const locId = '6';
 const unitRecordId = 1;
@@ -42,14 +45,15 @@ const mockMap = () => ({
 });
 
 describe('UnitFuelService', () => {
-  let loadService: UnitFuelWorkspaceService;
-  let loadRepository: UnitFuelWorkspaceRepository;
+  let service: UnitFuelWorkspaceService;
+  let repository: UnitFuelWorkspaceRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       providers: [
         UnitFuelWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: UnitFuelWorkspaceRepository,
           useFactory: mockRepository,
@@ -61,35 +65,31 @@ describe('UnitFuelService', () => {
       ],
     }).compile();
 
-    loadService = module.get(UnitFuelWorkspaceService);
-    loadRepository = module.get(UnitFuelWorkspaceRepository);
+    service = module.get(UnitFuelWorkspaceService);
+    repository = module.get(UnitFuelWorkspaceRepository);
   });
 
   it('should be defined', () => {
-    expect(loadService).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
-      const result = await loadService.getUnitFuels(locId, unitRecordId);
+      const result = await service.getUnitFuels(locId, unitRecordId);
       expect(result).toEqual([]);
     });
   });
 
   describe('getUnitFuel', () => {
     it('should return unit fuel record for a specific unit fuel ID', async () => {
-      const result = await loadService.getUnitFuel(
-        locId,
-        unitRecordId,
-        unitFuelId,
-      );
+      const result = await service.getUnitFuel(locId, unitRecordId, unitFuelId);
       expect(result).toEqual({});
     });
   });
 
   describe('createUnitFuel', () => {
     it('creates a unit fuel record for a specified unit ID', async () => {
-      const result = await loadService.createUnitFuel(
+      const result = await service.createUnitFuel(
         userId,
         locId,
         unitRecordId,
@@ -101,7 +101,7 @@ describe('UnitFuelService', () => {
 
   describe('updateUnitFuel', () => {
     it('updates a unit fuel record for a specified unit fuel ID', async () => {
-      const result = await loadService.updateUnitFuel(
+      const result = await service.updateUnitFuel(
         userId,
         locId,
         unitRecordId,
