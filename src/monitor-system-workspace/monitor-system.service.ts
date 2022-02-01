@@ -15,9 +15,9 @@ import { validateObject } from '../utils';
 export class MonitorSystemWorkspaceService {
   constructor(
     @InjectRepository(MonitorSystemWorkspaceRepository)
-    private repository: MonitorSystemWorkspaceRepository,
-    private map: MonitorSystemMap,
-    private Logger: Logger,
+    private readonly repository: MonitorSystemWorkspaceRepository,
+    private readonly map: MonitorSystemMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -64,7 +64,7 @@ export class MonitorSystemWorkspaceService {
     const result = await this.repository.findOne(monitoringSystemId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor System Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor System Not Found', true, {
         monitoringSystemId: monitoringSystemId,
       });
     }

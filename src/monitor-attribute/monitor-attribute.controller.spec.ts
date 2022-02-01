@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorAttributeController } from './monitor-attribute.controller';
@@ -11,7 +12,7 @@ describe('MonitorAttributeController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [MonitorAttributeController],
       providers: [MonitorAttributeService],
     }).compile();
