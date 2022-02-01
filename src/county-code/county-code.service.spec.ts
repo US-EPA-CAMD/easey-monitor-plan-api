@@ -27,7 +27,7 @@ describe('CountyCodeService', () => {
         },
         {
           provide: CountyCodeMap,
-          useFactory: mockCountyCodeRepository,
+          useFactory: mockCountyCodeMap,
         },
       ],
     }).compile();

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitControlMap } from '../maps/unit-control.map';
@@ -8,6 +8,9 @@ import { UnitControlWorkspaceRepository } from './unit-control.repository';
 import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const locId = '6';
 const unitRecordId = 1;
@@ -42,14 +45,15 @@ const mockMap = () => ({
 });
 
 describe('UnitControlService', () => {
-  let loadService: UnitControlWorkspaceService;
-  let loadRepository: UnitControlWorkspaceRepository;
+  let service: UnitControlWorkspaceService;
+  let repository: UnitControlWorkspaceRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       providers: [
         UnitControlWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: UnitControlWorkspaceRepository,
           useFactory: mockRepository,
@@ -61,24 +65,24 @@ describe('UnitControlService', () => {
       ],
     }).compile();
 
-    loadService = module.get(UnitControlWorkspaceService);
-    loadRepository = module.get(UnitControlWorkspaceRepository);
+    service = module.get(UnitControlWorkspaceService);
+    repository = module.get(UnitControlWorkspaceRepository);
   });
 
   it('should be defined', () => {
-    expect(loadService).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   describe('getUnitControls', () => {
     it('should return array of unit controls', async () => {
-      const result = await loadService.getUnitControls(locId, unitRecordId);
+      const result = await service.getUnitControls(locId, unitRecordId);
       expect(result).toEqual([]);
     });
   });
 
   describe('getUnitControl', () => {
     it('should return unit control record for a specific unit control ID', async () => {
-      const result = await loadService.getUnitControl(
+      const result = await service.getUnitControl(
         locId,
         unitRecordId,
         unitControlId,
@@ -89,7 +93,7 @@ describe('UnitControlService', () => {
 
   describe('createUnitControl', () => {
     it('creates a unit control record for a specified unit ID', async () => {
-      const result = await loadService.createUnitControl(
+      const result = await service.createUnitControl(
         userId,
         locId,
         unitRecordId,
@@ -101,7 +105,7 @@ describe('UnitControlService', () => {
 
   describe('updateUnitControl', () => {
     it('updates a unit control record for a specified unit control ID', async () => {
-      const result = await loadService.updateUnitControl(
+      const result = await service.updateUnitControl(
         userId,
         locId,
         unitRecordId,
