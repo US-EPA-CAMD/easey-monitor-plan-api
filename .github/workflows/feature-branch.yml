@@ -3,6 +3,11 @@ name: Feature Branch Workflow
 on:
   pull_request:
     branches: [develop, release/*]
+    paths-ignore:
+    - '**/*.md'
+    - 'LICENSE'
+    - '.github/**'
+    - '.gitignore'
 
 jobs:
   Build-Test:
