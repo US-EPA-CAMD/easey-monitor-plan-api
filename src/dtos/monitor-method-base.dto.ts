@@ -1,8 +1,6 @@
-import { IsNotEmpty, ValidateIf } from 'class-validator';
+import { IsNotEmpty, ValidateIf, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsOptional } from 'class-validator';
-
 export class MonitorMethodBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorMethodDTOParameterCode.description,

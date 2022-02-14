@@ -1,7 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
-import { Logger } from '@nestjs/common/services/logger.service';
-import { validate } from 'class-validator';
-
 export const parseToken = (token: string) => {
   const obj = {
     userId: null,
