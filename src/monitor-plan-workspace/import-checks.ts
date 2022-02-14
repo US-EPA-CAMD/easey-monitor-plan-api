@@ -65,10 +65,10 @@ const Check4 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
     checkErrorMessages: [],
   };
 
-  const monitorLocationDataStackPipeIds = new Map<string, boolean>();
+  const monitorLocationDataStackPipeIds = new Set<string>();
   monPlan.locations.forEach(entry => {
     if (!(entry.stackPipeId === null || entry.stackPipeId === undefined)) {
-      monitorLocationDataStackPipeIds.set(entry.stackPipeId, true);
+      monitorLocationDataStackPipeIds.add(entry.stackPipeId);
     }
   });
 
@@ -95,10 +95,10 @@ const Check8 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
     checkErrorMessages: [],
   };
 
-  const monitorLocationDataUnitIds = new Map<number, boolean>();
+  const monitorLocationDataUnitIds = new Set<number>();
   monPlan.locations.forEach(entry => {
     if (!(entry.unitId === null || entry.unitId === undefined)) {
-      monitorLocationDataUnitIds.set(+entry.unitId, true);
+      monitorLocationDataUnitIds.add(+entry.unitId);
       console.log(entry.unitId);
     }
   });
