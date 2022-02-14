@@ -9,7 +9,6 @@ import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -58,7 +57,6 @@ export class MatsMethodWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(method);
     await this.repository.save(method);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(method);
@@ -83,7 +81,6 @@ export class MatsMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = new Date(Date.now());
 
-    await validateObject(method);
     await this.repository.save(method);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(method);

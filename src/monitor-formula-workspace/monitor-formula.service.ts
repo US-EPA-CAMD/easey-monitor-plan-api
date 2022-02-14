@@ -9,7 +9,6 @@ import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
@@ -66,7 +65,6 @@ export class MonitorFormulaWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(formula);
     await this.repository.save(formula);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(formula);
@@ -91,7 +89,6 @@ export class MonitorFormulaWorkspaceService {
     formula.userId = userId;
     formula.updateDate = new Date(Date.now());
 
-    await validateObject(formula);
     await this.repository.save(formula);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(formula);

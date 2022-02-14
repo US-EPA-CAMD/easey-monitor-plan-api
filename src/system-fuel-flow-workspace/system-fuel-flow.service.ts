@@ -10,7 +10,6 @@ import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {
@@ -60,7 +59,6 @@ export class SystemFuelFlowWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(fuelFlow);
     await this.repository.save(fuelFlow);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(fuelFlow);
@@ -83,7 +81,6 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.beginHour = payload.beginHour;
     fuelFlow.endHour = payload.endHour;
 
-    await validateObject(fuelFlow);
     await this.repository.save(fuelFlow);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(fuelFlow);

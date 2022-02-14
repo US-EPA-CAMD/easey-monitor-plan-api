@@ -9,7 +9,6 @@ import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
@@ -59,7 +58,6 @@ export class MonitorMethodWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(monMethod);
     await this.repository.save(monMethod);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(monMethod);
@@ -84,7 +82,6 @@ export class MonitorMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = new Date(Date.now());
 
-    await validateObject(method);
     await this.repository.save(method);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(method);
