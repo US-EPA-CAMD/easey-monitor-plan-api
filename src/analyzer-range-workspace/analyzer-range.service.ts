@@ -11,7 +11,6 @@ import { AnalyzerRange } from '../entities/analyzer-range.entity';
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class AnalyzerRangeWorkspaceService {
@@ -60,13 +59,12 @@ export class AnalyzerRangeWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(analyzerRange);
     await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(analyzerRange);
   }
 
-  async updateAnalyzerRangd(
+  async updateAnalyzerRange(
     analyzerRangeId: string,
     payload: UpdateAnalyzerRangeDTO,
     locationId: string,
@@ -81,7 +79,6 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.endDate = payload.endDate;
     analyzerRange.endHour = payload.endHour;
 
-    await validateObject(analyzerRange);
     await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(analyzerRange);

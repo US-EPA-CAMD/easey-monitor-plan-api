@@ -14,7 +14,6 @@ import { Component } from './component.entity';
 import { SystemComponent } from './system-component.entity';
 import { SystemFuelFlow } from './system-fuel-flow.entity';
 import { MonitorLocation } from './monitor-location.entity';
-import { IsNotEmpty, ValidateIf } from 'class-validator';
 
 @Entity({ name: 'camdecmpswks.monitor_system' })
 export class MonitorSystem extends BaseEntity {
@@ -50,16 +49,12 @@ export class MonitorSystem extends BaseEntity {
   beginDate: Date;
 
   @Column({ type: 'date', nullable: true, name: 'end_date' })
-  @IsNotEmpty()
-  @ValidateIf(o => o.endHour !== null)
   endDate: Date;
 
   @Column({ name: 'begin_hour' })
   beginHour: number;
 
   @Column({ name: 'end_hour' })
-  @IsNotEmpty()
-  @ValidateIf(o => o.endDate !== null)
   endHour: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })

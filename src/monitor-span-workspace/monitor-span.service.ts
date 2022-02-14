@@ -9,7 +9,6 @@ import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorSpanWorkspaceService {
@@ -69,7 +68,6 @@ export class MonitorSpanWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(span);
     await this.repository.save(span);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(span);
@@ -103,7 +101,6 @@ export class MonitorSpanWorkspaceService {
     span.userId = userId;
     span.updateDate = new Date(Date.now());
 
-    await validateObject(span);
     await this.repository.save(span);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(span);

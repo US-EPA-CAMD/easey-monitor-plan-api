@@ -1,4 +1,3 @@
-import { IsNotEmpty, ValidateIf } from 'class-validator';
 import {
   BaseEntity,
   Entity,
@@ -94,13 +93,9 @@ export class MonitorSpan extends BaseEntity {
   beginHour: number;
 
   @Column({ type: 'date', name: 'end_date' })
-  @IsNotEmpty()
-  @ValidateIf(o => o.endHour !== null)
   endDate: Date;
 
   @Column({ type: 'numeric', precision: 2, scale: 0, name: 'end_hour' })
-  @IsNotEmpty()
-  @ValidateIf(o => o.endDate !== null)
   endHour: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })
