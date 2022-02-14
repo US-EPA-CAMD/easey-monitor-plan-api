@@ -79,8 +79,10 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
   })
-  importPlan(@Body() plan: UpdateMonitorPlanDTO): Promise<MonitorPlanDTO> {
-    unitStackConfigurationValid(plan);
+  async importPlan(
+    @Body() plan: UpdateMonitorPlanDTO,
+  ): Promise<MonitorPlanDTO> {
+    await unitStackConfigurationValid(plan);
     /*
     this.logger.error(
       NotImplementedException,
