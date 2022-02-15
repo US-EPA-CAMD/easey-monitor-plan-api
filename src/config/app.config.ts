@@ -29,6 +29,6 @@ export default registerAs('app', () => ({
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
   // AUTH API MUST BE RUN LOCALLY FOR LOCAL DEVELOPMENT
   authApi: {
-    uri: process.env.EASEY_AUTH_API || 'http://localhost:8000/auth-mgmt',
+    uri: process.env.EASEY_AUTH_API || 'https://localhost:8000/auth-mgmt',
   },
 }));
