@@ -42,10 +42,6 @@ describe('MonitorSystemWorkspaceService', () => {
     service = module.get(MonitorSystemWorkspaceService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getSystems', () => {
     it('should return array of monitor systems', async () => {
       const result = await service.getSystems(null);

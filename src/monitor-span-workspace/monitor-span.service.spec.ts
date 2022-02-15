@@ -43,10 +43,6 @@ describe('MonitorSpanWorkspaceService', () => {
     service = module.get(MonitorSpanWorkspaceService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getSpans', () => {
     it('should return array of monitor spans', async () => {
       const result = await service.getSpans(null);

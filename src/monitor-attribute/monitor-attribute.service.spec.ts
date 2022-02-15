@@ -1,28 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorAttributeService } from './monitor-attribute.service';
 import { MonitorAttributeRepository } from './monitor-attribute.repository';
+import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
+
+const attribute = new MonitorAttributeDTO();
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  find: jest.fn().mockResolvedValue([attribute]),
 });
 
-const mockMap = () => ({
-  one: jest.fn().mockResolvedValue(''),
-  many: jest.fn().mockResolvedValue(''),
+const mockMonitorAttributeMap = () => ({
+  one: jest.fn().mockResolvedValue(attribute),
+  many: jest.fn().mockResolvedValue([attribute]),
 });
 
-const locId = 'string';
+const locationId = 'string';
 
 describe('MonitorAttributeService', () => {
   let service: MonitorAttributeService;
+  let repository: MonitorAttributeRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule, HttpModule],
+      imports: [HttpModule],
       providers: [
         MonitorAttributeService,
         {
@@ -31,22 +34,22 @@ describe('MonitorAttributeService', () => {
         },
         {
           provide: MonitorAttributeMap,
-          useFactory: mockMap,
+          useFactory: mockMonitorAttributeMap,
         },
       ],
     }).compile();
 
     service = module.get<MonitorAttributeService>(MonitorAttributeService);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+    repository = module.get<MonitorAttributeRepository>(
+      MonitorAttributeRepository,
+    );
   });
 
   describe('getAttributes', () => {
     it('should return array of location attributes', async () => {
-      const result = await service.getAttributes(locId);
-      expect(result).toEqual('');
+      const result = await service.getAttributes(locationId);
+      expect(repository.find).toHaveBeenCalled();
+      expect(result).toEqual([attribute]);
     });
   });
 });

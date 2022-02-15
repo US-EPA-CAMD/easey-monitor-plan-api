@@ -35,10 +35,6 @@ describe('MatsMethodService', () => {
     service = module.get(MatsMethodService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getMethods', () => {
     it('should return array of mats methods', async () => {
       const result = await service.getMethods(null);

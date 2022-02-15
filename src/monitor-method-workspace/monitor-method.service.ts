@@ -16,7 +16,7 @@ export class MonitorMethodWorkspaceService {
     @InjectRepository(MonitorMethodWorkspaceRepository)
     private repository: MonitorMethodWorkspaceRepository,
     private map: MonitorMethodMap,
-    private Logger: Logger,
+    private logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -29,7 +29,7 @@ export class MonitorMethodWorkspaceService {
     const result = this.repository.findOne(methodId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Method Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Method Not Found', true, {
         methodId: methodId,
       });
     }

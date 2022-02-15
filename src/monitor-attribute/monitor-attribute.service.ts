@@ -9,8 +9,8 @@ import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
 export class MonitorAttributeService {
   constructor(
     @InjectRepository(MonitorAttributeRepository)
-    private repository: MonitorAttributeRepository,
-    private map: MonitorAttributeMap,
+    private readonly repository: MonitorAttributeRepository,
+    private readonly map: MonitorAttributeMap,
   ) {}
 
   async getAttributes(locationId: string): Promise<MonitorAttributeDTO[]> {
