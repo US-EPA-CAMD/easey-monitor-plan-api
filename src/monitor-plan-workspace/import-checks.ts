@@ -1,8 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
+import { StackPipe } from '../entities/stack-pipe.entity';
 import { Plant } from 'src/entities/workspace/plant.entity';
 import { Unit } from 'src/entities/workspace/unit.entity';
 import { getManager } from 'typeorm';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { UnitStackConfiguration } from 'src/entities/unit-stack-configuration.entity';
 
 class CheckResult {
   public checkName: string = '';
@@ -13,6 +15,25 @@ class CheckResult {
   constructor(checkN, checkD) {
     this.checkName = checkN;
     this.checkDescription = checkD;
+  }
+}
+
+class Check {
+  public check: Function;
+  public args: Object[] = [];
+
+  constructor(checkFunc, argList?) {
+    this.check = checkFunc;
+
+    if (argList) {
+      this.args = argList;
+    }
+  }
+
+  public async executeCheck(
+    monPlan: UpdateMonitorPlanDTO,
+  ): Promise<CheckResult> {
+    return this.check(monPlan, ...this.args);
   }
 }
 
@@ -115,18 +136,19 @@ const Check8 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   return check;
 };
 
-const Check1 = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
+const Check1A = async (
+  monPlan: UpdateMonitorPlanDTO,
+  tableName: string,
+): Promise<CheckResult> => {
+  const entityManager = getManager();
+
   const check = new CheckResult(
-    'Check1',
+    'Check1A',
     'MP Facility Present in the Production Facility Table',
   );
 
-  const entityManager = getManager();
-
-  const facResult = await entityManager.findOne(Plant, {
-    orisCode: monPlan.orisCode,
-  });
-  if (facResult === undefined) {
+  const facilityId = await getFacIdFromOris(monPlan.orisCode);
+  if (facilityId === null) {
     check.checkResult = false;
     check.checkErrorMessages.push(
       `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
@@ -134,15 +156,15 @@ const Check1 = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
     return check;
   }
 
-  for (const entry of monPlan.locations) {
+  for (const entry of monPlan[tableName]) {
     const unitResult = await entityManager.findOne(Unit, {
       name: entry.unitId,
-      facId: facResult.id,
+      facId: facilityId,
     });
     if (unitResult === undefined) {
       check.checkResult = false;
       check.checkErrorMessages.push(
-        `No matching unitId-${entry.unitId} and facId-${facResult.id} found on workspace camd.unit table`,
+        `No matching unitId-${entry.unitId} and orisCode-${monPlan.orisCode} found on workspace camd.unit table`,
       );
     }
   }
@@ -150,19 +172,98 @@ const Check1 = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
   return check;
 };
 
-const runCheckQueue = (
-  checkQueue: Function[],
+const Check1B = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
+  const entityManager = getManager();
+
+  const check = new CheckResult(
+    'Check1B',
+    'Camdecmpswks.stack_pipe contains one record with stack_name=UnitStackConfiguration.StackPipeID from file and fac_id=camd.plant',
+  );
+
+  const facilityId = await getFacIdFromOris(monPlan.orisCode);
+  if (facilityId === null) {
+    check.checkResult = false;
+    check.checkErrorMessages.push(
+      `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
+    );
+    return check;
+  }
+
+  for (const entry of monPlan.unitStackConfiguration) {
+    const unitResult = await entityManager.findOne(StackPipe, {
+      id: entry.stackPipeId,
+      facId: facilityId,
+    });
+    if (unitResult === undefined) {
+      check.checkResult = false;
+      check.checkErrorMessages.push(
+        `No matching stackPipeId-${entry.stackPipeId} and unitId-${entry.unitId} found on workspace Camdecmpswks.stack_pipe table`,
+      );
+    }
+  }
+
+  return check;
+};
+
+const Check1C = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
+  const entityManager = getManager();
+
+  const check = new CheckResult(
+    'Check1C',
+    'Confirm camdecmpswks.unit_stack_configuration contains one record for each combination of (UnitStackConfiguration.StackPipeId, UnitStackConfiguration.UnitID)',
+  );
+
+  const facilityId = await getFacIdFromOris(monPlan.orisCode);
+  if (facilityId === null) {
+    check.checkResult = false;
+    check.checkErrorMessages.push(
+      `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
+    );
+    return check;
+  }
+
+  for (const entry of monPlan.unitStackConfiguration) {
+    const unitResult = await entityManager.findOne(UnitStackConfiguration, {
+      unitId: entry.unitId,
+      stackPipeId: entry.stackPipeId,
+    });
+    if (unitResult === undefined) {
+      check.checkResult = false;
+      check.checkErrorMessages.push(
+        `No matching stackPipeId-${entry.stackPipeId} and unitId-${entry.unitId} found on workspace camdecmpswks.unit_stack_configuration table`,
+      );
+    }
+  }
+
+  return check;
+};
+
+const getFacIdFromOris = async (orisCode: number): Promise<number> => {
+  const entityManager = getManager();
+
+  const facResult = await entityManager.findOne(Plant, {
+    orisCode: orisCode,
+  });
+  if (facResult === undefined) {
+    return null;
+  } else {
+    return facResult.id;
+  }
+};
+
+const runCheckQueue = async (
+  checkQueue: Check[],
   monPlan: UpdateMonitorPlanDTO,
-): CheckResult[] => {
+): Promise<CheckResult[]> => {
   const checkListResults = [];
 
-  checkQueue.forEach(check => {
-    const checkRun = check(monPlan);
+  for (const check of checkQueue) {
+    const checkRun = await check.executeCheck(monPlan);
 
     if (checkRun.checkResult === false) {
       checkListResults.push(checkRun);
     }
-  });
+  }
 
   if (checkListResults.length > 0) {
     const ErrorList = checkListResults.map(entry => entry.checkErrorMessages);
@@ -175,9 +276,18 @@ const runCheckQueue = (
 export const unitStackConfigurationValid = async (
   monPlan: UpdateMonitorPlanDTO,
 ) => {
-  const FileChecks = [Check3, Check4, Check8];
-  const SchemaChecks = [Check1];
+  const FileChecks = [new Check(Check3), new Check(Check4), new Check(Check8)];
+  const StackPipeChecks = [
+    new Check(Check1A, ['unitStackConfiguration']),
+    new Check(Check1B),
+    new Check(Check1C),
+  ];
+  const SingleUnitChecks = [new Check(Check1A, ['locations'])];
 
-  runCheckQueue(FileChecks, monPlan);
-  runCheckQueue(SchemaChecks, monPlan);
+  if (monPlan.unitStackConfiguration !== undefined) {
+    await runCheckQueue(FileChecks, monPlan);
+    await runCheckQueue(StackPipeChecks, monPlan);
+  } else {
+    await runCheckQueue(SingleUnitChecks, monPlan);
+  }
 };
