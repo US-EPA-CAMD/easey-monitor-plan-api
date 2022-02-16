@@ -1,10 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { StackPipe } from '../entities/stack-pipe.entity';
-import { Plant } from 'src/entities/workspace/plant.entity';
-import { Unit } from 'src/entities/workspace/unit.entity';
+import { Plant } from '../entities/workspace/plant.entity';
+import { Unit } from '../entities/workspace/unit.entity';
 import { getManager } from 'typeorm';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UnitStackConfiguration } from 'src/entities/unit-stack-configuration.entity';
+import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
 
 class CheckResult {
   public checkName: string = '';
@@ -37,7 +37,7 @@ class Check {
   }
 }
 
-const Check3 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
+export const Check3 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   const check = new CheckResult(
     'Check3',
     'The UnitStackConfigurationData.StackPipeID AND UnitStackConfigurationData.UnitID elements have defined values and are unique combinations',
@@ -82,7 +82,7 @@ const Check3 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   return check;
 };
 
-const Check4 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
+export const Check4 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   const check = new CheckResult(
     'Check4',
     'The UnitStackConfigurationData.StackPipeID value has a matching MonitoringLocationData.StackPipeID value',
@@ -109,7 +109,7 @@ const Check4 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   return check;
 };
 
-const Check8 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
+export const Check8 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   const check = new CheckResult(
     'Check8',
     'The UnitStackConfigurationData.UnitID value has a matching MonitoringLocationData.UnitID value',
@@ -136,11 +136,16 @@ const Check8 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   return check;
 };
 
-const Check1A = async (
+// Function needed to mock the getManager()
+export const getEntityManager: any = () => {
+  return getManager();
+};
+
+export const Check1A = async (
   monPlan: UpdateMonitorPlanDTO,
   tableName: string,
 ): Promise<CheckResult> => {
-  const entityManager = getManager();
+  const entityManager = getEntityManager();
 
   const check = new CheckResult(
     'Check1A',
@@ -172,8 +177,10 @@ const Check1A = async (
   return check;
 };
 
-const Check1B = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
-  const entityManager = getManager();
+export const Check1B = async (
+  monPlan: UpdateMonitorPlanDTO,
+): Promise<CheckResult> => {
+  const entityManager = getEntityManager();
 
   const check = new CheckResult(
     'Check1B',
@@ -205,8 +212,10 @@ const Check1B = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
   return check;
 };
 
-const Check1C = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
-  const entityManager = getManager();
+export const Check1C = async (
+  monPlan: UpdateMonitorPlanDTO,
+): Promise<CheckResult> => {
+  const entityManager = getEntityManager();
 
   const check = new CheckResult(
     'Check1C',
@@ -238,12 +247,13 @@ const Check1C = async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
   return check;
 };
 
-const getFacIdFromOris = async (orisCode: number): Promise<number> => {
-  const entityManager = getManager();
+export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
+  const entityManager = getEntityManager();
 
   const facResult = await entityManager.findOne(Plant, {
     orisCode: orisCode,
   });
+
   if (facResult === undefined) {
     return null;
   } else {
@@ -251,7 +261,7 @@ const getFacIdFromOris = async (orisCode: number): Promise<number> => {
   }
 };
 
-const runCheckQueue = async (
+export const runCheckQueue = async (
   checkQueue: Check[],
   monPlan: UpdateMonitorPlanDTO,
 ): Promise<CheckResult[]> => {
