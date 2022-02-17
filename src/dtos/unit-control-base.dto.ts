@@ -3,9 +3,9 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 export class UnitControlBaseDTO {
   @ApiProperty({
-    description: propertyMetadata.unitControlDTOParameterCode.description,
-    example: propertyMetadata.unitControlDTOParameterCode.example,
-    name: propertyMetadata.unitControlDTOParameterCode.fieldLabels.value,
+    description: propertyMetadata.controlEquipParamCode.description,
+    example: propertyMetadata.controlEquipParamCode.example,
+    name: propertyMetadata.controlEquipParamCode.fieldLabels.value,
   })
   controlEquipParamCode: string;
 
