@@ -10,7 +10,7 @@ export class UnitControlMap extends BaseMap<UnitControl, UnitControlDTO> {
     return {
       id: entity.id,
       unitId: entity.unitId,
-      parameterCode: entity.parameterCode,
+      controlEquipParamCode: entity.controlEquipParamCode,
       controlCode: entity.controlCode,
       originalCode: entity.originalCode,
       installDate: entity.installDate,
