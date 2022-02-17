@@ -179,20 +179,18 @@ describe('Monitor-Import File Check Tests', () => {
 });
 
 describe('Monitor-Import Database Check Tests', () => {
-  describe('Check1A', () => {
-    it('Should error with no corresponding facility id', async () => {
-      const mockManager = {
-        findOne: jest.fn().mockResolvedValue({}),
-      };
-      jest.spyOn(checks, 'getEntityManager').mockReturnValue(mockManager);
+  describe('Check1', () => {
+    it('Should pass with corresponding facility id', async () => {
       const testData = new UpdateMonitorPlanDTO();
       jest.spyOn(checks, 'getFacIdFromOris').mockResolvedValue(null);
 
-      const checkResults = await checks.Check1A(testData, '');
+      const checkResults = await checks.Check1(testData);
 
       expect(checkResults.checkResult).toBe(false);
     });
+  });
 
+  describe('Check2A', () => {
     it('Should pass given a returned entry for faciliyId and unitId in uniStackConfiguration', async () => {
       const mockManager = {
         findOne: jest.fn().mockResolvedValue({}),
@@ -210,7 +208,7 @@ describe('Monitor-Import Database Check Tests', () => {
 
       jest.spyOn(checks, 'getFacIdFromOris').mockResolvedValue(1);
 
-      const checkResults = await checks.Check1A(
+      const checkResults = await checks.Check2A(
         testData,
         'unitStackConfiguration',
       );
@@ -235,7 +233,7 @@ describe('Monitor-Import Database Check Tests', () => {
 
       jest.spyOn(checks, 'getFacIdFromOris').mockResolvedValue(1);
 
-      const checkResults = await checks.Check1A(
+      const checkResults = await checks.Check2A(
         testData,
         'unitStackConfiguration',
       );
@@ -244,20 +242,7 @@ describe('Monitor-Import Database Check Tests', () => {
     });
   });
 
-  describe('Check1B', () => {
-    it('Should error with no corresponding facility id', async () => {
-      const mockManager = {
-        findOne: jest.fn().mockResolvedValue({}),
-      };
-      jest.spyOn(checks, 'getEntityManager').mockReturnValue(mockManager);
-      const testData = new UpdateMonitorPlanDTO();
-      jest.spyOn(checks, 'getFacIdFromOris').mockResolvedValue(null);
-
-      const checkResults = await checks.Check1B(testData);
-
-      expect(checkResults.checkResult).toBe(false);
-    });
-
+  describe('Check2B', () => {
     it('Should pass with valid unitId and facilityId', async () => {
       const mockManager = {
         findOne: jest.fn().mockResolvedValue({}),
@@ -275,7 +260,7 @@ describe('Monitor-Import Database Check Tests', () => {
         },
       ];
 
-      const checkResults = await checks.Check1B(testData);
+      const checkResults = await checks.Check2B(testData);
 
       expect(checkResults.checkResult).toBe(true);
     });
@@ -297,26 +282,13 @@ describe('Monitor-Import Database Check Tests', () => {
         },
       ];
 
-      const checkResults = await checks.Check1B(testData);
+      const checkResults = await checks.Check2B(testData);
 
       expect(checkResults.checkResult).toBe(false);
     });
   });
 
-  describe('Check1C', () => {
-    it('Should error with no corresponding facility id', async () => {
-      const mockManager = {
-        findOne: jest.fn().mockResolvedValue({}),
-      };
-      jest.spyOn(checks, 'getEntityManager').mockReturnValue(mockManager);
-      const testData = new UpdateMonitorPlanDTO();
-      jest.spyOn(checks, 'getFacIdFromOris').mockResolvedValue(null);
-
-      const checkResults = await checks.Check1C(testData);
-
-      expect(checkResults.checkResult).toBe(false);
-    });
-
+  describe('Check2C', () => {
     it('Should pass with valid unitId and stackId', async () => {
       const mockManager = {
         findOne: jest.fn().mockResolvedValue({}),
@@ -334,7 +306,7 @@ describe('Monitor-Import Database Check Tests', () => {
         },
       ];
 
-      const checkResults = await checks.Check1C(testData);
+      const checkResults = await checks.Check2C(testData);
 
       expect(checkResults.checkResult).toBe(true);
     });
@@ -356,7 +328,7 @@ describe('Monitor-Import Database Check Tests', () => {
         },
       ];
 
-      const checkResults = await checks.Check1C(testData);
+      const checkResults = await checks.Check2C(testData);
 
       expect(checkResults.checkResult).toBe(false);
     });

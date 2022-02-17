@@ -7,10 +7,10 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
 
 class CheckResult {
-  public checkName: string = '';
-  public checkDescription: string = '';
-  public checkResult: boolean = true;
-  public checkErrorMessages: string[] = [];
+  public checkName = '';
+  public checkDescription = '';
+  public checkResult = true;
+  public checkErrorMessages = [];
 
   constructor(checkN, checkD) {
     this.checkName = checkN;
@@ -141,26 +141,18 @@ export const getEntityManager: any = () => {
   return getManager();
 };
 
-export const Check1A = async (
+export const Check2A = async (
   monPlan: UpdateMonitorPlanDTO,
   tableName: string,
 ): Promise<CheckResult> => {
   const entityManager = getEntityManager();
 
   const check = new CheckResult(
-    'Check1A',
+    'Check2A',
     'MP Facility Present in the Production Facility Table',
   );
 
   const facilityId = await getFacIdFromOris(monPlan.orisCode);
-  if (facilityId === null) {
-    check.checkResult = false;
-    check.checkErrorMessages.push(
-      `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
-    );
-    return check;
-  }
-
   for (const entry of monPlan[tableName]) {
     const unitResult = await entityManager.findOne(Unit, {
       name: entry.unitId,
@@ -177,25 +169,17 @@ export const Check1A = async (
   return check;
 };
 
-export const Check1B = async (
+export const Check2B = async (
   monPlan: UpdateMonitorPlanDTO,
 ): Promise<CheckResult> => {
   const entityManager = getEntityManager();
 
   const check = new CheckResult(
-    'Check1B',
+    'Check2B',
     'Camdecmpswks.stack_pipe contains one record with stack_name=UnitStackConfiguration.StackPipeID from file and fac_id=camd.plant',
   );
 
   const facilityId = await getFacIdFromOris(monPlan.orisCode);
-  if (facilityId === null) {
-    check.checkResult = false;
-    check.checkErrorMessages.push(
-      `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
-    );
-    return check;
-  }
-
   for (const entry of monPlan.unitStackConfiguration) {
     const unitResult = await entityManager.findOne(StackPipe, {
       id: entry.stackPipeId,
@@ -204,7 +188,7 @@ export const Check1B = async (
     if (unitResult === undefined) {
       check.checkResult = false;
       check.checkErrorMessages.push(
-        `No matching stackPipeId-${entry.stackPipeId} and unitId-${entry.unitId} found on workspace Camdecmpswks.stack_pipe table`,
+        `No matching facilityId-${facilityId} and unitId-${entry.unitId} found on workspace Camdecmpswks.stack_pipe table`,
       );
     }
   }
@@ -212,24 +196,15 @@ export const Check1B = async (
   return check;
 };
 
-export const Check1C = async (
+export const Check2C = async (
   monPlan: UpdateMonitorPlanDTO,
 ): Promise<CheckResult> => {
   const entityManager = getEntityManager();
 
   const check = new CheckResult(
-    'Check1C',
+    'Check2C',
     'Confirm camdecmpswks.unit_stack_configuration contains one record for each combination of (UnitStackConfiguration.StackPipeId, UnitStackConfiguration.UnitID)',
   );
-
-  const facilityId = await getFacIdFromOris(monPlan.orisCode);
-  if (facilityId === null) {
-    check.checkResult = false;
-    check.checkErrorMessages.push(
-      `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
-    );
-    return check;
-  }
 
   for (const entry of monPlan.unitStackConfiguration) {
     const unitResult = await entityManager.findOne(UnitStackConfiguration, {
@@ -242,6 +217,24 @@ export const Check1C = async (
         `No matching stackPipeId-${entry.stackPipeId} and unitId-${entry.unitId} found on workspace camdecmpswks.unit_stack_configuration table`,
       );
     }
+  }
+
+  return check;
+};
+
+export const Check1 = async (
+  monPlan: UpdateMonitorPlanDTO,
+): Promise<CheckResult> => {
+  const check = new CheckResult(
+    'Check1',
+    'MP Facility Present in the Production Facility Table',
+  );
+
+  if (getFacIdFromOris(monPlan.orisCode) === null) {
+    check.checkResult = false;
+    check.checkErrorMessages.push(
+      `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
+    );
   }
 
   return check;
@@ -287,17 +280,20 @@ export const unitStackConfigurationValid = async (
   monPlan: UpdateMonitorPlanDTO,
 ) => {
   const FileChecks = [new Check(Check3), new Check(Check4), new Check(Check8)];
+  const ValidOris = [new Check(Check1)];
   const StackPipeChecks = [
-    new Check(Check1A, ['unitStackConfiguration']),
-    new Check(Check1B),
-    new Check(Check1C),
+    new Check(Check2A, ['unitStackConfiguration']),
+    new Check(Check2B),
+    new Check(Check2C),
   ];
-  const SingleUnitChecks = [new Check(Check1A, ['locations'])];
+  const SingleUnitChecks = [new Check(Check2A, ['locations'])];
 
   if (monPlan.unitStackConfiguration !== undefined) {
     await runCheckQueue(FileChecks, monPlan);
+    await runCheckQueue(ValidOris, monPlan);
     await runCheckQueue(StackPipeChecks, monPlan);
   } else {
+    await runCheckQueue(ValidOris, monPlan);
     await runCheckQueue(SingleUnitChecks, monPlan);
   }
 };
