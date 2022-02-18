@@ -37,123 +37,36 @@ class Check {
   }
 }
 
-export const Check3 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
-  const check = new CheckResult(
-    'Check3',
-    'The UnitStackConfigurationData.StackPipeID AND UnitStackConfigurationData.UnitID elements have defined values and are unique combinations',
-  );
-
-  const stackPipeIdToUnitId = new Map<string, number>();
-
-  monPlan.unitStackConfiguration.forEach(entry => {
-    let hasUnitId = true;
-    let hasStackPipeId = true;
-
-    if (entry.unitId === null || entry.unitId === undefined) {
-      check.checkResult = false;
-      check.checkErrorMessages.push(
-        'Unit Stack Configuration unitId must be set',
-      );
-      hasUnitId = false;
-    }
-    if (entry.stackPipeId === null || entry.stackPipeId === undefined) {
-      check.checkResult = false;
-      check.checkErrorMessages.push(
-        'Unit Stack Configuration stackPipeId must be set',
-      );
-      hasStackPipeId = false;
-    }
-
-    if (hasUnitId && hasStackPipeId) {
-      if (
-        stackPipeIdToUnitId.has(entry.stackPipeId) &&
-        stackPipeIdToUnitId.get(entry.stackPipeId) === entry.unitId
-      ) {
-        check.checkResult = false;
-        check.checkErrorMessages.push(
-          `Unit Stack Configuration stackPipeId-${entry.stackPipeId} contains duplicate unit id entry`,
-        );
-      } else {
-        stackPipeIdToUnitId.set(entry.stackPipeId, entry.unitId);
-      }
-    }
-  });
-
-  return check;
-};
-
-export const Check4 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
-  const check = new CheckResult(
-    'Check4',
-    'The UnitStackConfigurationData.StackPipeID value has a matching MonitoringLocationData.StackPipeID value',
-  );
-
-  const monitorLocationDataStackPipeIds = new Set<string>();
-  monPlan.locations.forEach(entry => {
-    if (!(entry.stackPipeId === null || entry.stackPipeId === undefined)) {
-      monitorLocationDataStackPipeIds.add(entry.stackPipeId);
-    }
-  });
-
-  monPlan.unitStackConfiguration.forEach(entry => {
-    if (!(entry.stackPipeId === null || entry.stackPipeId === undefined)) {
-      if (!monitorLocationDataStackPipeIds.has(entry.stackPipeId)) {
-        check.checkResult = false;
-        check.checkErrorMessages.push(
-          `Unit Stack Configuration stackPipeId-${entry.stackPipeId} does not have matching record in Monitor Location Data`,
-        );
-      }
-    }
-  });
-
-  return check;
-};
-
-export const Check8 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
-  const check = new CheckResult(
-    'Check8',
-    'The UnitStackConfigurationData.UnitID value has a matching MonitoringLocationData.UnitID value',
-  );
-
-  const monitorLocationDataUnitIds = new Set<number>();
-  monPlan.locations.forEach(entry => {
-    if (!(entry.unitId === null || entry.unitId === undefined)) {
-      monitorLocationDataUnitIds.add(+entry.unitId);
-    }
-  });
-
-  monPlan.unitStackConfiguration.forEach(entry => {
-    if (!(entry.unitId === null || entry.unitId === undefined)) {
-      if (!monitorLocationDataUnitIds.has(entry.unitId)) {
-        check.checkResult = false;
-        check.checkErrorMessages.push(
-          `Unit Stack Configuration unitId-${entry.unitId} does not have matching record in Monitor Location Data`,
-        );
-      }
-    }
-  });
-
-  return check;
-};
-
-// Function needed to mock the getManager()
-export const getEntityManager: any = () => {
-  return getManager();
-};
-
-export const Check2A = async (
+export const Check1 = async (
   monPlan: UpdateMonitorPlanDTO,
-  tableName: string,
+): Promise<CheckResult> => {
+  const check = new CheckResult(
+    'Check1',
+    'MP Facility Present in the Production Facility Table Facility (ORIS Code) must be present in the database',
+  );
+
+  if ((await getFacIdFromOris(monPlan.orisCode)) === null) {
+    check.checkResult = false;
+    check.checkErrorMessages.push(
+      `The database doesn't contain any Facility with Oris Code ${monPlan.orisCode}`,
+    );
+  }
+
+  return check;
+};
+
+export const Check2 = async (
+  monPlan: UpdateMonitorPlanDTO,
 ): Promise<CheckResult> => {
   const entityManager = getEntityManager();
 
   const check = new CheckResult(
-    'Check2A',
-    'MP Facility Present in the Production Facility Table',
+    'Check2',
+    'Unit/Stack Present in the Production Unit Table and associated to the import facility',
   );
 
   const facilityId = await getFacIdFromOris(monPlan.orisCode);
-  for (const entry of monPlan[tableName]) {
+  for (const entry of monPlan.locations) {
     const unitResult = await entityManager.findOne(Unit, {
       name: entry.unitId,
       facId: facilityId,
@@ -161,7 +74,7 @@ export const Check2A = async (
     if (unitResult === undefined) {
       check.checkResult = false;
       check.checkErrorMessages.push(
-        `No matching unitId-${entry.unitId} and orisCode-${monPlan.orisCode} found on workspace camd.unit table`,
+        `The database doesn't contain unit ${entry.unitId} for Oris Code ${monPlan.orisCode}`,
       );
     }
   }
@@ -169,14 +82,14 @@ export const Check2A = async (
   return check;
 };
 
-export const Check2B = async (
+export const Check3 = async (
   monPlan: UpdateMonitorPlanDTO,
 ): Promise<CheckResult> => {
   const entityManager = getEntityManager();
 
   const check = new CheckResult(
-    'Check2B',
-    'Camdecmpswks.stack_pipe contains one record with stack_name=UnitStackConfiguration.StackPipeID from file and fac_id=camd.plant',
+    'Check3',
+    'Stack/Pipe in the File Associated With at Least One Unit (foreach UnitStackConfiguration element)',
   );
 
   const facilityId = await getFacIdFromOris(monPlan.orisCode);
@@ -188,7 +101,7 @@ export const Check2B = async (
     if (unitResult === undefined) {
       check.checkResult = false;
       check.checkErrorMessages.push(
-        `No matching facilityId-${facilityId} and unitId-${entry.unitId} found on workspace Camdecmpswks.stack_pipe table`,
+        `Each stack or pipe must be associated with at least one unit. Stack/pipe ${entry.stackPipeId} is not associated with any units.`,
       );
     }
   }
@@ -196,14 +109,14 @@ export const Check2B = async (
   return check;
 };
 
-export const Check2C = async (
+export const Check4 = async (
   monPlan: UpdateMonitorPlanDTO,
 ): Promise<CheckResult> => {
   const entityManager = getEntityManager();
 
   const check = new CheckResult(
-    'Check2C',
-    'Confirm camdecmpswks.unit_stack_configuration contains one record for each combination of (UnitStackConfiguration.StackPipeId, UnitStackConfiguration.UnitID)',
+    'Check4',
+    'Unit in the File Associated With at Least One Stack/Pipe (foreach UnitStackConfiguration element)',
   );
 
   for (const entry of monPlan.unitStackConfiguration) {
@@ -214,7 +127,7 @@ export const Check2C = async (
     if (unitResult === undefined) {
       check.checkResult = false;
       check.checkErrorMessages.push(
-        `No matching stackPipeId-${entry.stackPipeId} and unitId-${entry.unitId} found on workspace camdecmpswks.unit_stack_configuration table`,
+        `Each unit must be associated with at least one stack pipe. Unit ${entry.unitId} is not associated with any stack pipes.`,
       );
     }
   }
@@ -222,22 +135,59 @@ export const Check2C = async (
   return check;
 };
 
-export const Check1 = async (
-  monPlan: UpdateMonitorPlanDTO,
-): Promise<CheckResult> => {
+export const Check8 = (monPlan: UpdateMonitorPlanDTO): CheckResult => {
   const check = new CheckResult(
-    'Check1',
-    'MP Facility Present in the Production Facility Table',
+    'Check8',
+    'Unit Stack Configuration Record Must Be Linked to Unit and Stack/Pipe (foreach UnitStackConfiguration element)',
   );
 
-  if (getFacIdFromOris(monPlan.orisCode) === null) {
-    check.checkResult = false;
-    check.checkErrorMessages.push(
-      `No matching orisCode-${monPlan.orisCode} found on workspace camd.plant table`,
-    );
-  }
+  const monitorLocationDataStackPipeIds = new Set<string>();
+  const monitorLocationDataUnitIds = new Set<number>();
+  monPlan.locations.forEach(entry => {
+    if (!(entry.stackPipeId === null || entry.stackPipeId === undefined)) {
+      monitorLocationDataStackPipeIds.add(entry.stackPipeId);
+    }
+
+    if (!(entry.unitId === null || entry.unitId === undefined)) {
+      monitorLocationDataUnitIds.add(+entry.unitId);
+    }
+  });
+
+  const stackPipeIdToUnitId = new Map<string, number>();
+  monPlan.unitStackConfiguration.forEach(entry => {
+    if (
+      stackPipeIdToUnitId.has(entry.stackPipeId) &&
+      stackPipeIdToUnitId.get(entry.stackPipeId) === entry.unitId
+    ) {
+      check.checkResult = false;
+      check.checkErrorMessages.push(
+        `Unit stack configuration records must be unique combinations of StackPipeID and UnitID. The configuration for StackPipeID ${entry.stackPipeId} and Unit ${entry.unitId} has multiple instances.`,
+      );
+    } else {
+      stackPipeIdToUnitId.set(entry.stackPipeId, entry.unitId);
+    }
+
+    if (!monitorLocationDataStackPipeIds.has(entry.stackPipeId)) {
+      check.checkResult = false;
+      check.checkErrorMessages.push(
+        `Each Stack/Pipe in a unit stack configuration record must be linked to stack/pipe records that are also present in the file. StackPipeID ${entry.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
+      );
+    }
+
+    if (!monitorLocationDataUnitIds.has(entry.unitId)) {
+      check.checkResult = false;
+      check.checkErrorMessages.push(
+        `Each Unit in a unit stack configuration record must be linked to unit records that are also present in the file. Unit ${entry.unitId} was not associated with a Unit record in the file.`,
+      );
+    }
+  });
 
   return check;
+};
+
+// Function needed to mock the getManager()
+export const getEntityManager: any = () => {
+  return getManager();
 };
 
 export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
@@ -279,21 +229,15 @@ export const runCheckQueue = async (
 export const unitStackConfigurationValid = async (
   monPlan: UpdateMonitorPlanDTO,
 ) => {
-  const FileChecks = [new Check(Check3), new Check(Check4), new Check(Check8)];
-  const ValidOris = [new Check(Check1)];
-  const StackPipeChecks = [
-    new Check(Check2A, ['unitStackConfiguration']),
-    new Check(Check2B),
-    new Check(Check2C),
-  ];
-  const SingleUnitChecks = [new Check(Check2A, ['locations'])];
+  const FileChecks = [new Check(Check8)];
+  const LocationChecks = [new Check(Check1), new Check(Check2)];
+  const UnitStackChecks = [new Check(Check3), new Check(Check4)];
 
   if (monPlan.unitStackConfiguration !== undefined) {
+    await runCheckQueue(LocationChecks, monPlan);
     await runCheckQueue(FileChecks, monPlan);
-    await runCheckQueue(ValidOris, monPlan);
-    await runCheckQueue(StackPipeChecks, monPlan);
+    await runCheckQueue(UnitStackChecks, monPlan);
   } else {
-    await runCheckQueue(ValidOris, monPlan);
-    await runCheckQueue(SingleUnitChecks, monPlan);
+    await runCheckQueue(LocationChecks, monPlan);
   }
 };
