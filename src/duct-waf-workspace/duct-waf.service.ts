@@ -10,7 +10,6 @@ import { DuctWaf } from '../entities/duct-waf.entity';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class DuctWafWorkspaceService {
@@ -65,7 +64,6 @@ export class DuctWafWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(ductWaf);
     await this.repository.save(ductWaf);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(ductWaf);
@@ -95,7 +93,6 @@ export class DuctWafWorkspaceService {
     ductWaf.userId = userId;
     ductWaf.updateDate = new Date(Date.now());
 
-    await validateObject(ductWaf);
     await this.repository.save(ductWaf);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(ductWaf);

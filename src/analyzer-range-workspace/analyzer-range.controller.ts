@@ -89,7 +89,7 @@ export class AnalyzerRangeWorkspaceController {
       analyzerRangeId: analyzerRangeId,
       payload: payload,
     });
-    return this.service.updateAnalyzerRangd(
+    return this.service.updateAnalyzerRange(
       analyzerRangeId,
       payload,
       locationId,

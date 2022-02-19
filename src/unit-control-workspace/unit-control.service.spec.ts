@@ -22,7 +22,7 @@ const returnedUnitControl: UnitControlDTO = new UnitControlDTO();
 
 const payload: UpdateUnitControlDTO = {
   controlCode: 'PAX',
-  parameterCode: 'DL',
+  controlEquipParamCode: 'DL',
   installDate: new Date(Date.now()),
   optimizationDate: new Date(Date.now()),
   originalCode: '1',
