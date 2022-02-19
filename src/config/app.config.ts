@@ -1,8 +1,10 @@
+require('dotenv').config();
 import { registerAs } from '@nestjs/config';
+import { parseBool } from '@us-epa-camd/easey-common/utilities';
 
 const path = process.env.EASEY_MONITOR_PLAN_API_PATH || 'monitor-plan-mgmt';
 const host = process.env.EASEY_MONITOR_PLAN_API_HOST || 'localhost';
-const port = process.env.EASEY_MONITOR_PLAN_API_PORT || 8010;
+const port = +process.env.EASEY_MONITOR_PLAN_API_PORT || 8010;
 
 let uri = `https://${host}/${path}`;
 
@@ -20,11 +22,18 @@ export default registerAs('app', () => ({
   uri,
   apiKey: process.env.EASEY_MONITOR_PLAN_API_KEY,
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
-  enableCors: process.env.EASEY_MONITOR_PLAN_API_ENABLE_CORS || true,
-  enableApiKey: process.env.EASEY_MONITOR_PLAN_API_ENABLE_API_KEY || true,
-  enableAuthToken: process.env.EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN || true,
-  enableGlobalValidationPipes:
-    process.env.EASEY_MONITOR_PLAN_API_ENABLE_GLOBAL_VALIDATION_PIPE || true,
+  enableCors: parseBool(process.env.EASEY_FACILITIES_API_ENABLE_CORS, true),
+  enableApiKey: parseBool(
+    process.env.EASEY_FACILITIES_API_ENABLE_API_KEY,
+    true,
+  ),
+  enableAuthToken: parseBool(
+    process.env.EASEY_FACILITIES_API_ENABLE_AUTH_TOKEN,
+  ),
+  enableGlobalValidationPipes: parseBool(
+    process.env.EASEY_FACILITIES_API_ENABLE_GLOBAL_VALIDATION_PIPE,
+    true,
+  ),
   version: process.env.EASEY_MONITOR_PLAN_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
   // AUTH API MUST BE RUN LOCALLY FOR LOCAL DEVELOPMENT
