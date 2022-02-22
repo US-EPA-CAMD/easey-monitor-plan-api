@@ -21,6 +21,10 @@ import { UnitFuelWorkspaceModule } from '../unit-fuel-workspace/unit-fuel.module
 import { UserCheckOutModule } from '../user-check-out/user-check-out.module';
 import { CountyCodeModule } from '../county-code/county-code.module';
 import { MonitorPlanReportResultModule } from '../monitor-plan-report-result/monitor-plan-report-result.module';
+import { ComponentWorkspaceModule } from '../component-workspace/component.module';
+import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-workspace/monitor-qualification.module';
+import { SystemComponentWorkspaceModule } from '../system-component-workspace/system-component.module';
+import { AnalyzerRangeWorkspaceModule } from '../analyzer-range-workspace/analyzer-range.module';
 
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
@@ -40,11 +44,15 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
     MonitorSystemWorkspaceModule,
     DuctWafWorkspaceModule,
     SystemFuelFlowWorkspaceModule,
+    SystemComponentWorkspaceModule,
     MonitorDefaultWorkspaceModule,
     MonitorAttributeWorkspaceModule,
     UnitCapacityWorkspaceModule,
     UnitControlWorkspaceModule,
     UnitFuelWorkspaceModule,
+    ComponentWorkspaceModule,
+    MonitorQualificationWorkspaceModule,
+    AnalyzerRangeWorkspaceModule,
     UserCheckOutModule,
     CountyCodeModule,
     MonitorPlanReportResultModule,

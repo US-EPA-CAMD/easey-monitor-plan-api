@@ -15,6 +15,9 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { ComponentMap } from '../maps/component.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
+import { UnitCapacityMap } from './unit-capacity.map';
+import { UnitControlMap } from './unit-control.map';
+import { UnitFuelMap } from './unit-fuel.map';
 
 @Injectable()
 export class MonitorLocationMap extends BaseMap<
@@ -33,6 +36,9 @@ export class MonitorLocationMap extends BaseMap<
     private readonly componentMap: ComponentMap,
     private readonly systemMap: MonitorSystemMap,
     private readonly qualificationMap: MonitorQualificationMap,
+    private readonly unitCapacityMap: UnitCapacityMap,
+    private readonly unitControlMap: UnitControlMap,
+    private readonly unitFuelMap: UnitFuelMap,
   ) {
     super();
   }
@@ -117,6 +123,16 @@ export class MonitorLocationMap extends BaseMap<
       nonLoadBasedIndicator = null;
     }
 
+    const unitCapacities = entity.unit.unitCapacities
+      ? await this.unitCapacityMap.many(entity.unit.unitCapacities)
+      : [];
+    const unitControls = entity.unit.unitControls
+      ? await this.unitControlMap.many(entity.unit.unitControls)
+      : [];
+    const unitFuels = entity.unit.unitFuels
+      ? await this.unitFuelMap.many(entity.unit.unitFuels)
+      : [];
+
     return {
       id: entity.id,
       unitRecordId,
@@ -129,9 +145,9 @@ export class MonitorLocationMap extends BaseMap<
       retireDate,
       nonLoadBasedIndicator,
       attributes,
-      unitCapacity: null,
-      unitControls: null,
-      unitFuels: null,
+      unitCapacities,
+      unitControls,
+      unitFuels,
       methods,
       matsMethods,
       formulas,

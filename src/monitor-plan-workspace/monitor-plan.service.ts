@@ -1,32 +1,84 @@
+import { In } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
-
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { SystemFuelFlow } from 'src/entities/workspace/system-fuel-flow.entity';
+import { SystemComponent } from '../entities/workspace/system-component.entity';
 import { CountyCodeService } from '../county-code/county-code.service';
 import { MonitorPlanReportResultService } from '../monitor-plan-report-result/monitor-plan-report-result.service';
-import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
+import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
+import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
+import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
+import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
+import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
+import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
+import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
+import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
+import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
+import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
+import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit-capacity.repository';
+import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
+import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
+import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
+import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { MonitorSystemMap } from 'src/maps/monitor-system.map';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
   constructor(
     @InjectRepository(MonitorPlanWorkspaceRepository)
-    private repository: MonitorPlanWorkspaceRepository,
+    private readonly repository: MonitorPlanWorkspaceRepository,
     @InjectRepository(MonitorLocationWorkspaceRepository)
-    private mlRepository: MonitorLocationWorkspaceRepository,
+    private readonly locationRepository: MonitorLocationWorkspaceRepository,
+    @InjectRepository(MonitorPlanCommentWorkspaceRepository)
+    private readonly commentRepository: MonitorPlanCommentWorkspaceRepository,
+    @InjectRepository(MonitorAttributeWorkspaceRepository)
+    private readonly attributeRepository: MonitorAttributeWorkspaceRepository,
+    @InjectRepository(MonitorMethodWorkspaceRepository)
+    private readonly methodRepository: MonitorMethodWorkspaceRepository,
+    @InjectRepository(MatsMethodWorkspaceRepository)
+    private readonly matsMethodRepository: MatsMethodWorkspaceRepository,
+    @InjectRepository(MonitorFormulaWorkspaceRepository)
+    private readonly formulaRepository: MonitorFormulaWorkspaceRepository,
+    @InjectRepository(MonitorDefaultWorkspaceRepository)
+    private readonly defaultRepository: MonitorDefaultWorkspaceRepository,
+    @InjectRepository(MonitorSpanWorkspaceRepository)
+    private readonly spanRepository: MonitorSpanWorkspaceRepository,
+    @InjectRepository(DuctWafWorkspaceRepository)
+    private readonly ductWafRepository: DuctWafWorkspaceRepository,
+    @InjectRepository(MonitorLoadWorkspaceRepository)
+    private readonly loadRepository: MonitorLoadWorkspaceRepository,
+    @InjectRepository(ComponentWorkspaceRepository)
+    private readonly componentRepository: ComponentWorkspaceRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly systemRepository: MonitorSystemWorkspaceRepository,
+    @InjectRepository(UnitCapacityWorkspaceRepository)
+    private readonly unitCapacityRepository: UnitCapacityWorkspaceRepository,
+    @InjectRepository(MonitorQualificationWorkspaceRepository)
+    private readonly qualificationRepository: MonitorQualificationWorkspaceRepository,
+    @InjectRepository(SystemFuelFlowWorkspaceRepository)
+    private readonly systemFuelFlowRepository: SystemFuelFlowWorkspaceRepository,
+    @InjectRepository(SystemComponentWorkspaceRepository)
+    private readonly systemComponentRepository: SystemComponentWorkspaceRepository,
+    @InjectRepository(AnalyzerRangeWorkspaceRepository)
+    private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
     private map: MonitorPlanMap,
+    private systemMap: MonitorSystemMap,
   ) {}
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
     const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
     //TODO: error handling here in case no plans returned
-    const locations = await this.mlRepository.getMonitorLocationsByFacId(
+    const locations = await this.locationRepository.getMonitorLocationsByFacId(
       plans[0].facId,
     );
     plans.forEach(p => {
@@ -60,7 +112,6 @@ export class MonitorPlanWorkspaceService {
 
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
     const mp = await this.repository.getMonitorPlan(monPlanId);
-    console.log(mp);
     const mpDTO = new MonitorPlanDTO();
     mpDTO.id = mp.id;
     mpDTO.updateDate = mp.updateDate;
@@ -101,5 +152,126 @@ export class MonitorPlanWorkspaceService {
     const planId = plan.id;
 
     await this.repository.resetToNeedsEvaluation(planId, userId);
+  }
+
+  // async getSystemFuelFlow(
+  //   monSysId: string,
+  //   monSysIds: string[],
+  // ): Promise<SystemFuelFlow[]> {
+  //   const sysFuelFlows = await this.systemFuelFlowRepository.find({
+  //     monitoringSystemRecordId: In(monSysIds),
+  //   });
+  //   return sysFuelFlows.filter(i => i.monitoringSystemRecordId === monSysId);
+  // }
+  // async getSystemComponent(
+  //   monSysId: string,
+  //   monSysIds: string[],
+  // ): Promise<SystemComponent[]> {
+  //   const sysComponents = await this.systemComponentRepository.find({
+  //     monitoringSystemRecordId: In(monSysIds),
+  //   });
+  //   return sysComponents.filter(i => i.monitoringSystemRecordId === monSysId);
+  // }
+
+  async exportMonitorPlan(planId: string): Promise<MonitorPlanDTO> {
+    const mp = await this.repository.getMonitorPlan(planId);
+
+    mp.locations = await this.locationRepository.getMonitorLocationsByPlanId(
+      planId,
+    );
+
+    mp.comments = await this.commentRepository.find({
+      monitorPlanId: planId,
+    });
+
+    const locationIds = mp.locations.map(l => l.id);
+
+    const attributes = await this.attributeRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const methods = await this.methodRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const matsMethods = await this.matsMethodRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const formulas = await this.formulaRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const defaults = await this.defaultRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const spans = await this.spanRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const ductWafs = await this.ductWafRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const loads = await this.loadRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const components = await this.componentRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const systems = await this.systemRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    const qualifications = await this.qualificationRepository.find({
+      where: { locationId: In(locationIds) },
+    });
+
+    mp.locations.forEach(async l => {
+      const locationId = l.id;
+      l.attributes = attributes.filter(a => a.locationId === locationId);
+      l.methods = methods.filter(m => m.locationId === locationId);
+      l.matsMethods = matsMethods.filter(mm => mm.locationId === locationId);
+      l.formulas = formulas.filter(f => f.locationId === locationId);
+      l.defaults = defaults.filter(d => d.locationId === locationId);
+      l.spans = spans.filter(s => s.locationId === locationId);
+      l.ductWafs = ductWafs.filter(dw => dw.locationId === locationId);
+      l.loads = loads.filter(l => l.locationId === locationId);
+      l.components = components.filter(i => i.locationId === locationId);
+      l.systems = systems.filter(s => s.locationId === locationId);
+      l.qualifications = qualifications.filter(
+        i => i.locationId === locationId,
+      );
+
+      l.unit.unitCapacities = await this.unitCapacityRepository.getUnitCapacities(
+        l.id,
+        l.unit.id,
+      );
+
+      console.log('Entity', l.systems);
+
+      const sysDTO = await this.systemMap.many(l.systems);
+      console.log('Sys DTO', sysDTO);
+
+      l.systems.forEach(async s => {
+        s.fuelFlows = await this.systemFuelFlowRepository.getFuelFlows(s.id);
+        s.components = await this.systemComponentRepository.getComponents(
+          l.id,
+          s.id,
+        );
+      });
+
+      l.components.forEach(async c => {
+        const componentId = c.id;
+        c.analyzerRanges = await this.analyzerRangeRepository.find({
+          componentRecordId: componentId,
+        });
+      });
+    });
+
+    return this.map.one(mp);
   }
 }

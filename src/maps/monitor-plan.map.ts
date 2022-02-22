@@ -4,15 +4,20 @@ import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorLocationMap } from './monitor-location.map';
+import { MonitorPlanCommentMap } from './monitor-plan-comment.map';
 
 @Injectable()
 export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
-  constructor(private locationMap: MonitorLocationMap) {
+  constructor(
+    private locationMap: MonitorLocationMap,
+    private commentMap: MonitorPlanCommentMap,
+  ) {
     super();
   }
 
   public async one(entity: MonitorPlan): Promise<MonitorPlanDTO> {
     const locations = await this.locationMap.many(entity.locations);
+    const comments = await this.commentMap.many(entity.comments);
 
     return {
       id: entity.id,
@@ -21,9 +26,9 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       name: locations.map(l => l.name).join(', '),
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
-      comments: null,
+      comments,
       unitStackConfiguration: null,
-      locations: locations,
+      locations,
       evalStatusCode: entity.evalStatusCode,
       userId: entity.userId,
       addDate: entity.addDate,
