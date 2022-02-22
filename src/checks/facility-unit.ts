@@ -13,7 +13,7 @@ export const Check3 = new Check(
   async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
     const entityManager = getEntityManager();
 
-    const result = new CheckResult();
+    const result = new CheckResult('IMPORT3');
 
     const facilityId = await getFacIdFromOris(monPlan.orisCode);
     for (const entry of monPlan.unitStackConfiguration) {
@@ -22,8 +22,8 @@ export const Check3 = new Check(
         facId: facilityId,
       });
       if (unitResult === undefined) {
-        result.checkResult = false;
-        result.checkErrorMessages.push(
+        result.addError(
+          'FATAL-A',
           `Each stack or pipe must be associated with at least one unit. Stack/pipe ${entry.stackPipeId} is not associated with any units.`,
         );
       }
@@ -42,7 +42,7 @@ export const Check4 = new Check(
   async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
     const entityManager = getEntityManager();
 
-    const result = new CheckResult();
+    const result = new CheckResult('IMPORT4');
 
     for (const entry of monPlan.unitStackConfiguration) {
       const unitResult = await entityManager.findOne(UnitStackConfiguration, {
@@ -50,8 +50,8 @@ export const Check4 = new Check(
         stackPipeId: entry.stackPipeId,
       });
       if (unitResult === undefined) {
-        result.checkResult = false;
-        result.checkErrorMessages.push(
+        result.addError(
+          'FATAL-A',
           `Each unit must be associated with at least one stack pipe. Unit ${entry.unitId} is not associated with any stack pipes.`,
         );
       }
@@ -68,7 +68,7 @@ export const Check8 = new Check(
       'Unit Stack Configuration Record Must Be Linked to Unit and Stack/Pipe (foreach UnitStackConfiguration element)',
   },
   (monPlan: UpdateMonitorPlanDTO): CheckResult => {
-    const result = new CheckResult();
+    const result = new CheckResult('IMPORT8');
 
     const monitorLocationDataStackPipeIds = new Set<string>();
     const monitorLocationDataUnitIds = new Set<number>();
@@ -88,8 +88,8 @@ export const Check8 = new Check(
         stackPipeIdToUnitId.has(entry.stackPipeId) &&
         stackPipeIdToUnitId.get(entry.stackPipeId) === entry.unitId
       ) {
-        result.checkResult = false;
-        result.checkErrorMessages.push(
+        result.addError(
+          'CRIT1-A',
           `Unit stack configuration records must be unique combinations of StackPipeID and UnitID. The configuration for StackPipeID ${entry.stackPipeId} and Unit ${entry.unitId} has multiple instances.`,
         );
       } else {
@@ -97,15 +97,15 @@ export const Check8 = new Check(
       }
 
       if (!monitorLocationDataStackPipeIds.has(entry.stackPipeId)) {
-        result.checkResult = false;
-        result.checkErrorMessages.push(
+        result.addError(
+          'CRIT1-A',
           `Each Stack/Pipe in a unit stack configuration record must be linked to stack/pipe records that are also present in the file. StackPipeID ${entry.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
         );
       }
 
       if (!monitorLocationDataUnitIds.has(entry.unitId)) {
-        result.checkResult = false;
-        result.checkErrorMessages.push(
+        result.addError(
+          'CRIT1-B',
           `Each Unit in a unit stack configuration record must be linked to unit records that are also present in the file. Unit ${entry.unitId} was not associated with a Unit record in the file.`,
         );
       }

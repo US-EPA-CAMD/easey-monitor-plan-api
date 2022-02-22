@@ -10,11 +10,11 @@ export const Check1 = new Check(
       'MP Facility Present in the Production Facility Table Facility (ORIS Code) must be present in the database',
   },
   async (monPlan: UpdateMonitorPlanDTO) => {
-    const result = new CheckResult();
+    const result = new CheckResult('IMPORT1');
 
     if ((await getFacIdFromOris(monPlan.orisCode)) === null) {
-      result.checkResult = false;
-      result.checkErrorMessages.push(
+      result.addError(
+        'FATAL-A',
         `The database doesn't contain any Facility with Oris Code ${monPlan.orisCode}`,
       );
     }
@@ -32,19 +32,21 @@ export const Check2 = new Check(
   async (monPlan: UpdateMonitorPlanDTO) => {
     const entityManager = getEntityManager();
 
-    const result = new CheckResult();
+    const result = new CheckResult('IMPORT2');
 
     const facilityId = await getFacIdFromOris(monPlan.orisCode);
     for (const entry of monPlan.locations) {
-      const unitResult = await entityManager.findOne(Unit, {
-        name: entry.unitId,
-        facId: facilityId,
-      });
-      if (unitResult === undefined) {
-        result.checkResult = false;
-        result.checkErrorMessages.push(
-          `The database doesn't contain unit ${entry.unitId} for Oris Code ${monPlan.orisCode}`,
-        );
+      if (entry.unitId !== null) {
+        const unitResult = await entityManager.findOne(Unit, {
+          name: entry.unitId,
+          facId: facilityId,
+        });
+        if (unitResult === undefined) {
+          result.addError(
+            'FATAL-A',
+            `The database doesn't contain unit ${entry.unitId} for Oris Code ${monPlan.orisCode}`,
+          );
+        }
       }
     }
 

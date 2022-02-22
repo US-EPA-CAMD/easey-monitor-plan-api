@@ -7,7 +7,18 @@ interface CheckOptions {
 
 export class CheckResult {
   public checkResult = true;
-  public checkErrorMessages = [];
+
+  private checkErrorMessages = [];
+  private import: string;
+
+  constructor(importName: string) {
+    this.import = importName;
+  }
+
+  public addError(severity: string, message: string) {
+    this.checkResult = false;
+    this.checkErrorMessages.push(`[${this.import}-${severity}] ${message}`);
+  }
 }
 
 export class Check {
