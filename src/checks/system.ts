@@ -1,9 +1,10 @@
-import { Unit } from '../entities/workspace/unit.entity';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { Check, CheckResult } from './utilities/check';
-import { getEntityManager, getFacIdFromOris } from './utilities/utils';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
+import {
+  getEntityManager,
+  getFacIdFromOris,
+  getMonLocId,
+} from './utilities/utils';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 
 export const Check31 = new Check(
@@ -18,27 +19,10 @@ export const Check31 = new Check(
     const entityManager = getEntityManager();
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
-    for (const loc of monPlan.locations) {
-      let monLoc;
-      if (loc.stackPipeId !== null) {
-        const stackPipe = await entityManager.findOne(StackPipe, {
-          name: loc.stackPipeId,
-          facId: facility,
-        });
-        monLoc = await entityManager.findOne(MonitorLocation, {
-          stackPipe: stackPipe.id,
-        });
-      } else {
-        const unit = await entityManager.findOne(Unit, {
-          name: loc.unitId,
-          facId: facility,
-        });
-        monLoc = await entityManager.findOne(MonitorLocation, {
-          unit: unit.id,
-        });
-      }
+    const invalidTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
 
-      const invalidTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
+    for (const loc of monPlan.locations) {
+      const monLoc = await getMonLocId(loc, facility);
 
       for (const system of loc.systems) {
         if (
