@@ -34,18 +34,19 @@ export const Check31 = new Check(
             'You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
           );
         } else {
-          for (const typeCd of invalidTypeCodes) {
-            if (
-              (await entityManager.findOne(MonitorSystem, {
-                locationId: monLoc.id,
-                systemTypeCode: typeCd,
-              })) !== undefined
-            ) {
-              result.addError(
-                'CRIT1-A',
-                'You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
-              );
-            }
+          const Sys = await entityManager.findOne(MonitorSystem, {
+            locationId: monLoc.id,
+            monitoringSystemId: system.monitoringSystemId,
+          });
+
+          if (
+            Sys !== undefined &&
+            invalidTypeCodes.includes(Sys.systemTypeCode)
+          ) {
+            result.addError(
+              'CRIT1-A',
+              'You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
+            );
           }
         }
       }

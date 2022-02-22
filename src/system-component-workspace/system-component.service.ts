@@ -127,6 +127,7 @@ export class SystemComponentWorkspaceService {
         modelVersion: payload.modelVersion,
         serialNumber: payload.serialNumber,
         hgConverterIndicator: payload.hgConverterIndicator,
+        analyzerRanges: [],
       };
 
       component = await this.componentService.createComponent(

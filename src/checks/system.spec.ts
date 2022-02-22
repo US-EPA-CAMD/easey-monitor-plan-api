@@ -5,6 +5,7 @@ import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UpdateMonitorSystemDTO } from '../dtos/monitor-system-update.dto';
 import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
+import { MonitorSystem } from '../entities/monitor-system.entity';
 
 describe('System Tests', () => {
   describe('Check31', () => {
@@ -56,8 +57,11 @@ describe('System Tests', () => {
     });
 
     it('Should error with valid system type code and matching record found in db with invalid system type code', async () => {
+      const sys = new MonitorSystem();
+      sys.systemTypeCode = 'LTGS';
+
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue({}),
+        findOne: jest.fn().mockResolvedValue(sys),
       };
       jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
