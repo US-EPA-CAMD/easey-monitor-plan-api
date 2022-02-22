@@ -22,7 +22,10 @@ export const runCheckQueue = async (
   }
 
   if (checkListResults.length > 0) {
-    const ErrorList = checkListResults.map(entry => entry.checkErrorMessages);
+    const ErrorList = [];
+    checkListResults.forEach(checkListResult => {
+      ErrorList.push(...checkListResult.checkErrorMessages);
+    });
     throw new BadRequestException(ErrorList, 'Validation Failure');
   }
 
