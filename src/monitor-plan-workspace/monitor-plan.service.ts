@@ -6,8 +6,6 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { SystemFuelFlow } from 'src/entities/workspace/system-fuel-flow.entity';
-import { SystemComponent } from '../entities/workspace/system-component.entity';
 import { CountyCodeService } from '../county-code/county-code.service';
 import { MonitorPlanReportResultService } from '../monitor-plan-report-result/monitor-plan-report-result.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
@@ -31,10 +29,8 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
-
-import { MonitorSystemMap } from 'src/maps/monitor-system.map';
-import { UnitControlWorkspaceRepository } from 'src/unit-control-workspace/unit-control.repository';
-import { UnitFuelWorkspaceRepository } from 'src/unit-fuel-workspace/unit-fuel.repository';
+import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
+import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -88,7 +84,6 @@ export class MonitorPlanWorkspaceService {
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
     private map: MonitorPlanMap,
-    private systemMap: MonitorSystemMap,
   ) {}
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
@@ -257,11 +252,6 @@ export class MonitorPlanWorkspaceService {
         l.id,
         l.unit.id,
       );
-
-      console.log('Entity', l.systems);
-
-      const sysDTO = await this.systemMap.many(l.systems);
-      console.log('Sys DTO', sysDTO);
 
       l.systems.forEach(async s => {
         s.fuelFlows = await this.systemFuelFlowRepository.getFuelFlows(s.id);
