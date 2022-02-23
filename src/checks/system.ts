@@ -7,6 +7,40 @@ import {
 } from './utilities/utils';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 
+export const Check5 = new Check(
+  {
+    checkName: 'Check5',
+    checkDescription:
+      'Each system (ORIS Code + UnitStackPipe ID + Monitoring System ID) in the file that is also in the Workspace schema system table must have the same System Type',
+  },
+  async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
+    const result = new CheckResult('IMPORT5');
+
+    const entityManager = getEntityManager();
+    const facility = await getFacIdFromOris(monPlan.orisCode);
+
+    for (const loc of monPlan.locations) {
+      const monLoc = await getMonLocId(loc, facility);
+
+      for (const system of loc.systems) {
+        const Sys = await entityManager.findOne(MonitorSystem, {
+          locationId: monLoc.id,
+          monitoringSystemId: system.monitoringSystemId,
+        });
+
+        if (Sys !== undefined && Sys.systemTypeCode !== system.systemTypeCode) {
+          result.addError(
+            'CRIT1-A',
+            `The system type ${system.systemTypeCode} for UnitStackPipeID ${loc.unitId}/${loc.stackPipeId} and MonitoringSystemID ${system.monitoringSystemId} does not match the system type in the Workspace database.`,
+          );
+        }
+      }
+
+      return result;
+    }
+  },
+);
+
 export const Check31 = new Check(
   {
     checkName: 'Check31',

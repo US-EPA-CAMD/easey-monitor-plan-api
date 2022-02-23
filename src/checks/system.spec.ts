@@ -8,6 +8,60 @@ import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
 import { MonitorSystem } from '../entities/monitor-system.entity';
 
 describe('System Tests', () => {
+  describe('Check5', () => {
+    it('Should pass with valid dsystem type code and matching db record', async () => {
+      const sys = new MonitorSystem();
+      sys.systemTypeCode = 'LTGS';
+
+      const mockManager = {
+        findOne: jest.fn().mockResolvedValue(sys),
+      };
+      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
+      jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
+
+      const location = new UpdateMonitorLocationDTO();
+      const system = new UpdateMonitorSystemDTO();
+      system.systemTypeCode = 'LTGS';
+
+      system.fuelFlows = [];
+      location.systems = [system];
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      const checkResults = await checks.Check5.executeCheck(testData);
+
+      expect(checkResults.checkResult).toBe(true);
+    });
+
+    it('Should error with systemTypeCode and non-matching db record', async () => {
+      const sys = new MonitorSystem();
+      sys.systemTypeCode = 'ERROR';
+
+      const mockManager = {
+        findOne: jest.fn().mockResolvedValue(sys),
+      };
+      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
+      jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
+
+      const location = new UpdateMonitorLocationDTO();
+      const system = new UpdateMonitorSystemDTO();
+      system.systemTypeCode = 'LTGS';
+
+      system.fuelFlows = [];
+      location.systems = [system];
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      const checkResults = await checks.Check5.executeCheck(testData);
+
+      expect(checkResults.checkResult).toBe(false);
+    });
+  });
+
   describe('Check31', () => {
     it('Should pass with invalid system type code and no fuel flow data', async () => {
       const mockManager = {
