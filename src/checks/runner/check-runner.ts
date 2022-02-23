@@ -1,7 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
-import { Check32, Check6 } from '../component';
+import { Check32, Check6, Check7 } from '../component';
 import { Check3, Check4, Check8 } from '../facility-unit';
+import { Check9 } from '../formula';
 import { Check11, Check12 } from '../qual';
 import { Check10 } from '../span';
 import { Check31, Check5 } from '../system';
@@ -41,6 +42,8 @@ export const unitStackConfigurationValid = async (
     Check2,
     Check5,
     Check6,
+    Check7,
+    Check9,
     Check10,
     Check11,
     Check12,
@@ -48,11 +51,8 @@ export const unitStackConfigurationValid = async (
     Check32,
   ];
   const UnitStackChecks = [Check3, Check4, Check8];
-
+  await runCheckQueue(LocationChecks, monPlan);
   if (monPlan.unitStackConfiguration !== undefined) {
-    await runCheckQueue(LocationChecks, monPlan);
     await runCheckQueue(UnitStackChecks, monPlan);
-  } else {
-    await runCheckQueue(LocationChecks, monPlan);
   }
 };
