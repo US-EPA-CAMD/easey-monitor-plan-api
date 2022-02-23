@@ -25,6 +25,9 @@ import { ComponentWorkspaceModule } from '../component-workspace/component.modul
 import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-workspace/monitor-qualification.module';
 import { SystemComponentWorkspaceModule } from '../system-component-workspace/system-component.module';
 import { AnalyzerRangeWorkspaceModule } from '../analyzer-range-workspace/analyzer-range.module';
+import { LEEQualificationWorkspaceModule } from '../lee-qualification-workspace/lee-qualification.module';
+import { LMEQualificationWorkspaceModule } from '../lme-qualification-workspace/lme-qualification.module';
+import { PCTQualificationWorkspaceModule } from '../pct-qualification-workspace/pct-qualification.module';
 
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
@@ -53,6 +56,9 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
     ComponentWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     AnalyzerRangeWorkspaceModule,
+    LEEQualificationWorkspaceModule,
+    LMEQualificationWorkspaceModule,
+    PCTQualificationWorkspaceModule,
     UserCheckOutModule,
     CountyCodeModule,
     MonitorPlanReportResultModule,

@@ -28,7 +28,13 @@ import { MonitorQualificationWorkspaceRepository } from '../monitor-qualificatio
 import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
 import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
+import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
+import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
+
 import { MonitorSystemMap } from 'src/maps/monitor-system.map';
+import { UnitControlWorkspaceRepository } from 'src/unit-control-workspace/unit-control.repository';
+import { UnitFuelWorkspaceRepository } from 'src/unit-fuel-workspace/unit-fuel.repository';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -61,6 +67,10 @@ export class MonitorPlanWorkspaceService {
     private readonly systemRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(UnitCapacityWorkspaceRepository)
     private readonly unitCapacityRepository: UnitCapacityWorkspaceRepository,
+    @InjectRepository(UnitControlWorkspaceRepository)
+    private readonly unitControlRepository: UnitControlWorkspaceRepository,
+    @InjectRepository(UnitFuelWorkspaceRepository)
+    private readonly unitFuelRepository: UnitFuelWorkspaceRepository,
     @InjectRepository(MonitorQualificationWorkspaceRepository)
     private readonly qualificationRepository: MonitorQualificationWorkspaceRepository,
     @InjectRepository(SystemFuelFlowWorkspaceRepository)
@@ -69,6 +79,12 @@ export class MonitorPlanWorkspaceService {
     private readonly systemComponentRepository: SystemComponentWorkspaceRepository,
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
+    @InjectRepository(LEEQualificationWorkspaceRepository)
+    private readonly leeQualificationRepository: LEEQualificationWorkspaceRepository,
+    @InjectRepository(LMEQualificationWorkspaceRepository)
+    private readonly lmeQualificationRepository: LMEQualificationWorkspaceRepository,
+    @InjectRepository(PCTQualificationWorkspaceRepository)
+    private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
     private map: MonitorPlanMap,
@@ -154,25 +170,6 @@ export class MonitorPlanWorkspaceService {
     await this.repository.resetToNeedsEvaluation(planId, userId);
   }
 
-  // async getSystemFuelFlow(
-  //   monSysId: string,
-  //   monSysIds: string[],
-  // ): Promise<SystemFuelFlow[]> {
-  //   const sysFuelFlows = await this.systemFuelFlowRepository.find({
-  //     monitoringSystemRecordId: In(monSysIds),
-  //   });
-  //   return sysFuelFlows.filter(i => i.monitoringSystemRecordId === monSysId);
-  // }
-  // async getSystemComponent(
-  //   monSysId: string,
-  //   monSysIds: string[],
-  // ): Promise<SystemComponent[]> {
-  //   const sysComponents = await this.systemComponentRepository.find({
-  //     monitoringSystemRecordId: In(monSysIds),
-  //   });
-  //   return sysComponents.filter(i => i.monitoringSystemRecordId === monSysId);
-  // }
-
   async exportMonitorPlan(planId: string): Promise<MonitorPlanDTO> {
     const mp = await this.repository.getMonitorPlan(planId);
 
@@ -251,6 +248,16 @@ export class MonitorPlanWorkspaceService {
         l.unit.id,
       );
 
+      l.unit.unitControls = await this.unitControlRepository.getUnitControls(
+        l.id,
+        l.unit.id,
+      );
+
+      l.unit.unitFuels = await this.unitFuelRepository.getUnitFuels(
+        l.id,
+        l.unit.id,
+      );
+
       console.log('Entity', l.systems);
 
       const sysDTO = await this.systemMap.many(l.systems);
@@ -269,6 +276,22 @@ export class MonitorPlanWorkspaceService {
         c.analyzerRanges = await this.analyzerRangeRepository.find({
           componentRecordId: componentId,
         });
+      });
+
+      l.qualifications.forEach(async q => {
+        const qualificationId = q.id;
+        q.leeQualifications = await this.leeQualificationRepository.getLEEQualifications(
+          l.id,
+          qualificationId,
+        );
+        q.lmeQualifications = await this.lmeQualificationRepository.getLMEQualifications(
+          l.id,
+          qualificationId,
+        );
+        q.pctQualifications = await this.pctQualificationRepository.getPCTQualifications(
+          l.id,
+          qualificationId,
+        );
       });
     });
 
