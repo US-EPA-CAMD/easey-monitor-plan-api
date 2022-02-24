@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
 import { Check32, Check6, Check7 } from './file-checks/component';
 import { Check3, Check4, Check8 } from './file-checks/facility-unit';
@@ -11,9 +12,9 @@ import { Check, CheckResult } from './utilities/check';
 
 @Injectable()
 export class ImportChecksService {
-  constructor() {}
+  constructor(private readonly logger: Logger) {}
 
-  runCheckQueue = async (
+  private runCheckQueue = async (
     checkQueue: Check[],
     monPlan: UpdateMonitorPlanDTO,
   ): Promise<CheckResult[]> => {
@@ -39,6 +40,9 @@ export class ImportChecksService {
   };
 
   fileCheckValidation = async (monPlan: UpdateMonitorPlanDTO) => {
+    this.logger.info('Running monitoring plan import file checks...', {
+      orisCode: monPlan.orisCode,
+    });
     const LocationChecks = [
       Check1,
       Check2,
@@ -57,5 +61,12 @@ export class ImportChecksService {
     if (monPlan.unitStackConfiguration !== undefined) {
       await this.runCheckQueue(UnitStackChecks, monPlan);
     }
+
+    this.logger.info(
+      'Successfully completed monitor plan import with no errors',
+      {
+        orisCode: monPlan.orisCode,
+      },
+    );
   };
 }

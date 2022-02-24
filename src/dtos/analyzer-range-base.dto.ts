@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInt, ValidationArguments } from 'class-validator';
+import { IsInDbValues } from 'src/import-checks/pipes/is-in-db-values.pipe';
 
 export class AnalyzerRangeBaseDTO {
   @ApiProperty({
@@ -9,6 +10,14 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOAnalyzerRangeCode.example,
     name: propertyMetadata.analyzerRangeDTOAnalyzerRangeCode.fieldLabels.value,
   })
+  @IsInDbValues(
+    'SELECT analyzer_range_cd as "value" FROM camdecmpsmd.analyzer_range_code',
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [ANALYZERRANGE-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+      },
+    },
+  )
   analyzerRangeCode: string;
 
   @ApiProperty({
