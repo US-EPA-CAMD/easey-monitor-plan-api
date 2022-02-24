@@ -26,13 +26,13 @@ export class MonitorQualificationMap extends BaseMap<
   ): Promise<MonitorQualificationDTO> {
     const leeQualifications = entity.leeQualifications
       ? await this.leeMap.many(entity.leeQualifications)
-      : null;
+      : [];
     const lmeQualifications = entity.lmeQualifications
       ? await this.lmeMap.many(entity.lmeQualifications)
-      : null;
+      : [];
     const pctQualifications = entity.pctQualifications
       ? await this.pctMap.many(entity.pctQualifications)
-      : null;
+      : [];
 
     return {
       id: entity.id,

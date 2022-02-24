@@ -16,8 +16,12 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
   }
 
   public async one(entity: MonitorPlan): Promise<MonitorPlanDTO> {
-    const locations = await this.locationMap.many(entity.locations);
-    const comments = await this.commentMap.many(entity.comments);
+    const locations = entity.locations 
+      ? await this.locationMap.many(entity.locations)
+      : [];
+    const comments = entity.comments
+      ? await this.commentMap.many(entity.comments)
+      : [];
 
     return {
       id: entity.id,
@@ -27,7 +31,7 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
       comments,
-      unitStackConfiguration: null,
+      unitStackConfiguration: [],
       locations,
       evalStatusCode: entity.evalStatusCode,
       userId: entity.userId,

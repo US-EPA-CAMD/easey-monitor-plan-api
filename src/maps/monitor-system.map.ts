@@ -19,10 +19,10 @@ export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
   public async one(entity: MonitorSystem): Promise<MonitorSystemDTO> {
     const components = entity.components
       ? await this.componentMap.many(entity.components)
-      : null;
+      : [];
     const fuelFlows = entity.fuelFlows
       ? await this.fuelFlowMap.many(entity.fuelFlows)
-      : null;
+      : [];
 
     return {
       id: entity.id,
