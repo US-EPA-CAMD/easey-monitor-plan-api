@@ -1,5 +1,5 @@
 import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
-import { Check, CheckResult } from './utilities/check';
+import { Check, CheckResult } from '../utilities/check';
 
 export const Check11 = new Check(
   {

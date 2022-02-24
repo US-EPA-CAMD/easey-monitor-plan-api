@@ -1,7 +1,7 @@
-import * as utils from './utilities/utils';
+import * as utils from '../utilities/utils';
 import * as checks from './unit-stack-config';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
 
 describe('Unit-Stack Tests', () => {
   describe('Check1', () => {

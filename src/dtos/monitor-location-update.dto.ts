@@ -13,6 +13,8 @@ import { UpdateMonitorLoadDTO } from './monitor-load-update.dto';
 import { UpdateComponentDTO } from './component-update.dto';
 import { UpdateMonitorSystemDTO } from './monitor-system-update.dto';
 import { UpdateMonitorQualificationDTO } from './monitor-qualification-update.dto';
+import { ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
   attributes: UpdateMonitorAttributeDTO[];
@@ -26,7 +28,11 @@ export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
   spans: UpdateMonitorSpanDTO[];
   ductWafs: UpdateDuctWafDTO[];
   loads: UpdateMonitorLoadDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateComponentDTO)
   components: UpdateComponentDTO[];
+
   systems: UpdateMonitorSystemDTO[];
   qualifications: UpdateMonitorQualificationDTO[];
 }

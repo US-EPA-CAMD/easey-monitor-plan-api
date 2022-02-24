@@ -1,7 +1,7 @@
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { Unit } from '../entities/unit.entity';
-import { Check, CheckResult } from './utilities/check';
-import { getEntityManager, getFacIdFromOris } from './utilities/utils';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { Unit } from '../../entities/unit.entity';
+import { Check, CheckResult } from '../utilities/check';
+import { getEntityManager, getFacIdFromOris } from '../utilities/utils';
 
 export const Check1 = new Check(
   {

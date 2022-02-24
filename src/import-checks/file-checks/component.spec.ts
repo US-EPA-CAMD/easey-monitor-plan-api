@@ -1,11 +1,11 @@
-import * as utils from './utilities/utils';
+import * as utils from '../utilities/utils';
 import * as checks from './component';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { UpdateComponentDTO } from '../dtos/component-update.dto';
-import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
-import { Component } from '../entities/workspace/component.entity';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
+import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
+import { UpdateComponentDTO } from '../../dtos/component-update.dto';
+import { UpdateAnalyzerRangeDTO } from '../../dtos/analyzer-range-update.dto';
+import { Component } from '../../entities/workspace/component.entity';
 
 describe('Component Tests', () => {
   describe('Check6', () => {

@@ -7,7 +7,6 @@ import {
   Param,
   Controller,
   ParseIntPipe,
-  NotImplementedException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -27,7 +26,7 @@ import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { unitStackConfigurationValid } from 'src/checks/runner/check-runner';
+import { ImportChecksService } from '../import-checks/import-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,6 +36,7 @@ export class MonitorPlanWorkspaceController {
     private service: MonitorPlanWorkspaceService,
     private ucoService: UserCheckOutService,
     private logger: Logger,
+    private importChecksService: ImportChecksService,
   ) {}
 
   // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable
@@ -82,13 +82,7 @@ export class MonitorPlanWorkspaceController {
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
   ): Promise<MonitorPlanDTO> {
-    await unitStackConfigurationValid(plan);
-    /*
-    this.logger.error(
-      NotImplementedException,
-      'Monitor Plan Import not supported at this time. Coming Soon!',
-    );
-    */
+    await this.importChecksService.fileCheckValidation(plan);
 
     return;
   }
