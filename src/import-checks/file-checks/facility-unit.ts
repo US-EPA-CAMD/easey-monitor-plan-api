@@ -98,7 +98,7 @@ export const Check8 = new Check(
 
       if (!monitorLocationDataStackPipeIds.has(entry.stackPipeId)) {
         result.addError(
-          'CRIT1-A',
+          'CRIT1-B',
           `Each Stack/Pipe in a unit stack configuration record must be linked to stack/pipe records that are also present in the file. StackPipeID ${entry.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
         );
       }

@@ -1,4 +1,3 @@
-import { IsNotEmpty, ValidateIf } from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -93,8 +92,6 @@ export class DuctWaf extends BaseEntity {
   ductDepth: number;
 
   @Column({ type: 'date', name: 'end_date' })
-  @IsNotEmpty()
-  @ValidateIf(o => o.wafEndHour !== null)
   wafEndDate: Date;
 
   @Column({
@@ -104,8 +101,6 @@ export class DuctWaf extends BaseEntity {
     nullable: true,
     name: 'end_hour',
   })
-  @IsNotEmpty()
-  @ValidateIf(o => o.wafEndDate !== null)
   wafEndHour: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })

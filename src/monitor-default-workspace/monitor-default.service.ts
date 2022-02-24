@@ -9,7 +9,6 @@ import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
@@ -67,7 +66,6 @@ export class MonitorDefaultWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(monDefault);
     await this.repository.save(monDefault);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(monDefault);
@@ -96,7 +94,6 @@ export class MonitorDefaultWorkspaceService {
     monDefault.userId = userId;
     monDefault.updateDate = new Date(Date.now());
 
-    await validateObject(monDefault);
     await this.repository.save(monDefault);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(monDefault);

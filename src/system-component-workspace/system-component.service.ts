@@ -12,7 +12,6 @@ import { ComponentWorkspaceService } from '../component-workspace/component.serv
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
@@ -99,7 +98,6 @@ export class SystemComponentWorkspaceService {
     component.userId = userId;
     component.updateDate = new Date(Date.now());
 
-    await validateObject(systemComponent);
     await this.repository.save(systemComponent);
     await this.compRepository.save(component);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
@@ -150,7 +148,6 @@ export class SystemComponentWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await validateObject(systemComponent);
     await this.repository.save(systemComponent);
     await this.compRepository.save(component);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);

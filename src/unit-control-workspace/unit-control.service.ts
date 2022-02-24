@@ -56,7 +56,7 @@ export class UnitControlWorkspaceService {
       id: uuid(),
       unitId: unitId,
       controlCode: payload.controlCode,
-      parameterCode: payload.parameterCode,
+      controlEquipParamCode: payload.controlEquipParamCode,
       installDate: payload.installDate,
       optimizationDate: payload.optimizationDate,
       originalCode: payload.originalCode,
@@ -82,7 +82,7 @@ export class UnitControlWorkspaceService {
     const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
 
     unitControl.controlCode = payload.controlCode;
-    unitControl.parameterCode = payload.parameterCode;
+    unitControl.controlEquipParamCode = payload.controlEquipParamCode;
     unitControl.installDate = payload.installDate;
     unitControl.optimizationDate = payload.optimizationDate;
     unitControl.originalCode = payload.originalCode;

@@ -78,5 +78,7 @@ export class AnalyzerRangeBaseDTO {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
     },
   })
+  @IsNotEmpty()
+  @ValidateIf(o => o.endDate !== null)
   endHour: number;
 }

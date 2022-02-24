@@ -2,12 +2,7 @@ name: Release Branch Workflow
 
 on:
   push:
-    branches: [release/v*]
-    paths-ignore:
-    - '**/*.md'
-    - 'LICENSE'
-    - '.github/**'
-    - '.gitignore'
+    branches: [release/*]
 
 jobs:
   Build-Test-Package:

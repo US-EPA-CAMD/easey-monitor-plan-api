@@ -9,7 +9,6 @@ import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { validateObject } from '../utils';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -63,8 +62,6 @@ export class MonitorLoadWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    // Validate load
-    await validateObject(load);
     await this.repository.save(load);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(load);
@@ -93,7 +90,6 @@ export class MonitorLoadWorkspaceService {
     load.userId = userId;
     load.updateDate = new Date(Date.now());
 
-    await validateObject(load);
     await this.repository.save(load);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(load);

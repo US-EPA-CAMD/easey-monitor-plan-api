@@ -3,8 +3,9 @@ name: monitor-plan-api
 title: Monitor Plan Management
 path: monitor-plan-mgmt
 port: 8080
+memory: 1024
+disk: 1024
 instances: 1
-memory: 512M
 environment: development
 host: api-easey-dev.app.cloud.gov
 apiHost: api.epa.gov/easey/dev
