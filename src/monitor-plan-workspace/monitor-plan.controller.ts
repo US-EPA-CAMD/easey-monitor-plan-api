@@ -27,6 +27,7 @@ import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { unitStackConfigurationValid } from 'src/checks/runner/check-runner';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -73,16 +74,21 @@ export class MonitorPlanWorkspaceController {
 
   @Post('import')
   @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
   })
-  importPlan(@Body() plan: UpdateMonitorPlanDTO): Promise<MonitorPlanDTO> {
+  async importPlan(
+    @Body() plan: UpdateMonitorPlanDTO,
+  ): Promise<MonitorPlanDTO> {
+    await unitStackConfigurationValid(plan);
+    /*
     this.logger.error(
       NotImplementedException,
       'Monitor Plan Import not supported at this time. Coming Soon!',
     );
+    */
 
     return;
   }
