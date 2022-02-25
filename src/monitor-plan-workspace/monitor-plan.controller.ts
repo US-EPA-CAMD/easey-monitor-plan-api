@@ -7,7 +7,6 @@ import {
   Param,
   Controller,
   ParseIntPipe,
-  NotImplementedException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -16,37 +15,28 @@ import {
   ApiBearerAuth,
   ApiSecurity,
 } from '@nestjs/swagger';
+import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { MonitorPlanWorkspaceService } from './monitor-plan.service';
-
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
+
+import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { unitStackConfigurationValid } from 'src/checks/runner/check-runner';
+import { unitStackConfigurationValid } from '../checks/runner/check-runner';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Plans & Configurations')
 export class MonitorPlanWorkspaceController {
   constructor(
-    private service: MonitorPlanWorkspaceService,
-    private ucoService: UserCheckOutService,
-    private logger: Logger,
+    private readonly service: MonitorPlanWorkspaceService,
+    private readonly ucoService: UserCheckOutService,
+    private readonly logger: Logger,
   ) {}
-
-  @Get(':planId')
-  @ApiOkResponse({
-    type: MonitorPlanDTO,
-    description: 'Retrieves workspace Monitor Plan record.',
-  })
-  exportMonitorPlan(@Param('planId') planId: string) {
-    return this.service.exportMonitorPlan(planId);
-  }
 
   // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable
   // really need to move check-outs to a controller of its own but that requires url changes
@@ -79,6 +69,15 @@ export class MonitorPlanWorkspaceController {
   })
   getEvaluationReport(@Param('planId') planId: string) {
     return this.service.getEvaluationReport(planId);
+  }
+
+  @Get(':planId/export')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves workspace Monitor Plan record.',
+  })
+  exportMonitorPlan(@Param('planId') planId: string) {
+    return this.service.exportMonitorPlan(planId);
   }
 
   @Post('import')
