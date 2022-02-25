@@ -72,7 +72,7 @@ export class MonitorPlanWorkspaceController {
     return this.service.getEvaluationReport(planId);
   }
 
-  @Get(':planId/export')
+  @Get(':planId')
   @ApiOkResponse({
     description: 'Exports a monitor plan',
   })
