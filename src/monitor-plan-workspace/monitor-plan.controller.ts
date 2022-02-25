@@ -39,6 +39,15 @@ export class MonitorPlanWorkspaceController {
     private logger: Logger,
   ) {}
 
+  @Get(':planId')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves workspace Monitor Plan record.',
+  })
+  exportMonitorPlan(@Param('planId') planId: string) {
+    return this.service.exportMonitorPlan(planId);
+  }
+
   // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable
   // really need to move check-outs to a controller of its own but that requires url changes
 
@@ -70,14 +79,6 @@ export class MonitorPlanWorkspaceController {
   })
   getEvaluationReport(@Param('planId') planId: string) {
     return this.service.getEvaluationReport(planId);
-  }
-
-  @Get(':planId')
-  @ApiOkResponse({
-    description: 'Exports a monitor plan',
-  })
-  exportMonitorPlan(@Param('planId') planId: string) {
-    return this.service.exportMonitorPlan(planId);
   }
 
   @Post('import')
