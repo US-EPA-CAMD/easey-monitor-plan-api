@@ -10,4 +10,11 @@ export class SystemFuelFlowRepository extends Repository<SystemFuelFlow> {
       .where('ms.id = :monSysId', { monSysId })
       .getMany();
   }
+
+  async getFuelFlowsBySystemIds(monSysIds: string[]): Promise<SystemFuelFlow[]> {
+    return this.createQueryBuilder('sff')
+      .innerJoinAndSelect('sff.system', 'ms')
+      .where('ms.id IN (:...monSysIds)', { monSysIds })
+      .getMany();
+  }
 }

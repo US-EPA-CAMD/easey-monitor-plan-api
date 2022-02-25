@@ -15,7 +15,6 @@ export class UnitStackConfigurationWorkspaceService {
     let relationship: any;
 
     if (location.stackPipeId) {
-      console.log('StackPipeId', location.stackPipeId);
       relationship = await this.repository.find({
         where: {
           stackPipeId: location.stackPipeId,
@@ -27,7 +26,6 @@ export class UnitStackConfigurationWorkspaceService {
     }
 
     if (location.unitId) {
-      console.log('UnitId', location.unitId);
       relationship = await this.repository.find({
         unitId: +location.unitId,
       });

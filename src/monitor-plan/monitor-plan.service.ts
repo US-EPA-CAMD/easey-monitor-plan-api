@@ -8,6 +8,7 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 
 import { MonitorPlanRepository } from './monitor-plan.repository';
+import { MonitorPlanCommentRepository } from '../monitor-plan-comment/monitor-plan-comment.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorAttributeRepository } from '../monitor-attribute/monitor-attribute.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
@@ -17,16 +18,25 @@ import { MonitorDefaultRepository } from '../monitor-default/monitor-default.rep
 import { MonitorSpanRepository } from '../monitor-span/monitor-span.repository';
 import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
 import { MonitorLoadRepository } from '../monitor-load/monitor-load.repository';
-//import { ComponentRepository } from '../component/component.repository';
+import { ComponentRepository } from '../component/component.repository';
+import { SystemComponentRepository } from '../system-component/system-component.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.repository';
-//import { MonitorQualificationRepository } from '../monitor-qualification/monitor-qualification.repository';
+import { MonitorQualificationRepository } from '../monitor-qualification/monitor-qualification.repository';
+import { LEEQualificationRepository } from '../lee-qualification/lee-qualification.repository';
+import { LMEQualificationRepository } from '../lme-qualification/lme-qualification.repository';
+import { PCTQualificationRepository } from '../pct-qualification/pct-qualification.repository';
+import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
+import { UnitControlRepository } from '../unit-control/unit-control.repository';
+import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 
 @Injectable()
 export class MonitorPlanService {
   constructor(
     @InjectRepository(MonitorPlanRepository)
     private readonly repository: MonitorPlanRepository,
+    @InjectRepository(MonitorPlanCommentRepository)
+    private readonly commentRepository: MonitorPlanCommentRepository,    
     @InjectRepository(MonitorLocationRepository)
     private readonly locationRepository: MonitorLocationRepository,
     @InjectRepository(MonitorAttributeRepository)
@@ -45,14 +55,28 @@ export class MonitorPlanService {
     private readonly ductWafRepository: DuctWafRepository,
     @InjectRepository(MonitorLoadRepository)
     private readonly loadRepository: MonitorLoadRepository,
-    // @InjectRepository(ComponentRepository)
-    // private readonly componentRepository: ComponentRepository,
+    @InjectRepository(ComponentRepository)
+    private readonly componentRepository: ComponentRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly systemRepository: MonitorSystemRepository,
+    @InjectRepository(SystemComponentRepository)
+    private readonly systemComponentRepository: SystemComponentRepository,
     @InjectRepository(SystemFuelFlowRepository)
     private readonly systemFuelFlowRepository: SystemFuelFlowRepository,
-    // @InjectRepository(MonitorQualificationRepository)
-    // private readonly qualificationRepository: MonitorQualificationRepository,
+    @InjectRepository(MonitorQualificationRepository)
+    private readonly qualificationRepository: MonitorQualificationRepository,
+    @InjectRepository(LEEQualificationRepository)
+    private readonly leeQualificationRepository: LEEQualificationRepository,
+    @InjectRepository(LMEQualificationRepository)
+    private readonly lmeQualificationRepository: LMEQualificationRepository,
+    @InjectRepository(PCTQualificationRepository)
+    private readonly pctQualificationRepository: PCTQualificationRepository,
+    @InjectRepository(UnitCapacityRepository)
+    private readonly unitCapacityRepository: UnitCapacityRepository,
+    @InjectRepository(UnitControlRepository)
+    private readonly unitControlRepository: UnitControlRepository,
+    @InjectRepository(UnitFuelRepository)
+    private readonly unitFuelRepository: UnitFuelRepository,
     private readonly map: MonitorPlanMap,
   ) {}
 
@@ -98,70 +122,160 @@ export class MonitorPlanService {
   }
 
   async getMonitorPlan(planId: string): Promise<MonitorPlanDTO> {
+    const promises = [];
+
     const mp = await this.repository.getMonitorPlan(planId);
     mp.locations = await this.locationRepository.getMonitorLocationsByPlanId(
       planId,
     );
 
-    const locationIds = mp.locations.map(i => i.id);
-    //const units = mp.locations.filter(l => l.unit).map(l => l.unit);
-    //const unitIds = units.map(u => u.id);
+    const identifiers = mp.locations.map(l => {
+      return {
+        locationId: l.id,
+        unitId: l.unit ? l.unit.id : null,
+        stackPipeId: l.stackPipe ? l.stackPipe.id: null,
+      }
+    });
 
-    const attributes = await this.attributeRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    const methods = await this.methodRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    const matsMethods = await this.matsMethodRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    const formulas = await this.formulaRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    const defaults = await this.defaultRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    const spans = await this.spanRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    const ductWafs = await this.ductWafRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    const loads = await this.loadRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    // const components = await this.componentRepository.find({
-    //   where: { locationId: In(locationIds) },
-    // });
-    const systems = await this.systemRepository.find({
-      where: { locationId: In(locationIds) },
-    });
-    // const qualifications = await this.qualificationRepository.find({
-    //   where: { locationId: In(locationIds) },
-    // });
+    const locationIds = identifiers.map(i => i.locationId);
+    const unitIds = identifiers.filter(i => i.unitId !== null).map(i => i.unitId);
+
+    const COMMENTS = 0;
+    promises.push(
+      this.commentRepository.find({ monitorPlanId: planId })
+    );
+
+    const UNIT_CAPACITIES = COMMENTS + 1;
+    promises.push(
+      this.unitCapacityRepository.getUnitCapacitiesByUnitIds(unitIds)
+    );
+
+    const UNIT_CONTROLS = UNIT_CAPACITIES + 1;
+    promises.push(
+      this.unitControlRepository.find({ where: { unitId: In(unitIds) } })
+    );
+
+    const UNIT_FUEL = UNIT_CONTROLS + 1;
+    promises.push(
+      this.unitFuelRepository.find({ where: { unitId: In(unitIds) } })
+    );
+
+    const ATTRIBUTES = UNIT_FUEL + 1;
+    promises.push(
+      this.attributeRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const METHODS = ATTRIBUTES + 1;    
+    promises.push(
+      this.methodRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const MATS_METHODS = METHODS + 1;
+    promises.push(
+      this.matsMethodRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const FORMULAS = MATS_METHODS + 1;
+    promises.push(
+      this.formulaRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const DEFAULTS = FORMULAS + 1;
+    promises.push(
+      this.defaultRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const SPANS = DEFAULTS + 1;
+    promises.push(
+      this.spanRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const DUCT_WAFS = SPANS + 1;
+    promises.push(
+      this.ductWafRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const LOADS = DUCT_WAFS + 1;
+    promises.push(
+      this.loadRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const COMPONENTS = LOADS + 1;
+    promises.push(
+      this.componentRepository.find({ where: { locationId: In(locationIds) } })
+    );
+
+    const SYSTEMS = COMPONENTS + 1;
+    promises.push(
+      new Promise(async (resolve, reject) => {
+        const systems = await this.systemRepository.find({
+          where: { locationId: In(locationIds) },
+        });
+
+        const systemIds = systems.map(i => i.id);
+        const s1 = this.systemFuelFlowRepository.getFuelFlowsBySystemIds(systemIds);
+        const s2 = this.systemComponentRepository.getComponentsBySystemIds(systemIds);
+
+        const sysResults = await Promise.all([s1, s2]);
+
+        systems.forEach(async s => {
+          s.fuelFlows = sysResults[0].filter(i => i.monitoringSystemRecordId === s.id);
+          s.components = sysResults[1].filter(i => i.monitoringSystemRecordId === s.id);
+        });
+
+        resolve(systems);
+      })
+    );
+
+    const QUALIFICATIONS = SYSTEMS + 1;
+    promises.push(
+      new Promise(async (resolve, reject) => {
+        const quals = await this.qualificationRepository.find({
+          where: { locationId: In(locationIds) }
+        });
+
+        const qualIds = quals.map(i => i.id);
+        const q1 = this.leeQualificationRepository.find({ where: { qualificationId: In(qualIds) } });
+        const q2 = this.lmeQualificationRepository.find({ where: { qualificationId: In(qualIds) } });
+        const q3 = this.pctQualificationRepository.find({ where: { qualificationId: In(qualIds) } });
+
+        const qualResults = await Promise.all([q1, q2, q3]);
+
+        quals.forEach(async q => {
+          q.leeQualifications = qualResults[0].filter(i => i.qualificationId === q.id);
+          q.lmeQualifications = qualResults[1].filter(i => i.qualificationId === q.id);
+          q.pctQualifications = qualResults[2].filter(i => i.qualificationId === q.id);
+        });
+
+        resolve(quals);
+      })
+    );
+
+    const results = await Promise.all(promises);
+    mp.comments = results[COMMENTS];
 
     mp.locations.forEach(l => {
       const locationId = l.id;
-      l.attributes = attributes.filter(i => i.locationId === locationId);
-      l.methods = methods.filter(i => i.locationId === locationId);
-      l.matsMethods = matsMethods.filter(i => i.locationId === locationId);
-      l.formulas = formulas.filter(i => i.locationId === locationId);
-      l.defaults = defaults.filter(i => i.locationId === locationId);
-      l.spans = spans.filter(i => i.locationId === locationId);
-      l.ductWafs = ductWafs.filter(i => i.locationId === locationId);
-      l.loads = loads.filter(i => i.locationId === locationId);
-      //l.components = components.filter(i => i.locationId === locationId);
-      l.systems = systems.filter(i => i.locationId === locationId);
-      // l.qualifications = qualifications.filter(
-      //   i => i.locationId === locationId,
-      // );
+      
+      if (l.unit) {
+        const unitId = l.unit.id;
 
-      // const monSysIds = l.systems.map(sys => sys.id);
-      // l.systems.forEach(async sys => {
-      //   const monSysId = sys.id;
-      //   sys.fuelFlows = await this.getMonSystemFuelFlow(monSysId, monSysIds);
-      // });
+        l.unit.unitCapacities = results[UNIT_CAPACITIES].filter(i => i.unitId === unitId);
+        l.unit.unitControls = results[UNIT_CONTROLS].filter(i => i.unitId === unitId);
+        l.unit.unitFuels = results[UNIT_FUEL].filter(i => i.unitId === unitId);
+      }
+
+      l.attributes = results[ATTRIBUTES].filter(i => i.locationId === locationId);
+      l.methods = results[METHODS].filter(i => i.locationId === locationId);
+      l.matsMethods = results[MATS_METHODS].filter(i => i.locationId === locationId);
+      l.formulas = results[FORMULAS].filter(i => i.locationId === locationId);
+      l.defaults = results[DEFAULTS].filter(i => i.locationId === locationId);
+      l.spans = results[SPANS].filter(i => i.locationId === locationId);
+      l.ductWafs = results[DUCT_WAFS].filter(i => i.locationId === locationId);
+      l.loads = results[LOADS].filter(i => i.locationId === locationId);
+      l.components = results[COMPONENTS].filter(i => i.locationId === locationId);
+      l.systems = results[SYSTEMS].filter(i => i.locationId === locationId);
+      l.qualifications = results[QUALIFICATIONS].filter(i => i.locationId === locationId);
     });
 
     return this.map.one(mp);

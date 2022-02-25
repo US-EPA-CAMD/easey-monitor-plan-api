@@ -23,8 +23,6 @@ export class UnitCapacityWorkspaceService {
   ): Promise<UnitCapacityDTO[]> {
     const results = await this.repository.getUnitCapacities(locId, unitId);
 
-    console.log(results);
-
     return this.map.many(results);
   }
 

@@ -15,6 +15,9 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { ComponentMap } from '../maps/component.map';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
+import { UnitCapacityMap } from './unit-capacity.map';
+import { UnitControlMap } from './unit-control.map';
+import { UnitFuelMap } from './unit-fuel.map';
 
 @Injectable()
 export class MonitorLocationMap extends BaseMap<
@@ -33,6 +36,9 @@ export class MonitorLocationMap extends BaseMap<
     private readonly componentMap: ComponentMap,
     private readonly systemMap: MonitorSystemMap,
     private readonly qualificationMap: MonitorQualificationMap,
+    private readonly unitCapacityMap: UnitCapacityMap,
+    private readonly unitControlMap: UnitControlMap,
+    private readonly unitFuelMap: UnitFuelMap,
   ) {
     super();
   }
@@ -64,36 +70,43 @@ export class MonitorLocationMap extends BaseMap<
     let stackPipeId: string;
     let unitRecordId: number;
     let nonLoadBasedIndicator: number;
+    let unitCapacities = [];
+    let unitControls = [];
+    let unitFuels = [];
 
     const attributes = entity.attributes
       ? await this.attributeMap.many(entity.attributes)
-      : null;
+      : [];
     const methods = entity.methods
       ? await this.methodMap.many(entity.methods)
-      : null;
+      : [];
     const matsMethods = entity.matsMethods
       ? await this.matsMethodMap.many(entity.matsMethods)
-      : null;
+      : [];
     const formulas = entity.formulas
       ? await this.formulaMap.many(entity.formulas)
-      : null;
+      : [];
     const defaults = entity.defaults
       ? await this.defaultMap.many(entity.defaults)
-      : null;
-    const spans = entity.spans ? await this.spanMap.many(entity.spans) : null;
+      : [];
+    const spans = entity.spans
+      ? await this.spanMap.many(entity.spans)
+      : [];
     const ductWafs = entity.ductWafs
       ? await this.ductWafMap.many(entity.ductWafs)
-      : null;
-    const loads = entity.loads ? await this.loadMap.many(entity.loads) : null;
+      : [];
+    const loads = entity.loads
+      ? await this.loadMap.many(entity.loads)
+      : [];
     const components = entity.components
       ? await this.componentMap.many(entity.components)
-      : null;
+      : [];
     const systems = entity.systems
       ? await this.systemMap.many(entity.systems)
-      : null;
+      : [];
     const qualifications = entity.qualifications
       ? await this.qualificationMap.many(entity.qualifications)
-      : null;
+      : [];
 
     if (entity.unit) {
       type = 'unit';
@@ -104,6 +117,15 @@ export class MonitorLocationMap extends BaseMap<
       stackPipeId = null;
       activeDate = null;
       retireDate = null;
+      unitCapacities = entity.unit.unitCapacities
+        ? await this.unitCapacityMap.many(entity.unit.unitCapacities)
+        : [];
+      unitControls = entity.unit.unitControls
+        ? await this.unitControlMap.many(entity.unit.unitControls)
+        : [];
+      unitFuels = entity.unit.unitFuels
+        ? await this.unitFuelMap.many(entity.unit.unitFuels)
+        : [];
     }
 
     if (entity.stackPipe) {
@@ -129,9 +151,9 @@ export class MonitorLocationMap extends BaseMap<
       retireDate,
       nonLoadBasedIndicator,
       attributes,
-      unitCapacity: null,
-      unitControls: null,
-      unitFuels: null,
+      unitCapacities,
+      unitControls,
+      unitFuels,
       methods,
       matsMethods,
       formulas,

@@ -72,6 +72,14 @@ export class MonitorPlanWorkspaceController {
     return this.service.getEvaluationReport(planId);
   }
 
+  @Get(':planId')
+  @ApiOkResponse({
+    description: 'Exports a monitor plan',
+  })
+  exportMonitorPlan(@Param('planId') planId: string) {
+    return this.service.exportMonitorPlan(planId);
+  }
+
   @Post('import')
   @ApiBearerAuth('Token')
   //@UseGuards(AuthGuard)
