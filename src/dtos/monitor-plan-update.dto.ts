@@ -18,9 +18,11 @@ export class UpdateMonitorPlanDTO {
   version: string;
 
   @ValidateNested()
+  @Type(() => UpdateMonitorPlanCommentDTO)
   comments: UpdateMonitorPlanCommentDTO[];
 
   @ValidateNested()
+  @Type(() => UpdateUnitStackConfigurationDTO)
   unitStackConfiguration: UpdateUnitStackConfigurationDTO[];
 
   @ValidateNested()

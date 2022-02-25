@@ -82,7 +82,7 @@ export class MonitorPlanWorkspaceController {
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
   ): Promise<MonitorPlanDTO> {
-    await this.importChecksService.fileCheckValidation(plan);
+    await this.importChecksService.mpFileChecks(plan);
 
     return;
   }

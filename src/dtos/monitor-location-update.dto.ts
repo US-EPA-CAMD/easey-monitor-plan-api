@@ -17,22 +17,59 @@ import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
+  @ValidateNested()
+  @Type(() => UpdateMonitorAttributeDTO)
   attributes: UpdateMonitorAttributeDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateUnitCapacityDTO)
   unitCapacity: UpdateUnitCapacityDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateUnitControlDTO)
   unitControls: UpdateUnitControlDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateUnitFuelDTO)
   unitFuels: UpdateUnitFuelDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateMonitorMethodDTO)
   methods: UpdateMonitorMethodDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateMatsMethodDTO)
   matsMethods: UpdateMatsMethodDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateMonitorFormulaDTO)
   formulas: UpdateMonitorFormulaDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateMonitorDefaultDTO)
   defaults: UpdateMonitorDefaultDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateMonitorSpanDTO)
   spans: UpdateMonitorSpanDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateDuctWafDTO)
   ductWafs: UpdateDuctWafDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateMonitorLoadDTO)
   loads: UpdateMonitorLoadDTO[];
 
   @ValidateNested()
   @Type(() => UpdateComponentDTO)
   components: UpdateComponentDTO[];
 
+  @ValidateNested()
+  @Type(() => UpdateMonitorSystemDTO)
   systems: UpdateMonitorSystemDTO[];
+
+  @ValidateNested()
+  @Type(() => UpdateMonitorQualificationDTO)
   qualifications: UpdateMonitorQualificationDTO[];
 }
