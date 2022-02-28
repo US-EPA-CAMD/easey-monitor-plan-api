@@ -20,7 +20,7 @@ export const Check5 = new Check(
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
     for (const loc of monPlan.locations) {
-      const monLoc = await getMonLocId(loc, facility);
+      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const system of loc.systems) {
         const Sys = await entityManager.findOne(MonitorSystem, {
@@ -56,7 +56,7 @@ export const Check31 = new Check(
     const invalidTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
 
     for (const loc of monPlan.locations) {
-      const monLoc = await getMonLocId(loc, facility);
+      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const system of loc.systems) {
         if (system.fuelFlows.length > 0) {

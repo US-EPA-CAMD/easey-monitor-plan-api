@@ -19,7 +19,7 @@ export const Check9 = new Check(
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
     for (const loc of monPlan.locations) {
-      const monLoc = await getMonLocId(loc, facility);
+      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const formula of loc.formulas) {
         const Form = await entityManager.findOne(MonitorFormula, {

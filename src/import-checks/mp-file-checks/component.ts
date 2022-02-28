@@ -20,7 +20,7 @@ export const Check6 = new Check(
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
     for (const loc of monPlan.locations) {
-      const monLoc = await getMonLocId(loc, facility);
+      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const component of loc.components) {
         const Comp = await entityManager.findOne(Component, {
@@ -68,7 +68,7 @@ export const Check7 = new Check(
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
     for (const loc of monPlan.locations) {
-      const monLoc = await getMonLocId(loc, facility);
+      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const component of loc.components) {
         const Comp = await entityManager.findOne(Component, {
@@ -104,7 +104,7 @@ export const Check32 = new Check(
     const invalidTypeCodes = ['SO2', 'NOX', 'CO2', 'O2', 'HG', 'HCL', 'HF'];
 
     for (const loc of monPlan.locations) {
-      const monLoc = await getMonLocId(loc, facility);
+      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const component of loc.components) {
         if (
