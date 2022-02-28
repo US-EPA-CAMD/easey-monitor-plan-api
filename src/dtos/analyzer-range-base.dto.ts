@@ -69,7 +69,12 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOEndDate.example,
     name: propertyMetadata.analyzerRangeDTOEndDate.fieldLabels.value,
   })
-  @IsIsoFormat()
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
+  })
+  @ValidateIf(o => o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
