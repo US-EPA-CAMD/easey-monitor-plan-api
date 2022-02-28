@@ -1,7 +1,7 @@
-import * as utils from './utilities/utils';
+import * as utils from '../utilities/utils';
 import * as checks from './facility-unit';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
 
 describe('Facility-Unit Tests', () => {
   describe('Check3', () => {

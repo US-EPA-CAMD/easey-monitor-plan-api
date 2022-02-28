@@ -1,7 +1,7 @@
 import * as checks from './span';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
+import { UpdateMonitorSpanDTO } from '../../dtos/monitor-span-update.dto';
 
 describe('Span Tests', () => {
   describe('Check10', () => {

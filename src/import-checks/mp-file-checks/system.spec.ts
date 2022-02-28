@@ -1,11 +1,11 @@
-import * as utils from './utilities/utils';
+import * as utils from '../utilities/utils';
 import * as checks from './system';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { UpdateMonitorSystemDTO } from '../dtos/monitor-system-update.dto';
-import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
-import { MonitorSystem } from '../entities/monitor-system.entity';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
+import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
+import { UpdateMonitorSystemDTO } from '../../dtos/monitor-system-update.dto';
+import { UpdateSystemFuelFlowDTO } from '../../dtos/system-fuel-flow-update.dto';
+import { MonitorSystem } from '../../entities/monitor-system.entity';
 
 describe('System Tests', () => {
   describe('Check5', () => {

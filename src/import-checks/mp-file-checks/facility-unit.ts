@@ -1,8 +1,8 @@
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { StackPipe } from '../entities/stack-pipe.entity';
-import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
-import { Check, CheckResult } from './utilities/check';
-import { getEntityManager, getFacIdFromOris } from './utilities/utils';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { StackPipe } from '../../entities/stack-pipe.entity';
+import { UnitStackConfiguration } from '../../entities/unit-stack-configuration.entity';
+import { Check, CheckResult } from '../utilities/check';
+import { getEntityManager, getFacIdFromOris } from '../utilities/utils';
 
 export const Check3 = new Check(
   {

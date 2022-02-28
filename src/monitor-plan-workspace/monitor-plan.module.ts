@@ -33,9 +33,11 @@ import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
+import { ImportChecksModule } from 'src/import-checks/import-checks.module';
 
 @Module({
   imports: [
+    ImportChecksModule,
     MonitorPlanCommentWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,
     MonitorLocationWorkspaceModule,

@@ -15,9 +15,6 @@ import {
   ApiBearerAuth,
   ApiSecurity,
 } from '@nestjs/swagger';
-import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
@@ -26,16 +23,20 @@ import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 
-import { unitStackConfigurationValid } from '../checks/runner/check-runner';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ImportChecksService } from '../import-checks/import-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Plans & Configurations')
 export class MonitorPlanWorkspaceController {
   constructor(
-    private readonly service: MonitorPlanWorkspaceService,
-    private readonly ucoService: UserCheckOutService,
-    private readonly logger: Logger,
+    private service: MonitorPlanWorkspaceService,
+    private ucoService: UserCheckOutService,
+    private logger: Logger,
+    private importChecksService: ImportChecksService,
   ) {}
 
   // TODO: this & the GET check-outs interfer with each other as the route is not distinguisheable
@@ -90,13 +91,7 @@ export class MonitorPlanWorkspaceController {
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
   ): Promise<MonitorPlanDTO> {
-    await unitStackConfigurationValid(plan);
-    /*
-    this.logger.error(
-      NotImplementedException,
-      'Monitor Plan Import not supported at this time. Coming Soon!',
-    );
-    */
+    await this.importChecksService.mpFileChecks(plan);
 
     return;
   }

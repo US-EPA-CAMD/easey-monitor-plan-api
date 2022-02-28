@@ -3,6 +3,8 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { MonitorPlanCommentDTO } from './monitor-plan-comment.dto';
 import { UnitStackConfigurationDTO } from './unit-stack-configuration.dto';
 import { MonitorLocationDTO } from './monitor-location.dto';
+import { IsNumber, ValidationArguments } from 'class-validator';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 export class MonitorPlanDTO {
   @ApiProperty({

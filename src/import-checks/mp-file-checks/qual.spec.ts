@@ -1,9 +1,9 @@
 import * as checks from './qual';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
-import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
-import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
+import { UpdateMonitorQualificationDTO } from '../../dtos/monitor-qualification-update.dto';
+import { UpdateLMEQualificationDTO } from '../../dtos/lme-qualification-update.dto';
+import { UpdatePCTQualificationDTO } from '../../dtos/pct-qualification-update.dto';
 
 describe('Span Tests', () => {
   describe('Check11', () => {
