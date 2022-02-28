@@ -29,14 +29,6 @@ export class UpdateMonitorPlanDTO {
   })
   orisCode: number;
 
-  @MaxLength(10, {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLAN-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 10 characters`;
-    },
-  })
-  @ValidateIf(o => o.version !== null)
-  version: string;
-
   @ValidateNested()
   @Type(() => UpdateMonitorPlanCommentDTO)
   comments: UpdateMonitorPlanCommentDTO[];
