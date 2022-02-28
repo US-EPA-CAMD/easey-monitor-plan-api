@@ -260,7 +260,7 @@ export class MonitorSpanBaseDTO {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
-  @ValidateIf(o => o.endHour !== null)
+  @ValidateIf(o => o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
