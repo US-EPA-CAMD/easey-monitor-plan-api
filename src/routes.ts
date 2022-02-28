@@ -68,6 +68,8 @@ import { UnitFuelWorkspaceModule } from './unit-fuel-workspace/unit-fuel.module'
 import { UnitCapacityWorkspaceModule } from './unit-capacity-workspace/unit-capacity.module';
 import { UnitCapacityModule } from './unit-capacity/unit-capacity.module';
 
+import { CheckOutModule } from './check-out/check-out.module';
+
 const routes: Routes = [
   {
     path: '/plans',
@@ -272,6 +274,10 @@ const routes: Routes = [
         module: UnitCapacityWorkspaceModule,
       },
     ],
+  },
+  {
+    path: 'workspace/check-outs/plans',
+    module: CheckOutModule,
   },
 ];
 
