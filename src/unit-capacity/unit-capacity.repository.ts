@@ -17,4 +17,13 @@ export class UnitCapacityRepository extends Repository<UnitCapacity> {
 
     return query.getMany();
   }
+
+  async getUnitCapacitiesByUnitIds(ids: number[]): Promise<UnitCapacity[]> {
+    const query = this.createQueryBuilder('uc')
+      .innerJoinAndSelect('uc.unit', 'u')
+      .innerJoinAndSelect('u.unitBoilerType', 'ubt')
+      .where('u.id IN (:...ids)', { ids });
+
+    return query.getMany();
+  }
 }

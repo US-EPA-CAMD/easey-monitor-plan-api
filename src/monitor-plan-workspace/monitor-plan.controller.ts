@@ -18,9 +18,9 @@ import {
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { MonitorPlanWorkspaceService } from './monitor-plan.service';
-
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
+
+import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
@@ -70,6 +70,15 @@ export class MonitorPlanWorkspaceController {
   })
   getEvaluationReport(@Param('planId') planId: string) {
     return this.service.getEvaluationReport(planId);
+  }
+
+  @Get(':planId/export')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves workspace Monitor Plan record.',
+  })
+  exportMonitorPlan(@Param('planId') planId: string) {
+    return this.service.exportMonitorPlan(planId);
   }
 
   @Post('import')
