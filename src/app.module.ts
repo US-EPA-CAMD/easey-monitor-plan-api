@@ -14,6 +14,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
 import { CountyCodeModule } from './county-code/county-code.module';
+import { CheckOutModule } from './check-out/check-out.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CountyCodeModule } from './county-code/county-code.module';
     MonitorPlanModule,
     MonitorPlanWorkspaceModule,
     CountyCodeModule,
+    CheckOutModule,
   ],
   providers: [],
 })
