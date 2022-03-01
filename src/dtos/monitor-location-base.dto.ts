@@ -1,7 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsInt, ValidationArguments } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator';
+import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
 
 export class MonitorLocationBaseDTO {
   @ApiProperty({
@@ -9,6 +16,14 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOUnitId.example,
     name: propertyMetadata.monitorLocationDTOUnitId.fieldLabels.value,
   })
+  @IsString()
+  @IsNotEmpty()
+  @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
+    },
+  })
+  @ValidateIf(o => o.stackPipeId === null)
   unitId: string;
 
   @ApiProperty({
@@ -16,6 +31,14 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOStackPipeId.example,
     name: propertyMetadata.monitorLocationDTOStackPipeId.fieldLabels.value,
   })
+  @IsString()
+  @IsNotEmpty()
+  @MatchesRegEx('(C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}', {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}`;
+    },
+  })
+  @ValidateIf(o => o.unitId === null)
   stackPipeId: string;
 
   @ApiProperty({
@@ -23,9 +46,10 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOActiveDate.example,
     name: propertyMetadata.monitorLocationDTOActiveDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   activeDate: Date;
@@ -35,9 +59,10 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTORetireDate.example,
     name: propertyMetadata.monitorLocationDTORetireDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   retireDate: Date;
@@ -53,7 +78,7 @@ export class MonitorLocationBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNIT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
     },
   })
   nonLoadBasedIndicator: number;

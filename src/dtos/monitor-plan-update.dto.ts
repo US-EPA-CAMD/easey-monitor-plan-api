@@ -1,11 +1,4 @@
-import {
-  IsInt,
-  IsNumber,
-  MaxLength,
-  ValidateIf,
-  ValidateNested,
-  ValidationArguments,
-} from 'class-validator';
+import { IsInt, ValidateNested, ValidationArguments } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -28,14 +21,6 @@ export class UpdateMonitorPlanDTO {
     },
   })
   orisCode: number;
-
-  @MaxLength(10, {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLAN-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 10 characters`;
-    },
-  })
-  @ValidateIf(o => o.version !== null)
-  version: string;
 
   @ValidateNested()
   @Type(() => UpdateMonitorPlanCommentDTO)
