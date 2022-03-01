@@ -1,11 +1,4 @@
-import {
-  IsInt,
-  IsNumber,
-  MaxLength,
-  ValidateIf,
-  ValidateNested,
-  ValidationArguments,
-} from 'class-validator';
+import { IsInt, ValidateNested, ValidationArguments } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
