@@ -1,0 +1,1059 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    // "$ref": "#/definitions/Welcome",
+    "MonitoringPlan": {
+        "type": "UpdateMonitorPlanDTO",
+        "additionalProperties": false,
+        "properties": {
+            "id": {
+                "type": "string"                        
+              },
+            "facId": {
+                "type": "number"
+              },
+            "orisCode": {
+              "type": "number"
+            },
+            "endReportPeriodId": {
+              "type": "number"
+            },    
+            // "comments": {
+            //     "type": "array",
+            //     "items": {
+            //         "$ref": "#/definitions/Comment"
+            //     }
+            // },
+            // "unitStackConfiguration": {
+            //     "type": "array",
+            //     "items": {
+            //         "$ref": "#/definitions/UnitStackConfiguration"
+            //     }
+            // },
+            // "locations": {
+            //     "type": "array",
+            //     "items": {
+            //         "$ref": "#/definitions/Location"
+            //     }
+            // }
+        },
+        "required": [
+            // "locations",
+            "orisCode",
+            "facId",
+            "id",
+            "endReportPeriodId"
+            
+        ],
+        // "definitions": {
+        //     // "Comment": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "monitoringPlanComment": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "monitoringPlanComment",
+        //     //         "beginDate"
+                    
+        //     //     ],            
+        //     //     "title": "Comment"
+        //     // },
+        //     // "UnitStackConfiguration": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"
+        //     //           },
+        //     //         "unitId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "stackPipeId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",                
+        //     //         "stackPipeId",
+        //     //         "unitId"
+        //     //     ],
+        //     //     "title": "UnitStackConfiguration"
+        //     // },
+        //     // "Location": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "unitId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "stackPipeId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "activeDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "retireDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "nonLoadBasedIndicator": {
+        //     //             "type": "null"
+        //     //         },
+        //     //         "attributes": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/Attribute"
+        //     //             }
+        //     //         },
+        //     //         "unitCapacity": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/UnitCapacity"
+        //     //             }
+        //     //         },
+        //     //         "unitControls": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/UnitControl"
+        //     //             }
+        //     //         },
+        //     //         "unitFuels": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/UnitFuel"
+        //     //             }
+        //     //         },
+        //     //         "methods": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/Method"
+        //     //             }
+        //     //         },
+        //     //         "matsMethods": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/MatsMethod"
+        //     //             }
+        //     //         },
+        //     //         "formulas": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/Formula"
+        //     //             }
+        //     //         },
+        //     //         "defaults": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/Default"
+        //     //             }
+        //     //         },
+        //     //         "spans": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/Span"
+        //     //             }
+        //     //         },
+        //     //         "ductWafs": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/DuctWaf"
+        //     //             }
+        //     //         },
+        //     //         "loads": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/Load"
+        //     //             }
+        //     //         },
+        //     //         "components": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/LocationComponent"
+        //     //             }
+        //     //         },
+        //     //         "systems": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/System"
+        //     //             }
+        //     //         },
+        //     //         "qualifications": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/Qualification"
+        //     //             }
+        //     //         }
+        //     //     },
+        //     //      "required": [
+        //     //         "unitId",
+        //     //         "stackPipeId",
+        //     //         "activeDate",
+        //     //         "nonLoadBasedIndicator",
+        //     //         "id"
+        //     //     ],
+                        
+        //     //     "title": "Location"
+        //     // },
+        //     // "Attribute": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"
+        //     //           },
+        //     //         "ductIndicator": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "bypassIndicator": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "groundElevation": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "stackHeight": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "materialCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "shapeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "crossAreaFlow": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "crossAreaStackExit": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate"
+                    
+        //     //     ],
+        //     //     "title": "Attribute"
+        //     // },
+        //     // "LocationComponent": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "componentId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "componentTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "sampleAcquisitionMethodCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "basisCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "manufacturer": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "modelVersion": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "serialNumber": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "hgConverterIndicator": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "componentId",
+        //     //         "componentTypeCode"
+                    
+        //     //     ],
+        //     //     "title": "LocationComponent"
+        //     // },
+        //     // "Default": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "parameterCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "defaultValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "defaultUnitsOfMeasureCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "defaultPurposeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "fuelCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "operatingConditionCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "defaultSourceCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "groupId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",
+        //     //         "beginHour",  
+        //     //         "defaultValue",
+        //     //         "parameterCode"
+        //     //     ],
+        //     //     "title": "Default"
+        //     // },
+        //     // "DuctWaf": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "wafDeterminationDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "wafBeginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "wafBeginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "wafMethodCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "wafValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "numberOfTestRuns": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "numberOfTraversePointsWaf": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "numberOfTestPorts": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "numberOfTraversePointsRef": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "ductWidth": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "ductDepth": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "wafEndDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "wafEndHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "active": {
+        //     //             "type": "boolean"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "wafBeginDate",
+        //     //         "wafBeginHour",               
+        //     //         "wafValue"
+        //     //     ],
+        //     //     "title": "DuctWaf"
+        //     // },
+        //     // "Formula": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "formulaId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "parameterCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "formulaCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "formulaText": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "formulaId",                
+        //     //         "parameterCode"
+        //     //     ],
+        //     //     "title": "Formula"
+        //     // },
+        //     // "Load": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "maximumLoadValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "maximumLoadUnitsOfMeasureCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "lowerOperationBoundary": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "upperOperationBoundary": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "normalLevelCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "secondLevelCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "secondNormalIndicator": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "loadAnalysisDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",
+        //     //         "beginHour"
+                    
+        //     //     ],
+        //     //     "title": "Load"
+        //     // },
+        //     // "MatsMethod": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "supplementalMATSParameterCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "supplementalMATSMonitoringMethodCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",
+        //     //         "beginHour",
+        //     //         "supplementalMATSMonitoringMethodCode",
+        //     //         "supplementalMATSParameterCode"
+        //     //     ],
+        //     //     "title": "MatsMethod"
+        //     // },
+        //     // "Method": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "parameterCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "monitoringMethodCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "substituteDataCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "bypassApproachCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",
+        //     //         "beginHour",  
+        //     //         "monitoringMethodCode",
+        //     //         "parameterCode"
+        //     //     ],
+        //     //     "title": "Method"
+        //     // },
+        //     // "Qualification": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "qualificationTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "leeQualifications": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/LeeQualification"
+        //     //             }
+        //     //         },
+        //     //         "lmeQualifications": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/LmeQualification"
+        //     //             }
+        //     //         },
+        //     //         "pctQualifications": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/PctQualification"
+        //     //             }
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",                
+        //     //         "qualificationTypeCode"
+        //     //     ],
+        //     //     "title": "Qualification"
+        //     // },
+        //     // "LeeQualification": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "qualificationTestDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "parameterCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "qualificationTestType": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "potentialAnnualMassEmissions": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "applicableEmissionStandard": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "unitsOfStandard": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "percentageOfEmissionStandard": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "parameterCode",           
+        //     //         "qualificationTestDate",
+        //     //         "qualificationTestType"               
+        //     //     ],
+        //     //     "title": "LeeQualification"
+        //     // },
+        //     // "LmeQualification": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "qualificationDataYear": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "operatingHours": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "so2Tons": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "noxTons": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "qualificationDataYear"
+        //     //     ],
+        //     //     "title": "LmeQualification"
+        //     // },
+        //     // "PctQualification": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "year": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "averagePercentValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "yr1QualificationDataYear": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "yr1QualificationDataTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "yr1PercentageValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "yr2QualificationDataYear": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "yr2QualificationDataTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "yr2PercentageValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "yr3QualificationDataYear": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "yr3QualificationDataTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "yr3PercentageValue": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "year"
+        //     //     ],
+        //     //     "title": "PctQualification"
+        //     // },
+        //     // "Span": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "componentTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "spanScaleCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "spanMethodCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "mecValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "mpcValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "mpfValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "spanValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "fullScaleRange": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "spanUnitsOfMeasureCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "defaultHighRange": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "flowSpanValue": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "flowFullScaleRange": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "scaleTransitionPoint": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",
+        //     //         "beginHour",
+        //     //         "componentTypeCode"                
+        //     //     ],
+        //     //     "title": "Span"
+        //     // },
+        //     // "System": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "monitoringSystemId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "systemTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "systemDesignationCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "fuelCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "components": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/SystemComponent"
+        //     //             }
+        //     //         },
+        //     //         "fuelFlows": {
+        //     //             "type": "array",
+        //     //             "items": {
+        //     //                 "$ref": "#/definitions/FuelFlow"
+        //     //             }
+        //     //         }
+        //     //     },
+        //     //     "required": [                
+        //     //         "monitoringSystemId",
+        //     //         "systemTypeCode"
+        //     //     ],
+        //     //     "title": "System"
+        //     // },
+        //     // "SystemComponent": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "componentId": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "componentTypeCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "sampleAcquisitionMethodCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "basisCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "manufacturer": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "modelVersion": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "serialNumber": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "hgConverterIndicator": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "componentId",
+        //     //         "componentTypeCode",
+        //     //         "beginDate",
+        //     //         "beginHour"               
+        //     //     ],
+        //     //     "title": "SystemComponent"
+        //     // },
+        //     // "FuelFlow": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "maximumFuelFlowRate": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "systemFuelFlowUOMCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "maximumFuelFlowRateSourceCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "beginHour": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endHour": {
+        //     //             "type": "number"
+        //     //         }
+        //     //     },
+        //     //     "required": [                
+        //     //         "maximumFuelFlowRate",               
+        //     //         "systemFuelFlowUOMCode"
+        //     //     ],
+        //     //     "title": "FuelFlow"
+        //     // },
+        //     // "UnitCapacity": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "maximumHourlyHeatInputCapacity": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",               
+        //     //         "maximumHourlyHeatInputCapacity"
+        //     //     ],
+        //     //     "title": "UnitCapacity"
+        //     // },
+        //     // "UnitControl": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "parameterCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "controlCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "originalCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "installDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "optimizationDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "seasonalControlsIndicator": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "retireDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "controlCode",                
+        //     //         "parameterCode"
+        //     //     ],
+        //     //     "title": "UnitControl"
+        //     // },
+        //     // "UnitFuel": {
+        //     //     "type": "object",
+        //     //     "additionalProperties": false,
+        //     //     "properties": {
+        //     //         "id": {
+        //     //             "type": "string"                        
+        //     //           },
+        //     //         "fuelCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "indicatorCode": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "ozoneSeasonIndicator": {
+        //     //             "type": "number"
+        //     //         },
+        //     //         "demGCV": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "demSO2": {
+        //     //             "type": "string"
+        //     //         },
+        //     //         "beginDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         },
+        //     //         "endDate": {
+        //     //             "type": "string",
+        //     //             "format": "date"
+        //     //         }
+        //     //     },
+        //     //     "required": [
+        //     //         "beginDate",                
+        //     //         "fuelCode"                
+        //     //     ],
+        //     //     "title": "UnitFuel"
+        //     // }
+            
+        // },
+        "title": "MonitoringPlan"
+    },
+}
