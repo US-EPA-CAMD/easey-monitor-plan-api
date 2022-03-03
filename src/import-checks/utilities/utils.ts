@@ -56,7 +56,7 @@ export const getMonLocId = async (
 export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
   const entityManager = getEntityManager();
 
-  const facResult = await entityManager.findOne(Plant, {
+  const facResult: Plant = await entityManager.findOne(Plant, {
     orisCode: orisCode,
   });
 
@@ -64,8 +64,7 @@ export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
     throw new BadRequestException(
       'No valid facility id exists for specified oris code',
     );
-    return null;
-  } else {
-    return facResult.id;
   }
+
+  return facResult.id;
 };
