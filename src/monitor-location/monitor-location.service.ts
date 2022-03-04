@@ -5,7 +5,6 @@ import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationRepository } from './monitor-location.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationService } from '../unit-stack-configuration/unit-stack-configuration.service';
-import { resourceLimits } from 'worker_threads';
 
 @Injectable()
 export class MonitorLocationService {
@@ -15,13 +14,14 @@ export class MonitorLocationService {
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationService,
     private Logger: Logger,
+    private errorMsg: 'Monitor Location Not Found',
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId: locationId,
       });
     }
@@ -29,10 +29,10 @@ export class MonitorLocationService {
     return this.map.one(result);
   }
 
-  async hasUnit(locationId: string): Promise<Boolean> {
+  async hasUnit(locationId: string): Promise<boolean> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
       return false;
@@ -43,28 +43,30 @@ export class MonitorLocationService {
     return false;
   }
 
-  async getStackPipeId(locationId: string): Promise<String> {
+  async getStackPipeId(locationId: string): Promise<string> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
     if (result.stackPipe) {
       return result.stackPipe.id;
     }
+    return '';
   }
 
   async getUnitId(locationId: string): Promise<String> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
     if (result.unit) {
       return result.unit.id.toString();
     }
+    return '';
   }
 
   async getLocationRelationships(locId: string) {

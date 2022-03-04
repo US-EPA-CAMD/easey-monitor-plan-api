@@ -14,13 +14,14 @@ export class MonitorLocationWorkspaceService {
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
     private Logger: Logger,
+    private errorMsg: 'Monitor Location Not Found',
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
@@ -28,10 +29,10 @@ export class MonitorLocationWorkspaceService {
     return this.map.one(result);
   }
 
-  async hasUnit(locationId: string): Promise<Boolean> {
+  async hasUnit(locationId: string): Promise<boolean> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
       return false;
@@ -42,32 +43,36 @@ export class MonitorLocationWorkspaceService {
     return false;
   }
 
-  async getStackPipeId(locationId: string): Promise<String> {
+  async getStackPipeId(locationId: string): Promise<string> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
-      return;
     }
-    return result.stackPipe.id;
+    if (result.stackPipe) {
+      return result.stackPipe.id;
+    }
+    return '';
   }
 
-  async getUnitId(locationId: string): Promise<String> {
+  async getUnitId(locationId: string): Promise<string> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
-      return;
     }
-    return result.unit.id.toString();
+    if (result.unit) {
+      return result.unit.id.toString();
+    }
+    return '';
   }
 
   async getLocationRelationships(locId: string) {
     const hasUnit = await this.hasUnit(locId);
 
-    let id;
+    let id = '';
 
     if (hasUnit) {
       id = await this.getUnitId(locId);

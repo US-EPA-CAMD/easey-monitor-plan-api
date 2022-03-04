@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { UnitStackConfigurationRepository } from './unit-stack-configuration.repository';
 
 @Injectable()
