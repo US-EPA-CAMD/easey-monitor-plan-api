@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -11,23 +10,21 @@ export class UnitStackConfigurationWorkspaceService {
     private readonly map: UnitStackConfigurationMap,
   ) {}
 
-  async getUnitStackRelationships(location: MonitorLocationDTO) {
+  async getUnitStackRelationships(hasUnit: boolean, id: string) {
     let relationship: any;
 
-    if (location.stackPipeId) {
+    if (hasUnit) {
+      relationship = await this.repository.find({
+        unitId: +id,
+      });
+    } else {
       relationship = await this.repository.find({
         where: {
-          stackPipeId: location.stackPipeId,
+          stackPipeId: id,
         },
         order: {
           unitId: 'ASC',
         },
-      });
-    }
-
-    if (location.unitId) {
-      relationship = await this.repository.find({
-        unitId: +location.unitId,
       });
     }
 

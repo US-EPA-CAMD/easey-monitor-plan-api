@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsNotEmpty, IsString, ValidationArguments } from 'class-validator';
-import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
+import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class UnitStackConfigurationBaseDTO {
   @ApiProperty({
