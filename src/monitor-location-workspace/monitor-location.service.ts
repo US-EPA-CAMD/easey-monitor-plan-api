@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
@@ -29,57 +30,22 @@ export class MonitorLocationWorkspaceService {
     return this.map.one(result);
   }
 
-  async hasUnit(locationId: string): Promise<boolean> {
-    const result = await this.repository.findOne(locationId);
-    if (!result) {
-      this.Logger.error(NotFoundException, this.errorMsg, true, {
-        locationId,
-      });
-      return false;
-    }
-    if (result.unit) {
-      return true;
-    }
-    return false;
-  }
-
-  async getStackPipeId(locationId: string): Promise<string> {
+  async getLocationEntity(locationId: string): Promise<MonitorLocation> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
       this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
-    if (result.stackPipe) {
-      return result.stackPipe.id;
-    }
-    return '';
-  }
-
-  async getUnitId(locationId: string): Promise<string> {
-    const result = await this.repository.findOne(locationId);
-    if (!result) {
-      this.Logger.error(NotFoundException, this.errorMsg, true, {
-        locationId,
-      });
-    }
-    if (result.unit) {
-      return result.unit.id.toString();
-    }
-    return '';
+    return result;
   }
 
   async getLocationRelationships(locId: string) {
-    const hasUnit = await this.hasUnit(locId);
-
-    let id = '';
-
-    if (hasUnit) {
-      id = await this.getUnitId(locId);
-    } else {
-      id = await this.getStackPipeId(locId);
-    }
-
+    const location = await this.getLocationEntity(locId);
+    const hasUnit = location.unit !== null;
+    const id = location.unit
+      ? location.unit.id.toString()
+      : location.stackPipe.id;
     return this.uscServcie.getUnitStackRelationships(hasUnit, id);
   }
 }
