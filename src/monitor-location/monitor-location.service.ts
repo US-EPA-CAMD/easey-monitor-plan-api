@@ -5,6 +5,7 @@ import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationRepository } from './monitor-location.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationService } from '../unit-stack-configuration/unit-stack-configuration.service';
+import { resourceLimits } from 'worker_threads';
 
 @Injectable()
 export class MonitorLocationService {
@@ -20,7 +21,7 @@ export class MonitorLocationService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
         locationId: locationId,
       });
     }
@@ -28,9 +29,55 @@ export class MonitorLocationService {
     return this.map.one(result);
   }
 
-  async getLocationRelationships(locId: string) {
-    const location = await this.getLocation(locId);
+  async hasUnit(locationId: string): Promise<Boolean> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+        locationId,
+      });
+      return false;
+    }
+    if (result.unit) {
+      return true;
+    }
+    return false;
+  }
 
-    return this.uscServcie.getUnitStackRelationships(location);
+  async getStackPipeId(locationId: string): Promise<String> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+        locationId,
+      });
+    }
+    if (result.stackPipe) {
+      return result.stackPipe.id;
+    }
+  }
+
+  async getUnitId(locationId: string): Promise<String> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+        locationId,
+      });
+    }
+    if (result.unit) {
+      return result.unit.id.toString();
+    }
+  }
+
+  async getLocationRelationships(locId: string) {
+    const hasUnit = await this.hasUnit(locId);
+
+    let id;
+
+    if (hasUnit) {
+      id = await this.getUnitId(locId);
+    } else {
+      id = await this.getStackPipeId(locId);
+    }
+
+    return this.uscServcie.getUnitStackRelationships(hasUnit, id);
   }
 }

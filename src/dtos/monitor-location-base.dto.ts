@@ -8,7 +8,7 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
+import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class MonitorLocationBaseDTO {
   @ApiProperty({

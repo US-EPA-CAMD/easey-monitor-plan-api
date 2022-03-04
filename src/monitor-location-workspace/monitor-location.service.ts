@@ -20,7 +20,7 @@ export class MonitorLocationWorkspaceService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true,{
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
         locationId,
       });
     }
@@ -28,9 +28,53 @@ export class MonitorLocationWorkspaceService {
     return this.map.one(result);
   }
 
-  async getLocationRelationships(locId: string) {
-    const location = await this.getLocation(locId);
+  async hasUnit(locationId: string): Promise<Boolean> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+        locationId,
+      });
+      return false;
+    }
+    if (result.unit) {
+      return true;
+    }
+    return false;
+  }
 
-    return this.uscServcie.getUnitStackRelationships(location);
+  async getStackPipeId(locationId: string): Promise<String> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+        locationId,
+      });
+      return;
+    }
+    return result.stackPipe.id;
+  }
+
+  async getUnitId(locationId: string): Promise<String> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true, {
+        locationId,
+      });
+      return;
+    }
+    return result.unit.id.toString();
+  }
+
+  async getLocationRelationships(locId: string) {
+    const hasUnit = await this.hasUnit(locId);
+
+    let id;
+
+    if (hasUnit) {
+      id = await this.getUnitId(locId);
+    } else {
+      id = await this.getStackPipeId(locId);
+    }
+
+    return this.uscServcie.getUnitStackRelationships(hasUnit, id);
   }
 }
