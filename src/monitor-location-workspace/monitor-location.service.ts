@@ -9,13 +9,13 @@ import { MonitorLocationWorkspaceRepository } from './monitor-location.repositor
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
+  readonly errorMsg: 'Monitor Location Not Found';
   constructor(
     @InjectRepository(MonitorLocationWorkspaceRepository)
     readonly repository: MonitorLocationWorkspaceRepository,
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
     private Logger: Logger,
-    private readonly errorMsg: 'Monitor Location Not Found',
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
