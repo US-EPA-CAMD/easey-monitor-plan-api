@@ -29,7 +29,6 @@ import { PCTQualificationRepository } from '../pct-qualification/pct-qualificati
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
-import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class MonitorPlanService {
