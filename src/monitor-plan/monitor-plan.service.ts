@@ -82,12 +82,11 @@ export class MonitorPlanService {
   ) {}
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
-    console.log('I RUN');
     const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
     //TODO: error handling here in case no plans returned
 
     if (plans.length === 0) {
-      return;
+      return [];
     }
 
     const locations = await this.locationRepository.getMonitorLocationsByFacId(

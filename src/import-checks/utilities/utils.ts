@@ -61,9 +61,7 @@ export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
   });
 
   if (facResult === undefined) {
-    throw new BadRequestException(
-      'No valid facility id exists for specified oris code',
-    );
+    return null;
   }
 
   return facResult.id;
