@@ -14,7 +14,7 @@ export class MonitorLocationWorkspaceService {
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
     private Logger: Logger,
-    private errorMsg: 'Monitor Location Not Found',
+    private readonly errorMsg: 'Monitor Location Not Found',
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {

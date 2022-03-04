@@ -14,7 +14,7 @@ export class MonitorLocationService {
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationService,
     private Logger: Logger,
-    private errorMsg: 'Monitor Location Not Found',
+    private readonly errorMsg: 'Monitor Location Not Found',
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
@@ -56,7 +56,7 @@ export class MonitorLocationService {
     return '';
   }
 
-  async getUnitId(locationId: string): Promise<String> {
+  async getUnitId(locationId: string): Promise<string> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
       this.Logger.error(NotFoundException, this.errorMsg, true, {
@@ -72,7 +72,7 @@ export class MonitorLocationService {
   async getLocationRelationships(locId: string) {
     const hasUnit = await this.hasUnit(locId);
 
-    let id;
+    let id = '';
 
     if (hasUnit) {
       id = await this.getUnitId(locId);

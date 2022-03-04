@@ -10,7 +10,7 @@ export class UnitStackConfigurationService {
     private readonly map: UnitStackConfigurationMap,
   ) {}
 
-  async getUnitStackRelationships(hasUnit: Boolean, id: string) {
+  async getUnitStackRelationships(hasUnit: boolean, id: string) {
     let relationship: any;
 
     if (hasUnit) {
