@@ -1,5 +1,11 @@
-import { IsNotEmpty, ValidateIf } from 'class-validator';
+import {
+  IsNotEmpty,
+  ValidateIf,
+  IsInt,
+  ValidationArguments,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 export class MonitorLoadBaseDTO {
@@ -59,6 +65,12 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOSecondNormalIndicator.example,
     name:
       propertyMetadata.monitorLoadDTOSecondNormalIndicator.fieldLabels.value,
+  })
+  @IsInt()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [COMPONENT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+    },
   })
   secondNormalIndicator: number;
 
