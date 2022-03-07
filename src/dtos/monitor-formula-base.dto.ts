@@ -60,11 +60,6 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaText.example,
     name: propertyMetadata.monitorFormulaDTOFormulaText.fieldLabels.value,
   })
-  @MinLength(1, {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must exceed 1 character`;
-    },
-  })
   @MaxLength(200, {
     message: (args: ValidationArguments) => {
       return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 4000 characters`;
