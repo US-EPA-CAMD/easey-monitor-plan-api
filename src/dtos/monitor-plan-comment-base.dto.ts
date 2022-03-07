@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
-  IsInt,
   IsNotEmpty,
   MaxLength,
   MinLength,
