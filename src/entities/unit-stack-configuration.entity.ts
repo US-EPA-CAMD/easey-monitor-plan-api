@@ -7,6 +7,7 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 import { StackPipe } from './stack-pipe.entity';
+import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmps.unit_stack_configuration' })
 export class UnitStackConfiguration extends BaseEntity {
@@ -41,4 +42,12 @@ export class UnitStackConfiguration extends BaseEntity {
   )
   @JoinColumn({ name: 'stack_pipe_id' })
   stackPipe: StackPipe;
+
+  @OneToOne(
+    () => Unit,
+    unit => unit.unitStackConfig,
+    { eager: true },
+  )
+  @JoinColumn({ name: 'stack_pipe_id' })
+  unit: Unit;
 }

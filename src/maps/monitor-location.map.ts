@@ -89,15 +89,11 @@ export class MonitorLocationMap extends BaseMap<
     const defaults = entity.defaults
       ? await this.defaultMap.many(entity.defaults)
       : [];
-    const spans = entity.spans
-      ? await this.spanMap.many(entity.spans)
-      : [];
+    const spans = entity.spans ? await this.spanMap.many(entity.spans) : [];
     const ductWafs = entity.ductWafs
       ? await this.ductWafMap.many(entity.ductWafs)
       : [];
-    const loads = entity.loads
-      ? await this.loadMap.many(entity.loads)
-      : [];
+    const loads = entity.loads ? await this.loadMap.many(entity.loads) : [];
     const components = entity.components
       ? await this.componentMap.many(entity.components)
       : [];

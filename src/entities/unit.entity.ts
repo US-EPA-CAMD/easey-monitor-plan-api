@@ -16,6 +16,7 @@ import { UnitFuel } from './unit-fuel.entity';
 import { UnitControl } from './unit-control.entity';
 import { UnitCapacity } from './unit-capacity.entity';
 import { UnitBoilerType } from './unit-boiler-type.entity';
+import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 
 @Entity({ name: 'camd.unit' })
 export class Unit extends BaseEntity {
@@ -68,6 +69,12 @@ export class Unit extends BaseEntity {
     location => location.unit,
   )
   location: MonitorLocation;
+
+  @OneToOne(
+    () => UnitStackConfiguration,
+    unitStackConfig => unitStackConfig.stackPipe,
+  )
+  unitStackConfig: UnitStackConfiguration;
 
   @OneToOne(
     () => UnitBoilerType,

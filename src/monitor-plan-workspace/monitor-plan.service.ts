@@ -88,7 +88,11 @@ export class MonitorPlanWorkspaceService {
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
     const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
-    //TODO: error handling here in case no plans returned
+
+    if (plans.length === 0) {
+      return [];
+    }
+
     const locations = await this.locationRepository.getMonitorLocationsByFacId(
       plans[0].facId,
     );
