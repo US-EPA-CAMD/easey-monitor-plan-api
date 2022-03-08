@@ -18,13 +18,13 @@ export const Check3 = new Check(
     const facilityId = await getFacIdFromOris(monPlan.orisCode);
     for (const entry of monPlan.unitStackConfiguration) {
       const unitResult = await entityManager.findOne(StackPipe, {
-        id: entry.stackPipeId,
+        name: entry.stackName,
         facId: facilityId,
       });
       if (unitResult === undefined) {
         result.addError(
           'FATAL-A',
-          `Each stack or pipe must be associated with at least one unit. Stack/pipe ${entry.stackPipeId} is not associated with any units.`,
+          `Each stack or pipe must be associated with at least one unit. StackName ${entry.stackPipeId} is not associated with any units.`,
         );
       }
     }
@@ -71,42 +71,42 @@ export const Check8 = new Check(
     const result = new CheckResult('IMPORT8');
 
     const monitorLocationDataStackPipeIds = new Set<string>();
-    const monitorLocationDataUnitIds = new Set<number>();
+    const monitorLocationDataUnitIds = new Set<string>();
     monPlan.locations.forEach(entry => {
       if (!(entry.stackPipeId === null || entry.stackPipeId === undefined)) {
         monitorLocationDataStackPipeIds.add(entry.stackPipeId);
       }
 
       if (!(entry.unitId === null || entry.unitId === undefined)) {
-        monitorLocationDataUnitIds.add(+entry.unitId);
+        monitorLocationDataUnitIds.add(entry.unitId);
       }
     });
 
-    const stackPipeIdToUnitId = new Map<string, number>();
+    const stackPipeIdToUnitId = new Map<string, string>();
     monPlan.unitStackConfiguration.forEach(entry => {
       if (
-        stackPipeIdToUnitId.has(entry.stackPipeId) &&
-        stackPipeIdToUnitId.get(entry.stackPipeId) === entry.unitId
+        stackPipeIdToUnitId.has(entry.stackName) &&
+        stackPipeIdToUnitId.get(entry.stackName) === entry.unitName
       ) {
         result.addError(
           'CRIT1-A',
-          `Unit stack configuration records must be unique combinations of StackPipeID and UnitID. The configuration for StackPipeID ${entry.stackPipeId} and Unit ${entry.unitId} has multiple instances.`,
+          `Unit stack configuration records must be unique combinations of StackPipeID and UnitID. The configuration for StackName ${entry.stackName} and Unit ${entry.unitName} has multiple instances.`,
         );
       } else {
-        stackPipeIdToUnitId.set(entry.stackPipeId, entry.unitId);
+        stackPipeIdToUnitId.set(entry.stackName, entry.unitName);
       }
 
-      if (!monitorLocationDataStackPipeIds.has(entry.stackPipeId)) {
+      if (!monitorLocationDataStackPipeIds.has(entry.stackName)) {
         result.addError(
           'CRIT1-B',
-          `Each Stack/Pipe in a unit stack configuration record must be linked to stack/pipe records that are also present in the file. StackPipeID ${entry.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
+          `Each Stack/Pipe in a unit stack configuration record must be linked to stack/pipe records that are also present in the file. StackName ${entry.stackName} was not associated with a Stack/Pipe record in the file.`,
         );
       }
 
-      if (!monitorLocationDataUnitIds.has(entry.unitId)) {
+      if (!monitorLocationDataUnitIds.has(entry.unitName)) {
         result.addError(
           'CRIT1-B',
-          `Each Unit in a unit stack configuration record must be linked to unit records that are also present in the file. Unit ${entry.unitId} was not associated with a Unit record in the file.`,
+          `Each Unit in a unit stack configuration record must be linked to unit records that are also present in the file. Unit ${entry.unitName} was not associated with a Unit record in the file.`,
         );
       }
     });

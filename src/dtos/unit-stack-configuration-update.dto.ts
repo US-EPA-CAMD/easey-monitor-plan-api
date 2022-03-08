@@ -1,3 +1,3 @@
-import { UnitStackConfigurationBaseDTO } from './unit-stack-configuration-base.dto';
+import { UnitStackConfigurationDTO } from './unit-stack-configuration.dto';
 
-export class UpdateUnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {}
+export class UpdateUnitStackConfigurationDTO extends UnitStackConfigurationDTO {}
