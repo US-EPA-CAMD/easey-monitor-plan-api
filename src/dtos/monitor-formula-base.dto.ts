@@ -20,7 +20,7 @@ export class MonitorFormulaBaseDTO {
   })
   @MatchesRegEx('[A-Z0-9-]{1,3}', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Z0-9-]{1,3}`;
+      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Z0-9-]{1,3}`;
     },
   })
   formulaId: string;
@@ -34,7 +34,7 @@ export class MonitorFormulaBaseDTO {
     'SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_formula_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [DEFAULT-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [FORMULA-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
       },
     },
   )
@@ -49,7 +49,7 @@ export class MonitorFormulaBaseDTO {
     'SELECT distinct formula_code as "value" FROM camdecmpsmd.vw_formula_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [DEFAULT-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [FORMULA-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
       },
     },
   )
@@ -62,7 +62,7 @@ export class MonitorFormulaBaseDTO {
   })
   @MaxLength(200, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 4000 characters`;
+      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 4000 characters`;
     },
   })
   formulaText: string;
@@ -75,7 +75,7 @@ export class MonitorFormulaBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   beginDate: Date;
@@ -89,7 +89,7 @@ export class MonitorFormulaBaseDTO {
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
     },
   })
   beginHour: number;
@@ -102,7 +102,7 @@ export class MonitorFormulaBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   @ValidateIf(o => o.endHour !== null)
@@ -117,7 +117,7 @@ export class MonitorFormulaBaseDTO {
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
     },
   })
   @ValidateIf(o => o.endDate !== null)
