@@ -2,7 +2,6 @@ import {
   IsInt,
   IsNotEmpty,
   MaxLength,
-  MinLength,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
