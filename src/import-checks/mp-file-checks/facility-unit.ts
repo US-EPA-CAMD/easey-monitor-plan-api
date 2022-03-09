@@ -1,3 +1,4 @@
+import { Unit } from '../../entities/unit.entity';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { StackPipe } from '../../entities/stack-pipe.entity';
 import { UnitStackConfiguration } from '../../entities/unit-stack-configuration.entity';
@@ -24,7 +25,7 @@ export const Check3 = new Check(
       if (unitResult === undefined) {
         result.addError(
           'FATAL-A',
-          `Each stack or pipe must be associated with at least one unit. StackName ${entry.stackPipeId} is not associated with any units.`,
+          `Each stack or pipe must be associated with at least one unit. StackName ${entry.stackName} is not associated with any units.`,
         );
       }
     }
@@ -44,15 +45,35 @@ export const Check4 = new Check(
 
     const result = new CheckResult('IMPORT4');
 
+    const facility = await getFacIdFromOris(monPlan.orisCode);
+
     for (const entry of monPlan.unitStackConfiguration) {
+      const unit = await entityManager.findOne(Unit, {
+        name: entry.unitName,
+        facId: facility,
+      });
+
+      if (unit === undefined) {
+        result.addError(
+          'FATAL-A',
+          `Each unit must be associated with at least one unit record. Unit Name ${entry.unitName} is not associated with any unit record`,
+        );
+        continue;
+      }
+
+      const stackPipe = await entityManager.findOne(StackPipe, {
+        name: entry.stackName,
+        facId: facility,
+      });
+
       const unitResult = await entityManager.findOne(UnitStackConfiguration, {
-        unitId: entry.unitId,
-        stackPipeId: entry.stackPipeId,
+        unitId: unit.id,
+        stackPipeId: stackPipe.id,
       });
       if (unitResult === undefined) {
         result.addError(
           'FATAL-A',
-          `Each unit must be associated with at least one stack pipe. Unit ${entry.unitId} is not associated with any stack pipes.`,
+          `Each unit must be associated with at least one stack pipe. Unit ${entry.unitName} is not associated with any stack pipes.`,
         );
       }
     }
