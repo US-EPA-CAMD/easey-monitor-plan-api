@@ -29,20 +29,19 @@ export class MonitorPlanComment extends BaseEntity {
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'end_date' })
+  @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })
+  @Column({ type: 'varchar', length: 8, name: 'userid' })
   userId: string;
 
   @Column({
     type: 'timestamp without time zone',
-    nullable: true,
     name: 'add_date',
   })
   addDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
 
   @ManyToOne(

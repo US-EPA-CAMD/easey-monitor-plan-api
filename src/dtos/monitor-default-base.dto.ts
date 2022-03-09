@@ -9,7 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsInDbValues } from 'src/import-checks/pipes/is-in-db-values.pipe';
+import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
 export class MonitorDefaultBaseDTO {
   @ApiProperty({
