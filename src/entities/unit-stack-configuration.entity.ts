@@ -48,6 +48,6 @@ export class UnitStackConfiguration extends BaseEntity {
     unit => unit.unitStackConfig,
     { eager: true },
   )
-  @JoinColumn({ name: 'stack_pipe_id' })
+  @JoinColumn({ name: 'unit_id' })
   unit: Unit;
 }
