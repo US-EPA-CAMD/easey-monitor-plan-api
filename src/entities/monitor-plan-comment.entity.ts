@@ -35,7 +35,11 @@ export class MonitorPlanComment extends BaseEntity {
   @Column({ type: 'varchar', length: 8, name: 'userid' })
   userId: string;
 
-  @Column({ type: 'timestamp without time zone', name: 'add_date' })
+  @Column({
+    type: 'timestamp without time zone',
+    nullable: true,
+    name: 'add_date',
+  })
   addDate: Date;
 
   @Column({ type: 'date', name: 'update_date' })
