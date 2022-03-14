@@ -17,7 +17,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaId.example,
     name: propertyMetadata.monitorFormulaDTOFormulaId.fieldLabels.value,
   })
-  @MatchesRegEx('[A-Z0-9-]{1,3}', {
+  @MatchesRegEx('^[A-Z0-9-]{1,3}$', {
     message: (args: ValidationArguments) => {
       return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Z0-9-]{1,3}`;
     },
