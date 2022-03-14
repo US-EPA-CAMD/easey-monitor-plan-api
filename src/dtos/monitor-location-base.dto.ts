@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsString,
+  MaxLength,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -17,6 +18,7 @@ export class MonitorLocationBaseDTO {
     name: propertyMetadata.monitorLocationDTOUnitId.fieldLabels.value,
   })
   @IsString()
+  @MaxLength(6)
   @IsNotEmpty()
   @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
     message: (args: ValidationArguments) => {
