@@ -43,7 +43,7 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
   active: boolean;
 
   @IsString()
-  @MatchesRegEx('(C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}', {
+  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}$', {
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}`;
     },
@@ -51,7 +51,7 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
   stackName: string;
 
   @IsString()
-  @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
+  @MatchesRegEx('^[A-z0-9 -*#]{1,6}$', {
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
     },

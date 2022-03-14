@@ -34,7 +34,7 @@ export class MonitorLoadBaseDTO {
         .value,
   })
   @IsInDbValues(
-    'SELECT distinct unit_of_measure_code from camdecmpsmd.vw_load_master_data_relationships',
+    'SELECT distinct unit_of_measure_code AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [LOAD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
@@ -79,7 +79,7 @@ export class MonitorLoadBaseDTO {
     name: propertyMetadata.monitorLoadDTONormalLevelCode.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct normal_level from camdecmpsmd.vw_load_master_data_relationships',
+    'SELECT distinct normal_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [LOAD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
@@ -94,7 +94,7 @@ export class MonitorLoadBaseDTO {
     name: propertyMetadata.monitorLoadDTOSecondLevelCode.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct second_level from camdecmpsmd.vw_load_master_data_relationships',
+    'SELECT distinct second_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [LOAD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
