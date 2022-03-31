@@ -36,7 +36,7 @@ export class MonitorDefaultBaseDTO {
     { maxDecimalPlaces: 4 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} is allowed only four decimal place`;
       },
     },
   )
