@@ -178,7 +178,7 @@ export class MonitorDefaultBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   @ValidateIf(o => o.endHour !== null)
@@ -193,7 +193,7 @@ export class MonitorDefaultBaseDTO {
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
     },
   })
   @ValidateIf(o => o.endDate !== null)
