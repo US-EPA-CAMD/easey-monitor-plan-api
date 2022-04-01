@@ -23,7 +23,7 @@ export class MatsMethodBaseDTO {
     'SELECT distinct parameter_code FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [MATSMETHOD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
       },
     },
   )
@@ -44,7 +44,7 @@ export class MatsMethodBaseDTO {
     'SELECT distinct method_code FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [MATSMETHOD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
       },
     },
   )
@@ -57,7 +57,7 @@ export class MatsMethodBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   beginDate: Date;
@@ -70,7 +70,7 @@ export class MatsMethodBaseDTO {
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be within the range of 0 and 23`;
     },
   })
   beginHour: number;
@@ -83,7 +83,7 @@ export class MatsMethodBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   @ValidateIf(o => o.endHour !== null)
@@ -97,7 +97,7 @@ export class MatsMethodBaseDTO {
   @IsNotEmpty()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be within the range of 0 and 23`;
     },
   })
   @ValidateIf(o => o.endDate !== null)
