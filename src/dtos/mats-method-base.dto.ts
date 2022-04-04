@@ -20,7 +20,7 @@ export class MatsMethodBaseDTO {
         .value,
   })
   @IsInDbValues(
-    'SELECT distinct parameter_code FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
+    'SELECT distinct parameter_code as "value"  FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
@@ -41,7 +41,7 @@ export class MatsMethodBaseDTO {
         .fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct method_code FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
+    'SELECT distinct method_code as "value" FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;

@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsNumber, ValidationArguments } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 export class LMEQualificationBaseDTO {
   @ApiProperty({
@@ -10,6 +13,12 @@ export class LMEQualificationBaseDTO {
       propertyMetadata.lMEQualificationDTOQualificationDataYear.fieldLabels
         .value,
   })
+  @MatchesRegEx('^(19|20)([0-9]{2})$', {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record
+       ${args.property} is not formatted properly`;
+    },
+  })
   qualificationDataYear: number;
 
   @ApiProperty({
@@ -17,6 +26,7 @@ export class LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOOperatingHours.example,
     name: propertyMetadata.lMEQualificationDTOOperatingHours.fieldLabels.value,
   })
+  @IsInt()
   operatingHours: number;
 
   @ApiProperty({
@@ -24,12 +34,42 @@ export class LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOSo2Tons.example,
     name: propertyMetadata.lMEQualificationDTOSo2Tons.fieldLabels.value,
   })
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record 
+        ${args.property} is allowed only one decimal place`;
+      },
+    },
+  )
+  @IsInRange(-9999.9, 9999.9, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [QUALLME-FATAL-A] The value for 
+      ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
+    },
+  })
   so2Tons: number;
 
   @ApiProperty({
     description: propertyMetadata.lMEQualificationDTONoxTons.description,
     example: propertyMetadata.lMEQualificationDTONoxTons.example,
     name: propertyMetadata.lMEQualificationDTONoxTons.fieldLabels.value,
+  })
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record 
+        ${args.property} is allowed only one decimal place`;
+      },
+    },
+  )
+  @IsInRange(-9999.9, 9999.9, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [QUALLME-FATAL-A] The value for 
+      ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
+    },
   })
   noxTons: number;
 }
