@@ -19,8 +19,7 @@ export class MonitorSystemBaseDTO {
   })
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in theMonitoring System record
-       ${args.property} is not formatted properly`;
+      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in theMonitoring System record ${args.property} is not formatted properly`;
     },
   })
   monitoringSystemId: string;
@@ -34,8 +33,7 @@ export class MonitorSystemBaseDTO {
     `SELECT sys_type_cd as "value" FROM camdecmpsmd.system_type_code`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record 
-        ${args.property} is invalid`;
+        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
       },
     },
   )
@@ -52,8 +50,7 @@ export class MonitorSystemBaseDTO {
     `SELECT sys_designation_cd as "value" FROM camdecmpsmd.system_designation_code`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record 
-        ${args.property} is invalid`;
+        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
       },
     },
   )
@@ -68,8 +65,7 @@ export class MonitorSystemBaseDTO {
     `SELECT fuel_cd as "value" FROM camdecmpsmd.fuel_code where fuel_group_cd not in ('OTHER','COAL')`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record 
-        ${args.property} is invalid`;
+        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
       },
     },
   )

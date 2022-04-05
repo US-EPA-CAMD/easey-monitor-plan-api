@@ -18,8 +18,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct parameter_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record 
-        ${args.property} is invalid`;
+        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
       },
     },
   )
@@ -36,8 +35,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct method_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record 
-        ${args.property} is invalid`;
+        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
       },
     },
   )
@@ -53,8 +51,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct substitute_data_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record 
-        ${args.property} is invalid`;
+        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
       },
     },
   )
@@ -70,8 +67,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct bypass_approach_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record 
-        ${args.property} is invalid`;
+        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
       },
     },
   )
@@ -84,8 +80,7 @@ export class MonitorMethodBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record 
-      ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   beginDate: Date;
@@ -98,8 +93,7 @@ export class MonitorMethodBaseDTO {
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record 
-      ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be within the range of 0 and 23`;
     },
   })
   beginHour: number;
@@ -112,8 +106,7 @@ export class MonitorMethodBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record 
-      ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   @ValidateIf(o => o.endHour !== null)
@@ -128,8 +121,7 @@ export class MonitorMethodBaseDTO {
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record 
-      ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be within the range of 0 and 23`;
     },
   })
   @ValidateIf(o => o.endDate !== null)
