@@ -19,7 +19,7 @@ export class MonitorSystemBaseDTO {
   })
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in theMonitoring System record ${args.property} is not formatted properly`;
+      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} is not formatted properly`;
     },
   })
   monitoringSystemId: string;
