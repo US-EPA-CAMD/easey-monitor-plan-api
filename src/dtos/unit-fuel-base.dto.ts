@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInt, ValidationArguments } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsInDbValues } from 'src/import-checks/pipes/is-in-db-values.pipe';
+import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
 export class UnitFuelBaseDTO {
   @ApiProperty({
@@ -14,7 +14,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct fuel_type_cd FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [UNITFUEL-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
       },
     },
   )
@@ -29,7 +29,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct fuel_indicator_cd FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [UNITFUEL-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
       },
     },
   )
@@ -43,8 +43,7 @@ export class UnitFuelBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value}  in the Unit Fuel record 
-      ${args.property} must be within the range of 0 and 1`;
+      return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value}  in the Unit Fuel record ${args.property} must be within the range of 0 and 1`;
     },
   })
   ozoneSeasonIndicator: number;
@@ -58,7 +57,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct dem_gcv FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [UNITFUEL-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
       },
     },
   )
@@ -73,7 +72,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct dem_so2 FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [UNITFUEL-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
       },
     },
   )
@@ -86,7 +85,7 @@ export class UnitFuelBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITFUEL-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value} in the Unit Fuel record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   beginDate: Date;
