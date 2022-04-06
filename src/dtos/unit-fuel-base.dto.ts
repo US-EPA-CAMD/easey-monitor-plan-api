@@ -11,7 +11,7 @@ export class UnitFuelBaseDTO {
     name: propertyMetadata.unitFuelDTOFuelCode.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct fuel_type_cd FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
+    'SELECT distinct fuel_type_cd as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
@@ -26,7 +26,7 @@ export class UnitFuelBaseDTO {
     name: propertyMetadata.unitFuelDTOIndicatorCode.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct fuel_indicator_cd FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
+    'SELECT distinct fuel_indicator_cd as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
@@ -54,7 +54,7 @@ export class UnitFuelBaseDTO {
     name: propertyMetadata.unitFuelDTODemGCV.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct dem_gcv FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
+    'SELECT distinct dem_gcv as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
@@ -69,7 +69,7 @@ export class UnitFuelBaseDTO {
     name: propertyMetadata.unitFuelDTODemSO2.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct dem_so2 FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
+    'SELECT distinct dem_so2 as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITFUEL-FATAL-B] The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
