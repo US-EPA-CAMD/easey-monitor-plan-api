@@ -11,7 +11,7 @@ export class UnitControlBaseDTO {
     name: propertyMetadata.controlEquipParamCode.fieldLabels.value,
   })
   @IsInDbValues(
-    `SELECT distinct controlequipparamcode  as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
+    `SELECT distinct controlequipparamcode as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITCONTROL-FATAL-B] The value for ${args.value} in the Unit Control record ${args.property} is invalid`;
@@ -26,7 +26,7 @@ export class UnitControlBaseDTO {
     name: propertyMetadata.unitControlDTOControlCode.fieldLabels.value,
   })
   @IsInDbValues(
-    `SELECT distinct control_code  as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
+    `SELECT distinct control_code as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITCONTROL-FATAL-B] The value for ${args.value} in the Unit Control record ${args.property} is invalid`;

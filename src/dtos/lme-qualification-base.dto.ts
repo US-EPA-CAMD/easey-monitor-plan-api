@@ -15,8 +15,7 @@ export class LMEQualificationBaseDTO {
   })
   @MatchesRegEx('^(19|20)([0-9]{2})$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record
-       ${args.property} is not formatted properly`;
+      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} is not formatted properly`;
     },
   })
   qualificationDataYear: number;
@@ -27,6 +26,14 @@ export class LMEQualificationBaseDTO {
     name: propertyMetadata.lMEQualificationDTOOperatingHours.fieldLabels.value,
   })
   @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 0 },
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} must be numeric, no decimals`;
+      },
+    },
+  )
   operatingHours: number;
 
   @ApiProperty({
@@ -38,15 +45,13 @@ export class LMEQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record 
-        ${args.property} is allowed only one decimal place`;
+        return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLME-FATAL-A] The value for 
-      ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
     },
   })
   so2Tons: number;
@@ -60,15 +65,13 @@ export class LMEQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record 
-        ${args.property} is allowed only one decimal place`;
+        return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLME-FATAL-A] The value for 
-      ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
     },
   })
   noxTons: number;
