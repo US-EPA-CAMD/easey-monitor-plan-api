@@ -7,7 +7,7 @@ export class MonitorPlanParamsDTO extends PaginationDTO {
   @ApiProperty({
     description: propertyMetadata.facilityId.description,
     example: propertyMetadata.facilityId.example,
-    name: propertyMetadata.facilityId.fieldLabels.value
+    name: propertyMetadata.facilityId.fieldLabels.value,
   })
   @IsOptional()
   @ApiPropertyOptional()
@@ -17,7 +17,7 @@ export class MonitorPlanParamsDTO extends PaginationDTO {
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOOrisCode.description,
     example: propertyMetadata.monitorPlanDTOOrisCode.example,
-    name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value
+    name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
   })
   orisCode: number;
 
