@@ -45,7 +45,7 @@ export class LEEQualificationBaseDTO {
         .value,
   })
   @IsInDbValues(
-    'SELECT distinct qual_lee_test_type_code as "value" FROM camdecmpsmd.vw_quallee_master_data_relationships',
+    'SELECT distinct qual_lee_test_type_cd as "value" FROM camdecmpsmd.vw_quallee_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [QUALLEE-FATAL-B] The value for ${args.value} in the Qualification LEE record ${args.property} is invalid`;
