@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, ValidationArguments } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { ValidationArguments } from 'class-validator';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostYears } from '../import-checks/pipes/is-at-most-years.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { IsAtMostDigitsWithDecimals } from '../import-checks/pipes/is-at-most-digits-with-decimal.pipe';
@@ -26,9 +27,17 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOAveragePercentValue.fieldLabels.value,
   })
-  @IsAtMostDigitsWithDecimals(5, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+      },
+    },
+  )
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be 5 digits or less including decimal points`;
+      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
     },
   })
   averagePercentValue: number;
@@ -63,7 +72,7 @@ export class PCTQualificationBaseDTO {
     'SELECT distinct qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
+        return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
       },
     },
   )
@@ -76,9 +85,17 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOYr1PercentageValue.fieldLabels.value,
   })
-  @IsAtMostDigitsWithDecimals(5, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+      },
+    },
+  )
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be 5 digits or less including decimal points`;
+      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
     },
   })
   yr1PercentageValue: number;
@@ -113,7 +130,7 @@ export class PCTQualificationBaseDTO {
     'SELECT distinct qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
+        return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
       },
     },
   )
@@ -126,9 +143,17 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOYr2PercentageValue.fieldLabels.value,
   })
-  @IsAtMostDigitsWithDecimals(5, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+      },
+    },
+  )
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be 5 digits or less including decimal points`;
+      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
     },
   })
   yr2PercentageValue: number;
@@ -163,7 +188,7 @@ export class PCTQualificationBaseDTO {
     'SELECT distinct qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
+        return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
       },
     },
   )
@@ -176,9 +201,17 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOYr3PercentageValue.fieldLabels.value,
   })
-  @IsAtMostDigitsWithDecimals(5, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+      },
+    },
+  )
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be 5 digits or less including decimal points`;
+      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
     },
   })
   yr3PercentageValue: number;
