@@ -6,15 +6,7 @@ import { UpdateLMEQualificationDTO } from './lme-qualification-update.dto';
 import { UpdatePCTQualificationDTO } from './pct-qualification-update.dto';
 
 export class UpdateMonitorQualificationDTO extends MonitorQualificationBaseDTO {
-  @ValidateNested()
-  @Type(() => UpdateLEEQualificationDTO)
   leeQualifications: UpdateLEEQualificationDTO[];
-
-  @ValidateNested()
-  @Type(() => UpdateLMEQualificationDTO)
   lmeQualifications: UpdateLMEQualificationDTO[];
-
-  @ValidateNested()
-  @Type(() => UpdatePCTQualificationDTO)
   pctQualifications: UpdatePCTQualificationDTO[];
 }
