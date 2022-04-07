@@ -1,4 +1,9 @@
-import { IsNotEmpty, IsNumber, ValidateIf, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { ComponentBaseDTO } from './component-base.dto';
