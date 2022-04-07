@@ -77,7 +77,7 @@ export class LEEQualificationBaseDTO {
       return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of -9999.9 and 9999.9`;
     },
   })
-  potentialAnnualHgMassEmissions: number;
+  potentialAnnualMassEmissions: number;
 
   @ApiProperty({
     description:

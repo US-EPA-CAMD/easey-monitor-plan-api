@@ -16,7 +16,7 @@ export class LEEQualificationMap extends BaseMap<
       qualificationTestDate: entity.qualificationTestDate,
       parameterCode: entity.parameterCode,
       qualificationTestType: entity.qualificationTestType,
-      potentialAnnualHgMassEmissions: entity.potentialAnnualHgMassEmissions,
+      potentialAnnualMassEmissions: entity.potentialAnnualMassEmissions,
       applicableEmissionStandard: entity.applicableEmissionStandard,
       unitsOfStandard: entity.unitsOfStandard,
       percentageOfEmissionStandard: entity.percentageOfEmissionStandard,

@@ -20,7 +20,7 @@ const payload: UpdateLEEQualificationDTO = {
   qualificationTestDate: new Date(Date.now()),
   parameterCode: 'HG',
   qualificationTestType: 'INITIAL',
-  potentialAnnualHgMassEmissions: null,
+  potentialAnnualMassEmissions: null,
   applicableEmissionStandard: 1.2,
   unitsOfStandard: 'LBTBTU',
   percentageOfEmissionStandard: 1.4,
