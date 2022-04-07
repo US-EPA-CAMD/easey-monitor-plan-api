@@ -64,7 +64,7 @@ export class LEEQualificationWorkspaceService {
       qualificationTestDate: payload.qualificationTestDate,
       parameterCode: payload.parameterCode,
       qualificationTestType: payload.qualificationTestType,
-      potentialAnnualHgMassEmissions: payload.potentialAnnualHgMassEmissions,
+      potentialAnnualMassEmissions: payload.potentialAnnualMassEmissions,
       applicableEmissionStandard: payload.applicableEmissionStandard,
       unitsOfStandard: payload.unitsOfStandard,
       percentageOfEmissionStandard: payload.percentageOfEmissionStandard,
@@ -91,8 +91,7 @@ export class LEEQualificationWorkspaceService {
     leeQual.qualificationTestDate = payload.qualificationTestDate;
     leeQual.parameterCode = payload.parameterCode;
     leeQual.qualificationTestType = payload.qualificationTestType;
-    leeQual.potentialAnnualHgMassEmissions =
-      payload.potentialAnnualHgMassEmissions;
+    leeQual.potentialAnnualMassEmissions = payload.potentialAnnualMassEmissions;
     leeQual.applicableEmissionStandard = payload.applicableEmissionStandard;
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
