@@ -7,7 +7,6 @@ import { SystemComponent } from '../entities/workspace/system-component.entity';
 export class SystemComponentWorkspaceRepository extends Repository<
   SystemComponent
 > {
-
   async getComponent(
     monSysId: string,
     componentId: string,
@@ -33,7 +32,9 @@ export class SystemComponentWorkspaceRepository extends Repository<
       .getMany();
   }
 
-  async getComponentsBySystemIds(monSysIds: string[]): Promise<SystemComponent[]> {
+  async getComponentsBySystemIds(
+    monSysIds: string[],
+  ): Promise<SystemComponent[]> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('msc.monitoringSystemRecordId IN (:...monSysIds)', { monSysIds })
