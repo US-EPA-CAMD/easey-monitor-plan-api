@@ -15,7 +15,7 @@ export class MonitorQualificationBaseDTO {
         .value,
   })
   @IsInDbValues(
-    'SELECT distinct qual_type_cd as "value" FROM camdecmpsmd.qual_type_code',
+    'SELECT qual_type_cd as "value" FROM camdecmpsmd.qual_type_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [QUAL-FATAL-B] The value for ${args.value} in the Qualification record ${args.property} is invalid`;
