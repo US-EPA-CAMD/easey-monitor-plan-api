@@ -49,9 +49,9 @@ export class LMEQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(-999.9, 999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} must be within the range of -999.9 and 999.9`;
     },
   })
   so2Tons: number;
@@ -69,9 +69,9 @@ export class LMEQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(-999.9, 999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} must be within the range of -999.9 and 999.9`;
     },
   })
   noxTons: number;
