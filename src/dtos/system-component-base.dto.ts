@@ -1,6 +1,6 @@
 import {
+  IsInt,
   IsNotEmpty,
-  IsNumber,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -28,14 +28,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOBeginHour.example,
     name: propertyMetadata.systemComponentDTOBeginHour.fieldLabels.value,
   })
-  @IsNumber(
-    { maxDecimalPlaces: 0 },
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the System Component record ${args.property} is allowed only without decimal place`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the System Component record ${args.property} must be within the range of 0 and 23`;
@@ -64,14 +57,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
   })
   @IsNotEmpty()
   @ValidateIf(o => o.endDate !== null)
-  @IsNumber(
-    { maxDecimalPlaces: 0 },
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the System Component record ${args.property} is allowed only without decimal place`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the System Component record ${args.property} must be within the range of 0 and 23`;
