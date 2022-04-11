@@ -1,7 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInt, ValidationArguments } from 'class-validator';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
+import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
 export class MonitorAttributeBaseDTO {
   @ApiProperty({
@@ -12,7 +14,7 @@ export class MonitorAttributeBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [COMPONENT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be within the range of 0 and 1`;
     },
   })
   ductIndicator: number;
@@ -26,7 +28,7 @@ export class MonitorAttributeBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [COMPONENT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be within the range of 0 and 1`;
     },
   })
   bypassIndicator: number;
@@ -37,12 +39,24 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOGroundElevation.example,
     name: propertyMetadata.monitorAttributeDTOGroundElevation.fieldLabels.value,
   })
+  @IsInt()
+  @IsAtMostDigits(5, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 5 digits or less`;
+    },
+  })
   groundElevation: number;
 
   @ApiProperty({
     description: propertyMetadata.monitorAttributeDTOStackHeight.description,
     example: propertyMetadata.monitorAttributeDTOStackHeight.example,
     name: propertyMetadata.monitorAttributeDTOStackHeight.fieldLabels.value,
+  })
+  @IsInt()
+  @IsAtMostDigits(4, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 4 digits or less`;
+    },
   })
   stackHeight: number;
 
@@ -51,6 +65,14 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOMaterialCode.example,
     name: propertyMetadata.monitorAttributeDTOMaterialCode.fieldLabels.value,
   })
+  @IsInDbValues(
+    'SELECT material_cd as "value" FROM camdecmpsmd.material_code',
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
+      },
+    },
+  )
   materialCode: string;
 
   @ApiProperty({
@@ -58,12 +80,26 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOShapeCode.example,
     name: propertyMetadata.monitorAttributeDTOShapeCode.fieldLabels.value,
   })
+  @IsInDbValues(
+    'SELECT shape_cd as "value" FROM camdecmpsmd.shape_code',
+    {
+      message: (args: ValidationArguments) => {
+        return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
+      },
+    },
+  )
   shapeCode: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorAttributeDTOCrossAreaFlow.description,
     example: propertyMetadata.monitorAttributeDTOCrossAreaFlow.example,
     name: propertyMetadata.monitorAttributeDTOCrossAreaFlow.fieldLabels.value,
+  })
+  @IsInt()
+  @IsAtMostDigits(4, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 4 digits or less`;
+    },
   })
   crossAreaFlow: number;
 
@@ -74,6 +110,12 @@ export class MonitorAttributeBaseDTO {
     name:
       propertyMetadata.monitorAttributeDTOCrossAreaStackExit.fieldLabels.value,
   })
+  @IsInt()
+  @IsAtMostDigits(4, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 4 digits or less`;
+    },
+  })
   crossAreaStackExit: number;
 
   @ApiProperty({
@@ -81,12 +123,22 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOBeginDate.example,
     name: propertyMetadata.monitorAttributeDTOBeginDate.fieldLabels.value,
   })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
     description: propertyMetadata.monitorAttributeDTOEndDate.description,
     example: propertyMetadata.monitorAttributeDTOEndDate.example,
     name: propertyMetadata.monitorAttributeDTOEndDate.fieldLabels.value,
+  })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
   })
   endDate: Date;
 }
