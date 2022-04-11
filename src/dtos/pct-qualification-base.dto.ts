@@ -4,7 +4,6 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostYears } from '../import-checks/pipes/is-at-most-years.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import { IsAtMostDigitsWithDecimals } from '../import-checks/pipes/is-at-most-digits-with-decimal.pipe';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class PCTQualificationBaseDTO {
