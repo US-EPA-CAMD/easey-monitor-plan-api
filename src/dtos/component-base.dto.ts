@@ -33,7 +33,7 @@ export class ComponentBaseDTO {
     'SELECT distinct component_type_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [COMPONENT-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
+        return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
       },
     },
   )
@@ -51,7 +51,7 @@ export class ComponentBaseDTO {
     'SELECT distinct sample_aquisition_method_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [COMPONENT-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
+        return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
       },
     },
   )
@@ -66,7 +66,7 @@ export class ComponentBaseDTO {
     'SELECT distinct basis_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [COMPONENT-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
+        return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
       },
     },
   )
@@ -79,7 +79,7 @@ export class ComponentBaseDTO {
   })
   @MaxLength(25, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [COMPONENT-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 25 characters`;
+      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 25 characters`;
     },
   })
   manufacturer: string;
@@ -91,7 +91,7 @@ export class ComponentBaseDTO {
   })
   @MaxLength(15, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [COMPONENT-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 15 characters`;
+      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 15 characters`;
     },
   })
   modelVersion: string;
@@ -103,7 +103,7 @@ export class ComponentBaseDTO {
   })
   @MaxLength(20, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [COMPONENT-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 20 characters`;
+      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 20 characters`;
     },
   })
   serialNumber: string;
@@ -116,7 +116,7 @@ export class ComponentBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [COMPONENT-FATAL-A] The value for ${args.value} in the Component record ${args.property} must be within the range of 0 and 1`;
+      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must be within the range of 0 and 1`;
     },
   })
   hgConverterIndicator: number;
