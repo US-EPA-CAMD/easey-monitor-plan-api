@@ -66,7 +66,7 @@ export class MonitorAttributeBaseDTO {
     name: propertyMetadata.monitorAttributeDTOMaterialCode.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct material_cd as "value" FROM camdecmpsmd.material_code',
+    'SELECT material_cd as "value" FROM camdecmpsmd.material_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
@@ -81,7 +81,7 @@ export class MonitorAttributeBaseDTO {
     name: propertyMetadata.monitorAttributeDTOShapeCode.fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct shape_cd as "value" FROM camdecmpsmd.shape_code',
+    'SELECT shape_cd as "value" FROM camdecmpsmd.shape_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
