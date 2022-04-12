@@ -10,7 +10,7 @@ export class PCTQualificationBaseDTO {
   @ApiProperty({
     description: propertyMetadata.year.description,
     example: propertyMetadata.year.example,
-    name: propertyMetadata.year.fieldLabels.value,
+    name: 'qualificationYear',
   })
   @MatchesRegEx('^(19|20)([0-9]{2})$', {
     message: (args: ValidationArguments) => {
