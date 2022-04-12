@@ -68,7 +68,7 @@ export class PCTQualificationBaseDTO {
         .fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
+    'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
@@ -126,7 +126,7 @@ export class PCTQualificationBaseDTO {
         .fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
+    'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
@@ -184,7 +184,7 @@ export class PCTQualificationBaseDTO {
         .fieldLabels.value,
   })
   @IsInDbValues(
-    'SELECT distinct qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
+    'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
