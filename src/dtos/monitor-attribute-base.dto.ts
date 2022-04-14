@@ -80,14 +80,11 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOShapeCode.example,
     name: propertyMetadata.monitorAttributeDTOShapeCode.fieldLabels.value,
   })
-  @IsInDbValues(
-    'SELECT shape_cd as "value" FROM camdecmpsmd.shape_code',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
-      },
+  @IsInDbValues('SELECT shape_cd as "value" FROM camdecmpsmd.shape_code', {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
     },
-  )
+  })
   shapeCode: string;
 
   @ApiProperty({
