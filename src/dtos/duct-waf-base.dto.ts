@@ -2,7 +2,6 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
-  MaxLength,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -10,6 +9,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { IsAtMostDigits } from 'src/import-checks/pipes/is-at-most-digits.pipe';
 
 export class DuctWafBaseDTO {
   @ApiProperty({
@@ -90,9 +90,9 @@ export class DuctWafBaseDTO {
     name: propertyMetadata.ductWafDTONumberOfTestRuns.fieldLabels.value,
   })
   @IsInt()
-  @MaxLength(2, {
+  @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must not exceed 2 characters`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
     },
   })
   numberOfTestRuns: number;
@@ -105,9 +105,9 @@ export class DuctWafBaseDTO {
       propertyMetadata.ductWafDTONumberOfTraversePointsWaf.fieldLabels.value,
   })
   @IsInt()
-  @MaxLength(2, {
+  @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must not exceed 2 characters`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
     },
   })
   numberOfTraversePointsWaf: number;
@@ -118,9 +118,9 @@ export class DuctWafBaseDTO {
     name: propertyMetadata.ductWafDTONumberOfTestPorts.fieldLabels.value,
   })
   @IsInt()
-  @MaxLength(2, {
+  @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must not exceed 2 characters`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
     },
   })
   numberOfTestPorts: number;
@@ -133,9 +133,9 @@ export class DuctWafBaseDTO {
       propertyMetadata.ductWafDTONumberOfTraversePointsRef.fieldLabels.value,
   })
   @IsInt()
-  @MaxLength(2, {
+  @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must not exceed 2 characters`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
     },
   })
   numberOfTraversePointsRef: number;
