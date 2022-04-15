@@ -92,7 +92,7 @@ export class DuctWafBaseDTO {
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 2 digits or less`;
     },
   })
   numberOfTestRuns: number;
@@ -107,7 +107,7 @@ export class DuctWafBaseDTO {
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 2 digits or less`;
     },
   })
   numberOfTraversePointsWaf: number;
@@ -120,7 +120,7 @@ export class DuctWafBaseDTO {
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 2 digits or less`;
     },
   })
   numberOfTestPorts: number;
@@ -135,7 +135,7 @@ export class DuctWafBaseDTO {
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 5 digits or less`;
+      return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be 2 digits or less`;
     },
   })
   numberOfTraversePointsRef: number;
