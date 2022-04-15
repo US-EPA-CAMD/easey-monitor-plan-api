@@ -9,7 +9,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import { IsAtMostDigits } from 'src/import-checks/pipes/is-at-most-digits.pipe';
+import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 
 export class DuctWafBaseDTO {
   @ApiProperty({
