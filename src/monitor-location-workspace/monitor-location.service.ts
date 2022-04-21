@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
+  readonly errorMsg: 'Monitor Location Not Found';
   constructor(
     @InjectRepository(MonitorLocationWorkspaceRepository)
     readonly repository: MonitorLocationWorkspaceRepository,
@@ -20,7 +22,7 @@ export class MonitorLocationWorkspaceService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Location Not Found', true,{
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
@@ -28,9 +30,22 @@ export class MonitorLocationWorkspaceService {
     return this.map.one(result);
   }
 
-  async getLocationRelationships(locId: string) {
-    const location = await this.getLocation(locId);
+  async getLocationEntity(locationId: string): Promise<MonitorLocation> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
+        locationId,
+      });
+    }
+    return result;
+  }
 
-    return this.uscServcie.getUnitStackRelationships(location);
+  async getLocationRelationships(locId: string) {
+    const location = await this.getLocationEntity(locId);
+    const hasUnit = location.unit !== null;
+    const id = location.unit
+      ? location.unit.id.toString()
+      : location.stackPipe.id;
+    return this.uscServcie.getUnitStackRelationships(hasUnit, id);
   }
 }

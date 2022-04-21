@@ -148,9 +148,15 @@ export class SystemComponentWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    await this.repository.save(systemComponent);
     await this.compRepository.save(component);
+    await this.repository.save(systemComponent);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(systemComponent);
+
+    const createdSysComp = await this.getComponent(
+      monitoringSystemRecordId,
+      component.id,
+    );
+
+    return this.map.one(createdSysComp);
   }
 }

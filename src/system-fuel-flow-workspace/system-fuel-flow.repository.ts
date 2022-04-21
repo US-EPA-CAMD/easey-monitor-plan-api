@@ -6,7 +6,6 @@ import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
 export class SystemFuelFlowWorkspaceRepository extends Repository<
   SystemFuelFlow
 > {
-
   async getFuelFlow(id: string): Promise<SystemFuelFlow> {
     return this.createQueryBuilder('sff')
       .innerJoinAndSelect('sff.system', 'ms')
@@ -21,10 +20,12 @@ export class SystemFuelFlowWorkspaceRepository extends Repository<
       .getMany();
   }
 
-  async getFuelFlowsBySystemIds(monSysIds: string[]): Promise<SystemFuelFlow[]> {
+  async getFuelFlowsBySystemIds(
+    monSysIds: string[],
+  ): Promise<SystemFuelFlow[]> {
     return this.createQueryBuilder('sff')
       .innerJoinAndSelect('sff.system', 'ms')
       .where('ms.id IN (:...monSysIds)', { monSysIds })
       .getMany();
-  }  
+  }
 }

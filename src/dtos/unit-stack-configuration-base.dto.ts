@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsNotEmpty, IsString, ValidationArguments } from 'class-validator';
-import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 
 export class UnitStackConfigurationBaseDTO {
   @ApiProperty({
@@ -10,11 +10,6 @@ export class UnitStackConfigurationBaseDTO {
     name: propertyMetadata.unitStackConfigurationDTOUnitId.fieldLabels.value,
   })
   @IsNotEmpty()
-  @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
-    },
-  })
   unitId: number;
 
   @ApiProperty({
@@ -32,12 +27,22 @@ export class UnitStackConfigurationBaseDTO {
     example: propertyMetadata.unitStackConfigurationDTOBeginDate.example,
     name: propertyMetadata.unitStackConfigurationDTOBeginDate.fieldLabels.value,
   })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
     description: propertyMetadata.unitStackConfigurationDTOEndDate.description,
     example: propertyMetadata.unitStackConfigurationDTOEndDate.example,
     name: propertyMetadata.unitStackConfigurationDTOEndDate.fieldLabels.value,
+  })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
   })
   endDate: Date;
 }

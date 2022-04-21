@@ -16,7 +16,9 @@ export class SystemComponentRepository extends Repository<SystemComponent> {
       .getMany();
   }
 
-  async getComponentsBySystemIds(monSysIds: string[]): Promise<SystemComponent[]> {
+  async getComponentsBySystemIds(
+    monSysIds: string[],
+  ): Promise<SystemComponent[]> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('msc.monitoringSystemRecordId IN (:...monSysIds)', { monSysIds })

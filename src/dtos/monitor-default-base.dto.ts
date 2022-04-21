@@ -9,7 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsInDbValues } from 'src/import-checks/pipes/is-in-db-values.pipe';
+import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
 export class MonitorDefaultBaseDTO {
   @ApiProperty({
@@ -36,7 +36,7 @@ export class MonitorDefaultBaseDTO {
     { maxDecimalPlaces: 4 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} is allowed only four decimal place`;
       },
     },
   )
@@ -178,7 +178,7 @@ export class MonitorDefaultBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   @ValidateIf(o => o.endHour !== null)
@@ -193,7 +193,7 @@ export class MonitorDefaultBaseDTO {
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
     },
   })
   @ValidateIf(o => o.endDate !== null)

@@ -7,7 +7,7 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInDbValues } from 'src/import-checks/pipes/is-in-db-values.pipe';
+import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
 export class AnalyzerRangeBaseDTO {
   @ApiProperty({

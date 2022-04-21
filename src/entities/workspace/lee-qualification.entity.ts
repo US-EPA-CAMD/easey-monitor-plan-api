@@ -27,7 +27,7 @@ export class LEEQualification extends BaseEntity {
   qualificationTestType: string;
 
   @Column({ name: 'potential_annual_emissions' })
-  potentialAnnualHgMassEmissions: number;
+  potentialAnnualMassEmissions: number;
 
   @Column({ name: 'applicable_emission_standard' })
   applicableEmissionStandard: number;

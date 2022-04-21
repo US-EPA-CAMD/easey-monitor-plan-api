@@ -5,10 +5,11 @@ import {
   IsInt,
   IsNotEmpty,
   IsString,
+  MaxLength,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
+import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class MonitorLocationBaseDTO {
   @ApiProperty({
@@ -17,6 +18,7 @@ export class MonitorLocationBaseDTO {
     name: propertyMetadata.monitorLocationDTOUnitId.fieldLabels.value,
   })
   @IsString()
+  @MaxLength(6)
   @IsNotEmpty()
   @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
     message: (args: ValidationArguments) => {

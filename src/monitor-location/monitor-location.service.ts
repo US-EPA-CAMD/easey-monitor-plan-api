@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationRepository } from './monitor-location.repository';
@@ -8,6 +9,7 @@ import { UnitStackConfigurationService } from '../unit-stack-configuration/unit-
 
 @Injectable()
 export class MonitorLocationService {
+  readonly errorMsg: 'Monitor Location Not Found';
   constructor(
     @InjectRepository(MonitorLocationRepository)
     readonly repository: MonitorLocationRepository,
@@ -20,7 +22,7 @@ export class MonitorLocationService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Load Not Found', true,{
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
         locationId: locationId,
       });
     }
@@ -28,9 +30,22 @@ export class MonitorLocationService {
     return this.map.one(result);
   }
 
-  async getLocationRelationships(locId: string) {
-    const location = await this.getLocation(locId);
+  async getLocationEntity(locationId: string): Promise<MonitorLocation> {
+    const result = await this.repository.findOne(locationId);
+    if (!result) {
+      this.Logger.error(NotFoundException, this.errorMsg, true, {
+        locationId: locationId,
+      });
+    }
+    return result;
+  }
 
-    return this.uscServcie.getUnitStackRelationships(location);
+  async getLocationRelationships(locId: string) {
+    const location = await this.getLocationEntity(locId);
+    const hasUnit = location.unit !== null;
+    const id = location.unit
+      ? location.unit.id.toString()
+      : location.stackPipe.id;
+    return this.uscServcie.getUnitStackRelationships(hasUnit, id);
   }
 }

@@ -15,10 +15,20 @@ describe('Facility-Unit Tests', () => {
 
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: '',
+          unitName: '',
         },
       ];
 
@@ -37,10 +47,20 @@ describe('Facility-Unit Tests', () => {
 
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: '',
+          unitName: '',
         },
       ];
 
@@ -61,10 +81,20 @@ describe('Facility-Unit Tests', () => {
 
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: '',
+          unitName: '',
         },
       ];
 
@@ -83,10 +113,20 @@ describe('Facility-Unit Tests', () => {
 
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: '',
+          unitName: '',
         },
       ];
 
@@ -101,10 +141,20 @@ describe('Facility-Unit Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: 'test',
+          unitName: '1',
         },
       ];
 
@@ -123,16 +173,36 @@ describe('Facility-Unit Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: 'test',
+          unitName: '1',
         },
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: 'test',
+          unitName: '1',
         },
       ];
 
@@ -150,16 +220,20 @@ describe('Facility-Unit Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
-        },
-        {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: 'test',
+          unitName: '1',
         },
       ];
 
@@ -177,16 +251,20 @@ describe('Facility-Unit Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
       testData.unitStackConfiguration = [
         {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
-        },
-        {
-          unitId: 1,
-          stackPipeId: 'test',
-          beginDate: new Date(),
-          endDate: new Date(),
+          id: '',
+          userId: '',
+          addDate: null,
+          updateDate: null,
+          active: true,
+
+          unitId: 0,
+          stackPipeId: '',
+
+          beginDate: null,
+          endDate: null,
+
+          stackName: 'test',
+          unitName: '1',
         },
       ];
 

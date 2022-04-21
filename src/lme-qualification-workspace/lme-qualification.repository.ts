@@ -4,7 +4,7 @@ import { LMEQualification } from '../entities/workspace/lme-qualification.entity
 
 @EntityRepository(LMEQualification)
 export class LMEQualificationWorkspaceRepository extends Repository<
-LMEQualification
+  LMEQualification
 > {
   async getLMEQualifications(
     locId: string,
