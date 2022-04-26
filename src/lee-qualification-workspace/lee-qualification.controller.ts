@@ -17,7 +17,7 @@ import {
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { UpdateLEEQualificationDTO } from '../dtos/lee-qualification-update.dto';
+import { LEEQualificationBaseDTO } from '../dtos/lee-qualification.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -57,7 +57,7 @@ export class LEEQualificationWorkspaceController {
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Param('leeQualId') leeQualId: string,
-    @Body() payload: UpdateLEEQualificationDTO,
+    @Body() payload: LEEQualificationBaseDTO,
   ): Promise<LEEQualificationDTO> {
     this.logger.info('Updating LEE qualification', {
       qualId: qualId,
@@ -87,7 +87,7 @@ export class LEEQualificationWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
-    @Body() payload: UpdateLEEQualificationDTO,
+    @Body() payload: LEEQualificationBaseDTO,
   ): Promise<LEEQualificationDTO> {
     this.logger.info('Creating LEE Qualification', {
       userId: userId,

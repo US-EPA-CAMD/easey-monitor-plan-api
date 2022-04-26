@@ -7,7 +7,7 @@ import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 
-import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
+import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
@@ -40,7 +40,7 @@ export class SystemFuelFlowWorkspaceService {
 
   async createFuelFlow(
     monitoringSystemRecordId: string,
-    payload: UpdateSystemFuelFlowDTO,
+    payload: SystemFuelFlowBaseDTO,
     locId: string,
     userId: string,
   ): Promise<SystemFuelFlowDTO> {
@@ -66,7 +66,7 @@ export class SystemFuelFlowWorkspaceService {
 
   async updateFuelFlow(
     fuelFlowId: string,
-    payload: UpdateSystemFuelFlowDTO,
+    payload: SystemFuelFlowBaseDTO,
     locId: string,
     userId: string,
   ): Promise<SystemFuelFlowDTO> {

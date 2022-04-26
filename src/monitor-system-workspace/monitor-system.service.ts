@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { UpdateMonitorSystemDTO } from '../dtos/monitor-system-update.dto';
+import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
@@ -34,7 +34,7 @@ export class MonitorSystemWorkspaceService {
 
   async createSystem(
     locationId: string,
-    payload: UpdateMonitorSystemDTO,
+    payload: MonitorSystemBaseDTO,
     userId: string,
   ): Promise<MonitorSystemDTO> {
     const system = this.repository.create({
@@ -72,7 +72,7 @@ export class MonitorSystemWorkspaceService {
 
   async updateSystem(
     monitoringSystemId: string,
-    payload: UpdateMonitorSystemDTO,
+    payload: MonitorSystemBaseDTO,
     locId: string,
     userId: string,
   ): Promise<MonitorSystemDTO> {

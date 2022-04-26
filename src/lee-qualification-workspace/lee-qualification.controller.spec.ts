@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationWorkspaceController } from './lee-qualification.controller';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
-import { UpdateLEEQualificationDTO } from '../dtos/lee-qualification-update.dto';
+import { LEEQualificationBaseDTO } from '../dtos/lee-qualification-update.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
@@ -15,7 +15,7 @@ const locId = '6';
 const qualId = '1';
 const leeQualId = 'some lee qualification id';
 const currentUser = 'testuser';
-const payload = new UpdateLEEQualificationDTO();
+const payload = new LEEQualificationBaseDTO();
 
 const returnedLEEQualifications: LEEQualificationDTO[] = [];
 returnedLEEQualifications.push(new LEEQualificationDTO());

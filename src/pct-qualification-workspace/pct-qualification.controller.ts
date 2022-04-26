@@ -17,7 +17,7 @@ import {
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
+import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -57,7 +57,7 @@ export class PCTQualificationWorkspaceController {
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Param('pctQualId') pctQualId: string,
-    @Body() payload: UpdatePCTQualificationDTO,
+    @Body() payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
     this.Logger.info('Updating PCT qualification', {
       qualId: qualId,
@@ -87,7 +87,7 @@ export class PCTQualificationWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
-    @Body() payload: UpdatePCTQualificationDTO,
+    @Body() payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
     this.Logger.info('Creating PCT Qualification', {
       userId: userId,

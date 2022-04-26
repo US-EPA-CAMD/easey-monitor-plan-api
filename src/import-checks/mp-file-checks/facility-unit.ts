@@ -5,6 +5,7 @@ import { UnitStackConfiguration } from '../../entities/unit-stack-configuration.
 import { Check, CheckResult } from '../utilities/check';
 import { getEntityManager, getFacIdFromOris } from '../utilities/utils';
 
+/*
 export const Check3 = new Check(
   {
     checkName: 'Check3',
@@ -33,6 +34,7 @@ export const Check3 = new Check(
     return result;
   },
 );
+
 
 export const Check4 = new Check(
   {
@@ -135,3 +137,5 @@ export const Check8 = new Check(
     return result;
   },
 );
+
+*/

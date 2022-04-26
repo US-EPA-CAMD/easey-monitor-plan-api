@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
-import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
+import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -44,7 +44,7 @@ export class MonitorQualificationWorkspaceService {
   async createQualification(
     userId: string,
     locationId: string,
-    payload: UpdateMonitorQualificationDTO,
+    payload: MonitorQualificationBaseDTO,
   ): Promise<MonitorQualificationDTO> {
     const qual = this.repository.create({
       id: uuid(),
@@ -66,7 +66,7 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
     locId: string,
     qualId: string,
-    payload: UpdateMonitorQualificationDTO,
+    payload: MonitorQualificationBaseDTO,
   ): Promise<MonitorQualificationDTO> {
     const qual = await this.getQualification(locId, qualId);
 

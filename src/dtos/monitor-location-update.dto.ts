@@ -8,11 +8,11 @@ import { UpdateMatsMethodDTO } from './mats-method-update.dto';
 import { UpdateMonitorFormulaDTO } from './monitor-formula-update.dto';
 import { UpdateMonitorDefaultDTO } from './monitor-default-update.dto';
 import { UpdateMonitorSpanDTO } from './monitor-span-update.dto';
-import { UpdateDuctWafDTO } from './duct-waf-update.dto';
-import { UpdateMonitorLoadDTO } from './monitor-load-update.dto';
-import { UpdateComponentDTO } from './component-update.dto';
-import { UpdateMonitorSystemDTO } from './monitor-system-update.dto';
-import { UpdateMonitorQualificationDTO } from './monitor-qualification-update.dto';
+import { DuctWafBaseDTO } from './duct-waf.dto';
+import { MonitorLoadBaseDTO } from './monitor-load.dto';
+import { UpdateComponentBaseDTO } from './component.dto';
+import { MonitorSystemBaseDTO } from './monitor-system.dto';
+import { MonitorQualificationBaseDTO } from './monitor-qualification.dto';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -54,22 +54,22 @@ export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
   spans: UpdateMonitorSpanDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateDuctWafDTO)
-  ductWafs: UpdateDuctWafDTO[];
+  @Type(() => DuctWafBaseDTO)
+  ductWafs: DuctWafBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorLoadDTO)
-  loads: UpdateMonitorLoadDTO[];
+  @Type(() => MonitorLoadBaseDTO)
+  loads: MonitorLoadBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateComponentDTO)
-  components: UpdateComponentDTO[];
+  @Type(() => UpdateComponentBaseDTO)
+  components: UpdateComponentBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorSystemDTO)
-  systems: UpdateMonitorSystemDTO[];
+  @Type(() => MonitorSystemBaseDTO)
+  systems: MonitorSystemBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorQualificationDTO)
-  qualifications: UpdateMonitorQualificationDTO[];
+  @Type(() => MonitorQualificationBaseDTO)
+  qualifications: MonitorQualificationBaseDTO[];
 }

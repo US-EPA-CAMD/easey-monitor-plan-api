@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
+import { DuctWafBaseDTO } from '../dtos/duct-waf.dto';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWaf } from '../entities/duct-waf.entity';
@@ -40,7 +40,7 @@ export class DuctWafWorkspaceService {
 
   async createDuctWaf(
     locationId: string,
-    payload: UpdateDuctWafDTO,
+    payload: DuctWafBaseDTO,
     userId: string,
   ): Promise<DuctWafDTO> {
     const ductWaf = this.repository.create({
@@ -72,7 +72,7 @@ export class DuctWafWorkspaceService {
   async updateDuctWaf(
     locationId: string,
     ductWafId: string,
-    payload: UpdateDuctWafDTO,
+    payload: DuctWafBaseDTO,
     userId: string,
   ): Promise<DuctWafDTO> {
     const ductWaf = await this.getDuctWaf(ductWafId);

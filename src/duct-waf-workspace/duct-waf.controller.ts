@@ -15,7 +15,7 @@ import {
 } from '@nestjs/swagger';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
+import { DuctWafBaseDTO } from '../dtos/duct-waf.dto';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
@@ -49,7 +49,7 @@ export class DuctWafWorkspaceController {
   })
   async createDuctWaf(
     @Param('locId') locationId: string,
-    @Body() payload: UpdateDuctWafDTO,
+    @Body() payload: DuctWafBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
     this.logger.info('Creating duct waf', {
@@ -70,7 +70,7 @@ export class DuctWafWorkspaceController {
   async updateDuctWaf(
     @Param('locId') locationId: string,
     @Param('ductWafId') ductWafId: string,
-    @Body() payload: UpdateDuctWafDTO,
+    @Body() payload: DuctWafBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<DuctWafDTO> {
     this.logger.info('Updating duct waf', {

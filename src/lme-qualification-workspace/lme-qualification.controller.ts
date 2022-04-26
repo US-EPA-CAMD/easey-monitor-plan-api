@@ -17,7 +17,7 @@ import {
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
+import { LMEQualificationBaseDTO } from '../dtos/lme-qualification.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -57,7 +57,7 @@ export class LMEQualificationWorkspaceController {
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Param('lmeQualId') lmeQualId: string,
-    @Body() payload: UpdateLMEQualificationDTO,
+    @Body() payload: LMEQualificationBaseDTO,
   ): Promise<LMEQualificationDTO> {
     this.logger.info('Updating LME qualification', {
       qualId: qualId,
@@ -87,7 +87,7 @@ export class LMEQualificationWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
-    @Body() payload: UpdateLMEQualificationDTO,
+    @Body() payload: LMEQualificationBaseDTO,
   ): Promise<LMEQualificationDTO> {
     this.logger.info('Creating LME Qualification', {
       userId: userId,

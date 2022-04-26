@@ -2,7 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
-import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -11,7 +10,6 @@ export class UserCheckOutService {
   constructor(
     @InjectRepository(UserCheckOutRepository)
     private repository: UserCheckOutRepository,
-    private map: UserCheckOutMap,
     private Logger: Logger,
   ) {}
 

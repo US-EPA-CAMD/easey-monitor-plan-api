@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
-import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
+import { LMEQualificationBaseDTO } from '../dtos/lme-qualification.dto';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -56,7 +56,7 @@ export class LMEQualificationWorkspaceService {
     userId: string,
     locId: string,
     qualId: string,
-    payload: UpdateLMEQualificationDTO,
+    payload: LMEQualificationBaseDTO,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = this.repository.create({
       id: uuid(),
@@ -80,7 +80,7 @@ export class LMEQualificationWorkspaceService {
     locId: string,
     qualId: string,
     lmeQualId: string,
-    payload: UpdateLMEQualificationDTO,
+    payload: LMEQualificationBaseDTO,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = await this.getLMEQualification(locId, qualId, lmeQualId);
 

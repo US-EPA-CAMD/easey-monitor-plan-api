@@ -16,7 +16,7 @@ import {
 
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
-import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
+import { MonitorLoadBaseDTO } from '../dtos/monitor-load.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -50,7 +50,7 @@ export class MonitorLoadWorkspaceController {
   async updateLoad(
     @Param('locId') locationId: string,
     @Param('loadId') spanId: string,
-    @Body() payload: UpdateMonitorLoadDTO,
+    @Body() payload: MonitorLoadBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorLoadDTO> {
     this.logger.info('Updating Load', {
@@ -72,7 +72,7 @@ export class MonitorLoadWorkspaceController {
   })
   createLoad(
     @Param('locId') locationId: string,
-    @Body() payload: UpdateMonitorLoadDTO,
+    @Body() payload: MonitorLoadBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorLoadDTO> {
     this.logger.info('Creating Load', {

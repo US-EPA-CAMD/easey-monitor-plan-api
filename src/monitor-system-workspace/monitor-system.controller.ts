@@ -16,7 +16,7 @@ import {
 
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
-import { UpdateMonitorSystemDTO } from '../dtos/monitor-system-update.dto';
+import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
@@ -46,7 +46,7 @@ export class MonitorSystemWorkspaceController {
   })
   createSystem(
     @Param('locId') locationId: string,
-    @Body() payload: UpdateMonitorSystemDTO,
+    @Body() payload: MonitorSystemBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorSystemDTO> {
     return this.service.createSystem(locationId, payload, userId);
@@ -63,7 +63,7 @@ export class MonitorSystemWorkspaceController {
   updateSystem(
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemId: string,
-    @Body() payload: UpdateMonitorSystemDTO,
+    @Body() payload: MonitorSystemBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorSystemDTO> {
     return this.service.updateSystem(

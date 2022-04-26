@@ -3,8 +3,8 @@ import * as checks from './component';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
-import { UpdateComponentDTO } from '../../dtos/component-update.dto';
-import { UpdateAnalyzerRangeDTO } from '../../dtos/analyzer-range-update.dto';
+import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
+import { AnalyzerRangeBaseDTO } from '../../dtos/analyzer-range.dto';
 import { Component } from '../../entities/workspace/component.entity';
 
 describe('Component Tests', () => {
@@ -21,7 +21,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
+      const component = new UpdateComponentBaseDTO();
 
       component.componentTypeCode = 'SO2';
       component.basisCode = null;
@@ -47,7 +47,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
+      const component = new UpdateComponentBaseDTO();
 
       component.componentTypeCode = 'SO2';
       component.basisCode = null;
@@ -74,7 +74,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
+      const component = new UpdateComponentBaseDTO();
 
       component.componentTypeCode = 'SO2';
       component.basisCode = 'W';
@@ -101,7 +101,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
+      const component = new UpdateComponentBaseDTO();
 
       component.componentTypeCode = 'SO2';
       component.basisCode = null;
@@ -124,7 +124,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
+      const component = new UpdateComponentBaseDTO();
 
       component.componentTypeCode = 'SO2';
       component.basisCode = null;
@@ -152,7 +152,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
+      const component = new UpdateComponentBaseDTO();
       component.componentTypeCode = 'TEST';
       component.analyzerRanges = [];
       location.components = [component];
@@ -174,7 +174,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
+      const component = new UpdateComponentBaseDTO();
       component.componentTypeCode = 'SO2';
       component.analyzerRanges = [];
       location.components = [component];
@@ -196,8 +196,8 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentDTO();
-      const analyzerRange = new UpdateAnalyzerRangeDTO();
+      const component = new UpdateComponentBaseDTO();
+      const analyzerRange = new AnalyzerRangeBaseDTO();
       component.componentTypeCode = 'SO2';
       component.analyzerRanges = [analyzerRange];
       location.components = [component];

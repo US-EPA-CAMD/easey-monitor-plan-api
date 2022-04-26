@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
-import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
+import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRange } from '../entities/analyzer-range.entity';
 
@@ -41,7 +41,7 @@ export class AnalyzerRangeWorkspaceService {
 
   async createAnalyzerRange(
     componentRecordId: string,
-    payload: UpdateAnalyzerRangeDTO,
+    payload: AnalyzerRangeBaseDTO,
     locationId: string,
     userId: string,
   ): Promise<AnalyzerRangeDTO> {
@@ -66,7 +66,7 @@ export class AnalyzerRangeWorkspaceService {
 
   async updateAnalyzerRange(
     analyzerRangeId: string,
-    payload: UpdateAnalyzerRangeDTO,
+    payload: AnalyzerRangeBaseDTO,
     locationId: string,
     userId: string,
   ): Promise<AnalyzerRangeDTO> {

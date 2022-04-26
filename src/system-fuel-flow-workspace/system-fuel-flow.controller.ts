@@ -16,7 +16,7 @@ import {
 
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
-import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
+import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -53,7 +53,7 @@ export class SystemFuelFlowWorkspaceController {
   async createFuelFlow(
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemRecordId: string,
-    @Body() payload: UpdateSystemFuelFlowDTO,
+    @Body() payload: SystemFuelFlowBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
     this.logger.info('Creating Fuel Flow', {
@@ -82,7 +82,7 @@ export class SystemFuelFlowWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemRecordId: string,
     @Param('fuelFlowId') id: string,
-    @Body() payload: UpdateSystemFuelFlowDTO,
+    @Body() payload: SystemFuelFlowBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<SystemFuelFlowDTO> {
     this.logger.info('Updating fuel flow', {

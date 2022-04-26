@@ -6,14 +6,14 @@ import { MonitorQualificationWorkspaceService } from './monitor-qualification.se
 import { MonitorQualificationWorkspaceController } from './monitor-qualification.controller';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
+import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification-update.dto';
 
 jest.mock('./monitor-qualification.service');
 
 const currentUser = 'testuser';
 const qualId = 'some qualification id';
 const locId = 'some location id';
-const payload = new UpdateMonitorQualificationDTO();
+const payload = new MonitorQualificationBaseDTO();
 
 const data: MonitorQualificationDTO[] = [];
 data.push(new MonitorQualificationDTO());

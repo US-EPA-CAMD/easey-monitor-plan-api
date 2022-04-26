@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { UpdateSystemComponentDTO } from '../dtos/system-component-update.dto';
+import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
-import { UpdateComponentDTO } from '../dtos/component-update.dto';
+import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { SystemComponentMap } from '../maps/system-component.map';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { SystemComponent } from '../entities/system-component.entity';
@@ -58,7 +58,7 @@ export class SystemComponentWorkspaceService {
     locationId: string,
     sysId: string,
     componentId: string,
-    payload: UpdateSystemComponentDTO,
+    payload: SystemComponentBaseDTO,
     userId: string,
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
@@ -107,7 +107,7 @@ export class SystemComponentWorkspaceService {
   async createSystemComponent(
     locationId: string,
     monitoringSystemRecordId: string,
-    payload: UpdateSystemComponentDTO,
+    payload: SystemComponentBaseDTO,
     userId: string,
   ): Promise<SystemComponentDTO> {
     let component = await this.componentService.getComponentByIdentifier(
@@ -116,7 +116,7 @@ export class SystemComponentWorkspaceService {
     );
 
     if (!component) {
-      const componentPayload: UpdateComponentDTO = {
+      const componentPayload: UpdateComponentBaseDTO = {
         componentId: payload.componentId,
         componentTypeCode: payload.componentTypeCode,
         sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,

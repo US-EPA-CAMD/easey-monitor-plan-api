@@ -16,7 +16,7 @@ import {
 
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
-import { UpdateSystemComponentDTO } from '../dtos/system-component-update.dto';
+import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
@@ -51,7 +51,7 @@ export class SystemComponentWorkspaceController {
     @Param('sysId') monSysId: string,
     @Param('compId') componentId: string,
     @CurrentUser() userId: string,
-    @Body() payload: UpdateSystemComponentDTO,
+    @Body() payload: SystemComponentBaseDTO,
   ): Promise<SystemComponentDTO> {
     return this.service.updateComponent(
       locationId,
@@ -73,7 +73,7 @@ export class SystemComponentWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @CurrentUser() userId: string,
-    @Body() payload: UpdateSystemComponentDTO,
+    @Body() payload: SystemComponentBaseDTO,
   ): Promise<SystemComponentDTO> {
     return this.service.createSystemComponent(
       locationId,

@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
-import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
+import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -56,7 +56,7 @@ export class PCTQualificationWorkspaceService {
     userId: string,
     locId: string,
     qualId: string,
-    payload: UpdatePCTQualificationDTO,
+    payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -87,7 +87,7 @@ export class PCTQualificationWorkspaceService {
     locId: string,
     qualId: string,
     pctQualId: string,
-    payload: UpdatePCTQualificationDTO,
+    payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
     const pctQual = await this.getPCTQualification(locId, qualId, pctQualId);
 

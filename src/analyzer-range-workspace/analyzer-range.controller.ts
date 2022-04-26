@@ -13,7 +13,7 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UpdateAnalyzerRangeDTO } from '../dtos/analyzer-range-update.dto';
+import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
@@ -54,7 +54,7 @@ export class AnalyzerRangeWorkspaceController {
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
     @CurrentUser() userId: string,
-    @Body() payload: UpdateAnalyzerRangeDTO,
+    @Body() payload: AnalyzerRangeBaseDTO,
   ) {
     this.logger.info('Creating analyzer range', {
       userId: userId,
@@ -82,7 +82,7 @@ export class AnalyzerRangeWorkspaceController {
     @Param('compId') componentRecordId: string,
     @Param('analyzerRangeId') analyzerRangeId: string,
     @CurrentUser() userId: string,
-    @Body() payload: UpdateAnalyzerRangeDTO,
+    @Body() payload: AnalyzerRangeBaseDTO,
   ) {
     this.logger.info('Updating analyzer range', {
       userId: userId,

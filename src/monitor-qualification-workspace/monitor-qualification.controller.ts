@@ -17,7 +17,7 @@ import {
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { UpdateMonitorQualificationDTO } from '../dtos/monitor-qualification-update.dto';
+import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
 @Controller()
@@ -50,7 +50,7 @@ export class MonitorQualificationWorkspaceController {
   createQualification(
     @CurrentUser() userId: string,
     @Param('locId') locationId: string,
-    @Body() payload: UpdateMonitorQualificationDTO,
+    @Body() payload: MonitorQualificationBaseDTO,
   ): Promise<MonitorQualificationDTO> {
     return this.service.createQualification(userId, locationId, payload);
   }
@@ -67,7 +67,7 @@ export class MonitorQualificationWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
-    @Body() payload: UpdateMonitorQualificationDTO,
+    @Body() payload: MonitorQualificationBaseDTO,
   ): Promise<MonitorQualificationDTO> {
     return this.service.updateQualification(userId, locId, qualId, payload);
   }
