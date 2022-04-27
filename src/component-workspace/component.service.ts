@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateComponentBaseDTO } from '../dtos/component.dto';
-import { ComponentDTO } from '../dtos/component.dto';
+import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
