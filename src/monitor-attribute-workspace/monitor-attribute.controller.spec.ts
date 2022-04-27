@@ -5,7 +5,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
-import { UpdateMonitorAttributeDTO } from '../dtos/monitor-attribute-update.dto';
+import { MonitorAttributeBaseDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceController } from './monitor-attribute.controller';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 
@@ -15,7 +15,7 @@ const data = {
   locId: '6',
   attributeId: '1',
   currentUser: 'testuser',
-  payload: new UpdateMonitorAttributeDTO(),
+  payload: new MonitorAttributeBaseDTO(),
 };
 
 const returnedAttributes: MonitorAttributeDTO[] = [];

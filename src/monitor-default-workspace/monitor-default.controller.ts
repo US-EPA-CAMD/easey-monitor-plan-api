@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
-import { UpdateMonitorDefaultDTO } from '../dtos/monitor-default-update.dto';
+import { MonitorDefaultBaseDTO } from '../dtos/monitor-default.dto';
 import { MonitorDefaultWorkspaceService } from './monitor-default.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
@@ -52,7 +52,7 @@ export class MonitorDefaultWorkspaceController {
   async updateDefault(
     @Param('locId') locationId: string,
     @Param('defaultId') defaultId: string,
-    @Body() payload: UpdateMonitorDefaultDTO,
+    @Body() payload: MonitorDefaultBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorDefaultDTO> {
     this.logger.info('Updating Monitor Default', {
@@ -73,7 +73,7 @@ export class MonitorDefaultWorkspaceController {
   })
   createDefault(
     @Param('locId') locationId: string,
-    @Body() payload: UpdateMonitorDefaultDTO,
+    @Body() payload: MonitorDefaultBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorDefaultDTO> {
     this.logger.info('Creating new monitor default', {

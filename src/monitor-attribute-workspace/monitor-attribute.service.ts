@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
 
-import { UpdateMonitorAttributeDTO } from '../dtos/monitor-attribute-update.dto';
+import { MonitorAttributeBaseDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
@@ -47,7 +47,7 @@ export class MonitorAttributeWorkspaceService {
 
   async createAttribute(
     locationId: string,
-    payload: UpdateMonitorAttributeDTO,
+    payload: MonitorAttributeBaseDTO,
     userId: string,
   ): Promise<MonitorAttributeDTO> {
     const attribute = this.repository.create({
@@ -76,7 +76,7 @@ export class MonitorAttributeWorkspaceService {
   async updateAttribute(
     locationId: string,
     id: string,
-    payload: UpdateMonitorAttributeDTO,
+    payload: MonitorAttributeBaseDTO,
     userId: string,
   ): Promise<MonitorAttributeDTO> {
     const attribute = await this.getAttribute(locationId, id);

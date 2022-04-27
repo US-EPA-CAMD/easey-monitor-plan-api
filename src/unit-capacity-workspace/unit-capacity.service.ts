@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
-import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
+import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
@@ -49,7 +49,7 @@ export class UnitCapacityWorkspaceService {
     userId: string,
     locId: string,
     unitId: number,
-    payload: UpdateUnitCapacityDTO,
+    payload: UnitCapacityBaseDTO,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = this.repository.create({
       id: uuid(),
@@ -72,7 +72,7 @@ export class UnitCapacityWorkspaceService {
     locId: string,
     unitRecordId: number,
     unitCapacityId: string,
-    payload: UpdateUnitCapacityDTO,
+    payload: UnitCapacityBaseDTO,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = await this.getUnitCapacity(
       locId,

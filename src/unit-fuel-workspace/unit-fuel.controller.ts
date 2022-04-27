@@ -18,7 +18,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
+import { UnitFuelBaseDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
@@ -58,7 +58,7 @@ export class UnitFuelWorkspaceController {
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Param('unitFuelId') unitFuelId: string,
-    @Body() payload: UpdateUnitFuelDTO,
+    @Body() payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
     this.Logger.info('Updating unit fuel', {
       unitId,
@@ -87,7 +87,7 @@ export class UnitFuelWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-    @Body() payload: UpdateUnitFuelDTO,
+    @Body() payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
     this.Logger.info('Creating unit fuel', {
       unitId,

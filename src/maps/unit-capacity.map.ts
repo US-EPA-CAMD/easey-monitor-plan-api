@@ -9,7 +9,7 @@ export class UnitCapacityMap extends BaseMap<UnitCapacity, UnitCapacityDTO> {
   public async one(entity: UnitCapacity): Promise<UnitCapacityDTO> {
     return {
       id: entity.id,
-      unitId: entity.unitId,
+      unitRecordId: entity.unitId,
       commercialOperationDate: entity.unit.commercialOperationDate,
       operationDate: entity.unit.operationDate,
       boilerTurbineType: entity.unit.unitBoilerType.unitTypeCode,

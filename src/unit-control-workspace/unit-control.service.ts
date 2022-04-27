@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
+import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { v4 as uuid } from 'uuid';
@@ -13,9 +13,9 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 export class UnitControlWorkspaceService {
   constructor(
     @InjectRepository(UnitControlWorkspaceRepository)
-    readonly repository: UnitControlWorkspaceRepository,
-    readonly map: UnitControlMap,
-    private Logger: Logger,
+    private readonly repository: UnitControlWorkspaceRepository,
+    private readonly map: UnitControlMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -29,18 +29,18 @@ export class UnitControlWorkspaceService {
 
   async getUnitControl(
     locId: string,
-    unitId: number,
+    unitRecordId: number,
     unitControlId: string,
   ): Promise<UnitControlDTO> {
     const result = await this.repository.getUnitControl(
       locId,
-      unitId,
+      unitRecordId,
       unitControlId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Control Not Found', true, {
-        unitId: unitId,
-        unitControlId: unitControlId,
+      this.logger.error(NotFoundException, 'Unit Control Not Found', true, {
+        unitRecordId,
+        unitControlId,
       });
     }
     return this.map.one(result);
@@ -50,7 +50,7 @@ export class UnitControlWorkspaceService {
     userId: string,
     locId: string,
     unitId: number,
-    payload: UpdateUnitControlDTO,
+    payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -77,7 +77,7 @@ export class UnitControlWorkspaceService {
     locId: string,
     unitId: number,
     unitControlId: string,
-    payload: UpdateUnitControlDTO,
+    payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
     const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
 
