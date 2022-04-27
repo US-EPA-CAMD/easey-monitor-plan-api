@@ -6,6 +6,8 @@ import { IsAtMostYears } from '../import-checks/pipes/is-at-most-years.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
+const qualDataTypeCodeQuery =
+  'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code';
 export class PCTQualificationBaseDTO {
   @ApiProperty({
     description: propertyMetadata.year.description,
@@ -67,14 +69,11 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr1QualificationDataTypeCode
         .fieldLabels.value,
   })
-  @IsInDbValues(
-    'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
-      },
+  @IsInDbValues(qualDataTypeCodeQuery, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
     },
-  )
+  })
   yr1QualificationDataTypeCode: string;
 
   @ApiProperty({
@@ -125,14 +124,11 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr2QualificationDataTypeCode
         .fieldLabels.value,
   })
-  @IsInDbValues(
-    'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
-      },
+  @IsInDbValues(qualDataTypeCodeQuery, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
     },
-  )
+  })
   yr2QualificationDataTypeCode: string;
 
   @ApiProperty({
@@ -183,14 +179,11 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr3QualificationDataTypeCode
         .fieldLabels.value,
   })
-  @IsInDbValues(
-    'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
-      },
+  @IsInDbValues(qualDataTypeCodeQuery, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
     },
-  )
+  })
   yr3QualificationDataTypeCode: string;
 
   @ApiProperty({
