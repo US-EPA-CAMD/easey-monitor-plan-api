@@ -13,8 +13,10 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
-import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
+import {
+  AnalyzerRangeBaseDTO,
+  AnalyzerRangeDTO,
+} from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';

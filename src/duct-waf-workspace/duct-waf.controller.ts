@@ -13,10 +13,8 @@ import {
   ApiTags,
   ApiSecurity,
 } from '@nestjs/swagger';
-
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { DuctWafBaseDTO } from '../dtos/duct-waf.dto';
-import { DuctWafDTO } from '../dtos/duct-waf.dto';
+import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';

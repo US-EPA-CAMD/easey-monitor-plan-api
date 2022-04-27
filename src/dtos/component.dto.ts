@@ -1,14 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
 import { AnalyzerRangeBaseDTO } from './analyzer-range.dto';
-
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import {
   IsInt,
   IsString,
   MaxLength,
+  ValidateNested,
   ValidationArguments,
 } from 'class-validator';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';

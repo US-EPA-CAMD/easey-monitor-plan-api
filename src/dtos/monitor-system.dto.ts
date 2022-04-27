@@ -1,20 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import {
-  SystemComponentBaseDTO,
-  SystemComponentDTO,
-} from './system-component.dto';
-import { SystemFuelFlowDTO } from './system-fuel-flow.dto';
 import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
-import { SystemFuelFlowBaseDTO } from './system-fuel-flow.dto';
-
 import {
   IsInt,
   IsNotEmpty,
   ValidateIf,
+  ValidateNested,
   ValidationArguments,
 } from 'class-validator';
+import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { SystemComponentBaseDTO } from './system-component.dto';
+import { SystemFuelFlowBaseDTO } from './system-fuel-flow.dto';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';

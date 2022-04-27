@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { v4 as uuid } from 'uuid';
-
-import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
-import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
+import {
+  AnalyzerRangeBaseDTO,
+  AnalyzerRangeDTO,
+} from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRange } from '../entities/analyzer-range.entity';
 
