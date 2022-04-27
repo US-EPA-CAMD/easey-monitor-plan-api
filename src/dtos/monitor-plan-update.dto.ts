@@ -2,7 +2,7 @@ import { IsInt, ValidateNested, ValidationArguments } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { UpdateUnitStackConfigurationDTO } from './unit-stack-configuration-update.dto';
+import { UnitStackConfigurationBaseDTO } from './unit-stack-configuration.dto';
 import { UpdateMonitorLocationDTO } from './monitor-location-update.dto';
 import { Type } from 'class-transformer';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
@@ -27,8 +27,8 @@ export class UpdateMonitorPlanDTO {
   comments: MonitorPlanCommentBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateUnitStackConfigurationDTO)
-  unitStackConfiguration: UpdateUnitStackConfigurationDTO[];
+  @Type(() => UnitStackConfigurationBaseDTO)
+  unitStackConfiguration: UnitStackConfigurationBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorLocationDTO)

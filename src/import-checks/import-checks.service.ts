@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { Check32, Check6, Check7 } from './mp-file-checks/component';
-//import { Check3, Check4, Check8 } from './mp-file-checks/facility-unit';
+import { Check3, Check4, Check8 } from './mp-file-checks/facility-unit';
 import { Check9 } from './mp-file-checks/formula';
 import { Check11, Check12 } from './mp-file-checks/qual';
 import { Check10 } from './mp-file-checks/span';
@@ -57,13 +57,13 @@ export class ImportChecksService {
       Check32,
     ];
 
-    //const UnitStackChecks1 = [Check3];
-    //const UnitStackChecks2 = [Check4, Check8]; //Depends on UnitStackChecks1 Passing
+    const UnitStackChecks1 = [Check3];
+    const UnitStackChecks2 = [Check4, Check8]; //Depends on UnitStackChecks1 Passing
 
-    //await this.runCheckQueue(LocationChecks, monPlan);
+    await this.runCheckQueue(LocationChecks, monPlan);
     if (monPlan.unitStackConfiguration !== undefined) {
-      //await this.runCheckQueue(UnitStackChecks1, monPlan);
-      //await this.runCheckQueue(UnitStackChecks2, monPlan);
+      await this.runCheckQueue(UnitStackChecks1, monPlan);
+      await this.runCheckQueue(UnitStackChecks2, monPlan);
     }
 
     this.logger.info(

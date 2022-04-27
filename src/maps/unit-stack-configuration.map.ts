@@ -13,11 +13,11 @@ export class UnitStackConfigurationMap extends BaseMap<
     entity: UnitStackConfiguration,
   ): Promise<UnitStackConfigurationDTO> {
     return {
-      stackName: entity.stackPipe.name,
-      unitName: entity.unit.name,
+      stackPipeId: entity.stackPipe.name,
+      unitId: entity.unit.name,
       id: entity.id,
-      unitId: entity.unitId,
-      stackPipeId: entity.stackPipeId,
+      unitRecordId: entity.unitId,
+      stackPipeRecordId: entity.stackPipeId,
       beginDate: entity.beginDate,
       endDate: entity.endDate,
       userId: entity.userId,
