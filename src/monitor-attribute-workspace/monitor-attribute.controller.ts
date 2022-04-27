@@ -17,7 +17,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
-import { UpdateMonitorAttributeDTO } from '../dtos/monitor-attribute-update.dto';
+import { MonitorAttributeBaseDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
@@ -51,7 +51,7 @@ export class MonitorAttributeWorkspaceController {
   })
   createAttribute(
     @Param('locId') locationId: string,
-    @Body() payload: UpdateMonitorAttributeDTO,
+    @Body() payload: MonitorAttributeBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorAttributeDTO> {
     this.logger.info('Creating new monitor location attribute', {
@@ -72,7 +72,7 @@ export class MonitorAttributeWorkspaceController {
   updateAttribute(
     @Param('locId') locationId: string,
     @Param('attributeId') id: string,
-    @Body() payload: UpdateMonitorAttributeDTO,
+    @Body() payload: MonitorAttributeBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorAttributeDTO> {
     this.logger.info('Upding monitor attribute', {

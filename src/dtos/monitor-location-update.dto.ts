@@ -1,12 +1,8 @@
 import { MonitorLocationBaseDTO } from './monitor-location-base.dto';
-import { UpdateMonitorAttributeDTO } from './monitor-attribute-update.dto';
-import { UpdateUnitCapacityDTO } from './unit-capacity-update.dto';
+import { MonitorAttributeBaseDTO } from './monitor-attribute.dto';
+import { UnitCapacityBaseDTO } from './unit-capacity.dto';
 import { UnitControlBaseDTO } from './unit-control.dto';
 import { UnitFuelBaseDTO } from './unit-fuel.dto';
-import { MonitorMethodBaseDTO } from './monitor-method.dto';
-import { MatsMethodBaseDTO } from './mats-method.dto';
-import { MonitorFormulaBaseDTO } from './monitor-formula.dto';
-import { MonitorDefaultBaseDTO } from './monitor-default.dto';
 import { MonitorSpanBaseDTO } from './monitor-span.dto';
 import { DuctWafBaseDTO } from './duct-waf.dto';
 import { MonitorLoadBaseDTO } from './monitor-load.dto';
@@ -15,15 +11,19 @@ import { MonitorSystemBaseDTO } from './monitor-system.dto';
 import { MonitorQualificationBaseDTO } from './monitor-qualification.dto';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { MonitorMethodBaseDTO } from './monitor-method.dto';
+import { MatsMethodBaseDTO } from './mats-method.dto';
+import { MonitorFormulaBaseDTO } from './monitor-formula.dto';
+import { MonitorDefaultBaseDTO } from './monitor-default.dto';
 
 export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
   @ValidateNested()
-  @Type(() => UpdateMonitorAttributeDTO)
-  attributes: UpdateMonitorAttributeDTO[];
+  @Type(() => MonitorAttributeBaseDTO)
+  attributes: MonitorAttributeBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateUnitCapacityDTO)
-  unitCapacity: UpdateUnitCapacityDTO[];
+  @Type(() => UnitCapacityBaseDTO)
+  unitCapacity: UnitCapacityBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitControlBaseDTO)

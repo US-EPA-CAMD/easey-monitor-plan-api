@@ -13,9 +13,9 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 export class UnitFuelWorkspaceService {
   constructor(
     @InjectRepository(UnitFuelWorkspaceRepository)
-    readonly repository: UnitFuelWorkspaceRepository,
-    readonly map: UnitFuelMap,
-    private Logger: Logger,
+    private readonly repository: UnitFuelWorkspaceRepository,
+    private readonly map: UnitFuelMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -31,7 +31,7 @@ export class UnitFuelWorkspaceService {
   ): Promise<UnitFuelDTO> {
     const result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
+      this.logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
         locId: locId,
         unitId: unitId,
         unitFuelId: unitFuelId,

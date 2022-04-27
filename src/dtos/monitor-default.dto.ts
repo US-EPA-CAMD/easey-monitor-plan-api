@@ -1,6 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-
 import {
   IsInt,
   IsNotEmpty,
@@ -9,6 +6,9 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 

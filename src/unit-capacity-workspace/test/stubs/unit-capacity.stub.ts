@@ -3,7 +3,7 @@ import { UnitCapacityDTO } from '../../../dtos/unit-capacity.dto';
 export const unitCapacityStub = (): UnitCapacityDTO => {
   return {
     id: '1',
-    unitId: 1,
+    unitRecordId: 1,
     commercialOperationDate: new Date(Date.now()),
     operationDate: new Date(Date.now()),
     boilerTurbineType: 'string',

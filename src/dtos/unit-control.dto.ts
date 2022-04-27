@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-
 import { IsInt, ValidationArguments } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
@@ -115,7 +114,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOUnitId.example,
     name: propertyMetadata.unitControlDTOUnitId.fieldLabels.value,
   })
-  unitId: number;
+  unitRecordId: number;
 
   @ApiProperty({
     description: propertyMetadata.unitControlDTOUserId.description,

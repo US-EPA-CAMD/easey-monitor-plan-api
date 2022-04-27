@@ -14,7 +14,7 @@ import { UnitFuelMap } from './unit-fuel.map';
 */
 
 const id = '';
-const unitId = 6;
+const unitRecordId = 6;
 const fuelCode = '123';
 const ozoneSeasonIndicator = 1;
 const demGCV = null;
@@ -27,7 +27,7 @@ const updateDate = new Date(Date.now());
 
 const entity = new UnitFuel();
 entity.id = id;
-entity.unitId = unitId;
+entity.unitId = unitRecordId;
 entity.fuelCode = fuelCode;
 entity.ozoneSeasonIndicator = ozoneSeasonIndicator;
 entity.demGCV = demGCV;
@@ -43,7 +43,7 @@ describe('UnitFuelMap', () => {
     const map = new UnitFuelMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(id);
-    expect(result.unitId).toEqual(unitId);
+    expect(result.unitRecordId).toEqual(unitRecordId);
     expect(result.fuelCode).toEqual(fuelCode);
     expect(result.ozoneSeasonIndicator).toEqual(ozoneSeasonIndicator);
     expect(result.demGCV).toEqual(demGCV);

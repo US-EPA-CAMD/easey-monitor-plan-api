@@ -13,9 +13,9 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 export class UnitControlWorkspaceService {
   constructor(
     @InjectRepository(UnitControlWorkspaceRepository)
-    readonly repository: UnitControlWorkspaceRepository,
-    readonly map: UnitControlMap,
-    private Logger: Logger,
+    private readonly repository: UnitControlWorkspaceRepository,
+    private readonly map: UnitControlMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -29,18 +29,18 @@ export class UnitControlWorkspaceService {
 
   async getUnitControl(
     locId: string,
-    unitId: number,
+    unitRecordId: number,
     unitControlId: string,
   ): Promise<UnitControlDTO> {
     const result = await this.repository.getUnitControl(
       locId,
-      unitId,
+      unitRecordId,
       unitControlId,
     );
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Control Not Found', true, {
-        unitId: unitId,
-        unitControlId: unitControlId,
+      this.logger.error(NotFoundException, 'Unit Control Not Found', true, {
+        unitRecordId,
+        unitControlId,
       });
     }
     return this.map.one(result);
