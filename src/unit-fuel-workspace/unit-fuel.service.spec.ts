@@ -5,7 +5,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
-import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
+import { UnitFuelBaseDTO } from '../dtos/unit-fuel-update.dto';
 import { UnitFuel } from '../entities/workspace/unit-fuel.entity';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -20,7 +20,7 @@ const userId = 'testuser';
 const returnedUnitFuels: UnitFuelDTO[] = [];
 const returnedUnitFuel: UnitFuelDTO = new UnitFuelDTO();
 
-const payload: UpdateUnitFuelDTO = {
+const payload: UnitFuelBaseDTO = {
   fuelCode: '',
   indicatorCode: '',
   ozoneSeasonIndicator: 1,

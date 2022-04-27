@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
+import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { v4 as uuid } from 'uuid';
@@ -50,7 +50,7 @@ export class UnitControlWorkspaceService {
     userId: string,
     locId: string,
     unitId: number,
-    payload: UpdateUnitControlDTO,
+    payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -77,7 +77,7 @@ export class UnitControlWorkspaceService {
     locId: string,
     unitId: number,
     unitControlId: string,
-    payload: UpdateUnitControlDTO,
+    payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
     const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
 

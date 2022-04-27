@@ -4,7 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { v4 as uuid } from 'uuid';
 
-import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
+import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
@@ -46,7 +46,7 @@ export class MonitorFormulaWorkspaceService {
 
   async createFormula(
     locationId: string,
-    payload: UpdateMonitorFormulaDTO,
+    payload: MonitorFormulaBaseDTO,
     userId: string,
   ): Promise<MonitorFormulaDTO> {
     const formula = this.repository.create({
@@ -73,7 +73,7 @@ export class MonitorFormulaWorkspaceService {
   async updateFormula(
     locationId: string,
     formulaRecordId: string,
-    payload: UpdateMonitorFormulaDTO,
+    payload: MonitorFormulaBaseDTO,
     userId: string,
   ) {
     const formula = await this.getFormula(locationId, formulaRecordId);

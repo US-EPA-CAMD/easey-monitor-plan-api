@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
+import { UnitFuelBaseDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
@@ -44,7 +44,7 @@ export class UnitFuelWorkspaceService {
     userId: string,
     locId: string,
     unitId: number,
-    payload: UpdateUnitFuelDTO,
+    payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
     const unitFuel = this.repository.create({
       id: uuid(),
@@ -71,7 +71,7 @@ export class UnitFuelWorkspaceService {
     locId: string,
     unitId: number,
     unitFuelId: string,
-    payload: UpdateUnitFuelDTO,
+    payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
     const unitFuel = await this.getUnitFuel(locId, unitId, unitFuelId);
 

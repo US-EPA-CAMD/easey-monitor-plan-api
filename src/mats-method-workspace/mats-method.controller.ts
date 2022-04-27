@@ -16,7 +16,7 @@ import {
 
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
-import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
+import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
@@ -50,7 +50,7 @@ export class MatsMethodWorkspaceController {
   })
   createMethod(
     @Param('locId') locationId: string,
-    @Body() payload: UpdateMatsMethodDTO,
+    @Body() payload: MatsMethodBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MatsMethodDTO> {
     this.logger.info('Creating method', {
@@ -72,7 +72,7 @@ export class MatsMethodWorkspaceController {
     @Param('locId') locationId: string,
     @Param('methodId') methodId: string,
     @CurrentUser() userId: string,
-    @Body() payload: UpdateMatsMethodDTO,
+    @Body() payload: MatsMethodBaseDTO,
   ): Promise<MatsMethodDTO> {
     this.logger.info('Updating method', {
       locationId: locationId,

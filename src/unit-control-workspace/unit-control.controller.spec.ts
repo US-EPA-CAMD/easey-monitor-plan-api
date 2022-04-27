@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlWorkspaceController } from './unit-control.controller';
 import { UnitControlWorkspaceService } from './unit-control.service';
-import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
+import { UnitControlBaseDTO } from '../dtos/unit-control-update.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
@@ -15,7 +15,7 @@ const locId = '6';
 const unitRecordId = 1;
 const unitControlId = 'some unit control id';
 const currentUser = 'testuser';
-const payload = new UpdateUnitControlDTO();
+const payload = new UnitControlBaseDTO();
 
 const returnedUnitControls: UnitControlDTO[] = [];
 returnedUnitControls.push(new UnitControlDTO());

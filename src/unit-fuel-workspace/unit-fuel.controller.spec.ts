@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceController } from './unit-fuel.controller';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
-import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
+import { UnitFuelBaseDTO } from '../dtos/unit-fuel-update.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
@@ -15,7 +15,7 @@ const locId = '6';
 const unitRecordId = 1;
 const unitFuelId = 'some unit fuel id';
 const currentUser = 'testuser';
-const payload = new UpdateUnitFuelDTO();
+const payload = new UnitFuelBaseDTO();
 
 const returnedUnitFuels: UnitFuelDTO[] = [];
 returnedUnitFuels.push(new UnitFuelDTO());

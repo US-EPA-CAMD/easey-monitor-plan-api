@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
+import { MonitorMethodBaseDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
@@ -45,7 +45,7 @@ export class MonitorMethodWorkspaceController {
   })
   createMethod(
     @Param('locId') locId: string,
-    @Body() payload: UpdateMonitorMethodDTO,
+    @Body() payload: MonitorMethodBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorMethodDTO> {
     return this.service.createMethod(locId, payload, userId);
@@ -61,7 +61,7 @@ export class MonitorMethodWorkspaceController {
   updateMethod(
     @Param('locId') locId: string,
     @Param('methodId') methodId: string,
-    @Body() payload: UpdateMonitorMethodDTO,
+    @Body() payload: MonitorMethodBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorMethodDTO> {
     return this.service.updateMethod(methodId, payload, locId, userId);

@@ -16,7 +16,7 @@ import {
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
-import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
+import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
@@ -46,7 +46,7 @@ export class MonitorSpanWorkspaceController {
   async updateSpan(
     @Param('locId') locationId: string,
     @Param('spanId') spanId: string,
-    @Body() payload: UpdateMonitorSpanDTO,
+    @Body() payload: MonitorSpanBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorSpanDTO> {
     return this.service.updateSpan(locationId, spanId, payload, userId);
@@ -62,7 +62,7 @@ export class MonitorSpanWorkspaceController {
   })
   createSpan(
     @Param('locId') locationId: string,
-    @Body() payload: UpdateMonitorSpanDTO,
+    @Body() payload: MonitorSpanBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorSpanDTO> {
     return this.service.createSpan(locationId, payload, userId);

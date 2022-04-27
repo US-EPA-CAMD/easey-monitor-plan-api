@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { UpdateMonitorMethodDTO } from '../dtos/monitor-method-update.dto';
+import { MonitorMethodBaseDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
@@ -39,7 +39,7 @@ export class MonitorMethodWorkspaceService {
 
   async createMethod(
     locationId: string,
-    payload: UpdateMonitorMethodDTO,
+    payload: MonitorMethodBaseDTO,
     userId: string,
   ): Promise<MonitorMethodDTO> {
     const monMethod = this.repository.create({
@@ -65,7 +65,7 @@ export class MonitorMethodWorkspaceService {
 
   async updateMethod(
     methodId: string,
-    payload: UpdateMonitorMethodDTO,
+    payload: MonitorMethodBaseDTO,
     locationId: string,
     userId: string,
   ): Promise<MonitorMethodDTO> {

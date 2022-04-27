@@ -4,7 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { v4 as uuid } from 'uuid';
 
-import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
+import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
@@ -40,7 +40,7 @@ export class MonitorSpanWorkspaceService {
 
   async createSpan(
     locationId: string,
-    payload: UpdateMonitorSpanDTO,
+    payload: MonitorSpanBaseDTO,
     userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = this.repository.create({
@@ -76,7 +76,7 @@ export class MonitorSpanWorkspaceService {
   async updateSpan(
     locationId: string,
     spanId: string,
-    payload: UpdateMonitorSpanDTO,
+    payload: MonitorSpanBaseDTO,
     userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = await this.getSpan(locationId, spanId);

@@ -4,7 +4,7 @@ import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
 import { MonitorFormula } from '../../entities/workspace/monitor-formula.entity';
-import { UpdateMonitorFormulaDTO } from '../../dtos/monitor-formula-update.dto';
+import { MonitorFormulaBaseDTO } from '../../dtos/monitor-formula-update.dto';
 
 describe('Component Tests', () => {
   describe('Check9', () => {
@@ -20,7 +20,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const formula = new UpdateMonitorFormulaDTO();
+      const formula = new MonitorFormulaBaseDTO();
 
       formula.parameterCode = 'SO2';
       formula.formulaCode = null;
@@ -46,7 +46,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const formula = new UpdateMonitorFormulaDTO();
+      const formula = new MonitorFormulaBaseDTO();
 
       formula.parameterCode = 'SO2';
       formula.formulaCode = null;
@@ -73,7 +73,7 @@ describe('Component Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const formula = new UpdateMonitorFormulaDTO();
+      const formula = new MonitorFormulaBaseDTO();
 
       formula.parameterCode = 'SO2';
       formula.formulaCode = 'W';
