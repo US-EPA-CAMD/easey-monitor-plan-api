@@ -11,6 +11,7 @@ export const Check1 = new Check(
   },
   async (monPlan: UpdateMonitorPlanDTO) => {
     const result = new CheckResult('IMPORT1');
+    console.log(monPlan)
 
     if ((await getFacIdFromOris(monPlan.orisCode)) === null) {
       result.addError(
@@ -33,7 +34,8 @@ export const Check2 = new Check(
     const entityManager = getEntityManager();
 
     const result = new CheckResult('IMPORT2');
-
+    
+    console.log(monPlan)
     const facilityId = await getFacIdFromOris(monPlan.orisCode);
     for (const entry of monPlan.locations) {
       if (entry.unitId !== null) {
