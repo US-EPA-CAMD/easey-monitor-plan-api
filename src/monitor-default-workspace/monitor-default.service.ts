@@ -1,14 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
-import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
-import { MonitorDefaultBaseDTO } from '../dtos/monitor-default.dto';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorDefaultBaseDTO, MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {

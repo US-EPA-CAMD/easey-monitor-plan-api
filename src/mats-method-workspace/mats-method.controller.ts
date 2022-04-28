@@ -13,13 +13,11 @@ import {
   ApiTags,
   ApiSecurity,
 } from '@nestjs/swagger';
-
-import { MatsMethodWorkspaceService } from './mats-method.service';
-import { MatsMethodDTO } from '../dtos/mats-method.dto';
-import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
+import { MatsMethodWorkspaceService } from './mats-method.service';
 
 @Controller()
 @ApiSecurity('APIKey')

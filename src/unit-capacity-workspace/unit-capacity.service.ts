@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
-
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
-import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
-import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
+import {
+  UnitCapacityBaseDTO,
+  UnitCapacityDTO,
+} from '../dtos/unit-capacity.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()

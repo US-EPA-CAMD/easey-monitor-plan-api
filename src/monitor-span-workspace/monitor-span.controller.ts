@@ -13,12 +13,10 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
-
-import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
-import { MonitorSpanWorkspaceService } from './monitor-span.service';
-import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { MonitorSpanWorkspaceService } from './monitor-span.service';
+import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 
 @Controller()
 @ApiSecurity('APIKey')

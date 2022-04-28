@@ -17,12 +17,12 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 export class SystemComponentWorkspaceService {
   constructor(
     @InjectRepository(SystemComponentWorkspaceRepository)
-    private repository: SystemComponentWorkspaceRepository,
-    private componentService: ComponentWorkspaceService,
-    private map: SystemComponentMap,
-    private Logger: Logger,
+    private readonly repository: SystemComponentWorkspaceRepository,
+    private readonly componentService: ComponentWorkspaceService,
+    private readonly map: SystemComponentMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
-    private compRepository: ComponentWorkspaceRepository,
+    private readonly compRepository: ComponentWorkspaceRepository,
   ) {}
 
   async getComponents(
@@ -40,7 +40,7 @@ export class SystemComponentWorkspaceService {
     const result = await this.repository.getComponent(sysId, componentId);
 
     if (!result) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         'System component was not found',
         true,

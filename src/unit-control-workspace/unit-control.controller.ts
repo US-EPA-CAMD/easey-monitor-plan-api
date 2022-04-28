@@ -13,13 +13,11 @@ import {
   ApiBearerAuth,
   ApiSecurity,
 } from '@nestjs/swagger';
-import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
-import { UnitControlDTO } from '../dtos/unit-control.dto';
-
-import { UnitControlWorkspaceService } from './unit-control.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
+import { UnitControlWorkspaceService } from './unit-control.service';
 
 @Controller()
 @ApiSecurity('APIKey')

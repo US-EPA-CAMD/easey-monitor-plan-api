@@ -13,12 +13,13 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-
-import { MonitorSystemWorkspaceService } from './monitor-system.service';
-import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
-import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { MonitorSystemWorkspaceService } from './monitor-system.service';
+import {
+  MonitorSystemBaseDTO,
+  MonitorSystemDTO,
+} from '../dtos/monitor-system.dto';
 
 @Controller()
 @ApiTags('Systems')

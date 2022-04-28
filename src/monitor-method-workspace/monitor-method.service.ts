@@ -1,22 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorMethodBaseDTO } from '../dtos/monitor-method.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import {
+  MonitorMethodBaseDTO,
+  MonitorMethodDTO,
+} from '../dtos/monitor-method.dto';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
-import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
   constructor(
     @InjectRepository(MonitorMethodWorkspaceRepository)
-    private repository: MonitorMethodWorkspaceRepository,
-    private map: MonitorMethodMap,
-    private Logger: Logger,
+    private readonly repository: MonitorMethodWorkspaceRepository,
+    private readonly map: MonitorMethodMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -29,7 +30,7 @@ export class MonitorMethodWorkspaceService {
     const result = this.repository.findOne(methodId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, 'Monitor Method Not Found', true, {
+      this.logger.error(NotFoundException, 'Monitor Method Not Found', true, {
         methodId: methodId,
       });
     }

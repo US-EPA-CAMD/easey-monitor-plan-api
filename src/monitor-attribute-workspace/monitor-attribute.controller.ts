@@ -14,12 +14,13 @@ import {
   Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-
-import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
-import { MonitorAttributeBaseDTO } from '../dtos/monitor-attribute.dto';
-import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import {
+  MonitorAttributeBaseDTO,
+  MonitorAttributeDTO,
+} from '../dtos/monitor-attribute.dto';
+import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 
 @Controller()
 @ApiSecurity('APIKey')

@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsString, ValidationArguments } from 'class-validator';
+import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
 
 export class UnitStackConfigurationBaseDTO {

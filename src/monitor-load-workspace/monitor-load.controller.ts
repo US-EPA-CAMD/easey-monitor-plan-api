@@ -13,13 +13,11 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-
-import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
-import { MonitorLoadWorkspaceService } from './monitor-load.service';
-import { MonitorLoadBaseDTO } from '../dtos/monitor-load.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorLoadWorkspaceService } from './monitor-load.service';
+import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 
 @Controller()
 @ApiSecurity('APIKey')

@@ -1,14 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { MatsMethodWorkspaceRepository } from './mats-method.repository';
-import { MatsMethodMap } from '../maps/mats-method.map';
-import { MatsMethodDTO } from '../dtos/mats-method.dto';
-import { MatsMethod } from '../entities/workspace/mats-method.entity';
-import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MatsMethodMap } from '../maps/mats-method.map';
+import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
+import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 
 @Injectable()
 export class MatsMethodWorkspaceService {

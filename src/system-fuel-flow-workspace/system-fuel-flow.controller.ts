@@ -13,13 +13,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-
-import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
-import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
-import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import {
+  SystemFuelFlowBaseDTO,
+  SystemFuelFlowDTO,
+} from '../dtos/system-fuel-flow.dto';
+import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 
 @Controller()
 @ApiSecurity('APIKey')

@@ -16,9 +16,7 @@ import {
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
-import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
-import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
+import { UnitCapacityBaseDTO, UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 
 @Controller()

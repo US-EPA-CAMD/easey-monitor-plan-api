@@ -13,12 +13,10 @@ import {
   Controller,
   UseGuards,
 } from '@nestjs/common';
-
-import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorMethodBaseDTO } from '../dtos/monitor-method.dto';
-import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { MonitorMethodBaseDTO, MonitorMethodDTO } from '../dtos/monitor-method.dto';
+import { MonitorMethodWorkspaceService } from './monitor-method.service';
 
 @Controller()
 @ApiSecurity('APIKey')
