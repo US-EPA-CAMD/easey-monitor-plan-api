@@ -13,12 +13,13 @@ import {
   Body,
   Put,
 } from '@nestjs/common';
-
-import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
-import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
+import {
+  MonitorQualificationBaseDTO,
+  MonitorQualificationDTO,
+} from '../dtos/monitor-qualification.dto';
 
 @Controller()
 @ApiSecurity('APIKey')

@@ -1,22 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { v4 as uuid } from 'uuid';
-import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
-import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
-import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
-import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
+import {
+  MonitorQualificationBaseDTO,
+  MonitorQualificationDTO,
+} from '../dtos/monitor-qualification.dto';
+import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
   constructor(
     @InjectRepository(MonitorQualificationWorkspaceRepository)
-    private repository: MonitorQualificationWorkspaceRepository,
-    private map: MonitorQualificationMap,
-    private Logger: Logger,
+    private readonly repository: MonitorQualificationWorkspaceRepository,
+    private readonly map: MonitorQualificationMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -33,7 +34,7 @@ export class MonitorQualificationWorkspaceService {
   ): Promise<MonitorQualification> {
     const result = await this.repository.getQualification(locId, qualId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Qualification Not Found', true, {
+      this.logger.error(NotFoundException, 'Qualification Not Found', true, {
         locId: locId,
         qualId: qualId,
       });

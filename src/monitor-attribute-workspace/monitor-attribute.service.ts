@@ -2,12 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
-
-import { MonitorAttributeBaseDTO } from '../dtos/monitor-attribute.dto';
-import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
-import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
+import {
+  MonitorAttributeBaseDTO,
+  MonitorAttributeDTO,
+} from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {

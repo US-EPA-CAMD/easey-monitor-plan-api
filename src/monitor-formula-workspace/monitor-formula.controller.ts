@@ -13,13 +13,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-
-import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
-import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
-import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
+import {
+  MonitorFormulaBaseDTO,
+  MonitorFormulaDTO,
+} from '../dtos/monitor-formula.dto';
 
 @Controller()
 @ApiSecurity('APIKey')

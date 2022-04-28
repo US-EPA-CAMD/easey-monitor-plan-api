@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, ValidationArguments } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
+import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class UnitStackConfigurationBaseDTO {
   @IsString()
@@ -49,6 +49,13 @@ export class UnitStackConfigurationBaseDTO {
 
 export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
   @ApiProperty({
+    description: propertyMetadata.unitStackConfigurationDTOId.description,
+    example: propertyMetadata.unitStackConfigurationDTOId.example,
+    name: propertyMetadata.unitStackConfigurationDTOId.fieldLabels.value,
+  })
+  id: string;
+
+  @ApiProperty({
     description: propertyMetadata.unitStackConfigurationDTOUnitId.description,
     example: propertyMetadata.unitStackConfigurationDTOUnitId.example,
   })
@@ -60,13 +67,6 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
     example: propertyMetadata.unitStackConfigurationDTOStackPipeId.example,
   })
   stackPipeRecordId: string;
-
-  @ApiProperty({
-    description: propertyMetadata.unitStackConfigurationDTOId.description,
-    example: propertyMetadata.unitStackConfigurationDTOId.example,
-    name: propertyMetadata.unitStackConfigurationDTOId.fieldLabels.value,
-  })
-  id: string;
 
   @ApiProperty({
     description: propertyMetadata.unitStackConfigurationDTOUserId.description,

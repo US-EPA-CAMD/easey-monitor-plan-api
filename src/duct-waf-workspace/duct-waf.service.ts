@@ -1,14 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { DuctWafBaseDTO } from '../dtos/duct-waf.dto';
-import { DuctWafDTO } from '../dtos/duct-waf.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWaf } from '../entities/duct-waf.entity';
-
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
