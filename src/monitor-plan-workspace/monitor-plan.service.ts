@@ -1,6 +1,7 @@
 import { In } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { getManager } from 'typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
@@ -38,6 +39,13 @@ import {
   getMonLocId,
   getFacIdFromOris,
 } from '../import-checks/utilities/utils';
+import { StackPipe } from 'src/entities/workspace/stack-pipe.entity';
+import { Unit } from 'src/entities/workspace/unit.entity';
+import { UnitStackConfiguration } from 'src/entities/workspace/unit-stack-configuration.entity';
+import { UnitStackConfigurationRepository } from 'src/unit-stack-configuration/unit-stack-configuration.repository';
+import { UnitCapacityWorkspaceService } from 'src/unit-capacity-workspace/unit-capacity.service';
+import { UnitControlWorkspaceService } from 'src/unit-control-workspace/unit-control.service';
+import { UnitFuelWorkspaceService } from 'src/unit-fuel-workspace/unit-fuel.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -88,10 +96,15 @@ export class MonitorPlanWorkspaceService {
     private readonly lmeQualificationRepository: LMEQualificationWorkspaceRepository,
     @InjectRepository(PCTQualificationWorkspaceRepository)
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
+    @InjectRepository(UnitStackConfigurationRepository)
+    private readonly unitStackConfigRepository: UnitStackConfigurationRepository,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
 
     private readonly componentService: ComponentWorkspaceService,
+    private readonly unitCapacityService: UnitCapacityWorkspaceService,
+    private readonly unitControlService: UnitControlWorkspaceService,
+    private readonly unitFuelService: UnitFuelWorkspaceService,
 
     private map: MonitorPlanMap,
   ) {}
@@ -100,15 +113,57 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
+    const entityManager = getManager();
     const promises = [];
 
+    const updateDate: Date = new Date();
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
-    // Unit Stack
+    // Unit Stack Config Merge Logic
+    for (const unitStackConfig of plan.unitStackConfiguration) {
+      promises.push(
+        new Promise(async () => {
+          const stackPipe = await entityManager.findOne(StackPipe, {
+            name: unitStackConfig.stackPipeId,
+            facId: facilityId,
+          });
 
-    //Comments
+          const unit = await entityManager.findOne(Unit, {
+            name: unitStackConfig.unitId,
+            facId: facilityId,
+          });
+
+          const unitStackCongigRecord = await entityManager.findOne(
+            UnitStackConfiguration,
+            {
+              unitId: unit.id,
+              stackPipeId: stackPipe.id,
+            },
+          );
+          if (
+            unitStackConfig.beginDate != unitStackCongigRecord.beginDate ||
+            unitStackConfig.endDate != unitStackCongigRecord.endDate
+          ) {
+            unitStackCongigRecord.updateDate = updateDate;
+            unitStackCongigRecord.beginDate = unitStackConfig.beginDate;
+            unitStackConfig.endDate = unitStackConfig.endDate;
+            unitStackCongigRecord.userId = userId;
+
+            await this.unitStackConfigRepository.update(
+              unitStackCongigRecord,
+              unitStackCongigRecord,
+            );
+          }
+        }),
+      );
+    }
 
     for (const location of plan.locations) {
+      const unitRecord = await entityManager.findOne(Unit, {
+        name: location.unitId,
+        facId: facilityId,
+      });
+
       const MonitorLocation = await getMonLocId(
         location,
         facilityId,
@@ -128,9 +183,106 @@ export class MonitorPlanWorkspaceService {
         }),
       );
 
-      // --
+      // Unit Merge Logic
+      promises.push(
+        new Promise(async () => {
+          unitRecord.nonLoadBasedIndicator = location.nonLoadBasedIndicator;
+          await entityManager.update(Unit, unitRecord, unitRecord);
+        }),
+      );
 
-      // --
+      //Unit Capacity Merge Logic
+      for (const unitCapacity of location.unitCapacity) {
+        promises.push(
+          new Promise(async () => {
+            const unitCapacityRecord = await this.unitCapacityRepository.getUnitCapacityByUnitIdAndDate(
+              unitRecord.id,
+              unitCapacity.beginDate,
+              unitCapacity.endDate,
+            );
+
+            if (unitCapacityRecord != null) {
+              this.unitCapacityService.updateUnitCapacity(
+                userId,
+                MonitorLocation.id,
+                unitRecord.id,
+                unitCapacityRecord.id,
+                unitCapacity,
+              );
+            } else {
+              this.unitCapacityService.createUnitCapacity(
+                userId,
+                MonitorLocation.id,
+                unitRecord.id,
+                unitCapacity,
+              );
+            }
+          }),
+        );
+      }
+
+      //Unit Control Merge Logic
+      for (const unitControl of location.unitControls) {
+        promises.push(
+          new Promise(async () => {
+            const unitControlRecord = await this.unitControlRepository.getUnitControlBySpecs(
+              unitRecord.id,
+              unitControl.controlEquipParamCode,
+              unitControl.controlCode,
+              unitControl.installDate,
+              unitControl.retireDate,
+            );
+
+            if (unitControlRecord != null) {
+              this.unitControlService.updateUnitControl(
+                userId,
+                MonitorLocation.id,
+                unitRecord.id,
+                unitControlRecord.id,
+                unitControl,
+              );
+            } else {
+              this.unitControlService.createUnitControl(
+                userId,
+                MonitorLocation.id,
+                unitRecord.id,
+                unitControl,
+              );
+            }
+          }),
+        );
+      }
+
+      //Unit Fuel Merge Logic
+      for (const unitFuel of location.unitFuels) {
+        promises.push(
+          new Promise(async () => {
+            const unitFuelRecord = await this.unitFuelRepository.getUnitFuelBySpecs(
+              unitRecord.id,
+              unitFuel.fuelCode,
+              unitFuel.beginDate,
+              unitFuel.endDate,
+            );
+
+            if (unitFuelRecord != null) {
+              this.unitFuelService.updateUnitFuel(
+                userId,
+                MonitorLocation.id,
+                unitRecord.id,
+                unitFuelRecord.id,
+                unitFuel,
+              );
+            } else {
+              this.unitFuelService.createUnitFuel(
+                userId,
+                MonitorLocation.id,
+                unitRecord.id,
+                unitFuel,
+              );
+            }
+          }),
+        );
+      }
     }
 
     await Promise.all(promises);
