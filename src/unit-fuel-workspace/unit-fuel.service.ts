@@ -2,20 +2,18 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
-import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
-import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
+import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
-import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 
 @Injectable()
 export class UnitFuelWorkspaceService {
   constructor(
     @InjectRepository(UnitFuelWorkspaceRepository)
-    readonly repository: UnitFuelWorkspaceRepository,
-    readonly map: UnitFuelMap,
-    private Logger: Logger,
+    private readonly repository: UnitFuelWorkspaceRepository,
+    private readonly map: UnitFuelMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -31,7 +29,7 @@ export class UnitFuelWorkspaceService {
   ): Promise<UnitFuelDTO> {
     const result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
     if (!result) {
-      this.Logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
+      this.logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
         locId: locId,
         unitId: unitId,
         unitFuelId: unitFuelId,
@@ -44,7 +42,7 @@ export class UnitFuelWorkspaceService {
     userId: string,
     locId: string,
     unitId: number,
-    payload: UpdateUnitFuelDTO,
+    payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
     const unitFuel = this.repository.create({
       id: uuid(),
@@ -71,7 +69,7 @@ export class UnitFuelWorkspaceService {
     locId: string,
     unitId: number,
     unitFuelId: string,
-    payload: UpdateUnitFuelDTO,
+    payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
     const unitFuel = await this.getUnitFuel(locId, unitId, unitFuelId);
 

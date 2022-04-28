@@ -13,13 +13,14 @@ import {
   Body,
   Put,
 } from '@nestjs/common';
-
-import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
-import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import {
+  PCTQualificationBaseDTO,
+  PCTQualificationDTO,
+} from '../dtos/pct-qualification.dto';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,7 +28,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class PCTQualificationWorkspaceController {
   constructor(
     private readonly service: PCTQualificationWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -57,9 +58,9 @@ export class PCTQualificationWorkspaceController {
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Param('pctQualId') pctQualId: string,
-    @Body() payload: UpdatePCTQualificationDTO,
+    @Body() payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
-    this.Logger.info('Updating PCT qualification', {
+    this.logger.info('Updating PCT qualification', {
       qualId: qualId,
       pctQualId: pctQualId,
       payload: payload,
@@ -87,9 +88,9 @@ export class PCTQualificationWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
-    @Body() payload: UpdatePCTQualificationDTO,
+    @Body() payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
-    this.Logger.info('Creating PCT Qualification', {
+    this.logger.info('Creating PCT Qualification', {
       userId: userId,
       locId: locId,
       qualId: qualId,

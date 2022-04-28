@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateComponentDTO } from '../dtos/component-update.dto';
-import { ComponentDTO } from '../dtos/component.dto';
+import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -46,7 +44,7 @@ export class ComponentWorkspaceService {
 
   async createComponent(
     locationId: string,
-    payload: UpdateComponentDTO,
+    payload: UpdateComponentBaseDTO,
     userId: string,
   ): Promise<ComponentDTO> {
     const component = this.repository.create({

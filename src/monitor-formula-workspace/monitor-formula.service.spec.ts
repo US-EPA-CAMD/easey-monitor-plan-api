@@ -7,7 +7,7 @@ import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
-import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
+import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula-update.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -28,7 +28,7 @@ const locationId = '5770';
 const formulaId = 'someId';
 const userId = 'testuser';
 
-const monitorFormulaDTO: UpdateMonitorFormulaDTO = {
+const monitorFormulaDTO: MonitorFormulaBaseDTO = {
   formulaId: 'string',
   parameterCode: 'string',
   formulaCode: 'string',

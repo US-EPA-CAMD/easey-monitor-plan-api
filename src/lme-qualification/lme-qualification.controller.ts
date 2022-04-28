@@ -1,6 +1,5 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
-
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationService } from './lme-qualification.service';
 

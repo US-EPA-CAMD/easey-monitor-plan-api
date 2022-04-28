@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
-import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
+import { LMEQualificationBaseDTO } from '../dtos/lme-qualification-update.dto';
 import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 
@@ -16,7 +16,7 @@ const userId = 'testuser';
 const returnedLMEQualifications: LMEQualificationDTO[] = [];
 const returnedLMEQualification: LMEQualificationDTO = new LMEQualificationDTO();
 
-const payload: UpdateLMEQualificationDTO = {
+const payload: LMEQualificationBaseDTO = {
   qualificationDataYear: 2021,
   operatingHours: 10,
   so2Tons: 1.5,

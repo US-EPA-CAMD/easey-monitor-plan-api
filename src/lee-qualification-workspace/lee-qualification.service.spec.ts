@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
-import { UpdateLEEQualificationDTO } from '../dtos/lee-qualification-update.dto';
+import { LEEQualificationBaseDTO } from '../dtos/lee-qualification-update.dto';
 import { LEEQualification } from '../entities/workspace/lee-qualification.entity';
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 
@@ -16,7 +16,7 @@ const userId = 'testuser';
 const returnedLEEQualifications: LEEQualificationDTO[] = [];
 const returnedLEEQualification: LEEQualificationDTO = new LEEQualificationDTO();
 
-const payload: UpdateLEEQualificationDTO = {
+const payload: LEEQualificationBaseDTO = {
   qualificationTestDate: new Date(Date.now()),
   parameterCode: 'HG',
   qualificationTestType: 'INITIAL',

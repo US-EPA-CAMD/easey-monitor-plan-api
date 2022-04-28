@@ -3,8 +3,8 @@ import * as checks from './system';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
-import { UpdateMonitorSystemDTO } from '../../dtos/monitor-system-update.dto';
-import { UpdateSystemFuelFlowDTO } from '../../dtos/system-fuel-flow-update.dto';
+import { MonitorSystemBaseDTO } from '../../dtos/monitor-system-update.dto';
+import { SystemFuelFlowBaseDTO } from '../../dtos/system-fuel-flow-update.dto';
 import { MonitorSystem } from '../../entities/monitor-system.entity';
 
 describe('System Tests', () => {
@@ -21,7 +21,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new UpdateMonitorSystemDTO();
+      const system = new MonitorSystemBaseDTO();
       system.systemTypeCode = 'LTGS';
 
       system.fuelFlows = [];
@@ -47,7 +47,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new UpdateMonitorSystemDTO();
+      const system = new MonitorSystemBaseDTO();
       system.systemTypeCode = 'LTGS';
 
       system.fuelFlows = [];
@@ -72,7 +72,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new UpdateMonitorSystemDTO();
+      const system = new MonitorSystemBaseDTO();
       system.systemTypeCode = 'LTGS';
 
       system.fuelFlows = [];
@@ -95,9 +95,9 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new UpdateMonitorSystemDTO();
+      const system = new MonitorSystemBaseDTO();
       system.systemTypeCode = 'LTGS';
-      const fuelFlow = new UpdateSystemFuelFlowDTO();
+      const fuelFlow = new SystemFuelFlowBaseDTO();
 
       system.fuelFlows = [fuelFlow];
       location.systems = [system];
@@ -122,7 +122,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new UpdateMonitorSystemDTO();
+      const system = new MonitorSystemBaseDTO();
       system.systemTypeCode = 'LTGS';
 
       system.fuelFlows = [];

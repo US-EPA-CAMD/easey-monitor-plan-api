@@ -5,7 +5,7 @@ import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { MatsMethodMap } from '../maps/mats-method.map';
-import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
+import { MatsMethodBaseDTO } from '../dtos/mats-method-update.dto';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([]),
@@ -23,7 +23,7 @@ const locationId = '5770';
 const methodId = 'someId';
 const userId = 'testuser';
 
-const matsMethodDTO: UpdateMatsMethodDTO = {
+const matsMethodDTO: MatsMethodBaseDTO = {
   supplementalMATSMonitoringMethodCode: 'string',
   supplementalMATSParameterCode: 'string',
   beginDate: new Date(Date.now()),

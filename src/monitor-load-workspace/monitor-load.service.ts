@@ -1,13 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
-import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
@@ -39,7 +37,7 @@ export class MonitorLoadWorkspaceService {
 
   async createLoad(
     locationId: string,
-    payload: UpdateMonitorLoadDTO,
+    payload: MonitorLoadBaseDTO,
     userId: string,
   ): Promise<MonitorLoadDTO> {
     const load = this.repository.create({
@@ -70,7 +68,7 @@ export class MonitorLoadWorkspaceService {
   async updateLoad(
     locationId: string,
     loadId: string,
-    payload: UpdateMonitorLoadDTO,
+    payload: MonitorLoadBaseDTO,
     userId: string,
   ): Promise<MonitorLoadDTO> {
     const load = await this.getLoad(loadId);

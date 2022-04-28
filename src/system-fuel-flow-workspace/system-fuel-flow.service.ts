@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid, validate } from 'uuid';
-
-import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
-import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
+import { v4 as uuid } from 'uuid';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
-
-import { UpdateSystemFuelFlowDTO } from '../dtos/system-fuel-flow-update.dto';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import {
+  SystemFuelFlowBaseDTO,
+  SystemFuelFlowDTO,
+} from '../dtos/system-fuel-flow.dto';
+import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class SystemFuelFlowWorkspaceService {
 
   async createFuelFlow(
     monitoringSystemRecordId: string,
-    payload: UpdateSystemFuelFlowDTO,
+    payload: SystemFuelFlowBaseDTO,
     locId: string,
     userId: string,
   ): Promise<SystemFuelFlowDTO> {
@@ -66,7 +66,7 @@ export class SystemFuelFlowWorkspaceService {
 
   async updateFuelFlow(
     fuelFlowId: string,
-    payload: UpdateSystemFuelFlowDTO,
+    payload: SystemFuelFlowBaseDTO,
     locId: string,
     userId: string,
   ): Promise<SystemFuelFlowDTO> {

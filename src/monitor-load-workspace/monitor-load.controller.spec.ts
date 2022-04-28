@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadWorkspaceController } from './monitor-load.controller';
-import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
+import { MonitorLoadBaseDTO } from '../dtos/monitor-load-update.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 
@@ -12,7 +12,7 @@ jest.mock('./monitor-load.service');
 
 const locId = 'some location id';
 const loadId = 'some load id';
-const payload = new UpdateMonitorLoadDTO();
+const payload = new MonitorLoadBaseDTO();
 
 const returnedLoads: MonitorLoadDTO[] = [];
 returnedLoads.push(new MonitorLoadDTO());

@@ -9,7 +9,7 @@ export class UnitControlMap extends BaseMap<UnitControl, UnitControlDTO> {
   public async one(entity: UnitControl): Promise<UnitControlDTO> {
     return {
       id: entity.id,
-      unitId: entity.unitId,
+      unitRecordId: entity.unitId,
       controlEquipParamCode: entity.controlEquipParamCode,
       controlCode: entity.controlCode,
       originalCode: entity.originalCode,

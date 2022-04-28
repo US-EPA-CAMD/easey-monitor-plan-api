@@ -2,11 +2,11 @@ import { IsInt, ValidateNested, ValidationArguments } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { UpdateMonitorPlanCommentDTO } from './monitor-plan-comment-update.dto';
-import { UpdateUnitStackConfigurationDTO } from './unit-stack-configuration-update.dto';
+import { UnitStackConfigurationBaseDTO } from './unit-stack-configuration.dto';
 import { UpdateMonitorLocationDTO } from './monitor-location-update.dto';
 import { Type } from 'class-transformer';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { MonitorPlanCommentBaseDTO } from './monitor-plan-comment.dto';
 
 export class UpdateMonitorPlanDTO {
   @ApiProperty({
@@ -23,12 +23,12 @@ export class UpdateMonitorPlanDTO {
   orisCode: number;
 
   @ValidateNested()
-  @Type(() => UpdateMonitorPlanCommentDTO)
-  comments: UpdateMonitorPlanCommentDTO[];
+  @Type(() => MonitorPlanCommentBaseDTO)
+  comments: MonitorPlanCommentBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateUnitStackConfigurationDTO)
-  unitStackConfiguration: UpdateUnitStackConfigurationDTO[];
+  @Type(() => UnitStackConfigurationBaseDTO)
+  unitStackConfiguration: UnitStackConfigurationBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorLocationDTO)

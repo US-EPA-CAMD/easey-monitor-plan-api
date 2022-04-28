@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
-import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
+import { PCTQualificationBaseDTO } from '../dtos/pct-qualification-update.dto';
 import { PCTQualification } from '../entities/workspace/pct-qualification.entity';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 
@@ -16,7 +16,7 @@ const userId = 'testuser';
 const returnedPCTQualifications: PCTQualificationDTO[] = [];
 const returnedPCTQualification: PCTQualificationDTO = new PCTQualificationDTO();
 
-const payload: UpdatePCTQualificationDTO = {
+const payload: PCTQualificationBaseDTO = {
   qualificationYear: 2020,
   averagePercentValue: 1,
   yr1QualificationDataYear: 2000,
