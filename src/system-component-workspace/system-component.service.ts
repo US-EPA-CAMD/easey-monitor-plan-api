@@ -1,16 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
-import { SystemComponentDTO } from '../dtos/system-component.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import {
+  SystemComponentBaseDTO,
+  SystemComponentDTO,
+} from '../dtos/system-component.dto';
 import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { SystemComponentMap } from '../maps/system-component.map';
-import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { SystemComponent } from '../entities/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 
 @Injectable()

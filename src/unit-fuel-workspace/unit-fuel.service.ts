@@ -2,12 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
-import { UnitFuelBaseDTO } from '../dtos/unit-fuel.dto';
-import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
+import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
-import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 
 @Injectable()
 export class UnitFuelWorkspaceService {

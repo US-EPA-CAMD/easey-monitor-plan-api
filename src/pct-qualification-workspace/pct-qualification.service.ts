@@ -1,21 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
-import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
-import { PCTQualificationMap } from '../maps/pct-qualification.map';
-import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { PCTQualificationMap } from '../maps/pct-qualification.map';
+import {
+  PCTQualificationBaseDTO,
+  PCTQualificationDTO,
+} from '../dtos/pct-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 
 @Injectable()
 export class PCTQualificationWorkspaceService {
   constructor(
     @InjectRepository(PCTQualificationWorkspaceRepository)
-    private repository: PCTQualificationWorkspaceRepository,
-    private map: PCTQualificationMap,
-    private Logger: Logger,
+    private readonly repository: PCTQualificationWorkspaceRepository,
+    private readonly map: PCTQualificationMap,
+    private readonly logger: Logger,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -38,7 +39,7 @@ export class PCTQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         'PCT Qualification Not Found',
         true,
