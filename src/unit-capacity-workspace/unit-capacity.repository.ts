@@ -42,4 +42,22 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
 
     return query.getMany();
   }
+
+  async getUnitCapacityByUnitIdAndDate(
+    unitId: number,
+    beginDate: Date,
+    endDate: Date,
+  ): Promise<UnitCapacity> {
+    const result = this.createQueryBuilder('c')
+      .where('c.unitId = :unitId', {
+        unitId,
+      })
+      .andWhere('c.beginDate = :beginDate OR c.endDate = :endDate', {
+        beginDate,
+        endDate,
+      })
+      .getOne();
+
+    return result;
+  }
 }
