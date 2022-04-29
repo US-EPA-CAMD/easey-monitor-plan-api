@@ -43,6 +43,11 @@ export class StackPipe extends BaseEntity {
   })
   facId: number;
 
+  @Column({
+    name: 'userid',
+  })
+  userId: string;
+
   @ManyToOne(
     () => Plant,
     plant => plant.stackPipes,

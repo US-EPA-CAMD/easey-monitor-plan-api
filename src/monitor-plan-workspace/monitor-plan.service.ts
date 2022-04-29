@@ -134,8 +134,7 @@ export class MonitorPlanWorkspaceService {
       );
     }
 
-    await Promise.all(promises);
-
+    await Promise.all(promises)
     return null;
   }
 
