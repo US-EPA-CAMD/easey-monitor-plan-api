@@ -1,7 +1,6 @@
 import { In } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager } from 'typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
@@ -36,19 +35,10 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { MonitorPlanCommentService } from '../monitor-plan-comment/monitor-plan-comment.service';
 
-import {
-  getMonLocId,
-  getFacIdFromOris,
-} from '../import-checks/utilities/utils';
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { Unit } from '../entities/workspace/unit.entity';
-import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
 import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { MonitorPlanComment } from '../entities/workspace/monitor-plan-comment.entity';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -100,16 +90,10 @@ export class MonitorPlanWorkspaceService {
     @InjectRepository(PCTQualificationWorkspaceRepository)
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
     @InjectRepository(UnitStackConfigurationRepository)
-    private readonly unitStackConfigRepository: UnitStackConfigurationRepository,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
 
     private readonly monitorPlanCommentService: MonitorPlanCommentService,
-    private readonly componentService: ComponentWorkspaceService,
-    private readonly unitCapacityService: UnitCapacityWorkspaceService,
-    private readonly unitControlService: UnitControlWorkspaceService,
-    private readonly unitFuelService: UnitFuelWorkspaceService,
-
     private map: MonitorPlanMap,
   ) {}
 
@@ -117,243 +101,41 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
-    const entityManager = getManager();
-    const promises = [];
-
-    const updateDate: Date = new Date();
-    const facilityId = await getFacIdFromOris(plan.orisCode);
-    const monitorPlans = await entityManager.find(MonitorPlan, {
-      facId: facilityId,
-    });
+   
+    const monitorPlans = [{
+      id: 'WS156810-66E2623851F84AB3ACD6DCF4032DC086'
+    }]
 
     // Monitor Plan Comment Merge Logic
     for (const monitorPlan of monitorPlans) {
-      for (const comment of plan.comments) {
-        promises.push(
-          new Promise(async () => {
-            const monitorPlanComments = await this.monitorPlanCommentService.getCommentsByPlanIdCommentBD(
-              monitorPlan.id,
-              comment.monitoringPlanComment,
-              comment.beginDate,
-            );
-            if (monitorPlanComments.length === 0) {
-              await entityManager.create(MonitorPlanComment, {
-                monitorPlanId: monitorPlan.id,
-                monitorPlanComment: comment.monitoringPlanComment,
-                beginDate: comment.beginDate,
-                endDate: comment.endDate,
-                userId: userId,
-              });
-            } else {
-              monitorPlanComments.forEach(async monitorPlanComment => {
-                if (monitorPlanComment.endDate !== comment.endDate) {
-                  await entityManager.update(
-                    MonitorPlanComment,
-                    monitorPlanComment,
-                    {
-                      /* id: monitorPlanComment.id,
-                    monitorPlanId: monitorPlanComment.id,
-                    monitorPlanComment: monitorPlanComment.monitoringPlanComment,
-                    beginDate: monitorPlanComment.beginDate, */
-                      endDate: comment.endDate,
-                      userId: userId,
-                    },
-                  );
-                }
-              });
-            }
-          }),
-        );
-      }
+      await this.monitorPlanCommentService.createOrUpdateComments(plan, userId, monitorPlan.id)
     }
 
     // Stack Merge logic
-    for (const location of plan.locations) {
-      const statckPipe = await entityManager.findOne(StackPipe, {
-        id: location.stackPipeId,
-      });
-
-      if (statckPipe) {
-        if (statckPipe.activeDate !== location.activeDate) {
-          statckPipe.activeDate = location.activeDate;
-          // statckPipe.userId = userId;
-          statckPipe.activeDate = location.activeDate;
-        }
-        if (statckPipe.retireDate !== location.retireDate) {
-          statckPipe.retireDate = location.retireDate;
-        }
-        await entityManager.update(StackPipe, statckPipe, statckPipe);
-      }
-    }
-
-    // Unit Stack Config Merge Logic
-    for (const unitStackConfig of plan.unitStackConfiguration) {
+    /* for (const location of plan.locations) {
       promises.push(
         new Promise(async () => {
-          const stackPipe = await entityManager.findOne(StackPipe, {
-            name: unitStackConfig.stackPipeId,
-            facId: facilityId,
+          const statckPipe = await entityManager.findOne(StackPipe, {
+            id: location.stackPipeId,
           });
 
-          const unit = await entityManager.findOne(Unit, {
-            name: unitStackConfig.unitId,
-            facId: facilityId,
-          });
-
-          const unitStackCongigRecord = await entityManager.findOne(
-            UnitStackConfiguration,
-            {
-              unitId: unit.id,
-              stackPipeId: stackPipe.id,
-            },
-          );
-          if (
-            unitStackConfig.beginDate != unitStackCongigRecord.beginDate ||
-            unitStackConfig.endDate != unitStackCongigRecord.endDate
-          ) {
-            unitStackCongigRecord.updateDate = updateDate;
-            unitStackCongigRecord.beginDate = unitStackConfig.beginDate;
-            unitStackConfig.endDate = unitStackConfig.endDate;
-            unitStackCongigRecord.userId = userId;
-
-            await this.unitStackConfigRepository.update(
-              unitStackCongigRecord,
-              unitStackCongigRecord,
-            );
+          if (statckPipe) {
+            if (statckPipe.activeDate !== location.activeDate) {
+              statckPipe.activeDate = location.activeDate;
+              // statckPipe.userId = userId;
+              statckPipe.activeDate = location.activeDate;
+            }
+            if (statckPipe.retireDate !== location.retireDate) {
+              statckPipe.retireDate = location.retireDate;
+            }
+            await entityManager.update(StackPipe, statckPipe, statckPipe);
           }
+
+          // Throw error
         }),
       );
     }
-
-    for (const location of plan.locations) {
-      const unitRecord = await entityManager.findOne(Unit, {
-        name: location.unitId,
-        facId: facilityId,
-      });
-
-      const MonitorLocation = await getMonLocId(
-        location,
-        facilityId,
-        plan.orisCode,
-      );
-
-      // Component Merge Logic
-      promises.push(
-        new Promise(() => {
-          for (const component of location.components) {
-            this.componentService.createComponent(
-              MonitorLocation.id,
-              component,
-              userId,
-            );
-          }
-        }),
-      );
-
-      // Unit Merge Logic
-      promises.push(
-        new Promise(async () => {
-          unitRecord.nonLoadBasedIndicator = location.nonLoadBasedIndicator;
-          await entityManager.update(Unit, unitRecord, unitRecord);
-        }),
-      );
-
-      //Unit Capacity Merge Logic
-      for (const unitCapacity of location.unitCapacity) {
-        promises.push(
-          new Promise(async () => {
-            const unitCapacityRecord = await this.unitCapacityRepository.getUnitCapacityByUnitIdAndDate(
-              unitRecord.id,
-              unitCapacity.beginDate,
-              unitCapacity.endDate,
-            );
-
-            if (unitCapacityRecord != null) {
-              this.unitCapacityService.updateUnitCapacity(
-                userId,
-                MonitorLocation.id,
-                unitRecord.id,
-                unitCapacityRecord.id,
-                unitCapacity,
-              );
-            } else {
-              this.unitCapacityService.createUnitCapacity(
-                userId,
-                MonitorLocation.id,
-                unitRecord.id,
-                unitCapacity,
-              );
-            }
-          }),
-        );
-      }
-
-      //Unit Control Merge Logic
-      for (const unitControl of location.unitControls) {
-        promises.push(
-          new Promise(async () => {
-            const unitControlRecord = await this.unitControlRepository.getUnitControlBySpecs(
-              unitRecord.id,
-              unitControl.controlEquipParamCode,
-              unitControl.controlCode,
-              unitControl.installDate,
-              unitControl.retireDate,
-            );
-
-            if (unitControlRecord != null) {
-              this.unitControlService.updateUnitControl(
-                userId,
-                MonitorLocation.id,
-                unitRecord.id,
-                unitControlRecord.id,
-                unitControl,
-              );
-            } else {
-              this.unitControlService.createUnitControl(
-                userId,
-                MonitorLocation.id,
-                unitRecord.id,
-                unitControl,
-              );
-            }
-          }),
-        );
-      }
-
-      //Unit Fuel Merge Logic
-      for (const unitFuel of location.unitFuels) {
-        promises.push(
-          new Promise(async () => {
-            const unitFuelRecord = await this.unitFuelRepository.getUnitFuelBySpecs(
-              unitRecord.id,
-              unitFuel.fuelCode,
-              unitFuel.beginDate,
-              unitFuel.endDate,
-            );
-
-            if (unitFuelRecord != null) {
-              this.unitFuelService.updateUnitFuel(
-                userId,
-                MonitorLocation.id,
-                unitRecord.id,
-                unitFuelRecord.id,
-                unitFuel,
-              );
-            } else {
-              this.unitFuelService.createUnitFuel(
-                userId,
-                MonitorLocation.id,
-                unitRecord.id,
-                unitFuel,
-              );
-            }
-          }),
-        );
-      }
-    }
-
-    await Promise.all(promises);
-
+ */
     return null;
   }
 
