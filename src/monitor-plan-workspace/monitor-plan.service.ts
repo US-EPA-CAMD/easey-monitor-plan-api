@@ -32,13 +32,9 @@ import { PCTQualificationWorkspaceRepository } from '../pct-qualification-worksp
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { ComponentWorkspaceService } from '../component-workspace/component.service';
-import { MonitorPlanCommentService } from '../monitor-plan-comment/monitor-plan-comment.service';
+import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
 
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
-import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
-import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -93,7 +89,7 @@ export class MonitorPlanWorkspaceService {
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
 
-    private readonly monitorPlanCommentService: MonitorPlanCommentService,
+    private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
     private map: MonitorPlanMap,
   ) {}
 
@@ -101,41 +97,21 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
-   
-    const monitorPlans = [{
-      id: 'WS156810-66E2623851F84AB3ACD6DCF4032DC086'
-    }]
+    const monitorPlans = [
+      {
+        id: 'WS156810-66E2623851F84AB3ACD6DCF4032DC086',
+      },
+    ];
 
     // Monitor Plan Comment Merge Logic
     for (const monitorPlan of monitorPlans) {
-      await this.monitorPlanCommentService.createOrUpdateComments(plan, userId, monitorPlan.id)
-    }
-
-    // Stack Merge logic
-    /* for (const location of plan.locations) {
-      promises.push(
-        new Promise(async () => {
-          const statckPipe = await entityManager.findOne(StackPipe, {
-            id: location.stackPipeId,
-          });
-
-          if (statckPipe) {
-            if (statckPipe.activeDate !== location.activeDate) {
-              statckPipe.activeDate = location.activeDate;
-              // statckPipe.userId = userId;
-              statckPipe.activeDate = location.activeDate;
-            }
-            if (statckPipe.retireDate !== location.retireDate) {
-              statckPipe.retireDate = location.retireDate;
-            }
-            await entityManager.update(StackPipe, statckPipe, statckPipe);
-          }
-
-          // Throw error
-        }),
+      await this.monitorPlanCommentService.createOrUpdateComments(
+        plan,
+        userId,
+        monitorPlan.id,
       );
     }
- */
+
     return null;
   }
 
