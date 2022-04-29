@@ -34,8 +34,6 @@ import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.re
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
 
-import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-
 @Injectable()
 export class MonitorPlanWorkspaceService {
   constructor(
@@ -85,7 +83,6 @@ export class MonitorPlanWorkspaceService {
     private readonly lmeQualificationRepository: LMEQualificationWorkspaceRepository,
     @InjectRepository(PCTQualificationWorkspaceRepository)
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
-    @InjectRepository(UnitStackConfigurationRepository)
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
 
@@ -105,7 +102,7 @@ export class MonitorPlanWorkspaceService {
 
     // Monitor Plan Comment Merge Logic
     for (const monitorPlan of monitorPlans) {
-      await this.monitorPlanCommentService.createOrUpdateComments(
+      await this.monitorPlanCommentService.importComments(
         plan,
         userId,
         monitorPlan.id,

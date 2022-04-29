@@ -77,7 +77,7 @@ export class MonitorPlanCommentWorkspaceService {
     return this.getCommentById(comment.id);
   }
 
-  async createOrUpdateComments(
+  async importComments(
     plan: UpdateMonitorPlanDTO,
     userId: string,
     monitorPlanId: string,
