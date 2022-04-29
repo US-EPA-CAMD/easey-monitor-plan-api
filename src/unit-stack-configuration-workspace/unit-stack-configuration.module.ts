@@ -6,10 +6,14 @@ import { UnitStackConfigurationWorkspaceController } from './unit-stack-configur
 import { UnitStackConfigurationWorkspaceService } from './unit-stack-configuration.service';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { UnitModule } from 'src/unit/unit.module';
+import { StackPipeModule } from 'src/stack-pipe/stack-pipe.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([UnitStackConfigurationWorkspaceRepository]),
     HttpModule,
+    UnitModule,
+    StackPipeModule,
   ],
   controllers: [UnitStackConfigurationWorkspaceController],
   providers: [

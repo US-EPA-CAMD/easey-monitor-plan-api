@@ -2,13 +2,60 @@ import { Injectable } from '@nestjs/common';
 
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
+import { UnitService } from 'src/unit/unit.service';
+import { UnitStackConfiguration } from 'src/entities/workspace/unit-stack-configuration.entity';
+import { StackPipeService } from 'src/stack-pipe/stack-pipe.service';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
   constructor(
     private readonly repository: UnitStackConfigurationWorkspaceRepository,
+    private readonly unitServive: UnitService,
+    private readonly stackPipeService: StackPipeService,
     private readonly map: UnitStackConfigurationMap,
   ) {}
+
+  async importUnitStack(
+    plan: UpdateMonitorPlanDTO,
+    facilityId: number,
+    userId: string,
+  ) {
+    for (const unitStackConfig of plan.unitStackConfiguration) {
+      new Promise(async () => {
+        const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+          unitStackConfig.stackPipeId,
+          facilityId,
+        );
+
+        const unit = await this.unitServive.getUnitByNameAndFacId(
+          unitStackConfig.unitId,
+          facilityId,
+        );
+
+        const unitStackConfigRecord = await this.repository.findOne({
+          where: { unitId: unit.id, stackPipeId: stackPipe.id },
+        });
+
+        if (unitStackConfigRecord !== undefined) {
+          unitStackConfigRecord.updateDate = new Date();
+          unitStackConfigRecord.beginDate = unitStackConfig.beginDate;
+          unitStackConfigRecord.endDate = unitStackConfig.endDate;
+          unitStackConfigRecord.userId = userId;
+
+          this.repository.update(unitStackConfigRecord, unitStackConfigRecord);
+        } else {
+          const unitStack = new UnitStackConfiguration();
+          unitStack.updateDate = new Date();
+          unitStack.beginDate = unitStackConfig.beginDate;
+          unitStack.endDate = unitStackConfig.endDate;
+          unitStack.userId = userId;
+
+          this.repository.create(unitStack);
+        }
+      });
+    }
+  }
 
   async getUnitStackRelationships(hasUnit: boolean, id: string) {
     let relationship: any;

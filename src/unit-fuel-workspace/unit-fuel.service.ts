@@ -8,6 +8,7 @@ import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 
 @Injectable()
 export class UnitFuelWorkspaceService {
@@ -22,6 +23,36 @@ export class UnitFuelWorkspaceService {
   async getUnitFuels(locId: string, unitId: number): Promise<UnitFuelDTO[]> {
     const results = await this.repository.getUnitFuels(locId, unitId);
     return this.map.many(results);
+  }
+
+  async importUnitFuel(
+    location: UpdateMonitorLocationDTO,
+    unitId: number,
+    locationId: string,
+    userId: string,
+  ) {
+    for (const unitFuel of location.unitFuels) {
+      new Promise(async () => {
+        const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
+          unitId,
+          unitFuel.fuelCode,
+          unitFuel.beginDate,
+          unitFuel.endDate,
+        );
+
+        if (unitFuelRecord !== undefined) {
+          this.updateUnitFuel(
+            userId,
+            locationId,
+            unitId,
+            unitFuelRecord.id,
+            unitFuel,
+          );
+        } else {
+          this.createUnitFuel(userId, locationId, unitId, unitFuel);
+        }
+      });
+    }
   }
 
   async getUnitFuel(

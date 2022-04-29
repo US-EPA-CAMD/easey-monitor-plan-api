@@ -7,6 +7,7 @@ import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -16,6 +17,35 @@ export class UnitCapacityWorkspaceService {
     private readonly map: UnitCapacityMap,
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
+
+  async importUnityCapacity(
+    location: UpdateMonitorLocationDTO,
+    unitId: number,
+    locationId: string,
+    userId: string,
+  ) {
+    for (const unitCapacity of location.unitCapacity) {
+      new Promise(async () => {
+        const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
+          unitId,
+          unitCapacity.beginDate,
+          unitCapacity.endDate,
+        );
+
+        if (unitCapacityRecord !== undefined) {
+          this.updateUnitCapacity(
+            userId,
+            locationId,
+            unitId,
+            unitCapacityRecord.id,
+            unitCapacity,
+          );
+        } else {
+          this.createUnitCapacity(userId, locationId, unitId, unitCapacity);
+        }
+      });
+    }
+  }
 
   async getUnitCapacities(
     locId: string,
