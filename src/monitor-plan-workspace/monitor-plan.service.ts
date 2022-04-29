@@ -32,20 +32,23 @@ import { LMEQualificationWorkspaceRepository } from '../lme-qualification-worksp
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
-import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
-import { ComponentWorkspaceService } from 'src/component-workspace/component.service';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { MonitorPlanCommentService } from '../monitor-plan-comment/monitor-plan-comment.service';
 
 import {
   getMonLocId,
   getFacIdFromOris,
 } from '../import-checks/utilities/utils';
-import { StackPipe } from 'src/entities/workspace/stack-pipe.entity';
-import { Unit } from 'src/entities/workspace/unit.entity';
-import { UnitStackConfiguration } from 'src/entities/workspace/unit-stack-configuration.entity';
-import { UnitStackConfigurationRepository } from 'src/unit-stack-configuration/unit-stack-configuration.repository';
-import { UnitCapacityWorkspaceService } from 'src/unit-capacity-workspace/unit-capacity.service';
-import { UnitControlWorkspaceService } from 'src/unit-control-workspace/unit-control.service';
-import { UnitFuelWorkspaceService } from 'src/unit-fuel-workspace/unit-fuel.service';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
+import { Unit } from '../entities/workspace/unit.entity';
+import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
+import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
+import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
+import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
+import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { MonitorPlanComment } from '../entities/workspace/monitor-plan-comment.entity';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -101,6 +104,7 @@ export class MonitorPlanWorkspaceService {
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
 
+    private readonly monitorPlanCommentService: MonitorPlanCommentService,
     private readonly componentService: ComponentWorkspaceService,
     private readonly unitCapacityService: UnitCapacityWorkspaceService,
     private readonly unitControlService: UnitControlWorkspaceService,
@@ -118,6 +122,69 @@ export class MonitorPlanWorkspaceService {
 
     const updateDate: Date = new Date();
     const facilityId = await getFacIdFromOris(plan.orisCode);
+    const monitorPlans = await entityManager.find(MonitorPlan, {
+      facId: facilityId,
+    });
+
+    // Monitor Plan Comment Merge Logic
+    for (const monitorPlan of monitorPlans) {
+      for (const comment of plan.comments) {
+        promises.push(
+          new Promise(async () => {
+            const monitorPlanComments = await this.monitorPlanCommentService.getCommentsByPlanIdCommentBD(
+              monitorPlan.id,
+              comment.monitoringPlanComment,
+              comment.beginDate,
+            );
+            if (monitorPlanComments.length === 0) {
+              await entityManager.create(MonitorPlanComment, {
+                monitorPlanId: monitorPlan.id,
+                monitorPlanComment: comment.monitoringPlanComment,
+                beginDate: comment.beginDate,
+                endDate: comment.endDate,
+                userId: userId,
+              });
+            } else {
+              monitorPlanComments.forEach(async monitorPlanComment => {
+                if (monitorPlanComment.endDate !== comment.endDate) {
+                  await entityManager.update(
+                    MonitorPlanComment,
+                    monitorPlanComment,
+                    {
+                      /* id: monitorPlanComment.id,
+                    monitorPlanId: monitorPlanComment.id,
+                    monitorPlanComment: monitorPlanComment.monitoringPlanComment,
+                    beginDate: monitorPlanComment.beginDate, */
+                      endDate: comment.endDate,
+                      userId: userId,
+                    },
+                  );
+                }
+              });
+            }
+          }),
+        );
+      }
+    }
+
+    // Stack Merge logic
+    for (const location of plan.locations) {
+      const statckPipe = await entityManager.findOne(StackPipe, {
+        id: location.stackPipeId,
+      });
+
+      if (statckPipe) {
+        if (statckPipe.activeDate !== location.activeDate) {
+          statckPipe.activeDate = location.activeDate;
+          // statckPipe.userId = userId;
+          statckPipe.activeDate = location.activeDate;
+        }
+        if (statckPipe.retireDate !== location.retireDate) {
+          statckPipe.retireDate = location.retireDate;
+        }
+        await entityManager.update(StackPipe, statckPipe, statckPipe);
+      }
+    }
 
     // Unit Stack Config Merge Logic
     for (const unitStackConfig of plan.unitStackConfiguration) {
