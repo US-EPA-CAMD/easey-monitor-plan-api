@@ -33,6 +33,8 @@ import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-c
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
+import { getFacIdFromOris } from 'src/import-checks/utilities/utils';
+import { MonitorLocationWorkspaceService } from 'src/monitor-location-workspace/monitor-location.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -87,6 +89,7 @@ export class MonitorPlanWorkspaceService {
     private readonly mpReportResultService: MonitorPlanReportResultService,
 
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
+    private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private map: MonitorPlanMap,
   ) {}
 
@@ -94,6 +97,7 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
+    const facilityId = await getFacIdFromOris(plan.orisCode);
     const monitorPlans = [
       {
         id: 'WS156810-66E2623851F84AB3ACD6DCF4032DC086',
@@ -106,6 +110,12 @@ export class MonitorPlanWorkspaceService {
         plan,
         userId,
         monitorPlan.id,
+      );
+      this.monitorLocationService.importMonitorLocation(
+        monitorPlan.id,
+        plan,
+        facilityId,
+        userId,
       );
     }
 

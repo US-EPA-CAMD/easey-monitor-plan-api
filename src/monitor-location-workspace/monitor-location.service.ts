@@ -6,6 +6,9 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
+import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
+import { getMonLocId } from 'src/import-checks/utilities/utils';
+import { MatsMethodWorkspaceService } from 'src/mats-method-workspace/mats-method.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -15,6 +18,7 @@ export class MonitorLocationWorkspaceService {
     readonly repository: MonitorLocationWorkspaceRepository,
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
+    private readonly matsMethodService: MatsMethodWorkspaceService,
     private Logger: Logger,
   ) {}
 
@@ -47,5 +51,29 @@ export class MonitorLocationWorkspaceService {
       ? location.unit.id.toString()
       : location.stackPipe.id;
     return this.uscServcie.getUnitStackRelationships(hasUnit, id);
+  }
+
+  async importMonitorLocation(
+    monPlanId: string,
+    plan: UpdateMonitorPlanDTO,
+    facilityId: number,
+    userId: string,
+  ) {
+    for (const location of plan.locations) {
+      new Promise(async () => {
+        const monitorLocationRecord = await getMonLocId(
+          location,
+          facilityId,
+          plan.orisCode,
+        );
+
+        // Monitor MATs method Merge Logic
+        await this.matsMethodService.importMethod(
+          monPlanId,
+          location.matsMethods,
+          userId,
+        );
+      });
+    }
   }
 }

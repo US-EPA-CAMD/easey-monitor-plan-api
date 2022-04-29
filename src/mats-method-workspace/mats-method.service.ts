@@ -83,4 +83,76 @@ export class MatsMethodWorkspaceService {
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(method);
   }
+
+  async getMethodByBeginDate(
+    monPlanId: string,
+    supplementalMATSParameterCode: string,
+    beginDate: Date,
+    beginHour: number,
+  ): Promise<MatsMethodDTO> {
+    const result = await this.repository.findOne({
+      where: {
+        locationId: monPlanId,
+        supplementalMATSParameterCode: supplementalMATSParameterCode,
+        beginDate: beginDate,
+        beginHour: beginHour,
+      },
+    });
+
+    return this.map.one(result);
+  }
+
+  async getMethodByEndDate(
+    monPlanId: string,
+    supplementalMATSParameterCode: string,
+    endDate: Date,
+    endHour: number,
+  ): Promise<MatsMethodDTO> {
+    const result = await this.repository.findOne({
+      where: {
+        locationId: monPlanId,
+        supplementalMATSParameterCode: supplementalMATSParameterCode,
+        endDate: endDate,
+        endHour: endHour,
+      },
+    });
+
+    return this.map.one(result);
+  }
+
+  async importMethod(
+    monitorPlanId: string,
+    matsMethods: MatsMethodBaseDTO[],
+    userId: string,
+  ) {
+    const promises = [];
+    // Monitor MATs method Merge Logic
+    for (const matsMethod of matsMethods) {
+      promises.push(
+        new Promise(async () => {
+          let method = await this.getMethodByBeginDate(
+            monitorPlanId,
+            matsMethod.supplementalMATSParameterCode,
+            matsMethod.beginDate,
+            matsMethod.beginHour,
+          );
+
+          if (!method) {
+            method = await this.getMethodByEndDate(
+              monitorPlanId,
+              matsMethod.supplementalMATSParameterCode,
+              matsMethod.endDate,
+              matsMethod.endHour,
+            );
+          }
+
+          if (method) {
+            this.updateMethod(method.id, method.locationId, matsMethod, userId);
+          } else {
+            this.createMethod(monitorPlanId, matsMethod, userId);
+          }
+        }),
+      );
+    }
+  }
 }
