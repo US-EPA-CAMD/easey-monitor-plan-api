@@ -94,6 +94,7 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
+    const promises = [];
     const monitorPlans = [
       {
         id: 'WS156810-66E2623851F84AB3ACD6DCF4032DC086',
@@ -102,12 +103,18 @@ export class MonitorPlanWorkspaceService {
 
     // Monitor Plan Comment Merge Logic
     for (const monitorPlan of monitorPlans) {
-      await this.monitorPlanCommentService.importComments(
-        plan,
-        userId,
-        monitorPlan.id,
+      promises.push(
+        new Promise(async () => {
+          await this.monitorPlanCommentService.importComments(
+            plan,
+            userId,
+            monitorPlan.id,
+          );
+        }),
       );
     }
+
+    await Promise.all(promises);
 
     return null;
   }
