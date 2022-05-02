@@ -101,17 +101,23 @@ export class MonitorPlanWorkspaceService {
         id: 'WS156810-66E2623851F84AB3ACD6DCF4032DC086',
       },
     ];
+    const promises = [];
 
     // Monitor Plan Comment Merge Logic
     for (const monitorPlan of monitorPlans) {
-  
-      this.monitorLocationService.importMonitorLocation(
-        monitorPlan.id,
-        plan,
-        facilityId,
-        userId,
+      promises.push(
+        new Promise(async () => {
+          await this.monitorLocationService.importMonitorLocation(
+            monitorPlan.id,
+            plan,
+            facilityId,
+            userId,
+          );
+        }),
       );
     }
+
+    await Promise.all(promises);
 
     return null;
   }

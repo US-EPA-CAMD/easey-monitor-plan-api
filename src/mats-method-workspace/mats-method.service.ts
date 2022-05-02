@@ -156,5 +156,7 @@ export class MatsMethodWorkspaceService {
     }
 
     await Promise.all(promises);
+
+    return null;
   }
 }

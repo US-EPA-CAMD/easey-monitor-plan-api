@@ -59,21 +59,28 @@ export class MonitorLocationWorkspaceService {
     facilityId: number,
     userId: string,
   ) {
-    for (const location of plan.locations) {
-      new Promise(async () => {
-        const monitorLocationRecord = await getMonLocId(
-          location,
-          facilityId,
-          plan.orisCode,
-        );
+    const promises = [];
 
-        // Monitor MATs method Merge Logic
-        await this.matsMethodService.importMethod(
-          monPlanId,
-          location.matsMethods,
-          userId,
-        );
-      });
+    for (const location of plan.locations) {
+      promises.push(
+        new Promise(async () => {
+          const monitorLocationRecord = await getMonLocId(
+            location,
+            facilityId,
+            plan.orisCode,
+          );
+
+          // Monitor MATs method Merge Logic
+          await this.matsMethodService.importMethod(
+            monPlanId,
+            location.matsMethods,
+            userId,
+          );
+        }),
+      );
     }
+
+    await Promise.all(promises);
+    return null;
   }
 }
