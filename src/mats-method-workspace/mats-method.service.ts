@@ -154,5 +154,7 @@ export class MatsMethodWorkspaceService {
         }),
       );
     }
+
+    await Promise.all(promises);
   }
 }

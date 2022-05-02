@@ -32,7 +32,6 @@ import { PCTQualificationWorkspaceRepository } from '../pct-qualification-worksp
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
 import { getFacIdFromOris } from 'src/import-checks/utilities/utils';
 import { MonitorLocationWorkspaceService } from 'src/monitor-location-workspace/monitor-location.service';
 
@@ -88,7 +87,6 @@ export class MonitorPlanWorkspaceService {
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
 
-    private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private map: MonitorPlanMap,
   ) {}
@@ -106,11 +104,7 @@ export class MonitorPlanWorkspaceService {
 
     // Monitor Plan Comment Merge Logic
     for (const monitorPlan of monitorPlans) {
-      await this.monitorPlanCommentService.importComments(
-        plan,
-        userId,
-        monitorPlan.id,
-      );
+  
       this.monitorLocationService.importMonitorLocation(
         monitorPlan.id,
         plan,
