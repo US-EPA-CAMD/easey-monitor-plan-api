@@ -14,6 +14,7 @@ import { ComponentWorkspaceService } from 'src/component-workspace/component.ser
 import { UnitCapacityWorkspaceService } from 'src/unit-capacity-workspace/unit-capacity.service';
 import { UnitControlWorkspaceService } from 'src/unit-control-workspace/unit-control.service';
 import { UnitFuelWorkspaceService } from 'src/unit-fuel-workspace/unit-fuel.service';
+import { MonitorQualificationWorkspaceService } from 'src/monitor-qualification-workspace/monitor-qualification.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -28,6 +29,8 @@ export class MonitorLocationWorkspaceService {
     private readonly unitCapacityService: UnitCapacityWorkspaceService,
     private readonly unitControlService: UnitControlWorkspaceService,
     private readonly unitFuelService: UnitFuelWorkspaceService,
+    private readonly qualificationService: MonitorQualificationWorkspaceService,
+
     private Logger: Logger,
   ) {}
 
