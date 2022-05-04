@@ -1,6 +1,7 @@
 import { In } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { getManager } from 'typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
@@ -31,6 +32,23 @@ import { LMEQualificationWorkspaceRepository } from '../lme-qualification-worksp
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
+import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
+import { ComponentWorkspaceService } from 'src/component-workspace/component.service';
+
+import {
+  getMonLocId,
+  getFacIdFromOris,
+} from '../import-checks/utilities/utils';
+import { StackPipe } from 'src/entities/workspace/stack-pipe.entity';
+import { Unit } from 'src/entities/workspace/unit.entity';
+import { UnitStackConfiguration } from 'src/entities/workspace/unit-stack-configuration.entity';
+import { UnitStackConfigurationRepository } from 'src/unit-stack-configuration/unit-stack-configuration.repository';
+import { UnitCapacityWorkspaceService } from 'src/unit-capacity-workspace/unit-capacity.service';
+import { UnitControlWorkspaceService } from 'src/unit-control-workspace/unit-control.service';
+import { UnitFuelWorkspaceService } from 'src/unit-fuel-workspace/unit-fuel.service';
+import { MonitorLocationWorkspaceService } from 'src/monitor-location-workspace/monitor-location.service';
+import { UnitStackConfigurationService } from 'src/unit-stack-configuration/unit-stack-configuration.service';
+import { UnitStackConfigurationWorkspaceService } from 'src/unit-stack-configuration-workspace/unit-stack-configuration.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -83,8 +101,24 @@ export class MonitorPlanWorkspaceService {
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
+
+    private readonly unitStackService: UnitStackConfigurationWorkspaceService,
+    private readonly monitorLocationService: MonitorLocationWorkspaceService,
+
     private map: MonitorPlanMap,
   ) {}
+
+  async importMpPlan(
+    plan: UpdateMonitorPlanDTO,
+    userId: string,
+  ): Promise<MonitorPlanDTO> {
+    const facilityId = await getFacIdFromOris(plan.orisCode);
+
+    this.unitStackService.importUnitStack(plan, facilityId, userId);
+    this.monitorLocationService.importMonitorLocation(plan, facilityId, userId);
+
+    return null;
+  }
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
     const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);

@@ -10,6 +10,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 @Injectable()
@@ -49,6 +50,37 @@ export class UnitControlWorkspaceService {
       });
     }
     return this.map.one(result);
+  }
+
+  async importUnitControl(
+    location: UpdateMonitorLocationDTO,
+    unitId: number,
+    locationId: string,
+    userId: string,
+  ) {
+    for (const unitControl of location.unitControls) {
+      new Promise(async () => {
+        const unitControlRecord = await this.repository.getUnitControlBySpecs(
+          unitId,
+          unitControl.controlEquipParamCode,
+          unitControl.controlCode,
+          unitControl.installDate,
+          unitControl.retireDate,
+        );
+
+        if (unitControlRecord !== undefined) {
+          this.updateUnitControl(
+            userId,
+            locationId,
+            unitId,
+            unitControlRecord.id,
+            unitControl,
+          );
+        } else {
+          this.createUnitControl(userId, locationId, unitId, unitControl);
+        }
+      });
+    }
   }
 
   async createUnitControl(

@@ -10,6 +10,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 
 @Injectable()
@@ -27,6 +28,36 @@ export class UnitFuelWorkspaceService {
   async getUnitFuels(locId: string, unitId: number): Promise<UnitFuelDTO[]> {
     const results = await this.repository.getUnitFuels(locId, unitId);
     return this.map.many(results);
+  }
+
+  async importUnitFuel(
+    location: UpdateMonitorLocationDTO,
+    unitId: number,
+    locationId: string,
+    userId: string,
+  ) {
+    for (const unitFuel of location.unitFuels) {
+      new Promise(async () => {
+        const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
+          unitId,
+          unitFuel.fuelCode,
+          unitFuel.beginDate,
+          unitFuel.endDate,
+        );
+
+        if (unitFuelRecord !== undefined) {
+          this.updateUnitFuel(
+            userId,
+            locationId,
+            unitId,
+            unitFuelRecord.id,
+            unitFuel,
+          );
+        } else {
+          this.createUnitFuel(userId, locationId, unitId, unitFuel);
+        }
+      });
+    }
   }
 
   async getUnitFuel(
