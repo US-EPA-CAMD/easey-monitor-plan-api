@@ -9,17 +9,17 @@ import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import { MonitorPlanCommentBaseDTO } from './monitor-plan-comment.dto';
 
 export class UpdateMonitorPlanDTO {
-  // @ApiProperty({
-  //   description: propertyMetadata.monitorPlanDTOOrisCode.description,
-  //   example: propertyMetadata.monitorPlanDTOOrisCode.example,
-  //   name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
-  // })
-  // @IsInt()
-  // @IsInRange(1, 999999, {
-  //   message: (args: ValidationArguments) => {
-  //     return `${args.property} [MONPLAN-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 1 and 999999`;
-  //   },
-  // })
+  @ApiProperty({
+    description: propertyMetadata.monitorPlanDTOOrisCode.description,
+    example: propertyMetadata.monitorPlanDTOOrisCode.example,
+    name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
+  })
+  @IsInt()
+  @IsInRange(1, 999999, {
+    message: (args: ValidationArguments) => {
+      return `${args.property} [MONPLAN-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 1 and 999999`;
+    },
+  })
   orisCode: number;
 
   @ValidateNested()
