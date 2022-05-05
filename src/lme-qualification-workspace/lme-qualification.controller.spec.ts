@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationWorkspaceController } from './lme-qualification.controller';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
-import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
+import { LMEQualificationBaseDTO } from '../dtos/lme-qualification-update.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
@@ -15,7 +15,7 @@ const locId = '6';
 const qualId = '1';
 const lmeQualId = 'some lme qualification id';
 const currentUser = 'testuser';
-const payload = new UpdateLMEQualificationDTO();
+const payload = new LMEQualificationBaseDTO();
 
 const returnedLMEQualifications: LMEQualificationDTO[] = [];
 returnedLMEQualifications.push(new LMEQualificationDTO());

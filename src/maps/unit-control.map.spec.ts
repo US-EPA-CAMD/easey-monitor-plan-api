@@ -1,24 +1,8 @@
 import { UnitControl } from '../entities/unit-control.entity';
 import { UnitControlMap } from './unit-control.map';
 
-/*
-      id: entity.id,
-      unitId: entity.unitId,
-      parameterCode: entity.parameterCode,
-      controlCode: entity.controlCode,
-      originalCode: entity.originalCode,
-      installDate: entity.installDate,
-      optimizationDate: entity.optimizationDate,
-      seasonalControlsIndicator: entity.seasonalControlsIndicator,
-      retireDate: entity.retireDate,
-      userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
-      active: entity.retireDate === null, 
-*/
-
 const id = '';
-const unitId = 6;
+const unitRecordId = 6;
 const controlEquipParamCode = '';
 const controlCode = '';
 const originalCode = '1';
@@ -32,7 +16,7 @@ const updateDate = new Date(Date.now());
 
 const entity = new UnitControl();
 entity.id = id;
-entity.unitId = unitId;
+entity.unitId = unitRecordId;
 entity.controlEquipParamCode = controlEquipParamCode;
 entity.controlCode = controlCode;
 entity.originalCode = originalCode;
@@ -49,7 +33,7 @@ describe('UnitControlMap', () => {
     const map = new UnitControlMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(id);
-    expect(result.unitId).toEqual(unitId);
+    expect(result.unitRecordId).toEqual(unitRecordId);
     expect(result.controlEquipParamCode).toEqual(controlEquipParamCode);
     expect(result.controlCode).toEqual(controlCode);
     expect(result.originalCode).toEqual(originalCode);

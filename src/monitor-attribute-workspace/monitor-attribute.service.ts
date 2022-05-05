@@ -1,13 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateMonitorAttributeDTO } from '../dtos/monitor-attribute-update.dto';
-import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
-import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
+import {
+  MonitorAttributeBaseDTO,
+  MonitorAttributeDTO,
+} from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {
@@ -16,6 +22,8 @@ export class MonitorAttributeWorkspaceService {
     private readonly repository: MonitorAttributeWorkspaceRepository,
     private readonly map: MonitorAttributeMap,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -47,7 +55,7 @@ export class MonitorAttributeWorkspaceService {
 
   async createAttribute(
     locationId: string,
-    payload: UpdateMonitorAttributeDTO,
+    payload: MonitorAttributeBaseDTO,
     userId: string,
   ): Promise<MonitorAttributeDTO> {
     const attribute = this.repository.create({
@@ -76,7 +84,7 @@ export class MonitorAttributeWorkspaceService {
   async updateAttribute(
     locationId: string,
     id: string,
-    payload: UpdateMonitorAttributeDTO,
+    payload: MonitorAttributeBaseDTO,
     userId: string,
   ): Promise<MonitorAttributeDTO> {
     const attribute = await this.getAttribute(locationId, id);

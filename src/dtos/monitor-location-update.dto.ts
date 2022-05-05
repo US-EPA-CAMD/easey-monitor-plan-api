@@ -1,75 +1,75 @@
 import { MonitorLocationBaseDTO } from './monitor-location-base.dto';
-import { UpdateMonitorAttributeDTO } from './monitor-attribute-update.dto';
-import { UpdateUnitCapacityDTO } from './unit-capacity-update.dto';
-import { UpdateUnitControlDTO } from './unit-control-update.dto';
-import { UpdateUnitFuelDTO } from './unit-fuel-update.dto';
-import { UpdateMonitorMethodDTO } from './monitor-method-update.dto';
-import { UpdateMatsMethodDTO } from './mats-method-update.dto';
-import { UpdateMonitorFormulaDTO } from './monitor-formula-update.dto';
-import { UpdateMonitorDefaultDTO } from './monitor-default-update.dto';
-import { UpdateMonitorSpanDTO } from './monitor-span-update.dto';
-import { UpdateDuctWafDTO } from './duct-waf-update.dto';
-import { UpdateMonitorLoadDTO } from './monitor-load-update.dto';
-import { UpdateComponentDTO } from './component-update.dto';
-import { UpdateMonitorSystemDTO } from './monitor-system-update.dto';
-import { UpdateMonitorQualificationDTO } from './monitor-qualification-update.dto';
+import { MonitorAttributeBaseDTO } from './monitor-attribute.dto';
+import { UnitCapacityBaseDTO } from './unit-capacity.dto';
+import { UnitControlBaseDTO } from './unit-control.dto';
+import { UnitFuelBaseDTO } from './unit-fuel.dto';
+import { MonitorSpanBaseDTO } from './monitor-span.dto';
+import { DuctWafBaseDTO } from './duct-waf.dto';
+import { MonitorLoadBaseDTO } from './monitor-load.dto';
+import { UpdateComponentBaseDTO } from './component.dto';
+import { MonitorSystemBaseDTO } from './monitor-system.dto';
+import { MonitorQualificationBaseDTO } from './monitor-qualification.dto';
 import { ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { MonitorMethodBaseDTO } from './monitor-method.dto';
+import { MatsMethodBaseDTO } from './mats-method.dto';
+import { MonitorFormulaBaseDTO } from './monitor-formula.dto';
+import { MonitorDefaultBaseDTO } from './monitor-default.dto';
 
 export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
   @ValidateNested()
-  @Type(() => UpdateMonitorAttributeDTO)
-  attributes: UpdateMonitorAttributeDTO[];
+  @Type(() => MonitorAttributeBaseDTO)
+  attributes: MonitorAttributeBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateUnitCapacityDTO)
-  unitCapacity: UpdateUnitCapacityDTO[];
+  @Type(() => UnitCapacityBaseDTO)
+  unitCapacity: UnitCapacityBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateUnitControlDTO)
-  unitControls: UpdateUnitControlDTO[];
+  @Type(() => UnitControlBaseDTO)
+  unitControls: UnitControlBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateUnitFuelDTO)
-  unitFuels: UpdateUnitFuelDTO[];
+  @Type(() => UnitFuelBaseDTO)
+  unitFuels: UnitFuelBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorMethodDTO)
-  methods: UpdateMonitorMethodDTO[];
+  @Type(() => MonitorMethodBaseDTO)
+  methods: MonitorMethodBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMatsMethodDTO)
-  matsMethods: UpdateMatsMethodDTO[];
+  @Type(() => MatsMethodBaseDTO)
+  matsMethods: MatsMethodBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorFormulaDTO)
-  formulas: UpdateMonitorFormulaDTO[];
+  @Type(() => MonitorFormulaBaseDTO)
+  formulas: MonitorFormulaBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorDefaultDTO)
-  defaults: UpdateMonitorDefaultDTO[];
+  @Type(() => MonitorDefaultBaseDTO)
+  defaults: MonitorDefaultBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorSpanDTO)
-  spans: UpdateMonitorSpanDTO[];
+  @Type(() => MonitorSpanBaseDTO)
+  spans: MonitorSpanBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateDuctWafDTO)
-  ductWafs: UpdateDuctWafDTO[];
+  @Type(() => DuctWafBaseDTO)
+  ductWafs: DuctWafBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorLoadDTO)
-  loads: UpdateMonitorLoadDTO[];
+  @Type(() => MonitorLoadBaseDTO)
+  loads: MonitorLoadBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateComponentDTO)
-  components: UpdateComponentDTO[];
+  @Type(() => UpdateComponentBaseDTO)
+  components: UpdateComponentBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorSystemDTO)
-  systems: UpdateMonitorSystemDTO[];
+  @Type(() => MonitorSystemBaseDTO)
+  systems: MonitorSystemBaseDTO[];
 
   @ValidateNested()
-  @Type(() => UpdateMonitorQualificationDTO)
-  qualifications: UpdateMonitorQualificationDTO[];
+  @Type(() => MonitorQualificationBaseDTO)
+  qualifications: MonitorQualificationBaseDTO[];
 }

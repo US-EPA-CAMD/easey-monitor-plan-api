@@ -1,11 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
-import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
+import {
+  MonitorFormulaBaseDTO,
+  MonitorFormulaDTO,
+} from '../dtos/monitor-formula.dto';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
@@ -17,6 +23,8 @@ export class MonitorFormulaWorkspaceService {
     private readonly repository: MonitorFormulaWorkspaceRepository,
     private readonly map: MonitorFormulaMap,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -46,7 +54,7 @@ export class MonitorFormulaWorkspaceService {
 
   async createFormula(
     locationId: string,
-    payload: UpdateMonitorFormulaDTO,
+    payload: MonitorFormulaBaseDTO,
     userId: string,
   ): Promise<MonitorFormulaDTO> {
     const formula = this.repository.create({
@@ -73,7 +81,7 @@ export class MonitorFormulaWorkspaceService {
   async updateFormula(
     locationId: string,
     formulaRecordId: string,
-    payload: UpdateMonitorFormulaDTO,
+    payload: MonitorFormulaBaseDTO,
     userId: string,
   ) {
     const formula = await this.getFormula(locationId, formulaRecordId);

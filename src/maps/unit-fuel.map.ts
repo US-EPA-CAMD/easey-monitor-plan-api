@@ -9,7 +9,7 @@ export class UnitFuelMap extends BaseMap<UnitFuel, UnitFuelDTO> {
   public async one(entity: UnitFuel): Promise<UnitFuelDTO> {
     return {
       id: entity.id,
-      unitId: entity.unitId,
+      unitRecordId: entity.unitId,
       fuelCode: entity.fuelCode,
       indicatorCode: entity.indicatorCode,
       ozoneSeasonIndicator: entity.ozoneSeasonIndicator,

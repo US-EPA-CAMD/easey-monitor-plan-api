@@ -13,14 +13,10 @@ import {
   ApiBearerAuth,
   ApiSecurity,
 } from '@nestjs/swagger';
-
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
-import { UpdateUnitFuelDTO } from '../dtos/unit-fuel-update.dto';
-import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
-
+import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 
 @Controller()
@@ -29,7 +25,7 @@ import { UnitFuelWorkspaceService } from './unit-fuel.service';
 export class UnitFuelWorkspaceController {
   constructor(
     private readonly service: UnitFuelWorkspaceService,
-    private Logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -58,9 +54,9 @@ export class UnitFuelWorkspaceController {
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Param('unitFuelId') unitFuelId: string,
-    @Body() payload: UpdateUnitFuelDTO,
+    @Body() payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
-    this.Logger.info('Updating unit fuel', {
+    this.logger.info('Updating unit fuel', {
       unitId,
       unitFuelId,
       payload,
@@ -87,9 +83,9 @@ export class UnitFuelWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-    @Body() payload: UpdateUnitFuelDTO,
+    @Body() payload: UnitFuelBaseDTO,
   ): Promise<UnitFuelDTO> {
-    this.Logger.info('Creating unit fuel', {
+    this.logger.info('Creating unit fuel', {
       unitId,
       payload,
       userId,

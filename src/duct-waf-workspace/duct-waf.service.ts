@@ -1,14 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateDuctWafDTO } from '../dtos/duct-waf-update.dto';
-import { DuctWafDTO } from '../dtos/duct-waf.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWaf } from '../entities/duct-waf.entity';
-
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
@@ -18,6 +20,8 @@ export class DuctWafWorkspaceService {
     private readonly repository: DuctWafWorkspaceRepository,
     private readonly map: DuctWafMap,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -40,7 +44,7 @@ export class DuctWafWorkspaceService {
 
   async createDuctWaf(
     locationId: string,
-    payload: UpdateDuctWafDTO,
+    payload: DuctWafBaseDTO,
     userId: string,
   ): Promise<DuctWafDTO> {
     const ductWaf = this.repository.create({
@@ -72,7 +76,7 @@ export class DuctWafWorkspaceService {
   async updateDuctWaf(
     locationId: string,
     ductWafId: string,
-    payload: UpdateDuctWafDTO,
+    payload: DuctWafBaseDTO,
     userId: string,
   ): Promise<DuctWafDTO> {
     const ductWaf = await this.getDuctWaf(ductWafId);

@@ -6,7 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
-import { UpdateMonitorLoadDTO } from '../dtos/monitor-load-update.dto';
+import { MonitorLoadBaseDTO } from '../dtos/monitor-load-update.dto';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
@@ -16,7 +16,7 @@ const locationId = '1234';
 const loadId = '4321';
 const userId = 'testuser';
 
-const payload: UpdateMonitorLoadDTO = {
+const payload: MonitorLoadBaseDTO = {
   maximumLoadValue: 0,
   maximumLoadUnitsOfMeasureCode: 'string',
   lowerOperationBoundary: 0,

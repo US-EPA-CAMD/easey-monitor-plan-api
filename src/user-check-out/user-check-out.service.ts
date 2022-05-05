@@ -2,7 +2,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
-import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -10,9 +9,8 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class UserCheckOutService {
   constructor(
     @InjectRepository(UserCheckOutRepository)
-    private repository: UserCheckOutRepository,
-    private map: UserCheckOutMap,
-    private Logger: Logger,
+    private readonly repository: UserCheckOutRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getCheckedOutConfigurations(): Promise<UserCheckOutDTO[]> {
@@ -23,7 +21,7 @@ export class UserCheckOutService {
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOutDTO> {
-    this.Logger.info('Checked out location', {
+    this.logger.info('Checked out location', {
       userId: username,
       monPlanId: monPlanId,
     });
@@ -38,7 +36,7 @@ export class UserCheckOutService {
     });
 
     if (!record) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         `Check-out configuration not found`,
         true,

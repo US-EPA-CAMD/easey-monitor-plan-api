@@ -13,13 +13,11 @@ import {
   ApiBearerAuth,
   ApiSecurity,
 } from '@nestjs/swagger';
-import { UpdateUnitControlDTO } from '../dtos/unit-control-update.dto';
-import { UnitControlDTO } from '../dtos/unit-control.dto';
-
-import { UnitControlWorkspaceService } from './unit-control.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
+import { UnitControlWorkspaceService } from './unit-control.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -56,7 +54,7 @@ export class UnitControlWorkspaceController {
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Param('unitControlId') unitControlId: string,
-    @Body() payload: UpdateUnitControlDTO,
+    @Body() payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
     this.Logger.info('Updating Unit Control', {
       userId,
@@ -85,7 +83,7 @@ export class UnitControlWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-    @Body() payload: UpdateUnitControlDTO,
+    @Body() payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
     this.Logger.info('Creating Unit Control', {
       userId,

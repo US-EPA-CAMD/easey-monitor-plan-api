@@ -1,21 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
-import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
-import { PCTQualificationMap } from '../maps/pct-qualification.map';
-import { UpdatePCTQualificationDTO } from '../dtos/pct-qualification-update.dto';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { PCTQualificationMap } from '../maps/pct-qualification.map';
+import {
+  PCTQualificationBaseDTO,
+  PCTQualificationDTO,
+} from '../dtos/pct-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 
 @Injectable()
 export class PCTQualificationWorkspaceService {
   constructor(
     @InjectRepository(PCTQualificationWorkspaceRepository)
-    private repository: PCTQualificationWorkspaceRepository,
-    private map: PCTQualificationMap,
-    private Logger: Logger,
+    private readonly repository: PCTQualificationWorkspaceRepository,
+    private readonly map: PCTQualificationMap,
+    private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -38,7 +46,7 @@ export class PCTQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         'PCT Qualification Not Found',
         true,
@@ -56,7 +64,7 @@ export class PCTQualificationWorkspaceService {
     userId: string,
     locId: string,
     qualId: string,
-    payload: UpdatePCTQualificationDTO,
+    payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -87,7 +95,7 @@ export class PCTQualificationWorkspaceService {
     locId: string,
     qualId: string,
     pctQualId: string,
-    payload: UpdatePCTQualificationDTO,
+    payload: PCTQualificationBaseDTO,
   ): Promise<PCTQualificationDTO> {
     const pctQual = await this.getPCTQualification(locId, qualId, pctQualId);
 

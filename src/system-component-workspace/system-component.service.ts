@@ -1,28 +1,36 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateSystemComponentDTO } from '../dtos/system-component-update.dto';
-import { SystemComponentDTO } from '../dtos/system-component.dto';
-import { UpdateComponentDTO } from '../dtos/component-update.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import {
+  SystemComponentBaseDTO,
+  SystemComponentDTO,
+} from '../dtos/system-component.dto';
+import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { SystemComponentMap } from '../maps/system-component.map';
-import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { SystemComponent } from '../entities/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
   constructor(
     @InjectRepository(SystemComponentWorkspaceRepository)
-    private repository: SystemComponentWorkspaceRepository,
-    private componentService: ComponentWorkspaceService,
-    private map: SystemComponentMap,
-    private Logger: Logger,
+    private readonly repository: SystemComponentWorkspaceRepository,
+    private readonly componentService: ComponentWorkspaceService,
+    private readonly map: SystemComponentMap,
+    private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-    private compRepository: ComponentWorkspaceRepository,
+    private readonly compRepository: ComponentWorkspaceRepository,
   ) {}
 
   async getComponents(
@@ -40,7 +48,7 @@ export class SystemComponentWorkspaceService {
     const result = await this.repository.getComponent(sysId, componentId);
 
     if (!result) {
-      this.Logger.error(
+      this.logger.error(
         NotFoundException,
         'System component was not found',
         true,
@@ -58,7 +66,7 @@ export class SystemComponentWorkspaceService {
     locationId: string,
     sysId: string,
     componentId: string,
-    payload: UpdateSystemComponentDTO,
+    payload: SystemComponentBaseDTO,
     userId: string,
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
@@ -107,7 +115,7 @@ export class SystemComponentWorkspaceService {
   async createSystemComponent(
     locationId: string,
     monitoringSystemRecordId: string,
-    payload: UpdateSystemComponentDTO,
+    payload: SystemComponentBaseDTO,
     userId: string,
   ): Promise<SystemComponentDTO> {
     let component = await this.componentService.getComponentByIdentifier(
@@ -116,7 +124,7 @@ export class SystemComponentWorkspaceService {
     );
 
     if (!component) {
-      const componentPayload: UpdateComponentDTO = {
+      const componentPayload: UpdateComponentBaseDTO = {
         componentId: payload.componentId,
         componentTypeCode: payload.componentTypeCode,
         sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,

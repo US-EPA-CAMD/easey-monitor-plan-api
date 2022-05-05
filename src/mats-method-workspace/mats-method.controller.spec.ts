@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UpdateMatsMethodDTO } from '../dtos/mats-method-update.dto';
+import { MatsMethodBaseDTO } from '../dtos/mats-method-update.dto';
 import { MatsMethodWorkspaceController } from './mats-method.controller';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
@@ -8,7 +8,7 @@ import { HttpModule } from '@nestjs/axios';
 
 const locationId = 'string';
 const methodId = 'string';
-const matsMethodPayload: UpdateMatsMethodDTO = {
+const matsMethodPayload: MatsMethodBaseDTO = {
   supplementalMATSMonitoringMethodCode: 'string',
   supplementalMATSParameterCode: 'string',
   beginDate: new Date(Date.now()),

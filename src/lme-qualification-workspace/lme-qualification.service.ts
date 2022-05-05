@@ -1,13 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
-import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
-import { LMEQualificationMap } from '../maps/lme-qualification.map';
-import { UpdateLMEQualificationDTO } from '../dtos/lme-qualification-update.dto';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LMEQualificationMap } from '../maps/lme-qualification.map';
+import {
+  LMEQualificationBaseDTO,
+  LMEQualificationDTO,
+} from '../dtos/lme-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 
 @Injectable()
 export class LMEQualificationWorkspaceService {
@@ -16,6 +22,8 @@ export class LMEQualificationWorkspaceService {
     private readonly repository: LMEQualificationWorkspaceRepository,
     private readonly map: LMEQualificationMap,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -56,7 +64,7 @@ export class LMEQualificationWorkspaceService {
     userId: string,
     locId: string,
     qualId: string,
-    payload: UpdateLMEQualificationDTO,
+    payload: LMEQualificationBaseDTO,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = this.repository.create({
       id: uuid(),
@@ -80,7 +88,7 @@ export class LMEQualificationWorkspaceService {
     locId: string,
     qualId: string,
     lmeQualId: string,
-    payload: UpdateLMEQualificationDTO,
+    payload: LMEQualificationBaseDTO,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = await this.getLMEQualification(locId, qualId, lmeQualId);
 

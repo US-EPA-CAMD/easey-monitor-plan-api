@@ -1,11 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
-
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
-import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
-import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
+import {
+  UnitCapacityBaseDTO,
+  UnitCapacityDTO,
+} from '../dtos/unit-capacity.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
@@ -14,6 +20,8 @@ export class UnitCapacityWorkspaceService {
     private readonly logger: Logger,
     private readonly repository: UnitCapacityWorkspaceRepository,
     private readonly map: UnitCapacityMap,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -49,7 +57,7 @@ export class UnitCapacityWorkspaceService {
     userId: string,
     locId: string,
     unitId: number,
-    payload: UpdateUnitCapacityDTO,
+    payload: UnitCapacityBaseDTO,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = this.repository.create({
       id: uuid(),
@@ -72,7 +80,7 @@ export class UnitCapacityWorkspaceService {
     locId: string,
     unitRecordId: number,
     unitCapacityId: string,
-    payload: UpdateUnitCapacityDTO,
+    payload: UnitCapacityBaseDTO,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = await this.getUnitCapacity(
       locId,

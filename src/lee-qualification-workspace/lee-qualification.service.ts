@@ -1,13 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
-import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
-import { LEEQualificationMap } from '../maps/lee-qualification.map';
-import { UpdateLEEQualificationDTO } from '../dtos/lee-qualification-update.dto';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import {
+  LEEQualificationBaseDTO,
+  LEEQualificationDTO,
+} from '../dtos/lee-qualification.dto';
+import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 
 @Injectable()
 export class LEEQualificationWorkspaceService {
@@ -16,6 +22,8 @@ export class LEEQualificationWorkspaceService {
     private readonly repository: LEEQualificationWorkspaceRepository,
     private readonly map: LEEQualificationMap,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -56,7 +64,7 @@ export class LEEQualificationWorkspaceService {
     userId: string,
     locId: string,
     qualId: string,
-    payload: UpdateLEEQualificationDTO,
+    payload: LEEQualificationBaseDTO,
   ): Promise<LEEQualificationDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -83,7 +91,7 @@ export class LEEQualificationWorkspaceService {
     locId: string,
     qualId: string,
     pctQualId: string,
-    payload: UpdateLEEQualificationDTO,
+    payload: LEEQualificationBaseDTO,
   ): Promise<LEEQualificationDTO> {
     const leeQual = await this.getLEEQualification(locId, qualId, pctQualId);
 

@@ -13,13 +13,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-
-import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
-import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
-import { UpdateMonitorFormulaDTO } from '../dtos/monitor-formula-update.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
+import {
+  MonitorFormulaBaseDTO,
+  MonitorFormulaDTO,
+} from '../dtos/monitor-formula.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -52,7 +53,7 @@ export class MonitorFormulaWorkspaceController {
   createFormula(
     @Param('locId') locationId: string,
     @Body()
-    payload: UpdateMonitorFormulaDTO,
+    payload: MonitorFormulaBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
     this.logger.info('Creating Formula', {
@@ -74,7 +75,7 @@ export class MonitorFormulaWorkspaceController {
     @Param('locId') locationId: string,
     @Param('formulaId') formulaRecordId: string,
     @Body()
-    payload: UpdateMonitorFormulaDTO,
+    payload: MonitorFormulaBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<MonitorFormulaDTO> {
     this.logger.info('Updating Formula', {

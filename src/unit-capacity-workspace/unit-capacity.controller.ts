@@ -16,9 +16,7 @@ import {
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
-import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
-import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
+import { UnitCapacityBaseDTO, UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 
 @Controller()
@@ -56,7 +54,7 @@ export class UnitCapacityWorkspaceController {
     @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-    @Body() payload: UpdateUnitCapacityDTO,
+    @Body() payload: UnitCapacityBaseDTO,
   ): Promise<UnitCapacityDTO> {
     this.logger.info('Creating Unit Capcity', {
       userId,
@@ -77,7 +75,7 @@ export class UnitCapacityWorkspaceController {
     @Param('locId') locationId: string,
     @Param('unitId') unitId: number,
     @Param('unitCapacityId') unitCapacityId: string,
-    @Body() payload: UpdateUnitCapacityDTO,
+    @Body() payload: UnitCapacityBaseDTO,
     @CurrentUser() userId: string,
   ): Promise<UnitCapacityDTO> {
     this.logger.info('Updating Unit Capacity', {

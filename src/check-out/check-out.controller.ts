@@ -17,7 +17,10 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
+import {
+  UserCheckOutBaseDTO,
+  UserCheckOutDTO,
+} from '../dtos/user-check-out.dto';
 import { CheckOutService } from './check-out.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -48,7 +51,7 @@ export class CheckOutController {
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: UserCheckOutDTO,
+    type: UserCheckOutBaseDTO,
     description: 'Checks Out a Monitor Plan configuration',
   })
   checkOutConfiguration(
@@ -62,7 +65,7 @@ export class CheckOutController {
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
-    type: UserCheckOutDTO,
+    type: UserCheckOutBaseDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
   })
   updateLastActivity(

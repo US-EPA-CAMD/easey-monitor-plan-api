@@ -6,13 +6,13 @@ import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanWorkspaceController } from './monitor-span.controller';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
+import { MonitorSpanBaseDTO } from '../dtos/monitor-span-update.dto';
 
 jest.mock('./monitor-span.service');
 
 const locId = 'some location id';
 const spanId = 'someId';
-const payload = new UpdateMonitorSpanDTO();
+const payload = new MonitorSpanBaseDTO();
 const user = 'someUser';
 
 const data: MonitorSpanDTO[] = [];

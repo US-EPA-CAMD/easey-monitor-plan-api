@@ -1,7 +1,7 @@
 import * as checks from './span';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
-import { UpdateMonitorSpanDTO } from '../../dtos/monitor-span-update.dto';
+import { MonitorSpanBaseDTO } from '../../dtos/monitor-span-update.dto';
 
 describe('Span Tests', () => {
   describe('Check10', () => {
@@ -9,7 +9,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const span = new UpdateMonitorSpanDTO();
+      const span = new MonitorSpanBaseDTO();
 
       span.componentTypeCode = 'FLOW';
       span.mpcValue = null;
@@ -30,7 +30,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const span = new UpdateMonitorSpanDTO();
+      const span = new MonitorSpanBaseDTO();
 
       span.componentTypeCode = 'FLOW';
       span.mpcValue = 5;
@@ -47,7 +47,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const span = new UpdateMonitorSpanDTO();
+      const span = new MonitorSpanBaseDTO();
 
       span.componentTypeCode = 'FLOW';
       span.mecValue = 5;

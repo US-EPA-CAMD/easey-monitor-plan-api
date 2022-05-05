@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { v4 as uuid } from 'uuid';
-
-import { UpdateMonitorSpanDTO } from '../dtos/monitor-span-update.dto';
-import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 
 @Injectable()
@@ -17,6 +20,8 @@ export class MonitorSpanWorkspaceService {
     private readonly repository: MonitorSpanWorkspaceRepository,
     private readonly map: MonitorSpanMap,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
@@ -40,7 +45,7 @@ export class MonitorSpanWorkspaceService {
 
   async createSpan(
     locationId: string,
-    payload: UpdateMonitorSpanDTO,
+    payload: MonitorSpanBaseDTO,
     userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = this.repository.create({
@@ -76,7 +81,7 @@ export class MonitorSpanWorkspaceService {
   async updateSpan(
     locationId: string,
     spanId: string,
-    payload: UpdateMonitorSpanDTO,
+    payload: MonitorSpanBaseDTO,
     userId: string,
   ): Promise<MonitorSpanDTO> {
     const span = await this.getSpan(locationId, spanId);
