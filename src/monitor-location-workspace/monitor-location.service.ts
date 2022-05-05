@@ -70,43 +70,55 @@ export class MonitorLocationWorkspaceService {
     facilityId: number,
     userId: string,
   ) {
-    for (const location of plan.locations) {
-      new Promise(async () => {
-        const unitRecord = await this.unitService.getUnitByNameAndFacId(
-          location.unitId,
-          facilityId,
-        );
-        const monitorLocationRecord = await getMonLocId(
-          location,
-          facilityId,
-          plan.orisCode,
-        );
+    const promises = [];
 
-        this.componentService.importComponent(
-          location,
-          monitorLocationRecord.id,
-          userId,
-        );
-        this.unitService.importUnit(unitRecord, location.nonLoadBasedIndicator);
-        this.unitCapacityService.importUnityCapacity(
-          location,
-          unitRecord.id,
-          monitorLocationRecord.id,
-          userId,
-        );
-        this.unitControlService.importUnitControl(
-          location,
-          unitRecord.id,
-          monitorLocationRecord.id,
-          userId,
-        );
-        this.unitFuelService.importUnitFuel(
-          location,
-          unitRecord.id,
-          monitorLocationRecord.id,
-          userId,
-        );
-      });
+    for (const location of plan.locations) {
+      promises.push(
+        new Promise(async () => {
+          const unitRecord = await this.unitService.getUnitByNameAndFacId(
+            location.unitId,
+            facilityId,
+          );
+          const monitorLocationRecord = await getMonLocId(
+            location,
+            facilityId,
+            plan.orisCode,
+          );
+
+          promises.push(
+            ...(await this.componentService.importComponent(
+              location,
+              monitorLocationRecord.id,
+              userId,
+            )),
+          );
+
+          await this.unitService.importUnit(
+            unitRecord,
+            location.nonLoadBasedIndicator,
+          );
+          await this.unitCapacityService.importUnityCapacity(
+            location,
+            unitRecord.id,
+            monitorLocationRecord.id,
+            userId,
+          );
+          await this.unitControlService.importUnitControl(
+            location,
+            unitRecord.id,
+            monitorLocationRecord.id,
+            userId,
+          );
+          await this.unitFuelService.importUnitFuel(
+            location,
+            unitRecord.id,
+            monitorLocationRecord.id,
+            userId,
+          );
+        }),
+      );
     }
+
+    return promises;
   }
 }

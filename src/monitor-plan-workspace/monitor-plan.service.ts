@@ -114,6 +114,8 @@ export class MonitorPlanWorkspaceService {
   ): Promise<MonitorPlanDTO> {
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
+    const promises = [];
+
     this.unitStackService.importUnitStack(plan, facilityId, userId);
     this.monitorLocationService.importMonitorLocation(plan, facilityId, userId);
 
