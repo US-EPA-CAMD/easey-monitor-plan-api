@@ -10,7 +10,7 @@ import { Check31, Check5 } from './mp-file-checks/system';
 import { Check1, Check2 } from './mp-file-checks/unit-stack-config';
 import { Check, CheckResult } from './utilities/check';
 // import { JSV } from 'jsv';
-import * as schema from './utilities/import-schema.json';
+import { getContent } from '../utils';
 
 @Injectable()
 export class ImportChecksService {
@@ -46,43 +46,28 @@ export class ImportChecksService {
       orisCode: monPlan.orisCode,
     });
 
-    console.log("test log")
+    const LocationChecks = [
+      Check1,
+      Check2,
+      Check5,
+      Check6,
+      Check7,
+      Check9,
+      Check10,
+      Check11,
+      Check12,
+      Check31,
+      Check32,
+    ];
 
-    console.log("\n=======================================\n")
+    const UnitStackChecks1 = [Check3];
+    const UnitStackChecks2 = [Check4, Check8]; //Depends on UnitStackChecks1 Passing
 
-    console.log("jsonschema test")
-
-    var Validator = require("jsonschema").Validator;
-    var v = new Validator();
-    var result = v.validate(monPlan, schema)
-    console.log(result)
-
-    console.log("\n=======================================\n")
-
-    console.log("end test log")
-
-    // const LocationChecks = [
-    //   Check1,
-    //   Check2,
-    //   Check5,
-    //   Check6,
-    //   Check7,
-    //   Check9,
-    //   Check10,
-    //   Check11,
-    //   Check12,
-    //   Check31,
-    //   Check32,
-    // ];
-
-    // const UnitStackChecks1 = [Check3];
-    // const UnitStackChecks2 = [Check4, Check8]; //Depends on UnitStackChecks1 Passing
-
-    // //await this.runCheckQueue(LocationChecks, monPlan);
-    // if (monPlan.unitStackConfiguration !== undefined) {
-    //   await this.runCheckQueue(UnitStackChecks1, monPlan);
-    //   await this.runCheckQueue(UnitStackChecks2, monPlan);
-    // }
+    //await this.runCheckQueue(LocationChecks, monPlan);
+    if (monPlan.unitStackConfiguration !== undefined) {
+      await this.runCheckQueue(UnitStackChecks1, monPlan);
+      await this.runCheckQueue(UnitStackChecks2, monPlan);
+    }
 
     this.logger.info(
       'Successfully completed monitor plan import with no errors',
@@ -91,4 +76,24 @@ export class ImportChecksService {
       },
     );
   };
+
+  mpSchemaValidation = async (monPlan: UpdateMonitorPlanDTO) => {
+    var report = await getContent("/ecmps/reporting-instructions/monitor-plan.schema.json").then(resp => {
+      var schema = resp.data
+      var Validator = require("jsonschema").Validator;
+      var v = new Validator();
+      var result = v.validate(monPlan, schema)
+      let errorList = [];
+      result.errors.forEach ( function (error) {
+        errorList.push("[SCHEMA-FATAL-A] " + error.stack);
+      })
+      return errorList;
+    });
+
+    if (report.length > 0) {
+      throw new BadRequestException(report, 'Schema Validation Error')
+    }
+
+    return report;
+  }
 }

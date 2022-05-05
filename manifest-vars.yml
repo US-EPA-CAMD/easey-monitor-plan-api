@@ -10,3 +10,4 @@ environment: development
 host: api-easey-dev.app.cloud.gov
 apiHost: api.epa.gov/easey/dev
 authApiPath: auth-mgmt
+contentApiPath: content-mgmt

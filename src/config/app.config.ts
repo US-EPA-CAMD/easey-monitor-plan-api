@@ -40,4 +40,7 @@ export default registerAs('app', () => ({
   authApi: {
     uri: process.env.EASEY_AUTH_API || 'https://localhost:8000/auth-mgmt',
   },
+  contentApi: {
+    uri: process.env.EASEY_CONTENT_API || 'https://api.epa.gov/easey/dev/content-mgmt',
+  },
 }));
