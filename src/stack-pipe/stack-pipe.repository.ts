@@ -1,4 +1,4 @@
-import { StackPipe } from 'src/entities/workspace/stack-pipe.entity';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(StackPipe)

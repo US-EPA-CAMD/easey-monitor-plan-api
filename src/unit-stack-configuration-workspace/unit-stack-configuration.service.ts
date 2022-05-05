@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
-import { UnitService } from 'src/unit/unit.service';
-import { UnitStackConfiguration } from 'src/entities/workspace/unit-stack-configuration.entity';
-import { StackPipeService } from 'src/stack-pipe/stack-pipe.service';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { UnitService } from '../unit/unit.service';
+import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
+import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -42,7 +42,10 @@ export class UnitStackConfigurationWorkspaceService {
           unitStackConfigRecord.endDate = unitStackConfig.endDate;
           unitStackConfigRecord.userId = userId;
 
-          this.repository.update(unitStackConfigRecord, unitStackConfigRecord);
+          await this.repository.update(
+            unitStackConfigRecord,
+            unitStackConfigRecord,
+          );
         } else {
           const unitStack = new UnitStackConfiguration();
           unitStack.updateDate = new Date();
@@ -50,7 +53,7 @@ export class UnitStackConfigurationWorkspaceService {
           unitStack.endDate = unitStackConfig.endDate;
           unitStack.userId = userId;
 
-          this.repository.create(unitStack);
+          await this.repository.create(unitStack);
         }
       });
     }

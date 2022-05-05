@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { StackPipe } from 'src/entities/workspace/stack-pipe.entity';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { StackPipeRepository } from './stack-pipe.repository';
 
 @Injectable()

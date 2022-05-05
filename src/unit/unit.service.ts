@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
-import { Unit } from 'src/entities/unit.entity';
+import { Unit } from '../entities/unit.entity';
 import { UnitRepository } from './unit.repository';
 
 @Injectable()
