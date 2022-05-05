@@ -1,7 +1,6 @@
 import { In } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager } from 'typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
@@ -32,23 +31,11 @@ import { LMEQualificationWorkspaceRepository } from '../lme-qualification-worksp
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
-import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
-import { ComponentWorkspaceService } from 'src/component-workspace/component.service';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
-import {
-  getMonLocId,
-  getFacIdFromOris,
-} from '../import-checks/utilities/utils';
-import { StackPipe } from 'src/entities/workspace/stack-pipe.entity';
-import { Unit } from 'src/entities/workspace/unit.entity';
-import { UnitStackConfiguration } from 'src/entities/workspace/unit-stack-configuration.entity';
-import { UnitStackConfigurationRepository } from 'src/unit-stack-configuration/unit-stack-configuration.repository';
-import { UnitCapacityWorkspaceService } from 'src/unit-capacity-workspace/unit-capacity.service';
-import { UnitControlWorkspaceService } from 'src/unit-control-workspace/unit-control.service';
-import { UnitFuelWorkspaceService } from 'src/unit-fuel-workspace/unit-fuel.service';
-import { MonitorLocationWorkspaceService } from 'src/monitor-location-workspace/monitor-location.service';
-import { UnitStackConfigurationService } from 'src/unit-stack-configuration/unit-stack-configuration.service';
-import { UnitStackConfigurationWorkspaceService } from 'src/unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { getFacIdFromOris } from '../import-checks/utilities/utils';
+import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
+import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -112,12 +99,21 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
+    // Get faciily wirth OrisCode
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
-    const promises = [];
+    // Get all ACTIVE plans
+    const plans = await this.repository.getActivePlansByFacId(facilityId);
 
-    this.unitStackService.importUnitStack(plan, facilityId, userId);
-    this.monitorLocationService.importMonitorLocation(plan, facilityId, userId);
+    // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
+
+    await this.unitStackService.importUnitStack(plan, facilityId, userId);
+
+    await this.monitorLocationService.importMonitorLocation(
+      plan,
+      facilityId,
+      userId,
+    );
 
     return null;
   }

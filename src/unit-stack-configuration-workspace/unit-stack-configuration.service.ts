@@ -53,7 +53,7 @@ export class UnitStackConfigurationWorkspaceService {
           unitStack.endDate = unitStackConfig.endDate;
           unitStack.userId = userId;
 
-          await this.repository.create(unitStack);
+          this.repository.create(unitStack);
         }
       });
     }

@@ -49,6 +49,13 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .getOne();
   }
 
+  async getActivePlansByFacId(facId: number): Promise<MonitorPlan[]> {
+    return this.createQueryBuilder('plan')
+      .where('plan.facId =:facId', { facId })
+      .andWhere('plan.endReportPeriodId IS NULL')
+      .getMany();
+  }
+
   async resetToNeedsEvaluation(planId: string, userId: string) {
     try {
       const currDate = new Date(Date.now());

@@ -1,20 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorLocation } from '../entities/monitor-location.entity';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
-import { UpdateMonitorPlanDTO } from 'src/dtos/monitor-plan-update.dto';
+import { getMonLocId } from '../import-checks/utilities/utils';
+
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+
 import { UnitService } from '../unit/unit.service';
-import { getMonLocId } from 'src/import-checks/utilities/utils';
-import { ComponentWorkspaceService } from 'src/component-workspace/component.service';
-import { UnitCapacityWorkspaceService } from 'src/unit-capacity-workspace/unit-capacity.service';
-import { UnitControlWorkspaceService } from 'src/unit-control-workspace/unit-control.service';
-import { UnitFuelWorkspaceService } from 'src/unit-fuel-workspace/unit-fuel.service';
-import { MonitorQualificationWorkspaceService } from 'src/monitor-qualification-workspace/monitor-qualification.service';
+import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
+import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
+import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -31,14 +32,14 @@ export class MonitorLocationWorkspaceService {
     private readonly unitFuelService: UnitFuelWorkspaceService,
     private readonly qualificationService: MonitorQualificationWorkspaceService,
 
-    private Logger: Logger,
+    private logger: Logger,
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, this.errorMsg, true, {
+      this.logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
@@ -49,7 +50,7 @@ export class MonitorLocationWorkspaceService {
   async getLocationEntity(locationId: string): Promise<MonitorLocation> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, this.errorMsg, true, {
+      this.logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
@@ -85,31 +86,28 @@ export class MonitorLocationWorkspaceService {
             plan.orisCode,
           );
 
-          promises.push(
-            ...(await this.componentService.importComponent(
-              location,
-              monitorLocationRecord.id,
-              userId,
-            )),
+          this.componentService.importComponent(
+            location,
+            monitorLocationRecord.id,
+            userId,
           );
-
-          await this.unitService.importUnit(
+          this.unitService.importUnit(
             unitRecord,
             location.nonLoadBasedIndicator,
           );
-          await this.unitCapacityService.importUnityCapacity(
+          this.unitCapacityService.importUnityCapacity(
             location,
             unitRecord.id,
             monitorLocationRecord.id,
             userId,
           );
-          await this.unitControlService.importUnitControl(
+          this.unitControlService.importUnitControl(
             location,
             unitRecord.id,
             monitorLocationRecord.id,
             userId,
           );
-          await this.unitFuelService.importUnitFuel(
+          this.unitFuelService.importUnitFuel(
             location,
             unitRecord.id,
             monitorLocationRecord.id,
@@ -119,6 +117,6 @@ export class MonitorLocationWorkspaceService {
       );
     }
 
-    return promises;
+    Promise.all(promises);
   }
 }
