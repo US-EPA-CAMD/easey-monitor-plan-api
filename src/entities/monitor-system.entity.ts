@@ -51,10 +51,10 @@ export class MonitorSystem extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer(), })
+  @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer() })
   beginHour: number;
 
-  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer(), })
+  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
   endHour: number;
 
   @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })

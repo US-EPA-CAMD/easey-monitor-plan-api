@@ -15,7 +15,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
-import { SystemComponentBaseDTO, SystemComponentDTO } from '../dtos/system-component.dto';
+import {
+  SystemComponentBaseDTO,
+  SystemComponentDTO,
+} from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
 
 @Controller()

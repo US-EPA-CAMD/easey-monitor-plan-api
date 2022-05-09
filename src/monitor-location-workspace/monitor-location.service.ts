@@ -80,6 +80,8 @@ export class MonitorLocationWorkspaceService {
             location.unitId,
             facilityId,
           );
+
+          // TODO: Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
           const monitorLocationRecord = await getMonLocId(
             location,
             facilityId,
@@ -117,6 +119,6 @@ export class MonitorLocationWorkspaceService {
       );
     }
 
-    Promise.all(promises);
+    return promises;
   }
 }

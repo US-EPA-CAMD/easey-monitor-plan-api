@@ -17,9 +17,4 @@ export class MonitorPlanCommentService {
     const results = await this.repository.find({ monitorPlanId: planId });
     return this.map.many(results);
   }
-
-  async getCommentsByPlanIdCommentBD(planId: string, planComment: string, beginDate: Date): Promise<MonitorPlanCommentDTO[]> {
-    const results = await this.repository.find({ where: {monitorPlanId: planId, monitoringPlanComment:planComment, beginDate: beginDate}  });
-    return this.map.many(results);
-  }
 }
