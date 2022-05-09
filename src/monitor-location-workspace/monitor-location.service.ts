@@ -70,7 +70,7 @@ export class MonitorLocationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
-  ) {
+  ): Promise<any[]> {
     const promises = [];
 
     for (const location of plan.locations) {
