@@ -16,14 +16,15 @@ import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-cont
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
   readonly errorMsg: 'Monitor Location Not Found';
   constructor(
     @InjectRepository(MonitorLocationWorkspaceRepository)
-    readonly repository: MonitorLocationWorkspaceRepository,
-    readonly map: MonitorLocationMap,
+    private readonly repository: MonitorLocationWorkspaceRepository,
+    private readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
     private readonly unitService: UnitService,
     private readonly componentService: ComponentWorkspaceService,
@@ -31,7 +32,7 @@ export class MonitorLocationWorkspaceService {
     private readonly unitControlService: UnitControlWorkspaceService,
     private readonly unitFuelService: UnitFuelWorkspaceService,
     private readonly qualificationService: MonitorQualificationWorkspaceService,
-
+    private readonly systemService: MonitorSystemWorkspaceService,
     private readonly logger: Logger,
   ) {}
 
@@ -110,6 +111,11 @@ export class MonitorLocationWorkspaceService {
           this.unitFuelService.importUnitFuel(
             location,
             unitRecord.id,
+            monitorLocationRecord.id,
+            userId,
+          );
+          this.systemService.importSystem(
+            location,
             monitorLocationRecord.id,
             userId,
           );
