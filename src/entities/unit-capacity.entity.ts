@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmps.unit_capacity' })
@@ -24,6 +25,7 @@ export class UnitCapacity extends BaseEntity {
     scale: 0,
     nullable: false,
     name: 'unit_id',
+    transformer: new NumericColumnTransformer(),
   })
   unitId: number;
 
@@ -38,6 +40,7 @@ export class UnitCapacity extends BaseEntity {
     precision: 7,
     scale: 1,
     name: 'max_hi_capacity',
+    transformer: new NumericColumnTransformer(),
   })
   maximumHourlyHeatInputCapacity: number;
 

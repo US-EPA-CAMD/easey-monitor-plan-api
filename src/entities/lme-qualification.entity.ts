@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorQualification } from './monitor-qualification.entity';
 
 @Entity({ name: 'camdecmps.monitor_qualification_lme' })
@@ -17,16 +17,19 @@ export class LMEQualification extends BaseEntity {
   @Column({ name: 'mon_qual_id' })
   qualificationId: string;
 
-  @Column({ name: 'qual_data_year' })
+  @Column({
+    name: 'qual_data_year',
+    transformer: new NumericColumnTransformer(),
+  })
   qualificationDataYear: number;
 
-  @Column({ name: 'so2_tons' })
+  @Column({ name: 'so2_tons', transformer: new NumericColumnTransformer() })
   so2Tons: number;
 
-  @Column({ name: 'nox_tons' })
+  @Column({ name: 'nox_tons', transformer: new NumericColumnTransformer() })
   noxTons: number;
 
-  @Column({ name: 'op_hours' })
+  @Column({ name: 'op_hours', transformer: new NumericColumnTransformer() })
   operatingHours: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })

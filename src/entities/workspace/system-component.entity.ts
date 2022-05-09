@@ -6,7 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Component } from './component.entity';
 import { MonitorSystem } from './monitor-system.entity';
 
@@ -35,13 +35,20 @@ export class SystemComponent extends BaseEntity {
     scale: 0,
     nullable: false,
     name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
   })
   beginHour: number;
 
   @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'end_hour' })
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   endHour: number;
 
   @Column({

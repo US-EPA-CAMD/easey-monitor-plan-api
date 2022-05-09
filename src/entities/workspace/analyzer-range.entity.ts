@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Component } from './component.entity';
 
 @Entity({ name: 'camdecmpswks.analyzer_range' })
@@ -30,7 +30,10 @@ export class AnalyzerRange extends BaseEntity {
   })
   analyzerRangeCode: string;
 
-  @Column({ name: 'dual_range_ind' })
+  @Column({
+    name: 'dual_range_ind',
+    transformer: new NumericColumnTransformer(),
+  })
   dualRangeIndicator: number;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
@@ -39,10 +42,10 @@ export class AnalyzerRange extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'begin_hour' })
+  @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer() })
   beginHour: number;
 
-  @Column({ name: 'end_hour' })
+  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
   endHour: number;
 
   @Column({

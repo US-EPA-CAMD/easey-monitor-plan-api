@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorQualification } from './monitor-qualification.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_qualification_lee' })
@@ -26,16 +26,25 @@ export class LEEQualification extends BaseEntity {
   @Column({ name: 'qual_lee_test_type_cd' })
   qualificationTestType: string;
 
-  @Column({ name: 'potential_annual_emissions' })
+  @Column({
+    name: 'potential_annual_emissions',
+    transformer: new NumericColumnTransformer(),
+  })
   potentialAnnualMassEmissions: number;
 
-  @Column({ name: 'applicable_emission_standard' })
+  @Column({
+    name: 'applicable_emission_standard',
+    transformer: new NumericColumnTransformer(),
+  })
   applicableEmissionStandard: number;
 
   @Column({ name: 'emission_standard_uom' })
   unitsOfStandard: string;
 
-  @Column({ name: 'emission_standard_pct' })
+  @Column({
+    name: 'emission_standard_pct',
+    transformer: new NumericColumnTransformer(),
+  })
   percentageOfEmissionStandard: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })

@@ -9,7 +9,7 @@ import {
   JoinTable,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
@@ -23,16 +23,19 @@ export class MonitorPlan extends BaseEntity {
 
   @Column({
     name: 'fac_id',
+    transformer: new NumericColumnTransformer(),
   })
   facId: number;
 
   @Column({
     name: 'end_rpt_period_id',
+    transformer: new NumericColumnTransformer(),
   })
   endReportPeriodId: number;
 
+  // pointing to needs_eval_flg because there is no eval_status_cd column in global view
   @Column({
-    name: 'eval_status_cd',
+    name: 'needs_eval_flg',
   })
   evalStatusCode: string;
 
@@ -59,7 +62,7 @@ export class MonitorPlan extends BaseEntity {
     location => location.plans,
   )
   @JoinTable({
-    name: 'camdecmpswks.monitor_plan_location',
+    name: 'camdecmps.monitor_plan_location',
     joinColumn: {
       name: 'mon_plan_id',
       referencedColumnName: 'id',

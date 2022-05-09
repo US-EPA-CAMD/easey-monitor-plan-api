@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.mats_method_data' })
@@ -36,13 +36,21 @@ export class MatsMethod extends BaseEntity {
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ nullable: false, name: 'begin_hour' })
+  @Column({
+    nullable: false,
+    name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   beginHour: number;
 
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ nullable: true, name: 'end_hour' })
+  @Column({
+    nullable: true,
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   endHour: number;
 
   @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })
