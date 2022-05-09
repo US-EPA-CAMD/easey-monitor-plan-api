@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.rect_duct_waf' })
@@ -28,6 +29,7 @@ export class DuctWaf extends BaseEntity {
     scale: 0,
     nullable: false,
     name: 'waf_effective_hour',
+    transformer: new NumericColumnTransformer(),
   })
   wafBeginHour: number;
 
@@ -40,6 +42,7 @@ export class DuctWaf extends BaseEntity {
     scale: 4,
     nullable: false,
     name: 'waf_value',
+    transformer: new NumericColumnTransformer(),
   })
   wafValue: number;
 
@@ -48,6 +51,7 @@ export class DuctWaf extends BaseEntity {
     precision: 2,
     scale: 0,
     name: 'num_test_runs',
+    transformer: new NumericColumnTransformer(),
   })
   numberOfTestRuns: number;
 
@@ -56,6 +60,7 @@ export class DuctWaf extends BaseEntity {
     precision: 2,
     scale: 0,
     name: 'num_traverse_points_waf',
+    transformer: new NumericColumnTransformer(),
   })
   numberOfTraversePointsWaf: number;
 
@@ -64,6 +69,7 @@ export class DuctWaf extends BaseEntity {
     precision: 2,
     scale: 0,
     name: 'num_test_ports',
+    transformer: new NumericColumnTransformer(),
   })
   numberOfTestPorts: number;
 
@@ -72,6 +78,7 @@ export class DuctWaf extends BaseEntity {
     precision: 2,
     scale: 0,
     name: 'num_traverse_points_ref',
+    transformer: new NumericColumnTransformer(),
   })
   numberOfTraversePointsRef: number;
 
@@ -80,6 +87,7 @@ export class DuctWaf extends BaseEntity {
     precision: 5,
     scale: 1,
     name: 'duct_width',
+    transformer: new NumericColumnTransformer(),
   })
   ductWidth: number;
 
@@ -88,6 +96,7 @@ export class DuctWaf extends BaseEntity {
     precision: 5,
     scale: 1,
     name: 'duct_depth',
+    transformer: new NumericColumnTransformer(),
   })
   ductDepth: number;
 
@@ -100,6 +109,7 @@ export class DuctWaf extends BaseEntity {
     scale: 0,
     nullable: true,
     name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
   })
   wafEndHour: number;
 

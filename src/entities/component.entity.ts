@@ -8,10 +8,10 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorSystem } from './monitor-system.entity';
 import { MonitorLocation } from './monitor-location.entity';
-import { AnalyzerRange } from './workspace/analyzer-range.entity';
+import { AnalyzerRange } from './analyzer-range.entity';
 
 @Entity({ name: 'camdecmps.component' })
 export class Component extends BaseEntity {
@@ -69,6 +69,7 @@ export class Component extends BaseEntity {
     precision: 1,
     scale: 0,
     name: 'hg_converter_ind',
+    transformer: new NumericColumnTransformer(),
   })
   hgConverterIndicator: number;
 

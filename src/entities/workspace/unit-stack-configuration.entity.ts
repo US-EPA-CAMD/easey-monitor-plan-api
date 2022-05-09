@@ -6,6 +6,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { StackPipe } from './stack-pipe.entity';
 import { Unit } from './unit.entity';
 
@@ -14,7 +15,7 @@ export class UnitStackConfiguration extends BaseEntity {
   @PrimaryColumn({ name: 'config_id' })
   id: string;
 
-  @Column({ name: 'unit_id' })
+  @Column({ name: 'unit_id', transformer: new NumericColumnTransformer() })
   unitId: number;
 
   @Column({ name: 'stack_pipe_id' })

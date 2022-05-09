@@ -8,10 +8,10 @@ import {
   JoinColumn,
   OneToOne,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
-import { UnitStackConfiguration } from '../unit-stack-configuration.entity';
+import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 
 @Entity({ name: 'camdecmpswks.stack_pipe' })
 export class StackPipe extends BaseEntity {
@@ -37,6 +37,7 @@ export class StackPipe extends BaseEntity {
 
   @Column({
     name: 'fac_id',
+    transformer: new NumericColumnTransformer(),
   })
   facId: number;
 

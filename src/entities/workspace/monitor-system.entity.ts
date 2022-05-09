@@ -9,7 +9,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Component } from './component.entity';
 import { SystemComponent } from './system-component.entity';
 import { SystemFuelFlow } from './system-fuel-flow.entity';
@@ -23,6 +23,9 @@ export class MonitorSystem extends BaseEntity {
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
   locationId: string;
 
+  @Column({ type: 'varchar', length: 7, nullable: true, name: 'sys_type_cd' })
+  systemTypeCode: string;
+
   @Column({
     type: 'varchar',
     length: 3,
@@ -30,9 +33,6 @@ export class MonitorSystem extends BaseEntity {
     name: 'system_identifier',
   })
   monitoringSystemId: string;
-
-  @Column({ type: 'varchar', length: 7, nullable: true, name: 'sys_type_cd' })
-  systemTypeCode: string;
 
   @Column({
     type: 'varchar',
@@ -51,19 +51,19 @@ export class MonitorSystem extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'begin_hour' })
+  @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer() })
   beginHour: number;
 
-  @Column({ name: 'end_hour' })
+  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
   endHour: number;
 
-  @Column({ type: 'varchar', length: 8, name: 'userid' })
+  @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })
   userId: string;
 
-  @Column({ type: 'date', name: 'add_date' })
+  @Column({ type: 'date', nullable: true, name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', name: 'update_date' })
+  @Column({ type: 'date', nullable: true, name: 'update_date' })
   updateDate: Date;
 
   @ManyToMany(
@@ -71,7 +71,7 @@ export class MonitorSystem extends BaseEntity {
     c => c.systems,
   )
   @JoinTable({
-    name: 'camdecmpswks.monitor_system_component',
+    name: 'camdecmps.monitor_system_component',
     joinColumn: {
       name: 'mon_sys_id',
       referencedColumnName: 'id',

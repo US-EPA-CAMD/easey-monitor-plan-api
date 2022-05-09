@@ -1,5 +1,5 @@
 import { BaseEntity, Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Unit } from './unit.entity';
 import { StackPipe } from './stack-pipe.entity';
 import { MonitorPlan } from './monitor-plan.entity';
@@ -8,11 +8,13 @@ import { MonitorPlan } from './monitor-plan.entity';
 export class Plant extends BaseEntity {
   @PrimaryColumn({
     name: 'fac_id',
+    transformer: new NumericColumnTransformer(),
   })
   id: number;
 
   @Column({
     name: 'oris_code',
+    transformer: new NumericColumnTransformer(),
   })
   orisCode: number;
 
@@ -26,6 +28,7 @@ export class Plant extends BaseEntity {
 
   @Column({
     name: 'epa_region',
+    transformer: new NumericColumnTransformer(),
   })
   region: number;
 

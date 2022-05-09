@@ -6,6 +6,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Unit } from './unit.entity';
 
 @Entity({ name: 'camd.unit_boiler_type' })
@@ -15,6 +16,7 @@ export class UnitBoilerType extends BaseEntity {
     precision: 38,
     scale: 0,
     name: 'unit_boiler_type_id',
+    transformer: new NumericColumnTransformer(),
   })
   id: number;
 
@@ -24,6 +26,7 @@ export class UnitBoilerType extends BaseEntity {
     scale: 0,
     nullable: false,
     name: 'unit_id',
+    transformer: new NumericColumnTransformer(),
   })
   unitRecordId: number;
 

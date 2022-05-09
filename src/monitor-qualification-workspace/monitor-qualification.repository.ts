@@ -6,6 +6,27 @@ import { MonitorQualification } from '../entities/workspace/monitor-qualificatio
 export class MonitorQualificationWorkspaceRepository extends Repository<
   MonitorQualification
 > {
+  async getQualificationByLocTypeDate(
+    locId: string,
+    qualType: string,
+    beginDate: Date,
+  ): Promise<MonitorQualification> {
+    const result = this.createQueryBuilder('c')
+      .where('c.locationId = :locId', {
+        locId,
+      })
+      .andWhere(
+        'c.qualificationTypeCode = :qualType AND c.beginDate = :beginDate',
+        {
+          qualType,
+          beginDate,
+        },
+      )
+      .getOne();
+
+    return result;
+  }
+
   async getQualification(
     locId: string,
     qualId: string,

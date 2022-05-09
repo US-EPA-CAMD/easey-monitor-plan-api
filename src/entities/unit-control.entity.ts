@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmps.unit_control' })
@@ -20,7 +21,7 @@ export class UnitControl extends BaseEntity {
   controlCode: string;
 
   @Column({ name: 'ce_param' })
-  controlEquipParamCode: string;
+  parameterCode: string;
 
   @Column({ type: 'date', name: 'install_date' })
   installDate: Date;
@@ -28,13 +29,13 @@ export class UnitControl extends BaseEntity {
   @Column({ type: 'date', name: 'opt_date' })
   optimizationDate: Date;
 
-  @Column({ name: 'orig_cd' })
+  @Column({ name: 'orig_cd', transformer: new NumericColumnTransformer() })
   originalCode: string;
 
   @Column({ type: 'date', name: 'retire_date' })
   retireDate: Date;
 
-  @Column({ name: 'seas_cd' })
+  @Column({ name: 'seas_cd', transformer: new NumericColumnTransformer() })
   seasonalControlsIndicator: string;
 
   @Column({ name: 'userid' })

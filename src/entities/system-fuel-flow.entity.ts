@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorSystem } from './monitor-system.entity';
 
 @Entity({ name: 'camdecmps.system_fuel_flow' })
@@ -23,6 +23,7 @@ export class SystemFuelFlow extends BaseEntity {
     scale: 1,
     nullable: false,
     name: 'max_rate',
+    transformer: new NumericColumnTransformer(),
   })
   maximumFuelFlowRate: number;
 
@@ -44,13 +45,25 @@ export class SystemFuelFlow extends BaseEntity {
   @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'begin_hour' })
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   beginHour: number;
 
   @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'end_hour' })
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   endHour: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })

@@ -9,7 +9,7 @@ import {
   JoinTable,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
@@ -23,11 +23,13 @@ export class MonitorPlan extends BaseEntity {
 
   @Column({
     name: 'fac_id',
+    transformer: new NumericColumnTransformer(),
   })
   facId: number;
 
   @Column({
     name: 'end_rpt_period_id',
+    transformer: new NumericColumnTransformer(),
   })
   endReportPeriodId: number;
 

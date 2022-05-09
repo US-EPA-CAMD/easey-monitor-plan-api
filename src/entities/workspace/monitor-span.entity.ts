@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_span' })
@@ -17,19 +17,49 @@ export class MonitorSpan extends BaseEntity {
   @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
   locationId: string;
 
-  @Column({ type: 'numeric', precision: 6, scale: 1, name: 'mpc_value' })
+  @Column({
+    type: 'numeric',
+    precision: 6,
+    scale: 1,
+    name: 'mpc_value',
+    transformer: new NumericColumnTransformer(),
+  })
   mpcValue: number;
 
-  @Column({ type: 'numeric', precision: 6, scale: 1, name: 'mec_value' })
+  @Column({
+    type: 'numeric',
+    precision: 6,
+    scale: 1,
+    name: 'mec_value',
+    transformer: new NumericColumnTransformer(),
+  })
   mecValue: number;
 
-  @Column({ type: 'numeric', precision: 10, scale: 0, name: 'mpf_value' })
+  @Column({
+    type: 'numeric',
+    precision: 10,
+    scale: 0,
+    name: 'mpf_value',
+    transformer: new NumericColumnTransformer(),
+  })
   mpfValue: number;
 
-  @Column({ type: 'numeric', precision: 6, scale: 1, name: 'max_low_range' })
+  @Column({
+    type: 'numeric',
+    precision: 6,
+    scale: 1,
+    name: 'max_low_range',
+    transformer: new NumericColumnTransformer(),
+  })
   scaleTransitionPoint: number;
 
-  @Column({ type: 'numeric', precision: 13, scale: 3, name: 'span_value' })
+  @Column({
+    type: 'numeric',
+    precision: 13,
+    scale: 3,
+    name: 'span_value',
+    transformer: new NumericColumnTransformer(),
+  })
   spanValue: number;
 
   @Column({
@@ -37,6 +67,7 @@ export class MonitorSpan extends BaseEntity {
     precision: 13,
     scale: 3,
     name: 'full_scale_range',
+    transformer: new NumericColumnTransformer(),
   })
   fullScaleRange: number;
 
@@ -48,10 +79,17 @@ export class MonitorSpan extends BaseEntity {
     precision: 5,
     scale: 0,
     name: 'default_high_range',
+    transformer: new NumericColumnTransformer(),
   })
   defaultHighRange: number;
 
-  @Column({ type: 'numeric', precision: 10, scale: 0, name: 'flow_span_value' })
+  @Column({
+    type: 'numeric',
+    precision: 10,
+    scale: 0,
+    name: 'flow_span_value',
+    transformer: new NumericColumnTransformer(),
+  })
   flowSpanValue: number;
 
   @Column({
@@ -59,6 +97,7 @@ export class MonitorSpan extends BaseEntity {
     precision: 10,
     scale: 0,
     name: 'flow_full_scale_range',
+    transformer: new NumericColumnTransformer(),
   })
   flowFullScaleRange: number;
 
@@ -89,13 +128,20 @@ export class MonitorSpan extends BaseEntity {
     scale: 0,
     nullable: false,
     name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
   })
   beginHour: number;
 
   @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'end_hour' })
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   endHour: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })

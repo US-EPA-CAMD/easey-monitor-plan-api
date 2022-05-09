@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmps.monitor_load' })
@@ -23,25 +23,49 @@ export class MonitorLoad extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ nullable: true, name: 'begin_hour' })
+  @Column({
+    nullable: true,
+    name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   beginHour: number;
 
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ nullable: true, name: 'end_hour' })
+  @Column({
+    nullable: true,
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   endHour: number;
 
-  @Column({ nullable: true, name: 'max_load_value' })
+  @Column({
+    nullable: true,
+    name: 'max_load_value',
+    transformer: new NumericColumnTransformer(),
+  })
   maximumLoadValue: number;
 
-  @Column({ nullable: true, name: 'second_normal_ind' })
+  @Column({
+    nullable: true,
+    name: 'second_normal_ind',
+    transformer: new NumericColumnTransformer(),
+  })
   secondNormalIndicator: number;
 
-  @Column({ nullable: true, name: 'up_op_boundary' })
+  @Column({
+    nullable: true,
+    name: 'up_op_boundary',
+    transformer: new NumericColumnTransformer(),
+  })
   upperOperationBoundary: number;
 
-  @Column({ nullable: true, name: 'low_op_boundary' })
+  @Column({
+    nullable: true,
+    name: 'low_op_boundary',
+    transformer: new NumericColumnTransformer(),
+  })
   lowerOperationBoundary: number;
 
   @Column({
@@ -63,10 +87,10 @@ export class MonitorLoad extends BaseEntity {
   @Column({ type: 'varchar', length: 8, nullable: false, name: 'userid' })
   userId: string;
 
-  @Column({ type: 'date', nullable: true, name: 'add_date' })
+  @Column({ type: 'date', name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'update_date' })
+  @Column({ type: 'date', name: 'update_date' })
   updateDate: Date;
 
   @Column({

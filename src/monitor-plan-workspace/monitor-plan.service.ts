@@ -31,6 +31,11 @@ import { LMEQualificationWorkspaceRepository } from '../lme-qualification-worksp
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+
+import { getFacIdFromOris } from '../import-checks/utilities/utils';
+import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
+import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -83,8 +88,35 @@ export class MonitorPlanWorkspaceService {
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
+
+    private readonly unitStackService: UnitStackConfigurationWorkspaceService,
+    private readonly monitorLocationService: MonitorLocationWorkspaceService,
+
     private map: MonitorPlanMap,
   ) {}
+
+  async importMpPlan(
+    plan: UpdateMonitorPlanDTO,
+    userId: string,
+  ): Promise<MonitorPlanDTO> {
+    // Get faciily wirth OrisCode
+    const facilityId = await getFacIdFromOris(plan.orisCode);
+
+    // Get all ACTIVE plans
+    const plans = await this.repository.getActivePlansByFacId(facilityId);
+
+    // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
+
+    await this.unitStackService.importUnitStack(plan, facilityId, userId);
+
+    await this.monitorLocationService.importMonitorLocation(
+      plan,
+      facilityId,
+      userId,
+    );
+
+    return null;
+  }
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
     const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);

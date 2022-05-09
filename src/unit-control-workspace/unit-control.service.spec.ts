@@ -5,7 +5,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { UnitControlWorkspaceService } from './unit-control.service';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
-import { UnitControlBaseDTO } from '../dtos/unit-control-update.dto';
+import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -22,7 +22,7 @@ const returnedUnitControl: UnitControlDTO = new UnitControlDTO();
 
 const payload: UnitControlBaseDTO = {
   controlCode: 'PAX',
-  controlEquipParamCode: 'DL',
+  parameterCode: 'DL',
   installDate: new Date(Date.now()),
   optimizationDate: new Date(Date.now()),
   originalCode: '1',

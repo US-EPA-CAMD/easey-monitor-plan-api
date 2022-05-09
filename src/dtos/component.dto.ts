@@ -116,7 +116,6 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOHgConverterIndicator.example,
     name: propertyMetadata.componentDTOHgConverterIndicator.fieldLabels.value,
   })
-  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must be within the range of 0 and 1`;

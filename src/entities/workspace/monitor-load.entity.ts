@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_load' })
@@ -23,25 +23,46 @@ export class MonitorLoad extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ nullable: true, name: 'begin_hour' })
+  @Column({
+    nullable: true,
+    name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   beginHour: number;
 
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ nullable: true, name: 'end_hour' })
+  @Column({
+    nullable: true,
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   endHour: number;
 
-  @Column({ nullable: true, name: 'max_load_value' })
+  @Column({
+    nullable: true,
+    name: 'max_load_value',
+    transformer: new NumericColumnTransformer(),
+  })
   maximumLoadValue: number;
 
-  @Column({ nullable: true, name: 'second_normal_ind' })
+  @Column({
+    name: 'second_normal_ind',
+    transformer: new NumericColumnTransformer(),
+  })
   secondNormalIndicator: number;
 
-  @Column({ nullable: true, name: 'up_op_boundary' })
+  @Column({
+    name: 'up_op_boundary',
+    transformer: new NumericColumnTransformer(),
+  })
   upperOperationBoundary: number;
 
-  @Column({ nullable: true, name: 'low_op_boundary' })
+  @Column({
+    name: 'low_op_boundary',
+    transformer: new NumericColumnTransformer(),
+  })
   lowerOperationBoundary: number;
 
   @Column({

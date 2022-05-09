@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Unit } from './unit.entity';
 
 @Entity({ name: 'camdecmps.unit_fuel' })
@@ -13,7 +14,7 @@ export class UnitFuel extends BaseEntity {
   @PrimaryColumn({ name: 'uf_id' })
   id: string;
 
-  @Column({ name: 'unit_id' })
+  @Column({ name: 'unit_id', transformer: new NumericColumnTransformer() })
   unitId: number;
 
   @Column({ name: 'fuel_type' })
@@ -31,16 +32,22 @@ export class UnitFuel extends BaseEntity {
   @Column({ name: 'act_or_proj_cd' })
   actualOrProjectedCode: string;
 
-  @Column({ name: 'ozone_seas_ind' })
+  @Column({
+    name: 'ozone_seas_ind',
+    transformer: new NumericColumnTransformer(),
+  })
   ozoneSeasonIndicator: number;
 
   @Column({ name: 'dem_so2' })
   demSO2: string;
 
-  @Column({ name: 'dem_gcv' })
+  @Column({ name: 'dem_gcv', nullable: true })
   demGCV: string;
 
-  @Column({ name: 'sulfur_content' })
+  @Column({
+    name: 'sulfur_content',
+    transformer: new NumericColumnTransformer(),
+  })
   sulfurContent: number;
 
   @Column({ name: 'userid' })

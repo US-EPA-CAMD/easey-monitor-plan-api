@@ -5,6 +5,7 @@ import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -40,6 +41,24 @@ export class ComponentWorkspaceService {
     }
 
     return null;
+  }
+
+  async importComponent(
+    location: UpdateMonitorLocationDTO,
+    locationId: string,
+    userId: string,
+  ): Promise<any[]> {
+    const promises = [];
+    
+    for (const component of location.components) {
+      promises.push(
+        new Promise(async () => {
+          await this.createComponent(locationId, component, userId);
+        }),
+      );
+    }
+
+    return promises;
   }
 
   async createComponent(

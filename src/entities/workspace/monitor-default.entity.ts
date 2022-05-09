@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_default' })
@@ -31,6 +31,7 @@ export class MonitorDefault extends BaseEntity {
     scale: 4,
     nullable: false,
     name: 'default_value',
+    transformer: new NumericColumnTransformer(),
   })
   defaultValue: number;
 
@@ -61,13 +62,20 @@ export class MonitorDefault extends BaseEntity {
     scale: 0,
     nullable: false,
     name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
   })
   beginHour: number;
 
   @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ type: 'numeric', precision: 2, scale: 0, name: 'end_hour' })
+  @Column({
+    type: 'numeric',
+    precision: 2,
+    scale: 0,
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+  })
   endHour: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })

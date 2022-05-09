@@ -15,6 +15,7 @@ import {
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
+import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -27,6 +28,39 @@ export class MonitorQualificationWorkspaceService {
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
+
+  async importUnitControl(
+    location: UpdateMonitorLocationDTO,
+    unitRecordId: number,
+    locationId: string,
+    userId: string,
+  ) {
+    const promises = [];
+    for (const qualification of location.qualifications) {
+      promises.push(
+        new Promise(async (resolve, reject) => {
+          const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
+            locationId,
+            qualification.qualificationTypeCode,
+            qualification.beginDate,
+          );
+
+          if (qualificationRecord !== undefined) {
+            this.updateQualification(
+              userId,
+              locationId,
+              qualificationRecord.id,
+              qualification,
+            );
+          } else {
+            this.createQualification(userId, locationId, qualification);
+          }
+        }),
+      );
+    }
+
+    return promises;
+  }
 
   async getQualifications(
     locationId: string,

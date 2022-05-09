@@ -40,4 +40,6 @@ export default registerAs('app', () => ({
   authApi: {
     uri: process.env.EASEY_AUTH_API || 'https://localhost:8000/auth-mgmt',
   },
+
+  reqSizeLimit: process.env.EASEY_MONITOR_PLAN_API_REQ_SIZE_LIMIT || '1mb',
 }));

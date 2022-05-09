@@ -26,4 +26,26 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       .andWhere('uf.id = :unitControlId', { unitControlId })
       .getOne();
   }
+
+  async getUnitControlBySpecs(
+    unitId: number,
+    ceParam: string,
+    controlCode: string,
+    installDate: Date,
+    retireDate: Date,
+  ): Promise<UnitControl> {
+    return this.createQueryBuilder('c')
+      .where('c.unitId = :unitId', {
+        unitId,
+      })
+      .andWhere('c.parameterCode = :ceParam', {
+        ceParam,
+      })
+      .andWhere('c.controlCode = :controlCode', { controlCode })
+      .andWhere('c.installDate = :installDate OR c.retireDate = :retireDate', {
+        installDate,
+        retireDate,
+      })
+      .getOne();
+  }
 }

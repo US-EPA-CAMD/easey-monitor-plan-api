@@ -10,6 +10,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 @Injectable()
@@ -51,6 +52,43 @@ export class UnitControlWorkspaceService {
     return this.map.one(result);
   }
 
+  async importUnitControl(
+    location: UpdateMonitorLocationDTO,
+    unitId: number,
+    locationId: string,
+    userId: string,
+  ) {
+    const promises = [];
+
+    for (const unitControl of location.unitControls) {
+      promises.push(
+        new Promise(async (resolve, reject) => {
+          const unitControlRecord = await this.repository.getUnitControlBySpecs(
+            unitId,
+            unitControl.parameterCode,
+            unitControl.controlCode,
+            unitControl.installDate,
+            unitControl.retireDate,
+          );
+
+          if (unitControlRecord !== undefined) {
+            this.updateUnitControl(
+              userId,
+              locationId,
+              unitId,
+              unitControlRecord.id,
+              unitControl,
+            );
+          } else {
+            this.createUnitControl(userId, locationId, unitId, unitControl);
+          }
+        }),
+      );
+    }
+
+    return promises;
+  }
+
   async createUnitControl(
     userId: string,
     locId: string,
@@ -61,7 +99,7 @@ export class UnitControlWorkspaceService {
       id: uuid(),
       unitId: unitId,
       controlCode: payload.controlCode,
-      controlEquipParamCode: payload.controlEquipParamCode,
+      parameterCode: payload.parameterCode,
       installDate: payload.installDate,
       optimizationDate: payload.optimizationDate,
       originalCode: payload.originalCode,
@@ -87,7 +125,7 @@ export class UnitControlWorkspaceService {
     const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
 
     unitControl.controlCode = payload.controlCode;
-    unitControl.controlEquipParamCode = payload.controlEquipParamCode;
+    unitControl.parameterCode = payload.parameterCode;
     unitControl.installDate = payload.installDate;
     unitControl.optimizationDate = payload.optimizationDate;
     unitControl.originalCode = payload.originalCode;

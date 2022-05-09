@@ -26,4 +26,24 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
       .andWhere('uf.id = :unitFuelId', { unitFuelId })
       .getOne();
   }
+
+  async getUnitFuelBySpecs(
+    unitId: number,
+    fuelCode: string,
+    beginDate: Date,
+    endDate: Date,
+  ): Promise<UnitFuel> {
+    return this.createQueryBuilder('u')
+      .where('u.unitId = :unitId', {
+        unitId,
+      })
+      .andWhere('u.fuelCode = :fuelCode', {
+        fuelCode,
+      })
+      .andWhere('u.beginDate = :beginDate OR u.endDate = :endDate', {
+        beginDate,
+        endDate,
+      })
+      .getOne();
+  }
 }
