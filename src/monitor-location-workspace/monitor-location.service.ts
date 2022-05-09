@@ -81,7 +81,7 @@ export class MonitorLocationWorkspaceService {
             facilityId,
           );
 
-          // TODO: Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
+          // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
           const monitorLocationRecord = await getMonLocId(
             location,
             facilityId,
