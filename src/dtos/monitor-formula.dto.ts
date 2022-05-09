@@ -1,6 +1,7 @@
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   MaxLength,
   ValidateIf,
   ValidationArguments,
@@ -45,6 +46,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaCode.example,
     name: propertyMetadata.monitorFormulaDTOFormulaCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct formula_code as "value" FROM camdecmpsmd.vw_formula_master_data_relationships',
     {
@@ -60,6 +62,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaText.example,
     name: propertyMetadata.monitorFormulaDTOFormulaText.fieldLabels.value,
   })
+  @IsOptional()
   @MaxLength(200, {
     message: (args: ValidationArguments) => {
       return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 200 characters`;

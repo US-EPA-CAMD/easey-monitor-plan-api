@@ -4,6 +4,7 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -31,6 +32,7 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTODualRangeIndicator.example,
     name: propertyMetadata.analyzerRangeDTODualRangeIndicator.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {

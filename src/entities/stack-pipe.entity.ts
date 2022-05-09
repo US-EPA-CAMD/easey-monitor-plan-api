@@ -26,11 +26,13 @@ export class StackPipe extends BaseEntity {
   name: string;
 
   @Column({
+    type: 'date',
     name: 'active_date',
   })
   activeDate: Date;
 
   @Column({
+    type: 'date',
     name: 'retire_date',
   })
   retireDate: Date;

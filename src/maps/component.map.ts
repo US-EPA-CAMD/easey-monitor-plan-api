@@ -14,7 +14,7 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
   public async one(entity: Component): Promise<ComponentDTO> {
     const analyzerRanges = entity.analyzerRanges
       ? await this.rangeMap.many(entity.analyzerRanges)
-      : null;
+      : [];
 
     return {
       id: entity.id,

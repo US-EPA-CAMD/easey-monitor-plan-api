@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInt, ValidationArguments } from 'class-validator';
+import { IsInt, IsOptional, ValidationArguments } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
@@ -52,6 +52,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTODemGCV.example,
     name: propertyMetadata.unitFuelDTODemGCV.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct dem_gcv as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
@@ -67,6 +68,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTODemSO2.example,
     name: propertyMetadata.unitFuelDTODemSO2.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct dem_so2 as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
