@@ -40,7 +40,6 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOOzoneSeasonIndicator.example,
     name: propertyMetadata.unitFuelDTOOzoneSeasonIndicator.fieldLabels.value,
   })
-  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value}  in the Unit Fuel record ${args.property} must be within the range of 0 and 1`;

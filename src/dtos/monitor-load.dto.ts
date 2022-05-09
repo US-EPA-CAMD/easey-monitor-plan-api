@@ -50,7 +50,6 @@ export class MonitorLoadBaseDTO {
     name:
       propertyMetadata.monitorLoadDTOLowerOperationBoundary.fieldLabels.value,
   })
-  @IsInt()
   @IsAtMostDigits(6, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
@@ -65,7 +64,6 @@ export class MonitorLoadBaseDTO {
     name:
       propertyMetadata.monitorLoadDTOUpperOperationBoundary.fieldLabels.value,
   })
-  @IsInt()
   @IsAtMostDigits(6, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
@@ -110,7 +108,6 @@ export class MonitorLoadBaseDTO {
     name:
       propertyMetadata.monitorLoadDTOSecondNormalIndicator.fieldLabels.value,
   })
-  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;

@@ -62,7 +62,7 @@ export class UnitControlWorkspaceService {
       new Promise(async () => {
         const unitControlRecord = await this.repository.getUnitControlBySpecs(
           unitId,
-          unitControl.controlEquipParamCode,
+          unitControl.parameterCode,
           unitControl.controlCode,
           unitControl.installDate,
           unitControl.retireDate,
@@ -93,7 +93,7 @@ export class UnitControlWorkspaceService {
       id: uuid(),
       unitId: unitId,
       controlCode: payload.controlCode,
-      controlEquipParamCode: payload.controlEquipParamCode,
+      parameterCode: payload.parameterCode,
       installDate: payload.installDate,
       optimizationDate: payload.optimizationDate,
       originalCode: payload.originalCode,
@@ -119,7 +119,7 @@ export class UnitControlWorkspaceService {
     const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
 
     unitControl.controlCode = payload.controlCode;
-    unitControl.controlEquipParamCode = payload.controlEquipParamCode;
+    unitControl.parameterCode = payload.parameterCode;
     unitControl.installDate = payload.installDate;
     unitControl.optimizationDate = payload.optimizationDate;
     unitControl.originalCode = payload.originalCode;

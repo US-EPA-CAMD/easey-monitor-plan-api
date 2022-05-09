@@ -77,7 +77,6 @@ export class MonitorLocationBaseDTO {
       propertyMetadata.monitorLocationDTONonLoadBasedIndicator.fieldLabels
         .value,
   })
-  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;

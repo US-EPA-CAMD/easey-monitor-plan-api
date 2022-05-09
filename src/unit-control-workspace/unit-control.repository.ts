@@ -38,7 +38,7 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       .where('c.unitId = :unitId', {
         unitId,
       })
-      .andWhere('c.controlEquipParamCode = :ceParam', {
+      .andWhere('c.parameterCode = :ceParam', {
         ceParam,
       })
       .andWhere('c.controlCode = :controlCode', { controlCode })

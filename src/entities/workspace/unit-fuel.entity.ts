@@ -33,6 +33,7 @@ export class UnitFuel extends BaseEntity {
   actualOrProjectedCode: string;
 
   @Column({
+    nullable: true,
     name: 'ozone_seas_ind',
     transformer: new NumericColumnTransformer(),
   })

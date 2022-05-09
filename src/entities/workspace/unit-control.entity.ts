@@ -21,7 +21,7 @@ export class UnitControl extends BaseEntity {
   controlCode: string;
 
   @Column({ name: 'ce_param' })
-  controlEquipParamCode: string;
+  parameterCode: string;
 
   @Column({ type: 'date', name: 'install_date' })
   installDate: Date;

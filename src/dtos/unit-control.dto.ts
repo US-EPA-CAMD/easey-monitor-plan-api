@@ -5,20 +5,21 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
 export class UnitControlBaseDTO {
-  @ApiProperty({
-    description: propertyMetadata.controlEquipParamCode.description,
-    example: propertyMetadata.controlEquipParamCode.example,
-    name: propertyMetadata.controlEquipParamCode.fieldLabels.value,
-  })
+  // TODO: update contorlEquipParamCode to parameterCode in easey-common
+  // @ApiProperty({
+  //   description: propertyMetadata.parameterCode.description,
+  //   example: propertyMetadata.parameterCode.example,
+  //   name: propertyMetadata.parameterCode.fieldLabels.value,
+  // })
   @IsInDbValues(
-    `SELECT distinct controlequipparamcode as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
+    `SELECT distinct parameterCode as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITCONTROL-FATAL-B] The value for ${args.value} in the Unit Control record ${args.property} is invalid`;
       },
     },
   )
-  controlEquipParamCode: string;
+  parameterCode: string;
 
   @ApiProperty({
     description: propertyMetadata.unitControlDTOControlCode.description,
