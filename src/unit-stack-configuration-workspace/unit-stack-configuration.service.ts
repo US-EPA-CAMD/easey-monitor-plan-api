@@ -19,7 +19,7 @@ export class UnitStackConfigurationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
-  ) {
+  ): Promise<any[]> {
     const promises = [];
     for (const unitStackConfig of plan.unitStackConfiguration) {
       promises.push(
