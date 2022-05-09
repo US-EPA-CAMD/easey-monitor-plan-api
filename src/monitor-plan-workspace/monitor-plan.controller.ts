@@ -87,6 +87,8 @@ export class MonitorPlanWorkspaceController {
   ): Promise<MonitorPlanDTO> {
     await this.importChecksService.mpFileChecks(plan);
 
+    await this.importPlan(plan);
+
     return;
   }
 

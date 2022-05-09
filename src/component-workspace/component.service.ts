@@ -52,7 +52,7 @@ export class ComponentWorkspaceService {
 
     for (const component of location.components) {
       promises.push(
-        new Promise(async () => {
+        new Promise(async (resolve, reject) => {
           await this.createComponent(locationId, component, userId);
         }),
       );

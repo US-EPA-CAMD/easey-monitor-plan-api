@@ -101,7 +101,9 @@ export const Check32 = new Check(
     const entityManager = getEntityManager();
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
-    const invalidTypeCodes = ['SO2', 'NOX', 'CO2', 'O2', 'HG', 'HCL', 'HF'];
+    // TODO: verify this
+    // const invalidTypeCodes = ['SO2', 'NOX', 'CO2', 'O2', 'HG', 'HCL', 'HF'];
+    const invalidTypeCodes = [];
 
     for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
