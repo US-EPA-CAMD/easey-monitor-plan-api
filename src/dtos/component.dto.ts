@@ -4,7 +4,9 @@ import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO } from './analyzer-range.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsArray,
   IsInt,
+  IsOptional,
   IsString,
   MaxLength,
   ValidateNested,
@@ -104,6 +106,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOSerialNumber.example,
     name: propertyMetadata.componentDTOSerialNumber.fieldLabels.value,
   })
+  @IsOptional()
   @MaxLength(20, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 20 characters`;

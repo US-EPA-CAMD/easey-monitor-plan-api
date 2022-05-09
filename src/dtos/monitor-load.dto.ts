@@ -3,6 +3,7 @@ import {
   ValidateIf,
   IsInt,
   ValidationArguments,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -76,6 +77,7 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTONormalLevelCode.example,
     name: propertyMetadata.monitorLoadDTONormalLevelCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct normal_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
@@ -91,6 +93,7 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOSecondLevelCode.example,
     name: propertyMetadata.monitorLoadDTOSecondLevelCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct second_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {

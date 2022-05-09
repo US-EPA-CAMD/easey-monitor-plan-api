@@ -4,6 +4,7 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   ValidateIf,
@@ -17,9 +18,9 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOUnitId.example,
     name: propertyMetadata.monitorLocationDTOUnitId.fieldLabels.value,
   })
+  @IsOptional()
   @IsString()
   @MaxLength(6)
-  @IsNotEmpty()
   @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
     message: (args: ValidationArguments) => {
       return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
@@ -33,8 +34,8 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOStackPipeId.example,
     name: propertyMetadata.monitorLocationDTOStackPipeId.fieldLabels.value,
   })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MatchesRegEx('(C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}', {
     message: (args: ValidationArguments) => {
       return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}`;
@@ -48,7 +49,7 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOActiveDate.example,
     name: propertyMetadata.monitorLocationDTOActiveDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -61,7 +62,7 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTORetireDate.example,
     name: propertyMetadata.monitorLocationDTORetireDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;

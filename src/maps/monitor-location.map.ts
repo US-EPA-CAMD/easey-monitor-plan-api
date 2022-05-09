@@ -127,7 +127,7 @@ export class MonitorLocationMap extends BaseMap<
     if (entity.stackPipe) {
       type = 'stack';
       name = entity.stackPipe.name;
-      stackPipeId = entity.stackPipe.id;
+      stackPipeId = entity.stackPipe.name;
       activeDate = entity.stackPipe.activeDate;
       retireDate = entity.stackPipe.retireDate;
       unitId = null;

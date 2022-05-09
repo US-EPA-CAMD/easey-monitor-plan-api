@@ -29,7 +29,7 @@ export class MonitorQualificationWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
-  async importUnitControl(
+  async importQualification(
     location: UpdateMonitorLocationDTO,
     unitRecordId: number,
     locationId: string,

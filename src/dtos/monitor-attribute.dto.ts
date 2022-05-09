@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInt, ValidationArguments } from 'class-validator';
+import { IsInt, IsOptional, ValidationArguments } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
@@ -11,6 +11,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTODuctIndicator.example,
     name: propertyMetadata.monitorAttributeDTODuctIndicator.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
@@ -25,7 +26,6 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOBypassIndicator.example,
     name: propertyMetadata.monitorAttributeDTOBypassIndicator.fieldLabels.value,
   })
-  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be within the range of 0 and 1`;
@@ -65,6 +65,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOMaterialCode.example,
     name: propertyMetadata.monitorAttributeDTOMaterialCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT material_cd as "value" FROM camdecmpsmd.material_code',
     {
@@ -80,6 +81,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOShapeCode.example,
     name: propertyMetadata.monitorAttributeDTOShapeCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues('SELECT shape_cd as "value" FROM camdecmpsmd.shape_code', {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
@@ -92,6 +94,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOCrossAreaFlow.example,
     name: propertyMetadata.monitorAttributeDTOCrossAreaFlow.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(4, {
     message: (args: ValidationArguments) => {

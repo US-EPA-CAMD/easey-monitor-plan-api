@@ -99,6 +99,8 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
+    const promises = [];
+
     // Get faciily wirth OrisCode
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
@@ -107,12 +109,20 @@ export class MonitorPlanWorkspaceService {
 
     // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
 
-    await this.unitStackService.importUnitStack(plan, facilityId, userId);
+    promises.push(
+      ...(await this.unitStackService.importUnitStack(
+        plan,
+        facilityId,
+        userId,
+      )),
+    );
 
-    await this.monitorLocationService.importMonitorLocation(
-      plan,
-      facilityId,
-      userId,
+    promises.push(
+      await this.monitorLocationService.importMonitorLocation(
+        plan,
+        facilityId,
+        userId,
+      ),
     );
 
     return null;

@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -63,6 +64,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOMecValue.example,
     name: propertyMetadata.monitorSpanDTOMecValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -83,6 +85,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOMpcValue.example,
     name: propertyMetadata.monitorSpanDTOMpcValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -103,7 +106,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOMpfValue.example,
     name: propertyMetadata.monitorSpanDTOMpfValue.fieldLabels.value,
   })
-  @IsInt()
+  @IsOptional()
   @IsAtMostDigits(10, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SPAN-FATAL-A] The value : ${args.value} for ${args.property} must be 10 digits or less`;
@@ -168,6 +171,7 @@ export class MonitorSpanBaseDTO {
   )
   spanUnitsOfMeasureCode: string;
 
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
