@@ -48,7 +48,7 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
     beginDate: Date,
     endDate: Date,
   ): Promise<UnitCapacity> {
-    const result = this.createQueryBuilder('c')
+    return this.createQueryBuilder('c')
       .where('c.unitId = :unitId', {
         unitId,
       })
@@ -57,7 +57,5 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
         endDate,
       })
       .getOne();
-
-    return result;
   }
 }

@@ -34,7 +34,7 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
     installDate: Date,
     retireDate: Date,
   ): Promise<UnitControl> {
-    const result = this.createQueryBuilder('c')
+    return this.createQueryBuilder('c')
       .where('c.unitId = :unitId', {
         unitId,
       })
@@ -47,7 +47,5 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
         retireDate,
       })
       .getOne();
-
-    return result;
   }
 }

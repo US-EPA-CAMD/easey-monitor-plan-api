@@ -36,28 +36,33 @@ export class UnitFuelWorkspaceService {
     locationId: string,
     userId: string,
   ) {
+    const promises = [];
     for (const unitFuel of location.unitFuels) {
-      new Promise(async () => {
-        const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
-          unitId,
-          unitFuel.fuelCode,
-          unitFuel.beginDate,
-          unitFuel.endDate,
-        );
-
-        if (unitFuelRecord !== undefined) {
-          this.updateUnitFuel(
-            userId,
-            locationId,
+      promises.push(
+        new Promise(async (resolve, reject) => {
+          const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
             unitId,
-            unitFuelRecord.id,
-            unitFuel,
+            unitFuel.fuelCode,
+            unitFuel.beginDate,
+            unitFuel.endDate,
           );
-        } else {
-          this.createUnitFuel(userId, locationId, unitId, unitFuel);
-        }
-      });
+
+          if (unitFuelRecord !== undefined) {
+            this.updateUnitFuel(
+              userId,
+              locationId,
+              unitId,
+              unitFuelRecord.id,
+              unitFuel,
+            );
+          } else {
+            this.createUnitFuel(userId, locationId, unitId, unitFuel);
+          }
+        }),
+      );
     }
+
+    return promises;
   }
 
   async getUnitFuel(

@@ -58,29 +58,35 @@ export class UnitControlWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    for (const unitControl of location.unitControls) {
-      new Promise(async () => {
-        const unitControlRecord = await this.repository.getUnitControlBySpecs(
-          unitId,
-          unitControl.parameterCode,
-          unitControl.controlCode,
-          unitControl.installDate,
-          unitControl.retireDate,
-        );
+    const promises = [];
 
-        if (unitControlRecord !== undefined) {
-          this.updateUnitControl(
-            userId,
-            locationId,
+    for (const unitControl of location.unitControls) {
+      promises.push(
+        new Promise(async (resolve, reject) => {
+          const unitControlRecord = await this.repository.getUnitControlBySpecs(
             unitId,
-            unitControlRecord.id,
-            unitControl,
+            unitControl.parameterCode,
+            unitControl.controlCode,
+            unitControl.installDate,
+            unitControl.retireDate,
           );
-        } else {
-          this.createUnitControl(userId, locationId, unitId, unitControl);
-        }
-      });
+
+          if (unitControlRecord !== undefined) {
+            this.updateUnitControl(
+              userId,
+              locationId,
+              unitId,
+              unitControlRecord.id,
+              unitControl,
+            );
+          } else {
+            this.createUnitControl(userId, locationId, unitId, unitControl);
+          }
+        }),
+      );
     }
+
+    return promises;
   }
 
   async createUnitControl(

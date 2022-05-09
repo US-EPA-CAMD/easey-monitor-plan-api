@@ -32,7 +32,7 @@ export class MonitorLocationWorkspaceService {
     private readonly unitFuelService: UnitFuelWorkspaceService,
     private readonly qualificationService: MonitorQualificationWorkspaceService,
 
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {

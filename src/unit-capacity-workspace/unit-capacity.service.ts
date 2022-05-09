@@ -32,27 +32,32 @@ export class UnitCapacityWorkspaceService {
     locationId: string,
     userId: string,
   ) {
+    const promises = [];
     for (const unitCapacity of location.unitCapacity) {
-      new Promise(async () => {
-        const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
-          unitId,
-          unitCapacity.beginDate,
-          unitCapacity.endDate,
-        );
-
-        if (unitCapacityRecord !== undefined) {
-          this.updateUnitCapacity(
-            userId,
-            locationId,
+      promises.push(
+        new Promise(async (resolve, reject) => {
+          const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
             unitId,
-            unitCapacityRecord.id,
-            unitCapacity,
+            unitCapacity.beginDate,
+            unitCapacity.endDate,
           );
-        } else {
-          this.createUnitCapacity(userId, locationId, unitId, unitCapacity);
-        }
-      });
+
+          if (unitCapacityRecord !== undefined) {
+            this.updateUnitCapacity(
+              userId,
+              locationId,
+              unitId,
+              unitCapacityRecord.id,
+              unitCapacity,
+            );
+          } else {
+            this.createUnitCapacity(userId, locationId, unitId, unitCapacity);
+          }
+        }),
+      );
     }
+
+    return promises;
   }
 
   async getUnitCapacities(

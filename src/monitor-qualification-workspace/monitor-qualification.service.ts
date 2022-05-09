@@ -31,30 +31,35 @@ export class MonitorQualificationWorkspaceService {
 
   async importUnitControl(
     location: UpdateMonitorLocationDTO,
-    unitId: number,
+    unitRecordId: number,
     locationId: string,
     userId: string,
   ) {
+    const promises = [];
     for (const qualification of location.qualifications) {
-      new Promise(async () => {
-        const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
-          locationId,
-          qualification.qualificationTypeCode,
-          qualification.beginDate,
-        );
-
-        if (qualificationRecord !== undefined) {
-          this.updateQualification(
-            userId,
+      promises.push(
+        new Promise(async (resolve, reject) => {
+          const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
             locationId,
-            qualificationRecord.id,
-            qualification,
+            qualification.qualificationTypeCode,
+            qualification.beginDate,
           );
-        } else {
-          this.createQualification(userId, locationId, qualification);
-        }
-      });
+
+          if (qualificationRecord !== undefined) {
+            this.updateQualification(
+              userId,
+              locationId,
+              qualificationRecord.id,
+              qualification,
+            );
+          } else {
+            this.createQualification(userId, locationId, qualification);
+          }
+        }),
+      );
     }
+
+    return promises;
   }
 
   async getQualifications(

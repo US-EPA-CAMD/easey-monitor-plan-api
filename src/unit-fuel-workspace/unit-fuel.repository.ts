@@ -33,7 +33,7 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
     beginDate: Date,
     endDate: Date,
   ): Promise<UnitFuel> {
-    const result = this.createQueryBuilder('u')
+    return this.createQueryBuilder('u')
       .where('u.unitId = :unitId', {
         unitId,
       })
@@ -45,7 +45,5 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
         endDate,
       })
       .getOne();
-
-    return result;
   }
 }
