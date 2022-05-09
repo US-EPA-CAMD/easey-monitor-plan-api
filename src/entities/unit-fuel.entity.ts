@@ -41,7 +41,7 @@ export class UnitFuel extends BaseEntity {
   @Column({ name: 'dem_so2' })
   demSO2: string;
 
-  @Column({ name: 'dem_gcv' })
+  @Column({ name: 'dem_gcv', nullable: true })
   demGCV: string;
 
   @Column({

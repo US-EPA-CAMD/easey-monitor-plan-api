@@ -62,7 +62,7 @@ export class MonitorFormulaBaseDTO {
   })
   @MaxLength(200, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 4000 characters`;
+      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 200 characters`;
     },
   })
   formulaText: string;

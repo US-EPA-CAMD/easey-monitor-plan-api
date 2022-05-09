@@ -8,7 +8,7 @@ import {
   JoinColumn,
   OneToOne,
 } from 'typeorm';
-
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Plant } from './plant.entity';
 import { UnitOpStatus } from './unit-op-status.entity';
 import { MonitorLocation } from './monitor-location.entity';
@@ -22,6 +22,7 @@ import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 export class Unit extends BaseEntity {
   @PrimaryColumn({
     name: 'unit_id',
+    transformer: new NumericColumnTransformer(),
   })
   id: number;
 
@@ -49,6 +50,7 @@ export class Unit extends BaseEntity {
 
   @Column({
     name: 'non_load_based_ind',
+    transformer: new NumericColumnTransformer(),
   })
   nonLoadBasedIndicator: number;
 
