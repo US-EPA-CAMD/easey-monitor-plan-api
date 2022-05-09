@@ -35,7 +35,7 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     locationId: string,
     userId: string,
-  ) {
+  ): Promise<any[]> {
     const promises = [];
     for (const unitFuel of location.unitFuels) {
       promises.push(

@@ -70,7 +70,7 @@ export class MonitorLocationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
-  ) {
+  ): Promise<any[]> {
     const promises = [];
 
     for (const location of plan.locations) {
@@ -80,6 +80,8 @@ export class MonitorLocationWorkspaceService {
             location.unitId,
             facilityId,
           );
+
+          // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
           const monitorLocationRecord = await getMonLocId(
             location,
             facilityId,
@@ -117,6 +119,6 @@ export class MonitorLocationWorkspaceService {
       );
     }
 
-    Promise.all(promises);
+    return promises;
   }
 }

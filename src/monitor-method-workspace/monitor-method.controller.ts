@@ -15,7 +15,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
-import { MonitorMethodBaseDTO, MonitorMethodDTO } from '../dtos/monitor-method.dto';
+import {
+  MonitorMethodBaseDTO,
+  MonitorMethodDTO,
+} from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 
 @Controller()
