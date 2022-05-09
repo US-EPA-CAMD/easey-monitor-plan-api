@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { MonitorLocation } from './monitor-location.entity';
 
@@ -27,6 +28,7 @@ export class MonitorAttribute extends BaseEntity {
     precision: 38,
     scale: 0,
     name: 'duct_ind',
+    transformer: new NumericColumnTransformer(),
   })
   ductIndicator: number;
 
@@ -35,6 +37,7 @@ export class MonitorAttribute extends BaseEntity {
     precision: 38,
     scale: 0,
     name: 'bypass_ind',
+    transformer: new NumericColumnTransformer(),
   })
   bypassIndicator: number;
 
@@ -43,6 +46,7 @@ export class MonitorAttribute extends BaseEntity {
     precision: 5,
     scale: 0,
     name: 'grd_elevation',
+    transformer: new NumericColumnTransformer(),
   })
   groundElevation: number;
 
@@ -51,6 +55,7 @@ export class MonitorAttribute extends BaseEntity {
     precision: 4,
     scale: 0,
     name: 'stack_height',
+    transformer: new NumericColumnTransformer(),
   })
   stackHeight: number;
 
@@ -65,6 +70,7 @@ export class MonitorAttribute extends BaseEntity {
     precision: 4,
     scale: 0,
     name: 'cross_area_flow',
+    transformer: new NumericColumnTransformer(),
   })
   crossAreaFlow: number;
 
@@ -73,6 +79,7 @@ export class MonitorAttribute extends BaseEntity {
     precision: 4,
     scale: 0,
     name: 'cross_area_exit',
+    transformer: new NumericColumnTransformer(),
   })
   crossAreaStackExit: number;
 

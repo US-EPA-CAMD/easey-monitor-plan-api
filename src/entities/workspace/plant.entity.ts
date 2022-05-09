@@ -9,6 +9,7 @@ import { MonitorPlan } from './monitor-plan.entity';
 export class Plant extends BaseEntity {
   @PrimaryColumn({
     name: 'fac_id',
+    transformer: new NumericColumnTransformer(),
   })
   id: number;
 
@@ -33,6 +34,7 @@ export class Plant extends BaseEntity {
 
   @Column({
     name: 'epa_region',
+    transformer: new NumericColumnTransformer(),
   })
   region: number;
 
