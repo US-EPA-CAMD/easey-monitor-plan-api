@@ -49,7 +49,7 @@ export class ComponentWorkspaceService {
     userId: string,
   ): Promise<any[]> {
     const promises = [];
-    
+
     for (const component of location.components) {
       promises.push(
         new Promise(async () => {

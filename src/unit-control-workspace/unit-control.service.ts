@@ -57,7 +57,7 @@ export class UnitControlWorkspaceService {
     unitId: number,
     locationId: string,
     userId: string,
-  ) {
+  ): Promise<any[]> {
     const promises = [];
 
     for (const unitControl of location.unitControls) {

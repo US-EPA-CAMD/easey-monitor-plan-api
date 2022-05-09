@@ -31,7 +31,7 @@ export class UnitCapacityWorkspaceService {
     unitId: number,
     locationId: string,
     userId: string,
-  ) {
+  ): Promise<any[]> {
     const promises = [];
     for (const unitCapacity of location.unitCapacity) {
       promises.push(

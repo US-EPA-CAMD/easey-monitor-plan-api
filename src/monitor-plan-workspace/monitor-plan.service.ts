@@ -36,6 +36,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { getFacIdFromOris } from '../import-checks/utilities/utils';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -91,6 +92,7 @@ export class MonitorPlanWorkspaceService {
 
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
+    private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
 
     private map: MonitorPlanMap,
   ) {}
@@ -100,31 +102,39 @@ export class MonitorPlanWorkspaceService {
     userId: string,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
-
-    // Get faciily wirth OrisCode
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
     // Get all ACTIVE plans
     const plans = await this.repository.getActivePlansByFacId(facilityId);
 
-    // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
+    // Monitor Plan Comment Merge Logic
+    for (const monitorPlan of plans) {
+      promises.push(
+        ...(await this.monitorPlanCommentService.importComments(
+          plan,
+          userId,
+          monitorPlan.id,
+        )),
+      );
 
-    promises.push(
-      ...(await this.unitStackService.importUnitStack(
-        plan,
-        facilityId,
-        userId,
-      )),
-    );
+      promises.push(
+        ...(await this.unitStackService.importUnitStack(
+          plan,
+          facilityId,
+          userId,
+        )),
+      );
 
-    promises.push(
-      await this.monitorLocationService.importMonitorLocation(
-        plan,
-        facilityId,
-        userId,
-      ),
-    );
+      promises.push(
+        ...(await this.monitorLocationService.importMonitorLocation(
+          plan,
+          facilityId,
+          userId,
+        )),
+      );
+    }
 
+    await Promise.all(promises);
     return null;
   }
 
