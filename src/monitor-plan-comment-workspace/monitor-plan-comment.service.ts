@@ -56,8 +56,8 @@ export class MonitorPlanCommentWorkspaceService {
       addDate: new Date(Date.now()),
       updateDate: new Date(Date.now()),
     });
-    this.repository.save;
-    return this.map.one(comment);
+    const result = await this.repository.save(comment);
+    return this.map.one(result);
   }
 
   async updateComment(
@@ -73,8 +73,8 @@ export class MonitorPlanCommentWorkspaceService {
     comment.endDate = payload.endDate;
     comment.userId = userId;
     comment.updateDate = new Date(Date.now());
-    this.repository.save;
-    return this.getCommentById(comment.id);
+    const result = await this.repository.save(comment);
+    return this.map.one(result);
   }
 
   async importComments(

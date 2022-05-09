@@ -39,7 +39,7 @@ export class UnitStackConfigurationWorkspaceService {
           });
 
           if (unitStackConfigRecord !== undefined) {
-            unitStackConfigRecord.updateDate = new Date();
+            unitStackConfigRecord.updateDate = new Date(Date.now());
             unitStackConfigRecord.beginDate = unitStackConfig.beginDate;
             unitStackConfigRecord.endDate = unitStackConfig.endDate;
             unitStackConfigRecord.userId = userId;
@@ -50,7 +50,7 @@ export class UnitStackConfigurationWorkspaceService {
             );
           } else {
             const unitStack = new UnitStackConfiguration();
-            unitStack.updateDate = new Date();
+            unitStack.updateDate = new Date(Date.now());
             unitStack.beginDate = unitStackConfig.beginDate;
             unitStack.endDate = unitStackConfig.endDate;
             unitStack.userId = userId;
