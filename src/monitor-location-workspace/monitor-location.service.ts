@@ -125,7 +125,6 @@ export class MonitorLocationWorkspaceService {
         ),
       );
 
-      /*
       promises.push(
         this.unitControlService.importUnitControl(
           location,
@@ -134,6 +133,7 @@ export class MonitorLocationWorkspaceService {
           userId,
         ),
       );
+
       promises.push(
         this.unitFuelService.importUnitFuel(
           location,
@@ -142,14 +142,14 @@ export class MonitorLocationWorkspaceService {
           userId,
         ),
       );
-      promises.push(
-        this.systemService.importSystem(
-          location,
-          monitorLocationRecord.id,
-          userId,
-        ),
-      );
-      */
+
+      // promises.push(
+      //   this.systemService.importSystem(
+      //     location,
+      //     monitorLocationRecord.id,
+      //     userId,
+      //   ),
+      // );
     }
 
     return promises;
