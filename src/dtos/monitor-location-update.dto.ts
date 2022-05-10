@@ -23,7 +23,7 @@ export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
 
   @ValidateNested()
   @Type(() => UnitCapacityBaseDTO)
-  unitCapacity: UnitCapacityBaseDTO[];
+  unitCapacities: UnitCapacityBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitControlBaseDTO)
