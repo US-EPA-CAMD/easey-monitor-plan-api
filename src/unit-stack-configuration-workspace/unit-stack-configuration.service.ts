@@ -19,49 +19,52 @@ export class UnitStackConfigurationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
-  ): Promise<any[]> {
-    const promises = [];
-    for (const unitStackConfig of plan.unitStackConfiguration) {
-      promises.push(
-        new Promise(async (resolve, reject) => {
-          const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
-            unitStackConfig.stackPipeId,
-            facilityId,
-          );
-
-          const unit = await this.unitServive.getUnitByNameAndFacId(
-            unitStackConfig.unitId,
-            facilityId,
-          );
-
-          const unitStackConfigRecord = await this.repository.findOne({
-            where: { unitId: unit.id, stackPipeId: stackPipe.id },
-          });
-
-          if (unitStackConfigRecord !== undefined) {
-            unitStackConfigRecord.updateDate = new Date(Date.now());
-            unitStackConfigRecord.beginDate = unitStackConfig.beginDate;
-            unitStackConfigRecord.endDate = unitStackConfig.endDate;
-            unitStackConfigRecord.userId = userId;
-
-            await this.repository.update(
-              unitStackConfigRecord,
-              unitStackConfigRecord,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const unitStackConfig of plan.unitStackConfiguration) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+              unitStackConfig.stackPipeId,
+              facilityId,
             );
-          } else {
-            const unitStack = new UnitStackConfiguration();
-            unitStack.updateDate = new Date(Date.now());
-            unitStack.beginDate = unitStackConfig.beginDate;
-            unitStack.endDate = unitStackConfig.endDate;
-            unitStack.userId = userId;
 
-            this.repository.create(unitStack);
-          }
-        }),
-      );
-    }
+            const unit = await this.unitServive.getUnitByNameAndFacId(
+              unitStackConfig.unitId,
+              facilityId,
+            );
 
-    return promises;
+            const unitStackConfigRecord = await this.repository.findOne({
+              where: { unitId: unit.id, stackPipeId: stackPipe.id },
+            });
+
+            if (unitStackConfigRecord !== undefined) {
+              unitStackConfigRecord.updateDate = new Date(Date.now());
+              unitStackConfigRecord.beginDate = unitStackConfig.beginDate;
+              unitStackConfigRecord.endDate = unitStackConfig.endDate;
+              unitStackConfigRecord.userId = userId;
+
+              await this.repository.update(
+                unitStackConfigRecord,
+                unitStackConfigRecord,
+              );
+            } else {
+              const unitStack = new UnitStackConfiguration();
+              unitStack.updateDate = new Date(Date.now());
+              unitStack.beginDate = unitStackConfig.beginDate;
+              unitStack.endDate = unitStackConfig.endDate;
+              unitStack.userId = userId;
+
+              this.repository.create(unitStack);
+            }
+            innerResolve(true);
+          }),
+        );
+      }
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 
   async getUnitStackRelationships(hasUnit: boolean, id: string) {

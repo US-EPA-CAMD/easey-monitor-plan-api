@@ -136,33 +136,27 @@ export class MonitorPlanWorkspaceService {
       return null;
     }
 
-    /*
     // Monitor Plan Comment Merge Logic
     promises.push(
-      ...(await this.monitorPlanCommentService.importComments(
+      this.monitorPlanCommentService.importComments(
         plan,
         userId,
         activePlan.id,
-      )),
+      ),
     );
-    */
 
-    /*
+    //Unit Stack Merge Logic
     promises.push(
-      ...(await this.unitStackService.importUnitStack(
+      this.unitStackService.importUnitStack(plan, facilityId, userId),
+    );
+
+    //Monitor Location Merge Logic
+    promises.push(
+      this.monitorLocationService.importMonitorLocation(
         plan,
         facilityId,
         userId,
-      )),
-    );
-    */
-
-    promises.push(
-      ...(await this.monitorLocationService.importMonitorLocation(
-        plan,
-        facilityId,
-        userId,
-      )),
+      ),
     );
 
     await Promise.all(promises);

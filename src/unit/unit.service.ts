@@ -6,9 +6,13 @@ import { UnitRepository } from './unit.repository';
 export class UnitService {
   constructor(private readonly repository: UnitRepository) {}
 
-  async importUnit(unitRecord: Unit, nonLoadBasedIndicator: number) {
-    unitRecord.nonLoadBasedIndicator = nonLoadBasedIndicator;
-    this.repository.update(unitRecord, unitRecord);
+  async importUnit(unitRecord: Unit, nonLoadI: number) {
+    return new Promise(async resolve => {
+      await this.repository.update(unitRecord.id, {
+        nonLoadBasedIndicator: nonLoadI,
+      });
+      resolve(true);
+    });
   }
 
   async getUnitByNameAndFacId(

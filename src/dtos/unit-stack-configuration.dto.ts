@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, ValidationArguments } from 'class-validator';
+import { IsOptional, IsString, ValidationArguments } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';

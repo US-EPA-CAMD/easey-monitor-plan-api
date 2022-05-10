@@ -85,31 +85,33 @@ export class MonitorPlanCommentWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
     monitorPlanId: string,
-  ): Promise<any[]> {
-    const promises = [];
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
 
-    for (const comment of plan.comments) {
-      promises.push(
-        new Promise(async () => {
-          const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
-            monitorPlanId,
-            comment.monitoringPlanComment,
-            comment.beginDate,
-          );
+      for (const comment of plan.comments) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
+              monitorPlanId,
+              comment.monitoringPlanComment,
+              comment.beginDate,
+            );
 
-          console.log(monitorPlanComment);
-
-          if (!monitorPlanComment) {
-            await this.createComment(monitorPlanId, comment, userId);
-          } else {
-            if (monitorPlanComment.endDate !== comment.endDate) {
-              await this.updateComment(monitorPlanId, comment, userId);
+            if (!monitorPlanComment) {
+              await this.createComment(monitorPlanId, comment, userId);
+            } else {
+              if (monitorPlanComment.endDate !== comment.endDate) {
+                await this.updateComment(monitorPlanId, comment, userId);
+              }
             }
-          }
-        }),
-      );
-    }
+            innerResolve(true);
+          }),
+        );
+      }
 
-    return promises;
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }

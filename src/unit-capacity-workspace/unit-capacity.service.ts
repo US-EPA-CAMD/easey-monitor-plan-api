@@ -31,33 +31,43 @@ export class UnitCapacityWorkspaceService {
     unitId: number,
     locationId: string,
     userId: string,
-  ): Promise<any[]> {
-    const promises = [];
-    for (const unitCapacity of location.unitCapacities) {
-      promises.push(
-        new Promise(async (resolve, reject) => {
-          const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
-            unitId,
-            unitCapacity.beginDate,
-            unitCapacity.endDate,
-          );
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
 
-          if (unitCapacityRecord !== undefined) {
-            this.updateUnitCapacity(
-              userId,
-              locationId,
+      for (const unitCapacity of location.unitCapacities) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
               unitId,
-              unitCapacityRecord.id,
-              unitCapacity,
+              unitCapacity.beginDate,
+              unitCapacity.endDate,
             );
-          } else {
-            this.createUnitCapacity(userId, locationId, unitId, unitCapacity);
-          }
-        }),
-      );
-    }
 
-    return promises;
+            if (unitCapacityRecord !== undefined) {
+              await this.updateUnitCapacity(
+                userId,
+                locationId,
+                unitId,
+                unitCapacityRecord.id,
+                unitCapacity,
+              );
+            } else {
+              await this.createUnitCapacity(
+                userId,
+                locationId,
+                unitId,
+                unitCapacity,
+              );
+            }
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 
   async getUnitCapacities(

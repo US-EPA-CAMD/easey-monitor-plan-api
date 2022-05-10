@@ -35,34 +35,39 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     locationId: string,
     userId: string,
-  ): Promise<any[]> {
-    const promises = [];
-    for (const unitFuel of location.unitFuels) {
-      promises.push(
-        new Promise(async (resolve, reject) => {
-          const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
-            unitId,
-            unitFuel.fuelCode,
-            unitFuel.beginDate,
-            unitFuel.endDate,
-          );
-
-          if (unitFuelRecord !== undefined) {
-            this.updateUnitFuel(
-              userId,
-              locationId,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const unitFuel of location.unitFuels) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
               unitId,
-              unitFuelRecord.id,
-              unitFuel,
+              unitFuel.fuelCode,
+              unitFuel.beginDate,
+              unitFuel.endDate,
             );
-          } else {
-            this.createUnitFuel(userId, locationId, unitId, unitFuel);
-          }
-        }),
-      );
-    }
 
-    return promises;
+            if (unitFuelRecord !== undefined) {
+              await this.updateUnitFuel(
+                userId,
+                locationId,
+                unitId,
+                unitFuelRecord.id,
+                unitFuel,
+              );
+            } else {
+              await this.createUnitFuel(userId, locationId, unitId, unitFuel);
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 
   async getUnitFuel(

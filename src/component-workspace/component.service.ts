@@ -47,18 +47,13 @@ export class ComponentWorkspaceService {
     location: UpdateMonitorLocationDTO,
     locationId: string,
     userId: string,
-  ): Promise<any[]> {
-    const promises = [];
-
-    for (const component of location.components) {
-      promises.push(
-        new Promise(async (resolve, reject) => {
-          await this.createComponent(locationId, component, userId);
-        }),
-      );
-    }
-
-    return promises;
+  ) {
+    return new Promise(async resolve => {
+      for (const component of location.components) {
+        await this.createComponent(locationId, component, userId);
+      }
+      resolve(true);
+    });
   }
 
   async createComponent(

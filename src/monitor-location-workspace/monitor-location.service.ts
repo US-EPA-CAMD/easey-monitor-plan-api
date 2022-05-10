@@ -85,73 +85,78 @@ export class MonitorLocationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
-  ): Promise<any[]> {
-    const promises = [];
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
 
-    for (const location of plan.locations) {
-      const unitRecord = await this.unitService.getUnitByNameAndFacId(
-        location.unitId,
-        facilityId,
-      );
+      for (const location of plan.locations) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const innerPromises = [];
 
-      // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
-      const monitorLocationRecord = await getMonLocId(
-        location,
-        facilityId,
-        plan.orisCode,
-      );
+            const unitRecord = await this.unitService.getUnitByNameAndFacId(
+              location.unitId,
+              facilityId,
+            );
 
-      /*
-      promises.push(
-        this.componentService.importComponent(
-          location,
-          monitorLocationRecord.id,
-          userId,
-        ),
-      );
-      promises.push(
-        this.unitService.importUnit(unitRecord, location.nonLoadBasedIndicator),
-      );
-      */
+            // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
+            const monitorLocationRecord = await getMonLocId(
+              location,
+              facilityId,
+              plan.orisCode,
+            );
 
-      promises.push(
-        this.unitCapacityService.importUnityCapacity(
-          location,
-          unitRecord.id,
-          monitorLocationRecord.id,
-          userId,
-        ),
-      );
+            innerPromises.push(
+              this.componentService.importComponent(
+                location,
+                monitorLocationRecord.id,
+                userId,
+              ),
+            );
 
-      /*
-      promises.push(
-        this.unitControlService.importUnitControl(
-          location,
-          unitRecord.id,
-          monitorLocationRecord.id,
-          userId,
-        ),
-      );
-      */
+            if (unitRecord) {
+              innerPromises.push(
+                this.unitService.importUnit(
+                  unitRecord,
+                  location.nonLoadBasedIndicator,
+                ),
+              );
+            }
 
-      promises.push(
-        this.unitFuelService.importUnitFuel(
-          location,
-          unitRecord.id,
-          monitorLocationRecord.id,
-          userId,
-        ),
-      );
+            innerPromises.push(
+              this.unitCapacityService.importUnityCapacity(
+                location,
+                unitRecord.id,
+                monitorLocationRecord.id,
+                userId,
+              ),
+            );
 
-      // promises.push(
-      //   this.systemService.importSystem(
-      //     location,
-      //     monitorLocationRecord.id,
-      //     userId,
-      //   ),
-      // );
-    }
+            innerPromises.push(
+              this.unitControlService.importUnitControl(
+                location,
+                unitRecord.id,
+                monitorLocationRecord.id,
+                userId,
+              ),
+            );
 
-    return promises;
+            innerPromises.push(
+              this.unitFuelService.importUnitFuel(
+                location,
+                unitRecord.id,
+                monitorLocationRecord.id,
+                userId,
+              ),
+            );
+
+            await Promise.all(innerPromises);
+            innerResolve(true);
+          }),
+        );
+      }
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }
