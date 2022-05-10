@@ -112,7 +112,11 @@ export class MonitorLocationWorkspaceService {
         ),
       );
       promises.push(
-        this.unitService.importUnit(unitRecord, location.nonLoadBasedIndicator),
+        this.unitService.importUnit(
+          facilityId,
+          unitRecord,
+          location.nonLoadBasedIndicator,
+        ),
       );
       */
 
