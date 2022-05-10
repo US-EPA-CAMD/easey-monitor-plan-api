@@ -136,6 +136,7 @@ export class MonitorPlanWorkspaceService {
       return null;
     }
 
+    /*
     // Monitor Plan Comment Merge Logic
     promises.push(
       ...(await this.monitorPlanCommentService.importComments(
@@ -144,7 +145,9 @@ export class MonitorPlanWorkspaceService {
         activePlan.id,
       )),
     );
+    */
 
+    /*
     promises.push(
       ...(await this.unitStackService.importUnitStack(
         plan,
@@ -152,6 +155,7 @@ export class MonitorPlanWorkspaceService {
         userId,
       )),
     );
+    */
 
     promises.push(
       ...(await this.monitorLocationService.importMonitorLocation(

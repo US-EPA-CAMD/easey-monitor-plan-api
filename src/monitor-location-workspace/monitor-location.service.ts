@@ -101,8 +101,6 @@ export class MonitorLocationWorkspaceService {
         plan.orisCode,
       );
 
-      console.log(unitRecord);
-
       /*
       promises.push(
         this.componentService.importComponent(
@@ -125,6 +123,7 @@ export class MonitorLocationWorkspaceService {
         ),
       );
 
+      /*
       promises.push(
         this.unitControlService.importUnitControl(
           location,
@@ -133,6 +132,7 @@ export class MonitorLocationWorkspaceService {
           userId,
         ),
       );
+      */
 
       promises.push(
         this.unitFuelService.importUnitFuel(
