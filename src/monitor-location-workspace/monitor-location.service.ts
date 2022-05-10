@@ -36,6 +36,20 @@ export class MonitorLocationWorkspaceService {
     private readonly logger: Logger,
   ) {}
 
+  async getMonitorLocationsByFacilityAndOris(
+    plan: UpdateMonitorPlanDTO,
+    facilitId: number,
+    orisCode: number,
+  ): Promise<MonitorLocation[]> {
+    const plans: MonitorLocation[] = [];
+
+    for (const loc of plan.locations) {
+      plans.push(await getMonLocId(loc, facilitId, orisCode));
+    }
+
+    return plans;
+  }
+
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
     const result = await this.repository.findOne(locationId);
 
@@ -87,6 +101,9 @@ export class MonitorLocationWorkspaceService {
         plan.orisCode,
       );
 
+      console.log(unitRecord);
+
+      /*
       promises.push(
         this.componentService.importComponent(
           location,
@@ -97,6 +114,8 @@ export class MonitorLocationWorkspaceService {
       promises.push(
         this.unitService.importUnit(unitRecord, location.nonLoadBasedIndicator),
       );
+      */
+
       promises.push(
         this.unitCapacityService.importUnityCapacity(
           location,
@@ -105,6 +124,8 @@ export class MonitorLocationWorkspaceService {
           userId,
         ),
       );
+
+      /*
       promises.push(
         this.unitControlService.importUnitControl(
           location,
@@ -128,6 +149,7 @@ export class MonitorLocationWorkspaceService {
           userId,
         ),
       );
+      */
     }
 
     return promises;

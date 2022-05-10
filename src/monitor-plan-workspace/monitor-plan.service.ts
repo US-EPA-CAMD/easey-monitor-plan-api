@@ -104,35 +104,62 @@ export class MonitorPlanWorkspaceService {
     const promises = [];
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
+    const locationPlanIds = [];
+    const monitorLocations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
+      plan,
+      facilityId,
+      plan.orisCode,
+    );
+    for (const loc of monitorLocations) {
+      for (const locPlan of loc.plans) {
+        locationPlanIds.push(locPlan.id);
+      }
+    }
+
     // Get all ACTIVE plans
     const plans = await this.repository.getActivePlansByFacId(facilityId);
 
-    // Monitor Plan Comment Merge Logic
-    for (const monitorPlan of plans) {
-      promises.push(
-        ...(await this.monitorPlanCommentService.importComments(
-          plan,
-          userId,
-          monitorPlan.id,
-        )),
-      );
-
-      promises.push(
-        ...(await this.unitStackService.importUnitStack(
-          plan,
-          facilityId,
-          userId,
-        )),
-      );
-
-      promises.push(
-        ...(await this.monitorLocationService.importMonitorLocation(
-          plan,
-          facilityId,
-          userId,
-        )),
-      );
+    let activePlan = null;
+    for (const possiblePlan of plans) {
+      for (const possibleLoc of locationPlanIds) {
+        if (possiblePlan.id === possibleLoc) {
+          activePlan = possiblePlan;
+          break;
+        }
+      }
     }
+
+    if (activePlan != null) {
+      console.log(activePlan);
+    } else {
+      console.log('No active Plan');
+      return null;
+    }
+
+    // Monitor Plan Comment Merge Logic
+    promises.push(
+      ...(await this.monitorPlanCommentService.importComments(
+        plan,
+        userId,
+        activePlan.id,
+      )),
+    );
+
+    promises.push(
+      ...(await this.unitStackService.importUnitStack(
+        plan,
+        facilityId,
+        userId,
+      )),
+    );
+
+    promises.push(
+      ...(await this.monitorLocationService.importMonitorLocation(
+        plan,
+        facilityId,
+        userId,
+      )),
+    );
 
     await Promise.all(promises);
     return null;

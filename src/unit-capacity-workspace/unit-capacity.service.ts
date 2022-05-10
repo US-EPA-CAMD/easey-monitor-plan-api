@@ -33,7 +33,7 @@ export class UnitCapacityWorkspaceService {
     userId: string,
   ): Promise<any[]> {
     const promises = [];
-    for (const unitCapacity of location.unitCapacity) {
+    for (const unitCapacity of location.unitCapacities) {
       promises.push(
         new Promise(async (resolve, reject) => {
           const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(

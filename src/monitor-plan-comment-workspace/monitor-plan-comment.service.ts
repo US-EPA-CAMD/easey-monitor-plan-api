@@ -8,6 +8,7 @@ import {
 } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class MonitorPlanCommentWorkspaceService {
@@ -35,11 +36,13 @@ export class MonitorPlanCommentWorkspaceService {
     const result = await this.repository.findOne({
       where: {
         monitorPlanId: planId,
-        monitoringPlanComment: planComment,
+        monitorPlanComment: planComment,
         beginDate: beginDate,
       },
     });
-    return this.map.one(result);
+
+    if (result) return this.map.one(result);
+    else return null;
   }
 
   async createComment(
@@ -48,6 +51,7 @@ export class MonitorPlanCommentWorkspaceService {
     userId: string,
   ): Promise<MonitorPlanCommentDTO> {
     const comment = this.repository.create({
+      id: v4(),
       monitorPlanId: monPlanId,
       monitorPlanComment: payload.monitoringPlanComment,
       beginDate: payload.beginDate,
@@ -92,6 +96,9 @@ export class MonitorPlanCommentWorkspaceService {
             comment.monitoringPlanComment,
             comment.beginDate,
           );
+
+          console.log(monitorPlanComment);
+
           if (!monitorPlanComment) {
             await this.createComment(monitorPlanId, comment, userId);
           } else {
