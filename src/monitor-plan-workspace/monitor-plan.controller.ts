@@ -24,6 +24,7 @@ import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
+import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -34,6 +35,7 @@ export class MonitorPlanWorkspaceController {
     private readonly ucoService: UserCheckOutService,
     private readonly logger: Logger,
     private readonly importChecksService: ImportChecksService,
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   @Get(':planId')
@@ -87,7 +89,7 @@ export class MonitorPlanWorkspaceController {
   ): Promise<MonitorPlanDTO> {
     await this.importChecksService.mpFileChecks(plan);
 
-    await this.importPlan(plan);
+    await this.mpService.importMpPlan(plan, '');
 
     return;
   }
@@ -99,7 +101,10 @@ export class MonitorPlanWorkspaceController {
     description:
       'Revert workspace monitor plan back to official submitted record',
   })
-  revertToOfficialRecord(@Param('planId') planId: string): Promise<void> {
+  revertToOfficialRecord(
+    @Param('planId') planId: string,
+    @CurrentUser() userId: string,
+  ): Promise<void> {
     return this.service.revertToOfficialRecord(planId);
   }
 }
