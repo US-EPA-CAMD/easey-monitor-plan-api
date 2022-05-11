@@ -30,7 +30,7 @@ export class MatsMethodWorkspaceService {
     return this.map.many(results);
   }
 
-  async getMethod(methodId: string): Promise<MatsMethod> {
+  async getMethod(methodId: string): Promise<MatsMethodDTO> {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
@@ -39,7 +39,49 @@ export class MatsMethodWorkspaceService {
       });
     }
 
-    return result;
+    return this.map.one(result);
+  }
+
+  async getMethodByBeginDate(
+    locationId: string,
+    supplementalMATSParameterCode: string,
+    beginDate: Date,
+    beginHour: number,
+  ): Promise<MatsMethodDTO> {
+    const result = await this.repository.findOne({
+      where: {
+        locationId: locationId,
+        supplementalMATSParameterCode: supplementalMATSParameterCode,
+        beginDate: beginDate,
+        beginHour: beginHour,
+      },
+    });
+
+    if (result) {
+      return this.map.one(result);
+    }
+    return null;
+  }
+
+  async getMethodByEndDate(
+    locationId: string,
+    supplementalMATSParameterCode: string,
+    endDate: Date,
+    endHour: number,
+  ): Promise<MatsMethodDTO> {
+    const result = await this.repository.findOne({
+      where: {
+        locationId: locationId,
+        supplementalMATSParameterCode: supplementalMATSParameterCode,
+        endDate: endDate,
+        endHour: endHour,
+      },
+    });
+
+    if (result) {
+      return this.map.one(result);
+    }
+    return null;
   }
 
   async createMethod(
@@ -88,6 +130,55 @@ export class MatsMethodWorkspaceService {
 
     await this.repository.save(method);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(method);
+    return method;
+  }
+
+  async importMatsMethod(
+    locationId: string,
+    matsMethods: MatsMethodBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const matsMethod of matsMethods) {
+        promises.push(
+          new Promise(async innerResolve => {
+            let method = await this.getMethodByBeginDate(
+              locationId,
+              matsMethod.supplementalMATSParameterCode,
+              matsMethod.beginDate,
+              matsMethod.beginHour,
+            );
+
+            if (!method) {
+              method = await this.getMethodByEndDate(
+                locationId,
+                matsMethod.supplementalMATSParameterCode,
+                matsMethod.endDate,
+                matsMethod.endHour,
+              );
+            }
+
+            console.log('MatsMethod:', method);
+
+            if (method) {
+              this.updateMethod(
+                method.id,
+                method.locationId,
+                matsMethod,
+                userId,
+              );
+            } else {
+              this.createMethod(locationId, matsMethod, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }
