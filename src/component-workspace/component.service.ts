@@ -15,8 +15,9 @@ export class ComponentWorkspaceService {
     private readonly repository: ComponentWorkspaceRepository,
     private readonly map: ComponentMap,
     private readonly logger: Logger,
+
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
-    private readonly analyzerRangeWorkspaceService: AnalyzerRangeWorkspaceService,
+    private readonly analyzerRangeService: AnalyzerRangeWorkspaceService,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
@@ -52,16 +53,33 @@ export class ComponentWorkspaceService {
     userId: string,
   ) {
     return new Promise(async resolve => {
+      const innerPromises = [];
       for (const component of location.components) {
-        await this.createComponent(locationId, component, userId);
+        innerPromises.push(
+          new Promise(async innerResolve => {
+            const compRecord = await this.repository.getComponentByLocIdAndCompId(
+              locationId,
+              component.componentId,
+            );
 
-        await this.analyzerRangeWorkspaceService.importAnalyzerRange(
-          component.componentId,
-          locationId,
-          component.analyzerRanges,
-          userId,
+            if (compRecord) {
+              await this.repository.update(compRecord, compRecord);
+            } else {
+              await this.createComponent(locationId, component, userId);
+            }
+
+            await this.analyzerRangeService.importAnalyzerRange(
+              component.componentId,
+              locationId,
+              component.analyzerRanges,
+              userId,
+            );
+
+            innerResolve(true);
+          }),
         );
       }
+      await Promise.all(innerPromises);
       resolve(true);
     });
   }

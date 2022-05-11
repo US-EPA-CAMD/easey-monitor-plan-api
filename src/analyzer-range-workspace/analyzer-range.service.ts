@@ -46,38 +46,6 @@ export class AnalyzerRangeWorkspaceService {
     return result;
   }
 
-  async getAnalyzerRangeByBeginDate(
-    componentId: string,
-    beginDate: Date,
-    beginHour: number,
-  ): Promise<AnalyzerRangeDTO> {
-    const result = await this.repository.findOne({
-      where: {
-        componentId: componentId,
-        beginDate: beginDate,
-        beginHour: beginHour,
-      },
-    });
-
-    return this.map.one(result);
-  }
-
-  async getAnalyzerRangeByEndDate(
-    componentId: string,
-    endDate: Date,
-    endHour: number,
-  ): Promise<AnalyzerRangeDTO> {
-    const result = await this.repository.findOne({
-      where: {
-        componentId: componentId,
-        endDate: endDate,
-        endHour: endHour,
-      },
-    });
-
-    return this.map.one(result);
-  }
-
   async createAnalyzerRange(
     componentRecordId: string,
     payload: AnalyzerRangeBaseDTO,
@@ -134,31 +102,22 @@ export class AnalyzerRangeWorkspaceService {
       for (const analyzerRange of analyzerRanges) {
         promises.push(
           new Promise(async innerResolve => {
-            let analyzerRangeRecord = await this.getAnalyzerRangeByBeginDate(
+            const analyzerRangeRecord = await this.repository.getAnalyzerRangeByComponentIdAndDate(
               componentId,
-              analyzerRange.beginDate,
-              analyzerRange.beginHour,
+              analyzerRange,
             );
 
-            if (!analyzerRangeRecord) {
-              analyzerRangeRecord = await this.getAnalyzerRangeByEndDate(
-                componentId,
-                analyzerRange.endDate,
-                analyzerRange.endHour,
-              );
-            }
-
-            console.log('AnalyzerRange:', analyzerRangeRecord);
+            console.log('AnalyzerRange: ', analyzerRangeRecord);
 
             if (analyzerRangeRecord) {
-              this.updateAnalyzerRange(
+              await this.updateAnalyzerRange(
                 analyzerRangeRecord.id,
                 analyzerRange,
                 locationId,
                 userId,
               );
             } else {
-              this.createAnalyzerRange(
+              await this.createAnalyzerRange(
                 componentId,
                 analyzerRange,
                 locationId,
