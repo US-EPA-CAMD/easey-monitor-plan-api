@@ -124,6 +124,14 @@ export class MonitorLocationWorkspaceService {
             }
 
             innerPromises.push(
+              this.qualificationService.importQualification(
+                location,
+                monitorLocationRecord.id,
+                userId,
+              ),
+            );
+
+            innerPromises.push(
               this.unitCapacityService.importUnityCapacity(
                 location,
                 unitRecord.id,
