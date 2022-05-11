@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
@@ -16,7 +16,8 @@ export class ComponentWorkspaceService {
     private readonly map: ComponentMap,
     private readonly logger: Logger,
 
-    private readonly analyzerRangeWorkspaceService: AnalyzerRangeWorkspaceService,
+    @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
+    private readonly analyzerRangService: AnalyzerRangeWorkspaceService,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
@@ -55,7 +56,7 @@ export class ComponentWorkspaceService {
       for (const component of location.components) {
         await this.createComponent(locationId, component, userId);
 
-        await this.analyzerRangeWorkspaceService.importAnalyzerRange(
+        await this.analyzerRangService.importAnalyzerRange(
           component.componentId,
           locationId,
           component.analyzerRanges,
