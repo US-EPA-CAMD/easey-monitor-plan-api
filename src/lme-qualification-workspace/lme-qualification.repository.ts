@@ -33,4 +33,18 @@ export class LMEQualificationWorkspaceRepository extends Repository<
       .addOrderBy('lmeq.id')
       .getOne();
   }
+
+  async getLMEQualificationByDataYear(
+    locId: string,
+    qualificationId: string,
+    qualDataYear: number,
+  ): Promise<LMEQualification> {
+    return this.createQueryBuilder('lmeq')
+      .innerJoinAndSelect('lmeq.qualification', 'q')
+      .innerJoinAndSelect('q.location', 'l')
+      .where('l.id = :locId', { locId })
+      .andWhere('q.id = :qualificationId', { qualificationId })
+      .andWhere('lmeq.qualificationDataYear = :qualDataYear', { qualDataYear })
+      .getOne();
+  }
 }

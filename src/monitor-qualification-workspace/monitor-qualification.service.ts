@@ -15,7 +15,8 @@ import {
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -27,6 +28,8 @@ export class MonitorQualificationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+
+    private readonly lmeQualificationService: LMEQualificationWorkspaceService,
   ) {}
 
   async importQualification(
@@ -35,31 +38,52 @@ export class MonitorQualificationWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    const promises = [];
-    for (const qualification of location.qualifications) {
-      promises.push(
-        new Promise(async (resolve, reject) => {
-          const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
-            locationId,
-            qualification.qualificationTypeCode,
-            qualification.beginDate,
-          );
-
-          if (qualificationRecord !== undefined) {
-            this.updateQualification(
-              userId,
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const qualification of location.qualifications) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
               locationId,
-              qualificationRecord.id,
-              qualification,
+              qualification.qualificationTypeCode,
+              qualification.beginDate,
             );
-          } else {
-            this.createQualification(userId, locationId, qualification);
-          }
-        }),
-      );
-    }
 
-    return promises;
+            if (qualificationRecord !== undefined) {
+              this.updateQualification(
+                userId,
+                locationId,
+                qualificationRecord.id,
+                qualification,
+              );
+              this.lmeQualificationService.importLmeQualification(
+                locationId,
+                qualificationRecord.id,
+                qualification.lmeQualifications,
+                userId,
+              );
+            } else {
+              const createdQualRecord = await this.createQualification(
+                userId,
+                locationId,
+                qualification,
+              );
+              this.lmeQualificationService.importLmeQualification(
+                locationId,
+                createdQualRecord.id,
+                qualification.lmeQualifications,
+                userId,
+              );
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 
   async getQualifications(

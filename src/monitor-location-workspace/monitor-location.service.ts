@@ -149,6 +149,14 @@ export class MonitorLocationWorkspaceService {
                 userId,
               ),
             );
+            innerPromises.push(
+              this.qualificationService.importQualification(
+                location,
+                unitRecord.id,
+                monitorLocationRecord.id,
+                userId,
+              ),
+            );
 
             await Promise.all(innerPromises);
             innerResolve(true);
