@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class ComponentWorkspaceService {
     private readonly repository: ComponentWorkspaceRepository,
     private readonly map: ComponentMap,
     private readonly logger: Logger,
-
+    @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
     private readonly analyzerRangeWorkspaceService: AnalyzerRangeWorkspaceService,
   ) {}
 

@@ -42,48 +42,6 @@ export class MatsMethodWorkspaceService {
     return this.map.one(result);
   }
 
-  async getMethodByBeginDate(
-    locationId: string,
-    supplementalMATSParameterCode: string,
-    beginDate: Date,
-    beginHour: number,
-  ): Promise<MatsMethodDTO> {
-    const result = await this.repository.findOne({
-      where: {
-        locationId: locationId,
-        supplementalMATSParameterCode: supplementalMATSParameterCode,
-        beginDate: beginDate,
-        beginHour: beginHour,
-      },
-    });
-
-    if (result) {
-      return this.map.one(result);
-    }
-    return null;
-  }
-
-  async getMethodByEndDate(
-    locationId: string,
-    supplementalMATSParameterCode: string,
-    endDate: Date,
-    endHour: number,
-  ): Promise<MatsMethodDTO> {
-    const result = await this.repository.findOne({
-      where: {
-        locationId: locationId,
-        supplementalMATSParameterCode: supplementalMATSParameterCode,
-        endDate: endDate,
-        endHour: endHour,
-      },
-    });
-
-    if (result) {
-      return this.map.one(result);
-    }
-    return null;
-  }
-
   async createMethod(
     locationId: string,
     payload: MatsMethodBaseDTO,
@@ -143,33 +101,20 @@ export class MatsMethodWorkspaceService {
       for (const matsMethod of matsMethods) {
         promises.push(
           new Promise(async innerResolve => {
-            let method = await this.getMethodByBeginDate(
+            let method = await this.repository.getMatsMethodByLodIdParamCodeAndDate(
               locationId,
-              matsMethod.supplementalMATSParameterCode,
-              matsMethod.beginDate,
-              matsMethod.beginHour,
+              matsMethod,
             );
 
-            if (!method) {
-              method = await this.getMethodByEndDate(
-                locationId,
-                matsMethod.supplementalMATSParameterCode,
-                matsMethod.endDate,
-                matsMethod.endHour,
-              );
-            }
-
-            console.log('MatsMethod:', method);
-
             if (method) {
-              this.updateMethod(
+              await this.updateMethod(
                 method.id,
                 method.locationId,
                 matsMethod,
                 userId,
               );
             } else {
-              this.createMethod(locationId, matsMethod, userId);
+              await this.createMethod(locationId, matsMethod, userId);
             }
 
             innerResolve(true);
