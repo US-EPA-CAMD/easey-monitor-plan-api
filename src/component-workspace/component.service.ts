@@ -7,6 +7,7 @@ import { ComponentWorkspaceRepository } from './component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
+import { Component } from 'src/entities/component.entity';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -57,19 +58,25 @@ export class ComponentWorkspaceService {
       for (const component of location.components) {
         innerPromises.push(
           new Promise(async innerResolve => {
-            const compRecord = await this.repository.getComponentByLocIdAndCompId(
+            let compRecord = await this.repository.getComponentByLocIdAndCompId(
               locationId,
               component.componentId,
             );
 
             if (compRecord) {
-              await this.repository.update(compRecord, compRecord);
+              console.log('Updating Component');
+              await this.updateComponent(compRecord, component, userId);
             } else {
+              console.log('Creating Component');
               await this.createComponent(locationId, component, userId);
+              compRecord = await this.repository.getComponentByLocIdAndCompId(
+                locationId,
+                component.componentId,
+              );
             }
 
             await this.analyzerRangeService.importAnalyzerRange(
-              component.componentId,
+              compRecord.id,
               locationId,
               component.analyzerRanges,
               userId,
@@ -82,6 +89,25 @@ export class ComponentWorkspaceService {
       await Promise.all(innerPromises);
       resolve(true);
     });
+  }
+
+  async updateComponent(
+    DbRecord: Component,
+    payload: UpdateComponentBaseDTO,
+    userId: string,
+  ): Promise<ComponentDTO> {
+    DbRecord.modelVersion = payload.modelVersion;
+    DbRecord.serialNumber = payload.serialNumber;
+    DbRecord.hgConverterIndicator = payload.hgConverterIndicator;
+    DbRecord.manufacturer = payload.manufacturer;
+    DbRecord.componentTypeCode = payload.componentTypeCode;
+    DbRecord.sampleAcquisitionMethodCode = payload.sampleAcquisitionMethodCode;
+    DbRecord.basisCode = payload.basisCode;
+    DbRecord.userId = userId;
+    DbRecord.updateDate = new Date(Date.now());
+
+    const result = await this.repository.save(DbRecord);
+    return this.map.one(result);
   }
 
   async createComponent(

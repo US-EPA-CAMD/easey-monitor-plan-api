@@ -66,6 +66,8 @@ export class AnalyzerRangeWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
+    console.log('Analyzer Range Id', analyzerRange.id);
+
     await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(analyzerRange);
@@ -85,6 +87,8 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.beginHour = payload.beginHour;
     analyzerRange.endDate = payload.endDate;
     analyzerRange.endHour = payload.endHour;
+    analyzerRange.userId = userId;
+    analyzerRange.updateDate = new Date(Date.now());
 
     await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
@@ -117,6 +121,7 @@ export class AnalyzerRangeWorkspaceService {
                 userId,
               );
             } else {
+              console.log('Creating Analyzer Range');
               await this.createAnalyzerRange(
                 componentId,
                 analyzerRange,
