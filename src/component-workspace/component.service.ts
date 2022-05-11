@@ -5,7 +5,8 @@ import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -14,6 +15,8 @@ export class ComponentWorkspaceService {
     private readonly repository: ComponentWorkspaceRepository,
     private readonly map: ComponentMap,
     private readonly logger: Logger,
+
+    private readonly analyzerRangeWorkspaceService: AnalyzerRangeWorkspaceService,
   ) {}
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
@@ -51,6 +54,13 @@ export class ComponentWorkspaceService {
     return new Promise(async resolve => {
       for (const component of location.components) {
         await this.createComponent(locationId, component, userId);
+
+        await this.analyzerRangeWorkspaceService.importAnalyzerRange(
+          component.componentId,
+          locationId,
+          component.analyzerRanges,
+          userId,
+        );
       }
       resolve(true);
     });
