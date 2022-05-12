@@ -31,4 +31,13 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
       )
       .getOne();
   }
+
+  async getAnalyzerRangesByCompIds(
+    componentIds: string[],
+  ): Promise<AnalyzerRange[]> {
+    return this.createQueryBuilder('ar')
+      .innerJoinAndSelect('ar.component', 'c')
+      .where('c.id IN (:...componentIds)', { componentIds })
+      .getMany();
+  }
 }
