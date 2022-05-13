@@ -83,19 +83,20 @@ describe('LMEQualificationWorkspaceRepository', () => {
         .fn()
         .mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
-      queryBuilder.addOrderBy.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue('mockLMEQualification');
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(new LMEQualification());
 
       const result = await lmeQualificationRepository.getLMEQualificationByDataYear(
-        0,
-        0,
+        'locId',
+        'qualificationId',
         1990,
       );
 
       expect(queryBuilder.getOne).toHaveBeenCalled();
-      expect(result).toEqual('mockLMEQualification');
+      expect(result).toEqual(new LMEQualification());
     });
   });
 });

@@ -4,14 +4,20 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
-import { LMEQualificationBaseDTO } from '../dtos/lme-qualification-update.dto';
 import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
-import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
+import {
+  LMEQualificationBaseDTO,
+  LMEQualificationDTO,
+} from '../dtos/lme-qualification.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const locId = '6';
 const qualId = '1';
 const lmeQualId = 'some lme qualification id';
 const userId = 'testuser';
+const qualificationDataYear = 2021;
 
 const returnedLMEQualifications: LMEQualificationDTO[] = [];
 const returnedLMEQualification: LMEQualificationDTO = new LMEQualificationDTO();
@@ -26,6 +32,9 @@ const payload: LMEQualificationBaseDTO = {
 const mockRepository = () => ({
   getLMEQualifications: jest.fn().mockResolvedValue(returnedLMEQualifications),
   getLMEQualification: jest.fn().mockResolvedValue(returnedLMEQualification),
+  getLMEQualificationByDataYear: jest
+    .fn()
+    .mockResolvedValue(returnedLMEQualification),
   find: jest.fn().mockResolvedValue([]),
   findOne: jest.fn().mockResolvedValue(new LMEQualification()),
   create: jest.fn().mockResolvedValue(new LMEQualification()),
@@ -46,6 +55,7 @@ describe('LMEQualificationWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         LMEQualificationWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: LMEQualificationWorkspaceRepository,
           useFactory: mockRepository,
@@ -57,8 +67,12 @@ describe('LMEQualificationWorkspaceService', () => {
       ],
     }).compile();
 
-    lmeQualService = module.get(LMEQualificationWorkspaceService);
-    lmeQualRepository = module.get(LMEQualificationWorkspaceRepository);
+    lmeQualService = module.get<LMEQualificationWorkspaceService>(
+      LMEQualificationWorkspaceService,
+    );
+    lmeQualRepository = module.get<LMEQualificationWorkspaceRepository>(
+      LMEQualificationWorkspaceRepository,
+    );
   });
 
   it('should be defined', () => {
@@ -80,6 +94,23 @@ describe('LMEQualificationWorkspaceService', () => {
         lmeQualId,
       );
       expect(result).toEqual({});
+    });
+  });
+
+  describe('getLMEQualificationByDataYear', () => {
+    it('should return LEE qualification for a specific qualification ID , location ID and qualification data year', async () => {
+      lmeQualRepository.getLMEQualificationByDataYear = jest
+        .fn()
+        .mockResolvedValue(returnedLMEQualification);
+      const result = await lmeQualService.getLMEQualificationByDataYear(
+        locId,
+        qualId,
+        qualificationDataYear,
+      );
+      expect(
+        lmeQualRepository.getLMEQualificationByDataYear,
+      ).toHaveBeenCalledWith(locId, qualId, qualificationDataYear);
+      expect(result).toEqual(returnedLMEQualification);
     });
   });
 
@@ -105,6 +136,50 @@ describe('LMEQualificationWorkspaceService', () => {
         payload,
       );
       expect(result).toEqual({ ...result });
+    });
+  });
+
+  describe('importLmeQualification', () => {
+    it('should create LMEQualification if not exists', async () => {
+      const getLMEQualificationByDataYear = jest
+        .spyOn(lmeQualService, 'getLMEQualificationByDataYear')
+        .mockResolvedValue(null);
+      const createLMEQualification = jest
+        .spyOn(lmeQualService, 'createLMEQualification')
+        .mockResolvedValue(new LMEQualificationDTO());
+      await lmeQualService.importLmeQualification(
+        locId,
+        qualId,
+        [payload],
+        userId,
+      );
+      expect(getLMEQualificationByDataYear).toHaveBeenCalledWith(
+        locId,
+        qualId,
+        payload.qualificationDataYear,
+      );
+      expect(createLMEQualification).toHaveBeenCalled;
+    });
+
+    it('should update LMEQualification if exists', async () => {
+      const getLMEQualificationByDataYear = jest
+        .spyOn(lmeQualService, 'getLMEQualificationByDataYear')
+        .mockResolvedValue(returnedLMEQualification);
+      const updateLMEQualification = jest
+        .spyOn(lmeQualService, 'updateLMEQualification')
+        .mockResolvedValue(returnedLMEQualification);
+      await lmeQualService.importLmeQualification(
+        locId,
+        qualId,
+        [payload],
+        userId,
+      );
+      expect(getLMEQualificationByDataYear).toHaveBeenCalledWith(
+        locId,
+        qualId,
+        payload.qualificationDataYear,
+      );
+      expect(updateLMEQualification).toHaveBeenCalled;
     });
   });
 });
