@@ -66,6 +66,8 @@ export class AnalyzerRangeWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
+    console.log('Analyzer Range Id', analyzerRange.id);
+
     await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(analyzerRange);
@@ -85,9 +87,56 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.beginHour = payload.beginHour;
     analyzerRange.endDate = payload.endDate;
     analyzerRange.endHour = payload.endHour;
+    analyzerRange.userId = userId;
+    analyzerRange.updateDate = new Date(Date.now());
 
     await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(analyzerRange);
+  }
+
+  async importAnalyzerRange(
+    componentId: string,
+    locationId: string,
+    analyzerRanges: AnalyzerRangeBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const analyzerRange of analyzerRanges) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const analyzerRangeRecord = await this.repository.getAnalyzerRangeByComponentIdAndDate(
+              componentId,
+              analyzerRange,
+            );
+
+            console.log('AnalyzerRange: ', analyzerRangeRecord);
+
+            if (analyzerRangeRecord) {
+              await this.updateAnalyzerRange(
+                analyzerRangeRecord.id,
+                analyzerRange,
+                locationId,
+                userId,
+              );
+            } else {
+              console.log('Creating Analyzer Range');
+              await this.createAnalyzerRange(
+                componentId,
+                analyzerRange,
+                locationId,
+                userId,
+              );
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }

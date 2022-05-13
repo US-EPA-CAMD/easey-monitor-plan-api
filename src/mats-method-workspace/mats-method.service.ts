@@ -30,7 +30,7 @@ export class MatsMethodWorkspaceService {
     return this.map.many(results);
   }
 
-  async getMethod(methodId: string): Promise<MatsMethod> {
+  async getMethod(methodId: string): Promise<MatsMethodDTO> {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
@@ -39,7 +39,7 @@ export class MatsMethodWorkspaceService {
       });
     }
 
-    return result;
+    return this.map.one(result);
   }
 
   async createMethod(
@@ -88,6 +88,42 @@ export class MatsMethodWorkspaceService {
 
     await this.repository.save(method);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
-    return this.map.one(method);
+    return method;
+  }
+
+  async importMatsMethod(
+    locationId: string,
+    matsMethods: MatsMethodBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const matsMethod of matsMethods) {
+        promises.push(
+          new Promise(async innerResolve => {
+            let method = await this.repository.getMatsMethodByLodIdParamCodeAndDate(
+              locationId,
+              matsMethod,
+            );
+
+            if (method) {
+              await this.updateMethod(
+                method.id,
+                method.locationId,
+                matsMethod,
+                userId,
+              );
+            } else {
+              await this.createMethod(locationId, matsMethod, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }
