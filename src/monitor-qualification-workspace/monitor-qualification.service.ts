@@ -34,7 +34,6 @@ export class MonitorQualificationWorkspaceService {
 
   async importQualification(
     location: UpdateMonitorLocationDTO,
-    unitRecordId: number,
     locationId: string,
     userId: string,
   ) {
@@ -50,7 +49,7 @@ export class MonitorQualificationWorkspaceService {
             );
 
             if (qualificationRecord !== undefined) {
-              this.updateQualification(
+              await this.updateQualification(
                 userId,
                 locationId,
                 qualificationRecord.id,

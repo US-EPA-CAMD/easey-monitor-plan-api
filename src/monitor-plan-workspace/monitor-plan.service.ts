@@ -329,7 +329,27 @@ export class MonitorPlanWorkspaceService {
 
     const COMPONENTS = LOADS + 1;
     promises.push(
-      this.componentRepository.find({ where: { locationId: In(locationIds) } }),
+      new Promise(async (resolve, reject) => {
+        const components = await this.componentRepository.find({
+          where: { locationId: In(locationIds) },
+        });
+
+        const componentIds = components.map(i => i.id);
+
+        const analyzerRanges = this.analyzerRangeRepository.getAnalyzerRangesByCompIds(
+          componentIds,
+        );
+
+        const rangeResults = await Promise.all([analyzerRanges]);
+
+        components.forEach(async c => {
+          c.analyzerRanges = rangeResults[0].filter(
+            i => i.componentRecordId == c.id,
+          );
+        });
+
+        resolve(components);
+      }),
     );
 
     const SYSTEMS = COMPONENTS + 1;
