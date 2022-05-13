@@ -70,7 +70,8 @@ export class LMEQualificationWorkspaceService {
       qualId,
       qualDataYear,
     );
-    return this.map.one(result);
+    if (result) return this.map.one(result);
+    return result;
   }
 
   async createLMEQualification(
@@ -136,23 +137,19 @@ export class LMEQualificationWorkspaceService {
             );
 
             if (lmeQualRecord) {
-              promises.push(
-                this.updateLMEQualification(
-                  userId,
-                  locationId,
-                  qualificationId,
-                  lmeQualRecord.id,
-                  lmeQualification,
-                ),
+              this.updateLMEQualification(
+                userId,
+                locationId,
+                qualificationId,
+                lmeQualRecord.id,
+                lmeQualification,
               );
             } else {
-              promises.push(
-                this.createLMEQualification(
-                  userId,
-                  locationId,
-                  qualificationId,
-                  lmeQualification,
-                ),
+              this.createLMEQualification(
+                userId,
+                locationId,
+                qualificationId,
+                lmeQualification,
               );
             }
 
