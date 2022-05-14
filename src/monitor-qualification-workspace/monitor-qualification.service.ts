@@ -15,7 +15,7 @@ import {
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
