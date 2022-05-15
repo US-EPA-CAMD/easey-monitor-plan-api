@@ -76,4 +76,26 @@ describe('PCTQualificationWorkspaceRepository', () => {
       expect(result).toEqual('mockPCTQualifications');
     });
   });
+
+  describe('getLMEQualificationByDataYear', () => {
+    it('calls createQueryBuilder and gets all PCTQualifications from the repository with the specified qualification id and data year', async () => {
+      pctQualificationRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.addOrderBy.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(new PCTQualification());
+
+      const result = await pctQualificationRepository.getPCTQualificationByDataYear(
+        0,
+        0,
+        1990,
+      );
+
+      expect(queryBuilder.getOne).toHaveBeenCalled();
+      expect(result).toEqual(new PCTQualification());
+    });
+  });
 });
