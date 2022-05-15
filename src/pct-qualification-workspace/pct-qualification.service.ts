@@ -70,7 +70,9 @@ export class PCTQualificationWorkspaceService {
       qualId,
       qualDataYear,
     );
-    if (result) return this.map.one(result);
+    if (result) {
+      return this.map.one(result);
+    }
     return result;
   }
 
