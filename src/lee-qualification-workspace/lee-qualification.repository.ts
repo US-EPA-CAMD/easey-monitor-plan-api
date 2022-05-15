@@ -33,4 +33,18 @@ export class LEEQualificationWorkspaceRepository extends Repository<
       .addOrderBy('leeq.id')
       .getOne();
   }
+
+  async getLEEQualificationByTestDate(
+    locId: string,
+    qualificationId: string,
+    qualTestDate: Date,
+  ): Promise<LEEQualification> {
+    return this.createQueryBuilder('leeq')
+      .innerJoinAndSelect('leeq.qualification', 'q')
+      .innerJoinAndSelect('q.location', 'l')
+      .where('l.id = :locId', { locId })
+      .andWhere('q.id = :qualificationId', { qualificationId })
+      .andWhere('leeq.qualificationTestDate = :qualTestDate', { qualTestDate })
+      .getOne();
+  }
 }

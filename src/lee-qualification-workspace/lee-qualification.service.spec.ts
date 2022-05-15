@@ -4,9 +4,11 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
-import { LEEQualificationBaseDTO } from '../dtos/lee-qualification-update.dto';
 import { LEEQualification } from '../entities/workspace/lee-qualification.entity';
-import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
+import {
+  LEEQualificationBaseDTO,
+  LEEQualificationDTO,
+} from '../dtos/lee-qualification.dto';
 
 const locId = '6';
 const qualId = '1';

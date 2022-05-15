@@ -15,7 +15,8 @@ import {
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -27,6 +28,8 @@ export class MonitorQualificationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+
+    private readonly leeQualificationService: LEEQualificationWorkspaceService,
   ) {}
 
   async importQualification(
@@ -52,8 +55,24 @@ export class MonitorQualificationWorkspaceService {
                 qualificationRecord.id,
                 qualification,
               );
+              this.leeQualificationService.importLEEQualification(
+                locationId,
+                qualificationRecord.id,
+                qualification.leeQualifications,
+                userId,
+              );
             } else {
-              await this.createQualification(userId, locationId, qualification);
+              const createdQualification = await this.createQualification(
+                userId,
+                locationId,
+                qualification,
+              );
+              this.leeQualificationService.importLEEQualification(
+                locationId,
+                createdQualification.id,
+                qualification.leeQualifications,
+                userId,
+              );
             }
 
             innerResolve(true);

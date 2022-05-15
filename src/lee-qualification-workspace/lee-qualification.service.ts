@@ -60,6 +60,22 @@ export class LEEQualificationWorkspaceService {
     return this.map.one(result);
   }
 
+  async getLEEQualificationByTestDate(
+    locId: string,
+    qualId: string,
+    qualTestDate: Date,
+  ): Promise<LEEQualificationDTO> {
+    const result = await this.repository.getLEEQualificationByTestDate(
+      locId,
+      qualId,
+      qualTestDate,
+    );
+    if (result) {
+      return this.map.one(result);
+    }
+    return result;
+  }
+
   async createLEEQualification(
     userId: string,
     locId: string,
@@ -109,5 +125,49 @@ export class LEEQualificationWorkspaceService {
     const result = await this.repository.save(leeQual);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
+  }
+
+  async importLEEQualification(
+    locationId: string,
+    qualificationId: string,
+    leeQualifications: LEEQualificationBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const leeQualification of leeQualifications) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const leeQualificationRecord = await this.getLEEQualificationByTestDate(
+              locationId,
+              qualificationId,
+              leeQualification.qualificationTestDate,
+            );
+
+            if (leeQualificationRecord) {
+              this.updateLEEQualification(
+                userId,
+                locationId,
+                qualificationId,
+                leeQualificationRecord.id,
+                leeQualification,
+              );
+            } else {
+              this.createLEEQualification(
+                userId,
+                locationId,
+                qualificationId,
+                leeQualification,
+              );
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }
