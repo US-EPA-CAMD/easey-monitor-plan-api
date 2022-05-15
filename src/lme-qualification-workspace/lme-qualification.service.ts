@@ -70,7 +70,9 @@ export class LMEQualificationWorkspaceService {
       qualId,
       qualDataYear,
     );
-    if (result) return this.map.one(result);
+    if (result) {
+      return this.map.one(result);
+    }
     return result;
   }
 
