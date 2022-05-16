@@ -139,7 +139,7 @@ export class LMEQualificationWorkspaceService {
             );
 
             if (lmeQualRecord) {
-              this.updateLMEQualification(
+              await this.updateLMEQualification(
                 userId,
                 locationId,
                 qualificationId,
@@ -147,7 +147,7 @@ export class LMEQualificationWorkspaceService {
                 lmeQualification,
               );
             } else {
-              this.createLMEQualification(
+              await this.createLMEQualification(
                 userId,
                 locationId,
                 qualificationId,

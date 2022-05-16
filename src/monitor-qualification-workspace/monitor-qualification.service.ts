@@ -42,6 +42,7 @@ export class MonitorQualificationWorkspaceService {
       for (const qualification of location.qualifications) {
         promises.push(
           new Promise(async innerResolve => {
+            const innerPromises = [];
             const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
               locationId,
               qualification.qualificationTypeCode,
@@ -55,11 +56,13 @@ export class MonitorQualificationWorkspaceService {
                 qualificationRecord.id,
                 qualification,
               );
-              this.lmeQualificationService.importLmeQualification(
-                locationId,
-                qualificationRecord.id,
-                qualification.lmeQualifications,
-                userId,
+              innerPromises.push(
+                this.lmeQualificationService.importLmeQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.lmeQualifications,
+                  userId,
+                ),
               );
             } else {
               const createdQualRecord = await this.createQualification(
@@ -67,14 +70,17 @@ export class MonitorQualificationWorkspaceService {
                 locationId,
                 qualification,
               );
-              this.lmeQualificationService.importLmeQualification(
-                locationId,
-                createdQualRecord.id,
-                qualification.lmeQualifications,
-                userId,
+              innerPromises.push(
+                this.lmeQualificationService.importLmeQualification(
+                  locationId,
+                  createdQualRecord.id,
+                  qualification.lmeQualifications,
+                  userId,
+                ),
               );
             }
 
+            await Promise.all(innerPromises);
             innerResolve(true);
           }),
         );
