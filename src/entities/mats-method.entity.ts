@@ -9,7 +9,7 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { MonitorLocation } from './monitor-location.entity';
 
-@Entity({ name: 'camdecmp.mats_method_data' })
+@Entity({ name: 'camdecmpwks.mats_method_data' })
 export class MatsMethod extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'mats_method_data_id' })
   id: string;
