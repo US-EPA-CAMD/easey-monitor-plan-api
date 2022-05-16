@@ -77,7 +77,7 @@ describe('PCTQualificationWorkspaceRepository', () => {
     });
   });
 
-  describe('getLMEQualificationByDataYear', () => {
+  describe('getPCTQualificationByDataYear', () => {
     it('calls createQueryBuilder and gets all PCTQualifications from the repository with the specified qualification id and data year', async () => {
       pctQualificationRepository.createQueryBuilder = jest
         .fn()
