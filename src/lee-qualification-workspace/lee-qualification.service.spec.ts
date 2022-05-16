@@ -9,11 +9,15 @@ import {
   LEEQualificationBaseDTO,
   LEEQualificationDTO,
 } from '../dtos/lee-qualification.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const locId = '6';
 const qualId = '1';
 const leeQualId = 'some lee qualification id';
 const userId = 'testuser';
+const qualificationTestDate = new Date(Date.now());
 
 const returnedLEEQualifications: LEEQualificationDTO[] = [];
 const returnedLEEQualification: LEEQualificationDTO = new LEEQualificationDTO();
@@ -51,6 +55,7 @@ describe('LEEQualificationService', () => {
       imports: [LoggerModule],
       providers: [
         LEEQualificationWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: LEEQualificationWorkspaceRepository,
           useFactory: mockRepository,
@@ -62,8 +67,12 @@ describe('LEEQualificationService', () => {
       ],
     }).compile();
 
-    leeQualService = module.get(LEEQualificationWorkspaceService);
-    leeQualRepository = module.get(LEEQualificationWorkspaceRepository);
+    leeQualService = module.get<LEEQualificationWorkspaceService>(
+      LEEQualificationWorkspaceService,
+    );
+    leeQualRepository = module.get<LEEQualificationWorkspaceRepository>(
+      LEEQualificationWorkspaceRepository,
+    );
   });
 
   it('should be defined', () => {
@@ -85,6 +94,38 @@ describe('LEEQualificationService', () => {
         leeQualId,
       );
       expect(result).toEqual({});
+    });
+  });
+
+  describe('getLEEQualificationByTestDate', () => {
+    it('should return LEE qualification for a specific qualification ID , location ID and qualification test date', async () => {
+      leeQualRepository.getLEEQualificationByTestDate = jest
+        .fn()
+        .mockResolvedValue(returnedLEEQualification);
+      const result = await leeQualService.getLEEQualificationByTestDate(
+        locId,
+        qualId,
+        qualificationTestDate,
+      );
+      expect(
+        leeQualRepository.getLEEQualificationByTestDate,
+      ).toHaveBeenCalledWith(locId, qualId, qualificationTestDate);
+      expect(result).toEqual(returnedLEEQualification);
+    });
+
+    it('should return null for a specific qualification ID , location ID and qualification test data when not found', async () => {
+      leeQualRepository.getLEEQualificationByTestDate = jest
+        .fn()
+        .mockResolvedValue(null);
+      const result = await leeQualService.getLEEQualificationByTestDate(
+        locId,
+        qualId,
+        qualificationTestDate,
+      );
+      expect(
+        leeQualRepository.getLEEQualificationByTestDate,
+      ).toHaveBeenCalledWith(locId, qualId, qualificationTestDate);
+      expect(result).toEqual(null);
     });
   });
 
@@ -110,6 +151,50 @@ describe('LEEQualificationService', () => {
         payload,
       );
       expect(result).toEqual({ ...result });
+    });
+  });
+
+  describe('importLEEQualification', () => {
+    it('should create LEEQualification if not exists', async () => {
+      const getLEEQualificationByTestDate = jest
+        .spyOn(leeQualService, 'getLEEQualificationByTestDate')
+        .mockResolvedValue(null);
+      const createLEEQualification = jest
+        .spyOn(leeQualService, 'createLEEQualification')
+        .mockResolvedValue(returnedLEEQualification);
+      await leeQualService.importLEEQualification(
+        locId,
+        qualId,
+        [payload],
+        userId,
+      );
+      expect(getLEEQualificationByTestDate).toHaveBeenCalledWith(
+        locId,
+        qualId,
+        payload.qualificationTestDate,
+      );
+      expect(createLEEQualification).toHaveBeenCalled;
+    });
+
+    it('should update LEEQualification if exists', async () => {
+      const getLEEQualificationByTestDate = jest
+        .spyOn(leeQualService, 'getLEEQualificationByTestDate')
+        .mockResolvedValue(returnedLEEQualification);
+      const updateLMEQualification = jest
+        .spyOn(leeQualService, 'createLEEQualification')
+        .mockResolvedValue(returnedLEEQualification);
+      await leeQualService.importLEEQualification(
+        locId,
+        qualId,
+        [payload],
+        userId,
+      );
+      expect(getLEEQualificationByTestDate).toHaveBeenCalledWith(
+        locId,
+        qualId,
+        payload.qualificationTestDate,
+      );
+      expect(updateLMEQualification).toHaveBeenCalled;
     });
   });
 });
