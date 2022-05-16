@@ -18,6 +18,7 @@ import { ComponentWorkspaceService } from '../component-workspace/component.serv
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
 import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
+import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -34,6 +35,7 @@ export class MonitorLocationWorkspaceService {
     private readonly unitFuelService: UnitFuelWorkspaceService,
     private readonly qualificationService: MonitorQualificationWorkspaceService,
     private readonly systemService: MonitorSystemWorkspaceService,
+    private readonly loadService: MonitorLoadWorkspaceService,
     private readonly matsMethodService: MatsMethodWorkspaceService,
     private readonly logger: Logger,
   ) {}
@@ -164,6 +166,14 @@ export class MonitorLocationWorkspaceService {
               this.matsMethodService.importMatsMethod(
                 monitorLocationRecord.id,
                 location.matsMethods,
+                userId,
+              ),
+            );
+
+            innerPromises.push(
+              this.loadService.importLoad(
+                location,
+                monitorLocationRecord.id,
                 userId,
               ),
             );
