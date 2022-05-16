@@ -145,7 +145,7 @@ export class LEEQualificationWorkspaceService {
             );
 
             if (leeQualificationRecord) {
-              this.updateLEEQualification(
+              await this.updateLEEQualification(
                 userId,
                 locationId,
                 qualificationId,
@@ -153,7 +153,7 @@ export class LEEQualificationWorkspaceService {
                 leeQualification,
               );
             } else {
-              this.createLEEQualification(
+              await this.createLEEQualification(
                 userId,
                 locationId,
                 qualificationId,
