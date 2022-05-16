@@ -153,7 +153,7 @@ export class PCTQualificationWorkspaceService {
             );
 
             if (pctQualificationRecord) {
-              this.updatePCTQualification(
+              await this.updatePCTQualification(
                 userId,
                 locationId,
                 qualificationId,
@@ -161,7 +161,7 @@ export class PCTQualificationWorkspaceService {
                 pctQualification,
               );
             } else {
-              this.createPCTQualification(
+              await this.createPCTQualification(
                 userId,
                 locationId,
                 qualificationId,

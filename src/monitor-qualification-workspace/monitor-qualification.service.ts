@@ -42,6 +42,7 @@ export class MonitorQualificationWorkspaceService {
       for (const qualification of location.qualifications) {
         promises.push(
           new Promise(async innerResolve => {
+            const innerPromises = [];
             const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
               locationId,
               qualification.qualificationTypeCode,
@@ -55,11 +56,13 @@ export class MonitorQualificationWorkspaceService {
                 qualificationRecord.id,
                 qualification,
               );
-              this.pctQualificationService.importPCTQualification(
-                locationId,
-                qualificationRecord.id,
-                qualification.pctQualifications,
-                userId,
+              innerPromises.push(
+                this.pctQualificationService.importPCTQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.pctQualifications,
+                  userId,
+                ),
               );
             } else {
               const createdQualification = await this.createQualification(
@@ -67,14 +70,17 @@ export class MonitorQualificationWorkspaceService {
                 locationId,
                 qualification,
               );
-              this.pctQualificationService.importPCTQualification(
-                locationId,
-                createdQualification.id,
-                qualification.pctQualifications,
-                userId,
+              innerPromises.push(
+                this.pctQualificationService.importPCTQualification(
+                  locationId,
+                  createdQualification.id,
+                  qualification.pctQualifications,
+                  userId,
+                ),
               );
             }
 
+            await Promise.all(innerPromises);
             innerResolve(true);
           }),
         );
