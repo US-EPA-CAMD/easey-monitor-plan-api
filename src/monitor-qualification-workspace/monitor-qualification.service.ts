@@ -17,6 +17,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
+import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -30,6 +31,7 @@ export class MonitorQualificationWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
 
     private readonly lmeQualificationService: LMEQualificationWorkspaceService,
+    private readonly pctQualificationService: PCTQualificationWorkspaceService,
   ) {}
 
   async importQualification(
@@ -64,8 +66,16 @@ export class MonitorQualificationWorkspaceService {
                   userId,
                 ),
               );
+              innerPromises.push(
+                this.pctQualificationService.importPCTQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.pctQualifications,
+                  userId,
+                ),
+              );
             } else {
-              const createdQualRecord = await this.createQualification(
+              const createdQualification = await this.createQualification(
                 userId,
                 locationId,
                 qualification,
@@ -73,8 +83,16 @@ export class MonitorQualificationWorkspaceService {
               innerPromises.push(
                 this.lmeQualificationService.importLmeQualification(
                   locationId,
-                  createdQualRecord.id,
+                  createdQualification.id,
                   qualification.lmeQualifications,
+                   userId,
+                ),
+              );
+              innerPromises.push(
+                this.pctQualificationService.importPCTQualification(
+                  locationId,
+                  createdQualification.id,
+                  qualification.pctQualifications,
                   userId,
                 ),
               );
