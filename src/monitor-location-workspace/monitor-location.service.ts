@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocation } from '../entities/monitor-location.entity';
@@ -38,8 +38,10 @@ export class MonitorLocationWorkspaceService {
     private readonly systemService: MonitorSystemWorkspaceService,
     private readonly loadService: MonitorLoadWorkspaceService,
     private readonly matsMethodService: MatsMethodWorkspaceService,
-    private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorAttributeWorkspaceService))
+    private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
   ) {}
 
   async getMonitorLocationsByFacilityAndOris(
