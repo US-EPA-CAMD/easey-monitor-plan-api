@@ -147,7 +147,7 @@ describe('LMEQualificationWorkspaceService', () => {
       const createLMEQualification = jest
         .spyOn(lmeQualService, 'createLMEQualification')
         .mockResolvedValue(new LMEQualificationDTO());
-      await lmeQualService.importLmeQualification(
+      await lmeQualService.importLMEQualification(
         locId,
         qualId,
         [payload],
@@ -168,7 +168,7 @@ describe('LMEQualificationWorkspaceService', () => {
       const updateLMEQualification = jest
         .spyOn(lmeQualService, 'updateLMEQualification')
         .mockResolvedValue(returnedLMEQualification);
-      await lmeQualService.importLmeQualification(
+      await lmeQualService.importLMEQualification(
         locId,
         qualId,
         [payload],

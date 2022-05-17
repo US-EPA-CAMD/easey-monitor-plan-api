@@ -1,6 +1,5 @@
-import { MatsMethodBaseDTO } from 'src/dtos/mats-method.dto';
 import { EntityRepository, Repository } from 'typeorm';
-
+import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
 
 @EntityRepository(MatsMethod)

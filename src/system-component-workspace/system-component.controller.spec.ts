@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentWorkspaceController } from './system-component.controller';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./system-component.service');
 

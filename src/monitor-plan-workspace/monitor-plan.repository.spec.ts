@@ -1,9 +1,9 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
 
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
-import { BadRequestException } from '@nestjs/common';
 
 const mp = new MonitorPlan();
 const mpArray = [];

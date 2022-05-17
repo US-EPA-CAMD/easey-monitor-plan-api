@@ -55,12 +55,12 @@ describe('MonitorPlanWorkspaceController', () => {
     });
   });
 
-  describe('getCheckedOutConfigurations', () => {
-    it('should return array of monitor plan configurations checked out', async () => {
-      jest
-        .spyOn(ucoService, 'getCheckedOutConfigurations')
-        .mockResolvedValue(ucoData);
-      expect(await controller.getCheckedOutConfigurations()).toBe(ucoData);
-    });
-  });
+  // describe('getCheckedOutConfigurations', () => {
+  //   it('should return array of monitor plan configurations checked out', async () => {
+  //     jest
+  //       .spyOn(ucoService, 'getCheckedOutConfigurations')
+  //       .mockResolvedValue(ucoData);
+  //     expect(await controller.getCheckedOutConfigurations()).toBe(ucoData);
+  //   });
+  // });
 });

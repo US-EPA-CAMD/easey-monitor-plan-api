@@ -8,7 +8,6 @@ import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
-import { threadId } from 'worker_threads';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
