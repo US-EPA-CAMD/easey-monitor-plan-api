@@ -19,6 +19,7 @@ import { MonitorQualificationWorkspaceService } from '../monitor-qualification-w
 import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
 import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
 import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
+import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -37,6 +38,7 @@ export class MonitorLocationWorkspaceService {
     private readonly systemService: MonitorSystemWorkspaceService,
     private readonly loadService: MonitorLoadWorkspaceService,
     private readonly matsMethodService: MatsMethodWorkspaceService,
+    private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
     private readonly logger: Logger,
   ) {}
 
@@ -174,6 +176,14 @@ export class MonitorLocationWorkspaceService {
               this.loadService.importLoad(
                 location,
                 monitorLocationRecord.id,
+                userId,
+              ),
+            );
+
+            innerPromises.push(
+              this.monitorAttributeService.importAttributes(
+                monitorLocationRecord.id,
+                location.attributes,
                 userId,
               ),
             );
