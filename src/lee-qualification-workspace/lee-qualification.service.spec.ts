@@ -180,8 +180,8 @@ describe('LEEQualificationService', () => {
       const getLEEQualificationByTestDate = jest
         .spyOn(leeQualService, 'getLEEQualificationByTestDate')
         .mockResolvedValue(returnedLEEQualification);
-      const updateLMEQualification = jest
-        .spyOn(leeQualService, 'createLEEQualification')
+      const updateLEEQualification = jest
+        .spyOn(leeQualService, 'updateLEEQualification')
         .mockResolvedValue(returnedLEEQualification);
       await leeQualService.importLEEQualification(
         locId,
@@ -194,7 +194,7 @@ describe('LEEQualificationService', () => {
         qualId,
         payload.qualificationTestDate,
       );
-      expect(updateLMEQualification).toHaveBeenCalled;
+      expect(updateLEEQualification).toHaveBeenCalled;
     });
   });
 });
