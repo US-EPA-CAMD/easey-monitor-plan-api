@@ -59,7 +59,7 @@ export class MonitorQualificationWorkspaceService {
                 qualification,
               );
               innerPromises.push(
-                this.lmeQualificationService.importLmeQualification(
+                this.lmeQualificationService.importLMEQualification(
                   locationId,
                   qualificationRecord.id,
                   qualification.lmeQualifications,
@@ -81,11 +81,11 @@ export class MonitorQualificationWorkspaceService {
                 qualification,
               );
               innerPromises.push(
-                this.lmeQualificationService.importLmeQualification(
+                this.lmeQualificationService.importLMEQualification(
                   locationId,
                   createdQualification.id,
                   qualification.lmeQualifications,
-                   userId,
+                  userId,
                 ),
               );
               innerPromises.push(

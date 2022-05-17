@@ -121,7 +121,7 @@ export class LMEQualificationWorkspaceService {
     return this.map.one(result);
   }
 
-  async importLmeQualification(
+  async importLMEQualification(
     locationId: string,
     qualificationId: string,
     lmeQualifications: LMEQualificationBaseDTO[],
