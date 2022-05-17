@@ -60,6 +60,22 @@ export class LMEQualificationWorkspaceService {
     return this.map.one(result);
   }
 
+  async getLMEQualificationByDataYear(
+    locId: string,
+    qualId: string,
+    qualDataYear: number,
+  ): Promise<LMEQualificationDTO> {
+    const result = await this.repository.getLMEQualificationByDataYear(
+      locId,
+      qualId,
+      qualDataYear,
+    );
+    if (result) {
+      return this.map.one(result);
+    }
+    return result;
+  }
+
   async createLMEQualification(
     userId: string,
     locId: string,
@@ -103,5 +119,49 @@ export class LMEQualificationWorkspaceService {
     const result = await this.repository.save(lmeQual);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
+  }
+
+  async importLMEQualification(
+    locationId: string,
+    qualificationId: string,
+    lmeQualifications: LMEQualificationBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const lmeQualification of lmeQualifications) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const lmeQualRecord = await this.getLMEQualificationByDataYear(
+              locationId,
+              qualificationId,
+              lmeQualification.qualificationDataYear,
+            );
+
+            if (lmeQualRecord) {
+              await this.updateLMEQualification(
+                userId,
+                locationId,
+                qualificationId,
+                lmeQualRecord.id,
+                lmeQualification,
+              );
+            } else {
+              await this.createLMEQualification(
+                userId,
+                locationId,
+                qualificationId,
+                lmeQualification,
+              );
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }

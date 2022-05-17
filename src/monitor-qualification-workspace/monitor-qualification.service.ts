@@ -16,6 +16,7 @@ import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 
 @Injectable()
@@ -29,6 +30,7 @@ export class MonitorQualificationWorkspaceService {
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
 
+    private readonly lmeQualificationService: LMEQualificationWorkspaceService,
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
   ) {}
 
@@ -57,6 +59,14 @@ export class MonitorQualificationWorkspaceService {
                 qualification,
               );
               innerPromises.push(
+                this.lmeQualificationService.importLMEQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.lmeQualifications,
+                  userId,
+                ),
+              );
+              innerPromises.push(
                 this.pctQualificationService.importPCTQualification(
                   locationId,
                   qualificationRecord.id,
@@ -69,6 +79,14 @@ export class MonitorQualificationWorkspaceService {
                 userId,
                 locationId,
                 qualification,
+              );
+              innerPromises.push(
+                this.lmeQualificationService.importLMEQualification(
+                  locationId,
+                  createdQualification.id,
+                  qualification.lmeQualifications,
+                  userId,
+                ),
               );
               innerPromises.push(
                 this.pctQualificationService.importPCTQualification(
