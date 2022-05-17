@@ -19,6 +19,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOComponentTypeCode.example,
     name: propertyMetadata.monitorSpanDTOComponentTypeCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     'SELECT distinct component_type_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
@@ -34,6 +35,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOSpanScaleCode.example,
     name: propertyMetadata.monitorSpanDTOSpanScaleCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct span_scale_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
@@ -49,6 +51,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOSpanMethodCode.example,
     name: propertyMetadata.monitorSpanDTOSpanMethodCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct span_method_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
@@ -119,6 +122,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOSpanValue.example,
     name: propertyMetadata.monitorSpanDTOSpanValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 3 },
     {
@@ -134,6 +138,12 @@ export class MonitorSpanBaseDTO {
   })
   spanValue: number;
 
+  @ApiProperty({
+    description: propertyMetadata.monitorSpanDTOFullScaleRange.description,
+    example: propertyMetadata.monitorSpanDTOFullScaleRange.example,
+    name: propertyMetadata.monitorSpanDTOFullScaleRange.fieldLabels.value,
+  })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 3 },
     {
@@ -147,11 +157,6 @@ export class MonitorSpanBaseDTO {
       return `${args.property} [SPAN-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of -9999999999.999 and 9999999999.999`;
     },
   })
-  @ApiProperty({
-    description: propertyMetadata.monitorSpanDTOFullScaleRange.description,
-    example: propertyMetadata.monitorSpanDTOFullScaleRange.example,
-    name: propertyMetadata.monitorSpanDTOFullScaleRange.fieldLabels.value,
-  })
   fullScaleRange: number;
 
   @ApiProperty({
@@ -161,6 +166,7 @@ export class MonitorSpanBaseDTO {
     name:
       propertyMetadata.monitorSpanDTOSpanUnitsOfMeasureCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
@@ -171,6 +177,13 @@ export class MonitorSpanBaseDTO {
   )
   spanUnitsOfMeasureCode: string;
 
+  // TODO: add api property definition for monitor-span scaleTransitionPoint
+  // @ApiProperty({
+  //   description:
+  //     propertyMetadata.monitorSpanDTOScaleTransitionPoint.description,
+  //   example: propertyMetadata.monitorSpanDTOScaleTransitionPoint.example,
+  //   name: propertyMetadata.monitorSpanDTOScaleTransitionPoint.fieldLabels.value,
+  // })
   @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
@@ -192,6 +205,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTODefaultHighRange.example,
     name: propertyMetadata.monitorSpanDTODefaultHighRange.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(5, {
     message: (args: ValidationArguments) => {
@@ -206,6 +220,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOFlowSpanValue.example,
     name: propertyMetadata.monitorSpanDTOFlowSpanValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(10, {
     message: (args: ValidationArguments) => {
@@ -220,6 +235,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOFlowFullScaleRange.example,
     name: propertyMetadata.monitorSpanDTOFlowFullScaleRange.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(10, {
     message: (args: ValidationArguments) => {
@@ -234,6 +250,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOBeginDate.example,
     name: propertyMetadata.monitorSpanDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -246,6 +263,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOBeginHour.example,
     name: propertyMetadata.monitorSpanDTOBeginHour.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -259,7 +277,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOEndDate.example,
     name: propertyMetadata.monitorSpanDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -273,7 +291,7 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOEndHour.example,
     name: propertyMetadata.monitorSpanDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {

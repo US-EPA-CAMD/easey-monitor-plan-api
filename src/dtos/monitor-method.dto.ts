@@ -1,6 +1,7 @@
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -15,6 +16,7 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOParameterCode.example,
     name: propertyMetadata.monitorMethodDTOParameterCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     `SELECT distinct parameter_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
@@ -32,6 +34,7 @@ export class MonitorMethodBaseDTO {
     name:
       propertyMetadata.monitorMethodDTOMonitoringMethodCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     `SELECT distinct method_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
@@ -48,6 +51,7 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOSubstituteDataCode.example,
     name: propertyMetadata.monitorMethodDTOSubstituteDataCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     `SELECT distinct substitute_data_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
@@ -64,6 +68,7 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOBypassApproachCode.example,
     name: propertyMetadata.monitorMethodDTOBypassApproachCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     `SELECT distinct bypass_approach_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
@@ -79,6 +84,7 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOBeginDate.example,
     name: propertyMetadata.monitorMethodDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -91,6 +97,7 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOBeginHour.example,
     name: propertyMetadata.monitorMethodDTOBeginHour.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -104,7 +111,7 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndDate.example,
     name: propertyMetadata.monitorMethodDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -118,7 +125,7 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndHour.example,
     name: propertyMetadata.monitorMethodDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {

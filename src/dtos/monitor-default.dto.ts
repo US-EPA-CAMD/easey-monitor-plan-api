@@ -2,6 +2,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   MaxLength,
   ValidateIf,
   ValidationArguments,
@@ -57,6 +58,7 @@ export class MonitorDefaultBaseDTO {
       propertyMetadata.monitorDefaultDTODefaultUnitsOfMeasureCode.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -74,6 +76,7 @@ export class MonitorDefaultBaseDTO {
     name:
       propertyMetadata.monitorDefaultDTODefaultPurposeCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct purpose_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -89,6 +92,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOFuelCode.example,
     name: propertyMetadata.monitorDefaultDTOFuelCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct fuel_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -107,6 +111,7 @@ export class MonitorDefaultBaseDTO {
       propertyMetadata.monitorDefaultDTOOperatingConditionCode.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct operating_condition_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -131,6 +136,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @IsOptional()
   defaultSourceCode: string;
 
   @ApiProperty({
@@ -138,6 +144,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOGroupId.example,
     name: propertyMetadata.monitorDefaultDTOGroupId.fieldLabels.value,
   })
+  @IsOptional()
   @MaxLength(10, {
     message: (args: ValidationArguments) => {
       return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 10 characters`;
@@ -151,6 +158,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOBeginDate.example,
     name: propertyMetadata.monitorDefaultDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -163,6 +171,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOBeginHour.example,
     name: propertyMetadata.monitorDefaultDTOBeginHour.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -176,7 +185,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOEndDate.example,
     name: propertyMetadata.monitorDefaultDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [DEFAULT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -190,7 +199,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOEndHour.example,
     name: propertyMetadata.monitorDefaultDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {

@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInt, IsOptional, ValidationArguments } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
@@ -26,6 +31,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOBypassIndicator.example,
     name: propertyMetadata.monitorAttributeDTOBypassIndicator.fieldLabels.value,
   })
+  @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be within the range of 0 and 1`;
@@ -39,6 +45,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOGroundElevation.example,
     name: propertyMetadata.monitorAttributeDTOGroundElevation.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(5, {
     message: (args: ValidationArguments) => {
@@ -52,6 +59,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOStackHeight.example,
     name: propertyMetadata.monitorAttributeDTOStackHeight.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(4, {
     message: (args: ValidationArguments) => {
@@ -110,6 +118,7 @@ export class MonitorAttributeBaseDTO {
     name:
       propertyMetadata.monitorAttributeDTOCrossAreaStackExit.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(4, {
     message: (args: ValidationArguments) => {
@@ -123,6 +132,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOBeginDate.example,
     name: propertyMetadata.monitorAttributeDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -135,6 +145,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOEndDate.example,
     name: propertyMetadata.monitorAttributeDTOEndDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be a valid ISO date format yyyy-mm-dd`;

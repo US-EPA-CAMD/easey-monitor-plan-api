@@ -6,7 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
-import { MonitorLoadBaseDTO } from '../dtos/monitor-load-update.dto';
+import { MonitorLoadBaseDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 

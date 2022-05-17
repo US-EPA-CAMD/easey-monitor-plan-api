@@ -3,6 +3,7 @@ import {
   ValidateIf,
   ValidationArguments,
   IsInt,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -55,6 +56,7 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOBeginDate.example,
     name: propertyMetadata.matsMethodDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -67,6 +69,7 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOBeginHour.example,
     name: propertyMetadata.matsMethodDTOBeginHour.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -80,7 +83,7 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOEndDate.example,
     name: propertyMetadata.matsMethodDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -94,7 +97,7 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOEndHour.example,
     name: propertyMetadata.matsMethodDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
       return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be within the range of 0 and 23`;

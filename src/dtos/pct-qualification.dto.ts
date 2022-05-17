@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsNumber, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostYears } from '../import-checks/pipes/is-at-most-years.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
@@ -14,6 +19,7 @@ export class PCTQualificationBaseDTO {
     example: propertyMetadata.year.example,
     name: 'qualificationYear',
   })
+  @IsNotEmpty()
   @MatchesRegEx('^(19|20)([0-9]{2})$', {
     message: (args: ValidationArguments) => {
       return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is not formatted properly`;
@@ -28,6 +34,7 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOAveragePercentValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -52,6 +59,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr1QualificationDataYear.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsAtMostYears(1940, 2050, {
     message: (args: ValidationArguments) => {
       return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
@@ -69,6 +77,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr1QualificationDataTypeCode
         .fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
       return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
@@ -83,6 +92,7 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOYr1PercentageValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -107,6 +117,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr2QualificationDataYear.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsAtMostYears(1940, 2050, {
     message: (args: ValidationArguments) => {
       return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
@@ -124,6 +135,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr2QualificationDataTypeCode
         .fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
       return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
@@ -138,6 +150,7 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOYr2PercentageValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -162,6 +175,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr3QualificationDataYear.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsAtMostYears(1940, 2050, {
     message: (args: ValidationArguments) => {
       return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
@@ -179,6 +193,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr3QualificationDataTypeCode
         .fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
       return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
@@ -193,6 +208,7 @@ export class PCTQualificationBaseDTO {
     name:
       propertyMetadata.pCTQualificationDTOYr3PercentageValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
