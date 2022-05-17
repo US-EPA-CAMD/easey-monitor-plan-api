@@ -76,4 +76,27 @@ describe('LMEQualificationWorkspaceRepository', () => {
       expect(result).toEqual('mockLMEQualifications');
     });
   });
+
+  describe('getLMEQualificationByDataYear', () => {
+    it('calls createQueryBuilder and gets all LMEQualifications from the repository with the specified qualification id and data year', async () => {
+      lmeQualificationRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(new LMEQualification());
+
+      const result = await lmeQualificationRepository.getLMEQualificationByDataYear(
+        'locId',
+        'qualificationId',
+        1990,
+      );
+
+      expect(queryBuilder.getOne).toHaveBeenCalled();
+      expect(result).toEqual(new LMEQualification());
+    });
+  });
 });

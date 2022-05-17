@@ -4,8 +4,6 @@ import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO } from './analyzer-range.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import {
-  IsArray,
-  IsInt,
   IsOptional,
   IsString,
   MaxLength,
@@ -52,6 +50,7 @@ export class ComponentBaseDTO {
       propertyMetadata.componentDTOSampleAcquisitionMethodCode.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct sample_aquisition_method_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
     {
@@ -67,6 +66,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOBasisCode.example,
     name: propertyMetadata.componentDTOBasisCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct basis_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
     {
@@ -82,6 +82,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOManufacturer.example,
     name: propertyMetadata.componentDTOManufacturer.fieldLabels.value,
   })
+  @IsOptional()
   @MaxLength(25, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 25 characters`;
@@ -94,6 +95,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOModelVersion.example,
     name: propertyMetadata.componentDTOModelVersion.fieldLabels.value,
   })
+  @IsOptional()
   @MaxLength(15, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 15 characters`;
@@ -124,6 +126,7 @@ export class ComponentBaseDTO {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must be within the range of 0 and 1`;
     },
   })
+  @IsOptional()
   hgConverterIndicator: number;
 }
 

@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsNotEmpty, IsNumber, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
@@ -64,6 +69,7 @@ export class LEEQualificationBaseDTO {
       propertyMetadata.lEEQualificationDTOPotentialAnnualMassEmissions
         .fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -89,6 +95,7 @@ export class LEEQualificationBaseDTO {
       propertyMetadata.lEEQualificationDTOApplicableEmissionStandard.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 4 },
     {
@@ -110,6 +117,7 @@ export class LEEQualificationBaseDTO {
     example: propertyMetadata.lEEQualificationDTOUnitsOfStandard.example,
     name: propertyMetadata.lEEQualificationDTOUnitsOfStandard.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct unit_of_standard_code as "value" FROM camdecmpsmd.vw_quallee_master_data_relationships',
     {
@@ -130,6 +138,7 @@ export class LEEQualificationBaseDTO {
       propertyMetadata.lEEQualificationDTOPercentageOfEmissionStandard
         .fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {

@@ -6,7 +6,7 @@ import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
-import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
+import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacity } from '../entities/unit-capacity.entity';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
@@ -20,7 +20,7 @@ const returnedUnitCapacities: UnitCapacityDTO[] = [];
 const returnedUnitCapacity: UnitCapacityDTO = new UnitCapacityDTO();
 returnedUnitCapacities.push(returnedUnitCapacity);
 
-const payload: UpdateUnitCapacityDTO = {
+const payload: UnitCapacityBaseDTO = {
   maximumHourlyHeatInputCapacity: 1,
   beginDate: new Date(Date.now()),
   endDate: new Date(Date.now()),
