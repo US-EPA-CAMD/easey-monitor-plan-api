@@ -138,8 +138,6 @@ export class MonitorAttributeWorkspaceService {
             );
 
             if (attributeRecord) {
-              console.log('attributeRecord: ', attributeRecord.id);
-              console.log('Updating Attributes');
               await this.updateAttribute(
                 locationId,
                 attributeRecord.id,
@@ -147,7 +145,6 @@ export class MonitorAttributeWorkspaceService {
                 userId,
               );
             } else {
-              console.log('Creating Attributes');
               await this.createAttribute(locationId, attribute, userId);
             }
 

@@ -28,7 +28,7 @@ export class MonitorAttributeWorkspaceRepository extends Repository<
       .where('ma.locationId = :locationId', {
         locationId,
       })
-      .andWhere('ma.beginDate = :beginDate OR ar.endDate = :endDate', {
+      .andWhere('ma.beginDate = :beginDate OR ma.endDate = :endDate', {
         beginDate,
         endDate,
       })
