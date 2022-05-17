@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadWorkspaceController } from './monitor-load.controller';
-import { MonitorLoadBaseDTO } from '../dtos/monitor-load-update.dto';
+import { MonitorLoadBaseDTO } from '../dtos/monitor-load.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 
