@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -18,6 +19,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafDeterminationDate.example,
     name: propertyMetadata.ductWafDTOWafDeterminationDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -55,6 +57,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafMethodCode.example,
     name: propertyMetadata.ductWafDTOWafMethodCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT waf_method_cd as "value" FROM camdecmpsmd.waf_method_code',
     {
@@ -90,6 +93,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTONumberOfTestRuns.example,
     name: propertyMetadata.ductWafDTONumberOfTestRuns.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
@@ -105,6 +109,7 @@ export class DuctWafBaseDTO {
     name:
       propertyMetadata.ductWafDTONumberOfTraversePointsWaf.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
@@ -118,6 +123,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTONumberOfTestPorts.example,
     name: propertyMetadata.ductWafDTONumberOfTestPorts.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
@@ -133,6 +139,7 @@ export class DuctWafBaseDTO {
     name:
       propertyMetadata.ductWafDTONumberOfTraversePointsRef.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
@@ -146,6 +153,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTODuctWidth.example,
     name: propertyMetadata.ductWafDTODuctWidth.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -166,6 +174,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTODuctDepth.example,
     name: propertyMetadata.ductWafDTODuctDepth.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -186,7 +195,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafEndDate.example,
     name: propertyMetadata.ductWafDTOWafEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateIf(o => o.wafEndHour !== null)
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
@@ -200,7 +209,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafEndHour.example,
     name: propertyMetadata.ductWafDTOWafEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateIf(o => o.wafEndDate !== null)
   @IsInt()
   @IsInRange(0, 23, {

@@ -3,6 +3,7 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
+  IsOptional,
   MaxLength,
   MinLength,
   ValidateIf,
@@ -18,6 +19,7 @@ export class MonitorPlanCommentBaseDTO {
       propertyMetadata.monitorPlanCommentDTOMonitoringPlanComment.fieldLabels
         .value,
   })
+  @IsNotEmpty()
   @MinLength(1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must exceed 1 character`;
@@ -48,7 +50,7 @@ export class MonitorPlanCommentBaseDTO {
     example: propertyMetadata.monitorPlanCommentDTOEndDate.example,
     name: propertyMetadata.monitorPlanCommentDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;

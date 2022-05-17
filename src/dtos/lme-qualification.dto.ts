@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInt, IsNumber, ValidationArguments } from 'class-validator';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
+import {
+  IsInt,
+  IsNumber,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class LMEQualificationBaseDTO {
   @ApiProperty({
@@ -25,6 +30,7 @@ export class LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOOperatingHours.example,
     name: propertyMetadata.lMEQualificationDTOOperatingHours.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsNumber(
     { maxDecimalPlaces: 0 },
@@ -41,6 +47,7 @@ export class LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOSo2Tons.example,
     name: propertyMetadata.lMEQualificationDTOSo2Tons.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -61,6 +68,7 @@ export class LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTONoxTons.example,
     name: propertyMetadata.lMEQualificationDTONoxTons.fieldLabels.value,
   })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {

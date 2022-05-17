@@ -1,4 +1,4 @@
-import { IsInt, ValidateNested, ValidationArguments } from 'class-validator';
+import { IsInt, IsNotEmpty, ValidateNested, ValidationArguments } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -14,6 +14,7 @@ export class UpdateMonitorPlanDTO {
     example: propertyMetadata.monitorPlanDTOOrisCode.example,
     name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(1, 999999, {
     message: (args: ValidationArguments) => {

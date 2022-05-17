@@ -3,7 +3,7 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import { ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { LEEQualificationBaseDTO } from './lee-qualification.dto';
 import { LMEQualificationBaseDTO } from './lme-qualification.dto';
@@ -19,6 +19,7 @@ export class MonitorQualificationBaseDTO {
       propertyMetadata.monitorQualificationDTOQualificationTypeCode.fieldLabels
         .value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     'SELECT qual_type_cd as "value" FROM camdecmpsmd.qual_type_code',
     {
@@ -34,6 +35,7 @@ export class MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOBeginDate.example,
     name: propertyMetadata.monitorQualificationDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [QUAL-FATAL-A] The value for ${args.value} in the Qualification record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -46,6 +48,7 @@ export class MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOEndDate.example,
     name: propertyMetadata.monitorQualificationDTOEndDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [QUAL-FATAL-A] The value for ${args.value} in the Qualification record ${args.property} must be a valid ISO date format yyyy-mm-dd`;

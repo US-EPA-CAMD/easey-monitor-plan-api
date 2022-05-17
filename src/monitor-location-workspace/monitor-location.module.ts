@@ -22,7 +22,7 @@ import { MonitorLocationWorkspaceRepository } from './monitor-location.repositor
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceController } from './monitor-location.controller';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
-import { UnitModule } from 'src/unit/unit.module';
+import { UnitModule } from '../unit/unit.module';
 
 @Module({
   imports: [
