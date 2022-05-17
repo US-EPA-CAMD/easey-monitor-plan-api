@@ -16,6 +16,7 @@ import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 
@@ -30,6 +31,7 @@ export class MonitorQualificationWorkspaceService {
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
 
+    private readonly leeQualificationService: LEEQualificationWorkspaceService,
     private readonly lmeQualificationService: LMEQualificationWorkspaceService,
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
   ) {}
@@ -59,6 +61,14 @@ export class MonitorQualificationWorkspaceService {
                 qualification,
               );
               innerPromises.push(
+                this.leeQualificationService.importLEEQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.leeQualifications,
+                  userId,
+                ),
+              );
+              innerPromises.push(
                 this.lmeQualificationService.importLMEQualification(
                   locationId,
                   qualificationRecord.id,
@@ -79,6 +89,14 @@ export class MonitorQualificationWorkspaceService {
                 userId,
                 locationId,
                 qualification,
+              );
+              innerPromises.push(
+                this.leeQualificationService.importLEEQualification(
+                  locationId,
+                  createdQualification.id,
+                  qualification.leeQualifications,
+                  userId,
+                ),
               );
               innerPromises.push(
                 this.lmeQualificationService.importLMEQualification(
