@@ -17,6 +17,7 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOMaximumLoadValue.example,
     name: propertyMetadata.monitorLoadDTOMaximumLoadValue.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsAtMostDigits(6, {
     message: (args: ValidationArguments) => {
@@ -34,6 +35,7 @@ export class MonitorLoadBaseDTO {
       propertyMetadata.monitorLoadDTOMaximumLoadUnitsOfMeasureCode.fieldLabels
         .value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
@@ -51,6 +53,7 @@ export class MonitorLoadBaseDTO {
     name:
       propertyMetadata.monitorLoadDTOLowerOperationBoundary.fieldLabels.value,
   })
+  @IsOptional()
   @IsAtMostDigits(6, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
@@ -65,6 +68,7 @@ export class MonitorLoadBaseDTO {
     name:
       propertyMetadata.monitorLoadDTOUpperOperationBoundary.fieldLabels.value,
   })
+  @IsOptional()
   @IsAtMostDigits(6, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
@@ -111,6 +115,7 @@ export class MonitorLoadBaseDTO {
     name:
       propertyMetadata.monitorLoadDTOSecondNormalIndicator.fieldLabels.value,
   })
+  @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
@@ -123,6 +128,7 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOLoadAnalysisDate.example,
     name: propertyMetadata.monitorLoadDTOLoadAnalysisDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -162,7 +168,7 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOEndDate.example,
     name: propertyMetadata.monitorLoadDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -176,7 +182,7 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOEndHour.example,
     name: propertyMetadata.monitorLoadDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
