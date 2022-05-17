@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlWorkspaceController } from './unit-control.controller';
 import { UnitControlWorkspaceService } from './unit-control.service';
 import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
-import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
 
 jest.mock('./unit-control.service');
 

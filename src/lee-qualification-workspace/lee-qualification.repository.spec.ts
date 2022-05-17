@@ -15,7 +15,7 @@ const mockQueryBuilder = () => ({
 });
 
 describe('LEEQualificationWorkspaceRepository', () => {
-  let pctQualificationRepository;
+  let leeQualificationRepository;
   let queryBuilder;
 
   beforeEach(async () => {
@@ -26,7 +26,7 @@ describe('LEEQualificationWorkspaceRepository', () => {
       ],
     }).compile();
 
-    pctQualificationRepository = module.get(
+    leeQualificationRepository = module.get(
       LEEQualificationWorkspaceRepository,
     );
     queryBuilder = module.get<SelectQueryBuilder<LEEQualification>>(
@@ -36,7 +36,7 @@ describe('LEEQualificationWorkspaceRepository', () => {
 
   describe('getLEEQualification', () => {
     it('calls createQueryBuilder and gets all LEEQualifications from the repository with the specified facId', async () => {
-      pctQualificationRepository.createQueryBuilder = jest
+      leeQualificationRepository.createQueryBuilder = jest
         .fn()
         .mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
@@ -45,7 +45,7 @@ describe('LEEQualificationWorkspaceRepository', () => {
       queryBuilder.addOrderBy.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue('mockLEEQualification');
 
-      const result = await pctQualificationRepository.getLEEQualification(
+      const result = await leeQualificationRepository.getLEEQualification(
         0,
         0,
         0,
@@ -58,7 +58,7 @@ describe('LEEQualificationWorkspaceRepository', () => {
 
   describe('getLEEQualifications', () => {
     it('calls createQueryBuilder and gets all LEEQualifications from the repository with the specified facId', async () => {
-      pctQualificationRepository.createQueryBuilder = jest
+      leeQualificationRepository.createQueryBuilder = jest
         .fn()
         .mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
@@ -67,13 +67,35 @@ describe('LEEQualificationWorkspaceRepository', () => {
       queryBuilder.addOrderBy.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue('mockLEEQualifications');
 
-      const result = await pctQualificationRepository.getLEEQualifications(
+      const result = await leeQualificationRepository.getLEEQualifications(
         0,
         0,
       );
 
       expect(queryBuilder.getMany).toHaveBeenCalled();
       expect(result).toEqual('mockLEEQualifications');
+    });
+  });
+
+  describe('getLEEQualificationByTestDate', () => {
+    it('calls createQueryBuilder and gets all LEEQualifications from the repository with the specified qualification id and test date', async () => {
+      leeQualificationRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.addOrderBy.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(new LEEQualification());
+
+      const result = await leeQualificationRepository.getLEEQualificationByTestDate(
+        0,
+        0,
+        1990,
+      );
+
+      expect(queryBuilder.getOne).toHaveBeenCalled();
+      expect(result).toEqual(new LEEQualification());
     });
   });
 });

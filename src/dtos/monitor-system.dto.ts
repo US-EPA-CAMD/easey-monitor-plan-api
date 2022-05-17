@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -21,6 +22,7 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOMonitoringSystemId.example,
     name: propertyMetadata.monitorSystemDTOMonitoringSystemId.fieldLabels.value,
   })
+  @IsNotEmpty()
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} is not formatted properly`;
@@ -33,6 +35,7 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOSystemTypeCode.example,
     name: propertyMetadata.monitorSystemDTOSystemTypeCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     `SELECT sys_type_cd as "value" FROM camdecmpsmd.system_type_code`,
     {
@@ -50,6 +53,7 @@ export class MonitorSystemBaseDTO {
     name:
       propertyMetadata.monitorSystemDTOSystemDesignationCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     `SELECT sys_designation_cd as "value" FROM camdecmpsmd.system_designation_code`,
     {
@@ -65,6 +69,7 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOFuelCode.example,
     name: propertyMetadata.monitorSystemDTOFuelCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     `SELECT fuel_cd as "value" FROM camdecmpsmd.fuel_code where fuel_group_cd not in ('OTHER','COAL')`,
     {
@@ -85,6 +90,7 @@ export class MonitorSystemBaseDTO {
       return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
+  @IsOptional()
   beginDate: Date;
 
   @ApiProperty({
@@ -92,7 +98,7 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndDate.example,
     name: propertyMetadata.monitorSystemDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -106,6 +112,7 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOBeginHour.example,
     name: propertyMetadata.monitorSystemDTOBeginHour.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -119,7 +126,7 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndHour.example,
     name: propertyMetadata.monitorSystemDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
