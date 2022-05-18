@@ -13,7 +13,6 @@ import {
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -27,7 +26,7 @@ export class UnitCapacityWorkspaceService {
   ) {}
 
   async importUnityCapacity(
-    location: UpdateMonitorLocationDTO,
+    unitCapacities: UnitCapacityBaseDTO[],
     unitId: number,
     locationId: string,
     userId: string,
@@ -35,7 +34,7 @@ export class UnitCapacityWorkspaceService {
     return new Promise(async resolve => {
       const promises = [];
 
-      for (const unitCapacity of location.unitCapacities) {
+      for (const unitCapacity of unitCapacities) {
         promises.push(
           new Promise(async innerResolve => {
             const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
