@@ -53,6 +53,21 @@ export class MonitorAttributeWorkspaceService {
     return this.map.one(result);
   }
 
+  async getAttributeByLocIdAndDate(
+    locationId: string,
+    attribute: MonitorAttributeBaseDTO,
+  ) {
+    const result = await this.repository.getAttributeByLocIdAndDate(
+      locationId,
+      attribute,
+    );
+
+    if (result) {
+      return this.map.one(result);
+    }
+    return result;
+  }
+
   async createAttribute(
     locationId: string,
     payload: MonitorAttributeBaseDTO,
@@ -105,5 +120,44 @@ export class MonitorAttributeWorkspaceService {
     await this.repository.save(attribute);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getAttribute(locationId, id);
+  }
+
+  async importAttributes(
+    locationId: string,
+    attributes: MonitorAttributeBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const attribute of attributes) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const attributeRecord = await this.getAttributeByLocIdAndDate(
+              locationId,
+              attribute,
+            );
+
+            if (attributeRecord) {
+              console.log('attributeRecord: ', attributeRecord.id);
+              console.log('Updating Attributes');
+              await this.updateAttribute(
+                locationId,
+                attributeRecord.id,
+                attribute,
+                userId,
+              );
+            } else {
+              console.log('Creating Attributes');
+              await this.createAttribute(locationId, attribute, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }
