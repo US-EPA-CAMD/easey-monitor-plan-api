@@ -10,6 +10,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
 import { UnitService } from '../unit/unit.service';
+import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
 import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
@@ -31,6 +32,7 @@ export class MonitorLocationWorkspaceService {
     private readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
     private readonly unitService: UnitService,
+    private readonly stackPipeService: StackPipeService,
     private readonly componentService: ComponentWorkspaceService,
     private readonly unitCapacityService: UnitCapacityWorkspaceService,
     private readonly unitControlService: UnitControlWorkspaceService,
@@ -107,19 +109,16 @@ export class MonitorLocationWorkspaceService {
               facilityId,
             );
 
+            const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
+              location.stackPipeId,
+              facilityId,
+            );
+
             // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
             const monitorLocationRecord = await getMonLocId(
               location,
               facilityId,
               plan.orisCode,
-            );
-
-            innerPromises.push(
-              this.componentService.importComponent(
-                location,
-                monitorLocationRecord.id,
-                userId,
-              ),
             );
 
             if (unitRecord) {
@@ -129,38 +128,55 @@ export class MonitorLocationWorkspaceService {
                   location.nonLoadBasedIndicator,
                 ),
               );
+
+              innerPromises.push(
+                this.unitCapacityService.importUnityCapacity(
+                  location,
+                  unitRecord.id,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+
+              innerPromises.push(
+                this.unitControlService.importUnitControl(
+                  location,
+                  unitRecord.id,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+
+              innerPromises.push(
+                this.unitFuelService.importUnitFuel(
+                  location,
+                  unitRecord.id,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
             }
+
+            if (stackPipeRecord) {
+              innerPromises.push(
+                this.stackPipeService.importStackPipe(
+                  stackPipeRecord,
+                  location.retireDate,
+                ),
+              );
+            }
+
+            innerPromises.push(
+              this.componentService.importComponent(
+                location,
+                monitorLocationRecord.id,
+                userId,
+              ),
+            );
 
             innerPromises.push(
               this.qualificationService.importQualification(
                 location,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
-
-            innerPromises.push(
-              this.unitCapacityService.importUnityCapacity(
-                location,
-                unitRecord.id,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
-
-            innerPromises.push(
-              this.unitControlService.importUnitControl(
-                location,
-                unitRecord.id,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
-
-            innerPromises.push(
-              this.unitFuelService.importUnitFuel(
-                location,
-                unitRecord.id,
                 monitorLocationRecord.id,
                 userId,
               ),

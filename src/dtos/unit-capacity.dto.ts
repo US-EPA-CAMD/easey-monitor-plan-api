@@ -4,6 +4,7 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -39,6 +40,7 @@ export class UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOBeginDate.example,
     name: propertyMetadata.unitCapacityDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -51,7 +53,7 @@ export class UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOEndDate.example,
     name: propertyMetadata.unitCapacityDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
