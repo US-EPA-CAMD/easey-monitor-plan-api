@@ -186,10 +186,20 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
+            if (location.systems.length > 0) {
+              innerPromises.push(
+                this.systemService.importSystem(
+                  location.systems,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
+
             if (location.qualifications.length > 0) {
               innerPromises.push(
                 this.qualificationService.importQualification(
-                  location,
+                  location.qualifications,
                   monitorLocationRecord.id,
                   userId,
                 ),
