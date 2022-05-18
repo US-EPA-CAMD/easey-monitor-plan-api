@@ -37,13 +37,13 @@ export class MonitorQualificationWorkspaceService {
   ) {}
 
   async importQualification(
-    location: UpdateMonitorLocationDTO,
+    qualifications: MonitorQualificationBaseDTO[],
     locationId: string,
     userId: string,
   ) {
     return new Promise(async resolve => {
       const promises = [];
-      for (const qualification of location.qualifications) {
+      for (const qualification of qualifications) {
         promises.push(
           new Promise(async innerResolve => {
             const innerPromises = [];

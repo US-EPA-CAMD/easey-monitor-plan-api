@@ -56,6 +56,7 @@ export class Unit extends BaseEntity {
 
   @Column({
     name: 'fac_id',
+    transformer: new NumericColumnTransformer(),
   })
   facId: number;
 
