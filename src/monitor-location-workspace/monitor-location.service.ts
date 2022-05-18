@@ -104,16 +104,6 @@ export class MonitorLocationWorkspaceService {
           new Promise(async innerResolve => {
             const innerPromises = [];
 
-            const unitRecord = await this.unitService.getUnitByNameAndFacId(
-              location.unitId,
-              facilityId,
-            );
-
-            const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
-              location.stackPipeId,
-              facilityId,
-            );
-
             // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
             const monitorLocationRecord = await getMonLocId(
               location,
@@ -121,7 +111,12 @@ export class MonitorLocationWorkspaceService {
               plan.orisCode,
             );
 
-            if (unitRecord) {
+            if (location.unitId) {
+              const unitRecord = await this.unitService.getUnitByNameAndFacId(
+                location.unitId,
+                facilityId,
+              );
+
               innerPromises.push(
                 this.unitService.importUnit(
                   unitRecord,
@@ -167,7 +162,12 @@ export class MonitorLocationWorkspaceService {
               }
             }
 
-            if (stackPipeRecord) {
+            if (location.stackPipeId) {
+              const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
+                location.stackPipeId,
+                facilityId,
+              );
+
               innerPromises.push(
                 this.stackPipeService.importStackPipe(
                   stackPipeRecord,
