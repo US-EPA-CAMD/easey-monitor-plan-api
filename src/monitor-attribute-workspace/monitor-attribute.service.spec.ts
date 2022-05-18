@@ -10,7 +10,6 @@ import {
   MonitorAttributeBaseDTO,
   MonitorAttributeDTO,
 } from '../dtos/monitor-attribute.dto';
-import { MonitorAttribute } from '../entities/monitor-attribute.entity';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -48,6 +47,7 @@ describe('MonitorAttributeWorkspaceService', () => {
       imports: [LoggerModule, HttpModule],
       providers: [
         MonitorAttributeWorkspaceService,
+        MonitorPlanWorkspaceService,
         {
           provide: MonitorAttributeWorkspaceRepository,
           useFactory: mockRepository,
