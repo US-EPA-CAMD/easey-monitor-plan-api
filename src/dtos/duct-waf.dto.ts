@@ -32,6 +32,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafBeginDate.example,
     name: propertyMetadata.ductWafDTOWafBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [RECTDUCTWAF-FATAL-A] The value for ${args.value} in the Rectangular Duct Waf record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -44,6 +45,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafBeginHour.example,
     name: propertyMetadata.ductWafDTOWafBeginHour.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -73,6 +75,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafValue.example,
     name: propertyMetadata.ductWafDTOWafValue.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsNumber(
     { maxDecimalPlaces: 4 },
     {
@@ -218,8 +221,6 @@ export class DuctWafBaseDTO {
     },
   })
   wafEndHour: number;
-
-  active: boolean;
 }
 
 export class DuctWafDTO extends DuctWafBaseDTO {
@@ -257,4 +258,7 @@ export class DuctWafDTO extends DuctWafBaseDTO {
     name: propertyMetadata.ductWafDTOUpdateDate.fieldLabels.value,
   })
   updateDate: Date;
+
+  // TODO: add ApiProperty
+  active: boolean;
 }

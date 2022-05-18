@@ -15,7 +15,6 @@ import {
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
