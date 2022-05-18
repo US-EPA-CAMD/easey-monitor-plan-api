@@ -129,32 +129,42 @@ export class MonitorLocationWorkspaceService {
                 ),
               );
 
-              innerPromises.push(
-                this.unitCapacityService.importUnityCapacity(
-                  location,
-                  unitRecord.id,
-                  monitorLocationRecord.id,
-                  userId,
-                ),
-              );
+              if (location.unitCapacities.length > 0) {
+                innerPromises.push(
+                  this.unitCapacityService.importUnityCapacity(
+                    location.unitCapacities,
+                    unitRecord.id,
+                    monitorLocationRecord.id,
+                    userId,
+                  ),
+                );
+              }
 
-              innerPromises.push(
-                this.unitControlService.importUnitControl(
-                  location,
-                  unitRecord.id,
-                  monitorLocationRecord.id,
-                  userId,
-                ),
-              );
+              if (location.unitControls.length > 0) {
+                console.log(
+                  'Plan Location Unit Controls',
+                  location.unitControls,
+                );
+                innerPromises.push(
+                  this.unitControlService.importUnitControl(
+                    location.unitControls,
+                    unitRecord.id,
+                    monitorLocationRecord.id,
+                    userId,
+                  ),
+                );
+              }
 
-              innerPromises.push(
-                this.unitFuelService.importUnitFuel(
-                  location,
-                  unitRecord.id,
-                  monitorLocationRecord.id,
-                  userId,
-                ),
-              );
+              if (location.unitCapacities.length > 0) {
+                innerPromises.push(
+                  this.unitFuelService.importUnitFuel(
+                    location,
+                    unitRecord.id,
+                    monitorLocationRecord.id,
+                    userId,
+                  ),
+                );
+              }
             }
 
             if (stackPipeRecord) {
@@ -166,53 +176,65 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            innerPromises.push(
-              this.componentService.importComponent(
-                location,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.components.length > 0) {
+              innerPromises.push(
+                this.componentService.importComponent(
+                  location,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.qualificationService.importQualification(
-                location,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.qualifications.length > 0) {
+              innerPromises.push(
+                this.qualificationService.importQualification(
+                  location,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.matsMethodService.importMatsMethod(
-                monitorLocationRecord.id,
-                location.matsMethods,
-                userId,
-              ),
-            );
+            if (location.matsMethods.length > 0) {
+              innerPromises.push(
+                this.matsMethodService.importMatsMethod(
+                  monitorLocationRecord.id,
+                  location.matsMethods,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.loadService.importLoad(
-                location.loads,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.loads.length > 0) {
+              innerPromises.push(
+                this.loadService.importLoad(
+                  location.loads,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.formulaService.importFormula(
-                location.formulas,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.formulas.length > 0) {
+              innerPromises.push(
+                this.formulaService.importFormula(
+                  location.formulas,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.methodService.importMethod(
-                monitorLocationRecord.id,
-                location.methods,
-                userId,
-              ),
-            );
+            if (location.methods.length > 0) {
+              innerPromises.push(
+                this.methodService.importMethod(
+                  monitorLocationRecord.id,
+                  location.methods,
+                  userId,
+                ),
+              );
+            }
 
             await Promise.all(innerPromises);
             innerResolve(true);
