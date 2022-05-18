@@ -6,7 +6,7 @@ import { MonitorQualificationWorkspaceService } from './monitor-qualification.se
 import { MonitorQualificationWorkspaceController } from './monitor-qualification.controller';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification-update.dto';
+import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
 
 jest.mock('./monitor-qualification.service');
 

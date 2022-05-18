@@ -4,16 +4,12 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification-update.dto';
+import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
-import { LEEQualificationBaseDTO } from '../dtos/lee-qualification-update.dto';
-import { LMEQualificationBaseDTO } from '../dtos/lme-qualification-update.dto';
-import { PCTQualificationBaseDTO } from '../dtos/pct-qualification-update.dto';
 
 const locId = '6';
 const qualId = '1';
-const pctQualId = 'some pct qualification id';
 const userId = 'testuser';
 
 const returnedMonitorQualifications: MonitorQualificationDTO[] = [];

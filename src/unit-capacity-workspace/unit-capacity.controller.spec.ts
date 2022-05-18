@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
-import { UpdateUnitCapacityDTO } from '../dtos/unit-capacity-update.dto';
+import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceController } from './unit-capacity.controller';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
@@ -15,7 +15,7 @@ const locId = '6';
 const unitRecordId = 1;
 const id = '1';
 const currentUser = 'testuser';
-const payload = new UpdateUnitCapacityDTO();
+const payload = new UnitCapacityBaseDTO();
 
 const returnedUnitCapacities: UnitCapacityDTO[] = [];
 returnedUnitCapacities.push(new UnitCapacityDTO());

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MatsMethodBaseDTO } from '../dtos/mats-method-update.dto';
+import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
 import { MatsMethodWorkspaceController } from './mats-method.controller';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';

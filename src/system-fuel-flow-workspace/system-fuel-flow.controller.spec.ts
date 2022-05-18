@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { SystemFuelFlowWorkspaceController } from './system-fuel-flow.controller';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./system-fuel-flow.service');
 

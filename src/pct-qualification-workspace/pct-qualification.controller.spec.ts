@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationWorkspaceController } from './pct-qualification.controller';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
-import { PCTQualificationBaseDTO } from '../dtos/pct-qualification-update.dto';
+import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';

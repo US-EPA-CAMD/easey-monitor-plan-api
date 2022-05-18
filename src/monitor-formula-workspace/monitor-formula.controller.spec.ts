@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
-import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula-update.dto';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
+import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';
 
 const locationId = 'string';
 const methodId = 'string';

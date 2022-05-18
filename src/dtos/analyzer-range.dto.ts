@@ -46,6 +46,7 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOBeginDate.example,
     name: propertyMetadata.analyzerRangeDTOBeginDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -58,6 +59,7 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOBeginHour.example,
     name: propertyMetadata.analyzerRangeDTOBeginHour.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -71,6 +73,7 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOEndDate.example,
     name: propertyMetadata.analyzerRangeDTOEndDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -84,6 +87,7 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOEndHour.example,
     name: propertyMetadata.analyzerRangeDTOEndHour.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {

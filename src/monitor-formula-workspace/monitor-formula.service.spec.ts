@@ -7,7 +7,7 @@ import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
-import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula-update.dto';
+import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
