@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInt, IsOptional, ValidationArguments } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
@@ -10,6 +15,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOFuelCode.example,
     name: propertyMetadata.unitFuelDTOFuelCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     'SELECT distinct fuel_type_cd as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
@@ -25,6 +31,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOIndicatorCode.example,
     name: propertyMetadata.unitFuelDTOIndicatorCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct fuel_indicator_cd as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
@@ -40,6 +47,8 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOOzoneSeasonIndicator.example,
     name: propertyMetadata.unitFuelDTOOzoneSeasonIndicator.fieldLabels.value,
   })
+  @IsOptional()
+  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value}  in the Unit Fuel record ${args.property} must be within the range of 0 and 1`;
@@ -84,6 +93,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOBeginDate.example,
     name: propertyMetadata.unitFuelDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value} in the Unit Fuel record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -96,6 +106,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOEndDate.example,
     name: propertyMetadata.unitFuelDTOEndDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value} in the Unit Fuel record ${args.property} must be a valid ISO date format yyyy-mm-dd`;

@@ -14,4 +14,13 @@ export class StackPipeService {
       where: { name: nameId, facId: facilityId },
     });
   }
+
+  async importStackPipe(stackPipeRecord: StackPipe, retireDate: Date) {
+    return new Promise(async resolve => {
+      await this.repository.update(stackPipeRecord.id, {
+        retireDate,
+      });
+      resolve(true);
+    });
+  }
 }
