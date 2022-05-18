@@ -12,7 +12,6 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -44,14 +43,14 @@ export class MonitorLoadWorkspaceService {
   }
 
   async importLoad(
-    location: UpdateMonitorLocationDTO,
+    loads: MonitorLoadBaseDTO[],
     locationId: string,
     userId: string,
   ) {
     return new Promise(async resolve => {
       const promises = [];
 
-      for (const load of location.loads) {
+      for (const load of loads) {
         promises.push(
           new Promise(async innerResolve => {
             const loadRecord = await this.repository.getLoadByLocBDateBHour(

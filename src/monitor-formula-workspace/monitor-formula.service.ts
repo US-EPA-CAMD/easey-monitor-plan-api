@@ -101,4 +101,41 @@ export class MonitorFormulaWorkspaceService {
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(formula);
   }
+
+  async importFormula(
+    formulas: MonitorFormulaBaseDTO[],
+    locationId: string,
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+
+      for (const formula of formulas) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const formulaRecord = await this.repository.getFormulaByLocIdAndFormulaIdentifier(
+              locationId,
+              formula.formulaId,
+            );
+
+            if (formulaRecord !== undefined) {
+              await this.updateFormula(
+                locationId,
+                formulaRecord.id,
+                formula,
+                userId,
+              );
+            } else {
+              await this.createFormula(locationId, formula, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+
+        await Promise.all(promises);
+        resolve(true);
+      }
+    });
+  }
 }
