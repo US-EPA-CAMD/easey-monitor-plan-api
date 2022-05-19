@@ -151,6 +151,7 @@ export class MonitorQualificationWorkspaceService {
               }
             }
 
+            await Promise.all(innerPromises);
             innerResolve(true);
           }),
         );
