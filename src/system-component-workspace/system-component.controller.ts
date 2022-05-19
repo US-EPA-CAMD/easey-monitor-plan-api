@@ -33,7 +33,7 @@ export class SystemComponentWorkspaceController {
     type: SystemComponentDTO,
     description: 'Retrieves workspace component records for a monitor system',
   })
-  async getComponents(
+  async getSystemComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
   ): Promise<SystemComponentDTO[]> {
@@ -47,14 +47,14 @@ export class SystemComponentWorkspaceController {
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
   })
-  async upDateComponent(
+  async updateSystemCompnent(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @Param('compId') componentId: string,
     @CurrentUser() userId: string,
     @Body() payload: SystemComponentBaseDTO,
   ): Promise<SystemComponentDTO> {
-    return this.service.updateComponent(
+    return this.service.updateSystemComponent(
       locationId,
       monSysId,
       componentId,

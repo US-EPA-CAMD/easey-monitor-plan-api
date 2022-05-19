@@ -4,6 +4,7 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsInt,
   IsNotEmpty,
+  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -17,6 +18,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOBeginDate.example,
     name: propertyMetadata.systemComponentDTOBeginDate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the System Component record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -29,6 +31,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOBeginHour.example,
     name: propertyMetadata.systemComponentDTOBeginHour.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -42,7 +45,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndDate.example,
     name: propertyMetadata.systemComponentDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateIf(o => o.endHour !== null)
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
@@ -56,7 +59,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndHour.example,
     name: propertyMetadata.systemComponentDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateIf(o => o.endDate !== null)
   @IsInt()
   @IsInRange(0, 23, {

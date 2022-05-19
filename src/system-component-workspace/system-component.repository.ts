@@ -1,16 +1,14 @@
-import { Component } from '../entities/workspace/component.entity';
 import { Repository, EntityRepository } from 'typeorm';
 
 import { SystemComponent } from '../entities/workspace/system-component.entity';
-import { uuid } from 'aws-sdk/clients/customerprofiles';
 
 @EntityRepository(SystemComponent)
 export class SystemComponentWorkspaceRepository extends Repository<
   SystemComponent
 > {
-  async getComponent(
+  async getSystemComponent(
     monSysId: string,
-    monSysCompId: uuid,
+    monSysCompId: string,
   ): Promise<SystemComponent> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
@@ -47,12 +45,14 @@ export class SystemComponentWorkspaceRepository extends Repository<
     monSysId: string,
     componentId: string,
     beginDate: Date,
+    beginHour: number,
   ): Promise<SystemComponent> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('c.componentId = :componentId', { componentId })
       .andWhere('msc.monitoringSystemRecordId = :monSysId', { monSysId })
       .andWhere('msc.beginDate = :beginDate', { beginDate })
+      .andWhere('msc.beginHour = :beginHour', { beginHour })
       .getOne();
   }
 }

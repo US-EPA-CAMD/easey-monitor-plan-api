@@ -55,8 +55,6 @@ export class MonitorSystemWorkspaceService {
     payload: MonitorSystemBaseDTO,
     userId: string,
   ): Promise<MonitorSystemDTO> {
-    console.log('creating monSystemRecord');
-
     const system = this.repository.create({
       id: uuid(),
       locationId,
@@ -84,9 +82,7 @@ export class MonitorSystemWorkspaceService {
     locId: string,
     userId: string,
   ): Promise<MonitorSystemDTO> {
-    console.log('updating monSystemRecord');
     const system = await this.getSystem(monitoringSystemRecordId);
-
     system.systemTypeCode = payload.systemTypeCode;
     system.systemDesignationCode = payload.systemDesignationCode;
     system.fuelCode = payload.fuelCode;
@@ -121,7 +117,7 @@ export class MonitorSystemWorkspaceService {
 
             if (systemRecord !== undefined) {
               await this.updateSystem(
-                systemRecord.monitoringSystemId,
+                systemRecord.id,
                 system,
                 locationId,
                 userId,
@@ -136,13 +132,11 @@ export class MonitorSystemWorkspaceService {
                 ),
               );
             } else {
-              console.log('updating monitor system');
               const createdSystemRecord = await this.createSystem(
                 locationId,
                 system,
                 userId,
               );
-              console.log('createdSystemRecord', createdSystemRecord.id);
               innerPromises.push(
                 this.systemComponentService.importComponent(
                   locationId,

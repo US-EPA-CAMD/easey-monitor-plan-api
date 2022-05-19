@@ -257,7 +257,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.methods.length > 0) {
+            if (location.methods && location.methods.length > 0) {
               innerPromises.push(
                 this.methodService.importMethod(
                   monitorLocationRecord.id,
