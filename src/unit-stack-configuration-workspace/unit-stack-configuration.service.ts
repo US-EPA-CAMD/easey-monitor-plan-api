@@ -41,7 +41,6 @@ export class UnitStackConfigurationWorkspaceService {
             });
 
             if (unitStackConfigRecord !== undefined) {
-              console.log('Updating unit stack');
               unitStackConfigRecord.updateDate = new Date(Date.now());
               unitStackConfigRecord.beginDate = unitStackConfig.beginDate;
               unitStackConfigRecord.endDate = unitStackConfig.endDate;
@@ -49,7 +48,6 @@ export class UnitStackConfigurationWorkspaceService {
 
               await this.repository.save(unitStackConfigRecord);
             } else {
-              console.log('Creating unit stack');
               const unitStack = new UnitStackConfiguration();
               unitStack.id = v4();
               unitStack.updateDate = new Date(Date.now());

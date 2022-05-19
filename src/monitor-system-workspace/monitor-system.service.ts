@@ -11,6 +11,7 @@ import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
+import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -24,6 +25,7 @@ export class MonitorSystemWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
 
     private readonly systemComponentService: SystemComponentWorkspaceService,
+    private readonly systemFuelFlowService: SystemFuelFlowWorkspaceService,
   ) {}
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
@@ -123,6 +125,15 @@ export class MonitorSystemWorkspaceService {
                   userId,
                 ),
               );
+
+              innerPromises.push(
+                this.systemFuelFlowService.importFuelFlow(
+                  locationId,
+                  systemRecord.id,
+                  system.fuelFlows,
+                  userId,
+                ),
+              );
             } else {
               const createdSystemRecord = await this.createSystem(
                 locationId,
@@ -134,6 +145,14 @@ export class MonitorSystemWorkspaceService {
                   locationId,
                   createdSystemRecord.id,
                   system.components,
+                  userId,
+                ),
+              );
+              innerPromises.push(
+                this.systemFuelFlowService.importFuelFlow(
+                  locationId,
+                  createdSystemRecord.id,
+                  system.fuelFlows,
                   userId,
                 ),
               );
