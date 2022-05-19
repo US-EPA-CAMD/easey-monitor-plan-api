@@ -5,6 +5,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitService } from '../unit/unit.service';
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -40,23 +41,26 @@ export class UnitStackConfigurationWorkspaceService {
             });
 
             if (unitStackConfigRecord !== undefined) {
+              console.log('Updating unit stack');
               unitStackConfigRecord.updateDate = new Date(Date.now());
               unitStackConfigRecord.beginDate = unitStackConfig.beginDate;
               unitStackConfigRecord.endDate = unitStackConfig.endDate;
               unitStackConfigRecord.userId = userId;
 
-              await this.repository.update(
-                unitStackConfigRecord,
-                unitStackConfigRecord,
-              );
+              await this.repository.save(unitStackConfigRecord);
             } else {
+              console.log('Creating unit stack');
               const unitStack = new UnitStackConfiguration();
+              unitStack.id = v4();
               unitStack.updateDate = new Date(Date.now());
+              unitStack.unitId = unit.id;
+              unitStack.stackPipeId = stackPipe.id;
               unitStack.beginDate = unitStackConfig.beginDate;
               unitStack.endDate = unitStackConfig.endDate;
               unitStack.userId = userId;
 
-              this.repository.create(unitStack);
+              const val = this.repository.create(unitStack);
+              this.repository.save(val);
             }
             innerResolve(true);
           }),

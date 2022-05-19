@@ -230,8 +230,8 @@ export class MonitorLocationWorkspaceService {
             if (location.loads.length > 0) {
               innerPromises.push(
                 this.loadService.importLoad(
-                  location.loads,
                   monitorLocationRecord.id,
+                  location.loads,
                   userId,
                 ),
               );
