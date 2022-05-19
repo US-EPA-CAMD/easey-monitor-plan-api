@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -20,6 +21,7 @@ export class SystemFuelFlowBaseDTO {
     name:
       propertyMetadata.systemFuelFlowDTOMaximumFuelFlowRate.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -42,6 +44,7 @@ export class SystemFuelFlowBaseDTO {
     name:
       propertyMetadata.systemFuelFlowDTOSystemFuelFlowUOMCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_systemfuel_master_data_relationships',
     {
@@ -62,6 +65,7 @@ export class SystemFuelFlowBaseDTO {
       propertyMetadata.systemFuelFlowDTOMaximumFuelFlowRateSourceCode
         .fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct max_rate_source_code as "value" FROM camdecmpsmd.vw_systemfuel_master_data_relationships',
     {
@@ -77,6 +81,7 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOBeginDate.example,
     name: propertyMetadata.systemFuelFlowDTOBeginDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -89,6 +94,7 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOBeginHour.example,
     name: propertyMetadata.systemFuelFlowDTOBeginHour.fieldLabels.value,
   })
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -102,7 +108,7 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOEndDate.example,
     name: propertyMetadata.systemFuelFlowDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateIf(o => o.endHour !== null)
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
@@ -116,7 +122,7 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOEndHour.example,
     name: propertyMetadata.systemFuelFlowDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateIf(o => o.endDate !== null)
   @IsInt()
   @IsInRange(0, 23, {

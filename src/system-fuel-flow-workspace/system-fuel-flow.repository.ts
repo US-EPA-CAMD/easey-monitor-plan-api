@@ -28,4 +28,20 @@ export class SystemFuelFlowWorkspaceRepository extends Repository<
       .where('ms.id IN (:...monSysIds)', { monSysIds })
       .getMany();
   }
+
+  async getFuelFlowByBeginOrEndDate(
+    monSysId: string,
+    maximumFuelFlowRate: number,
+    systemFuelFlowUOMCode: string,
+  ): Promise<SystemFuelFlow> {
+    return this.createQueryBuilder('sff')
+      .where('sff.monitoringSystemRecordId = :monSysId', { monSysId })
+      .andWhere('sff.maximumFuelFlowRate = :maximumFuelFlowRate', {
+        maximumFuelFlowRate,
+      })
+      .andWhere('sff.systemFuelFlowUOMCode = :systemFuelFlowUOMCode', {
+        systemFuelFlowUOMCode,
+      })
+      .getOne();
+  }
 }
