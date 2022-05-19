@@ -59,63 +59,98 @@ export class MonitorQualificationWorkspaceService {
                 qualificationRecord.id,
                 qualification,
               );
-              innerPromises.push(
-                this.leeQualificationService.importLEEQualification(
-                  locationId,
-                  qualificationRecord.id,
-                  qualification.leeQualifications,
-                  userId,
-                ),
-              );
-              innerPromises.push(
-                this.lmeQualificationService.importLMEQualification(
-                  locationId,
-                  qualificationRecord.id,
-                  qualification.lmeQualifications,
-                  userId,
-                ),
-              );
-              innerPromises.push(
-                this.pctQualificationService.importPCTQualification(
-                  locationId,
-                  qualificationRecord.id,
-                  qualification.pctQualifications,
-                  userId,
-                ),
-              );
+
+              if (
+                qualification.leeQualifications &&
+                qualification.leeQualifications.length > 0
+              ) {
+                innerPromises.push(
+                  this.leeQualificationService.importLEEQualification(
+                    locationId,
+                    qualificationRecord.id,
+                    qualification.leeQualifications,
+                    userId,
+                  ),
+                );
+              }
+
+              if (
+                qualification.lmeQualifications &&
+                qualification.lmeQualifications.length > 0
+              ) {
+                innerPromises.push(
+                  this.lmeQualificationService.importLMEQualification(
+                    locationId,
+                    qualificationRecord.id,
+                    qualification.lmeQualifications,
+                    userId,
+                  ),
+                );
+              }
+
+              if (
+                qualification.pctQualifications &&
+                qualification.pctQualifications.length > 0
+              ) {
+                innerPromises.push(
+                  this.pctQualificationService.importPCTQualification(
+                    locationId,
+                    qualificationRecord.id,
+                    qualification.pctQualifications,
+                    userId,
+                  ),
+                );
+              }
             } else {
               const createdQualification = await this.createQualification(
                 userId,
                 locationId,
                 qualification,
               );
-              innerPromises.push(
-                this.leeQualificationService.importLEEQualification(
-                  locationId,
-                  createdQualification.id,
-                  qualification.leeQualifications,
-                  userId,
-                ),
-              );
-              innerPromises.push(
-                this.lmeQualificationService.importLMEQualification(
-                  locationId,
-                  createdQualification.id,
-                  qualification.lmeQualifications,
-                  userId,
-                ),
-              );
-              innerPromises.push(
-                this.pctQualificationService.importPCTQualification(
-                  locationId,
-                  createdQualification.id,
-                  qualification.pctQualifications,
-                  userId,
-                ),
-              );
+
+              if (
+                qualification.leeQualifications &&
+                qualification.leeQualifications.length > 0
+              ) {
+                innerPromises.push(
+                  this.leeQualificationService.importLEEQualification(
+                    locationId,
+                    createdQualification.id,
+                    qualification.leeQualifications,
+                    userId,
+                  ),
+                );
+              }
+
+              if (
+                qualification.lmeQualifications &&
+                qualification.lmeQualifications.length > 0
+              ) {
+                innerPromises.push(
+                  this.lmeQualificationService.importLMEQualification(
+                    locationId,
+                    createdQualification.id,
+                    qualification.lmeQualifications,
+                    userId,
+                  ),
+                );
+              }
+
+              if (
+                qualification.lmeQualifications &&
+                qualification.lmeQualifications.length > 0
+              ) {
+                innerPromises.push(
+                  this.pctQualificationService.importPCTQualification(
+                    locationId,
+                    createdQualification.id,
+                    qualification.pctQualifications,
+                    userId,
+                  ),
+                );
+              }
             }
 
-            await Promise.all(innerPromises);
             innerResolve(true);
           }),
         );
