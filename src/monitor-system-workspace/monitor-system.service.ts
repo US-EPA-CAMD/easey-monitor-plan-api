@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -44,7 +39,7 @@ export class MonitorSystemWorkspaceService {
   }
 
   async getSystem(monitoringSystemRecordId: string): Promise<MonitorSystem> {
-    return await this.repository.findOne(monitoringSystemRecordId);
+    return this.repository.findOne(monitoringSystemRecordId);
   }
 
   async createSystem(

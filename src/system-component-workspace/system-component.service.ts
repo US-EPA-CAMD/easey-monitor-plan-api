@@ -71,7 +71,7 @@ export class SystemComponentWorkspaceService {
     beginDate: Date,
     beginHour: number,
   ): Promise<SystemComponent> {
-    return await this.repository.getComponenByBeginOrEndDate(
+    return this.repository.getComponenByBeginOrEndDate(
       sysId,
       componentId,
       beginDate,
