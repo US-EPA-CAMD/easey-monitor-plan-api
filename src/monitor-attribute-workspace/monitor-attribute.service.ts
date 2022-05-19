@@ -106,4 +106,40 @@ export class MonitorAttributeWorkspaceService {
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.getAttribute(locationId, id);
   }
+
+  async importAttributes(
+    locationId: string,
+    attributes: MonitorAttributeBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const attribute of attributes) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const attributeRecord = await this.repository.getAttributeByLocIdAndDate(
+              locationId,
+              attribute.beginDate,
+            );
+
+            if (attributeRecord) {
+              await this.updateAttribute(
+                locationId,
+                attributeRecord.id,
+                attribute,
+                userId,
+              );
+            } else {
+              await this.createAttribute(locationId, attribute, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
+  }
 }

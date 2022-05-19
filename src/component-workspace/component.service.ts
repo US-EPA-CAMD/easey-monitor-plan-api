@@ -64,10 +64,8 @@ export class ComponentWorkspaceService {
             );
 
             if (compRecord) {
-              console.log('Updating Component');
               await this.updateComponent(compRecord, component, userId);
             } else {
-              console.log('Creating Component');
               await this.createComponent(locationId, component, userId);
               compRecord = await this.repository.getComponentByLocIdAndCompId(
                 locationId,

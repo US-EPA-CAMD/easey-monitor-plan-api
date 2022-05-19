@@ -275,7 +275,6 @@ export class MonitorPlanWorkspaceService {
       this.unitCapacityRepository.getUnitCapacitiesByUnitIds(unitIds),
     );
 
-    console.log(unitIds);
     const UNIT_CONTROLS = UNIT_CAPACITIES + 1;
     promises.push(
       this.unitControlRepository.find({ where: { unitId: In(unitIds) } }),

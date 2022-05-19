@@ -145,7 +145,6 @@ export class UnitControlWorkspaceService {
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
-    console.log('Unit Control Record Updated', unitControl);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getUnitControl(locId, unitRecordId, unitControlId);
   }

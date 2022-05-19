@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocation } from '../entities/monitor-location.entity';
@@ -21,6 +26,7 @@ import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monit
 import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
 import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
+import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
 import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monitor-method.service';
 import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
@@ -50,6 +56,9 @@ export class MonitorLocationWorkspaceService {
     private readonly spanService: MonitorSpanWorkspaceService,
     private readonly defaultService: MonitorDefaultWorkspaceService,
     private readonly logger: Logger,
+
+    @Inject(forwardRef(() => MonitorAttributeWorkspaceService))
+    private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
   ) {}
 
   async getMonitorLocationsByFacilityAndOris(
@@ -142,10 +151,6 @@ export class MonitorLocationWorkspaceService {
               }
 
               if (location.unitControls.length > 0) {
-                console.log(
-                  'Plan Location Unit Controls',
-                  location.unitControls,
-                );
                 innerPromises.push(
                   this.unitControlService.importUnitControl(
                     location.unitControls,
@@ -232,6 +237,16 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
+            if (location.attributes.length > 0) {
+              innerPromises.push(
+                this.monitorAttributeService.importAttributes(
+                  monitorLocationRecord.id,
+                  location.attributes,
+                  userId,
+                ),
+              );
+            }
+
             if (location.formulas.length > 0) {
               innerPromises.push(
                 this.formulaService.importFormula(
@@ -281,6 +296,14 @@ export class MonitorLocationWorkspaceService {
                 ),
               );
             }
+
+            innerPromises.push(
+              this.monitorAttributeService.importAttributes(
+                monitorLocationRecord.id,
+                location.attributes,
+                userId,
+              ),
+            );
 
             await Promise.all(innerPromises);
             innerResolve(true);

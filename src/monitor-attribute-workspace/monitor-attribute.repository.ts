@@ -15,4 +15,18 @@ export class MonitorAttributeWorkspaceRepository extends Repository<
       .andWhere('ma.id = :id', { id })
       .getOne();
   }
+
+  async getAttributeByLocIdAndDate(
+    locationId: string,
+    beginDate: Date,
+  ): Promise<MonitorAttribute> {
+    return this.createQueryBuilder('ma')
+      .where('ma.locationId = :locationId', {
+        locationId,
+      })
+      .andWhere('ma.beginDate = :beginDate', {
+        beginDate,
+      })
+      .getOne();
+  }
 }
