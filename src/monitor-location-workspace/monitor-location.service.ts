@@ -297,14 +297,6 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            innerPromises.push(
-              this.monitorAttributeService.importAttributes(
-                monitorLocationRecord.id,
-                location.attributes,
-                userId,
-              ),
-            );
-
             await Promise.all(innerPromises);
             innerResolve(true);
           }),

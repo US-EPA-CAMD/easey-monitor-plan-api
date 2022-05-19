@@ -15,6 +15,8 @@ import {
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -26,6 +28,8 @@ export class MonitorSystemWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+
+    private readonly systemComponentService: SystemComponentWorkspaceService,
   ) {}
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
@@ -40,11 +44,19 @@ export class MonitorSystemWorkspaceService {
     return this.map.many(results);
   }
 
+  async getSystem(monitoringSystemRecordId: string): Promise<MonitorSystem> {
+    const result = await this.repository.findOne(monitoringSystemRecordId);
+
+    return result;
+  }
+
   async createSystem(
     locationId: string,
     payload: MonitorSystemBaseDTO,
     userId: string,
   ): Promise<MonitorSystemDTO> {
+    console.log('creating monSystemRecord');
+
     const system = this.repository.create({
       id: uuid(),
       locationId,
@@ -66,25 +78,14 @@ export class MonitorSystemWorkspaceService {
     return this.map.one(system);
   }
 
-  async getSystem(monitoringSystemId: string): Promise<MonitorSystem> {
-    const result = await this.repository.findOne(monitoringSystemId);
-
-    if (!result) {
-      this.logger.error(NotFoundException, 'Monitor System Not Found', true, {
-        monitoringSystemId: monitoringSystemId,
-      });
-    }
-
-    return result;
-  }
-
   async updateSystem(
-    monitoringSystemId: string,
+    monitoringSystemRecordId: string,
     payload: MonitorSystemBaseDTO,
     locId: string,
     userId: string,
   ): Promise<MonitorSystemDTO> {
-    const system = await this.getSystem(monitoringSystemId);
+    console.log('updating monSystemRecord');
+    const system = await this.getSystem(monitoringSystemRecordId);
 
     system.systemTypeCode = payload.systemTypeCode;
     system.systemDesignationCode = payload.systemDesignationCode;
@@ -112,6 +113,7 @@ export class MonitorSystemWorkspaceService {
       for (const system of systems) {
         promises.push(
           new Promise(async innerResolve => {
+            const innerPromises = [];
             const systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
               locationId,
               system.monitoringSystemId,
@@ -124,17 +126,41 @@ export class MonitorSystemWorkspaceService {
                 locationId,
                 userId,
               );
+
+              innerPromises.push(
+                this.systemComponentService.importComponent(
+                  locationId,
+                  systemRecord.id,
+                  system.components,
+                  userId,
+                ),
+              );
             } else {
-              await this.createSystem(locationId, system, userId);
+              console.log('updating monitor system');
+              const createdSystemRecord = await this.createSystem(
+                locationId,
+                system,
+                userId,
+              );
+              console.log('createdSystemRecord', createdSystemRecord.id);
+              innerPromises.push(
+                this.systemComponentService.importComponent(
+                  locationId,
+                  createdSystemRecord.id,
+                  system.components,
+                  userId,
+                ),
+              );
             }
 
+            await Promise.all(innerPromises);
             innerResolve(true);
           }),
         );
-
-        await Promise.all(promises);
-        resolve(true);
       }
+
+      await Promise.all(promises);
+      resolve(true);
     });
   }
 }

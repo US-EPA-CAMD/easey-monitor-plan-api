@@ -43,9 +43,12 @@ export class SystemComponentWorkspaceService {
 
   async getComponent(
     sysId: string,
-    componentId: string,
+    sysComponentRecordId: string,
   ): Promise<SystemComponent> {
-    const result = await this.repository.getComponent(sysId, componentId);
+    const result = await this.repository.getComponent(
+      sysId,
+      sysComponentRecordId,
+    );
 
     if (!result) {
       this.logger.error(
@@ -54,7 +57,7 @@ export class SystemComponentWorkspaceService {
         true,
         {
           sysId: sysId,
-          componentId: componentId,
+          systemComponentRecordId: sysComponentRecordId,
         },
       );
     }
@@ -62,17 +65,34 @@ export class SystemComponentWorkspaceService {
     return result;
   }
 
+  async getComponenByBeginOrEndDate(
+    sysId: string,
+    componentId: string,
+    beginDate: Date,
+  ): Promise<SystemComponent> {
+    const result = await this.repository.getComponenByBeginOrEndDate(
+      sysId,
+      componentId,
+      beginDate,
+    );
+
+    return result;
+  }
+
   async updateComponent(
     locationId: string,
     sysId: string,
-    componentId: string,
+    sysComponentRecordId: string,
     payload: SystemComponentBaseDTO,
     userId: string,
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
-    const systemComponent = await this.getComponent(sysId, componentId);
+    const systemComponent = await this.getComponent(
+      sysId,
+      sysComponentRecordId,
+    );
 
-    systemComponent.component.modelVersion = payload.modelVersion;
+    /*   systemComponent.component.modelVersion = payload.modelVersion;
     systemComponent.component.sampleAcquisitionMethodCode =
       payload.sampleAcquisitionMethodCode;
     systemComponent.component.componentTypeCode = payload.componentTypeCode;
@@ -81,7 +101,7 @@ export class SystemComponentWorkspaceService {
     systemComponent.component.modelVersion = payload.modelVersion;
     systemComponent.component.serialNumber = payload.serialNumber;
     systemComponent.component.hgConverterIndicator =
-      payload.hgConverterIndicator;
+      payload.hgConverterIndicator; */
 
     systemComponent.beginDate = payload.beginDate;
     systemComponent.beginHour = payload.beginHour;
@@ -91,7 +111,7 @@ export class SystemComponentWorkspaceService {
     systemComponent.updateDate = new Date(Date.now());
 
     // Saving Component fields
-    const component = await this.compRepository.getComponent(
+    /*     const component = await this.compRepository.getComponent(
       systemComponent.componentRecordId,
     );
 
@@ -104,10 +124,10 @@ export class SystemComponentWorkspaceService {
     component.serialNumber = payload.serialNumber;
     component.hgConverterIndicator = payload.hgConverterIndicator;
     component.userId = userId;
-    component.updateDate = new Date(Date.now());
+    component.updateDate = new Date(Date.now()); */
 
     await this.repository.save(systemComponent);
-    await this.compRepository.save(component);
+    // await this.compRepository.save(component);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(systemComponent);
   }
@@ -145,7 +165,7 @@ export class SystemComponentWorkspaceService {
 
     const systemComponent = this.repository.create({
       id: uuid(),
-      monitoringSystemRecordId,
+      monitoringSystemRecordId: monitoringSystemRecordId,
       componentRecordId: component.id,
       beginDate: payload.beginDate,
       beginHour: payload.beginHour,
@@ -164,7 +184,61 @@ export class SystemComponentWorkspaceService {
       monitoringSystemRecordId,
       component.id,
     );
+    console.log('systemComponentRecord', createdSysComp.id);
 
     return this.map.one(createdSysComp);
+  }
+
+  async importComponent(
+    locationId: string,
+    sysId: string,
+    systemComponents: SystemComponentBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const component of systemComponents) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const innerPromises = [];
+            const systemComponentRecord = await this.getComponenByBeginOrEndDate(
+              sysId,
+              component.componentId,
+              component.beginDate,
+            );
+
+            if (systemComponentRecord) {
+              console.log('systemComponentRecord', systemComponentRecord.id);
+              console.log('updating systemComponentRecord');
+              innerPromises.push(
+                await this.updateComponent(
+                  locationId,
+                  sysId,
+                  systemComponentRecord.id,
+                  component,
+                  userId,
+                ),
+              );
+            } else {
+              console.log('creating systemComponentRecord');
+              innerPromises.push(
+                await this.createSystemComponent(
+                  locationId,
+                  sysId,
+                  component,
+                  userId,
+                ),
+              );
+            }
+
+            await Promise.all(innerPromises);
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }

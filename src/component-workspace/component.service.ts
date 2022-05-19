@@ -33,13 +33,14 @@ export class ComponentWorkspaceService {
     return this.map.many(results);
   }
 
-  async getComponentByIdentifier(locationId: string, componentId: string) {
-    const result = await this.repository.findOne({
-      where: {
-        locationId,
-        componentId,
-      },
-    });
+  async getComponentByIdentifier(
+    locationId: string,
+    componentId: string,
+  ): Promise<ComponentDTO> {
+    const result = await this.repository.getComponentByLocIdAndCompId(
+      locationId,
+      componentId,
+    );
 
     if (result) {
       return this.map.one(result);
