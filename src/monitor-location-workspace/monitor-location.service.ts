@@ -23,6 +23,7 @@ import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-l
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monitor-method.service';
 import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
+import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -45,6 +46,7 @@ export class MonitorLocationWorkspaceService {
     private readonly matsMethodService: MatsMethodWorkspaceService,
     private readonly methodService: MonitorMethodWorkspaceService,
     private readonly ductWafService: DuctWafWorkspaceService,
+    private readonly spanService: MonitorSpanWorkspaceService,
     private readonly logger: Logger,
   ) {}
 
@@ -253,6 +255,16 @@ export class MonitorLocationWorkspaceService {
                 this.ductWafService.importDuctWaf(
                   monitorLocationRecord.id,
                   location.ductWafs,
+                  userId,
+                ),
+              );
+            }
+
+            if (location.spans.length > 0) {
+              innerPromises.push(
+                this.spanService.importSpan(
+                  monitorLocationRecord.id,
+                  location.spans,
                   userId,
                 ),
               );
