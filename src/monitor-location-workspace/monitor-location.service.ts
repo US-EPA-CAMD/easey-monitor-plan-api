@@ -15,6 +15,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
 import { UnitService } from '../unit/unit.service';
+import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
 import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
@@ -27,6 +28,9 @@ import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-l
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
 import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monitor-method.service';
+import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
+import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
+import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -37,6 +41,7 @@ export class MonitorLocationWorkspaceService {
     private readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
     private readonly unitService: UnitService,
+    private readonly stackPipeService: StackPipeService,
     private readonly componentService: ComponentWorkspaceService,
     private readonly unitCapacityService: UnitCapacityWorkspaceService,
     private readonly unitControlService: UnitControlWorkspaceService,
@@ -47,6 +52,9 @@ export class MonitorLocationWorkspaceService {
     private readonly formulaService: MonitorFormulaWorkspaceService,
     private readonly matsMethodService: MatsMethodWorkspaceService,
     private readonly methodService: MonitorMethodWorkspaceService,
+    private readonly ductWafService: DuctWafWorkspaceService,
+    private readonly spanService: MonitorSpanWorkspaceService,
+    private readonly defaultService: MonitorDefaultWorkspaceService,
     private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorAttributeWorkspaceService))
@@ -111,11 +119,6 @@ export class MonitorLocationWorkspaceService {
           new Promise(async innerResolve => {
             const innerPromises = [];
 
-            const unitRecord = await this.unitService.getUnitByNameAndFacId(
-              location.unitId,
-              facilityId,
-            );
-
             // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
             const monitorLocationRecord = await getMonLocId(
               location,
@@ -123,97 +126,176 @@ export class MonitorLocationWorkspaceService {
               plan.orisCode,
             );
 
-            innerPromises.push(
-              this.componentService.importComponent(
-                location,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.unitId) {
+              const unitRecord = await this.unitService.getUnitByNameAndFacId(
+                location.unitId,
+                facilityId,
+              );
 
-            if (unitRecord) {
               innerPromises.push(
                 this.unitService.importUnit(
                   unitRecord,
                   location.nonLoadBasedIndicator,
                 ),
               );
+
+              if (location.unitCapacities.length > 0) {
+                innerPromises.push(
+                  this.unitCapacityService.importUnityCapacity(
+                    location.unitCapacities,
+                    unitRecord.id,
+                    monitorLocationRecord.id,
+                    userId,
+                  ),
+                );
+              }
+
+              if (location.unitControls.length > 0) {
+                innerPromises.push(
+                  this.unitControlService.importUnitControl(
+                    location.unitControls,
+                    unitRecord.id,
+                    monitorLocationRecord.id,
+                    userId,
+                  ),
+                );
+              }
+
+              if (location.unitFuels.length > 0) {
+                innerPromises.push(
+                  this.unitFuelService.importUnitFuel(
+                    location.unitFuels,
+                    unitRecord.id,
+                    monitorLocationRecord.id,
+                    userId,
+                  ),
+                );
+              }
             }
 
-            innerPromises.push(
-              this.qualificationService.importQualification(
-                location,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.stackPipeId) {
+              const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
+                location.stackPipeId,
+                facilityId,
+              );
 
-            innerPromises.push(
-              this.unitCapacityService.importUnityCapacity(
-                location,
-                unitRecord.id,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+              innerPromises.push(
+                this.stackPipeService.importStackPipe(
+                  stackPipeRecord,
+                  location.retireDate,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.unitControlService.importUnitControl(
-                location,
-                unitRecord.id,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.components.length > 0) {
+              innerPromises.push(
+                this.componentService.importComponent(
+                  location,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.unitFuelService.importUnitFuel(
-                location,
-                unitRecord.id,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.systems.length > 0) {
+              innerPromises.push(
+                this.systemService.importSystem(
+                  location.systems,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.matsMethodService.importMatsMethod(
-                monitorLocationRecord.id,
-                location.matsMethods,
-                userId,
-              ),
-            );
+            if (location.qualifications.length > 0) {
+              innerPromises.push(
+                this.qualificationService.importQualification(
+                  location.qualifications,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.loadService.importLoad(
-                location.loads,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.matsMethods.length > 0) {
+              innerPromises.push(
+                this.matsMethodService.importMatsMethod(
+                  monitorLocationRecord.id,
+                  location.matsMethods,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.formulaService.importFormula(
-                location.formulas,
-                monitorLocationRecord.id,
-                userId,
-              ),
-            );
+            if (location.loads.length > 0) {
+              innerPromises.push(
+                this.loadService.importLoad(
+                  location.loads,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.monitorAttributeService.importAttributes(
-                monitorLocationRecord.id,
-                location.attributes,
-                userId,
-              ),
-            );
+            if (location.attributes.length > 0) {
+              innerPromises.push(
+                this.monitorAttributeService.importAttributes(
+                  monitorLocationRecord.id,
+                  location.attributes,
+                  userId,
+                ),
+              );
+            }
 
-            innerPromises.push(
-              this.methodService.importMethod(
-                monitorLocationRecord.id,
-                location.methods,
-                userId,
-              ),
-            );
+            if (location.formulas.length > 0) {
+              innerPromises.push(
+                this.formulaService.importFormula(
+                  location.formulas,
+                  monitorLocationRecord.id,
+                  userId,
+                ),
+              );
+            }
+
+            if (location.methods.length > 0) {
+              innerPromises.push(
+                this.methodService.importMethod(
+                  monitorLocationRecord.id,
+                  location.methods,
+                  userId,
+                ),
+              );
+            }
+
+            if (location.ductWafs.length > 0) {
+              innerPromises.push(
+                this.ductWafService.importDuctWaf(
+                  monitorLocationRecord.id,
+                  location.ductWafs,
+                  userId,
+                ),
+              );
+            }
+
+            if (location.spans.length > 0) {
+              innerPromises.push(
+                this.spanService.importSpan(
+                  monitorLocationRecord.id,
+                  location.spans,
+                  userId,
+                ),
+              );
+            }
+
+            if (location.defaults.length > 0) {
+              innerPromises.push(
+                this.defaultService.importDefault(
+                  monitorLocationRecord.id,
+                  location.defaults,
+                  userId,
+                ),
+              );
+            }
 
             innerPromises.push(
               this.monitorAttributeService.importAttributes(

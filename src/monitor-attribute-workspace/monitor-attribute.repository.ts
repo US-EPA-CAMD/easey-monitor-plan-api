@@ -1,4 +1,3 @@
-import { MonitorAttributeBaseDTO } from 'src/dtos/monitor-attribute.dto';
 import { EntityRepository, Repository } from 'typeorm';
 
 import { MonitorAttribute } from '../entities/workspace/monitor-attribute.entity';
@@ -19,18 +18,14 @@ export class MonitorAttributeWorkspaceRepository extends Repository<
 
   async getAttributeByLocIdAndDate(
     locationId: string,
-    attribute: MonitorAttributeBaseDTO,
+    beginDate: Date,
   ): Promise<MonitorAttribute> {
-    const beginDate = attribute.beginDate;
-    const endDate = attribute.endDate;
-
     return this.createQueryBuilder('ma')
       .where('ma.locationId = :locationId', {
         locationId,
       })
-      .andWhere('ma.beginDate = :beginDate OR ma.endDate = :endDate', {
+      .andWhere('ma.beginDate = :beginDate', {
         beginDate,
-        endDate,
       })
       .getOne();
   }

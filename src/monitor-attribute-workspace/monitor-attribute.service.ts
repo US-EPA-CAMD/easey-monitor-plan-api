@@ -53,21 +53,6 @@ export class MonitorAttributeWorkspaceService {
     return this.map.one(result);
   }
 
-  async getAttributeByLocIdAndDate(
-    locationId: string,
-    attribute: MonitorAttributeBaseDTO,
-  ) {
-    const result = await this.repository.getAttributeByLocIdAndDate(
-      locationId,
-      attribute,
-    );
-
-    if (result) {
-      return this.map.one(result);
-    }
-    return result;
-  }
-
   async createAttribute(
     locationId: string,
     payload: MonitorAttributeBaseDTO,
@@ -132,9 +117,9 @@ export class MonitorAttributeWorkspaceService {
       for (const attribute of attributes) {
         promises.push(
           new Promise(async innerResolve => {
-            const attributeRecord = await this.getAttributeByLocIdAndDate(
+            const attributeRecord = await this.repository.getAttributeByLocIdAndDate(
               locationId,
-              attribute,
+              attribute.beginDate,
             );
 
             if (attributeRecord) {

@@ -10,7 +10,6 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 @Injectable()
@@ -53,30 +52,28 @@ export class UnitControlWorkspaceService {
   }
 
   async importUnitControl(
-    location: UpdateMonitorLocationDTO,
-    unitId: number,
+    unitControls: UnitControlBaseDTO[],
+    unitRecordId: number,
     locationId: string,
     userId: string,
   ) {
     return new Promise(async resolve => {
       const promises = [];
 
-      for (const unitControl of location.unitControls) {
+      for (const unitControl of unitControls) {
         promises.push(
           new Promise(async innerResolve => {
-            const unitControlRecord = await this.repository.getUnitControlBySpecs(
-              unitId,
+            const unitControlRecord = await this.repository.getUnitControlByUnitIdParamCdControlCd(
+              unitRecordId,
               unitControl.parameterCode,
               unitControl.controlCode,
-              unitControl.installDate,
-              unitControl.retireDate,
             );
 
             if (unitControlRecord !== undefined) {
               await this.updateUnitControl(
                 userId,
                 locationId,
-                unitId,
+                unitRecordId,
                 unitControlRecord.id,
                 unitControl,
               );
@@ -84,7 +81,7 @@ export class UnitControlWorkspaceService {
               await this.createUnitControl(
                 userId,
                 locationId,
-                unitId,
+                unitRecordId,
                 unitControl,
               );
             }
@@ -101,12 +98,12 @@ export class UnitControlWorkspaceService {
   async createUnitControl(
     userId: string,
     locId: string,
-    unitId: number,
+    unitRecordId: number,
     payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
-    const load = this.repository.create({
+    const unitControl = this.repository.create({
       id: uuid(),
-      unitId: unitId,
+      unitId: unitRecordId,
       controlCode: payload.controlCode,
       parameterCode: payload.parameterCode,
       installDate: payload.installDate,
@@ -119,7 +116,7 @@ export class UnitControlWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(load);
+    const result = await this.repository.save(unitControl);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.map.one(result);
   }
@@ -127,11 +124,15 @@ export class UnitControlWorkspaceService {
   async updateUnitControl(
     userId: string,
     locId: string,
-    unitId: number,
+    unitRecordId: number,
     unitControlId: string,
     payload: UnitControlBaseDTO,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.getUnitControl(locId, unitId, unitControlId);
+    const unitControl = await this.getUnitControl(
+      locId,
+      unitRecordId,
+      unitControlId,
+    );
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;
@@ -145,6 +146,6 @@ export class UnitControlWorkspaceService {
 
     await this.repository.save(unitControl);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getUnitControl(locId, unitId, unitControlId);
+    return this.getUnitControl(locId, unitRecordId, unitControlId);
   }
 }

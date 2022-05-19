@@ -18,34 +18,28 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
     unitRecordId: number,
     unitControlId: string,
   ): Promise<UnitControl> {
-    return this.createQueryBuilder('uf')
-      .innerJoinAndSelect('uf.unit', 'u')
+    return this.createQueryBuilder('uc')
+      .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.location', 'l')
       .where('l.id = :locId', { locId })
       .andWhere('u.id = :unitRecordId', { unitRecordId })
-      .andWhere('uf.id = :unitControlId', { unitControlId })
+      .andWhere('uc.id = :unitControlId', { unitControlId })
       .getOne();
   }
 
-  async getUnitControlBySpecs(
-    unitId: number,
-    ceParam: string,
+  async getUnitControlByUnitIdParamCdControlCd(
+    unitRecordId: number,
+    parameterCode: string,
     controlCode: string,
-    installDate: Date,
-    retireDate: Date,
   ): Promise<UnitControl> {
-    return this.createQueryBuilder('c')
-      .where('c.unitId = :unitId', {
-        unitId,
+    return this.createQueryBuilder('uc')
+      .where('uc.unitId = :unitRecordId', {
+        unitRecordId,
       })
-      .andWhere('c.parameterCode = :ceParam', {
-        ceParam,
+      .andWhere('uc.parameterCode = :parameterCode', {
+        parameterCode,
       })
-      .andWhere('c.controlCode = :controlCode', { controlCode })
-      .andWhere('c.installDate = :installDate OR c.retireDate = :retireDate', {
-        installDate,
-        retireDate,
-      })
+      .andWhere('uc.controlCode = :controlCode', { controlCode })
       .getOne();
   }
 }
