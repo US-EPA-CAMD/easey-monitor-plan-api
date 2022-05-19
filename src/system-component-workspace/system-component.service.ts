@@ -71,14 +71,12 @@ export class SystemComponentWorkspaceService {
     beginDate: Date,
     beginHour: number,
   ): Promise<SystemComponent> {
-    const result = await this.repository.getComponenByBeginOrEndDate(
+    return await this.repository.getComponenByBeginOrEndDate(
       sysId,
       componentId,
       beginDate,
       beginHour,
     );
-
-    return result;
   }
 
   async updateSystemComponent(

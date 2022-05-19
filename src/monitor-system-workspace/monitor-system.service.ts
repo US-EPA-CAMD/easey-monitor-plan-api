@@ -15,7 +15,6 @@ import {
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 
 @Injectable()
@@ -45,9 +44,7 @@ export class MonitorSystemWorkspaceService {
   }
 
   async getSystem(monitoringSystemRecordId: string): Promise<MonitorSystem> {
-    const result = await this.repository.findOne(monitoringSystemRecordId);
-
-    return result;
+    return await this.repository.findOne(monitoringSystemRecordId);
   }
 
   async createSystem(
