@@ -19,6 +19,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOParameterCode.example,
     name: propertyMetadata.monitorDefaultDTOParameterCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     'SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -34,6 +35,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTODefaultValue.example,
     name: propertyMetadata.monitorDefaultDTODefaultValue.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsNumber(
     { maxDecimalPlaces: 4 },
     {
@@ -128,6 +130,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTODefaultSourceCode.example,
     name: propertyMetadata.monitorDefaultDTODefaultSourceCode.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDbValues(
     'SELECT distinct source_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -136,7 +139,6 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
-  @IsOptional()
   defaultSourceCode: string;
 
   @ApiProperty({

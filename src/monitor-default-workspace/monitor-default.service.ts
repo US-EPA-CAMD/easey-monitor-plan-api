@@ -106,4 +106,44 @@ export class MonitorDefaultWorkspaceService {
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(monDefault);
   }
+
+  async importDefault(
+    locationId: string,
+    monDefaults: MonitorDefaultBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+
+      promises.push(
+        new Promise(async innerResolve => {
+          for (const monDefault of monDefaults) {
+            const monDefaultRecord = await this.repository.getDefaultBySpecs(
+              locationId,
+              monDefault.parameterCode,
+              monDefault.defaultValue,
+              monDefault.beginDate,
+              monDefault.beginHour,
+            );
+
+            if (monDefaultRecord !== undefined) {
+              await this.updateDefault(
+                locationId,
+                monDefaultRecord.id,
+                monDefault,
+                userId,
+              );
+            } else {
+              await this.createDefault(locationId, monDefault, userId);
+            }
+
+            resolve(true);
+          }
+        }),
+      );
+
+      await Promise.all(promises);
+      resolve(true);
+    });
+  }
 }
