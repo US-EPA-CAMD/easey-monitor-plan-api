@@ -139,7 +139,10 @@ export class MonitorLocationWorkspaceService {
                 ),
               );
 
-              if (location.unitCapacities.length > 0) {
+              if (
+                location.unitCapacities &&
+                location.unitCapacities.length > 0
+              ) {
                 innerPromises.push(
                   this.unitCapacityService.importUnityCapacity(
                     location.unitCapacities,
@@ -150,7 +153,7 @@ export class MonitorLocationWorkspaceService {
                 );
               }
 
-              if (location.unitControls.length > 0) {
+              if (location.unitControls && location.unitControls.length > 0) {
                 innerPromises.push(
                   this.unitControlService.importUnitControl(
                     location.unitControls,
@@ -161,7 +164,7 @@ export class MonitorLocationWorkspaceService {
                 );
               }
 
-              if (location.unitFuels.length > 0) {
+              if (location.unitFuels && location.unitFuels.length > 0) {
                 innerPromises.push(
                   this.unitFuelService.importUnitFuel(
                     location.unitFuels,
@@ -187,7 +190,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.components.length > 0) {
+            if (location.components && location.components.length > 0) {
               innerPromises.push(
                 this.componentService.importComponent(
                   location,
@@ -197,7 +200,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.systems.length > 0) {
+            if (location.systems && location.systems.length > 0) {
               innerPromises.push(
                 this.systemService.importSystem(
                   location.systems,
@@ -207,7 +210,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.qualifications.length > 0) {
+            if (location.qualifications && location.qualifications.length > 0) {
               innerPromises.push(
                 this.qualificationService.importQualification(
                   location.qualifications,
@@ -217,7 +220,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.matsMethods.length > 0) {
+            if (location.matsMethods && location.matsMethods.length > 0) {
               innerPromises.push(
                 this.matsMethodService.importMatsMethod(
                   monitorLocationRecord.id,
@@ -227,7 +230,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.loads.length > 0) {
+            if (location.loads && location.loads.length > 0) {
               innerPromises.push(
                 this.loadService.importLoad(
                   monitorLocationRecord.id,
@@ -237,7 +240,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.attributes.length > 0) {
+            if (location.attributes && location.attributes.length > 0) {
               innerPromises.push(
                 this.monitorAttributeService.importAttributes(
                   monitorLocationRecord.id,
@@ -247,7 +250,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.formulas.length > 0) {
+            if (location.formulas && location.formulas.length > 0) {
               innerPromises.push(
                 this.formulaService.importFormula(
                   location.formulas,
@@ -267,7 +270,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.ductWafs.length > 0) {
+            if (location.ductWafs && location.ductWafs.length > 0) {
               innerPromises.push(
                 this.ductWafService.importDuctWaf(
                   monitorLocationRecord.id,
@@ -277,7 +280,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.spans.length > 0) {
+            if (location.spans && location.spans.length > 0) {
               innerPromises.push(
                 this.spanService.importSpan(
                   monitorLocationRecord.id,
@@ -287,7 +290,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.defaults.length > 0) {
+            if (location.defaults && location.defaults.length > 0) {
               innerPromises.push(
                 this.defaultService.importDefault(
                   monitorLocationRecord.id,
