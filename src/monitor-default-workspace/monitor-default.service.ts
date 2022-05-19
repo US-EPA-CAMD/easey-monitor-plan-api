@@ -137,7 +137,7 @@ export class MonitorDefaultWorkspaceService {
               await this.createDefault(locationId, monDefault, userId);
             }
 
-            resolve(true);
+            innerResolve(true);
           }
         }),
       );

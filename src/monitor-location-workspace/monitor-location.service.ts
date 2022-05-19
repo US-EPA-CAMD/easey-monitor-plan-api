@@ -230,8 +230,8 @@ export class MonitorLocationWorkspaceService {
             if (location.loads.length > 0) {
               innerPromises.push(
                 this.loadService.importLoad(
-                  location.loads,
                   monitorLocationRecord.id,
+                  location.loads,
                   userId,
                 ),
               );
@@ -257,15 +257,16 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.methods.length > 0) {
-              innerPromises.push(
-                this.methodService.importMethod(
-                  monitorLocationRecord.id,
-                  location.methods,
-                  userId,
-                ),
-              );
-            }
+            // TODO: fix method bug
+            // if (location.methods.length > 0) {
+            //   innerPromises.push(
+            //     this.methodService.importMethod(
+            //       monitorLocationRecord.id,
+            //       location.methods,
+            //       userId,
+            //     ),
+            //   );
+            // }
 
             if (location.ductWafs.length > 0) {
               innerPromises.push(
