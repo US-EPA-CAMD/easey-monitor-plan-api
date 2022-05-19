@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanWorkspaceController } from './monitor-span.controller';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
-import { MonitorSpanBaseDTO } from '../dtos/monitor-span-update.dto';
+import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 
 jest.mock('./monitor-span.service');
 

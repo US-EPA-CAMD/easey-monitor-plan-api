@@ -60,6 +60,22 @@ export class PCTQualificationWorkspaceService {
     return this.map.one(result);
   }
 
+  async getPCTQualificationByDataYear(
+    locId: string,
+    qualId: string,
+    qualDataYear: number,
+  ): Promise<PCTQualificationDTO> {
+    const result = await this.repository.getPCTQualificationByDataYear(
+      locId,
+      qualId,
+      qualDataYear,
+    );
+    if (result) {
+      return this.map.one(result);
+    }
+    return result;
+  }
+
   async createPCTQualification(
     userId: string,
     locId: string,
@@ -117,5 +133,49 @@ export class PCTQualificationWorkspaceService {
     await this.repository.save(pctQual);
     await this.mpService.resetToNeedsEvaluation(locId, userId);
     return this.getPCTQualification(locId, qualId, pctQualId);
+  }
+
+  async importPCTQualification(
+    locationId: string,
+    qualificationId: string,
+    pctQualifications: PCTQualificationBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+      for (const pctQualification of pctQualifications) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const pctQualificationRecord = await this.getPCTQualificationByDataYear(
+              locationId,
+              qualificationId,
+              pctQualification.qualificationYear,
+            );
+
+            if (pctQualificationRecord) {
+              await this.updatePCTQualification(
+                userId,
+                locationId,
+                qualificationId,
+                pctQualificationRecord.id,
+                pctQualification,
+              );
+            } else {
+              await this.createPCTQualification(
+                userId,
+                locationId,
+                qualificationId,
+                pctQualification,
+              );
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }

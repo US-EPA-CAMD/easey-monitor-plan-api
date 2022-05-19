@@ -1,7 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInt, ValidationArguments } from 'class-validator';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
 export class UnitControlBaseDTO {
@@ -11,8 +16,9 @@ export class UnitControlBaseDTO {
   //   example: propertyMetadata.parameterCode.example,
   //   name: propertyMetadata.parameterCode.fieldLabels.value,
   // })
+  @IsNotEmpty()
   @IsInDbValues(
-    `SELECT distinct parameterCode as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
+    `SELECT distinct controlequipparamcode as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [UNITCONTROL-FATAL-B] The value for ${args.value} in the Unit Control record ${args.property} is invalid`;
@@ -26,6 +32,7 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOControlCode.example,
     name: propertyMetadata.unitControlDTOControlCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     `SELECT distinct control_code as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
     {
@@ -41,10 +48,10 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOOriginalCode.example,
     name: propertyMetadata.unitControlDTOOriginalCode.fieldLabels.value,
   })
-  @IsInt()
-  @IsInRange(0, 1, {
+  @IsOptional()
+  @IsIn(['0', '1'], {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record  ${args.property} must be within the range of 0 and 1`;
+      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
     },
   })
   originalCode: string;
@@ -54,6 +61,7 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOInstallDate.example,
     name: propertyMetadata.unitControlDTOInstallDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -66,6 +74,7 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOOptimizationDate.example,
     name: propertyMetadata.unitControlDTOOptimizationDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -81,10 +90,10 @@ export class UnitControlBaseDTO {
       propertyMetadata.unitControlDTOSeasonalControlsIndicator.fieldLabels
         .value,
   })
-  @IsInt()
-  @IsInRange(0, 1, {
+  @IsOptional()
+  @IsIn(['0', '1'], {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record  ${args.property} must be within the range of 0 and 1`;
+      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
     },
   })
   seasonalControlsIndicator: string;
@@ -94,6 +103,7 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTORetireDate.example,
     name: propertyMetadata.unitControlDTORetireDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format yyyy-mm-dd`;

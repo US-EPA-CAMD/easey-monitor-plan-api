@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 

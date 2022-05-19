@@ -14,17 +14,16 @@ export class MonitorLoad extends BaseEntity {
   @PrimaryColumn({ type: 'varchar', length: 45, name: 'load_id' })
   id: string;
 
-  @Column({ type: 'varchar', length: 45, nullable: false, name: 'mon_loc_id' })
+  @Column({ type: 'varchar', length: 45, name: 'mon_loc_id' })
   locationId: string;
 
-  @Column({ type: 'date', nullable: true, name: 'load_analysis_date' })
+  @Column({ type: 'date', name: 'load_analysis_date' })
   loadAnalysisDate: Date;
 
-  @Column({ type: 'date', nullable: true, name: 'begin_date' })
+  @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
   @Column({
-    nullable: true,
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
   })
@@ -68,7 +67,6 @@ export class MonitorLoad extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 7,
-    nullable: false,
     name: 'normal_level_cd',
   })
   normalLevelCode: string;
@@ -76,12 +74,11 @@ export class MonitorLoad extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 7,
-    nullable: false,
     name: 'second_level_cd',
   })
   secondLevelCode: string;
 
-  @Column({ type: 'varchar', length: 8, nullable: false, name: 'userid' })
+  @Column({ type: 'varchar', length: 8, name: 'userid' })
   userId: string;
 
   @Column({ type: 'date', name: 'add_date' })
@@ -93,7 +90,6 @@ export class MonitorLoad extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 8,
-    nullable: false,
     name: 'max_load_uom_cd',
   })
   maximumLoadUnitsOfMeasureCode: string;

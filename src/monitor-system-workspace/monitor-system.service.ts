@@ -15,7 +15,6 @@ import {
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -103,15 +102,39 @@ export class MonitorSystemWorkspaceService {
   }
 
   async importSystem(
-    location: UpdateMonitorLocationDTO,
+    systems: MonitorSystemBaseDTO[],
     locationId: string,
     userId: string,
   ) {
     return new Promise(async resolve => {
-      for (const system of location.systems) {
-        await this.createSystem(locationId, system, userId);
+      const promises = [];
+
+      for (const system of systems) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
+              locationId,
+              system.monitoringSystemId,
+            );
+
+            if (systemRecord !== undefined) {
+              await this.updateSystem(
+                systemRecord.monitoringSystemId,
+                system,
+                locationId,
+                userId,
+              );
+            } else {
+              await this.createSystem(locationId, system, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+
+        await Promise.all(promises);
+        resolve(true);
       }
-      resolve(true);
     });
   }
 }

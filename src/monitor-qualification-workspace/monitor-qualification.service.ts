@@ -15,7 +15,9 @@ import {
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
+import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
+import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -27,18 +29,23 @@ export class MonitorQualificationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+
+    private readonly leeQualificationService: LEEQualificationWorkspaceService,
+    private readonly lmeQualificationService: LMEQualificationWorkspaceService,
+    private readonly pctQualificationService: PCTQualificationWorkspaceService,
   ) {}
 
   async importQualification(
-    location: UpdateMonitorLocationDTO,
+    qualifications: MonitorQualificationBaseDTO[],
     locationId: string,
     userId: string,
   ) {
     return new Promise(async resolve => {
       const promises = [];
-      for (const qualification of location.qualifications) {
+      for (const qualification of qualifications) {
         promises.push(
           new Promise(async innerResolve => {
+            const innerPromises = [];
             const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
               locationId,
               qualification.qualificationTypeCode,
@@ -52,10 +59,63 @@ export class MonitorQualificationWorkspaceService {
                 qualificationRecord.id,
                 qualification,
               );
+              innerPromises.push(
+                this.leeQualificationService.importLEEQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.leeQualifications,
+                  userId,
+                ),
+              );
+              innerPromises.push(
+                this.lmeQualificationService.importLMEQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.lmeQualifications,
+                  userId,
+                ),
+              );
+              innerPromises.push(
+                this.pctQualificationService.importPCTQualification(
+                  locationId,
+                  qualificationRecord.id,
+                  qualification.pctQualifications,
+                  userId,
+                ),
+              );
             } else {
-              await this.createQualification(userId, locationId, qualification);
+              const createdQualification = await this.createQualification(
+                userId,
+                locationId,
+                qualification,
+              );
+              innerPromises.push(
+                this.leeQualificationService.importLEEQualification(
+                  locationId,
+                  createdQualification.id,
+                  qualification.leeQualifications,
+                  userId,
+                ),
+              );
+              innerPromises.push(
+                this.lmeQualificationService.importLMEQualification(
+                  locationId,
+                  createdQualification.id,
+                  qualification.lmeQualifications,
+                  userId,
+                ),
+              );
+              innerPromises.push(
+                this.pctQualificationService.importPCTQualification(
+                  locationId,
+                  createdQualification.id,
+                  qualification.pctQualifications,
+                  userId,
+                ),
+              );
             }
 
+            await Promise.all(innerPromises);
             innerResolve(true);
           }),
         );

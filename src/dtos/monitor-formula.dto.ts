@@ -19,6 +19,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaId.example,
     name: propertyMetadata.monitorFormulaDTOFormulaId.fieldLabels.value,
   })
+  @IsNotEmpty()
   @MatchesRegEx('^[A-Z0-9-]{1,3}$', {
     message: (args: ValidationArguments) => {
       return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Z0-9-]{1,3}`;
@@ -31,6 +32,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOParameterCode.example,
     name: propertyMetadata.monitorFormulaDTOParameterCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     'SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_formula_master_data_relationships',
     {
@@ -75,7 +77,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOBeginDate.example,
     name: propertyMetadata.monitorFormulaDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -88,7 +90,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOBeginHour.example,
     name: propertyMetadata.monitorFormulaDTOBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
@@ -102,7 +104,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOEndDate.example,
     name: propertyMetadata.monitorFormulaDTOEndDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -116,7 +118,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOEndHour.example,
     name: propertyMetadata.monitorFormulaDTOEndHour.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {

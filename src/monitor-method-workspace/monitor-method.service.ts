@@ -94,4 +94,42 @@ export class MonitorMethodWorkspaceService {
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(method);
   }
+
+  async importMethod(
+    locationId: string,
+    methods: MonitorMethodBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+
+      for (const method of methods) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const methodRecord = await this.repository.getMethodByLocIdParamCDBDate(
+              locationId,
+              method.parameterCode,
+              method.beginDate,
+            );
+
+            if (methodRecord !== undefined) {
+              await this.updateMethod(
+                methodRecord.id,
+                method,
+                locationId,
+                userId,
+              );
+            } else {
+              await this.createMethod(locationId, method, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+
+        await Promise.all(promises);
+        resolve(true);
+      }
+    });
+  }
 }

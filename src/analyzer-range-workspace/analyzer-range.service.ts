@@ -66,8 +66,6 @@ export class AnalyzerRangeWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    console.log('Analyzer Range Id', analyzerRange.id);
-
     await this.repository.save(analyzerRange);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(analyzerRange);
@@ -111,8 +109,6 @@ export class AnalyzerRangeWorkspaceService {
               analyzerRange,
             );
 
-            console.log('AnalyzerRange: ', analyzerRangeRecord);
-
             if (analyzerRangeRecord) {
               await this.updateAnalyzerRange(
                 analyzerRangeRecord.id,
@@ -121,7 +117,6 @@ export class AnalyzerRangeWorkspaceService {
                 userId,
               );
             } else {
-              console.log('Creating Analyzer Range');
               await this.createAnalyzerRange(
                 componentId,
                 analyzerRange,

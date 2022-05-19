@@ -12,4 +12,14 @@ export class MonitorFormulaWorkspaceRepository extends Repository<
       .andWhere('mf.id = :id ', { id })
       .getOne();
   }
+
+  async getFormulaByLocIdAndFormulaIdentifier(
+    locationId: string,
+    formulaId: string,
+  ): Promise<MonitorFormula> {
+    return this.createQueryBuilder('mf')
+      .where('mf.locationId = :locationId', { locationId })
+      .andWhere('mf.formulaId = :formulaId', { formulaId })
+      .getOne();
+  }
 }

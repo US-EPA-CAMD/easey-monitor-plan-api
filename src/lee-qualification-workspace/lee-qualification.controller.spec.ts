@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationWorkspaceController } from './lee-qualification.controller';
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
-import { LEEQualificationBaseDTO } from '../dtos/lee-qualification-update.dto';
+import { LEEQualificationBaseDTO } from '../dtos/lee-qualification.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';

@@ -5,7 +5,7 @@ import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { MatsMethodMap } from '../maps/mats-method.map';
-import { MatsMethodBaseDTO } from '../dtos/mats-method-update.dto';
+import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([]),

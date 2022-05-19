@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { MonitorMethodWorkspaceController } from './monitor-method.controller';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./monitor-method.service');
 
