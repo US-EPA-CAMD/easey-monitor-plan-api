@@ -43,8 +43,8 @@ export class MonitorLoadWorkspaceService {
   }
 
   async importLoad(
-    loads: MonitorLoadBaseDTO[],
     locationId: string,
+    loads: MonitorLoadBaseDTO[],
     userId: string,
   ) {
     return new Promise(async resolve => {

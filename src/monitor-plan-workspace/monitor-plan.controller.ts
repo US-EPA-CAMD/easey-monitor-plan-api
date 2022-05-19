@@ -86,7 +86,7 @@ export class MonitorPlanWorkspaceController {
     @Body() plan: UpdateMonitorPlanDTO,
   ): Promise<MonitorPlanDTO> {
     await this.importChecksService.mpFileChecks(plan);
-    await this.service.importMpPlan(plan, 'kyle');
+    await this.service.importMpPlan(plan, 'newUser');
 
     return null;
   }
