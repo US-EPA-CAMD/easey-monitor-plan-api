@@ -110,4 +110,38 @@ export class MonitorSpanWorkspaceService {
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(span);
   }
+
+  async importSpan(
+    locationId: string,
+    spans: MonitorSpanBaseDTO[],
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+
+      for (const span of spans) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const spanRecord = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
+              locationId,
+              span.componentTypeCode,
+              span.beginDate,
+              span.beginHour,
+            );
+
+            if (spanRecord !== undefined) {
+              await this.updateSpan(locationId, spanRecord.id, span, userId);
+            } else {
+              await this.createSpan(locationId, span, userId);
+            }
+
+            innerResolve(true);
+          }),
+        );
+
+        await Promise.all(promises);
+        resolve(true);
+      }
+    });
+  }
 }
