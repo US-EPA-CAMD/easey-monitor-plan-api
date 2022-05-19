@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -15,6 +10,7 @@ import {
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -26,6 +22,8 @@ export class MonitorSystemWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+
+    private readonly systemComponentService: SystemComponentWorkspaceService,
   ) {}
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
@@ -38,6 +36,10 @@ export class MonitorSystemWorkspaceService {
       },
     });
     return this.map.many(results);
+  }
+
+  async getSystem(monitoringSystemRecordId: string): Promise<MonitorSystem> {
+    return this.repository.findOne(monitoringSystemRecordId);
   }
 
   async createSystem(
@@ -66,26 +68,13 @@ export class MonitorSystemWorkspaceService {
     return this.map.one(system);
   }
 
-  async getSystem(monitoringSystemId: string): Promise<MonitorSystem> {
-    const result = await this.repository.findOne(monitoringSystemId);
-
-    if (!result) {
-      this.logger.error(NotFoundException, 'Monitor System Not Found', true, {
-        monitoringSystemId: monitoringSystemId,
-      });
-    }
-
-    return result;
-  }
-
   async updateSystem(
-    monitoringSystemId: string,
+    monitoringSystemRecordId: string,
     payload: MonitorSystemBaseDTO,
     locId: string,
     userId: string,
   ): Promise<MonitorSystemDTO> {
-    const system = await this.getSystem(monitoringSystemId);
-
+    const system = await this.getSystem(monitoringSystemRecordId);
     system.systemTypeCode = payload.systemTypeCode;
     system.systemDesignationCode = payload.systemDesignationCode;
     system.fuelCode = payload.fuelCode;
@@ -112,6 +101,7 @@ export class MonitorSystemWorkspaceService {
       for (const system of systems) {
         promises.push(
           new Promise(async innerResolve => {
+            const innerPromises = [];
             const systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
               locationId,
               system.monitoringSystemId,
@@ -119,22 +109,44 @@ export class MonitorSystemWorkspaceService {
 
             if (systemRecord !== undefined) {
               await this.updateSystem(
-                systemRecord.monitoringSystemId,
+                systemRecord.id,
                 system,
                 locationId,
                 userId,
               );
+
+              innerPromises.push(
+                this.systemComponentService.importComponent(
+                  locationId,
+                  systemRecord.id,
+                  system.components,
+                  userId,
+                ),
+              );
             } else {
-              await this.createSystem(locationId, system, userId);
+              const createdSystemRecord = await this.createSystem(
+                locationId,
+                system,
+                userId,
+              );
+              innerPromises.push(
+                this.systemComponentService.importComponent(
+                  locationId,
+                  createdSystemRecord.id,
+                  system.components,
+                  userId,
+                ),
+              );
             }
 
+            await Promise.all(innerPromises);
             innerResolve(true);
           }),
         );
-
-        await Promise.all(promises);
-        resolve(true);
       }
+
+      await Promise.all(promises);
+      resolve(true);
     });
   }
 }

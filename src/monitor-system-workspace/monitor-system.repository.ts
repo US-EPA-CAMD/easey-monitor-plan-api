@@ -11,8 +11,8 @@ export class MonitorSystemWorkspaceRepository extends Repository<
     monitoringSystemId: string,
   ): Promise<MonitorSystem> {
     return this.createQueryBuilder('ms')
-      .where('ms.locationID =: locationId', { locationId })
-      .andWhere('ms.monitoringSystemId =: monitoringSystemId', {
+      .where('ms.locationId = :locationId', { locationId })
+      .andWhere('ms.monitoringSystemId = :monitoringSystemId', {
         monitoringSystemId,
       })
       .getOne();

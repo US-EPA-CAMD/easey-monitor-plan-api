@@ -1,4 +1,3 @@
-import { Component } from '../entities/workspace/component.entity';
 import { Repository, EntityRepository } from 'typeorm';
 
 import { SystemComponent } from '../entities/workspace/system-component.entity';
@@ -7,13 +6,13 @@ import { SystemComponent } from '../entities/workspace/system-component.entity';
 export class SystemComponentWorkspaceRepository extends Repository<
   SystemComponent
 > {
-  async getComponent(
+  async getSystemComponent(
     monSysId: string,
-    componentId: string,
+    monSysCompId: string,
   ): Promise<SystemComponent> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
-      .where('msc.componentRecordId = :componentId', { componentId })
+      .where('msc.id = :monSysCompId', { monSysCompId })
       .andWhere('msc.monitoringSystemRecordId = :monSysId', {
         monSysId,
       })
@@ -40,5 +39,20 @@ export class SystemComponentWorkspaceRepository extends Repository<
       .where('msc.monitoringSystemRecordId IN (:...monSysIds)', { monSysIds })
       .orderBy('c.componentId', 'ASC')
       .getMany();
+  }
+
+  async getComponenByBeginOrEndDate(
+    monSysId: string,
+    componentId: string,
+    beginDate: Date,
+    beginHour: number,
+  ): Promise<SystemComponent> {
+    return this.createQueryBuilder('msc')
+      .innerJoinAndSelect('msc.component', 'c')
+      .where('c.componentId = :componentId', { componentId })
+      .andWhere('msc.monitoringSystemRecordId = :monSysId', { monSysId })
+      .andWhere('msc.beginDate = :beginDate', { beginDate })
+      .andWhere('msc.beginHour = :beginHour', { beginHour })
+      .getOne();
   }
 }

@@ -14,13 +14,16 @@ export class ComponentWorkspaceRepository extends Repository<Component> {
 
   async getComponentByLocIdAndCompId(
     locationId: string,
-    componentId: string,
+    componentIdentifier: string,
   ): Promise<Component> {
     return this.createQueryBuilder('c')
-      .where('c.componentId = :componentId AND c.locationId = :locationId', {
-        componentId,
-        locationId,
-      })
+      .where(
+        'c.componentId = :componentIdentifier AND c.locationId = :locationId',
+        {
+          componentIdentifier,
+          locationId,
+        },
+      )
       .getOne();
   }
 }
