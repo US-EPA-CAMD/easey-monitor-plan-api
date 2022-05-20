@@ -1,5 +1,5 @@
 import { In } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
@@ -133,7 +133,7 @@ export class MonitorPlanWorkspaceService {
       console.log(activePlan);
     } else {
       console.log('No active Plan');
-      return null;
+      throw new HttpException('No active Plan', HttpStatus.NOT_FOUND);
     }
 
     // Monitor Plan Comment Merge Logic
