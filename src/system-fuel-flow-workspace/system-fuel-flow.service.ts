@@ -108,8 +108,7 @@ export class SystemFuelFlowWorkspaceService {
             const innerPromises = [];
             const fuelFlowRecord = await this.repository.getFuelFlowByBeginOrEndDate(
               sysId,
-              fuelFlow.maximumFuelFlowRate,
-              fuelFlow.systemFuelFlowUOMCode,
+              fuelFlow,
             );
 
             if (fuelFlowRecord) {
