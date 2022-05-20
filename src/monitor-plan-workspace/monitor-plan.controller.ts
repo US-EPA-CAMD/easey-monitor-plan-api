@@ -82,13 +82,18 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
   })
-  async importPlan(
-    @Body() plan: UpdateMonitorPlanDTO,
-  ): Promise<MonitorPlanDTO> {
+  async importPlan(@Body() plan: UpdateMonitorPlanDTO): Promise<any> {
     await this.importChecksService.mpFileChecks(plan);
-    await this.service.importMpPlan(plan, 'newUser');
+    const mpPlan = await this.service.importMpPlan(plan, 'newUser');
 
-    return null;
+    // TODO: Temporary returned message
+    if (mpPlan === null) {
+      return {
+        message: `Monitoring plan Successfully Updated.`,
+      };
+    }
+
+    return mpPlan;
   }
 
   @Delete(':planId/revert')
