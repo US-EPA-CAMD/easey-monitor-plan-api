@@ -64,7 +64,7 @@ export const Check7 = new Check(
   async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
     const result = new CheckResult('IMPORT7');
 
-    const entityManager = getEntityManager();
+    // const entityManager = getEntityManager();
     // const facility = await getFacIdFromOris(monPlan.orisCode);
 
     // TODO: Refactor IMPORT CHECK 7
