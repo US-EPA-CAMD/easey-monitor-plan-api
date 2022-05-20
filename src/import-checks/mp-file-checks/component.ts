@@ -65,7 +65,7 @@ export const Check7 = new Check(
     const result = new CheckResult('IMPORT7');
 
     const entityManager = getEntityManager();
-    const facility = await getFacIdFromOris(monPlan.orisCode);
+    // const facility = await getFacIdFromOris(monPlan.orisCode);
 
     // TODO: Refactor IMPORT CHECK 7
     /* for (const loc of monPlan.locations) {
