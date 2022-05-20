@@ -81,7 +81,7 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOBeginDate.example,
     name: propertyMetadata.systemFuelFlowDTOBeginDate.fieldLabels.value,
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -94,7 +94,7 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOBeginHour.example,
     name: propertyMetadata.systemFuelFlowDTOBeginHour.fieldLabels.value,
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {

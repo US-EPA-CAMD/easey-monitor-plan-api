@@ -1,3 +1,4 @@
+import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
 import { Repository, EntityRepository } from 'typeorm';
 
 import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
@@ -31,17 +32,24 @@ export class SystemFuelFlowWorkspaceRepository extends Repository<
 
   async getFuelFlowByBeginOrEndDate(
     monSysId: string,
-    maximumFuelFlowRate: number,
-    systemFuelFlowUOMCode: string,
+    fuelFlow: SystemFuelFlowBaseDTO,
   ): Promise<SystemFuelFlow> {
+    const beginDate = fuelFlow.beginDate;
+    const beginHour = fuelFlow.beginHour;
+    const endDate = fuelFlow.endDate;
+    const endHour = fuelFlow.endHour;
+
     return this.createQueryBuilder('sff')
       .where('sff.monitoringSystemRecordId = :monSysId', { monSysId })
-      .andWhere('sff.maximumFuelFlowRate = :maximumFuelFlowRate', {
-        maximumFuelFlowRate,
-      })
-      .andWhere('sff.systemFuelFlowUOMCode = :systemFuelFlowUOMCode', {
-        systemFuelFlowUOMCode,
-      })
+      .andWhere(
+        '(sff.beginDate = :beginDate AND sff.beginHour = :beginHour) OR (sff.endDate = :endDate AND sff.endHour = :endHour)',
+        {
+          beginDate,
+          beginHour,
+          endDate,
+          endHour,
+        },
+      )
       .getOne();
   }
 }
