@@ -5,7 +5,7 @@ import {
   getFacIdFromOris,
   getMonLocId,
 } from '../utilities/utils';
-import { Component } from '../../entities/component.entity';
+import { Component } from '../../entities/workspace/component.entity';
 
 export const Check6 = new Check(
   {
@@ -67,7 +67,8 @@ export const Check7 = new Check(
     const entityManager = getEntityManager();
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
-    for (const loc of monPlan.locations) {
+    // TODO: Refactor IMPORT CHECK 7
+    /* for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const component of loc.components) {
@@ -82,10 +83,10 @@ export const Check7 = new Check(
             `The workspace database does not contain a Component record for ${component.componentId}`,
           );
         }
-      }
+      } 
 
-      return result;
-    }
+    }*/
+    return result;
   },
 );
 

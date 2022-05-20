@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO } from './analyzer-range.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -19,6 +20,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOComponentId.example,
     name: propertyMetadata.componentDTOComponentId.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsString()
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
@@ -32,6 +34,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOComponentTypeCode.example,
     name: propertyMetadata.componentDTOComponentTypeCode.fieldLabels.value,
   })
+  @IsNotEmpty()
   @IsInDbValues(
     'SELECT distinct component_type_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
     {
@@ -121,6 +124,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOHgConverterIndicator.example,
     name: propertyMetadata.componentDTOHgConverterIndicator.fieldLabels.value,
   })
+  @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must be within the range of 0 and 1`;
