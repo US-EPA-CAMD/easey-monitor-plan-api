@@ -70,6 +70,42 @@ export class MonitorSystemWorkspaceService {
     return this.map.one(system);
   }
 
+  private async updateSysComponentAndFuelFlow(
+    systemRecordId: string,
+    system: MonitorSystemBaseDTO,
+    locationId: string,
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+
+      if (system.components && system.components.length > 0) {
+        promises.push(
+          this.systemComponentService.importComponent(
+            locationId,
+            systemRecordId,
+            system.components,
+            userId,
+          ),
+        );
+      }
+
+      if (system.fuelFlows && system.fuelFlows.length > 0) {
+        promises.push(
+          this.systemFuelFlowService.importFuelFlow(
+            locationId,
+            systemRecordId,
+            system.fuelFlows,
+            userId,
+          ),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
+  }
+
   async updateSystem(
     monitoringSystemRecordId: string,
     payload: MonitorSystemBaseDTO,
@@ -118,19 +154,10 @@ export class MonitorSystemWorkspaceService {
               );
 
               innerPromises.push(
-                this.systemComponentService.importComponent(
-                  locationId,
+                this.updateSysComponentAndFuelFlow(
                   systemRecord.id,
-                  system.components,
-                  userId,
-                ),
-              );
-
-              innerPromises.push(
-                this.systemFuelFlowService.importFuelFlow(
+                  system,
                   locationId,
-                  systemRecord.id,
-                  system.fuelFlows,
                   userId,
                 ),
               );
@@ -141,18 +168,10 @@ export class MonitorSystemWorkspaceService {
                 userId,
               );
               innerPromises.push(
-                this.systemComponentService.importComponent(
-                  locationId,
+                this.updateSysComponentAndFuelFlow(
                   createdSystemRecord.id,
-                  system.components,
-                  userId,
-                ),
-              );
-              innerPromises.push(
-                this.systemFuelFlowService.importFuelFlow(
+                  system,
                   locationId,
-                  createdSystemRecord.id,
-                  system.fuelFlows,
                   userId,
                 ),
               );

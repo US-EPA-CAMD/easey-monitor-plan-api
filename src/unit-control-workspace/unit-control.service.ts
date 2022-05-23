@@ -67,6 +67,8 @@ export class UnitControlWorkspaceService {
               unitRecordId,
               unitControl.parameterCode,
               unitControl.controlCode,
+              unitControl.installDate,
+              unitControl.retireDate,
             );
 
             if (unitControlRecord !== undefined) {
