@@ -31,6 +31,8 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
     unitRecordId: number,
     parameterCode: string,
     controlCode: string,
+    installDate: Date,
+    retireDate: Date,
   ): Promise<UnitControl> {
     return this.createQueryBuilder('uc')
       .where('uc.unitId = :unitRecordId', {
@@ -40,6 +42,10 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
         parameterCode,
       })
       .andWhere('uc.controlCode = :controlCode', { controlCode })
+      .andWhere(
+        '(uc.installDate = :installDate) OR (uc.retireDate = :retireDate)',
+        { installDate, retireDate },
+      )
       .getOne();
   }
 }
