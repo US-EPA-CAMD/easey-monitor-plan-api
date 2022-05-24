@@ -13,9 +13,9 @@ export class UnitStackConfigurationMap extends BaseMap<
     entity: UnitStackConfiguration,
   ): Promise<UnitStackConfigurationDTO> {
     return {
-      stackPipeId: entity.stackPipe.name,
-      unitId: entity.unit.name,
       id: entity.id,
+      unitId: entity.unit ? entity.unit.name : null,
+      stackPipeId: entity.stackPipe ? entity.stackPipe.name : null,
       unitRecordId: entity.unitId,
       stackPipeRecordId: entity.stackPipeId,
       beginDate: entity.beginDate,

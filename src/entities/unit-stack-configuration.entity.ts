@@ -15,19 +15,23 @@ export class UnitStackConfiguration extends BaseEntity {
   @PrimaryColumn({ name: 'config_id' })
   id: string;
 
-  @Column({ name: 'unit_id', transformer: new NumericColumnTransformer() })
+  @Column({
+    type: 'numeric',
+    name: 'unit_id',
+    transformer: new NumericColumnTransformer(),
+  })
   unitId: number;
 
-  @Column({ name: 'stack_pipe_id' })
+  @Column({ type: 'varchar', name: 'stack_pipe_id' })
   stackPipeId: string;
 
-  @Column({ name: 'begin_date' })
+  @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ name: 'end_date' })
+  @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'userid' })
+  @Column({ type: 'varchar', name: 'userid' })
   userId: string;
 
   @Column({ name: 'add_date' })
