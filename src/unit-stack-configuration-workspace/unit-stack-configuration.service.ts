@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitService } from '../unit/unit.service';
-import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
-import { v4 } from 'uuid';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -36,29 +36,25 @@ export class UnitStackConfigurationWorkspaceService {
               facilityId,
             );
 
-            const unitStackConfigRecord = await this.repository.findOne({
-              where: { unitId: unit.id, stackPipeId: stackPipe.id },
-            });
+            const unitStackConfigRecord = await this.repository.getUnitStackByUnitIdStackIdBDate(
+              unit.id,
+              stackPipe.id,
+              unitStackConfig.beginDate,
+            );
 
             if (unitStackConfigRecord !== undefined) {
-              unitStackConfigRecord.updateDate = new Date(Date.now());
-              unitStackConfigRecord.beginDate = unitStackConfig.beginDate;
-              unitStackConfigRecord.endDate = unitStackConfig.endDate;
-              unitStackConfigRecord.userId = userId;
-
-              await this.repository.save(unitStackConfigRecord);
+              await this.updateUnitStackConfig(
+                unitStackConfigRecord.id,
+                unitStackConfig,
+                userId,
+              );
             } else {
-              const unitStack = new UnitStackConfiguration();
-              unitStack.id = v4();
-              unitStack.updateDate = new Date(Date.now());
-              unitStack.unitId = unit.id;
-              unitStack.stackPipeId = stackPipe.id;
-              unitStack.beginDate = unitStackConfig.beginDate;
-              unitStack.endDate = unitStackConfig.endDate;
-              unitStack.userId = userId;
-
-              const val = this.repository.create(unitStack);
-              this.repository.save(val);
+              await this.createUnitStackConfig(
+                unit.id,
+                stackPipe.id,
+                unitStackConfig,
+                userId,
+              );
             }
             innerResolve(true);
           }),
@@ -88,5 +84,41 @@ export class UnitStackConfigurationWorkspaceService {
     }
 
     return this.map.many(relationship);
+  }
+
+  async createUnitStackConfig(
+    unitRecordId: number,
+    stackPipeRecordId: string,
+    payload: UnitStackConfigurationBaseDTO,
+    userId: string,
+  ) {
+    const unitStackConfig = this.repository.create({
+      id: uuid(),
+      unitId: unitRecordId,
+      stackPipeId: stackPipeRecordId,
+      beginDate: payload.beginDate,
+      endDate: payload.endDate,
+      addDate: new Date(Date.now()),
+      updateDate: new Date(Date.now()),
+      userId,
+    });
+
+    await this.repository.save(unitStackConfig);
+    return this.map.one(unitStackConfig);
+  }
+
+  async updateUnitStackConfig(
+    id: string,
+    payload: UnitStackConfigurationBaseDTO,
+    userId: string,
+  ) {
+    const unitStackConfig = await this.repository.getUnitStackById(id);
+
+    unitStackConfig.endDate = payload.endDate;
+    unitStackConfig.userId = userId;
+    unitStackConfig.updateDate = new Date(Date.now());
+
+    await this.repository.save(unitStackConfig);
+    return this.map.one(unitStackConfig);
   }
 }
