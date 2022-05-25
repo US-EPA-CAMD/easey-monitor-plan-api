@@ -105,11 +105,13 @@ export class MonitorPlanWorkspaceService {
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
     const locationPlanIds = [];
+
     const monitorLocations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
       plan,
       facilityId,
       plan.orisCode,
     );
+
     for (const loc of monitorLocations) {
       for (const locPlan of loc.plans) {
         locationPlanIds.push(locPlan.id);
@@ -118,6 +120,8 @@ export class MonitorPlanWorkspaceService {
 
     // Get all ACTIVE plans
     const plans = await this.repository.getActivePlansByFacId(facilityId);
+
+    console.log('Monitor Plans', plans);
 
     let activePlan = null;
     for (const possiblePlan of plans) {
