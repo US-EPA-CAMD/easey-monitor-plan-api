@@ -119,8 +119,6 @@ export class MonitorPlanWorkspaceService {
     // Get all ACTIVE plans
     const plans = await this.repository.getActivePlansByFacId(facilityId);
 
-    console.log('Monitor Plans', plans);
-
     let activePlan = null;
     for (const possiblePlan of plans) {
       for (const possibleLoc of locationPlanIds) {
