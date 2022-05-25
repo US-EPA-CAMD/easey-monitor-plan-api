@@ -17,37 +17,48 @@ import { MonitorPlanComment } from './monitor-plan-comment.entity';
 @Entity({ name: 'camdecmpswks.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
   @PrimaryColumn({
+    type: 'varchar',
+    length: 45,
     name: 'mon_plan_id',
   })
   id: string;
 
   @Column({
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'fac_id',
     transformer: new NumericColumnTransformer(),
   })
   facId: number;
 
   @Column({
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'end_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
   endReportPeriodId: number;
 
-  // pointing to needs_eval_flg because there is no eval_status_cd column in global view
   @Column({
-    name: 'needs_eval_flg',
+    type: 'varchar',
+    length: 7,
+    name: 'eval_status_cd',
   })
   evalStatusCode: string;
 
   @Column({
+    type: 'varchar',
+    length: 25,
     name: 'userid',
   })
   userId: string;
 
-  @Column({ type: 'date', nullable: false, name: 'add_date' })
+  @Column({ nullable: false, name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', name: 'update_date' })
+  @Column({ name: 'update_date' })
   updateDate: Date;
 
   @ManyToOne(
