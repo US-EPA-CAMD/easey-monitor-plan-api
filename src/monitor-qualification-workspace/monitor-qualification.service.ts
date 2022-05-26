@@ -137,8 +137,8 @@ export class MonitorQualificationWorkspaceService {
               }
 
               if (
-                qualification.lmeQualifications &&
-                qualification.lmeQualifications.length > 0
+                qualification.pctQualifications &&
+                qualification.pctQualifications.length > 0
               ) {
                 innerPromises.push(
                   this.pctQualificationService.importPCTQualification(
