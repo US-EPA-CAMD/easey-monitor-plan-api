@@ -31,12 +31,12 @@ import { LMEQualificationWorkspaceRepository } from '../lme-qualification-worksp
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 import { getFacIdFromOris } from '../import-checks/utilities/utils';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
+import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -93,60 +93,44 @@ export class MonitorPlanWorkspaceService {
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
+    private readonly monPlanLocationService: MonitorPlanLocationService,
 
     private map: MonitorPlanMap,
   ) {}
 
   async importMpPlan(
-    plan: UpdateMonitorPlanDTO,
+    plan: MonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
-    const locationPlanIds = [];
+    // Get ACTIVE planIds by FacId
+    const activePlans = await this.repository.getActivePlansByFacId(facilityId);
 
-    const monitorLocations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
-      plan,
-      facilityId,
-      plan.orisCode,
-    );
+    const locationIds = plan.locations.map(l => l.id);
 
-    for (const loc of monitorLocations) {
-      for (const locPlan of loc.plans) {
-        locationPlanIds.push(locPlan.id);
-      }
-    }
+    // Get Active Plan
+    let activePlanId: string;
 
-    // Get all ACTIVE plans
-    const plans = await this.repository.getActivePlansByFacId(facilityId);
-
-    console.log('Monitor Plans', plans);
-
-    let activePlan = null;
-    for (const possiblePlan of plans) {
-      for (const possibleLoc of locationPlanIds) {
-        if (possiblePlan.id === possibleLoc) {
-          activePlan = possiblePlan;
-          break;
-        }
-      }
-    }
-
-    if (activePlan != null) {
-      console.log(activePlan);
+    if (plan.id) {
+      activePlanId = plan.id;
     } else {
-      console.log('No active Plan');
-      throw new HttpException('No active Plan', HttpStatus.NOT_FOUND);
+      {
+        // Get active plan
+        const activePlan = await this.repository.getActivePlanByLocation(
+          locationIds[0],
+        );
+
+        activePlanId = activePlan.id;
+
+        console.log('Active Plan', activePlanId);
+      }
     }
 
     // Monitor Plan Comment Merge Logic
     promises.push(
-      this.monitorPlanCommentService.importComments(
-        plan,
-        userId,
-        activePlan.id,
-      ),
+      this.monitorPlanCommentService.importComments(plan, userId, activePlanId),
     );
 
     //Unit Stack Merge Logic
