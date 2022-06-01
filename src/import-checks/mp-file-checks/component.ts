@@ -55,41 +55,6 @@ export const Check6 = new Check(
   },
 );
 
-export const Check7 = new Check(
-  {
-    checkName: 'Check7',
-    checkDescription:
-      'Component in the System Component Record Present in Workspace Component Table. Each component in the system component table must be a component in the component table.',
-  },
-  async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
-    const result = new CheckResult('IMPORT7');
-
-    // const entityManager = getEntityManager();
-    // const facility = await getFacIdFromOris(monPlan.orisCode);
-
-    // TODO: Refactor IMPORT CHECK 7
-    /* for (const loc of monPlan.locations) {
-      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
-
-      for (const component of loc.components) {
-        const Comp = await entityManager.findOne(Component, {
-          locationId: monLoc.id,
-          componentId: component.componentId,
-        });
-
-        if (Comp === undefined) {
-          result.addError(
-            'CRIT1-A',
-            `The workspace database does not contain a Component record for ${component.componentId}`,
-          );
-        }
-      } 
-
-    }*/
-    return result;
-  },
-);
-
 export const Check32 = new Check(
   {
     checkName: 'Check32',
