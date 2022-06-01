@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { Check32, Check6 } from './mp-file-checks/component';
 import { Check3, Check4, Check8 } from './mp-file-checks/facility-unit';
@@ -12,7 +13,28 @@ import { Check, CheckResult } from './utilities/check';
 
 @Injectable()
 export class ImportChecksService {
-  constructor(private readonly logger: Logger) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly componentService: ComponentWorkspaceService,
+  ) {}
+
+  private async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
+    let errorList = [];
+
+    for (const location of monPlan.locations) {
+      errorList.push(
+        ...(await this.componentService.runComponentChecks(
+          location.components,
+          location,
+          '', //TODO GET MONITOR LOCATION ID REFACTORING
+        )),
+      );
+    }
+
+    if (errorList.length > 0) {
+      throw new BadRequestException(errorList, 'Validation Failure');
+    }
+  }
 
   private runCheckQueue = async (
     checkQueue: Check[],

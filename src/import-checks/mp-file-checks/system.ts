@@ -95,14 +95,14 @@ export const Check31 = new Check(
     const entityManager = getEntityManager();
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
-    const invalidTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
+    const validTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
 
     for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
-      /* for (const system of loc.systems) {
+       for (const system of loc.systems) {
         if (system.fuelFlows.length > 0) {
-          if (!invalidTypeCodes.includes(system.systemTypeCode)) {
+          if (!validTypeCodes.includes(system.systemTypeCode)) {
             result.addError(
               'CRIT1-A',
               'You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
@@ -115,7 +115,7 @@ export const Check31 = new Check(
 
             if (
               Sys !== undefined &&
-              !invalidTypeCodes.includes(Sys.systemTypeCode)
+              !validTypeCodes.includes(Sys.systemTypeCode)
             ) {
               result.addError(
                 'CRIT1-A',
@@ -124,7 +124,7 @@ export const Check31 = new Check(
             }
           }
         }
-      } */
+      } 
 
       return result;
     }
