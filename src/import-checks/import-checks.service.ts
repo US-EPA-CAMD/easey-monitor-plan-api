@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { Check32, Check6, Check7 } from './mp-file-checks/component';
+import { Check32, Check6 } from './mp-file-checks/component';
 import { Check3, Check4, Check8 } from './mp-file-checks/facility-unit';
 import { Check9 } from './mp-file-checks/formula';
 import { Check11, Check12 } from './mp-file-checks/qual';
 import { Check10 } from './mp-file-checks/span';
-import { Check31, Check5 } from './mp-file-checks/system';
+import { Check31, Check5, Check7 } from './mp-file-checks/system';
 import { Check1, Check2 } from './mp-file-checks/unit-stack-config';
 import { Check, CheckResult } from './utilities/check';
 

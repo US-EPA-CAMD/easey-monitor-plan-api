@@ -5,6 +5,8 @@ import { Unit } from '../../entities/workspace/unit.entity';
 import { getManager } from 'typeorm';
 import { Plant } from '../../entities/plant.entity';
 import { BadRequestException } from '@nestjs/common';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
 
 export const getEntityManager: any = () => {
   return getManager();
@@ -65,4 +67,21 @@ export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
   }
 
   return facResult.id;
+};
+
+export const checkComponentExistanceInFile = (
+  monPlan: UpdateMonitorPlanDTO,
+  systemComponent: SystemComponentBaseDTO,
+) => {
+  for (const loc of monPlan.locations) {
+    for (const component of loc.components) {
+      if (
+        component.componentId !== systemComponent.componentId &&
+        component.componentTypeCode !== systemComponent.componentTypeCode
+      ) {
+        return false;
+      }
+      return true;
+    }
+  }
 };

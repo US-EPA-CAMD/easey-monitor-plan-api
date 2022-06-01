@@ -3,9 +3,12 @@ import * as checks from './system';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
-import { MonitorSystemBaseDTO } from '../../dtos/monitor-system-update.dto';
-import { SystemFuelFlowBaseDTO } from '../../dtos/system-fuel-flow-update.dto';
 import { MonitorSystem } from '../../entities/monitor-system.entity';
+import { Component } from '../../entities/workspace/component.entity';
+import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
+import { MonitorSystemBaseDTO } from '../../dtos/monitor-system.dto';
+import { SystemFuelFlowBaseDTO } from '../../dtos/system-fuel-flow.dto';
+import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
 
 describe('System Tests', () => {
   describe('Check5', () => {
@@ -57,6 +60,108 @@ describe('System Tests', () => {
       testData.locations = [location];
 
       const checkResults = await checks.Check5.executeCheck(testData);
+
+      expect(checkResults.checkResult).toBe(false);
+    });
+  });
+
+  describe('Check7', () => {
+    it('Should pass with component found in database', async () => {
+      const comp = new Component();
+
+      const mockManager = {
+        findOne: jest.fn().mockResolvedValue(comp),
+      };
+      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
+      jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
+
+      const location = new UpdateMonitorLocationDTO();
+      const system = new MonitorSystemBaseDTO();
+      const systemComponent = new SystemComponentBaseDTO();
+      const component = new UpdateComponentBaseDTO();
+
+      component.componentTypeCode = 'SO2';
+      component.basisCode = 'AA0';
+
+      systemComponent.componentTypeCode = 'SO2';
+      systemComponent.basisCode = 'AA0';
+
+      system.components = [systemComponent];
+
+      location.components = [component];
+      location.systems = [system];
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      const checkResults = await checks.Check7.executeCheck(testData);
+
+      expect(checkResults.checkResult).toBe(true);
+    });
+
+    it('Should pass with component if not found in database but exists in monitor plan import file', async () => {
+      const mockManager = {
+        findOne: jest.fn().mockResolvedValue(undefined),
+      };
+      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
+      jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
+      jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(true);
+
+      const location = new UpdateMonitorLocationDTO();
+      const system = new MonitorSystemBaseDTO();
+      const systemComponent = new SystemComponentBaseDTO();
+      const component = new UpdateComponentBaseDTO();
+
+      component.componentTypeCode = 'SO2';
+      component.basisCode = 'AA0';
+
+      systemComponent.componentTypeCode = 'SO2';
+      systemComponent.basisCode = 'AA0';
+
+      system.components = [systemComponent];
+
+      location.components = [component];
+      location.systems = [system];
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      const checkResults = await checks.Check7.executeCheck(testData);
+
+      expect(checkResults.checkResult).toBe(true);
+    });
+
+    it('Should faill with component not found in database and in the monitor plan import file', async () => {
+      const mockManager = {
+        findOne: jest.fn().mockResolvedValue(undefined),
+      };
+      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
+      jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
+      jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(false);
+
+      const location = new UpdateMonitorLocationDTO();
+      const system = new MonitorSystemBaseDTO();
+      const systemComponent = new SystemComponentBaseDTO();
+      const component = new UpdateComponentBaseDTO();
+
+      component.componentTypeCode = 'SO2';
+      component.basisCode = 'AA0';
+
+      systemComponent.componentTypeCode = 'S20';
+      systemComponent.basisCode = 'AA0';
+
+      system.components = [systemComponent];
+
+      location.components = [component];
+      location.systems = [system];
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      const checkResults = await checks.Check7.executeCheck(testData);
 
       expect(checkResults.checkResult).toBe(false);
     });

@@ -1,11 +1,13 @@
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { Check, CheckResult } from '../utilities/check';
 import {
+  checkComponentExistanceInFile,
   getEntityManager,
   getFacIdFromOris,
   getMonLocId,
 } from '../utilities/utils';
 import { MonitorSystem } from '../../entities/workspace/monitor-system.entity';
+import { Component } from '../../entities/workspace/component.entity';
 
 export const Check5 = new Check(
   {
@@ -38,6 +40,46 @@ export const Check5 = new Check(
 
       return result;
     }
+  },
+);
+
+export const Check7 = new Check(
+  {
+    checkName: 'Check7',
+    checkDescription:
+      'Component in the System Component Record Present in Workspace Component Table. Each component in the system component table must be a component in the component table.',
+  },
+  async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
+    const result = new CheckResult('IMPORT7');
+
+    const entityManager = getEntityManager();
+    const facility = await getFacIdFromOris(monPlan.orisCode);
+
+    for (const loc of monPlan.locations) {
+      const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
+
+      for (const system of loc.systems) {
+        for (const systemComponent of system.components) {
+          const Comp = await entityManager.findOne(Component, {
+            locationId: monLoc.id,
+            componentId: systemComponent.componentId,
+          });
+
+          const checkComponentExists = await checkComponentExistanceInFile(
+            monPlan,
+            systemComponent,
+          );
+
+          if (Comp === undefined && checkComponentExists === false) {
+            result.addError(
+              'CRIT1-A',
+              `The workspace database and Monitor Plan Import File does not contain a Component record for ${systemComponent.componentId}`,
+            );
+          }
+        }
+      }
+    }
+    return result;
   },
 );
 

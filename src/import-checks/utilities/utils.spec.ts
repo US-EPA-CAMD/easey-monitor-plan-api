@@ -1,3 +1,7 @@
+import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { MonitorSystemBaseDTO } from '../../dtos/monitor-system.dto';
+import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
 import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
 import * as utils from './utils';
@@ -16,7 +20,7 @@ describe('Monitor-Import Utilities Tests', () => {
       loc.stackPipeId = 'TEST';
       loc.unitId = null;
 
-      const checkResult = await utils.getMonLocId(loc, 1);
+      const checkResult = await utils.getMonLocId(loc, 1, 1);
 
       expect(checkResult).toBe(expected);
     });
@@ -33,7 +37,7 @@ describe('Monitor-Import Utilities Tests', () => {
       loc.unitId = '1';
       loc.stackPipeId = null;
 
-      const checkResult = await utils.getMonLocId(loc, 1);
+      const checkResult = await utils.getMonLocId(loc, 1, 1);
 
       expect(checkResult).toBe(expected);
     });
@@ -60,6 +64,68 @@ describe('Monitor-Import Utilities Tests', () => {
       const checkResult = await utils.getFacIdFromOris(1);
 
       expect(checkResult).toBe(1);
+    });
+  });
+
+  describe('checkComponentExistanceInFile', () => {
+    it('Should return true when component exists in monitor plan import file data', async () => {
+      jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(true);
+
+      const location = new UpdateMonitorLocationDTO();
+      const system = new MonitorSystemBaseDTO();
+      const systemComponent = new SystemComponentBaseDTO();
+      const component = new UpdateComponentBaseDTO();
+
+      component.componentTypeCode = 'SO2';
+      component.componentId = 'AA0';
+
+      systemComponent.componentTypeCode = 'S02';
+      systemComponent.componentId = 'AA0';
+
+      system.components = [systemComponent];
+
+      location.components = [component];
+      location.systems = [system];
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      const checkResult = await utils.checkComponentExistanceInFile(
+        testData,
+        systemComponent,
+      );
+
+      expect(checkResult).toBe(true);
+    });
+
+    it('Should return false when component does not exists in monitor plan import file data', async () => {
+      jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(false);
+
+      const location = new UpdateMonitorLocationDTO();
+      const system = new MonitorSystemBaseDTO();
+      const systemComponent = new SystemComponentBaseDTO();
+      const component = new UpdateComponentBaseDTO();
+
+      component.componentTypeCode = 'SO2';
+      component.componentId = 'AA0';
+
+      systemComponent.componentTypeCode = 'S20';
+      systemComponent.componentId = 'AA00';
+
+      system.components = [systemComponent];
+
+      location.components = [component];
+      location.systems = [system];
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      const checkResult = await utils.checkComponentExistanceInFile(
+        testData,
+        systemComponent,
+      );
+
+      expect(checkResult).toBe(false);
     });
   });
 });

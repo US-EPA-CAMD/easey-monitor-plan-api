@@ -89,56 +89,6 @@ describe('Component Tests', () => {
     });
   });
 
-  describe('Check7', () => {
-    it('Should pass with component found in database', async () => {
-      const comp = new Component();
-
-      const mockManager = {
-        findOne: jest.fn().mockResolvedValue(comp),
-      };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
-      jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
-      jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
-
-      const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentBaseDTO();
-
-      component.componentTypeCode = 'SO2';
-      component.basisCode = null;
-
-      location.components = [component];
-      const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
-
-      const checkResults = await checks.Check7.executeCheck(testData);
-
-      expect(checkResults.checkResult).toBe(true);
-    });
-
-    it('Should faill with component not found in database', async () => {
-      const mockManager = {
-        findOne: jest.fn().mockResolvedValue(undefined),
-      };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
-      jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
-      jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
-
-      const location = new UpdateMonitorLocationDTO();
-      const component = new UpdateComponentBaseDTO();
-
-      component.componentTypeCode = 'SO2';
-      component.basisCode = null;
-
-      location.components = [component];
-      const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
-
-      const checkResults = await checks.Check7.executeCheck(testData);
-
-      expect(checkResults.checkResult).toBe(false);
-    });
-  });
-
   describe('Check32', () => {
     it('Should fail with invalid component type code and analyzer range data', async () => {
       const comp = new Component();
