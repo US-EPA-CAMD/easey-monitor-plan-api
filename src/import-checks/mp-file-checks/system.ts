@@ -65,10 +65,14 @@ export const Check7 = new Check(
             componentId: systemComponent.componentId,
           });
 
-          const checkComponentExists = await checkComponentExistanceInFile(
-            monPlan,
-            systemComponent,
-          );
+          let checkComponentExists;
+
+          if (Comp === undefined) {
+            checkComponentExists = await checkComponentExistanceInFile(
+              monPlan,
+              systemComponent,
+            );
+          }
 
           if (Comp === undefined && checkComponentExists === false) {
             result.addError(
