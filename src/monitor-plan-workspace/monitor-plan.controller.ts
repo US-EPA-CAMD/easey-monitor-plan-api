@@ -83,7 +83,7 @@ export class MonitorPlanWorkspaceController {
     description: 'imports an entire monitor plan from JSON payload',
   })
   async importPlan(@Body() plan: MonitorPlanDTO): Promise<any> {
-    await this.importChecksService.mpFileChecks(plan);
+    await this.importChecksService.runImportChecks(plan);
     const mpPlan = await this.service.importMpPlan(plan, 'newUser');
 
     // TODO: Temporary returned message
