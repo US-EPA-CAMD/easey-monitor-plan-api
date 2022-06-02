@@ -9,7 +9,9 @@ describe('MonitorPlanLocationService', () => {
       providers: [MonitorPlanLocationService],
     }).compile();
 
-    service = module.get<MonitorPlanLocationService>(MonitorPlanLocationService);
+    service = module.get<MonitorPlanLocationService>(
+      MonitorPlanLocationService,
+    );
   });
 
   it('should be defined', () => {

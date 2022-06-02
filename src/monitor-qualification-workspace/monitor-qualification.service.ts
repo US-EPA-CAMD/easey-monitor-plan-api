@@ -35,6 +35,45 @@ export class MonitorQualificationWorkspaceService {
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
   ) {}
 
+  async runQualificationImportCheck(
+    qualifications: MonitorQualificationBaseDTO[],
+  ) {
+    const errorList: string[] = [];
+
+    qualifications.forEach(qual => {
+      if (qual.qualificationTypeCode !== 'LMEA') {
+        for (let i = 0; i < qual.lmeQualifications.length; i++) {
+          if (qual.lmeQualifications[i].so2Tons !== null) {
+            errorList.push(
+              `[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #${i +
+                1}. This field should be blank`,
+            );
+          }
+        }
+      }
+
+      if (
+        !['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode) &&
+        qual.pctQualifications.length > 0
+      ) {
+        errorList.push(
+          `[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification Codes other than PK, SK or GF.`,
+        );
+      }
+
+      if (
+        !['LMEA', 'LMES'].includes(qual.qualificationTypeCode) &&
+        qual.lmeQualifications.length > 0
+      ) {
+        errorList.push(
+          `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.`,
+        );
+      }
+    });
+
+    return errorList;
+  }
+
   private async importQualPctLeeLme(
     locationId: string,
     qualificationRecordId: string,
