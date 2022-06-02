@@ -26,7 +26,7 @@ export class ComponentWorkspaceService {
     monitorLocation: UpdateMonitorLocationDTO,
     monitorLocationId: string,
   ): Promise<string[]> {
-    const results: string[] = [];
+    const errorList: string[] = [];
 
     const validTypeCodes = ['SO2', 'NOX', 'CO2', 'O2', 'HG', 'HCL', 'HF'];
 
@@ -40,7 +40,7 @@ export class ComponentWorkspaceService {
         databaseComponent &&
         databaseComponent.componentTypeCode !== fileComponent.componentTypeCode
       ) {
-        results.push(
+        errorList.push(
           `[IMPORT6-CRIT1-A] The component type ${fileComponent.componentTypeCode} for ComponentID ${fileComponent.componentId} in UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} does not match the component type in the Workspace database.`,
         );
       }
@@ -50,7 +50,7 @@ export class ComponentWorkspaceService {
         fileComponent.basisCode &&
         databaseComponent.basisCode !== fileComponent.basisCode
       ) {
-        results.push(
+        errorList.push(
           `[IMPORT6-CRIT1-A]The moisture basis ${fileComponent.basisCode} for ComponentID ${fileComponent.componentId} in UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} does not match the moisture basis in the Workspace database.`,
         );
       }
@@ -60,19 +60,19 @@ export class ComponentWorkspaceService {
         databaseComponent.analyzerRanges.length > 0 &&
         !validTypeCodes.includes(databaseComponent.componentTypeCode)
       ) {
-        results.push(
+        errorList.push(
           '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
         );
       } else if (
         fileComponent.analyzerRanges.length > 0 &&
         !validTypeCodes.includes(fileComponent.componentTypeCode)
       ) {
-        results.push(
+        errorList.push(
           '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
         );
       }
 
-      return results;
+      return errorList;
     }
   }
 
