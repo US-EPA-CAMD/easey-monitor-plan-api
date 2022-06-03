@@ -21,6 +21,60 @@ export class ComponentWorkspaceService {
     private readonly analyzerRangeService: AnalyzerRangeWorkspaceService,
   ) {}
 
+  async runComponentChecks(
+    components: UpdateComponentBaseDTO[],
+    monitorLocation: UpdateMonitorLocationDTO,
+    monitorLocationId: string,
+  ): Promise<string[]> {
+    const errorList: string[] = [];
+
+    const validTypeCodes = ['SO2', 'NOX', 'CO2', 'O2', 'HG', 'HCL', 'HF'];
+
+    const import32Error =
+      '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.';
+
+    for (const fileComponent of components) {
+      const databaseComponent = await this.repository.findOne({
+        locationId: monitorLocationId,
+        componentId: fileComponent.componentId,
+      });
+
+      if (
+        databaseComponent &&
+        databaseComponent.componentTypeCode !== fileComponent.componentTypeCode
+      ) {
+        errorList.push(
+          `[IMPORT6-CRIT1-A] The component type ${fileComponent.componentTypeCode} for ComponentID ${fileComponent.componentId} in UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} does not match the component type in the Workspace database.`,
+        );
+      }
+
+      if (
+        databaseComponent &&
+        fileComponent.basisCode &&
+        databaseComponent.basisCode !== fileComponent.basisCode
+      ) {
+        errorList.push(
+          `[IMPORT6-CRIT1-B]The moisture basis ${fileComponent.basisCode} for ComponentID ${fileComponent.componentId} in UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} does not match the moisture basis in the Workspace database.`,
+        );
+      }
+
+      if (
+        databaseComponent &&
+        databaseComponent.analyzerRanges.length > 0 &&
+        !validTypeCodes.includes(databaseComponent.componentTypeCode)
+      ) {
+        errorList.push(import32Error);
+      } else if (
+        fileComponent.analyzerRanges.length > 0 &&
+        !validTypeCodes.includes(fileComponent.componentTypeCode)
+      ) {
+        errorList.push(import32Error);
+      }
+
+      return errorList;
+    }
+  }
+
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
     const results = await this.repository.find({
       where: {

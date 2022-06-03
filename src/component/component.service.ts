@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 
-import { ComponentDTO } from '../dtos/component.dto';
+import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentRepository } from './component.repository';
 

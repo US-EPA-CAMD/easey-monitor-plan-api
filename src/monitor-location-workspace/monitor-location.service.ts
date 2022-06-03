@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -9,10 +10,10 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
-import { getMonLocId } from '../import-checks/utilities/utils';
 
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 
 import { UnitService } from '../unit/unit.service';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
@@ -21,8 +22,8 @@ import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-ca
 import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
-import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
 import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
@@ -66,13 +67,14 @@ export class MonitorLocationWorkspaceService {
     facilitId: number,
     orisCode: number,
   ): Promise<MonitorLocation[]> {
-    const plans: MonitorLocation[] = [];
+    const locations = [];
 
     for (const loc of plan.locations) {
-      plans.push(await getMonLocId(loc, facilitId, orisCode));
+      locations.push(await this.getLocationRecord(loc, facilitId, orisCode));
     }
 
-    return plans;
+    console.log(locations);
+    return locations;
   }
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
@@ -87,18 +89,61 @@ export class MonitorLocationWorkspaceService {
     return this.map.one(result);
   }
 
-  async getLocationEntity(locationId: string): Promise<MonitorLocation> {
-    const result = await this.repository.findOne(locationId);
-    if (!result) {
+  async getLocationRecord(
+    loc: UpdateMonitorLocationDTO,
+    facilityId: number,
+    orisCode: number,
+  ): Promise<MonitorLocation> {
+    let location: MonitorLocation;
+
+    if (loc.unitId) {
+      const unit = await this.unitService.getUnitByNameAndFacId(
+        loc.unitId,
+        facilityId,
+      );
+
+      if (unit === undefined) {
+        throw new BadRequestException(
+          `No unit record exists for unitName: ${loc.unitId} and orisCode: ${orisCode}`,
+        );
+      }
+
+      location = await this.repository.findOne({
+        where: {
+          unit: unit.id,
+        },
+      });
+    }
+    if (loc.stackPipeId) {
+      const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+        loc.stackPipeId,
+        facilityId,
+      );
+
+      if (stackPipe === undefined) {
+        throw new BadRequestException(
+          `No stack pipe record exists for stackPipeName: ${loc.stackPipeId} and orisCode: ${orisCode}`,
+        );
+      }
+
+      location = await this.repository.findOne({
+        where: {
+          stackPipe: stackPipe.id,
+        },
+      });
+    }
+
+    return location;
+  }
+
+  async getLocationRelationships(locationId: string) {
+    const location = await this.repository.findOne(locationId);
+
+    if (!location) {
       this.logger.error(NotFoundException, this.errorMsg, true, {
         locationId,
       });
     }
-    return result;
-  }
-
-  async getLocationRelationships(locId: string) {
-    const location = await this.getLocationEntity(locId);
     const hasUnit = location.unit !== null;
     const id = location.unit
       ? location.unit.id.toString()
@@ -120,7 +165,7 @@ export class MonitorLocationWorkspaceService {
             const innerPromises = [];
 
             // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
-            const monitorLocationRecord = await getMonLocId(
+            const monitorLocationRecord = await this.getLocationRecord(
               location,
               facilityId,
               plan.orisCode,

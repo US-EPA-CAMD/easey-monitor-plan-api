@@ -1,76 +1,82 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
+import { PlantService } from '../plant/plant.service';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { Check32, Check6 } from './mp-file-checks/component';
-import { Check3, Check4, Check8 } from './mp-file-checks/facility-unit';
-import { Check9 } from './mp-file-checks/formula';
-import { Check11, Check12 } from './mp-file-checks/qual';
-import { Check10 } from './mp-file-checks/span';
-import { Check31, Check5, Check7 } from './mp-file-checks/system';
-import { Check1, Check2 } from './mp-file-checks/unit-stack-config';
-import { Check, CheckResult } from './utilities/check';
+import { UnitService } from '../unit/unit.service';
+import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 
 @Injectable()
 export class ImportChecksService {
-  constructor(private readonly logger: Logger) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly componentService: ComponentWorkspaceService,
+    private readonly monitorLocationService: MonitorLocationWorkspaceService,
+    private readonly unitService: UnitService,
+    private readonly plantService: PlantService,
+    private readonly unitStackService: UnitStackConfigurationWorkspaceService,
+  ) {}
 
-  private runCheckQueue = async (
-    checkQueue: Check[],
-    monPlan: UpdateMonitorPlanDTO,
-  ): Promise<CheckResult[]> => {
-    const checkListResults = [];
-
-    for (const check of checkQueue) {
-      const checkRun = await check.executeCheck(monPlan);
-
-      if (checkRun.checkResult === false) {
-        checkListResults.push(checkRun);
-      }
+  private checkIfThrows(errorList: string[]) {
+    if (errorList.length > 0) {
+      this.logger.error(BadRequestException, errorList, true);
     }
+  }
 
-    if (checkListResults.length > 0) {
-      const ErrorList = [];
-      checkListResults.forEach(checkListResult => {
-        ErrorList.push(...checkListResult.checkErrorMessages);
-      });
-      throw new BadRequestException(ErrorList, 'Validation Failure');
-    }
+  public async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
+    this.logger.info('Running import validation checks');
+    let errorList = [];
 
-    return checkListResults;
-  };
-
-  mpFileChecks = async (monPlan: UpdateMonitorPlanDTO) => {
-    this.logger.info('Running monitoring plan import file checks...', {
-      orisCode: monPlan.orisCode,
-    });
-    const LocationChecks = [
-      Check1,
-      Check2,
-      Check5,
-      Check6,
-      Check7,
-      Check9,
-      Check10,
-      Check11,
-      Check12,
-      Check31,
-      Check32,
-    ];
-
-    const UnitStackChecks1 = [Check3];
-    const UnitStackChecks2 = [Check4, Check8]; //Depends on UnitStackChecks1 Passing
-
-    await this.runCheckQueue(LocationChecks, monPlan);
-    if (monPlan.unitStackConfiguration !== undefined) {
-      await this.runCheckQueue(UnitStackChecks1, monPlan);
-      await this.runCheckQueue(UnitStackChecks2, monPlan);
-    }
-
-    this.logger.info(
-      'Successfully completed monitor plan import with no errors',
-      {
-        orisCode: monPlan.orisCode,
-      },
+    // Plant Check
+    errorList.push(
+      ...(await this.plantService.runPlantCheck(monPlan.orisCode)),
     );
-  };
+    this.checkIfThrows(errorList);
+
+    //TODO, needs to throw error here if non existing
+
+    const facilityId = await this.plantService.getFacIdFromOris(
+      monPlan.orisCode,
+    );
+
+    //Unit Stack Checks
+    errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
+    this.checkIfThrows(errorList);
+
+    const databaseLocations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
+      monPlan,
+      facilityId,
+      monPlan.orisCode,
+    );
+
+    let index = 0;
+    for (const location of monPlan.locations) {
+      // Unit Checks
+      if (location.unitId) {
+        errorList.push(
+          ...(await this.unitService.runUnitChecks(
+            location,
+            monPlan.orisCode,
+            facilityId,
+          )),
+        );
+      }
+
+      // Component Checks
+      errorList.push(
+        ...(await this.componentService.runComponentChecks(
+          location.components,
+          location,
+          databaseLocations[index].id,
+        )),
+      );
+
+      index++;
+    }
+
+    this.checkIfThrows(errorList);
+
+    this.logger.info('Import validation checks ran successfully');
+  }
 }

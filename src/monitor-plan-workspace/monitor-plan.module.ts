@@ -28,6 +28,7 @@ import { AnalyzerRangeWorkspaceModule } from '../analyzer-range-workspace/analyz
 import { LEEQualificationWorkspaceModule } from '../lee-qualification-workspace/lee-qualification.module';
 import { LMEQualificationWorkspaceModule } from '../lme-qualification-workspace/lme-qualification.module';
 import { PCTQualificationWorkspaceModule } from '../pct-qualification-workspace/pct-qualification.module';
+import { MonitorPlanLocationModule } from '../monitor-plan-location-workspace/monitor-plan-location.module';
 
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
@@ -64,6 +65,7 @@ import { ImportChecksModule } from '../import-checks/import-checks.module';
     UserCheckOutModule,
     CountyCodeModule,
     MonitorPlanReportResultModule,
+    MonitorPlanLocationModule,
     TypeOrmModule.forFeature([MonitorPlanWorkspaceRepository]),
     HttpModule,
   ],
