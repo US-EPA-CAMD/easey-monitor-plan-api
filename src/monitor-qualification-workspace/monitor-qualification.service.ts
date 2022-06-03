@@ -42,14 +42,13 @@ export class MonitorQualificationWorkspaceService {
 
     for (const qual of qualifications) {
       if (qual.qualificationTypeCode !== 'LMEA') {
-        for (let i = 0; i < qual.lmeQualifications.length; i++) {
-          if (qual.lmeQualifications[i].so2Tons !== null) {
+        qual.lmeQualifications.forEach((lmeQual, idx) => {
+          if (lmeQual.so2Tons !== null) {
             errorList.push(
-              `[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #${i +
-                1}. This field should be blank`,
+              `[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #${idx}. This field should be blank`,
             );
           }
-        }
+        });
       }
 
       if (

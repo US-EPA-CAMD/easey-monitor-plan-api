@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  forwardRef,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { PlantService } from '../plant/plant.service';
@@ -20,9 +15,7 @@ export class ImportChecksService {
   constructor(
     private readonly logger: Logger,
     private readonly componentService: ComponentWorkspaceService,
-
     private readonly qualificationService: MonitorQualificationWorkspaceService,
-
     private readonly monitorSystemService: MonitorSystemWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly unitService: UnitService,
