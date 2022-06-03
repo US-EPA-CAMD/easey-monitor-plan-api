@@ -6,6 +6,7 @@ import { ComponentWorkspaceService } from '../component-workspace/component.serv
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitService } from '../unit/unit.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 
 @Injectable()
 export class ImportChecksService {
@@ -16,6 +17,7 @@ export class ImportChecksService {
     private readonly unitService: UnitService,
     private readonly plantService: PlantService,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
+    private readonly formulaService: MonitorFormulaWorkspaceService,
   ) {}
 
   private checkIfThrows(errorList: string[]) {
@@ -65,6 +67,15 @@ export class ImportChecksService {
       errorList.push(
         ...(await this.componentService.runComponentChecks(
           location.components,
+          location,
+          databaseLocations[index].id,
+        )),
+      );
+
+      // Formula Checks
+      errorList.push(
+        ...(await this.formulaService.runFormulaChecks(
+          location.formulas,
           location,
           databaseLocations[index].id,
         )),

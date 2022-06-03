@@ -15,6 +15,7 @@ import {
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
@@ -100,6 +101,44 @@ export class MonitorFormulaWorkspaceService {
     await this.repository.save(formula);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(formula);
+  }
+
+  async runFormulaChecks(
+    formulas: MonitorFormulaBaseDTO[],
+    location: UpdateMonitorLocationDTO,
+    locationId: string,
+  ) {
+    const errorList: string[] = [];
+
+    for (const formula of formulas) {
+      const formulaRecord = await this.repository.findOne({
+        locationId,
+        formulaId: formula.formulaId,
+      });
+
+      if (
+        formulaRecord &&
+        formulaRecord.parameterCode !== formula.parameterCode
+      ) {
+        errorList.push(
+          'CRIT1-A',
+          `The ParameterCode ${formula.parameterCode} for UnitStackPipeID ${location.unitId}/${location.stackPipeId} and FormulaID ${formula.formulaId} does not match the parameter code in the Workspace database.`,
+        );
+      }
+
+      if (
+        formulaRecord &&
+        formulaRecord.formulaCode !== null &&
+        formulaRecord.formulaCode !== formula.formulaCode
+      ) {
+        errorList.push(
+          'CRIT1-B',
+          `The FormulaCode ${formula.formulaCode} for UnitStackPipeID ${location.unitId}/${location.stackPipeId} and FormulaID ${formula.formulaId} does not match the formula code in the Workspace database.`,
+        );
+      }
+    }
+
+    return errorList;
   }
 
   async importFormula(
