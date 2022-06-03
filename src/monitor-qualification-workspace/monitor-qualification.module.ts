@@ -11,6 +11,7 @@ import { MonitorQualificationWorkspaceService } from './monitor-qualification.se
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Module({
   imports: [

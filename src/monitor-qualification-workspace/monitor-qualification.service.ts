@@ -40,7 +40,7 @@ export class MonitorQualificationWorkspaceService {
   ) {
     const errorList: string[] = [];
 
-    qualifications.forEach(qual => {
+    for (const qual of qualifications) {
       if (qual.qualificationTypeCode !== 'LMEA') {
         for (let i = 0; i < qual.lmeQualifications.length; i++) {
           if (qual.lmeQualifications[i].so2Tons !== null) {
@@ -69,7 +69,7 @@ export class MonitorQualificationWorkspaceService {
           `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.`,
         );
       }
-    });
+    }
 
     return errorList;
   }

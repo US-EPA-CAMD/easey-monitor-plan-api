@@ -28,7 +28,9 @@ export class MonitorSystemWorkspaceService {
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
 
+    @Inject(forwardRef(() => ComponentWorkspaceService))
     private readonly componentService: ComponentWorkspaceService,
+
     private readonly systemComponentService: SystemComponentWorkspaceService,
     private readonly systemFuelFlowService: SystemFuelFlowWorkspaceService,
   ) {}
@@ -43,39 +45,46 @@ export class MonitorSystemWorkspaceService {
 
     const validTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
 
-    systems.forEach(async system => {
+    const componentIdAndTypeCodeSet: Set<string> = new Set<string>();
+    for (const loc of monPlan.locations) {
+      for (const component of loc.components) {
+        componentIdAndTypeCodeSet.add(
+          `${component.componentId}:${component.componentTypeCode}`,
+        );
+      }
+    }
+
+    for (const system of systems) {
       const Sys = await this.repository.findOne({
         locationId: monitorLocationId,
         monitoringSystemId: system.monitoringSystemId,
       });
 
-      if (Sys !== undefined && Sys.systemTypeCode !== system.systemTypeCode) {
+      if (Sys && Sys.systemTypeCode !== system.systemTypeCode) {
         errorList.push(
           `[IMPORT5-CRIT1-A] The system type ${system.systemTypeCode} for UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} and MonitoringSystemID ${system.monitoringSystemId} does not match the system type in the Workspace database.`,
         );
       }
 
       if (system.components && system.components.length > 0) {
-        system.components.forEach(async systemComponent => {
+        for (const systemComponent of system.components) {
           const Comp = await this.componentService.getComponentByIdentifier(
             monitorLocationId,
             systemComponent.componentId,
           );
-          let checkComponentExists;
 
-          if (Comp === undefined) {
-            checkComponentExists = await checkComponentExistanceInFile(
-              monPlan,
-              systemComponent,
-            );
+          if (!Comp) {
+            if (
+              !componentIdAndTypeCodeSet.has(
+                `${systemComponent.componentId}:${systemComponent.componentTypeCode}`,
+              )
+            ) {
+              errorList.push(
+                `[IMPORT7-CRIT1-A] The workspace database and Monitor Plan Import JSON File does not contain a Component record for ${systemComponent.componentId}`,
+              );
+            }
           }
-
-          if (Comp === undefined && checkComponentExists === false) {
-            errorList.push(
-              `[IMPORT7-CRIT1-A] The workspace database and Monitor Plan Import File does not contain a Component record for ${systemComponent.componentId}`,
-            );
-          }
-        });
+        }
       }
 
       if (system.fuelFlows && system.fuelFlows.length > 0) {
@@ -84,18 +93,14 @@ export class MonitorSystemWorkspaceService {
             '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
           );
         } else {
-          if (
-            Sys !== undefined &&
-            !validTypeCodes.includes(Sys.systemTypeCode)
-          ) {
+          if (Sys && !validTypeCodes.includes(Sys.systemTypeCode)) {
             errorList.push(
               '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
             );
           }
         }
       }
-    });
-
+    }
     return errorList;
   }
 

@@ -16,6 +16,62 @@ export class UnitStackConfigurationWorkspaceService {
     private readonly map: UnitStackConfigurationMap,
   ) {}
 
+  runUnitStackChecks(monitorPlan: UpdateMonitorPlanDTO): string[] {
+    const errorList: string[] = [];
+
+    const unitStackIds: Set<string> = new Set<string>(); // Set for faster look up times
+    const unitUnitIds: Set<string> = new Set<string>();
+
+    const unitStackConfigStackIds: Set<string> = new Set<string>();
+    const unitStackConfigUnitIds: Set<string> = new Set<string>();
+
+    for (const location of monitorPlan.locations) {
+      if (location.stackPipeId) {
+        unitStackIds.add(location.stackPipeId);
+      }
+      if (location.unitId) {
+        unitUnitIds.add(location.unitId);
+      }
+    }
+
+    for (const unitStackConfig of monitorPlan.unitStackConfiguration) {
+      if (!unitStackIds.has(unitStackConfig.stackPipeId)) {
+        errorList.push(
+          `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID ${unitStackConfig.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
+        );
+      }
+
+      if (!unitUnitIds.has(unitStackConfig.unitId)) {
+        errorList.push(
+          `[IMPORT8-CRIT1-B] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. UnitID ${unitStackConfig.unitId} was not associated with a Unit record in the file. This StackPipe Configuration Record was not imported.`,
+        );
+      }
+
+      unitStackConfigStackIds.add(unitStackConfig.stackPipeId);
+      unitStackConfigUnitIds.add(unitStackConfig.unitId);
+    }
+
+    for (const stackPipe of unitStackIds) {
+      if (!unitStackConfigStackIds.has(stackPipe)) {
+        errorList.push(
+          `[IMPORT3-FATAL-A] Each stack or pipe must be associated with at least one unit. StackName ${stackPipe} is not associated with any units.`,
+        );
+      }
+    }
+
+    if (unitUnitIds.size > 1) {
+      for (const unitId of unitUnitIds) {
+        if (!unitStackConfigUnitIds.has(unitId)) {
+          errorList.push(
+            `[IMPORT4-FATAL-A] Each unit must be associated with at least one unit record. Unit Name ${unitId} is not associated with any unit record`,
+          );
+        }
+      }
+    }
+
+    return errorList;
+  }
+
   async importUnitStack(
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
