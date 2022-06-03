@@ -1,13 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
-import { Component } from 'src/entities/component.entity';
+import { Component } from '../entities/component.entity';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -70,9 +70,9 @@ export class ComponentWorkspaceService {
       ) {
         errorList.push(import32Error);
       }
-
-      return errorList;
     }
+
+    return errorList;
   }
 
   async getComponents(locationId: string): Promise<ComponentDTO[]> {
@@ -145,21 +145,22 @@ export class ComponentWorkspaceService {
   }
 
   async updateComponent(
-    DbRecord: Component,
+    componentRecord: Component,
     payload: UpdateComponentBaseDTO,
     userId: string,
   ): Promise<ComponentDTO> {
-    DbRecord.modelVersion = payload.modelVersion;
-    DbRecord.serialNumber = payload.serialNumber;
-    DbRecord.hgConverterIndicator = payload.hgConverterIndicator;
-    DbRecord.manufacturer = payload.manufacturer;
-    DbRecord.componentTypeCode = payload.componentTypeCode;
-    DbRecord.sampleAcquisitionMethodCode = payload.sampleAcquisitionMethodCode;
-    DbRecord.basisCode = payload.basisCode;
-    DbRecord.userId = userId;
-    DbRecord.updateDate = new Date(Date.now());
+    componentRecord.modelVersion = payload.modelVersion;
+    componentRecord.serialNumber = payload.serialNumber;
+    componentRecord.hgConverterIndicator = payload.hgConverterIndicator;
+    componentRecord.manufacturer = payload.manufacturer;
+    componentRecord.componentTypeCode = payload.componentTypeCode;
+    componentRecord.sampleAcquisitionMethodCode =
+      payload.sampleAcquisitionMethodCode;
+    componentRecord.basisCode = payload.basisCode;
+    componentRecord.userId = userId;
+    componentRecord.updateDate = new Date(Date.now());
 
-    const result = await this.repository.save(DbRecord);
+    const result = await this.repository.save(componentRecord);
     return this.map.one(result);
   }
 
