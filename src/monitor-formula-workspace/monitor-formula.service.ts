@@ -116,25 +116,21 @@ export class MonitorFormulaWorkspaceService {
         formulaId: formula.formulaId,
       });
 
-      if (
-        formulaRecord &&
-        formulaRecord.parameterCode !== formula.parameterCode
-      ) {
-        errorList.push(
-          'CRIT1-A',
-          `The ParameterCode ${formula.parameterCode} for UnitStackPipeID ${location.unitId}/${location.stackPipeId} and FormulaID ${formula.formulaId} does not match the parameter code in the Workspace database.`,
-        );
-      }
+      if (formulaRecord) {
+        if (formulaRecord.parameterCode !== formula.parameterCode) {
+          errorList.push(
+            `[IMPORT9-CRIT1-A] The ParameterCode for Formula ID ${formulaRecord.formulaId} in the database is not equal to the ParameterCode ${formula.formulaId} in the incoming record`,
+          );
+        }
 
-      if (
-        formulaRecord &&
-        formulaRecord.formulaCode !== null &&
-        formulaRecord.formulaCode !== formula.formulaCode
-      ) {
-        errorList.push(
-          'CRIT1-B',
-          `The FormulaCode ${formula.formulaCode} for UnitStackPipeID ${location.unitId}/${location.stackPipeId} and FormulaID ${formula.formulaId} does not match the formula code in the Workspace database.`,
-        );
+        if (
+          formulaRecord.formulaCode !== null &&
+          formulaRecord.formulaCode !== formula.formulaCode
+        ) {
+          errorList.push(
+            `[IMPORT9-CRIT1-B] The FormulaCode for Formula ID ${formulaRecord.formulaId} in the database is not equal to the FormulaCode ${formula.formulaCode} in the incoming record`,
+          );
+        }
       }
     }
 
