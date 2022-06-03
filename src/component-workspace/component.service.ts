@@ -30,6 +30,9 @@ export class ComponentWorkspaceService {
 
     const validTypeCodes = ['SO2', 'NOX', 'CO2', 'O2', 'HG', 'HCL', 'HF'];
 
+    const import32Error =
+      '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.';
+
     for (const fileComponent of components) {
       const databaseComponent = await this.repository.findOne({
         locationId: monitorLocationId,
@@ -51,7 +54,7 @@ export class ComponentWorkspaceService {
         databaseComponent.basisCode !== fileComponent.basisCode
       ) {
         errorList.push(
-          `[IMPORT6-CRIT1-A]The moisture basis ${fileComponent.basisCode} for ComponentID ${fileComponent.componentId} in UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} does not match the moisture basis in the Workspace database.`,
+          `[IMPORT6-CRIT1-B]The moisture basis ${fileComponent.basisCode} for ComponentID ${fileComponent.componentId} in UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} does not match the moisture basis in the Workspace database.`,
         );
       }
 
@@ -60,16 +63,12 @@ export class ComponentWorkspaceService {
         databaseComponent.analyzerRanges.length > 0 &&
         !validTypeCodes.includes(databaseComponent.componentTypeCode)
       ) {
-        errorList.push(
-          '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
-        );
+        errorList.push(import32Error);
       } else if (
         fileComponent.analyzerRanges.length > 0 &&
         !validTypeCodes.includes(fileComponent.componentTypeCode)
       ) {
-        errorList.push(
-          '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
-        );
+        errorList.push(import32Error);
       }
 
       return errorList;

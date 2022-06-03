@@ -26,25 +26,29 @@ export class UnitStackConfigurationWorkspaceService {
     const unitStackConfigUnitIds: Set<string> = new Set<string>();
 
     for (const location of monitorPlan.locations) {
-      unitStackIds.add(location.stackPipeId);
-      unitUnitIds.add(location.unitId);
+      if (location.stackPipeId) {
+        unitStackIds.add(location.stackPipeId);
+      }
+      if (location.unitId) {
+        unitUnitIds.add(location.unitId);
+      }
     }
 
-    for (const unitStack of monitorPlan.unitStackConfiguration) {
-      if (!unitStackIds.has(unitStack.stackPipeId)) {
+    for (const unitStackConfig of monitorPlan.unitStackConfiguration) {
+      if (!unitStackIds.has(unitStackConfig.stackPipeId)) {
         errorList.push(
-          `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID ${unitStack.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
+          `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID ${unitStackConfig.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
         );
       }
 
-      if (!unitUnitIds.has(unitStack.unitId)) {
+      if (!unitUnitIds.has(unitStackConfig.unitId)) {
         errorList.push(
-          `[IMPORT8-CRIT1-B] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. UnitID ${unitStack.unitId} was not associated with a Unit record in the file. This StackPipe Configuration Record was not imported.`,
+          `[IMPORT8-CRIT1-B] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. UnitID ${unitStackConfig.unitId} was not associated with a Unit record in the file. This StackPipe Configuration Record was not imported.`,
         );
       }
 
-      unitStackConfigStackIds.add(unitStack.stackPipeId);
-      unitStackConfigUnitIds.add(unitStack.unitId);
+      unitStackConfigStackIds.add(unitStackConfig.stackPipeId);
+      unitStackConfigUnitIds.add(unitStackConfig.unitId);
     }
 
     for (const stackPipe of unitStackIds) {

@@ -41,7 +41,7 @@ export class ImportChecksService {
     );
 
     //Unit Stack Checks
-    errorList.push(this.unitStackService.runUnitStackChecks(monPlan));
+    errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
     this.checkIfThrows(errorList);
 
     const databaseLocations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
@@ -53,13 +53,15 @@ export class ImportChecksService {
     let index = 0;
     for (const location of monPlan.locations) {
       // Unit Checks
-      errorList.push(
-        ...(await this.unitService.runUnitChecks(
-          location,
-          monPlan.orisCode,
-          facilityId,
-        )),
-      );
+      if (location.unitId) {
+        errorList.push(
+          ...(await this.unitService.runUnitChecks(
+            location,
+            monPlan.orisCode,
+            facilityId,
+          )),
+        );
+      }
 
       // Component Checks
       errorList.push(
