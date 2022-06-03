@@ -12,7 +12,6 @@ import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
-import { checkComponentExistanceInFile } from '../import-checks/utilities/utils';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
