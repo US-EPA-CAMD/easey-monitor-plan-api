@@ -102,7 +102,6 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         plan.locations = [location, location2];
 
         const result = service.runUnitStackChecks(plan);
-        console.log(result);
         expect(result).toEqual([
           '[IMPORT3-FATAL-A] Each stack or pipe must be associated with at least one unit. StackName TESTING is not associated with any units.',
         ]);
@@ -127,7 +126,6 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         plan.locations = [location, location2];
 
         const result = service.runUnitStackChecks(plan);
-        console.log(result);
         expect(result).toEqual([
           '[IMPORT4-FATAL-A] Each unit must be associated with at least one unit record. Unit Name TESTING is not associated with any unit record',
         ]);

@@ -126,7 +126,6 @@ export class MonitorPlanWorkspaceService {
         );
 
         activePlanId = activePlan.id;
-
         console.log('Active Plan', activePlanId);
       }
     }

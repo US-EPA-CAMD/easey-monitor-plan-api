@@ -4,6 +4,8 @@ import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/m
 import { PlantService } from '../plant/plant.service';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
 import { UnitService } from '../unit/unit.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
@@ -13,6 +15,8 @@ export class ImportChecksService {
   constructor(
     private readonly logger: Logger,
     private readonly componentService: ComponentWorkspaceService,
+    private readonly qualificationService: MonitorQualificationWorkspaceService,
+    private readonly monitorSystemService: MonitorSystemWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly unitService: UnitService,
     private readonly plantService: PlantService,
@@ -71,6 +75,23 @@ export class ImportChecksService {
           location.components,
           location,
           databaseLocations[index].id,
+        )),
+      );
+
+      // Qualification Checks
+      errorList.push(
+        ...(await this.qualificationService.runQualificationImportCheck(
+          location.qualifications,
+        )),
+      );
+
+      // Monitor System Checks
+      errorList.push(
+        ...(await this.monitorSystemService.runMonitorSystemImportCheck(
+          monPlan,
+          location,
+          databaseLocations[index].id,
+          location.systems,
         )),
       );
 

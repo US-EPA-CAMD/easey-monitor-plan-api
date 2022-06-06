@@ -73,7 +73,6 @@ export class MonitorLocationWorkspaceService {
       locations.push(await this.getLocationRecord(loc, facilitId, orisCode));
     }
 
-    console.log(locations);
     return locations;
   }
 
