@@ -7,6 +7,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitService } from '../unit/unit.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
+import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
 
 @Injectable()
 export class ImportChecksService {
@@ -18,6 +19,7 @@ export class ImportChecksService {
     private readonly plantService: PlantService,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly formulaService: MonitorFormulaWorkspaceService,
+    private readonly spanService: MonitorSpanWorkspaceService,
   ) {}
 
   private checkIfThrows(errorList: string[]) {
@@ -82,6 +84,9 @@ export class ImportChecksService {
           databaseLocations[index].id,
         )),
       );
+
+      // Span Checks
+      errorList.push(...(await this.spanService.runSpanChecks(location.spans)));
 
       index++;
     }
