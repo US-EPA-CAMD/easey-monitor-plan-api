@@ -1,5 +1,5 @@
 import { In } from 'typeorm';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
@@ -36,7 +36,8 @@ import { getFacIdFromOris } from '../import-checks/utilities/utils';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
-import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
+import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
+import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -87,13 +88,15 @@ export class MonitorPlanWorkspaceService {
     private readonly lmeQualificationRepository: LMEQualificationWorkspaceRepository,
     @InjectRepository(PCTQualificationWorkspaceRepository)
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
+    @InjectRepository(UnitStackConfigurationWorkspaceRepository)
+    private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
+
+    private readonly uscMap: UnitStackConfigurationMap,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
-
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
-    private readonly monPlanLocationService: MonitorPlanLocationService,
 
     private map: MonitorPlanMap,
   ) {}
@@ -123,7 +126,6 @@ export class MonitorPlanWorkspaceService {
         );
 
         activePlanId = activePlan.id;
-
         console.log('Active Plan', activePlanId);
       }
     }
@@ -258,7 +260,14 @@ export class MonitorPlanWorkspaceService {
     const COMMENTS = 0;
     promises.push(this.commentRepository.find({ monitorPlanId: planId }));
 
-    const UNIT_CAPACITIES = COMMENTS + 1;
+    const UNIT_STACK_CONFIGS = COMMENTS + 1;
+    promises.push(
+      this.unitStackConfigRepository.getUnitStackConfigsByLocationIds(
+        locationIds,
+      ),
+    );
+
+    const UNIT_CAPACITIES = UNIT_STACK_CONFIGS + 1;
     promises.push(
       this.unitCapacityRepository.getUnitCapacitiesByUnitIds(unitIds),
     );
@@ -407,6 +416,7 @@ export class MonitorPlanWorkspaceService {
     );
 
     const results = await Promise.all(promises);
+
     mp.comments = results[COMMENTS];
 
     mp.locations.forEach(l => {
@@ -445,6 +455,11 @@ export class MonitorPlanWorkspaceService {
       );
     });
 
-    return this.map.one(mp);
+    const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
+    const mpDTO = await this.map.one(mp);
+
+    mpDTO.unitStackConfiguration = uscDTO;
+
+    return mpDTO;
   }
 }

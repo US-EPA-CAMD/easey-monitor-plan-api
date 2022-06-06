@@ -3,7 +3,6 @@ import {
   Entity,
   Column,
   PrimaryColumn,
-  OneToMany,
   ManyToOne,
   JoinColumn,
   OneToOne,
@@ -50,15 +49,15 @@ export class StackPipe extends BaseEntity {
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
 
-  @OneToMany(
+  @OneToOne(
     () => MonitorLocation,
     location => location.stackPipe,
   )
-  locations: MonitorLocation[];
+  location: MonitorLocation;
 
   @OneToOne(
     () => UnitStackConfiguration,
-    unitStackConfig => unitStackConfig.stackPipe,
+    usc => usc.stackPipe,
   )
-  unitStackConfig: UnitStackConfiguration;
+  unitStackConfigurations: UnitStackConfiguration[];
 }

@@ -12,6 +12,9 @@ import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -24,9 +27,74 @@ export class MonitorSystemWorkspaceService {
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
 
+    @Inject(forwardRef(() => ComponentWorkspaceService))
+    private readonly componentService: ComponentWorkspaceService,
+
     private readonly systemComponentService: SystemComponentWorkspaceService,
     private readonly systemFuelFlowService: SystemFuelFlowWorkspaceService,
   ) {}
+
+  async runMonitorSystemImportCheck(
+    monPlan: UpdateMonitorPlanDTO,
+    monitorLocation: UpdateMonitorLocationDTO,
+    monitorLocationId: string,
+    systems: MonitorSystemBaseDTO[],
+  ) {
+    const errorList: string[] = [];
+
+    const validTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
+
+    const componentIdAndTypeCodeSet: Set<string> = new Set<string>();
+    for (const loc of monPlan.locations) {
+      for (const component of loc.components) {
+        componentIdAndTypeCodeSet.add(
+          `${component.componentId}:${component.componentTypeCode}`,
+        );
+      }
+    }
+
+    for (const system of systems) {
+      const Sys = await this.repository.findOne({
+        locationId: monitorLocationId,
+        monitoringSystemId: system.monitoringSystemId,
+      });
+
+      if (Sys && Sys.systemTypeCode !== system.systemTypeCode) {
+        errorList.push(
+          `[IMPORT5-CRIT1-A] The system type ${system.systemTypeCode} for UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} and MonitoringSystemID ${system.monitoringSystemId} does not match the system type in the Workspace database.`,
+        );
+      }
+
+      if (system.components && system.components.length > 0) {
+        for (const systemComponent of system.components) {
+          if (
+            !componentIdAndTypeCodeSet.has(
+              `${systemComponent.componentId}:${systemComponent.componentTypeCode}`,
+            )
+          ) {
+            errorList.push(
+              `[IMPORT7-CRIT1-A] The workspace database and Monitor Plan Import JSON File does not contain a Component record for ${systemComponent.componentId}`,
+            );
+          }
+        }
+      }
+
+      if (system.fuelFlows && system.fuelFlows.length > 0) {
+        if (Sys && !validTypeCodes.includes(Sys.systemTypeCode)) {
+          errorList.push(
+            '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
+          );
+        } else {
+          if (!validTypeCodes.includes(system.systemTypeCode)) {
+            errorList.push(
+              '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
+            );
+          }
+        }
+      }
+    }
+    return errorList;
+  }
 
   async getSystems(locationId: string): Promise<MonitorSystemDTO[]> {
     const results = await this.repository.find({

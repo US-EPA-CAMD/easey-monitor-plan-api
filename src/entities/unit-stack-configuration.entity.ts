@@ -3,7 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
@@ -40,18 +40,16 @@ export class UnitStackConfiguration extends BaseEntity {
   @Column({ name: 'update_date' })
   updateDate: Date;
 
-  @OneToOne(
+  @ManyToOne(
     () => StackPipe,
-    stackPipe => stackPipe.unitStackConfig,
-    { eager: true },
+    stackPipe => stackPipe.unitStackConfigurations,
   )
   @JoinColumn({ name: 'stack_pipe_id' })
   stackPipe: StackPipe;
 
-  @OneToOne(
+  @ManyToOne(
     () => Unit,
-    unit => unit.unitStackConfig,
-    { eager: true },
+    unit => unit.unitStackConfigurations,
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;

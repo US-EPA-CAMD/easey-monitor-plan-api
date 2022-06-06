@@ -7,6 +7,15 @@ import { MonitorQualificationWorkspaceRepository } from './monitor-qualification
 import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
+import { LMEQualificationBaseDTO } from '../dtos/lme-qualification.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
+import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
+import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
+import { LEEQualificationBaseDTO } from '../dtos/lee-qualification.dto';
+import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const locId = '6';
 const qualId = '1';
@@ -40,13 +49,25 @@ const mockMap = () => ({
 
 describe('MonitorQualificationService', () => {
   let loadService: MonitorQualificationWorkspaceService;
-  let loadRepository: MonitorQualificationWorkspaceRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
         MonitorQualificationWorkspaceService,
+        MonitorPlanWorkspaceService,
+        {
+          provide: LEEQualificationWorkspaceService,
+          useFactory: () => ({}),
+        },
+        {
+          provide: LMEQualificationWorkspaceService,
+          useFactory: () => ({}),
+        },
+        {
+          provide: PCTQualificationWorkspaceService,
+          useFactory: () => ({}),
+        },
         {
           provide: MonitorQualificationWorkspaceRepository,
           useFactory: mockRepository,
@@ -59,11 +80,93 @@ describe('MonitorQualificationService', () => {
     }).compile();
 
     loadService = module.get(MonitorQualificationWorkspaceService);
-    loadRepository = module.get(MonitorQualificationWorkspaceRepository);
   });
 
   it('should be defined', () => {
     expect(loadService).toBeDefined();
+  });
+
+  describe('runQualificationImportCheck', () => {
+    it('Should pass when values for qualTypeCode "LMEA" of qualfication is valid with so2 value not set', async () => {
+      const quals = new MonitorQualificationBaseDTO();
+      const lmeQual = new LMEQualificationBaseDTO();
+      const leeQual = new LEEQualificationBaseDTO();
+
+      lmeQual.so2Tons = null;
+      quals.qualificationTypeCode = 'LMEA';
+      quals.lmeQualifications = [lmeQual];
+      quals.leeQualifications = [leeQual];
+      quals.pctQualifications = [];
+
+      const checkResults = await loadService.runQualificationImportCheck([
+        quals,
+      ]);
+
+      expect(checkResults).toEqual([]);
+    });
+
+    it('Should pass when values for qualTypeCode "PK" of qualfication is valid with so2 value not set', async () => {
+      const quals = new MonitorQualificationBaseDTO();
+      const lmeQual = new LMEQualificationBaseDTO();
+      const leeQual = new LEEQualificationBaseDTO();
+      const pctQual = new PCTQualificationBaseDTO();
+
+      lmeQual.so2Tons = null;
+      quals.qualificationTypeCode = 'PK';
+      quals.lmeQualifications = [];
+      quals.leeQualifications = [leeQual];
+      quals.pctQualifications = [pctQual];
+
+      const checkResults = await loadService.runQualificationImportCheck([
+        quals,
+      ]);
+
+      expect(checkResults).toEqual([]);
+    });
+
+    it('Should fail when values for qualTypeCode "PK" of qualfication is valid with so2 value not null', async () => {
+      const quals = new MonitorQualificationBaseDTO();
+      const lmeQual = new LMEQualificationBaseDTO();
+
+      lmeQual.so2Tons = 1;
+      quals.qualificationTypeCode = 'PK';
+      quals.lmeQualifications = [lmeQual];
+      quals.leeQualifications = [];
+      quals.pctQualifications = [];
+
+      const checkResults = await loadService.runQualificationImportCheck([
+        quals,
+      ]);
+
+      const errorList = [
+        '[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #0. This field should be blank',
+        '[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.',
+      ];
+
+      expect(checkResults).toEqual(errorList);
+    });
+
+    it('Should fail when values for qualTypeCode "LMEA" of qualfication is valid with so2 value not null', async () => {
+      const quals = new MonitorQualificationBaseDTO();
+      const lmeQual = new LMEQualificationBaseDTO();
+      const pctQual = new PCTQualificationBaseDTO();
+
+      lmeQual.so2Tons = null;
+      quals.qualificationTypeCode = 'LMEA';
+      quals.lmeQualifications = [];
+      quals.leeQualifications = [];
+      quals.pctQualifications = [pctQual];
+
+      const checkResults = await loadService.runQualificationImportCheck([
+        quals,
+      ]);
+
+      const errorList = [
+        '[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification Codes other than PK, SK or GF.',
+      ];
+
+      expect(checkResults).toEqual(errorList);
+    });
   });
 
   describe('getQualifications', () => {

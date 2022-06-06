@@ -10,9 +10,11 @@ import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
+import { ComponentWorkspaceModule } from '../component-workspace/component.module';
 
 @Module({
   imports: [
+    ComponentWorkspaceModule,
     SystemFuelFlowWorkspaceModule,
     SystemComponentWorkspaceModule,
     TypeOrmModule.forFeature([MonitorSystemWorkspaceRepository]),
