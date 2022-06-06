@@ -104,7 +104,7 @@ export const Check31 = new Check(
     for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
-       for (const system of loc.systems) {
+      for (const system of loc.systems) {
         if (system.fuelFlows.length > 0) {
           if (!validTypeCodes.includes(system.systemTypeCode)) {
             result.addError(
@@ -128,7 +128,7 @@ export const Check31 = new Check(
             }
           }
         }
-      } 
+      }
 
       return result;
     }

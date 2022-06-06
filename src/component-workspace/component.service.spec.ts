@@ -150,8 +150,6 @@ describe('ComponentWorkspaceService', () => {
             '1',
           );
 
-          console.log(checkResults);
-
           expect(checkResults).toEqual([
             '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
           ]);
