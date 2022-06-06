@@ -108,10 +108,16 @@ export class MonitorPlanWorkspaceService {
     const promises = [];
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
-    // Get ACTIVE planIds by FacId
-    const activePlans = await this.repository.getActivePlansByFacId(facilityId);
+    // TODO: delete
+    // const locationIds = plan.locations.map(l => l.id);
 
-    const locationIds = plan.locations.map(l => l.id);
+    const locations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
+      plan,
+      facilityId,
+      plan.orisCode,
+    );
+
+    const locationIds = locations.map(l => l.id);
 
     // Get Active Plan
     let activePlanId: string;
@@ -126,7 +132,6 @@ export class MonitorPlanWorkspaceService {
         );
 
         activePlanId = activePlan.id;
-        console.log('Active Plan', activePlanId);
       }
     }
 
@@ -231,6 +236,7 @@ export class MonitorPlanWorkspaceService {
 
   async resetToNeedsEvaluation(locId: string, userId: string): Promise<void> {
     const plan = await this.repository.getActivePlanByLocation(locId);
+    console.log('Reset MP', plan);
     const planId = plan.id;
 
     await this.repository.resetToNeedsEvaluation(planId, userId);
@@ -455,7 +461,12 @@ export class MonitorPlanWorkspaceService {
       );
     });
 
+    console.log(results[UNIT_STACK_CONFIGS]);
+
     const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
+
+    console.log('USC DTO', uscDTO);
+
     const mpDTO = await this.map.one(mp);
 
     mpDTO.unitStackConfiguration = uscDTO;
