@@ -35,9 +35,7 @@ export class MonitorQualificationWorkspaceService {
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
   ) {}
 
-  async runQualificationImportCheck(
-    qualifications: MonitorQualificationBaseDTO[],
-  ) {
+  runQualificationImportCheck(qualifications: MonitorQualificationBaseDTO[]) {
     const errorList: string[] = [];
 
     for (const qual of qualifications) {

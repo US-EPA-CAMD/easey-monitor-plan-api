@@ -170,7 +170,7 @@ describe('MonitorSystemWorkspaceService', () => {
       expect(checkResults).toEqual(errorList);
     });
 
-    it('Should fail when systemTypeCode is invalid', async () => {
+    it('Should fail when systemTypeCode in production data is invalid', async () => {
       const location = new UpdateMonitorLocationDTO();
       const system = new MonitorSystemBaseDTO();
       const systemFuelFlow = new SystemFuelFlowBaseDTO();
@@ -198,7 +198,39 @@ describe('MonitorSystemWorkspaceService', () => {
         [system],
       );
 
-      // expect(componentService.getComponentByIdentifier).toHaveBeenCalled()
+      const errorList = [
+        '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
+      ];
+      expect(checkResults).toEqual(errorList);
+    });
+
+    it('Should fail when systemTypeCode in workspace data is invalid', async () => {
+      const location = new UpdateMonitorLocationDTO();
+      const system = new MonitorSystemBaseDTO();
+      const systemFuelFlow = new SystemFuelFlowBaseDTO();
+      const component = new UpdateComponentBaseDTO();
+
+      system.components = [];
+      system.fuelFlows = [systemFuelFlow];
+      system.systemTypeCode = 'AIR';
+
+      location.components = [component];
+      location.systems = [system];
+      location.unitId = '1';
+      location.stackPipeId = 'CS0AAN';
+
+      const testData = new UpdateMonitorPlanDTO();
+      testData.locations = [location];
+
+      repository.findOne = jest.fn().mockResolvedValue(null);
+
+      const checkResults = await service.runMonitorSystemImportCheck(
+        testData,
+        location,
+        'id',
+        [system],
+      );
+
       const errorList = [
         '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
       ];

@@ -139,7 +139,7 @@ describe('MonitorQualificationService', () => {
       ]);
 
       const errorList = [
-        '[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #1. This field should be blank',
+        '[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #0. This field should be blank',
         '[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.',
       ];
 
