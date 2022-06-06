@@ -8,10 +8,12 @@ import { ImportChecksService } from './import-checks.service';
 import { IsInDbValuesConstraint } from './pipes/is-in-db-values.pipe';
 import { UnitStackConfigurationWorkspaceModule } from '../unit-stack-configuration-workspace/unit-stack-configuration.module';
 import { MonitorFormulaWorkspaceModule } from '../monitor-formula-workspace/monitor-formula.module';
+import { MonitorSpanWorkspaceModule } from '../monitor-span-workspace/monitor-span.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
 
 @Module({
   imports: [
+    MonitorSpanWorkspaceModule,
     MonitorSystemWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     MonitorFormulaWorkspaceModule,

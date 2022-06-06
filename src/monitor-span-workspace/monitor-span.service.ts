@@ -111,6 +111,36 @@ export class MonitorSpanWorkspaceService {
     return this.map.one(span);
   }
 
+  async runSpanChecks(spans: MonitorSpanBaseDTO[]) {
+    const errorList: string[] = [];
+
+    let mustBeNull: string[] = [];
+    for (const span of spans) {
+      if (span.componentTypeCode === 'FLOW') {
+        mustBeNull = [
+          'mpcValue',
+          'mecValue',
+          'defaultHighRange',
+          'scaleTransitionPoint',
+          'spanScaleCode',
+        ];
+      } else {
+        mustBeNull = ['mpfValue', 'flowSpanValue', 'flowFullScaleRange'];
+      }
+
+      mustBeNull.forEach(category => {
+        if (span[category] !== null) {
+          errorList.push(
+            'IMPORT10-NONCRIT-A',
+            `An extraneous value has been reported for ${category} in the span record for ${span.componentTypeCode}. This value was not imported.`,
+          );
+        }
+      });
+    }
+
+    return errorList;
+  }
+
   async importSpan(
     locationId: string,
     spans: MonitorSpanBaseDTO[],
