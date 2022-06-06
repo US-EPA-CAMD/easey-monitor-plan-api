@@ -3,12 +3,14 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { StackPipe } from './stack-pipe.entity';
 import { Unit } from './unit.entity';
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.unit_stack_configuration' })
 export class UnitStackConfiguration extends BaseEntity {
@@ -55,4 +57,13 @@ export class UnitStackConfiguration extends BaseEntity {
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;
+
+  @ManyToOne(
+    () => MonitorLocation,
+    location => location.unitStackConfigurations,
+    { eager: true },
+  )
+  @JoinColumn({ name: 'unit_id' })
+  @JoinColumn({ name: 'stack_pipe_id' })
+  location: MonitorLocation;
 }

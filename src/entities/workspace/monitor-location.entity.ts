@@ -23,6 +23,7 @@ import { MonitorFormula } from './monitor-formula.entity';
 import { MonitorDefault } from './monitor-default.entity';
 import { MonitorAttribute } from './monitor-attribute.entity';
 import { MonitorQualification } from './monitor-qualification.entity';
+import { UnitStackConfiguration } from '../unit-stack-configuration.entity';
 
 @Entity({
   name: 'camdecmpswks.monitor_location',
@@ -121,4 +122,10 @@ export class MonitorLocation extends BaseEntity {
     qualification => qualification.location,
   )
   qualifications: MonitorQualification[];
+
+  @OneToMany(
+    () => UnitStackConfiguration,
+    unitStackConfiguration => unitStackConfiguration.location,
+  )
+  unitStackConfigurations: UnitStackConfiguration[];
 }

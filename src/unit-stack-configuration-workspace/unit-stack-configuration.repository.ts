@@ -23,4 +23,15 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
       .andWhere('usc.beginDate = :beginDate', { beginDate })
       .getOne();
   }
+
+  async getUnitStackConfigsByLocationIds(locationIds: string) {
+    return this.createQueryBuilder('usc')
+      .innerJoin('usc.unit', 'u')
+      .innerJoin('usc.stackPipe', 'sp')
+      .innerJoin('usc.location', 'mlu')
+      .innerJoin('usc.location', 'mlsp')
+      .where('mlu.locationId IN (:...locationIds)', { locationIds })
+      .where('msp.locationId IN (:...locationIds)', { locationIds })
+      .getMany();
+  }
 }
