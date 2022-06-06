@@ -10,7 +10,6 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { StackPipe } from './stack-pipe.entity';
 import { Unit } from './unit.entity';
-import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.unit_stack_configuration' })
 export class UnitStackConfiguration extends BaseEntity {
@@ -42,28 +41,17 @@ export class UnitStackConfiguration extends BaseEntity {
   @Column({ name: 'update_date' })
   updateDate: Date;
 
-  @OneToOne(
+  @ManyToOne(
     () => StackPipe,
-    stackPipe => stackPipe.unitStackConfig,
-    { eager: true },
+    stackPipe => stackPipe.unitStackConfigurations,
   )
   @JoinColumn({ name: 'stack_pipe_id' })
   stackPipe: StackPipe;
 
-  @OneToOne(
+  @ManyToOne(
     () => Unit,
-    unit => unit.unitStackConfig,
-    { eager: true },
+    unit => unit.unitStackConfigurations,
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;
-
-  @ManyToOne(
-    () => MonitorLocation,
-    location => location.unitStackConfigurations,
-    { eager: true },
-  )
-  @JoinColumn({ name: 'unit_id' })
-  @JoinColumn({ name: 'stack_pipe_id' })
-  location: MonitorLocation;
 }

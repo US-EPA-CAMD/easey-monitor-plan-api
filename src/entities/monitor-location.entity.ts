@@ -3,15 +3,16 @@ import {
   Entity,
   PrimaryColumn,
   OneToMany,
-  ManyToOne,
   ManyToMany,
   JoinColumn,
   OneToOne,
+  Column,
 } from 'typeorm';
 
 import { Unit } from './unit.entity';
-import { Component } from './component.entity';
+import { DuctWaf } from './duct-waf.entity';
 import { StackPipe } from './stack-pipe.entity';
+import { Component } from './component.entity';
 import { MatsMethod } from './mats-method.entity';
 import { MonitorPlan } from './monitor-plan.entity';
 import { MonitorLoad } from './monitor-load.entity';
@@ -19,10 +20,10 @@ import { MonitorSpan } from './monitor-span.entity';
 import { MonitorMethod } from './monitor-method.entity';
 import { MonitorSystem } from './monitor-system.entity';
 import { MonitorFormula } from './monitor-formula.entity';
-import { DuctWaf } from './duct-waf.entity';
 import { MonitorDefault } from './monitor-default.entity';
 import { MonitorAttribute } from './monitor-attribute.entity';
 import { MonitorQualification } from './monitor-qualification.entity';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 @Entity({
   name: 'camdecmps.monitor_location',
@@ -33,9 +34,22 @@ export class MonitorLocation extends BaseEntity {
   })
   id: string;
 
-  @ManyToOne(
+  @Column({
+    type: 'varchar',
+    name: 'stack_pipe_id',
+  })
+  stackPipeId: string;
+
+  @Column({
+    type: 'numeric',
+    transformer: new NumericColumnTransformer(),
+    name: 'unit_id',
+  })
+  unitId: number;
+
+  @OneToOne(
     () => StackPipe,
-    stackPipe => stackPipe.locations,
+    stackPipe => stackPipe.location,
     { eager: true },
   )
   @JoinColumn({ name: 'stack_pipe_id' })
@@ -118,7 +132,7 @@ export class MonitorLocation extends BaseEntity {
 
   @OneToMany(
     () => MonitorQualification,
-    mq => mq.location,
+    qualification => qualification.location,
   )
   qualifications: MonitorQualification[];
 }

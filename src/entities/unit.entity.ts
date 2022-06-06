@@ -74,12 +74,6 @@ export class Unit extends BaseEntity {
   location: MonitorLocation;
 
   @OneToOne(
-    () => UnitStackConfiguration,
-    unitStackConfig => unitStackConfig.stackPipe,
-  )
-  unitStackConfig: UnitStackConfiguration;
-
-  @OneToOne(
     () => UnitBoilerType,
     ubt => ubt.unit,
     { eager: true },
@@ -113,4 +107,11 @@ export class Unit extends BaseEntity {
     { eager: true },
   )
   unitCapacities: UnitCapacity[];
+
+  @OneToMany(
+    () => UnitStackConfiguration,
+    ucs => ucs.unit,
+    { eager: true },
+  )
+  unitStackConfigurations: UnitStackConfiguration[];
 }
