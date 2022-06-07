@@ -147,18 +147,7 @@ export class MonitorLocationWorkspaceService {
   }
 
   async getLocationRelationships(locationId: string) {
-    const location = await this.repository.findOne(locationId);
-
-    if (!location) {
-      this.logger.error(NotFoundException, this.errorMsg, true, {
-        locationId,
-      });
-    }
-    const hasUnit = location.unit !== null;
-    const id = location.unit
-      ? location.unit.id.toString()
-      : location.stackPipe.id;
-    return this.uscServcie.getUnitStackRelationships(hasUnit, id);
+    return this.uscServcie.getUnitStackConfigsByLocationIds([locationId]);
   }
 
   async importMonitorLocation(

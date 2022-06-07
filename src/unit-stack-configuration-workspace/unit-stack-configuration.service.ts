@@ -16,6 +16,10 @@ export class UnitStackConfigurationWorkspaceService {
     private readonly map: UnitStackConfigurationMap,
   ) {}
 
+  async getUnitStackConfigsByLocationIds(locationIds: string[]) {
+    return await this.repository.getUnitStackConfigsByLocationIds(locationIds);
+  }
+
   runUnitStackChecks(monitorPlan: UpdateMonitorPlanDTO): string[] {
     const errorList: string[] = [];
 
