@@ -73,9 +73,6 @@ export class MonitorLocationWorkspaceService {
       locations.push(await this.getLocationRecord(loc, facilitId, orisCode));
     }
 
-    console.log('HERE');
-    console.log(locations);
-
     return locations;
   }
 
@@ -122,7 +119,7 @@ export class MonitorLocationWorkspaceService {
 
       location = await this.repository.findOne({
         where: {
-          unit: unit.id,
+          unitId: unit.id,
         },
       });
     }
@@ -141,12 +138,12 @@ export class MonitorLocationWorkspaceService {
 
       location = await this.repository.findOne({
         where: {
-          stackPipe: stackPipe.id,
+          stackPipeId: stackPipe.id,
         },
       });
     }
 
-    // console.log('Location', location);
+    console.log('Location', location);
     return location;
   }
 
