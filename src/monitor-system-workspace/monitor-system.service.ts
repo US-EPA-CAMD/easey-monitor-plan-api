@@ -116,6 +116,7 @@ export class MonitorSystemWorkspaceService {
     locationId: string,
     payload: MonitorSystemBaseDTO,
     userId: string,
+    isImport: boolean = false,
   ): Promise<MonitorSystemDTO> {
     const system = this.repository.create({
       id: uuid(),
@@ -134,7 +135,11 @@ export class MonitorSystemWorkspaceService {
     });
 
     await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(system);
   }
 
@@ -170,6 +175,7 @@ export class MonitorSystemWorkspaceService {
       }
 
       await Promise.all(promises);
+
       resolve(true);
     });
   }
@@ -177,8 +183,9 @@ export class MonitorSystemWorkspaceService {
   async updateSystem(
     monitoringSystemRecordId: string,
     payload: MonitorSystemBaseDTO,
-    locId: string,
+    locationId: string,
     userId: string,
+    isImport: boolean = false,
   ): Promise<MonitorSystemDTO> {
     const system = await this.getSystem(monitoringSystemRecordId);
     system.systemTypeCode = payload.systemTypeCode;
@@ -192,7 +199,11 @@ export class MonitorSystemWorkspaceService {
     system.updateDate = new Date(Date.now());
 
     await this.repository.save(system);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(system);
   }
 
@@ -219,6 +230,7 @@ export class MonitorSystemWorkspaceService {
                 system,
                 locationId,
                 userId,
+                true,
               );
 
               innerPromises.push(
@@ -234,7 +246,9 @@ export class MonitorSystemWorkspaceService {
                 locationId,
                 system,
                 userId,
+                true,
               );
+
               innerPromises.push(
                 this.updateSysComponentAndFuelFlow(
                   createdSystemRecord.id,
@@ -246,6 +260,7 @@ export class MonitorSystemWorkspaceService {
             }
 
             await Promise.all(innerPromises);
+
             innerResolve(true);
           }),
         );

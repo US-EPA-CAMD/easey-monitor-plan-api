@@ -60,9 +60,15 @@ export class MonitorLoadWorkspaceService {
             );
 
             if (loadRecord !== undefined) {
-              await this.updateLoad(locationId, loadRecord.id, load, userId);
+              await this.updateLoad(
+                locationId,
+                loadRecord.id,
+                load,
+                userId,
+                true,
+              );
             } else {
-              await this.createLoad(locationId, load, userId);
+              await this.createLoad(locationId, load, userId, true);
             }
 
             innerResolve(true);
@@ -79,6 +85,7 @@ export class MonitorLoadWorkspaceService {
     locationId: string,
     payload: MonitorLoadBaseDTO,
     userId: string,
+    isImport: boolean = false,
   ): Promise<MonitorLoadDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -101,7 +108,11 @@ export class MonitorLoadWorkspaceService {
     });
 
     await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(load);
   }
 
@@ -110,6 +121,7 @@ export class MonitorLoadWorkspaceService {
     loadId: string,
     payload: MonitorLoadBaseDTO,
     userId: string,
+    isImport: boolean = false,
   ): Promise<MonitorLoadDTO> {
     const load = await this.getLoad(loadId);
 

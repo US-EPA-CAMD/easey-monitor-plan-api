@@ -78,9 +78,10 @@ export class PCTQualificationWorkspaceService {
 
   async createPCTQualification(
     userId: string,
-    locId: string,
+    locationId: string,
     qualId: string,
     payload: PCTQualificationBaseDTO,
+    isImport: boolean = false,
   ): Promise<PCTQualificationDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -102,18 +103,27 @@ export class PCTQualificationWorkspaceService {
     });
 
     const result = await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 
   async updatePCTQualification(
     userId: string,
-    locId: string,
+    locationId: string,
     qualId: string,
     pctQualId: string,
     payload: PCTQualificationBaseDTO,
+    isImport: boolean = false,
   ): Promise<PCTQualificationDTO> {
-    const pctQual = await this.getPCTQualification(locId, qualId, pctQualId);
+    const pctQual = await this.getPCTQualification(
+      locationId,
+      qualId,
+      pctQualId,
+    );
 
     pctQual.qualificationId = qualId;
     pctQual.qualificationYear = payload.qualificationYear;
@@ -131,8 +141,12 @@ export class PCTQualificationWorkspaceService {
     pctQual.updateDate = new Date(Date.now());
 
     await this.repository.save(pctQual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getPCTQualification(locId, qualId, pctQualId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
+    return this.getPCTQualification(locationId, qualId, pctQualId);
   }
 
   async importPCTQualification(
@@ -159,6 +173,7 @@ export class PCTQualificationWorkspaceService {
                 qualificationId,
                 pctQualificationRecord.id,
                 pctQualification,
+                true,
               );
             } else {
               await this.createPCTQualification(
@@ -166,6 +181,7 @@ export class PCTQualificationWorkspaceService {
                 locationId,
                 qualificationId,
                 pctQualification,
+                true,
               );
             }
 

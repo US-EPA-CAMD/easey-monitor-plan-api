@@ -42,12 +42,14 @@ export class UnitControlWorkspaceService {
       unitRecordId,
       unitControlId,
     );
+
     if (!result) {
       this.logger.error(NotFoundException, 'Unit Control Not Found', true, {
         unitRecordId,
         unitControlId,
       });
     }
+
     return this.map.one(result);
   }
 
@@ -78,6 +80,7 @@ export class UnitControlWorkspaceService {
                 unitRecordId,
                 unitControlRecord.id,
                 unitControl,
+                true,
               );
             } else {
               await this.createUnitControl(
@@ -85,23 +88,27 @@ export class UnitControlWorkspaceService {
                 locationId,
                 unitRecordId,
                 unitControl,
+                true,
               );
             }
+
             innerResolve(true);
           }),
         );
       }
 
       await Promise.all(promises);
+
       resolve(true);
     });
   }
 
   async createUnitControl(
     userId: string,
-    locId: string,
+    locationId: string,
     unitRecordId: number,
     payload: UnitControlBaseDTO,
+    isImport: boolean = false,
   ): Promise<UnitControlDTO> {
     const unitControl = this.repository.create({
       id: uuid(),
@@ -119,19 +126,24 @@ export class UnitControlWorkspaceService {
     });
 
     const result = await this.repository.save(unitControl);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 
   async updateUnitControl(
     userId: string,
-    locId: string,
+    locationId: string,
     unitRecordId: number,
     unitControlId: string,
     payload: UnitControlBaseDTO,
+    isImport: boolean = false,
   ): Promise<UnitControlDTO> {
     const unitControl = await this.getUnitControl(
-      locId,
+      locationId,
       unitRecordId,
       unitControlId,
     );
@@ -147,7 +159,11 @@ export class UnitControlWorkspaceService {
     unitControl.updateDate = new Date(Date.now());
 
     await this.repository.save(unitControl);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getUnitControl(locId, unitRecordId, unitControlId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
+    return this.getUnitControl(locationId, unitRecordId, unitControlId);
   }
 }

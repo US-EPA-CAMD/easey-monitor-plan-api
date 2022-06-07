@@ -57,6 +57,7 @@ export class MonitorFormulaWorkspaceService {
     locationId: string,
     payload: MonitorFormulaBaseDTO,
     userId: string,
+    isImport: boolean = false,
   ): Promise<MonitorFormulaDTO> {
     const formula = this.repository.create({
       id: uuid(),
@@ -75,7 +76,11 @@ export class MonitorFormulaWorkspaceService {
     });
 
     await this.repository.save(formula);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(formula);
   }
 
@@ -164,9 +169,10 @@ export class MonitorFormulaWorkspaceService {
                 formulaRecord.id,
                 formula,
                 userId,
+                true,
               );
             } else {
-              await this.createFormula(locationId, formula, userId);
+              await this.createFormula(locationId, formula, userId, true);
             }
 
             innerResolve(true);

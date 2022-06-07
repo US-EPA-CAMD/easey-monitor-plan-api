@@ -78,9 +78,10 @@ export class LEEQualificationWorkspaceService {
 
   async createLEEQualification(
     userId: string,
-    locId: string,
+    locationId: string,
     qualId: string,
     payload: LEEQualificationBaseDTO,
+    isImport: boolean = false,
   ): Promise<LEEQualificationDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -98,18 +99,27 @@ export class LEEQualificationWorkspaceService {
     });
 
     const result = await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 
   async updateLEEQualification(
     userId: string,
-    locId: string,
+    locationId: string,
     qualId: string,
     pctQualId: string,
     payload: LEEQualificationBaseDTO,
+    isImport: boolean = false,
   ): Promise<LEEQualificationDTO> {
-    const leeQual = await this.getLEEQualification(locId, qualId, pctQualId);
+    const leeQual = await this.getLEEQualification(
+      locationId,
+      qualId,
+      pctQualId,
+    );
 
     leeQual.qualificationId = qualId;
     leeQual.qualificationTestDate = payload.qualificationTestDate;
@@ -123,7 +133,11 @@ export class LEEQualificationWorkspaceService {
     leeQual.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(leeQual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 
@@ -151,6 +165,7 @@ export class LEEQualificationWorkspaceService {
                 qualificationId,
                 leeQualificationRecord.id,
                 leeQualification,
+                true,
               );
             } else {
               await this.createLEEQualification(
@@ -158,6 +173,7 @@ export class LEEQualificationWorkspaceService {
                 locationId,
                 qualificationId,
                 leeQualification,
+                true,
               );
             }
 

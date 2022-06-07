@@ -97,8 +97,11 @@ export class MonitorMethodWorkspaceService {
     method.updateDate = new Date(Date.now());
 
     await this.repository.save(method);
-    if (!isImport)
+
+    if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(method);
   }
 
@@ -125,9 +128,10 @@ export class MonitorMethodWorkspaceService {
                 method,
                 locationId,
                 userId,
+                true,
               );
             } else {
-              await this.createMethod(locationId, method, userId);
+              await this.createMethod(locationId, method, userId, true);
             }
 
             innerResolve(true);
@@ -135,6 +139,7 @@ export class MonitorMethodWorkspaceService {
         );
 
         await Promise.all(promises);
+
         resolve(true);
       }
     });

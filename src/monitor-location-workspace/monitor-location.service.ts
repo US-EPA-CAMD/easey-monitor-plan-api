@@ -364,7 +364,9 @@ export class MonitorLocationWorkspaceService {
           }),
         );
       }
+
       await Promise.all(promises);
+
       resolve(true);
     });
   }

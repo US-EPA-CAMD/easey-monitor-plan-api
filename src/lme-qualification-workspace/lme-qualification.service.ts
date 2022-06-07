@@ -78,9 +78,10 @@ export class LMEQualificationWorkspaceService {
 
   async createLMEQualification(
     userId: string,
-    locId: string,
+    locationId: string,
     qualId: string,
     payload: LMEQualificationBaseDTO,
+    isImport: boolean = false,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = this.repository.create({
       id: uuid(),
@@ -95,18 +96,27 @@ export class LMEQualificationWorkspaceService {
     });
 
     const result = await this.repository.save(lmeQual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 
   async updateLMEQualification(
     userId: string,
-    locId: string,
+    locationId: string,
     qualId: string,
     lmeQualId: string,
     payload: LMEQualificationBaseDTO,
+    isImport: boolean = false,
   ): Promise<LMEQualificationDTO> {
-    const lmeQual = await this.getLMEQualification(locId, qualId, lmeQualId);
+    const lmeQual = await this.getLMEQualification(
+      locationId,
+      qualId,
+      lmeQualId,
+    );
 
     lmeQual.qualificationId = qualId;
     lmeQual.qualificationDataYear = payload.qualificationDataYear;
@@ -117,7 +127,11 @@ export class LMEQualificationWorkspaceService {
     lmeQual.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(lmeQual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 
@@ -145,6 +159,7 @@ export class LMEQualificationWorkspaceService {
                 qualificationId,
                 lmeQualRecord.id,
                 lmeQualification,
+                true,
               );
             } else {
               await this.createLMEQualification(
@@ -152,6 +167,7 @@ export class LMEQualificationWorkspaceService {
                 locationId,
                 qualificationId,
                 lmeQualification,
+                true,
               );
             }
 

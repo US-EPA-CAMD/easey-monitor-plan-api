@@ -47,6 +47,7 @@ export class MonitorSpanWorkspaceService {
     locationId: string,
     payload: MonitorSpanBaseDTO,
     userId: string,
+    isImport: boolean = false,
   ): Promise<MonitorSpanDTO> {
     const span = this.repository.create({
       id: uuid(),
@@ -74,7 +75,11 @@ export class MonitorSpanWorkspaceService {
     });
 
     await this.repository.save(span);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(span);
   }
 
@@ -83,6 +88,7 @@ export class MonitorSpanWorkspaceService {
     spanId: string,
     payload: MonitorSpanBaseDTO,
     userId: string,
+    isImport: boolean = false,
   ): Promise<MonitorSpanDTO> {
     const span = await this.getSpan(locationId, spanId);
 
@@ -107,7 +113,11 @@ export class MonitorSpanWorkspaceService {
     span.updateDate = new Date(Date.now());
 
     await this.repository.save(span);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(span);
   }
 
@@ -160,9 +170,15 @@ export class MonitorSpanWorkspaceService {
             );
 
             if (spanRecord !== undefined) {
-              await this.updateSpan(locationId, spanRecord.id, span, userId);
+              await this.updateSpan(
+                locationId,
+                spanRecord.id,
+                span,
+                userId,
+                true,
+              );
             } else {
-              await this.createSpan(locationId, span, userId);
+              await this.createSpan(locationId, span, userId, true);
             }
 
             innerResolve(true);
