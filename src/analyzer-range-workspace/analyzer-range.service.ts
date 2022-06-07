@@ -50,7 +50,7 @@ export class AnalyzerRangeWorkspaceService {
     payload: AnalyzerRangeBaseDTO,
     locationId: string,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<AnalyzerRangeDTO> {
     const analyzerRange = this.repository.create({
       id: uuid(),
@@ -80,7 +80,7 @@ export class AnalyzerRangeWorkspaceService {
     payload: AnalyzerRangeBaseDTO,
     locationId: string,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<AnalyzerRangeDTO> {
     const analyzerRange = await this.getAnalyzerRange(analyzerRangeId);
 

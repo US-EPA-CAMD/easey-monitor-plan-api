@@ -81,7 +81,7 @@ export class LEEQualificationWorkspaceService {
     locationId: string,
     qualId: string,
     payload: LEEQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<LEEQualificationDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -113,7 +113,7 @@ export class LEEQualificationWorkspaceService {
     qualId: string,
     pctQualId: string,
     payload: LEEQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<LEEQualificationDTO> {
     const leeQual = await this.getLEEQualification(
       locationId,

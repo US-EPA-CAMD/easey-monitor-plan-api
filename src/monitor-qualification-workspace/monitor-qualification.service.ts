@@ -213,7 +213,7 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
     locationId: string,
     payload: MonitorQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorQualificationDTO> {
     const qual = this.repository.create({
       id: uuid(),
@@ -240,7 +240,7 @@ export class MonitorQualificationWorkspaceService {
     locationId: string,
     qualId: string,
     payload: MonitorQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorQualificationDTO> {
     const qual = await this.getQualification(locationId, qualId);
 

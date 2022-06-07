@@ -81,7 +81,7 @@ export class LMEQualificationWorkspaceService {
     locationId: string,
     qualId: string,
     payload: LMEQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = this.repository.create({
       id: uuid(),
@@ -110,7 +110,7 @@ export class LMEQualificationWorkspaceService {
     qualId: string,
     lmeQualId: string,
     payload: LMEQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = await this.getLMEQualification(
       locationId,

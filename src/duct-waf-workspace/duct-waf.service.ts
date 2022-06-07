@@ -46,7 +46,7 @@ export class DuctWafWorkspaceService {
     locationId: string,
     payload: DuctWafBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<DuctWafDTO> {
     const ductWaf = this.repository.create({
       id: uuid(),
@@ -83,7 +83,7 @@ export class DuctWafWorkspaceService {
     ductWafId: string,
     payload: DuctWafBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<DuctWafDTO> {
     const ductWaf = await this.getDuctWaf(ductWafId);
 

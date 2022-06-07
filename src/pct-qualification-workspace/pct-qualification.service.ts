@@ -81,7 +81,7 @@ export class PCTQualificationWorkspaceService {
     locationId: string,
     qualId: string,
     payload: PCTQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<PCTQualificationDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -117,7 +117,7 @@ export class PCTQualificationWorkspaceService {
     qualId: string,
     pctQualId: string,
     payload: PCTQualificationBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<PCTQualificationDTO> {
     const pctQual = await this.getPCTQualification(
       locationId,

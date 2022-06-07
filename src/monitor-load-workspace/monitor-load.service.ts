@@ -85,7 +85,7 @@ export class MonitorLoadWorkspaceService {
     locationId: string,
     payload: MonitorLoadBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorLoadDTO> {
     const load = this.repository.create({
       id: uuid(),
@@ -121,7 +121,7 @@ export class MonitorLoadWorkspaceService {
     loadId: string,
     payload: MonitorLoadBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorLoadDTO> {
     const load = await this.getLoad(loadId);
 

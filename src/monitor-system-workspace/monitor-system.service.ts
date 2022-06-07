@@ -116,7 +116,7 @@ export class MonitorSystemWorkspaceService {
     locationId: string,
     payload: MonitorSystemBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorSystemDTO> {
     const system = this.repository.create({
       id: uuid(),
@@ -185,7 +185,7 @@ export class MonitorSystemWorkspaceService {
     payload: MonitorSystemBaseDTO,
     locationId: string,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorSystemDTO> {
     const system = await this.getSystem(monitoringSystemRecordId);
     system.systemTypeCode = payload.systemTypeCode;

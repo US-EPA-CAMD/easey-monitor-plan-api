@@ -57,7 +57,7 @@ export class MonitorFormulaWorkspaceService {
     locationId: string,
     payload: MonitorFormulaBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorFormulaDTO> {
     const formula = this.repository.create({
       id: uuid(),
@@ -89,7 +89,7 @@ export class MonitorFormulaWorkspaceService {
     formulaRecordId: string,
     payload: MonitorFormulaBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ) {
     const formula = await this.getFormula(locationId, formulaRecordId);
 

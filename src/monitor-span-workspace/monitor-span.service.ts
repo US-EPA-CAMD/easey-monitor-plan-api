@@ -47,7 +47,7 @@ export class MonitorSpanWorkspaceService {
     locationId: string,
     payload: MonitorSpanBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorSpanDTO> {
     const span = this.repository.create({
       id: uuid(),
@@ -88,7 +88,7 @@ export class MonitorSpanWorkspaceService {
     spanId: string,
     payload: MonitorSpanBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorSpanDTO> {
     const span = await this.getSpan(locationId, spanId);
 

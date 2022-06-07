@@ -97,7 +97,7 @@ export class UnitFuelWorkspaceService {
     locationId: string,
     unitId: number,
     payload: UnitFuelBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<UnitFuelDTO> {
     const unitFuel = this.repository.create({
       id: uuid(),
@@ -129,7 +129,7 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     unitFuelId: string,
     payload: UnitFuelBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<UnitFuelDTO> {
     const unitFuel = await this.getUnitFuel(locationId, unitId, unitFuelId);
 

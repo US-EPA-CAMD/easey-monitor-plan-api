@@ -57,7 +57,7 @@ export class MonitorAttributeWorkspaceService {
     locationId: string,
     payload: MonitorAttributeBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorAttributeDTO> {
     const attribute = this.repository.create({
       id: uuid(),
@@ -91,7 +91,7 @@ export class MonitorAttributeWorkspaceService {
     id: string,
     payload: MonitorAttributeBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorAttributeDTO> {
     const attribute = await this.getAttribute(locationId, id);
 

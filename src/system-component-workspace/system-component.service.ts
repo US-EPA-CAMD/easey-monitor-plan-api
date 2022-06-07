@@ -85,7 +85,7 @@ export class SystemComponentWorkspaceService {
     sysComponentRecordId: string,
     payload: SystemComponentBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
     const systemComponent = await this.getSystemComponent(
@@ -114,7 +114,7 @@ export class SystemComponentWorkspaceService {
     monitoringSystemRecordId: string,
     payload: SystemComponentBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<SystemComponentDTO> {
     let component = await this.componentService.getComponentByIdentifier(
       locationId,

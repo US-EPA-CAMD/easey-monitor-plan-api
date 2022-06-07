@@ -53,7 +53,7 @@ export class MonitorDefaultWorkspaceService {
     locationId: string,
     payload: MonitorDefaultBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = this.repository.create({
       id: uuid(),
@@ -89,7 +89,7 @@ export class MonitorDefaultWorkspaceService {
     defaultId: string,
     payload: MonitorDefaultBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = await this.getDefault(locationId, defaultId);
 

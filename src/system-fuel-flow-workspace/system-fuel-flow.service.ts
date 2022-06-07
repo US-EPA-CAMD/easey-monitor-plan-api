@@ -50,7 +50,7 @@ export class SystemFuelFlowWorkspaceService {
     payload: SystemFuelFlowBaseDTO,
     locationId: string,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<SystemFuelFlowDTO> {
     const fuelFlow = this.repository.create({
       id: uuid(),
@@ -82,7 +82,7 @@ export class SystemFuelFlowWorkspaceService {
     payload: SystemFuelFlowBaseDTO,
     locationId: string,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<SystemFuelFlowDTO> {
     const fuelFlow = await this.getFuelFlow(fuelFlowId);
 

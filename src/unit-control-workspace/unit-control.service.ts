@@ -108,7 +108,7 @@ export class UnitControlWorkspaceService {
     locationId: string,
     unitRecordId: number,
     payload: UnitControlBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<UnitControlDTO> {
     const unitControl = this.repository.create({
       id: uuid(),
@@ -140,7 +140,7 @@ export class UnitControlWorkspaceService {
     unitRecordId: number,
     unitControlId: string,
     payload: UnitControlBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<UnitControlDTO> {
     const unitControl = await this.getUnitControl(
       locationId,

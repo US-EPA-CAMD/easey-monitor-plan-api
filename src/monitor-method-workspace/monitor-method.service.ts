@@ -49,7 +49,7 @@ export class MonitorMethodWorkspaceService {
     locationId: string,
     payload: MonitorMethodBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorMethodDTO> {
     const monMethod = this.repository.create({
       id: uuid(),
@@ -81,7 +81,7 @@ export class MonitorMethodWorkspaceService {
     payload: MonitorMethodBaseDTO,
     locationId: string,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MonitorMethodDTO> {
     const method = await this.getMethod(methodId);
 

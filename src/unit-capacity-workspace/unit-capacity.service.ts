@@ -104,7 +104,7 @@ export class UnitCapacityWorkspaceService {
     locationId: string,
     unitId: number,
     payload: UnitCapacityBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = this.repository.create({
       id: uuid(),
@@ -132,7 +132,7 @@ export class UnitCapacityWorkspaceService {
     unitRecordId: number,
     unitCapacityId: string,
     payload: UnitCapacityBaseDTO,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = await this.getUnitCapacity(
       locationId,

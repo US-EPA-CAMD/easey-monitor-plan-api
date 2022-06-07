@@ -46,7 +46,7 @@ export class MatsMethodWorkspaceService {
     locationId: string,
     payload: MatsMethodBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MatsMethodDTO> {
     const method = this.repository.create({
       id: uuid(),
@@ -77,7 +77,7 @@ export class MatsMethodWorkspaceService {
     locationId: string,
     payload: MatsMethodBaseDTO,
     userId: string,
-    isImport: boolean = false,
+    isImport = false,
   ): Promise<MatsMethodDTO> {
     const method = await this.getMethod(methodId);
 
@@ -125,8 +125,7 @@ export class MatsMethodWorkspaceService {
                 true,
               );
             } else {
-              await this.createMethod(locationId, matsMethod, userId);
-              true;
+              await this.createMethod(locationId, matsMethod, userId, true);
             }
 
             innerResolve(true);
