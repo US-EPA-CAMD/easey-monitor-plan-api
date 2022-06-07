@@ -85,6 +85,7 @@ export class SystemComponentWorkspaceService {
     sysComponentRecordId: string,
     payload: SystemComponentBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
     const systemComponent = await this.getSystemComponent(
@@ -100,7 +101,11 @@ export class SystemComponentWorkspaceService {
     systemComponent.updateDate = new Date(Date.now());
 
     await this.repository.save(systemComponent);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(systemComponent);
   }
 
@@ -109,6 +114,7 @@ export class SystemComponentWorkspaceService {
     monitoringSystemRecordId: string,
     payload: SystemComponentBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<SystemComponentDTO> {
     let component = await this.componentService.getComponentByIdentifier(
       locationId,
@@ -149,7 +155,10 @@ export class SystemComponentWorkspaceService {
     });
 
     await this.repository.save(systemComponent);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
 
     const createdSysComp = await this.getSystemComponent(
       monitoringSystemRecordId,
@@ -185,6 +194,7 @@ export class SystemComponentWorkspaceService {
                   systemComponentRecord.id,
                   component,
                   userId,
+                  true,
                 ),
               );
             } else {
@@ -194,6 +204,7 @@ export class SystemComponentWorkspaceService {
                   sysId,
                   component,
                   userId,
+                  true,
                 ),
               );
             }

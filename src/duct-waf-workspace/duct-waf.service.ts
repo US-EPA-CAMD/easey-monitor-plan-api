@@ -46,6 +46,7 @@ export class DuctWafWorkspaceService {
     locationId: string,
     payload: DuctWafBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<DuctWafDTO> {
     const ductWaf = this.repository.create({
       id: uuid(),
@@ -69,7 +70,11 @@ export class DuctWafWorkspaceService {
     });
 
     await this.repository.save(ductWaf);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(ductWaf);
   }
 
@@ -78,6 +83,7 @@ export class DuctWafWorkspaceService {
     ductWafId: string,
     payload: DuctWafBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<DuctWafDTO> {
     const ductWaf = await this.getDuctWaf(ductWafId);
 
@@ -98,7 +104,11 @@ export class DuctWafWorkspaceService {
     ductWaf.updateDate = new Date(Date.now());
 
     await this.repository.save(ductWaf);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(ductWaf);
   }
 
@@ -126,9 +136,10 @@ export class DuctWafWorkspaceService {
                 ductWafRecord.id,
                 ductWaf,
                 userId,
+                true,
               );
             } else {
-              await this.createDuctWaf(locationId, ductWaf, userId);
+              await this.createDuctWaf(locationId, ductWaf, userId, true);
             }
 
             innerResolve(true);

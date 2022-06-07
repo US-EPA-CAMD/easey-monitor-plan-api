@@ -53,6 +53,7 @@ export class MonitorDefaultWorkspaceService {
     locationId: string,
     payload: MonitorDefaultBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = this.repository.create({
       id: uuid(),
@@ -75,7 +76,11 @@ export class MonitorDefaultWorkspaceService {
     });
 
     await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(monDefault);
   }
 
@@ -84,6 +89,7 @@ export class MonitorDefaultWorkspaceService {
     defaultId: string,
     payload: MonitorDefaultBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<MonitorDefaultDTO> {
     const monDefault = await this.getDefault(locationId, defaultId);
 
@@ -103,7 +109,11 @@ export class MonitorDefaultWorkspaceService {
     monDefault.updateDate = new Date(Date.now());
 
     await this.repository.save(monDefault);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(monDefault);
   }
 
@@ -132,9 +142,10 @@ export class MonitorDefaultWorkspaceService {
                 monDefaultRecord.id,
                 monDefault,
                 userId,
+                true,
               );
             } else {
-              await this.createDefault(locationId, monDefault, userId);
+              await this.createDefault(locationId, monDefault, userId, true);
             }
 
             innerResolve(true);

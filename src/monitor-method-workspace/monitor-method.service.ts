@@ -49,6 +49,7 @@ export class MonitorMethodWorkspaceService {
     locationId: string,
     payload: MonitorMethodBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<MonitorMethodDTO> {
     const monMethod = this.repository.create({
       id: uuid(),
@@ -67,7 +68,11 @@ export class MonitorMethodWorkspaceService {
     });
 
     await this.repository.save(monMethod);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(monMethod);
   }
 
@@ -76,6 +81,7 @@ export class MonitorMethodWorkspaceService {
     payload: MonitorMethodBaseDTO,
     locationId: string,
     userId: string,
+    isImport = false,
   ): Promise<MonitorMethodDTO> {
     const method = await this.getMethod(methodId);
 
@@ -91,7 +97,11 @@ export class MonitorMethodWorkspaceService {
     method.updateDate = new Date(Date.now());
 
     await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(method);
   }
 
@@ -118,9 +128,10 @@ export class MonitorMethodWorkspaceService {
                 method,
                 locationId,
                 userId,
+                true,
               );
             } else {
-              await this.createMethod(locationId, method, userId);
+              await this.createMethod(locationId, method, userId, true);
             }
 
             innerResolve(true);
@@ -128,6 +139,7 @@ export class MonitorMethodWorkspaceService {
         );
 
         await Promise.all(promises);
+
         resolve(true);
       }
     });

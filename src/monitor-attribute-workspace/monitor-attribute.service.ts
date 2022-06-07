@@ -57,6 +57,7 @@ export class MonitorAttributeWorkspaceService {
     locationId: string,
     payload: MonitorAttributeBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<MonitorAttributeDTO> {
     const attribute = this.repository.create({
       id: uuid(),
@@ -77,7 +78,11 @@ export class MonitorAttributeWorkspaceService {
     });
 
     const result = await this.repository.save(attribute);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.getAttribute(locationId, result.id);
   }
 
@@ -86,6 +91,7 @@ export class MonitorAttributeWorkspaceService {
     id: string,
     payload: MonitorAttributeBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<MonitorAttributeDTO> {
     const attribute = await this.getAttribute(locationId, id);
 
@@ -103,7 +109,11 @@ export class MonitorAttributeWorkspaceService {
     attribute.updateDate = new Date(Date.now());
 
     await this.repository.save(attribute);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.getAttribute(locationId, id);
   }
 
@@ -128,9 +138,10 @@ export class MonitorAttributeWorkspaceService {
                 attributeRecord.id,
                 attribute,
                 userId,
+                true,
               );
             } else {
-              await this.createAttribute(locationId, attribute, userId);
+              await this.createAttribute(locationId, attribute, userId, true);
             }
 
             innerResolve(true);

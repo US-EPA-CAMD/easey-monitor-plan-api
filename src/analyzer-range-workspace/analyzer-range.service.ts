@@ -6,15 +6,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
 } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRange } from '../entities/analyzer-range.entity';
-
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
@@ -51,6 +50,7 @@ export class AnalyzerRangeWorkspaceService {
     payload: AnalyzerRangeBaseDTO,
     locationId: string,
     userId: string,
+    isImport = false,
   ): Promise<AnalyzerRangeDTO> {
     const analyzerRange = this.repository.create({
       id: uuid(),
@@ -67,7 +67,11 @@ export class AnalyzerRangeWorkspaceService {
     });
 
     await this.repository.save(analyzerRange);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(analyzerRange);
   }
 
@@ -76,6 +80,7 @@ export class AnalyzerRangeWorkspaceService {
     payload: AnalyzerRangeBaseDTO,
     locationId: string,
     userId: string,
+    isImport = false,
   ): Promise<AnalyzerRangeDTO> {
     const analyzerRange = await this.getAnalyzerRange(analyzerRangeId);
 
@@ -89,7 +94,11 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.updateDate = new Date(Date.now());
 
     await this.repository.save(analyzerRange);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(analyzerRange);
   }
 
@@ -115,6 +124,7 @@ export class AnalyzerRangeWorkspaceService {
                 analyzerRange,
                 locationId,
                 userId,
+                true,
               );
             } else {
               await this.createAnalyzerRange(
@@ -122,6 +132,7 @@ export class AnalyzerRangeWorkspaceService {
                 analyzerRange,
                 locationId,
                 userId,
+                true,
               );
             }
 

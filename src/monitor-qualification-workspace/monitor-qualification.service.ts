@@ -148,6 +148,7 @@ export class MonitorQualificationWorkspaceService {
                 locationId,
                 qualificationRecord.id,
                 qualification,
+                true,
               );
 
               innerPromises.push(
@@ -163,6 +164,7 @@ export class MonitorQualificationWorkspaceService {
                 userId,
                 locationId,
                 qualification,
+                true,
               );
 
               innerPromises.push(
@@ -211,6 +213,7 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
     locationId: string,
     payload: MonitorQualificationBaseDTO,
+    isImport = false,
   ): Promise<MonitorQualificationDTO> {
     const qual = this.repository.create({
       id: uuid(),
@@ -223,18 +226,23 @@ export class MonitorQualificationWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    const result = await this.repository.save(qual);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    await this.repository.save(qual);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(qual);
   }
 
   async updateQualification(
     userId: string,
-    locId: string,
+    locationId: string,
     qualId: string,
     payload: MonitorQualificationBaseDTO,
+    isImport = false,
   ): Promise<MonitorQualificationDTO> {
-    const qual = await this.getQualification(locId, qualId);
+    const qual = await this.getQualification(locationId, qualId);
 
     qual.userId = userId;
     qual.qualificationTypeCode = payload.qualificationTypeCode;
@@ -245,7 +253,11 @@ export class MonitorQualificationWorkspaceService {
     qual.updateDate = new Date(Date.now());
 
     const result = await this.repository.save(qual);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 }

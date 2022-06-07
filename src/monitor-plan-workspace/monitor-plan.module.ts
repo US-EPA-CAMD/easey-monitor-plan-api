@@ -35,6 +35,7 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { ImportChecksModule } from '../import-checks/import-checks.module';
+import { PlantModule } from 'src/plant/plant.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { ImportChecksModule } from '../import-checks/import-checks.module';
     CountyCodeModule,
     MonitorPlanReportResultModule,
     MonitorPlanLocationModule,
+    PlantModule,
     TypeOrmModule.forFeature([MonitorPlanWorkspaceRepository]),
     HttpModule,
   ],

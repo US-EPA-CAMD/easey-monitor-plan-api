@@ -50,6 +50,7 @@ export class UnitCapacityWorkspaceService {
                 unitId,
                 unitCapacityRecord.id,
                 unitCapacity,
+                true,
               );
             } else {
               await this.createUnitCapacity(
@@ -57,6 +58,7 @@ export class UnitCapacityWorkspaceService {
                 locationId,
                 unitId,
                 unitCapacity,
+                true,
               );
             }
             innerResolve(true);
@@ -99,9 +101,10 @@ export class UnitCapacityWorkspaceService {
 
   async createUnitCapacity(
     userId: string,
-    locId: string,
+    locationId: string,
     unitId: number,
     payload: UnitCapacityBaseDTO,
+    isImport = false,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = this.repository.create({
       id: uuid(),
@@ -115,19 +118,24 @@ export class UnitCapacityWorkspaceService {
     });
 
     const result = await this.repository.save(unitCapacity);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getUnitCapacity(locId, unitId, result.id);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
+    return this.getUnitCapacity(locationId, unitId, result.id);
   }
 
   async updateUnitCapacity(
     userId: string,
-    locId: string,
+    locationId: string,
     unitRecordId: number,
     unitCapacityId: string,
     payload: UnitCapacityBaseDTO,
+    isImport = false,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = await this.getUnitCapacity(
-      locId,
+      locationId,
       unitRecordId,
       unitCapacityId,
     );
@@ -140,7 +148,11 @@ export class UnitCapacityWorkspaceService {
     unitCapacity.updateDate = new Date(Date.now());
 
     await this.repository.save(unitCapacity);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getUnitCapacity(locId, unitRecordId, unitCapacityId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
+    return this.getUnitCapacity(locationId, unitRecordId, unitCapacityId);
   }
 }

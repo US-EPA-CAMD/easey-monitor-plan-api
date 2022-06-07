@@ -46,6 +46,7 @@ export class MatsMethodWorkspaceService {
     locationId: string,
     payload: MatsMethodBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<MatsMethodDTO> {
     const method = this.repository.create({
       id: uuid(),
@@ -63,7 +64,11 @@ export class MatsMethodWorkspaceService {
     });
 
     await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(method);
   }
 
@@ -72,6 +77,7 @@ export class MatsMethodWorkspaceService {
     locationId: string,
     payload: MatsMethodBaseDTO,
     userId: string,
+    isImport = false,
   ): Promise<MatsMethodDTO> {
     const method = await this.getMethod(methodId);
 
@@ -87,7 +93,11 @@ export class MatsMethodWorkspaceService {
     method.updateDate = new Date(Date.now());
 
     await this.repository.save(method);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return method;
   }
 
@@ -112,9 +122,10 @@ export class MatsMethodWorkspaceService {
                 method.locationId,
                 matsMethod,
                 userId,
+                true,
               );
             } else {
-              await this.createMethod(locationId, matsMethod, userId);
+              await this.createMethod(locationId, matsMethod, userId, true);
             }
 
             innerResolve(true);

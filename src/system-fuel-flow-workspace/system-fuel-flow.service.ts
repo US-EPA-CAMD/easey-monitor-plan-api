@@ -48,8 +48,9 @@ export class SystemFuelFlowWorkspaceService {
   async createFuelFlow(
     monitoringSystemRecordId: string,
     payload: SystemFuelFlowBaseDTO,
-    locId: string,
+    locationId: string,
     userId: string,
+    isImport = false,
   ): Promise<SystemFuelFlowDTO> {
     const fuelFlow = this.repository.create({
       id: uuid(),
@@ -68,15 +69,20 @@ export class SystemFuelFlowWorkspaceService {
 
     await this.repository.save(fuelFlow);
     const getFuelFlow = await this.getFuelFlow(fuelFlow.id);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(getFuelFlow);
   }
 
   async updateFuelFlow(
     fuelFlowId: string,
     payload: SystemFuelFlowBaseDTO,
-    locId: string,
+    locationId: string,
     userId: string,
+    isImport = false,
   ): Promise<SystemFuelFlowDTO> {
     const fuelFlow = await this.getFuelFlow(fuelFlowId);
 
@@ -90,7 +96,11 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.endHour = payload.endHour;
 
     await this.repository.save(fuelFlow);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(fuelFlow);
   }
 
@@ -118,11 +128,18 @@ export class SystemFuelFlowWorkspaceService {
                   fuelFlow,
                   locationId,
                   userId,
+                  true,
                 ),
               );
             } else {
               innerPromises.push(
-                await this.createFuelFlow(sysId, fuelFlow, locationId, userId),
+                await this.createFuelFlow(
+                  sysId,
+                  fuelFlow,
+                  locationId,
+                  userId,
+                  true,
+                ),
               );
             }
 

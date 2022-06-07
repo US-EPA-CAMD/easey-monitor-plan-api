@@ -54,9 +54,16 @@ export class UnitFuelWorkspaceService {
                 unitId,
                 unitFuelRecord.id,
                 unitFuel,
+                true,
               );
             } else {
-              await this.createUnitFuel(userId, locationId, unitId, unitFuel);
+              await this.createUnitFuel(
+                userId,
+                locationId,
+                unitId,
+                unitFuel,
+                true,
+              );
             }
 
             innerResolve(true);
@@ -87,9 +94,10 @@ export class UnitFuelWorkspaceService {
 
   async createUnitFuel(
     userId: string,
-    locId: string,
+    locationId: string,
     unitId: number,
     payload: UnitFuelBaseDTO,
+    isImport = false,
   ): Promise<UnitFuelDTO> {
     const unitFuel = this.repository.create({
       id: uuid(),
@@ -107,18 +115,23 @@ export class UnitFuelWorkspaceService {
     });
 
     const result = await this.repository.save(unitFuel);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(result);
   }
 
   async updateUnitFuel(
     userId: string,
-    locId: string,
+    locationId: string,
     unitId: number,
     unitFuelId: string,
     payload: UnitFuelBaseDTO,
+    isImport = false,
   ): Promise<UnitFuelDTO> {
-    const unitFuel = await this.getUnitFuel(locId, unitId, unitFuelId);
+    const unitFuel = await this.getUnitFuel(locationId, unitId, unitFuelId);
 
     unitFuel.fuelCode = payload.fuelCode;
     unitFuel.indicatorCode = payload.indicatorCode;
@@ -131,7 +144,11 @@ export class UnitFuelWorkspaceService {
     unitFuel.updateDate = new Date(Date.now());
 
     await this.repository.save(unitFuel);
-    await this.mpService.resetToNeedsEvaluation(locId, userId);
-    return this.getUnitFuel(locId, unitId, unitFuelId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
+    return this.getUnitFuel(locationId, unitId, unitFuelId);
   }
 }
