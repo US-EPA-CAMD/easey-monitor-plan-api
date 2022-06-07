@@ -152,6 +152,9 @@ export class MonitorPlanWorkspaceService {
     );
 
     await Promise.all(promises);
+
+    await this.resetToNeedsEvaluation(locationIds[0], userId);
+
     return null;
   }
 
