@@ -84,6 +84,7 @@ export class MonitorFormulaWorkspaceService {
     formulaRecordId: string,
     payload: MonitorFormulaBaseDTO,
     userId: string,
+    isImport: boolean = false,
   ) {
     const formula = await this.getFormula(locationId, formulaRecordId);
 
@@ -99,7 +100,11 @@ export class MonitorFormulaWorkspaceService {
     formula.updateDate = new Date(Date.now());
 
     await this.repository.save(formula);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    }
+
     return this.map.one(formula);
   }
 

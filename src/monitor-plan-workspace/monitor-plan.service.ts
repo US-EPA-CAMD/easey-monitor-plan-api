@@ -127,7 +127,7 @@ export class MonitorPlanWorkspaceService {
     } else {
       {
         // Get active plan
-        const activePlan = await this.repository.getActivePlanByLocation(
+        const activePlan = await this.repository.getActivePlanByLocationId(
           locationIds[0],
         );
 
@@ -235,8 +235,8 @@ export class MonitorPlanWorkspaceService {
   }
 
   async resetToNeedsEvaluation(locId: string, userId: string): Promise<void> {
-    const plan = await this.repository.getActivePlanByLocation(locId);
-    console.log('Reset MP', plan);
+    const plan = await this.repository.getActivePlanByLocationId(locId);
+
     const planId = plan.id;
 
     await this.repository.resetToNeedsEvaluation(planId, userId);

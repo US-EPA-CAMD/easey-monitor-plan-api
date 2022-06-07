@@ -41,12 +41,14 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .getOne();
   }
 
-  async getActivePlanByLocation(locId: string): Promise<MonitorPlan> {
-    return this.createQueryBuilder('plan')
+  async getActivePlanByLocationId(locId: string): Promise<MonitorPlan> {
+    const query = this.createQueryBuilder('plan')
       .innerJoinAndSelect('plan.locations', 'locations')
       .where('locations.id = :locId', { locId })
-      .andWhere('plan.endReportPeriodId IS NULL')
-      .getOne();
+      .andWhere('plan.endReportPeriodId IS NULL');
+
+    console.log(query.getQueryAndParameters());
+    return query.getOne();
   }
 
   async getActivePlansByFacId(facId: number): Promise<MonitorPlan[]> {
