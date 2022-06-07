@@ -48,6 +48,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .andWhere('plan.endReportPeriodId IS NULL');
 
     console.log(query.getQueryAndParameters());
+    // console.log(query.getOne());
     return query.getOne();
   }
 

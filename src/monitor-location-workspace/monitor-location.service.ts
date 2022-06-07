@@ -73,7 +73,20 @@ export class MonitorLocationWorkspaceService {
       locations.push(await this.getLocationRecord(loc, facilitId, orisCode));
     }
 
+    console.log('HERE');
+    console.log(locations);
+
     return locations;
+  }
+
+  async getMonitorLocationsByFacilityId(
+    facilityId: number,
+  ): Promise<MonitorLocationDTO[]> {
+    const results = await this.repository.getMonitorLocationsByFacId(
+      facilityId,
+    );
+
+    return this.map.many(results);
   }
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
@@ -113,6 +126,7 @@ export class MonitorLocationWorkspaceService {
         },
       });
     }
+
     if (loc.stackPipeId) {
       const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
         loc.stackPipeId,
@@ -132,6 +146,7 @@ export class MonitorLocationWorkspaceService {
       });
     }
 
+    // console.log('Location', location);
     return location;
   }
 

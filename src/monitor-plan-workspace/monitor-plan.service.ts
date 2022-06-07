@@ -108,6 +108,8 @@ export class MonitorPlanWorkspaceService {
     const promises = [];
     const facilityId = await getFacIdFromOris(plan.orisCode);
 
+    console.log('Facility Id', facilityId);
+
     // TODO: delete
     // const locationIds = plan.locations.map(l => l.id);
 
