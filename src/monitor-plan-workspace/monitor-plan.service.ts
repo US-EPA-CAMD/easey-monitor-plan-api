@@ -31,13 +31,12 @@ import { LMEQualificationWorkspaceRepository } from '../lme-qualification-worksp
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
-
-import { getFacIdFromOris } from '../import-checks/utilities/utils';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { PlantService } from '../plant/plant.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -91,6 +90,7 @@ export class MonitorPlanWorkspaceService {
     @InjectRepository(UnitStackConfigurationWorkspaceRepository)
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
 
+    private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
     private readonly countyCodeService: CountyCodeService,
     private readonly mpReportResultService: MonitorPlanReportResultService,
@@ -106,12 +106,7 @@ export class MonitorPlanWorkspaceService {
     userId: string,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
-    const facilityId = await getFacIdFromOris(plan.orisCode);
-
-    console.log('Facility Id', facilityId);
-
-    // TODO: delete
-    // const locationIds = plan.locations.map(l => l.id);
+    const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
 
     const locations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
       plan,
@@ -463,11 +458,7 @@ export class MonitorPlanWorkspaceService {
       );
     });
 
-    console.log(results[UNIT_STACK_CONFIGS]);
-
     const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
-
-    console.log('USC DTO', uscDTO);
 
     const mpDTO = await this.map.one(mp);
 

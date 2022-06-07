@@ -7,7 +7,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
   async getMonitorPlansByOrisCode(orisCode: number): Promise<MonitorPlan[]> {
     return this.createQueryBuilder('plan')
       .innerJoinAndSelect('plan.plant', 'plant', 'plant.orisCode = :orisCode', {
-        orisCode: orisCode,
+        orisCode,
       })
       .getMany();
   }
@@ -47,8 +47,6 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .where('locations.id = :locId', { locId })
       .andWhere('plan.endReportPeriodId IS NULL');
 
-    console.log(query.getQueryAndParameters());
-    // console.log(query.getOne());
     return query.getOne();
   }
 

@@ -143,7 +143,6 @@ export class MonitorLocationWorkspaceService {
       });
     }
 
-    console.log('Location', location);
     return location;
   }
 
