@@ -17,7 +17,6 @@ import { SystemComponent } from '../entities/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
@@ -30,14 +29,16 @@ export class SystemComponentWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-    private readonly compRepository: ComponentWorkspaceRepository,
   ) {}
 
-  async getComponents(
+  async getSystemComponents(
     locationId: string,
     monSysId: string,
   ): Promise<SystemComponentDTO[]> {
-    const results = await this.repository.getComponents(locationId, monSysId);
+    const results = await this.repository.getSystemComponents(
+      locationId,
+      monSysId,
+    );
     return this.map.many(results);
   }
 
@@ -63,20 +64,6 @@ export class SystemComponentWorkspaceService {
     }
 
     return result;
-  }
-
-  async getComponenByBeginOrEndDate(
-    sysId: string,
-    componentId: string,
-    beginDate: Date,
-    beginHour: number,
-  ): Promise<SystemComponent> {
-    return this.repository.getComponenByBeginOrEndDate(
-      sysId,
-      componentId,
-      beginDate,
-      beginHour,
-    );
   }
 
   async updateSystemComponent(
@@ -179,7 +166,7 @@ export class SystemComponentWorkspaceService {
         promises.push(
           new Promise(async innerResolve => {
             const innerPromises = [];
-            const systemComponentRecord = await this.getComponenByBeginOrEndDate(
+            const systemComponentRecord = await this.repository.getSystemComponentByBeginOrEndDate(
               sysId,
               component.componentId,
               component.beginDate,

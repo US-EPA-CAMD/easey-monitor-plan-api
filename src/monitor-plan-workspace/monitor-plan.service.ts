@@ -366,7 +366,7 @@ export class MonitorPlanWorkspaceService {
         const s1 = this.systemFuelFlowRepository.getFuelFlowsBySystemIds(
           systemIds,
         );
-        const s2 = this.systemComponentRepository.getComponentsBySystemIds(
+        const s2 = this.systemComponentRepository.getSystemComponentsBySystemIds(
           systemIds,
         );
 

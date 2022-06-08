@@ -19,7 +19,7 @@ export class SystemComponentWorkspaceRepository extends Repository<
       .getOne();
   }
 
-  async getComponents(
+  async getSystemComponents(
     locationId: string,
     monSysId: string,
   ): Promise<SystemComponent[]> {
@@ -31,7 +31,7 @@ export class SystemComponentWorkspaceRepository extends Repository<
       .getMany();
   }
 
-  async getComponentsBySystemIds(
+  async getSystemComponentsBySystemIds(
     monSysIds: string[],
   ): Promise<SystemComponent[]> {
     return this.createQueryBuilder('msc')
@@ -41,7 +41,7 @@ export class SystemComponentWorkspaceRepository extends Repository<
       .getMany();
   }
 
-  async getComponenByBeginOrEndDate(
+  async getSystemComponentByBeginOrEndDate(
     monSysId: string,
     componentId: string,
     beginDate: Date,
