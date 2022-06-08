@@ -11,11 +11,8 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
   ): Promise<UnitCapacity> {
     const query = this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
-      .innerJoinAndSelect('u.location', 'l')
       .innerJoinAndSelect('u.unitBoilerType', 'ubt')
-      .where('l.id = :locId', { locId })
-      .andWhere('u.id = :unitId', { unitId })
-      .andWhere('uc.id = :unitCapacityId', { unitCapacityId });
+      .where('uc.id = :unitCapacityId', { unitCapacityId });
 
     return query.getOne();
   }

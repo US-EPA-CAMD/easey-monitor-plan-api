@@ -37,6 +37,7 @@ export class UnitFuelWorkspaceService {
   ) {
     return new Promise(async resolve => {
       const promises = [];
+
       for (const unitFuel of unitFuels) {
         promises.push(
           new Promise(async innerResolve => {
@@ -81,7 +82,8 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     unitFuelId: string,
   ): Promise<UnitFuelDTO> {
-    const result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
+    const result = await this.repository.findOne(unitFuelId);
+
     if (!result) {
       this.logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
         locId: locId,
@@ -89,6 +91,7 @@ export class UnitFuelWorkspaceService {
         unitFuelId: unitFuelId,
       });
     }
+
     return this.map.one(result);
   }
 
@@ -131,7 +134,11 @@ export class UnitFuelWorkspaceService {
     payload: UnitFuelBaseDTO,
     isImport = false,
   ): Promise<UnitFuelDTO> {
-    const unitFuel = await this.getUnitFuel(locationId, unitId, unitFuelId);
+    const unitFuel = await this.repository.getUnitFuel(
+      locationId,
+      unitId,
+      unitFuelId,
+    );
 
     unitFuel.fuelCode = payload.fuelCode;
     unitFuel.indicatorCode = payload.indicatorCode;
@@ -149,6 +156,6 @@ export class UnitFuelWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return this.getUnitFuel(locationId, unitId, unitFuelId);
+    return this.map.one(unitFuel);
   }
 }

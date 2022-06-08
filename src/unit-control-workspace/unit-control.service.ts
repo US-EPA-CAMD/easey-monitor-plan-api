@@ -142,7 +142,7 @@ export class UnitControlWorkspaceService {
     payload: UnitControlBaseDTO,
     isImport = false,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.getUnitControl(
+    const unitControl = await this.repository.getUnitControl(
       locationId,
       unitRecordId,
       unitControlId,
@@ -164,6 +164,6 @@ export class UnitControlWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return this.getUnitControl(locationId, unitRecordId, unitControlId);
+    return this.map.one(unitControl);
   }
 }
