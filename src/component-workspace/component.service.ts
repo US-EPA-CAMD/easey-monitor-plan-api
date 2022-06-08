@@ -60,11 +60,13 @@ export class ComponentWorkspaceService {
 
       if (
         databaseComponent &&
+        databaseComponent.analyzerRanges &&
         databaseComponent.analyzerRanges.length > 0 &&
         !validTypeCodes.includes(databaseComponent.componentTypeCode)
       ) {
         errorList.push(import32Error);
       } else if (
+        fileComponent.analyzerRanges &&
         fileComponent.analyzerRanges.length > 0 &&
         !validTypeCodes.includes(fileComponent.componentTypeCode)
       ) {
