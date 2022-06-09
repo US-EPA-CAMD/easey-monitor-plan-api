@@ -69,10 +69,6 @@ describe('SystemComponentWorkspaceService', () => {
     componentService = module.get(ComponentWorkspaceService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getSystemComponents', () => {
     it('should return array of system components', async () => {
       const result = await service.getSystemComponents('1', '1');

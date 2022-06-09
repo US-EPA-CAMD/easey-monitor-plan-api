@@ -141,8 +141,7 @@ export class MonitorSpanWorkspaceService {
       mustBeNull.forEach(category => {
         if (span[category] !== null) {
           errorList.push(
-            'IMPORT10-NONCRIT-A',
-            `An extraneous value has been reported for ${category} in the span record for ${span.componentTypeCode}. This value was not imported.`,
+            `[IMPORT10-NONCRIT-A] An extraneous value has been reported for ${category} in the span record for ${span.componentTypeCode}. This value was not imported.`,
           );
         }
       });
