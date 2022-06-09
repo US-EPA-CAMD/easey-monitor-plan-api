@@ -31,8 +31,7 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
       .innerJoin('u.location', 'mlu')
       .innerJoin('sp.location', 'mlsp')
       .where('mlu.id IN (:...locationIds)', { locationIds })
-      .orWhere('mlsp.id IN (:...locationIds)', { locationIds })
-      .andWhere('usc.endDate IS NULL')
+      .andWhere('mlsp.id IN (:...locationIds)', { locationIds })
       .getMany();
   }
 }

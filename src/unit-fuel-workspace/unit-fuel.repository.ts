@@ -18,13 +18,11 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
     unitId: number,
     unitFuelId: string,
   ): Promise<UnitFuel> {
-    return this.createQueryBuilder('uf')
+    const query = this.createQueryBuilder('uf')
       .innerJoinAndSelect('uf.unit', 'u')
-      .innerJoinAndSelect('u.location', 'l')
-      .where('l.id = :locId', { locId })
-      .andWhere('u.id = :unitId', { unitId })
-      .andWhere('uf.id = :unitFuelId', { unitFuelId })
-      .getOne();
+      .andWhere('uf.id = :unitFuelId', { unitFuelId });
+
+    return query.getOne();
   }
 
   async getUnitFuelBySpecs(
@@ -40,9 +38,8 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
       .andWhere('u.fuelCode = :fuelCode', {
         fuelCode,
       })
-      .andWhere('u.beginDate = :beginDate OR u.endDate = :endDate', {
+      .andWhere('u.beginDate = :beginDate', {
         beginDate,
-        endDate,
       })
       .getOne();
   }
