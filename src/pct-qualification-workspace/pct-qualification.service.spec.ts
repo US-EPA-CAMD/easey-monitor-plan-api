@@ -19,8 +19,10 @@ const pctQualId = 'some pct qualification id';
 const userId = 'testuser';
 const qualificationDataYear = 1990;
 
-const returnedPCTQualifications: PCTQualificationDTO[] = [];
 const returnedPCTQualification: PCTQualificationDTO = new PCTQualificationDTO();
+const returnedPCTQualifications: PCTQualificationDTO[] = [
+  returnedPCTQualification,
+];
 
 const payload: PCTQualificationBaseDTO = {
   qualificationYear: 2020,
@@ -36,26 +38,28 @@ const payload: PCTQualificationBaseDTO = {
   yr3PercentageValue: 1,
 };
 
+const pctQual = new PCTQualification();
+
 const mockRepository = () => ({
   getPCTQualifications: jest.fn().mockResolvedValue(returnedPCTQualifications),
   getPCTQualification: jest.fn().mockResolvedValue(returnedPCTQualification),
   getPCTQualificationByDataYear: jest
     .fn()
     .mockResolvedValue(returnedPCTQualification),
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new PCTQualification()),
-  create: jest.fn().mockResolvedValue(new PCTQualification()),
-  save: jest.fn().mockResolvedValue(new PCTQualification()),
+  find: jest.fn().mockResolvedValue([returnedPCTQualification]),
+  findOne: jest.fn().mockResolvedValue(returnedPCTQualification),
+  create: jest.fn().mockResolvedValue(returnedPCTQualification),
+  save: jest.fn().mockResolvedValue(returnedPCTQualification),
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue({}),
-  many: jest.fn().mockResolvedValue([]),
+  one: jest.fn().mockResolvedValue(returnedPCTQualification),
+  many: jest.fn().mockResolvedValue(returnedPCTQualifications),
 });
 
 describe('PCTQualificationService', () => {
-  let loadService: PCTQualificationWorkspaceService;
-  let loadRepository: PCTQualificationWorkspaceRepository;
+  let service: PCTQualificationWorkspaceService;
+  let repository: PCTQualificationWorkspaceRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -74,47 +78,57 @@ describe('PCTQualificationService', () => {
       ],
     }).compile();
 
-    loadService = module.get<PCTQualificationWorkspaceService>(
+    service = module.get<PCTQualificationWorkspaceService>(
       PCTQualificationWorkspaceService,
     );
-    loadRepository = module.get<PCTQualificationWorkspaceRepository>(
+    repository = module.get<PCTQualificationWorkspaceRepository>(
       PCTQualificationWorkspaceRepository,
     );
   });
 
-  it('should be defined', () => {
-    expect(loadService).toBeDefined();
-  });
-
   describe('getPCTQualifications', () => {
     it('should return array of PCT qualifications', async () => {
-      const result = await loadService.getPCTQualifications(locId, qualId);
-      expect(result).toEqual([]);
+      const result = await service.getPCTQualifications(locId, qualId);
+      expect(result).toEqual(returnedPCTQualifications);
     });
   });
 
   describe('getPCTQualification', () => {
     it('should return PCT qualification for a specific qualification ID and location ID', async () => {
-      const result = await loadService.getPCTQualification(
+      const result = await service.getPCTQualification(
         locId,
         qualId,
         pctQualId,
       );
-      expect(result).toEqual({});
+      expect(result).toEqual(returnedPCTQualification);
+    });
+
+    it('should throw error when PCT qualification not found', async () => {
+      jest.spyOn(repository, 'getPCTQualification').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getPCTQualification(locId, qualId, pctQualId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 
   describe('getPCTQualificationByDataYear', () => {
     it('should return PCT qualification for a specific qualification ID , location ID and qualification data year', async () => {
-      loadRepository.getPCTQualificationByDataYear = jest
+      repository.getPCTQualificationByDataYear = jest
         .fn()
         .mockResolvedValue(returnedPCTQualification);
-      const result = await loadService.getPCTQualificationByDataYear(
+      const result = await service.getPCTQualificationByDataYear(
         locId,
         qualId,
         qualificationDataYear,
       );
-      expect(loadRepository.getPCTQualificationByDataYear).toHaveBeenCalledWith(
+      expect(repository.getPCTQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         qualificationDataYear,
@@ -123,15 +137,15 @@ describe('PCTQualificationService', () => {
     });
 
     it('should return null for a specific qualification ID , location ID and qualification data year when not found', async () => {
-      loadRepository.getPCTQualificationByDataYear = jest
+      repository.getPCTQualificationByDataYear = jest
         .fn()
         .mockResolvedValue(null);
-      const result = await loadService.getPCTQualificationByDataYear(
+      const result = await service.getPCTQualificationByDataYear(
         locId,
         qualId,
         qualificationDataYear,
       );
-      expect(loadRepository.getPCTQualificationByDataYear).toHaveBeenCalledWith(
+      expect(repository.getPCTQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         qualificationDataYear,
@@ -142,7 +156,7 @@ describe('PCTQualificationService', () => {
 
   describe('createPCTQualification', () => {
     it('creates a PCT qualification for a specific qualification ID', async () => {
-      const result = await loadService.createPCTQualification(
+      const result = await service.createPCTQualification(
         userId,
         locId,
         qualId,
@@ -154,7 +168,11 @@ describe('PCTQualificationService', () => {
 
   describe('updatePCTQualification', () => {
     it('updates a PCT qualification for a specific qualification ID and location ID', async () => {
-      const result = await loadService.updatePCTQualification(
+      jest
+        .spyOn(service, 'getPCTQualification')
+        .mockResolvedValue(returnedPCTQualification);
+
+      const result = await service.updatePCTQualification(
         userId,
         locId,
         qualId,
@@ -168,17 +186,12 @@ describe('PCTQualificationService', () => {
   describe('importPCTQualification', () => {
     it('should create PCTQualification if not exists', async () => {
       const getPCTQualificationByDataYear = jest
-        .spyOn(loadService, 'getPCTQualificationByDataYear')
+        .spyOn(service, 'getPCTQualificationByDataYear')
         .mockResolvedValue(null);
       const createPCTQualification = jest
-        .spyOn(loadService, 'createPCTQualification')
+        .spyOn(service, 'createPCTQualification')
         .mockResolvedValue(returnedPCTQualification);
-      await loadService.importPCTQualification(
-        locId,
-        qualId,
-        [payload],
-        userId,
-      );
+      await service.importPCTQualification(locId, qualId, [payload], userId);
       expect(getPCTQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
@@ -189,17 +202,12 @@ describe('PCTQualificationService', () => {
 
     it('should update PCTQualification if exists', async () => {
       const getPCTQualificationByDataYear = jest
-        .spyOn(loadService, 'getPCTQualificationByDataYear')
+        .spyOn(service, 'getPCTQualificationByDataYear')
         .mockResolvedValue(returnedPCTQualification);
       const updateLMEQualification = jest
-        .spyOn(loadService, 'createPCTQualification')
+        .spyOn(service, 'createPCTQualification')
         .mockResolvedValue(returnedPCTQualification);
-      await loadService.importPCTQualification(
-        locId,
-        qualId,
-        [payload],
-        userId,
-      );
+      await service.importPCTQualification(locId, qualId, [payload], userId);
       expect(getPCTQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
