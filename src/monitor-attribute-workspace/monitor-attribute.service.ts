@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { v4 as uuid } from 'uuid';
 import {
   MonitorAttributeBaseDTO,
   MonitorAttributeDTO,
 } from '../dtos/monitor-attribute.dto';
-import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 

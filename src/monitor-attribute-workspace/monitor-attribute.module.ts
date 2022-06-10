@@ -5,8 +5,8 @@ import { HttpModule } from '@nestjs/axios';
 import { MonitorAttributeWorkspaceController } from './monitor-attribute.controller';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
-import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
+import { MonitorAttributeMap } from 'src/maps/monitor-attribute.map';
 
 @Module({
   imports: [
