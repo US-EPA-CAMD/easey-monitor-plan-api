@@ -1,47 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
-import { NotFoundException } from '@nestjs/common';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
-import { MonitorLoadBaseDTO } from '../dtos/monitor-load.dto';
+import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
-const locationId = '1234';
-const loadId = '4321';
-const userId = 'testuser';
+const monLoad = new MonitorLoad();
+const monLoadDto = new MonitorLoadDTO();
 
-const payload: MonitorLoadBaseDTO = {
-  maximumLoadValue: 0,
-  maximumLoadUnitsOfMeasureCode: 'string',
-  lowerOperationBoundary: 0,
-  upperOperationBoundary: 0,
-  normalLevelCode: 'string',
-  secondLevelCode: 'string',
-  secondNormalIndicator: 0,
-  loadAnalysisDate: new Date(Date.now()),
-  beginDate: new Date(Date.now()),
-  beginHour: 0,
-  endDate: new Date(Date.now()),
-  endHour: 0,
-};
+const payload = new MonitorLoadBaseDTO();
 
 const mockRepository = () => ({
-  getLoad: jest.fn().mockRejectedValue(new NotFoundException('Async error')),
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new MonitorLoad()),
-  create: jest.fn().mockResolvedValue(new MonitorLoad()),
-  save: jest.fn().mockResolvedValue(new MonitorLoad()),
+  getLoadByLocBDateBHour: jest.fn().mockRejectedValue(monLoad),
+  getLoad: jest.fn().mockRejectedValue(monLoad),
+  find: jest.fn().mockResolvedValue([monLoad]),
+  findOne: jest.fn().mockResolvedValue(monLoad),
+  create: jest.fn().mockResolvedValue(monLoad),
+  save: jest.fn().mockResolvedValue(monLoad),
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue({}),
-  many: jest.fn().mockResolvedValue([]),
+  one: jest.fn().mockResolvedValue(monLoadDto),
+  many: jest.fn().mockResolvedValue([monLoadDto]),
 });
 
 describe('MonitorLoadService', () => {
@@ -69,40 +55,65 @@ describe('MonitorLoadService', () => {
     repository = module.get(MonitorLoadWorkspaceRepository);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getLoads', () => {
     it('should return array of monitor loads', async () => {
-      const result = await service.getLoads(null);
-      expect(result).toEqual([]);
+      const result = await service.getLoads('1');
+      expect(result).toEqual([monLoadDto]);
     });
   });
 
   describe('getLoad', () => {
     it('should return monitor load record for a specific loadId', async () => {
-      const result = await service.getLoad(loadId);
-      expect(result).toEqual({});
+      const result = await service.getLoad('1');
+      expect(result).toEqual(monLoad);
+    });
+
+    it('should throw error when monitor load not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getLoad('1');
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 
   describe('createLoad', () => {
     it('creates a monitor load record for a specified locationId', async () => {
-      const result = await service.createLoad(locationId, payload, userId);
-      expect(result).toEqual({ ...result });
+      const result = await service.createLoad('1', payload, 'testUser');
+      expect(result).toEqual(monLoadDto);
     });
   });
 
   describe('updateLoad', () => {
     it('updates a monitor load record for a specified locationId', async () => {
-      const result = await service.updateLoad(
-        locationId,
-        loadId,
-        payload,
-        userId,
-      );
-      expect(result).toEqual({ ...result });
+      jest.spyOn(service, 'getLoad').mockResolvedValue(monLoad);
+
+      const result = await service.updateLoad('1', '1', payload, 'testUser');
+      expect(result).toEqual(monLoadDto);
+    });
+  });
+
+  describe('importLoad', () => {
+    it('should update while importing monitor load', async () => {
+      jest
+        .spyOn(repository, 'getLoadByLocBDateBHour')
+        .mockResolvedValue(monLoad);
+      const result = await service.importLoad('1', [payload], 'testUser');
+      expect(result).toEqual(true);
+    });
+    it('should create while importing monitor load', async () => {
+      jest
+        .spyOn(repository, 'getLoadByLocBDateBHour')
+        .mockResolvedValue(undefined);
+
+      const result = await service.importLoad('1', [payload], 'testUser');
+      expect(result).toEqual(true);
     });
   });
 });

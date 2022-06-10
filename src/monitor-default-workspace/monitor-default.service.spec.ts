@@ -74,7 +74,7 @@ describe('MonitorDefaultWorkspaceService', () => {
       expect(result).toEqual(monDefault);
     });
 
-    it('should throw error when location defaults not found', async () => {
+    it('should throw error when monitor defaults not found', async () => {
       jest.spyOn(repository, 'getDefault').mockResolvedValue(null);
 
       let errored = false;
