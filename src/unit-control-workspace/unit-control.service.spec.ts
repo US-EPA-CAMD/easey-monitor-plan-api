@@ -12,36 +12,24 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
-const locId = '6';
-const unitRecordId = 1;
-const unitControlId = 'some unit control id';
-const userId = 'testuser';
-
-const returnedUnitControls: UnitControlDTO[] = [];
 const returnedUnitControl: UnitControlDTO = new UnitControlDTO();
+const unitControl = new UnitControl();
 
-const payload: UnitControlBaseDTO = {
-  controlCode: 'PAX',
-  parameterCode: 'DL',
-  installDate: new Date(Date.now()),
-  optimizationDate: new Date(Date.now()),
-  originalCode: '1',
-  retireDate: new Date(Date.now()),
-  seasonalControlsIndicator: 'P',
-};
+const payload: UnitControlBaseDTO = new UnitControlBaseDTO();
 
 const mockRepository = () => ({
-  getUnitControls: jest.fn().mockResolvedValue(returnedUnitControls),
-  getUnitControl: jest.fn().mockResolvedValue(returnedUnitControl),
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new UnitControl()),
-  create: jest.fn().mockResolvedValue(new UnitControl()),
-  save: jest.fn().mockResolvedValue(new UnitControl()),
+  getUnitControls: jest.fn().mockResolvedValue([unitControl]),
+  getUnitControl: jest.fn().mockResolvedValue(unitControl),
+  getUnitControlByUnitIdParamCdControlCd: jest
+    .fn()
+    .mockResolvedValue(unitControl),
+  create: jest.fn().mockResolvedValue(unitControl),
+  save: jest.fn().mockResolvedValue(unitControl),
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue({}),
-  many: jest.fn().mockResolvedValue([]),
+  one: jest.fn().mockResolvedValue(returnedUnitControl),
+  many: jest.fn().mockResolvedValue([returnedUnitControl]),
 });
 
 describe('UnitControlService', () => {
@@ -69,50 +57,82 @@ describe('UnitControlService', () => {
     repository = module.get(UnitControlWorkspaceRepository);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getUnitControls', () => {
     it('should return array of unit controls', async () => {
-      const result = await service.getUnitControls(locId, unitRecordId);
-      expect(result).toEqual([]);
+      const result = await service.getUnitControls('1', 1);
+      expect(result).toEqual([returnedUnitControl]);
     });
   });
 
   describe('getUnitControl', () => {
     it('should return unit control record for a specific unit control ID', async () => {
-      const result = await service.getUnitControl(
-        locId,
-        unitRecordId,
-        unitControlId,
-      );
-      expect(result).toEqual({});
+      const result = await service.getUnitControl('1', 1, '1');
+      expect(result).toEqual(returnedUnitControl);
+    });
+
+    it('should throw error when unit control record not found', async () => {
+      jest.spyOn(repository, 'getUnitControl').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getUnitControl('1', 1, '1');
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 
   describe('createUnitControl', () => {
     it('creates a unit control record for a specified unit ID', async () => {
       const result = await service.createUnitControl(
-        userId,
-        locId,
-        unitRecordId,
+        'testUser',
+        '1',
+        1,
         payload,
       );
-      expect(result).toEqual({ ...result });
+      expect(result).toEqual(returnedUnitControl);
     });
   });
 
   describe('updateUnitControl', () => {
     it('updates a unit control record for a specified unit control ID', async () => {
+      jest.spyOn(repository, 'getUnitControl').mockResolvedValue(unitControl);
+
       const result = await service.updateUnitControl(
-        userId,
-        locId,
-        unitRecordId,
-        unitControlId,
+        'testUser',
+        '1',
+        1,
+        '1',
         payload,
       );
-      expect(result).toEqual({ ...result });
+      expect(result).toEqual(returnedUnitControl);
+    });
+  });
+
+  describe('importDefault', () => {
+    it('should update while importing monitor default', async () => {
+      const result = await service.importUnitControl(
+        [payload],
+        1,
+        '1',
+        'testUser',
+      );
+      expect(result).toEqual(true);
+    });
+    it('should create while importing monitor default', async () => {
+      jest
+        .spyOn(repository, 'getUnitControlByUnitIdParamCdControlCd')
+        .mockResolvedValue(undefined);
+
+      const result = await service.importUnitControl(
+        [payload],
+        1,
+        '1',
+        'testUser',
+      );
+      expect(result).toEqual(true);
     });
   });
 });

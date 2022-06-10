@@ -72,7 +72,7 @@ describe('UnitCapacityWorkspaceService', () => {
       expect(result).toEqual(unitCapacity);
     });
 
-    it('should throw error when monitor defaults not found', async () => {
+    it('should throw error when unit capacity record not found', async () => {
       jest.spyOn(repository, 'getUnitCapacity').mockResolvedValue(undefined);
       let errored = false;
 
