@@ -188,7 +188,7 @@ export class MonitorLocationWorkspaceService {
                 location.unitCapacities.length > 0
               ) {
                 innerPromises.push(
-                  this.unitCapacityService.importUnityCapacity(
+                  this.unitCapacityService.importUnitCapacity(
                     location.unitCapacities,
                     unitRecord.id,
                     monitorLocationRecord.id,
