@@ -12,36 +12,22 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
-const locId = '6';
-const unitRecordId = 1;
-const unitFuelId = 'some unit fuel id';
-const userId = 'testuser';
-
-const returnedUnitFuels: UnitFuelDTO[] = [];
 const returnedUnitFuel: UnitFuelDTO = new UnitFuelDTO();
+const unitFuel = new UnitFuel();
 
-const payload: UnitFuelBaseDTO = {
-  fuelCode: '',
-  indicatorCode: '',
-  ozoneSeasonIndicator: 1,
-  demGCV: null,
-  demSO2: null,
-  beginDate: new Date(Date.now()),
-  endDate: new Date(Date.now()),
-};
+const payload: UnitFuelBaseDTO = new UnitFuelBaseDTO();
 
 const mockRepository = () => ({
-  getUnitFuels: jest.fn().mockResolvedValue(returnedUnitFuels),
-  getUnitFuel: jest.fn().mockResolvedValue(returnedUnitFuel),
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new UnitFuel()),
-  create: jest.fn().mockResolvedValue(new UnitFuel()),
-  save: jest.fn().mockResolvedValue(new UnitFuel()),
+  getUnitFuels: jest.fn().mockResolvedValue([unitFuel]),
+  getUnitFuel: jest.fn().mockResolvedValue(unitFuel),
+  getUnitFuelBySpecs: jest.fn().mockResolvedValue(unitFuel),
+  create: jest.fn().mockResolvedValue(unitFuel),
+  save: jest.fn().mockResolvedValue(unitFuel),
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue({}),
-  many: jest.fn().mockResolvedValue([]),
+  one: jest.fn().mockResolvedValue(returnedUnitFuel),
+  many: jest.fn().mockResolvedValue([returnedUnitFuel]),
 });
 
 describe('UnitFuelService', () => {
@@ -69,46 +55,74 @@ describe('UnitFuelService', () => {
     repository = module.get(UnitFuelWorkspaceRepository);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
-      const result = await service.getUnitFuels(locId, unitRecordId);
-      expect(result).toEqual([]);
+      const result = await service.getUnitFuels('1', 1);
+      expect(result).toEqual([returnedUnitFuel]);
     });
   });
 
   describe('getUnitFuel', () => {
     it('should return unit fuel record for a specific unit fuel ID', async () => {
-      const result = await service.getUnitFuel(locId, unitRecordId, unitFuelId);
-      expect(result).toEqual({});
+      const result = await service.getUnitFuel('1', 1, '1');
+      expect(result).toEqual(returnedUnitFuel);
+    });
+
+    it('should throw error when unit fuel record not found', async () => {
+      jest.spyOn(repository, 'getUnitFuel').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getUnitFuel('1', 1, '1');
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 
   describe('createUnitFuel', () => {
     it('creates a unit fuel record for a specified unit ID', async () => {
-      const result = await service.createUnitFuel(
-        userId,
-        locId,
-        unitRecordId,
-        payload,
-      );
-      expect(result).toEqual({ ...result });
+      const result = await service.createUnitFuel('testUser', '1', 1, payload);
+      expect(result).toEqual(returnedUnitFuel);
     });
   });
 
   describe('updateUnitFuel', () => {
     it('updates a unit fuel record for a specified unit fuel ID', async () => {
+      jest.spyOn(repository, 'getUnitFuel').mockResolvedValue(unitFuel);
       const result = await service.updateUnitFuel(
-        userId,
-        locId,
-        unitRecordId,
-        unitFuelId,
+        'testUser',
+        '1',
+        1,
+        '1',
         payload,
       );
-      expect(result).toEqual({ ...result });
+      expect(result).toEqual(returnedUnitFuel);
+    });
+  });
+
+  describe('importDefault', () => {
+    it('should update while importing monitor default', async () => {
+      const result = await service.importUnitFuel(
+        [payload],
+        1,
+        '1',
+        'testUser',
+      );
+      expect(result).toEqual(true);
+    });
+    it('should create while importing monitor default', async () => {
+      jest.spyOn(repository, 'getUnitFuelBySpecs').mockResolvedValue(undefined);
+
+      const result = await service.importUnitFuel(
+        [payload],
+        1,
+        '1',
+        'testUser',
+      );
+      expect(result).toEqual(true);
     });
   });
 });

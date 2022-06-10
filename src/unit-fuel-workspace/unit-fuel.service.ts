@@ -29,60 +29,12 @@ export class UnitFuelWorkspaceService {
     return this.map.many(results);
   }
 
-  async importUnitFuel(
-    unitFuels: UnitFuelBaseDTO[],
-    unitId: number,
-    locationId: string,
-    userId: string,
-  ) {
-    return new Promise(async resolve => {
-      const promises = [];
-
-      for (const unitFuel of unitFuels) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
-              unitId,
-              unitFuel.fuelCode,
-              unitFuel.beginDate,
-              unitFuel.endDate,
-            );
-
-            if (unitFuelRecord !== undefined) {
-              await this.updateUnitFuel(
-                userId,
-                locationId,
-                unitId,
-                unitFuelRecord.id,
-                unitFuel,
-                true,
-              );
-            } else {
-              await this.createUnitFuel(
-                userId,
-                locationId,
-                unitId,
-                unitFuel,
-                true,
-              );
-            }
-
-            innerResolve(true);
-          }),
-        );
-      }
-
-      await Promise.all(promises);
-      resolve(true);
-    });
-  }
-
   async getUnitFuel(
     locId: string,
     unitId: number,
     unitFuelId: string,
   ): Promise<UnitFuelDTO> {
-    const result = await this.repository.findOne(unitFuelId);
+    const result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
 
     if (!result) {
       this.logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
@@ -157,5 +109,53 @@ export class UnitFuelWorkspaceService {
     }
 
     return this.map.one(unitFuel);
+  }
+
+  async importUnitFuel(
+    unitFuels: UnitFuelBaseDTO[],
+    unitId: number,
+    locationId: string,
+    userId: string,
+  ) {
+    return new Promise(async resolve => {
+      const promises = [];
+
+      for (const unitFuel of unitFuels) {
+        promises.push(
+          new Promise(async innerResolve => {
+            const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
+              unitId,
+              unitFuel.fuelCode,
+              unitFuel.beginDate,
+              unitFuel.endDate,
+            );
+
+            if (unitFuelRecord !== undefined) {
+              await this.updateUnitFuel(
+                userId,
+                locationId,
+                unitId,
+                unitFuelRecord.id,
+                unitFuel,
+                true,
+              );
+            } else {
+              await this.createUnitFuel(
+                userId,
+                locationId,
+                unitId,
+                unitFuel,
+                true,
+              );
+            }
+
+            innerResolve(true);
+          }),
+        );
+      }
+
+      await Promise.all(promises);
+      resolve(true);
+    });
   }
 }
