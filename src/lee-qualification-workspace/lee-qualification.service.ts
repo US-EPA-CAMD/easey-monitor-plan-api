@@ -60,22 +60,6 @@ export class LEEQualificationWorkspaceService {
     return this.map.one(result);
   }
 
-  async getLEEQualificationByTestDate(
-    locId: string,
-    qualId: string,
-    qualTestDate: Date,
-  ): Promise<LEEQualificationDTO> {
-    const result = await this.repository.getLEEQualificationByTestDate(
-      locId,
-      qualId,
-      qualTestDate,
-    );
-    if (result) {
-      return this.map.one(result);
-    }
-    return result;
-  }
-
   async createLEEQualification(
     userId: string,
     locationId: string,
@@ -152,7 +136,7 @@ export class LEEQualificationWorkspaceService {
       for (const leeQualification of leeQualifications) {
         promises.push(
           new Promise(async innerResolve => {
-            const leeQualificationRecord = await this.getLEEQualificationByTestDate(
+            const leeQualificationRecord = await this.repository.getLEEQualificationByTestDate(
               locationId,
               qualificationId,
               leeQualification.qualificationTestDate,
