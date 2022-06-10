@@ -4,7 +4,7 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-import { MonitorAttributeMap } from './montitor-attribute.map';
+import { MonitorAttributeMap } from './monitor-attribute.map';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';

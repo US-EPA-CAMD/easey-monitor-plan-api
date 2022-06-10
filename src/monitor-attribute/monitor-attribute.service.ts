@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorAttributeRepository } from './monitor-attribute.repository';
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
-import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
+import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 
 @Injectable()
 export class MonitorAttributeService {

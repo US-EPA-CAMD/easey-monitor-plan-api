@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorAttribute } from '../entities/monitor-attribute.entity';
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
+
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 
 @Injectable()
 export class MonitorAttributeMap extends BaseMap<
@@ -22,7 +23,7 @@ export class MonitorAttributeMap extends BaseMap<
       crossAreaFlow: entity.crossAreaFlow,
       crossAreaStackExit: entity.crossAreaStackExit,
       beginDate: entity.beginDate,
-      endDate: entity.beginDate,
+      endDate: entity.endDate,
       userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,

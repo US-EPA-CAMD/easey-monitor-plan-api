@@ -5,7 +5,7 @@ import { HttpModule } from '@nestjs/axios';
 import { MonitorAttributeController } from './monitor-attribute.controller';
 import { MonitorAttributeService } from './monitor-attribute.service';
 import { MonitorAttributeRepository } from './monitor-attribute.repository';
-import { MonitorAttributeMap } from '../maps/montitor-attribute.map';
+import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MonitorAttributeRepository]), HttpModule],

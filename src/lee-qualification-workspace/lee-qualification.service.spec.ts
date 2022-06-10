@@ -13,42 +13,29 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
-const locId = '6';
-const qualId = '1';
-const leeQualId = 'some lee qualification id';
-const userId = 'testuser';
-const qualificationTestDate = new Date(Date.now());
-
-const returnedLEEQualifications: LEEQualificationDTO[] = [];
 const returnedLEEQualification: LEEQualificationDTO = new LEEQualificationDTO();
+const leeQual = new LEEQualification();
 
-const payload: LEEQualificationBaseDTO = {
-  qualificationTestDate: new Date(Date.now()),
-  parameterCode: 'HG',
-  qualificationTestType: 'INITIAL',
-  potentialAnnualMassEmissions: null,
-  applicableEmissionStandard: 1.2,
-  unitsOfStandard: 'LBTBTU',
-  percentageOfEmissionStandard: 1.4,
-};
+const payload = new LEEQualificationBaseDTO();
 
 const mockRepository = () => ({
-  getLEEQualifications: jest.fn().mockResolvedValue(returnedLEEQualifications),
-  getLEEQualification: jest.fn().mockResolvedValue(returnedLEEQualification),
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new LEEQualification()),
-  create: jest.fn().mockResolvedValue(new LEEQualification()),
-  save: jest.fn().mockResolvedValue(new LEEQualification()),
+  getLEEQualifications: jest.fn().mockResolvedValue([leeQual]),
+  getLEEQualification: jest.fn().mockResolvedValue(leeQual),
+  getLEEQualificationByTestDate: jest.fn().mockResolvedValue(leeQual),
+  find: jest.fn().mockResolvedValue([returnedLEEQualification]),
+  findOne: jest.fn().mockResolvedValue(leeQual),
+  create: jest.fn().mockResolvedValue(leeQual),
+  save: jest.fn().mockResolvedValue(leeQual),
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue({}),
-  many: jest.fn().mockResolvedValue([]),
+  one: jest.fn().mockResolvedValue(returnedLEEQualification),
+  many: jest.fn().mockResolvedValue([returnedLEEQualification]),
 });
 
 describe('LEEQualificationService', () => {
-  let leeQualService: LEEQualificationWorkspaceService;
-  let leeQualRepository: LEEQualificationWorkspaceRepository;
+  let service: LEEQualificationWorkspaceService;
+  let repository: LEEQualificationWorkspaceRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,134 +54,97 @@ describe('LEEQualificationService', () => {
       ],
     }).compile();
 
-    leeQualService = module.get<LEEQualificationWorkspaceService>(
+    service = module.get<LEEQualificationWorkspaceService>(
       LEEQualificationWorkspaceService,
     );
-    leeQualRepository = module.get<LEEQualificationWorkspaceRepository>(
+    repository = module.get<LEEQualificationWorkspaceRepository>(
       LEEQualificationWorkspaceRepository,
     );
   });
 
-  it('should be defined', () => {
-    expect(leeQualService).toBeDefined();
-  });
-
   describe('getLEEQualifications', () => {
     it('should return array of LEE qualifications', async () => {
-      const result = await leeQualService.getLEEQualifications(locId, qualId);
-      expect(result).toEqual([]);
+      const result = await service.getLEEQualifications('1', '1');
+      expect(result).toEqual([leeQual]);
     });
   });
 
   describe('getLEEQualification', () => {
     it('should return LEE qualification for a specific qualification ID and location ID', async () => {
-      const result = await leeQualService.getLEEQualification(
-        locId,
-        qualId,
-        leeQualId,
-      );
-      expect(result).toEqual({});
-    });
-  });
-
-  describe('getLEEQualificationByTestDate', () => {
-    it('should return LEE qualification for a specific qualification ID , location ID and qualification test date', async () => {
-      leeQualRepository.getLEEQualificationByTestDate = jest
-        .fn()
-        .mockResolvedValue(returnedLEEQualification);
-      const result = await leeQualService.getLEEQualificationByTestDate(
-        locId,
-        qualId,
-        qualificationTestDate,
-      );
-      expect(
-        leeQualRepository.getLEEQualificationByTestDate,
-      ).toHaveBeenCalledWith(locId, qualId, qualificationTestDate);
-      expect(result).toEqual(returnedLEEQualification);
+      const result = await service.getLEEQualification('1', '1', '1');
+      expect(result).toEqual(leeQual);
     });
 
-    it('should return null for a specific qualification ID , location ID and qualification test data when not found', async () => {
-      leeQualRepository.getLEEQualificationByTestDate = jest
-        .fn()
-        .mockResolvedValue(null);
-      const result = await leeQualService.getLEEQualificationByTestDate(
-        locId,
-        qualId,
-        qualificationTestDate,
-      );
-      expect(
-        leeQualRepository.getLEEQualificationByTestDate,
-      ).toHaveBeenCalledWith(locId, qualId, qualificationTestDate);
-      expect(result).toEqual(null);
+    it('should throw error when LEE qualification not found', async () => {
+      jest.spyOn(repository, 'getLEEQualification').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getLEEQualification('1', '1', '1');
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 
   describe('createLEEQualification', () => {
     it('creates a LEE qualification for a specific qualification ID', async () => {
-      const result = await leeQualService.createLEEQualification(
-        userId,
-        locId,
-        qualId,
+      const result = await service.createLEEQualification(
+        'testUser',
+        '1',
+        '1',
         payload,
       );
-      expect(result).toEqual({ ...result });
+      expect(result).toEqual(returnedLEEQualification);
     });
   });
 
   describe('updateLEEQualification', () => {
     it('updates a LEE qualification for a specific qualification ID and location ID', async () => {
-      const result = await leeQualService.updateLEEQualification(
-        userId,
-        locId,
-        qualId,
-        leeQualId,
+      jest
+        .spyOn(service, 'getLEEQualification')
+        .mockResolvedValue(returnedLEEQualification);
+
+      const result = await service.updateLEEQualification(
+        'testUser',
+        '1',
+        '1',
+        '1',
         payload,
       );
-      expect(result).toEqual({ ...result });
+      expect(result).toEqual(returnedLEEQualification);
     });
   });
 
   describe('importLEEQualification', () => {
     it('should create LEEQualification if not exists', async () => {
-      const getLEEQualificationByTestDate = jest
-        .spyOn(leeQualService, 'getLEEQualificationByTestDate')
+      jest
+        .spyOn(repository, 'getLEEQualificationByTestDate')
         .mockResolvedValue(null);
-      const createLEEQualification = jest
-        .spyOn(leeQualService, 'createLEEQualification')
-        .mockResolvedValue(returnedLEEQualification);
-      await leeQualService.importLEEQualification(
-        locId,
-        qualId,
+      const result = await service.importLEEQualification(
+        '1',
+        '1',
         [payload],
-        userId,
+        'testUser',
       );
-      expect(getLEEQualificationByTestDate).toHaveBeenCalledWith(
-        locId,
-        qualId,
-        payload.qualificationTestDate,
-      );
-      expect(createLEEQualification).toHaveBeenCalled;
+      expect(result).toEqual(true);
     });
 
     it('should update LEEQualification if exists', async () => {
-      const getLEEQualificationByTestDate = jest
-        .spyOn(leeQualService, 'getLEEQualificationByTestDate')
-        .mockResolvedValue(returnedLEEQualification);
-      const updateLEEQualification = jest
-        .spyOn(leeQualService, 'updateLEEQualification')
-        .mockResolvedValue(returnedLEEQualification);
-      await leeQualService.importLEEQualification(
-        locId,
-        qualId,
+      jest
+        .spyOn(repository, 'getLEEQualificationByTestDate')
+        .mockResolvedValue(leeQual);
+
+      const result = await service.importLEEQualification(
+        '1',
+        '1',
         [payload],
-        userId,
+        'testUser',
       );
-      expect(getLEEQualificationByTestDate).toHaveBeenCalledWith(
-        locId,
-        qualId,
-        payload.qualificationTestDate,
-      );
-      expect(updateLEEQualification).toHaveBeenCalled;
+      expect(result).toEqual(true);
     });
   });
 });

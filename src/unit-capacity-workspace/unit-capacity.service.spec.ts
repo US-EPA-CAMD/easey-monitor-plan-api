@@ -7,32 +7,22 @@ import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
-import { UnitCapacity } from '../entities/unit-capacity.entity';
+import { UnitCapacity } from '../entities/workspace/unit-capacity.entity';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
-const locId = '6';
-const unitRecordId = 1;
-const id = '1';
-const userId = 'testuser';
-
-const returnedUnitCapacities: UnitCapacityDTO[] = [];
 const returnedUnitCapacity: UnitCapacityDTO = new UnitCapacityDTO();
-returnedUnitCapacities.push(returnedUnitCapacity);
 
-const payload: UnitCapacityBaseDTO = {
-  maximumHourlyHeatInputCapacity: 1,
-  beginDate: new Date(Date.now()),
-  endDate: new Date(Date.now()),
-};
+const unitCapacity = new UnitCapacity();
+
+const payload = new UnitCapacityBaseDTO();
 
 const mockRepository = () => ({
-  getUnitCapacities: jest.fn().mockResolvedValue(returnedUnitCapacities),
-  getUnitCapacity: jest.fn().mockResolvedValue(returnedUnitCapacities),
-  find: jest.fn().mockResolvedValue(''),
-  findOne: jest.fn().mockResolvedValue(new UnitCapacity()),
-  create: jest.fn().mockResolvedValue(new UnitCapacity()),
-  save: jest.fn().mockResolvedValue(new UnitCapacity()),
+  getUnitCapacities: jest.fn().mockResolvedValue(unitCapacity),
+  getUnitCapacity: jest.fn().mockResolvedValue(unitCapacity),
+  getUnitCapacityByUnitIdAndDate: jest.fn().mockResolvedValue(unitCapacity),
+  create: jest.fn().mockResolvedValue(unitCapacity),
+  save: jest.fn().mockResolvedValue(unitCapacity),
 });
 
 const mockMap = () => ({
@@ -64,48 +54,87 @@ describe('UnitCapacityWorkspaceService', () => {
     service = module.get<UnitCapacityWorkspaceService>(
       UnitCapacityWorkspaceService,
     );
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+    repository = module.get<UnitCapacityWorkspaceRepository>(
+      UnitCapacityWorkspaceRepository,
+    );
   });
 
   describe('getUnitCapacities', () => {
     it('should return array of unit capacities', async () => {
-      const result = await service.getUnitCapacities(locId, unitRecordId);
-      expect(result).toEqual(returnedUnitCapacities);
+      const result = await service.getUnitCapacities('1', 1);
+      expect(result).toEqual([unitCapacity]);
     });
   });
 
   describe('getUnitCapacity', () => {
     it('should return unit capacity record for a specific unit capacity ID', async () => {
-      const result = await service.getUnitCapacity(locId, unitRecordId, id);
-      expect(result).toEqual(returnedUnitCapacity);
+      const result = await service.getUnitCapacity('1', 1, '1');
+      expect(result).toEqual(unitCapacity);
+    });
+
+    it('should throw error when unit capacity record not found', async () => {
+      jest.spyOn(repository, 'getUnitCapacity').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getUnitCapacity('1', 1, '1');
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 
   describe('createUnitCapacity', () => {
     it('creates a unit capacity record for a specified unit ID', async () => {
       const result = await service.createUnitCapacity(
-        userId,
-        locId,
-        unitRecordId,
+        'testUser',
+        '1',
+        1,
         payload,
       );
-      expect(result).toEqual({ ...result });
+      expect(result).toEqual(returnedUnitCapacity);
     });
   });
 
   describe('updateUnitCapacity', () => {
     it('updates a unit fuel record for a specified unit fuel ID', async () => {
+      jest.spyOn(repository, 'getUnitCapacity').mockResolvedValue(unitCapacity);
+
       const result = await service.updateUnitCapacity(
-        userId,
-        locId,
-        unitRecordId,
-        id,
+        'testUser',
+        '1',
+        1,
+        '1',
         payload,
       );
-      expect(result).toEqual({ ...result });
+      expect(result).toEqual(returnedUnitCapacity);
+    });
+  });
+
+  describe('importDefault', () => {
+    it('should update while importing monitor default', async () => {
+      const result = await service.importUnitCapacity(
+        [payload],
+        1,
+        '1',
+        'testUser',
+      );
+      expect(result).toEqual(true);
+    });
+    it('should create while importing monitor default', async () => {
+      jest
+        .spyOn(repository, 'getUnitCapacityByUnitIdAndDate')
+        .mockResolvedValue(undefined);
+
+      const result = await service.importUnitCapacity(
+        [payload],
+        1,
+        '1',
+        'testUser',
+      );
+      expect(result).toEqual(true);
     });
   });
 });

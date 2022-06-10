@@ -25,7 +25,7 @@ export class UnitCapacityWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
-  async importUnityCapacity(
+  async importUnitCapacity(
     unitCapacities: UnitCapacityBaseDTO[],
     unitId: number,
     locationId: string,
