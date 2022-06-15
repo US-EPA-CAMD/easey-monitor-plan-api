@@ -88,7 +88,10 @@ export class MonitorPlanWorkspaceController {
 
     // TODO: Temporary returned message
     if (mpPlan === null) {
-      return this.logger.info(`Monitoring plan Successfully Imported.`);
+      this.logger.info(`Monitoring plan Successfully Imported.`);
+      return {
+        message: `Monitoring plan Successfully Imported.`,
+      };
     }
 
     return mpPlan;
