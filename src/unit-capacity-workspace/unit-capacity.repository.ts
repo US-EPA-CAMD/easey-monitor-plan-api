@@ -4,11 +4,7 @@ import { UnitCapacity } from '../entities/workspace/unit-capacity.entity';
 
 @EntityRepository(UnitCapacity)
 export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
-  async getUnitCapacity(
-    locId: string,
-    unitId: number,
-    unitCapacityId: string,
-  ): Promise<UnitCapacity> {
+  async getUnitCapacity(unitCapacityId: string): Promise<UnitCapacity> {
     const query = this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.unitBoilerType', 'ubt')

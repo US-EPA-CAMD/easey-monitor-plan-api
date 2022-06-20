@@ -85,11 +85,7 @@ export class UnitCapacityWorkspaceService {
     unitId: number,
     unitCapacityId: string,
   ): Promise<UnitCapacityDTO> {
-    const result = await this.repository.getUnitCapacity(
-      locId,
-      unitId,
-      unitCapacityId,
-    );
+    const result = await this.repository.getUnitCapacity(unitCapacityId);
     if (!result) {
       this.logger.error(NotFoundException, 'Unit Capacity Not Found', true, {
         unitId,
@@ -134,7 +130,7 @@ export class UnitCapacityWorkspaceService {
     payload: UnitCapacityBaseDTO,
     isImport = false,
   ): Promise<UnitCapacityDTO> {
-    const unitCapacity = await this.repository.findOne(unitCapacityId);
+    const unitCapacity = await this.repository.getUnitCapacity(unitCapacityId);
 
     unitCapacity.maximumHourlyHeatInputCapacity =
       payload.maximumHourlyHeatInputCapacity;
