@@ -142,11 +142,7 @@ export class UnitControlWorkspaceService {
     payload: UnitControlBaseDTO,
     isImport = false,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.repository.getUnitControl(
-      locationId,
-      unitRecordId,
-      unitControlId,
-    );
+    const unitControl = await this.repository.findOne(unitControlId);
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;

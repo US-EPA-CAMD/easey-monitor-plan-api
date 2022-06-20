@@ -86,11 +86,7 @@ export class UnitFuelWorkspaceService {
     payload: UnitFuelBaseDTO,
     isImport = false,
   ): Promise<UnitFuelDTO> {
-    const unitFuel = await this.repository.getUnitFuel(
-      locationId,
-      unitId,
-      unitFuelId,
-    );
+    const unitFuel = await this.repository.findOne(unitFuelId);
 
     unitFuel.fuelCode = payload.fuelCode;
     unitFuel.indicatorCode = payload.indicatorCode;

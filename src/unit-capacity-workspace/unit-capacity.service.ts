@@ -134,11 +134,7 @@ export class UnitCapacityWorkspaceService {
     payload: UnitCapacityBaseDTO,
     isImport = false,
   ): Promise<UnitCapacityDTO> {
-    const unitCapacity = await this.repository.getUnitCapacity(
-      locationId,
-      unitRecordId,
-      unitCapacityId,
-    );
+    const unitCapacity = await this.repository.findOne(unitCapacityId);
 
     unitCapacity.maximumHourlyHeatInputCapacity =
       payload.maximumHourlyHeatInputCapacity;
