@@ -34,7 +34,7 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     unitFuelId: string,
   ): Promise<UnitFuelDTO> {
-    const result = await this.repository.getUnitFuel(locId, unitId, unitFuelId);
+    const result = await this.repository.getUnitFuel(unitFuelId);
 
     if (!result) {
       this.logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
@@ -123,7 +123,6 @@ export class UnitFuelWorkspaceService {
               unitId,
               unitFuel.fuelCode,
               unitFuel.beginDate,
-              unitFuel.endDate,
             );
 
             if (unitFuelRecord !== undefined) {

@@ -32,27 +32,6 @@ export class UnitControlWorkspaceService {
     return this.map.many(results);
   }
 
-  async getUnitControl(
-    locId: string,
-    unitRecordId: number,
-    unitControlId: string,
-  ): Promise<UnitControlDTO> {
-    const result = await this.repository.getUnitControl(
-      locId,
-      unitRecordId,
-      unitControlId,
-    );
-
-    if (!result) {
-      this.logger.error(NotFoundException, 'Unit Control Not Found', true, {
-        unitRecordId,
-        unitControlId,
-      });
-    }
-
-    return this.map.one(result);
-  }
-
   async importUnitControl(
     unitControls: UnitControlBaseDTO[],
     unitRecordId: number,
@@ -142,7 +121,7 @@ export class UnitControlWorkspaceService {
     payload: UnitControlBaseDTO,
     isImport = false,
   ): Promise<UnitControlDTO> {
-    const unitControl = await this.repository.findOne(unitControlId);
+    const unitControl = await this.repository.getUnitControl(unitControlId);
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;

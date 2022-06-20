@@ -13,11 +13,7 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
       .getMany();
   }
 
-  async getUnitFuel(
-    locId: string,
-    unitId: number,
-    unitFuelId: string,
-  ): Promise<UnitFuel> {
+  async getUnitFuel(unitFuelId: string): Promise<UnitFuel> {
     const query = this.createQueryBuilder('uf')
       .innerJoinAndSelect('uf.unit', 'u')
       .andWhere('uf.id = :unitFuelId', { unitFuelId });
@@ -29,7 +25,6 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
     unitId: number,
     fuelCode: string,
     beginDate: Date,
-    endDate: Date,
   ): Promise<UnitFuel> {
     return this.createQueryBuilder('u')
       .where('u.unitId = :unitId', {
