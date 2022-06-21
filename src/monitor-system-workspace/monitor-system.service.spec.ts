@@ -70,7 +70,7 @@ describe('MonitorSystemWorkspaceService', () => {
         },
         {
           provide: MonitorSystemMap,
-          useFactory: () => ({}),
+          useFactory: mockMap,
         },
       ],
     }).compile();
