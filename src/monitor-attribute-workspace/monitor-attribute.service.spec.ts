@@ -129,7 +129,7 @@ describe('MonitorAttributeWorkspaceService', () => {
       expect(retult).toEqual(true);
     });
 
-    it('should update LEEQualification if exists', async () => {
+    it('should update attribute if exists', async () => {
       jest
         .spyOn(repository, 'getAttributeByLocIdAndDate')
         .mockResolvedValue(monAttr);
