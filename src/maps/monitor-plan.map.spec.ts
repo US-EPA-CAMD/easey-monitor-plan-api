@@ -12,7 +12,7 @@ import { MonitorLoadMap } from './monitor-load.map';
 import { ComponentMap } from './component.map';
 import { MonitorSystemMap } from './monitor-system.map';
 import { MonitorQualificationMap } from './monitor-qualification.map';
-import { MonitorAttributeMap } from './montitor-attribute.map';
+import { MonitorAttributeMap } from './monitor-attribute.map';
 import { AnalyzerRangeMap } from './analyzer-range.map';
 import { SystemFuelFlowMap } from './system-fuel-flow.map';
 import { SystemComponentMap } from './system-component.map';

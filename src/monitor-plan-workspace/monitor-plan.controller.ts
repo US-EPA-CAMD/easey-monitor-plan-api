@@ -16,10 +16,8 @@ import {
 } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
-import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -31,7 +29,7 @@ import { ImportChecksService } from '../import-checks/import-checks.service';
 export class MonitorPlanWorkspaceController {
   constructor(
     private readonly service: MonitorPlanWorkspaceService,
-    private readonly ucoService: UserCheckOutService,
+    // private readonly ucoService: UserCheckOutService,
     private readonly logger: Logger,
     private readonly importChecksService: ImportChecksService,
   ) {}
