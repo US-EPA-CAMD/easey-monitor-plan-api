@@ -119,18 +119,12 @@ export class MonitorPlanWorkspaceService {
     // Get Active Plan
     let activePlanId: string;
 
-    if (plan.id) {
-      activePlanId = plan.id;
-    } else {
-      {
-        // Get active plan
-        const activePlan = await this.repository.getActivePlanByLocationId(
-          locationIds[0],
-        );
+    // Get active plan
+    const activePlan = await this.repository.getActivePlanByLocationId(
+      locationIds[0],
+    );
 
-        activePlanId = activePlan.id;
-      }
-    }
+    activePlanId = activePlan.id;
 
     // Monitor Plan Comment Merge Logic
     promises.push(

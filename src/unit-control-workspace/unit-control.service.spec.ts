@@ -66,7 +66,7 @@ describe('UnitControlService', () => {
 
   describe('getUnitControl', () => {
     it('should return unit control record for a specific unit control ID', async () => {
-      const result = await service.getUnitControl('1', 1, '1');
+      const result = await repository.getUnitControl('1');
       expect(result).toEqual(returnedUnitControl);
     });
 
@@ -75,7 +75,7 @@ describe('UnitControlService', () => {
       let errored = false;
 
       try {
-        await service.getUnitControl('1', 1, '1');
+        await repository.getUnitControl('1');
       } catch (err) {
         errored = true;
       }
