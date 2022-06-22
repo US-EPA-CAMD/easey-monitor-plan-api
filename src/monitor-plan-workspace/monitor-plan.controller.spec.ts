@@ -5,6 +5,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
+import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 // import { UserCheckOutService } from './../user-check-out/user-check-out.service';
@@ -22,6 +23,10 @@ const planId = null;
 const data: MonitorPlanDTO[] = [];
 data.push(new MonitorPlanDTO());
 data.push(new MonitorPlanDTO());
+
+const evaluationRportData = [];
+evaluationRportData.push(new MPEvaluationReportDTO());
+evaluationRportData.push(new MPEvaluationReportDTO());
 
 const ucoData: UserCheckOutDTO[] = [];
 ucoData.push(new UserCheckOutDTO());
@@ -55,6 +60,13 @@ describe('MonitorPlanWorkspaceController', () => {
     expect(controller).toBeDefined();
   });
 
+  describe('exportMonitorPlan', () => {
+    it('should export a monitor plan given a plan id', async () => {
+      jest.spyOn(service, 'exportMonitorPlan').mockResolvedValue(null);
+      expect(await controller.exportMonitorPlan(planId)).toBe(null);
+    });
+  });
+
   describe('getConfigurations', () => {
     it('should return array of monitor plan configurations', async () => {
       jest.spyOn(service, 'getConfigurations').mockResolvedValue(data);
@@ -68,6 +80,32 @@ describe('MonitorPlanWorkspaceController', () => {
       expect(await controller.getMonitorPlan(planId)).toBe(data[0]);
     });
   });
+
+  describe('getEvaluationReport', () => {
+    it('should return an evaluation report given a planId', async () => {
+      jest
+        .spyOn(service, 'getEvaluationReport')
+        .mockResolvedValue(evaluationRportData[0]);
+      expect(await controller.getEvaluationReport(planId)).toBe(
+        evaluationRportData[0],
+      );
+    });
+  });
+
+  describe('importPlan', () => {
+    it('should return import a report plan given a planId', async () => {
+      jest.spyOn(service, 'importMpPlan').mockResolvedValue(data[0]);
+      expect(await controller.importPlan(planId)).toBe(data[0]);
+    });
+  });
+
+  describe('revertToOfficialRecord', () => {
+    it('should revert to official record given a planId', async () => {
+      jest.spyOn(service, 'revertToOfficialRecord').mockResolvedValue(null);
+      expect(await controller.revertToOfficialRecord(planId)).toBe(null);
+    });
+  });
+
   // describe('getCheckedOutConfigurations', () => {
   //   it('should return array of monitor plan configurations checked out', async () => {
   //     jest
