@@ -42,6 +42,15 @@ export class MonitorPlan extends BaseEntity {
   endReportPeriodId: number;
 
   @Column({
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
+    name: 'begin_rpt_period_id',
+    transformer: new NumericColumnTransformer(),
+  })
+  beginReportPeriodId: number;
+
+  @Column({
     type: 'varchar',
     length: 7,
     name: 'eval_status_cd',

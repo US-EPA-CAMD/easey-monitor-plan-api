@@ -41,6 +41,15 @@ export class MonitorPlan extends BaseEntity {
   })
   endReportPeriodId: number;
 
+  @Column({
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
+    name: 'begin_rpt_period_id',
+    transformer: new NumericColumnTransformer(),
+  })
+  beginReportPeriodId: number;
+
   // pointing to needs_eval_flg because there is no eval_status_cd column in global view
   @Column({
     type: 'varchar',

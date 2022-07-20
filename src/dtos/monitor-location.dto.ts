@@ -32,6 +32,13 @@ export class MonitorLocationDTO extends MonitorLocationBaseDTO {
   unitRecordId: number;
 
   @ApiProperty({
+    description:
+      propertyMetadata.unitStackConfigurationDTOStackPipeId.description,
+    example: propertyMetadata.unitStackConfigurationDTOStackPipeId.example,
+  })
+  stackPipeRecordId: string;
+
+  @ApiProperty({
     description: propertyMetadata.monitorLocationDTOName.description,
     example: propertyMetadata.monitorLocationDTOName.example,
     name: propertyMetadata.monitorLocationDTOName.fieldLabels.value,

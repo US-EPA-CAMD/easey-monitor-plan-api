@@ -28,6 +28,7 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       facId: entity.facId,
       orisCode: entity.plant.orisCode,
       name: locations.map(l => l.name).join(', '),
+      beginReportPeriodId: entity.beginReportPeriodId,
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
       comments,

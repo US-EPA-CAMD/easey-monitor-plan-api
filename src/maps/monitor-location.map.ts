@@ -69,6 +69,7 @@ export class MonitorLocationMap extends BaseMap<
     let retireDate: Date;
     let stackPipeId: string;
     let unitRecordId: number;
+    let stackPipeRecordId: string;
     let nonLoadBasedIndicator: number;
     let unitCapacities = [];
     let unitControls = [];
@@ -109,6 +110,7 @@ export class MonitorLocationMap extends BaseMap<
       name = entity.unit.name;
       unitId = entity.unit.name;
       unitRecordId = entity.unit.id;
+      stackPipeRecordId = null;
       nonLoadBasedIndicator = entity.unit.nonLoadBasedIndicator;
       stackPipeId = null;
       activeDate = null;
@@ -127,6 +129,7 @@ export class MonitorLocationMap extends BaseMap<
     if (entity.stackPipe) {
       type = 'stack';
       name = entity.stackPipe.name;
+      stackPipeRecordId = entity.stackPipe.id;
       stackPipeId = entity.stackPipe.name;
       activeDate = entity.stackPipe.activeDate;
       retireDate = entity.stackPipe.retireDate;
@@ -139,6 +142,7 @@ export class MonitorLocationMap extends BaseMap<
       id: entity.id,
       unitRecordId,
       unitId,
+      stackPipeRecordId,
       stackPipeId,
       name,
       type,
