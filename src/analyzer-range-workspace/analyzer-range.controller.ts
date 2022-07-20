@@ -45,8 +45,6 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -72,8 +70,6 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Put(':analyzerRangeId')
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
