@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorLocation } from '../entities/monitor-location.entity';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 
 import { MonitorPlanRepository } from './monitor-plan.repository';

@@ -12,7 +12,7 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
   constructor(
     private locationMap: MonitorLocationMap,
     private commentMap: MonitorPlanCommentMap,
-    private unitStackConfigurationMap: UnitStackConfigurationMap,
+    private readonly unitStackConfigurationMap: UnitStackConfigurationMap,
   ) {
     super();
   }

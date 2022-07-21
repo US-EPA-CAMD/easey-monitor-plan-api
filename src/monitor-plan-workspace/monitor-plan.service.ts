@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { CountyCodeService } from '../county-code/county-code.service';
 import { MonitorPlanReportResultService } from '../monitor-plan-report-result/monitor-plan-report-result.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
