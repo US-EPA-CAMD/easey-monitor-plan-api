@@ -38,10 +38,11 @@ export class MonitorPlanDTO {
     example: propertyMetadata.monitorPlanDTOEndReportPeriodId.example,
     name: propertyMetadata.monitorPlanDTOEndReportPeriodId.fieldLabels.value,
   })
+  beginReportPeriodId: number;
   endReportPeriodId: number;
   active: boolean;
   comments: MonitorPlanCommentDTO[];
-  unitStackConfiguration: UnitStackConfigurationDTO[];
+  unitStackConfigurations: UnitStackConfigurationDTO[];
   locations: MonitorLocationDTO[];
   evalStatusCode: string;
   userId: string;

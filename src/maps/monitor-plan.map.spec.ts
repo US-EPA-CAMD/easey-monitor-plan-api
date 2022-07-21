@@ -20,15 +20,21 @@ import { LEEQualificationMap } from './lee-qualification.map';
 import { LMEQualificationMap } from './lme-qualification.map';
 import { PCTQualificationMap } from './pct-qualification.map';
 import { Plant } from '../entities/plant.entity';
+import { MonitorPlanCommentMap } from './monitor-plan-comment.map';
+import { UnitCapacityMap } from './unit-capacity.map';
+import { UnitControlMap } from './unit-control.map';
+import { UnitFuelMap } from './unit-fuel.map';
+import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 
 const id = '';
 const facId = 0;
 const orisCode = 0;
 const name = '';
 const endReportPeriodId = 0;
+const beginReportPeriodId = 1;
 const active = false;
-const comments = null;
-const unitStackConfiguration = null;
+const comments = [];
+const unitStackConfigurations = [];
 const locations = [];
 const evalStatusCode = '';
 const userId = '';
@@ -42,6 +48,7 @@ plant.orisCode = orisCode;
 
 entity.id = id;
 entity.facId = facId;
+entity.beginReportPeriodId = beginReportPeriodId;
 entity.endReportPeriodId = endReportPeriodId;
 entity.comments = comments;
 entity.locations = locations;
@@ -69,6 +76,7 @@ describe('MonitorPlanMap', () => {
         MonitorLoadMap,
         ComponentMap,
         MonitorSystemMap,
+        MonitorPlanCommentMap,
         MonitorQualificationMap,
         MonitorAttributeMap,
         AnalyzerRangeMap,
@@ -77,6 +85,10 @@ describe('MonitorPlanMap', () => {
         LEEQualificationMap,
         LMEQualificationMap,
         PCTQualificationMap,
+        UnitCapacityMap,
+        UnitControlMap,
+        UnitFuelMap,
+        UnitStackConfigurationMap,
       ],
     }).compile();
 
@@ -89,10 +101,11 @@ describe('MonitorPlanMap', () => {
     expect(result.facId).toEqual(facId);
     expect(result.orisCode).toEqual(orisCode);
     expect(result.name).toEqual(name);
+    expect(result.beginReportPeriodId).toEqual(beginReportPeriodId);
     expect(result.endReportPeriodId).toEqual(endReportPeriodId);
     expect(result.active).toEqual(active);
     expect(result.comments).toEqual(comments);
-    expect(result.unitStackConfiguration).toEqual(unitStackConfiguration);
+    expect(result.unitStackConfigurations).toEqual(unitStackConfigurations);
     expect(result.locations).toEqual(locations);
     expect(result.evalStatusCode).toEqual(evalStatusCode);
     expect(result.userId).toEqual(userId);

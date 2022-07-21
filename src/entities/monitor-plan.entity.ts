@@ -13,6 +13,7 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
+import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 
 @Entity({ name: 'camdecmps.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -40,6 +41,15 @@ export class MonitorPlan extends BaseEntity {
     transformer: new NumericColumnTransformer(),
   })
   endReportPeriodId: number;
+
+  @Column({
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
+    name: 'begin_rpt_period_id',
+    transformer: new NumericColumnTransformer(),
+  })
+  beginReportPeriodId: number;
 
   // pointing to needs_eval_flg because there is no eval_status_cd column in global view
   @Column({
@@ -91,4 +101,5 @@ export class MonitorPlan extends BaseEntity {
     comment => comment.plan,
   )
   comments: MonitorPlanComment[];
+  unitStackConfigurations: UnitStackConfiguration[];
 }

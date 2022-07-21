@@ -37,8 +37,8 @@ describe('SystemComponentWorkspaceController', () => {
 
   describe('getComponents', () => {
     it('should return array of system components', async () => {
-      jest.spyOn(service, 'getComponents').mockResolvedValue(data);
-      expect(await controller.getComponents(locId, sysId)).toBe(data);
+      jest.spyOn(service, 'getSystemComponents').mockResolvedValue(data);
+      expect(await controller.getSystemComponents(locId, sysId)).toBe(data);
     });
   });
 });

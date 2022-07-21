@@ -34,7 +34,7 @@ export class UpdateMonitorPlanDTO {
 
   @ValidateNested()
   @Type(() => UnitStackConfigurationBaseDTO)
-  unitStackConfiguration: UnitStackConfigurationBaseDTO[];
+  unitStackConfigurations: UnitStackConfigurationBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorLocationDTO)
