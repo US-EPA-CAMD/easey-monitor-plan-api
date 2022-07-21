@@ -101,5 +101,5 @@ export class MonitorPlan extends BaseEntity {
     comment => comment.plan,
   )
   comments: MonitorPlanComment[];
-  unitStackConfiguration: UnitStackConfiguration[];
+  unitStackConfigurations: UnitStackConfiguration[];
 }

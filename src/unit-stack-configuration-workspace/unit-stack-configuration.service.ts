@@ -38,7 +38,7 @@ export class UnitStackConfigurationWorkspaceService {
       }
     }
 
-    for (const unitStackConfig of monitorPlan.unitStackConfiguration) {
+    for (const unitStackConfig of monitorPlan.unitStackConfigurations) {
       if (!unitStackIds.has(unitStackConfig.stackPipeId)) {
         errorList.push(
           `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID ${unitStackConfig.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
@@ -83,7 +83,7 @@ export class UnitStackConfigurationWorkspaceService {
   ) {
     return new Promise(async resolve => {
       const promises = [];
-      for (const unitStackConfig of plan.unitStackConfiguration) {
+      for (const unitStackConfig of plan.unitStackConfigurations) {
         promises.push(
           new Promise(async innerResolve => {
             const stackPipe = await this.stackPipeService.getStackByNameAndFacId(

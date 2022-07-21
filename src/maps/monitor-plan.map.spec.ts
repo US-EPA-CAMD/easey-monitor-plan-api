@@ -34,7 +34,7 @@ const endReportPeriodId = 0;
 const beginReportPeriodId = 1;
 const active = false;
 const comments = [];
-const unitStackConfiguration = [];
+const unitStackConfigurations = [];
 const locations = [];
 const evalStatusCode = '';
 const userId = '';
@@ -105,7 +105,7 @@ describe('MonitorPlanMap', () => {
     expect(result.endReportPeriodId).toEqual(endReportPeriodId);
     expect(result.active).toEqual(active);
     expect(result.comments).toEqual(comments);
-    expect(result.unitStackConfiguration).toEqual(unitStackConfiguration);
+    expect(result.unitStackConfigurations).toEqual(unitStackConfigurations);
     expect(result.locations).toEqual(locations);
     expect(result.evalStatusCode).toEqual(evalStatusCode);
     expect(result.userId).toEqual(userId);

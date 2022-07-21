@@ -101,5 +101,5 @@ export class MonitorPlan extends BaseEntity {
   )
   comments: MonitorPlanComment[];
 
-  unitStackConfiguration: UnitStackConfiguration[];
+  unitStackConfigurations: UnitStackConfiguration[];
 }

@@ -41,7 +41,7 @@ describe('Unit Import Tests', () => {
       expect(result).toEqual([]);
     });
 
-    it('Should error given a undefined entry for facilityId and unitId in unitStackConfiguration', async () => {
+    it('Should error given a undefined entry for facilityId and unitId in unitStackConfigurations', async () => {
       repository.findOne = jest.fn().mockResolvedValue(undefined);
 
       const location = new UpdateMonitorLocationDTO();

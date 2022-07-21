@@ -42,7 +42,7 @@ export class MonitorPlanDTO {
   endReportPeriodId: number;
   active: boolean;
   comments: MonitorPlanCommentDTO[];
-  unitStackConfiguration: UnitStackConfigurationDTO[];
+  unitStackConfigurations: UnitStackConfigurationDTO[];
   locations: MonitorLocationDTO[];
   evalStatusCode: string;
   userId: string;

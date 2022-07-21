@@ -77,7 +77,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfiguration = [unitStackConfig];
+        plan.unitStackConfigurations = [unitStackConfig];
         plan.locations = [location];
 
         const result = service.runUnitStackChecks(plan);
@@ -98,7 +98,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location2.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfiguration = [unitStackConfig];
+        plan.unitStackConfigurations = [unitStackConfig];
         plan.locations = [location, location2];
 
         const result = service.runUnitStackChecks(plan);
@@ -122,7 +122,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location2.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfiguration = [unitStackConfig];
+        plan.unitStackConfigurations = [unitStackConfig];
         plan.locations = [location, location2];
 
         const result = service.runUnitStackChecks(plan);
@@ -146,7 +146,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfiguration = [unitStackConfig, unitStackConfig2];
+        plan.unitStackConfigurations = [unitStackConfig, unitStackConfig2];
         plan.locations = [location];
 
         const result = service.runUnitStackChecks(plan);
@@ -171,7 +171,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfiguration = [unitStackConfig, unitStackConfig2];
+        plan.unitStackConfigurations = [unitStackConfig, unitStackConfig2];
         plan.locations = [location];
 
         const result = service.runUnitStackChecks(plan);
@@ -186,7 +186,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
   describe('importUnitStack', () => {
     it('Should create new record given an undefined one', async () => {
       const plan = new UpdateMonitorPlanDTO();
-      plan.unitStackConfiguration = [new UnitStackConfigurationBaseDTO()];
+      plan.unitStackConfigurations = [new UnitStackConfigurationBaseDTO()];
       await service.importUnitStack(plan, 1, '');
       expect(repo.create).toHaveBeenCalled();
     });

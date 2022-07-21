@@ -24,8 +24,10 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
     const comments = entity.comments
       ? await this.commentMap.many(entity.comments)
       : [];
-    const unitStackConfiguration = entity.unitStackConfiguration
-      ? await this.unitStackConfigurationMap.many(entity.unitStackConfiguration)
+    const unitStackConfigurations = entity.unitStackConfigurations
+      ? await this.unitStackConfigurationMap.many(
+          entity.unitStackConfigurations,
+        )
       : [];
 
     return {
@@ -37,7 +39,7 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
       comments,
-      unitStackConfiguration,
+      unitStackConfigurations,
       locations,
       evalStatusCode: entity.evalStatusCode,
       userId: entity.userId,

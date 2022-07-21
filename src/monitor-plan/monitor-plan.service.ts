@@ -92,9 +92,7 @@ export class MonitorPlanService {
     const results = await this.map.many(plans);
 
     for (const p of results) {
-      const monPlan = await this.getMonitorPlan(p.id, false);
-      p.comments = monPlan.comments;
-      p.unitStackConfiguration = monPlan.unitStackConfiguration;
+      const monPlan = await this.getMonitorPlan(p.id, false, false, false);
       p.locations = monPlan.locations;
 
       p.locations.forEach(l => {
@@ -113,6 +111,8 @@ export class MonitorPlanService {
         delete l.systems;
         delete l.qualifications;
       });
+      delete p.comments;
+      delete p.unitStackConfigurations;
     }
     results.sort((a, b) => {
       if (a.name < b.name) {
@@ -141,9 +141,13 @@ export class MonitorPlanService {
   async getMonitorPlan(
     planId: string,
     getLocChildRecords: boolean = true,
+    getComments: boolean = true,
+    getUnitStacks: boolean = true,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
-    let UNIT_CAPACITIES,
+    let COMMENTS,
+      UNIT_STACK_CONFIGS,
+      UNIT_CAPACITIES,
       UNIT_CONTROLS,
       UNIT_FUEL,
       ATTRIBUTES,
@@ -176,15 +180,19 @@ export class MonitorPlanService {
       .filter(i => i.unitId !== null)
       .map(i => i.unitId);
 
-    const COMMENTS = 0;
-    promises.push(this.commentRepository.find({ monitorPlanId: planId }));
+    if (getComments) {
+      COMMENTS = 0;
+      promises.push(this.commentRepository.find({ monitorPlanId: planId }));
+    }
 
-    const UNIT_STACK_CONFIGS = COMMENTS + 1;
-    promises.push(
-      this.unitStackConfigRepository.getUnitStackConfigsByLocationIds(
-        locationIds,
-      ),
-    );
+    if (getUnitStacks) {
+      UNIT_STACK_CONFIGS = COMMENTS + 1;
+      promises.push(
+        this.unitStackConfigRepository.getUnitStackConfigsByLocationIds(
+          locationIds,
+        ),
+      );
+    }
 
     if (getLocChildRecords) {
       UNIT_CAPACITIES = UNIT_STACK_CONFIGS + 1;
@@ -321,7 +329,9 @@ export class MonitorPlanService {
     }
 
     const results = await Promise.all(promises);
-    mp.comments = results[COMMENTS];
+    if (getComments) {
+      mp.comments = results[COMMENTS];
+    }
 
     mp.locations.forEach(l => {
       const locationId = l.id;
@@ -367,11 +377,12 @@ export class MonitorPlanService {
       }
     });
 
-    const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
-
     const mpDTO = await this.map.one(mp);
 
-    mpDTO.unitStackConfiguration = uscDTO;
+    if (getUnitStacks) {
+      const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
+      mpDTO.unitStackConfigurations = uscDTO;
+    }
 
     return this.map.one(mp);
   }
