@@ -162,6 +162,7 @@ export class MonitorPlanWorkspaceService {
 
     for (const p of results) {
       const monPlan = await this.exportMonitorPlan(p.id, false);
+
       p.comments = monPlan.comments;
       p.unitStackConfiguration = monPlan.unitStackConfiguration;
       p.locations = monPlan.locations;
