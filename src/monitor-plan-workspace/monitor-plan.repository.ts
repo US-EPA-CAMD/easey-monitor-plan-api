@@ -6,9 +6,8 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
   async getMonitorPlansByOrisCode(orisCode: number): Promise<MonitorPlan[]> {
     return this.createQueryBuilder('plan')
-      .innerJoinAndSelect('plan.plant', 'plant', 'plant.orisCode = :orisCode', {
-        orisCode,
-      })
+      .innerJoinAndSelect('plan.plant', 'plant')
+      .where('plant.orisCode = :orisCode', { orisCode })
       .getMany();
   }
 

@@ -86,7 +86,7 @@ describe('MonitorPlanMap', () => {
         PCTQualificationMap,
         UnitCapacityMap,
         UnitControlMap,
-        UnitFuelMap
+        UnitFuelMap,
       ],
     }).compile();
 

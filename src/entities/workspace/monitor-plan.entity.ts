@@ -13,6 +13,7 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
+import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -36,19 +37,19 @@ export class MonitorPlan extends BaseEntity {
     type: 'numeric',
     precision: 38,
     scale: 0,
-    name: 'end_rpt_period_id',
+    name: 'begin_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
-  endReportPeriodId: number;
+  beginReportPeriodId: number;
 
   @Column({
     type: 'numeric',
     precision: 38,
     scale: 0,
-    name: 'begin_rpt_period_id',
+    name: 'end_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
-  beginReportPeriodId: number;
+  endReportPeriodId: number;
 
   @Column({
     type: 'varchar',
@@ -99,4 +100,6 @@ export class MonitorPlan extends BaseEntity {
     comment => comment.plan,
   )
   comments: MonitorPlanComment[];
+
+  unitStackConfiguration: UnitStackConfiguration[];
 }

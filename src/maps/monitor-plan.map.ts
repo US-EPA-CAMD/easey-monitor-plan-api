@@ -5,12 +5,14 @@ import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorLocationMap } from './monitor-location.map';
 import { MonitorPlanCommentMap } from './monitor-plan-comment.map';
+import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 
 @Injectable()
 export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
   constructor(
     private locationMap: MonitorLocationMap,
     private commentMap: MonitorPlanCommentMap,
+    private unitStackConfigurationMap: UnitStackConfigurationMap,
   ) {
     super();
   }
@@ -22,6 +24,9 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
     const comments = entity.comments
       ? await this.commentMap.many(entity.comments)
       : [];
+    const unitStackConfiguration = entity.unitStackConfiguration
+      ? await this.unitStackConfigurationMap.many(entity.unitStackConfiguration)
+      : [];
 
     return {
       id: entity.id,
@@ -32,7 +37,7 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
       comments,
-      unitStackConfiguration: [],
+      unitStackConfiguration,
       locations,
       evalStatusCode: entity.evalStatusCode,
       userId: entity.userId,
