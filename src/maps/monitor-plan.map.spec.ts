@@ -24,6 +24,7 @@ import { MonitorPlanCommentMap } from './monitor-plan-comment.map';
 import { UnitCapacityMap } from './unit-capacity.map';
 import { UnitControlMap } from './unit-control.map';
 import { UnitFuelMap } from './unit-fuel.map';
+import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 
 const id = '';
 const facId = 0;
@@ -87,6 +88,7 @@ describe('MonitorPlanMap', () => {
         UnitCapacityMap,
         UnitControlMap,
         UnitFuelMap,
+        UnitStackConfigurationMap,
       ],
     }).compile();
 
