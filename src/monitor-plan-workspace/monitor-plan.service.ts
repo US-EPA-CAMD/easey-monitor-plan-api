@@ -153,7 +153,6 @@ export class MonitorPlanWorkspaceService {
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
     const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
-
     if (plans.length === 0) {
       return [];
     }
@@ -161,9 +160,8 @@ export class MonitorPlanWorkspaceService {
 
     for (const p of results) {
       const monPlan = await this.exportMonitorPlan(p.id, false);
-
+      p.name = monPlan.name;
       p.locations = monPlan.locations;
-
       p.locations.forEach(l => {
         delete l.attributes;
         delete l.unitCapacities;
