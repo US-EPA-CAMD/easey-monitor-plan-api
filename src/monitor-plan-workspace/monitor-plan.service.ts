@@ -161,9 +161,8 @@ export class MonitorPlanWorkspaceService {
 
     for (const p of results) {
       const monPlan = await this.exportMonitorPlan(p.id, false);
-
+      p.name = monPlan.name;
       p.locations = monPlan.locations;
-
       p.locations.forEach(l => {
         delete l.attributes;
         delete l.unitCapacities;
@@ -497,6 +496,7 @@ export class MonitorPlanWorkspaceService {
     });
 
     const mpDTO = await this.map.one(mp);
+    console.log(mpDTO);
 
     if (getUnitStacks) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);

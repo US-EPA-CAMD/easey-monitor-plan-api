@@ -93,8 +93,8 @@ export class MonitorPlanService {
 
     for (const p of results) {
       const monPlan = await this.getMonitorPlan(p.id, false, false, false);
+      p.name = monPlan.name;
       p.locations = monPlan.locations;
-
       p.locations.forEach(l => {
         delete l.attributes;
         delete l.unitCapacities;
