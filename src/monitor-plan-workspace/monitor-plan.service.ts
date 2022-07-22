@@ -465,7 +465,6 @@ export class MonitorPlanWorkspaceService {
     }
 
     const results = await Promise.all(promises);
-    console.log(results);
 
     if (getComments) {
       mp.comments = results[COMMENTS];
@@ -473,7 +472,6 @@ export class MonitorPlanWorkspaceService {
 
     if (getReportingFrquencies) {
       mp.reportingFrequencies = results[REPORTING_FREQ];
-      console.log(results[REPORTING_FREQ]);
     }
 
     mp.locations.forEach(l => {
