@@ -30,6 +30,7 @@ import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { MonitorPlanReportingFrequencyRepository } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.repository';
 
 @Injectable()
 export class MonitorPlanService {
@@ -80,6 +81,8 @@ export class MonitorPlanService {
     private readonly unitFuelRepository: UnitFuelRepository,
     @InjectRepository(UnitStackConfigurationRepository)
     private readonly unitStackConfigRepository: UnitStackConfigurationRepository,
+    @InjectRepository(MonitorPlanReportingFrequencyRepository)
+    private readonly reportingFreqRepository: MonitorPlanReportingFrequencyRepository,
     private readonly map: MonitorPlanMap,
     private readonly uscMap: UnitStackConfigurationMap,
   ) {}
@@ -92,7 +95,13 @@ export class MonitorPlanService {
     const results = await this.map.many(plans);
 
     for (const p of results) {
-      const monPlan = await this.getMonitorPlan(p.id, false, false, false);
+      const monPlan = await this.getMonitorPlan(
+        p.id,
+        false,
+        false,
+        false,
+        false,
+      );
       p.name = monPlan.name;
       p.locations = monPlan.locations;
       p.locations.forEach(l => {
@@ -141,11 +150,13 @@ export class MonitorPlanService {
   async getMonitorPlan(
     planId: string,
     getLocChildRecords: boolean = true,
+    getReportingFrquencies: boolean = true,
     getComments: boolean = true,
     getUnitStacks: boolean = true,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
-    let COMMENTS,
+    let REPORTING_FREQ,
+      COMMENTS,
       UNIT_STACK_CONFIGS,
       UNIT_CAPACITIES,
       UNIT_CONTROLS,
@@ -180,8 +191,15 @@ export class MonitorPlanService {
       .filter(i => i.unitId !== null)
       .map(i => i.unitId);
 
+    if (getReportingFrquencies) {
+      REPORTING_FREQ = 0;
+      promises.push(
+        this.reportingFreqRepository.find({ monitorPlanId: planId }),
+      );
+    }
+
     if (getComments) {
-      COMMENTS = 0;
+      COMMENTS = REPORTING_FREQ + 1;
       promises.push(this.commentRepository.find({ monitorPlanId: planId }));
     }
 
@@ -331,6 +349,10 @@ export class MonitorPlanService {
     const results = await Promise.all(promises);
     if (getComments) {
       mp.comments = results[COMMENTS];
+    }
+
+    if (getReportingFrquencies) {
+      mp.reportingFrequencies = results[REPORTING_FREQ];
     }
 
     mp.locations.forEach(l => {

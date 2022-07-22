@@ -36,6 +36,7 @@ import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-work
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { PlantService } from '../plant/plant.service';
+import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -88,6 +89,8 @@ export class MonitorPlanWorkspaceService {
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
     @InjectRepository(UnitStackConfigurationWorkspaceRepository)
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
+    @InjectRepository(MonitorPlanReportingFrequencyWorkspaceRepository)
+    private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -159,7 +162,13 @@ export class MonitorPlanWorkspaceService {
     const results = await this.map.many(plans);
 
     for (const p of results) {
-      const monPlan = await this.exportMonitorPlan(p.id, false);
+      const monPlan = await this.exportMonitorPlan(
+        p.id,
+        false,
+        false,
+        false,
+        false,
+      );
       p.name = monPlan.name;
       p.locations = monPlan.locations;
       p.locations.forEach(l => {
@@ -241,11 +250,13 @@ export class MonitorPlanWorkspaceService {
   async exportMonitorPlan(
     planId: string,
     getLocChildRecords: boolean = true,
+    getReportingFrquencies: boolean = true,
     getComments: boolean = true,
     getUnitStacks: boolean = true,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
-    let COMMENTS,
+    let REPORTING_FREQ,
+      COMMENTS,
       UNIT_STACK_CONFIGS,
       UNIT_CAPACITIES,
       UNIT_CONTROLS,
@@ -280,8 +291,15 @@ export class MonitorPlanWorkspaceService {
       .filter(i => i.unitId !== null)
       .map(i => i.unitId);
 
+    if (getReportingFrquencies) {
+      REPORTING_FREQ = 0;
+      promises.push(
+        this.reportingFreqRepository.find({ monitorPlanId: planId }),
+      );
+    }
+
     if (getComments) {
-      COMMENTS = 0;
+      COMMENTS = REPORTING_FREQ + 1;
       promises.push(this.commentRepository.find({ monitorPlanId: planId }));
     }
 
@@ -447,9 +465,15 @@ export class MonitorPlanWorkspaceService {
     }
 
     const results = await Promise.all(promises);
+    console.log(results);
 
     if (getComments) {
       mp.comments = results[COMMENTS];
+    }
+
+    if (getReportingFrquencies) {
+      mp.reportingFrequencies = results[REPORTING_FREQ];
+      console.log(results[REPORTING_FREQ]);
     }
 
     mp.locations.forEach(l => {

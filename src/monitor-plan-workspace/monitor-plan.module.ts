@@ -35,7 +35,8 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { ImportChecksModule } from '../import-checks/import-checks.module';
-import { PlantModule } from 'src/plant/plant.module';
+import { PlantModule } from '../plant/plant.module';
+import { MonitorPlanReportingFreqWorkspaceModule } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { PlantModule } from 'src/plant/plant.module';
     CountyCodeModule,
     MonitorPlanReportResultModule,
     MonitorPlanLocationModule,
+    MonitorPlanReportingFreqWorkspaceModule,
     PlantModule,
     TypeOrmModule.forFeature([MonitorPlanWorkspaceRepository]),
     HttpModule,

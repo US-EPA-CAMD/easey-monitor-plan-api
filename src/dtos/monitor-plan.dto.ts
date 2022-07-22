@@ -3,6 +3,7 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { MonitorPlanCommentDTO } from './monitor-plan-comment.dto';
 import { UnitStackConfigurationDTO } from './unit-stack-configuration.dto';
 import { MonitorLocationDTO } from './monitor-location.dto';
+import { MonitorPlanReportingFreqDTO } from './monitor-plan-reporting-freq.dto';
 
 export class MonitorPlanDTO {
   @ApiProperty({
@@ -38,11 +39,18 @@ export class MonitorPlanDTO {
     example: propertyMetadata.monitorPlanDTOEndReportPeriodId.example,
     name: propertyMetadata.monitorPlanDTOEndReportPeriodId.fieldLabels.value,
   })
-  beginReportPeriodId: number;
   endReportPeriodId: number;
+
+  @ApiProperty({
+    description: propertyMetadata.monitorPlanDTOBeginReportPeriodId.description,
+    example: propertyMetadata.monitorPlanDTOBeginReportPeriodId.example,
+    name: propertyMetadata.monitorPlanDTOBeginReportPeriodId.fieldLabels.value,
+  })
+  beginReportPeriodId: number;
   active: boolean;
   comments: MonitorPlanCommentDTO[];
   unitStackConfigurations: UnitStackConfigurationDTO[];
+  reportingFrequencies: MonitorPlanReportingFreqDTO[];
   locations: MonitorLocationDTO[];
   evalStatusCode: string;
   userId: string;
