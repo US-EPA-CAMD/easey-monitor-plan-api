@@ -153,7 +153,6 @@ export class MonitorPlanWorkspaceService {
 
   async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
     const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
-
     if (plans.length === 0) {
       return [];
     }
@@ -496,7 +495,6 @@ export class MonitorPlanWorkspaceService {
     });
 
     const mpDTO = await this.map.one(mp);
-    console.log(mpDTO);
 
     if (getUnitStacks) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
