@@ -16,6 +16,7 @@ import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-pla
 import { CountyCodeModule } from './county-code/county-code.module';
 import { CheckOutModule } from './check-out/check-out.module';
 import { MonitorPlanLocationModule } from './monitor-plan-location-workspace/monitor-plan-location.module';
+import { MonitorPlanReportingFreqModule } from './monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { MonitorPlanLocationModule } from './monitor-plan-location-workspace/mon
     CountyCodeModule,
     CheckOutModule,
     MonitorPlanLocationModule,
+    MonitorPlanReportingFreqModule,
   ],
   providers: [],
 })

@@ -20,7 +20,7 @@ const mockQueryBuilder = () => ({
   findOne: jest.fn(),
 });
 
-describe('-- Monitor Plan Repository --', () => {
+describe('Monitor Plan Repository', () => {
   let monitorPlanRepository;
   let queryBuilder;
 
@@ -36,6 +36,10 @@ describe('-- Monitor Plan Repository --', () => {
     queryBuilder = module.get<SelectQueryBuilder<MonitorPlan>>(
       SelectQueryBuilder,
     );
+
+    jest
+      .spyOn(queryBuilder, 'innerJoinAndSelect')
+      .mockReturnValue(queryBuilder);
   });
 
   it('calls createQueryBuilder and gets all MonitorPlan data from the repository', async () => {

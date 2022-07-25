@@ -14,6 +14,7 @@ import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
+import { MonitorPlanReportingFrequency } from './monitor-plan-reporting-freq.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -100,6 +101,8 @@ export class MonitorPlan extends BaseEntity {
     comment => comment.plan,
   )
   comments: MonitorPlanComment[];
+
+  reportingFrequencies: MonitorPlanReportingFrequency[];
 
   unitStackConfigurations: UnitStackConfiguration[];
 }

@@ -36,6 +36,7 @@ import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-work
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { PlantService } from '../plant/plant.service';
+import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -88,6 +89,8 @@ export class MonitorPlanWorkspaceService {
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
     @InjectRepository(UnitStackConfigurationWorkspaceRepository)
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
+    @InjectRepository(MonitorPlanReportingFrequencyWorkspaceRepository)
+    private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -159,7 +162,13 @@ export class MonitorPlanWorkspaceService {
     const results = await this.map.many(plans);
 
     for (const p of results) {
-      const monPlan = await this.exportMonitorPlan(p.id, false);
+      const monPlan = await this.exportMonitorPlan(
+        p.id,
+        false,
+        false,
+        false,
+        false,
+      );
       p.name = monPlan.name;
       p.locations = monPlan.locations;
       p.locations.forEach(l => {
@@ -241,11 +250,13 @@ export class MonitorPlanWorkspaceService {
   async exportMonitorPlan(
     planId: string,
     getLocChildRecords: boolean = true,
+    getReportingFrquencies: boolean = true,
     getComments: boolean = true,
     getUnitStacks: boolean = true,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
-    let COMMENTS,
+    let REPORTING_FREQ,
+      COMMENTS,
       UNIT_STACK_CONFIGS,
       UNIT_CAPACITIES,
       UNIT_CONTROLS,
@@ -279,9 +290,15 @@ export class MonitorPlanWorkspaceService {
     const unitIds = identifiers
       .filter(i => i.unitId !== null)
       .map(i => i.unitId);
+    if (getReportingFrquencies) {
+      REPORTING_FREQ = 0;
+      promises.push(
+        this.reportingFreqRepository.find({ monitorPlanId: planId }),
+      );
+    }
 
     if (getComments) {
-      COMMENTS = 0;
+      COMMENTS = REPORTING_FREQ + 1;
       promises.push(this.commentRepository.find({ monitorPlanId: planId }));
     }
 
@@ -360,20 +377,21 @@ export class MonitorPlanWorkspaceService {
           const components = await this.componentRepository.find({
             where: { locationId: In(locationIds) },
           });
+          if (components.length !== 0) {
+            const componentIds = components.map(i => i.id);
 
-          const componentIds = components.map(i => i.id);
-
-          const analyzerRanges = this.analyzerRangeRepository.getAnalyzerRangesByCompIds(
-            componentIds,
-          );
-
-          const rangeResults = await Promise.all([analyzerRanges]);
-
-          components.forEach(async c => {
-            c.analyzerRanges = rangeResults[0].filter(
-              i => i.componentRecordId == c.id,
+            const analyzerRanges = this.analyzerRangeRepository.getAnalyzerRangesByCompIds(
+              componentIds,
             );
-          });
+
+            const rangeResults = await Promise.all([analyzerRanges]);
+
+            components.forEach(async c => {
+              c.analyzerRanges = rangeResults[0].filter(
+                i => i.componentRecordId == c.id,
+              );
+            });
+          }
 
           resolve(components);
         }),
@@ -386,24 +404,26 @@ export class MonitorPlanWorkspaceService {
             where: { locationId: In(locationIds) },
           });
 
-          const systemIds = systems.map(i => i.id);
-          const s1 = this.systemFuelFlowRepository.getFuelFlowsBySystemIds(
-            systemIds,
-          );
-          const s2 = this.systemComponentRepository.getSystemComponentsBySystemIds(
-            systemIds,
-          );
-
-          const sysResults = await Promise.all([s1, s2]);
-
-          systems.forEach(async s => {
-            s.fuelFlows = sysResults[0].filter(
-              i => i.monitoringSystemRecordId === s.id,
+          if (systems.length !== 0) {
+            const systemIds = systems.map(i => i.id);
+            const s1 = this.systemFuelFlowRepository.getFuelFlowsBySystemIds(
+              systemIds,
             );
-            s.components = sysResults[1].filter(
-              i => i.monitoringSystemRecordId === s.id,
+            const s2 = this.systemComponentRepository.getSystemComponentsBySystemIds(
+              systemIds,
             );
-          });
+
+            const sysResults = await Promise.all([s1, s2]);
+
+            systems.forEach(async s => {
+              s.fuelFlows = sysResults[0].filter(
+                i => i.monitoringSystemRecordId === s.id,
+              );
+              s.components = sysResults[1].filter(
+                i => i.monitoringSystemRecordId === s.id,
+              );
+            });
+          }
 
           resolve(systems);
         }),
@@ -416,30 +436,32 @@ export class MonitorPlanWorkspaceService {
             where: { locationId: In(locationIds) },
           });
 
-          const qualIds = quals.map(i => i.id);
-          const q1 = this.leeQualificationRepository.find({
-            where: { qualificationId: In(qualIds) },
-          });
-          const q2 = this.lmeQualificationRepository.find({
-            where: { qualificationId: In(qualIds) },
-          });
-          const q3 = this.pctQualificationRepository.find({
-            where: { qualificationId: In(qualIds) },
-          });
+          if (quals.length !== 0) {
+            const qualIds = quals.map(i => i.id);
+            const q1 = this.leeQualificationRepository.find({
+              where: { qualificationId: In(qualIds) },
+            });
+            const q2 = this.lmeQualificationRepository.find({
+              where: { qualificationId: In(qualIds) },
+            });
+            const q3 = this.pctQualificationRepository.find({
+              where: { qualificationId: In(qualIds) },
+            });
 
-          const qualResults = await Promise.all([q1, q2, q3]);
+            const qualResults = await Promise.all([q1, q2, q3]);
 
-          quals.forEach(async q => {
-            q.leeQualifications = qualResults[0].filter(
-              i => i.qualificationId === q.id,
-            );
-            q.lmeQualifications = qualResults[1].filter(
-              i => i.qualificationId === q.id,
-            );
-            q.pctQualifications = qualResults[2].filter(
-              i => i.qualificationId === q.id,
-            );
-          });
+            quals.forEach(async q => {
+              q.leeQualifications = qualResults[0].filter(
+                i => i.qualificationId === q.id,
+              );
+              q.lmeQualifications = qualResults[1].filter(
+                i => i.qualificationId === q.id,
+              );
+              q.pctQualifications = qualResults[2].filter(
+                i => i.qualificationId === q.id,
+              );
+            });
+          }
 
           resolve(quals);
         }),
@@ -450,6 +472,10 @@ export class MonitorPlanWorkspaceService {
 
     if (getComments) {
       mp.comments = results[COMMENTS];
+    }
+
+    if (getReportingFrquencies) {
+      mp.reportingFrequencies = results[REPORTING_FREQ];
     }
 
     mp.locations.forEach(l => {
