@@ -29,6 +29,7 @@ import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorPlanReportingFreqModule } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
+import { AnalyzerRangeModule } from '../analyzer-range/analyzer-range.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { MonitorPlanReportingFreqModule } from '../monitor-plan-reporting-freq/m
     UnitControlModule,
     UnitFuelModule,
     MonitorPlanReportingFreqModule,
+    AnalyzerRangeModule,
     TypeOrmModule.forFeature([MonitorPlanRepository]),
   ],
   controllers: [MonitorPlanController],
