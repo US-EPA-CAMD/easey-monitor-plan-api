@@ -292,7 +292,7 @@ export class MonitorPlanService {
 
             components.forEach(async c => {
               c.analyzerRanges = rangeResults[0].filter(
-                i => i.componentRecordId == c.id,
+                i => i.componentRecordId === c.id,
               );
             });
           }
