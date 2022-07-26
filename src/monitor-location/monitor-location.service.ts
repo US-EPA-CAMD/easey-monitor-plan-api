@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
@@ -6,6 +6,7 @@ import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationRepository } from './monitor-location.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationService } from '../unit-stack-configuration/unit-stack-configuration.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class MonitorLocationService {
@@ -22,7 +23,7 @@ export class MonitorLocationService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.Logger.error(NotFoundException, this.errorMsg, true, {
+      throw new LoggingException(this.errorMsg, HttpStatus.NOT_FOUND, {
         locationId: locationId,
       });
     }
@@ -33,7 +34,7 @@ export class MonitorLocationService {
   async getLocationEntity(locationId: string): Promise<MonitorLocation> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      this.Logger.error(NotFoundException, this.errorMsg, true, {
+      throw new LoggingException(this.errorMsg, HttpStatus.NOT_FOUND, {
         locationId: locationId,
       });
     }

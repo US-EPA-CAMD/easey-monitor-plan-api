@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -7,6 +8,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import {
   SystemComponentBaseDTO,
   SystemComponentDTO,
@@ -52,10 +55,9 @@ export class SystemComponentWorkspaceService {
     );
 
     if (!result) {
-      this.logger.error(
-        NotFoundException,
+      throw new LoggingException(
         'System component was not found',
-        true,
+        HttpStatus.NOT_FOUND,
         {
           sysId: sysId,
           systemComponentRecordId: sysComponentRecordId,

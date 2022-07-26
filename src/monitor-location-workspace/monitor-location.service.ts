@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -10,6 +11,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
@@ -90,8 +92,8 @@ export class MonitorLocationWorkspaceService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      this.logger.error(NotFoundException, this.errorMsg, true, {
-        locationId,
+      throw new LoggingException(this.errorMsg, HttpStatus.NOT_FOUND, {
+        locationId: locationId,
       });
     }
 

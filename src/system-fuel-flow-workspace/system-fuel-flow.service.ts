@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -9,6 +10,8 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import {
   SystemFuelFlowBaseDTO,
   SystemFuelFlowDTO,
@@ -37,7 +40,7 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Fuel Flow not found.', true, {
+      throw new LoggingException('Fuel Flow not found.', HttpStatus.NOT_FOUND, {
         fuelFlowId: fuelFlowId,
       });
     }

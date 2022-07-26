@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -14,6 +15,7 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {
@@ -39,10 +41,9 @@ export class MonitorAttributeWorkspaceService {
     const result = await this.repository.getAttribute(locationId, id);
 
     if (!result) {
-      this.logger.error(
-        NotFoundException,
+      throw new LoggingException(
         'Monitor Location Attribute not found',
-        true,
+        HttpStatus.NOT_FOUND,
         {
           locationId,
           id,

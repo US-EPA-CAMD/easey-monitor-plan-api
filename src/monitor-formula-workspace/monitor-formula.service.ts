@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -16,6 +17,7 @@ import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
@@ -44,10 +46,14 @@ export class MonitorFormulaWorkspaceService {
     );
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Monitor Formula not found', true, {
-        locationId: locationId,
-        formulaRecordId: formulaRecordId,
-      });
+      throw new LoggingException(
+        'Monitor Formula Not Found',
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          formulaRecordId: formulaRecordId,
+        },
+      );
     }
 
     return result;

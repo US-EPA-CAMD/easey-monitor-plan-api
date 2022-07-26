@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -14,6 +15,7 @@ import {
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class LEEQualificationWorkspaceService {
@@ -46,10 +48,9 @@ export class LEEQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.logger.error(
-        NotFoundException,
+      throw new LoggingException(
         'LEE Qualification Not Found',
-        true,
+        HttpStatus.NOT_FOUND,
         {
           locId: locId,
           qualId: qualId,

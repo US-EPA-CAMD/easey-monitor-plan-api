@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -12,6 +13,7 @@ import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class MonitorSpanWorkspaceService {
@@ -34,10 +36,14 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Monitor Span not found', true, {
-        locationId: locationId,
-        spanId: spanId,
-      });
+      throw new LoggingException(
+        'Monitor Span not found',
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          spanId: spanId,
+        },
+      );
     }
 
     return result;

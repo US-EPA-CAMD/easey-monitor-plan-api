@@ -1,9 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class UserCheckOutService {
@@ -36,10 +37,9 @@ export class UserCheckOutService {
     });
 
     if (!record) {
-      this.logger.error(
-        NotFoundException,
-        `Check-out configuration not found`,
-        true,
+      throw new LoggingException(
+        'Check-out configuration not found',
+        HttpStatus.NOT_FOUND,
         { monPlanId: monPlanId },
       );
     }

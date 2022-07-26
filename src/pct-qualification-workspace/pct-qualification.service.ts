@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -14,6 +15,7 @@ import {
 } from '../dtos/pct-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class PCTQualificationWorkspaceService {
@@ -46,10 +48,9 @@ export class PCTQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      this.logger.error(
-        NotFoundException,
+      throw new LoggingException(
         'PCT Qualification Not Found',
-        true,
+        HttpStatus.NOT_FOUND,
         {
           locId: locId,
           qualId: qualId,
