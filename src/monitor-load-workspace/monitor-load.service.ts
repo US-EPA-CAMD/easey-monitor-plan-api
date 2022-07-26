@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -12,6 +13,7 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -34,9 +36,11 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Monitor Load Not Found', true, {
-        loadId: loadId,
-      });
+      throw new LoggingException(
+        'Monitor Load Not Found',
+        HttpStatus.NOT_FOUND,
+        { loadId: loadId },
+      );
     }
 
     return result;

@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -8,6 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import {
   MonitorQualificationBaseDTO,
   MonitorQualificationDTO,
@@ -201,10 +204,14 @@ export class MonitorQualificationWorkspaceService {
   ): Promise<MonitorQualification> {
     const result = await this.repository.getQualification(locId, qualId);
     if (!result) {
-      this.logger.error(NotFoundException, 'Qualification Not Found', true, {
-        locId: locId,
-        qualId: qualId,
-      });
+      throw new LoggingException(
+        'Qualification Not Found',
+        HttpStatus.NOT_FOUND,
+        {
+          locId: locId,
+          qualId: qualId,
+        },
+      );
     }
     return result;
   }

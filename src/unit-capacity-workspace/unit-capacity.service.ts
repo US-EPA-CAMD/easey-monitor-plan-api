@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -8,6 +9,8 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import {
   UnitCapacityBaseDTO,
   UnitCapacityDTO,
@@ -87,10 +90,14 @@ export class UnitCapacityWorkspaceService {
   ): Promise<UnitCapacityDTO> {
     const result = await this.repository.getUnitCapacity(unitCapacityId);
     if (!result) {
-      this.logger.error(NotFoundException, 'Unit Capacity Not Found', true, {
-        unitId,
-        unitCapacityId,
-      });
+      throw new LoggingException(
+        'Unit Capacity Not Found.',
+        HttpStatus.NOT_FOUND,
+        {
+          unitId,
+          unitCapacityId,
+        },
+      );
     }
     return this.map.one(result);
   }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { PlantService } from '../plant/plant.service';
@@ -10,6 +10,7 @@ import { UnitService } from '../unit/unit.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class ImportChecksService {
@@ -28,7 +29,7 @@ export class ImportChecksService {
 
   private checkIfThrows(errorList: string[]) {
     if (errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
+      throw new LoggingException(errorList.toString(), HttpStatus.BAD_REQUEST);
     }
   }
 

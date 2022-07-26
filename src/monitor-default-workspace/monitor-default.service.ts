@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -15,6 +16,7 @@ import {
 } from '../dtos/monitor-default.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
@@ -40,10 +42,14 @@ export class MonitorDefaultWorkspaceService {
     const result = await this.repository.getDefault(locationId, defaultId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Monitor Default Not Found', true, {
-        locationId: locationId,
-        defaultId: defaultId,
-      });
+      throw new LoggingException(
+        'Monitor Default Not Found',
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          defaultId: defaultId,
+        },
+      );
     }
 
     return result;

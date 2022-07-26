@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -11,6 +12,7 @@ import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class UnitFuelWorkspaceService {
@@ -37,7 +39,7 @@ export class UnitFuelWorkspaceService {
     const result = await this.repository.getUnitFuel(unitFuelId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Unit Fuel Not Found', true, {
+      throw new LoggingException('Unit Fuel Not Found', HttpStatus.NOT_FOUND, {
         locId: locId,
         unitId: unitId,
         unitFuelId: unitFuelId,

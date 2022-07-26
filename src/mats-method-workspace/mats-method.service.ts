@@ -1,5 +1,6 @@
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -9,9 +10,9 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
-import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -34,9 +35,13 @@ export class MatsMethodWorkspaceService {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Mats Method not found.', true, {
-        methodId: methodId,
-      });
+      throw new LoggingException(
+        'Mats Method not found.',
+        HttpStatus.NOT_FOUND,
+        {
+          methodId: methodId,
+        },
+      );
     }
 
     return this.map.one(result);
