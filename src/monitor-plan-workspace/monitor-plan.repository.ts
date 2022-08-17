@@ -1,5 +1,4 @@
 import { BadRequestException } from '@nestjs/common';
-import { LastUpdatedConfigBaseDTO } from '../dtos/last-updated-config-base.dto';
 import { Repository, EntityRepository } from 'typeorm';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 

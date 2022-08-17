@@ -32,7 +32,7 @@ export class MonitorPlanController {
     return this.service.getConfigurations(orisCode);
   }
 
-  @Get('configuration/last-updated')
+  @Get('configurations/last-updated')
   @ApiOkResponse({
     isArray: true,
     type: MonitorPlanDTO,
