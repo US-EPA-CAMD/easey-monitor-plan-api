@@ -73,25 +73,6 @@ describe('Monitor Plan Repository', () => {
     expect(result).toEqual({});
   });
 
-  it('calls createQueryBuilder and gets data for unit stack configs by last updated time', async () => {
-    monitorPlanRepository.createQueryBuilder = jest
-      .fn()
-      .mockReturnValue(queryBuilder);
-    monitorPlanRepository.query = jest
-      .fn()
-      .mockResolvedValue([{ mon_plan_id: 'Test', last_updated_time: 'Test' }]);
-
-    queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
-    queryBuilder.where.mockReturnValue(queryBuilder);
-    queryBuilder.getMany.mockReturnValue(mp);
-
-    const result = await monitorPlanRepository.getMonitorPlanIdsByLastUpdatedTime(
-      new Date(),
-    );
-    expect(queryBuilder.getMany).toHaveBeenCalled();
-    expect(result.mostRecentUpdate).toEqual('Test');
-  });
-
   it('calls revertToOfficialRecord to revert a monitor plan to the official submitted version', async () => {
     monitorPlanRepository.query = jest.fn();
     await monitorPlanRepository.revertToOfficialRecord(1);

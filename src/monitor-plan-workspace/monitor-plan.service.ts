@@ -210,23 +210,6 @@ export class MonitorPlanWorkspaceService {
     return this.parseMonitorPlanConfigurations(plans);
   }
 
-  async getConfigurationsByLastUpdated(
-    queryTime: Date,
-  ): Promise<LastUpdatedConfigDTO> {
-    const dto = new LastUpdatedConfigDTO();
-
-    const configsAndTime = await this.repository.getMonitorPlanIdsByLastUpdatedTime(
-      queryTime,
-    );
-
-    dto.changedConfigs = await this.parseMonitorPlanConfigurations(
-      configsAndTime.changedConfigs,
-    );
-    dto.mostRecentUpdate = configsAndTime.mostRecentUpdate;
-
-    return dto;
-  }
-
   async revertToOfficialRecord(monPlanId: string): Promise<void> {
     return this.repository.revertToOfficialRecord(monPlanId);
   }

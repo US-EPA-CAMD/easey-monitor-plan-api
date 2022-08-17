@@ -67,19 +67,6 @@ export class MonitorPlanWorkspaceController {
     return this.service.getConfigurationsByOris(orisCode);
   }
 
-  @Get('configuration/last-updated')
-  @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanDTO,
-    description:
-      'Retrieves workspace Monitor Plan configurations that have been updated after a certain date',
-  })
-  getLastUpdated(
-    @Query('date') queryTime: Date,
-  ): Promise<LastUpdatedConfigDTO> {
-    return this.service.getConfigurationsByLastUpdated(queryTime);
-  }
-
   @Get(':planId/evaluation-report')
   @ApiOkResponse({
     description: 'Retrieves facility information and evaluation results',

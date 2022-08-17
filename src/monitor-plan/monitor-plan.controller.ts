@@ -1,5 +1,6 @@
-import { Get, Param, Controller, ParseIntPipe } from '@nestjs/common';
+import { Get, Param, Controller, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanService } from './monitor-plan.service';
@@ -29,5 +30,18 @@ export class MonitorPlanController {
     @Param('orisCode', ParseIntPipe) orisCode: number,
   ): Promise<MonitorPlanDTO[]> {
     return this.service.getConfigurations(orisCode);
+  }
+
+  @Get('configuration/last-updated')
+  @ApiOkResponse({
+    isArray: true,
+    type: MonitorPlanDTO,
+    description:
+      'Retrieves workspace Monitor Plan configurations that have been updated after a certain date',
+  })
+  getLastUpdated(
+    @Query('date') queryTime: Date,
+  ): Promise<LastUpdatedConfigDTO> {
+    return this.service.getConfigurationsByLastUpdated(queryTime);
   }
 }

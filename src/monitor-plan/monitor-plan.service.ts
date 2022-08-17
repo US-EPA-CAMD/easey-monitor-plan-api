@@ -32,6 +32,8 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyRepository } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.repository';
 import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
+import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
+import { MonitorPlan } from '../entities/monitor-plan.entity';
 
 @Injectable()
 export class MonitorPlanService {
@@ -90,8 +92,7 @@ export class MonitorPlanService {
     private readonly uscMap: UnitStackConfigurationMap,
   ) {}
 
-  async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
-    const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
+  private async parseMonitorPlanConfigurations(plans: MonitorPlan[]) {
     if (plans.length === 0) {
       return [];
     }
@@ -140,6 +141,11 @@ export class MonitorPlanService {
     return results;
   }
 
+  async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
+    const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
+    return this.parseMonitorPlanConfigurations(plans);
+  }
+
   async getMonSystemFuelFlow(
     monSysId: string,
     monSysIds: string[],
@@ -148,6 +154,35 @@ export class MonitorPlanService {
       monitoringSystemRecordId: In(monSysIds),
     });
     return sysFuelFlows.filter(i => i.monitoringSystemRecordId === monSysId);
+  }
+
+  async getConfigurationsByLastUpdated(
+    queryTime: Date,
+  ): Promise<LastUpdatedConfigDTO> {
+    const dto = new LastUpdatedConfigDTO();
+
+    const orisCodesAndTime = await this.repository.getOrisCodesByLastUpdatedTime(
+      queryTime,
+    );
+
+    const list: MonitorPlanDTO[] = [];
+    const promises = [];
+
+    orisCodesAndTime.changedOrisCodes.forEach(orisCode => {
+      promises.push(
+        new Promise(async resolve => {
+          list.push(...(await this.getConfigurations(orisCode)));
+          resolve(true);
+        }),
+      );
+    });
+
+    await Promise.all(promises);
+
+    dto.changedConfigs = list;
+    dto.mostRecentUpdate = orisCodesAndTime.mostRecentUpdate;
+
+    return dto;
   }
 
   async getMonitorPlan(
