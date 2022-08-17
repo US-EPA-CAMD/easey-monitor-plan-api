@@ -1,4 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
+import { LastUpdatedConfigBaseDTO } from '../dtos/last-updated-config-base.dto';
 import { Repository, EntityRepository } from 'typeorm';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
@@ -9,6 +10,33 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .innerJoinAndSelect('plan.plant', 'plant')
       .where('plant.orisCode = :orisCode', { orisCode })
       .getMany();
+  }
+
+  async getMonitorPlanIdsByLastUpdatedTime(
+    queryDate: Date,
+  ): Promise<LastUpdatedConfigBaseDTO> {
+    const planIdsQuery = await this.query(
+      'select * from camdecmpswks.last_updated_unit_stack_configs($1)',
+      [queryDate],
+    );
+
+    let planIds = [];
+
+    planIdsQuery.forEach(obj => {
+      planIds.push(obj['mon_plan_id']);
+    });
+
+    planIds = [...new Set(planIds)];
+
+    const dto = new LastUpdatedConfigBaseDTO();
+    dto.changedConfigs = await this.createQueryBuilder('plan')
+      .innerJoinAndSelect('plan.plant', 'plant')
+      .where('plan.mon_plan_id IN (:...planIds)', { planIds })
+      .getMany();
+
+    dto.mostRecentUpdate = planIdsQuery[0]['last_updated_time'];
+
+    return dto;
   }
 
   async revertToOfficialRecord(monPlanId: string) {

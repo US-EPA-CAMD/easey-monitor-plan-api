@@ -4,10 +4,10 @@ import { SelectQueryBuilder } from 'typeorm';
 
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { LastUpdatedConfigBaseDTO } from 'src/dtos/last-updated-config-base.dto';
 
 const mp = new MonitorPlan();
-const mpArray = [];
-mpArray.push(mp);
+const mpArray = [mp];
 
 const mockQueryBuilder = () => ({
   query: jest.fn(),
@@ -46,8 +46,9 @@ describe('Monitor Plan Repository', () => {
     monitorPlanRepository.createQueryBuilder = jest
       .fn()
       .mockReturnValue(queryBuilder);
-    queryBuilder.innerJoin.mockReturnValue(queryBuilder);
+
     queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+    queryBuilder.where.mockReturnValue(queryBuilder);
     queryBuilder.getMany.mockReturnValue(mpArray);
 
     const orisCode = 123;
@@ -70,6 +71,25 @@ describe('Monitor Plan Repository', () => {
     const result = await monitorPlanRepository.getMonitorPlan(1);
     expect(queryBuilder.getOne).toHaveBeenCalled();
     expect(result).toEqual({});
+  });
+
+  it('calls createQueryBuilder and gets data for unit stack configs by last updated time', async () => {
+    monitorPlanRepository.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(queryBuilder);
+    monitorPlanRepository.query = jest
+      .fn()
+      .mockResolvedValue([{ mon_plan_id: 'Test', last_updated_time: 'Test' }]);
+
+    queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+    queryBuilder.where.mockReturnValue(queryBuilder);
+    queryBuilder.getMany.mockReturnValue(mp);
+
+    const result = await monitorPlanRepository.getMonitorPlanIdsByLastUpdatedTime(
+      new Date(),
+    );
+    expect(queryBuilder.getMany).toHaveBeenCalled();
+    expect(result.mostRecentUpdate).toEqual('Test');
   });
 
   it('calls revertToOfficialRecord to revert a monitor plan to the official submitted version', async () => {
@@ -118,7 +138,7 @@ describe('Monitor Plan Repository', () => {
     queryBuilder.andWhere.mockReturnValue(queryBuilder);
     queryBuilder.getOne.mockReturnValue(mp);
 
-    const result = await monitorPlanRepository.getActivePlanByLocation(1);
+    const result = await monitorPlanRepository.getActivePlanByLocationId(1);
     expect(queryBuilder.getOne).toHaveBeenCalled();
     expect(result).toEqual({});
   });

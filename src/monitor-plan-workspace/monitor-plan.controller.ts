@@ -7,6 +7,7 @@ import {
   Controller,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -22,6 +23,7 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
+import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -62,7 +64,20 @@ export class MonitorPlanWorkspaceController {
   getConfigurations(
     @Param('orisCode', ParseIntPipe) orisCode: number,
   ): Promise<MonitorPlanDTO[]> {
-    return this.service.getConfigurations(orisCode);
+    return this.service.getConfigurationsByOris(orisCode);
+  }
+
+  @Get('configuration/last-updated')
+  @ApiOkResponse({
+    isArray: true,
+    type: MonitorPlanDTO,
+    description:
+      'Retrieves workspace Monitor Plan configurations that have been updated after a certain date',
+  })
+  getLastUpdated(
+    @Query('date') queryTime: Date,
+  ): Promise<LastUpdatedConfigDTO> {
+    return this.service.getConfigurationsByLastUpdated(queryTime);
   }
 
   @Get(':planId/evaluation-report')

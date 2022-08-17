@@ -37,6 +37,8 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -154,8 +156,7 @@ export class MonitorPlanWorkspaceService {
     return null;
   }
 
-  async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
-    const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
+  private async parseMonitorPlanConfigurations(plans: MonitorPlan[]) {
     if (plans.length === 0) {
       return [];
     }
@@ -202,6 +203,28 @@ export class MonitorPlanWorkspaceService {
       return 1;
     });
     return results;
+  }
+
+  async getConfigurationsByOris(orisCode: number): Promise<MonitorPlanDTO[]> {
+    const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
+    return this.parseMonitorPlanConfigurations(plans);
+  }
+
+  async getConfigurationsByLastUpdated(
+    queryTime: Date,
+  ): Promise<LastUpdatedConfigDTO> {
+    const dto = new LastUpdatedConfigDTO();
+
+    const configsAndTime = await this.repository.getMonitorPlanIdsByLastUpdatedTime(
+      queryTime,
+    );
+
+    dto.changedConfigs = await this.parseMonitorPlanConfigurations(
+      configsAndTime.changedConfigs,
+    );
+    dto.mostRecentUpdate = configsAndTime.mostRecentUpdate;
+
+    return dto;
   }
 
   async revertToOfficialRecord(monPlanId: string): Promise<void> {
