@@ -185,6 +185,11 @@ export class MonitorPlanService {
     return dto;
   }
 
+  async getTopLevelMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
+    const mp = await this.repository.getMonitorPlan(monPlanId);
+    return this.map.one(mp);
+  }
+
   async getMonitorPlan(
     planId: string,
     getLocChildRecords: boolean = true,
