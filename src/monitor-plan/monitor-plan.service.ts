@@ -104,7 +104,7 @@ export class MonitorPlanService {
         false,
         false,
         false,
-        false,
+        true,
       );
       p.name = monPlan.name;
       p.locations = monPlan.locations;
@@ -462,7 +462,7 @@ export class MonitorPlanService {
 
     const mpDTO = await this.map.one(mp);
 
-    if (getUnitStacks) {
+    if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurations = uscDTO;
     }

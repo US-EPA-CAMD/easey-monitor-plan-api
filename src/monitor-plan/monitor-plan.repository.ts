@@ -28,7 +28,7 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
     queryDate: Date,
   ): Promise<IorisCodesAndLastUpdatedTimes> {
     const planIdsQuery = await this.query(
-      'select * from camdecmps.last_updated_unit_stack_oris_codes($1)',
+      'select * from camdecmps.get_oris_codes_for_configurations_last_updated($1)',
       [queryDate],
     );
 
