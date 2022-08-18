@@ -4,6 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanService } from './monitor-plan.service';
 import { MonitorPlanController } from './monitor-plan.controller';
+import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 jest.mock('./monitor-plan.service');
 
@@ -36,6 +37,17 @@ describe('MonitorPlanController', () => {
     it('should return array of monitor plan configurations', async () => {
       jest.spyOn(service, 'getConfigurations').mockResolvedValue(data);
       expect(await controller.getConfigurations(orisCode)).toBe(data);
+    });
+  });
+
+  describe('configuration/last-updated', () => {
+    it('should return array of monitor plan configurations and a most recent update time', async () => {
+      const dto = new LastUpdatedConfigDTO();
+
+      jest
+        .spyOn(service, 'getConfigurationsByLastUpdated')
+        .mockResolvedValue(dto);
+      expect(await controller.getLastUpdated(new Date())).toBe(dto);
     });
   });
 });

@@ -50,6 +50,20 @@ describe('-- Monitor Plan Repository --', () => {
     expect(result).toEqual(mpArray);
   });
 
+  it('calls createQueryBuilder and gets all Oris codes that have been updated after a certain date', async () => {
+    monitorPlanRepository.query = jest
+      .fn()
+      .mockResolvedValue([{ oris_code: 1, last_updated_time: 'Test' }]);
+
+    const result = await monitorPlanRepository.getOrisCodesByLastUpdatedTime(
+      new Date(),
+    );
+
+    console.log(result);
+
+    expect(result.mostRecentUpdate).toEqual('Test');
+  });
+
   it('calls createQueryBuilder and gets data for a specific MonitorPlan from the repository', async () => {
     monitorPlanRepository.createQueryBuilder = jest
       .fn()

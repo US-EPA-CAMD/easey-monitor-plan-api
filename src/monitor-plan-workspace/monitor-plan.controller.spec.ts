@@ -12,6 +12,7 @@ import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { ImportChecksService } from '../import-checks/import-checks.service';
+import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 jest.mock('./monitor-plan.service');
 jest.mock('../user-check-out/user-check-out.service');
@@ -69,7 +70,7 @@ describe('MonitorPlanWorkspaceController', () => {
 
   describe('getConfigurations', () => {
     it('should return array of monitor plan configurations', async () => {
-      jest.spyOn(service, 'getConfigurations').mockResolvedValue(data);
+      jest.spyOn(service, 'getConfigurationsByOris').mockResolvedValue(data);
       expect(await controller.getConfigurations(orisCode)).toBe(data);
     });
   });

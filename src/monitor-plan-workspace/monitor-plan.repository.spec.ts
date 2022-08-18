@@ -4,10 +4,10 @@ import { SelectQueryBuilder } from 'typeorm';
 
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { LastUpdatedConfigBaseDTO } from 'src/dtos/last-updated-config-base.dto';
 
 const mp = new MonitorPlan();
-const mpArray = [];
-mpArray.push(mp);
+const mpArray = [mp];
 
 const mockQueryBuilder = () => ({
   query: jest.fn(),
@@ -46,8 +46,9 @@ describe('Monitor Plan Repository', () => {
     monitorPlanRepository.createQueryBuilder = jest
       .fn()
       .mockReturnValue(queryBuilder);
-    queryBuilder.innerJoin.mockReturnValue(queryBuilder);
+
     queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+    queryBuilder.where.mockReturnValue(queryBuilder);
     queryBuilder.getMany.mockReturnValue(mpArray);
 
     const orisCode = 123;
@@ -118,7 +119,7 @@ describe('Monitor Plan Repository', () => {
     queryBuilder.andWhere.mockReturnValue(queryBuilder);
     queryBuilder.getOne.mockReturnValue(mp);
 
-    const result = await monitorPlanRepository.getActivePlanByLocation(1);
+    const result = await monitorPlanRepository.getActivePlanByLocationId(1);
     expect(queryBuilder.getOne).toHaveBeenCalled();
     expect(result).toEqual({});
   });
