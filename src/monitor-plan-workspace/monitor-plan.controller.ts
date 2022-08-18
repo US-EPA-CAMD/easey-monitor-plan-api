@@ -41,7 +41,16 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves workspace Monitor Plan record.',
   })
-  exportMonitorPlan(@Param('planId') planId: string) {
+  OLDexportMonitorPlan(@Param('planId') planId: string) {
+    return this.service.exportMonitorPlan(planId);
+  }
+
+  @Get('export')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves workspace Monitor Plan record.',
+  })
+  exportMonitorPlan(@Query('planId') planId: string) {
     return this.service.exportMonitorPlan(planId);
   }
 
