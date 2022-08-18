@@ -16,7 +16,16 @@ export class MonitorPlanController {
     type: MonitorPlanDTO,
     description: 'Retrieves official Monitor Plan record',
   })
-  getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
+  OLDgetMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
+    return this.service.getMonitorPlan(planId);
+  }
+
+  @Get('export')
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description: 'Retrieves official Monitor Plan record',
+  })
+  getMonitorPlan(@Query('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
   }
 
