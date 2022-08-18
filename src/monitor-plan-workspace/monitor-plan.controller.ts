@@ -36,15 +36,6 @@ export class MonitorPlanWorkspaceController {
     private readonly importChecksService: ImportChecksService,
   ) {}
 
-  @Get(':planId')
-  @ApiOkResponse({
-    type: MonitorPlanDTO,
-    description: 'Retrieves workspace Monitor Plan record.',
-  })
-  OLDexportMonitorPlan(@Param('planId') planId: string) {
-    return this.service.exportMonitorPlan(planId);
-  }
-
   @Get('export')
   @ApiOkResponse({
     type: MonitorPlanDTO,
