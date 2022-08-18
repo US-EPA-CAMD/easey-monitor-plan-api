@@ -40,6 +40,13 @@ describe('MonitorPlanController', () => {
     });
   });
 
+  describe('getMonitorPlan', () => {
+    it('should return a monitor plan given a planId', async () => {
+      jest.spyOn(service, 'getTopLevelMonitorPlan').mockResolvedValue(data[0]);
+      expect(await controller.getMonitorPlan('')).toBe(data[0]);
+    });
+  });
+
   describe('configuration/last-updated', () => {
     it('should return array of monitor plan configurations and a most recent update time', async () => {
       const dto = new LastUpdatedConfigDTO();

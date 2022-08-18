@@ -4,7 +4,6 @@ import { SelectQueryBuilder } from 'typeorm';
 
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
-import { LastUpdatedConfigBaseDTO } from 'src/dtos/last-updated-config-base.dto';
 
 const mp = new MonitorPlan();
 const mpArray = [mp];

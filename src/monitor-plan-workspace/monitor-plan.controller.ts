@@ -46,7 +46,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   // TEMP: unconventional route path to avoid messing with URL's before demo
-  @Get(':planId/refresh')
+  @Get(':planId')
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'Retrieves information needed to refresh a monitor plan',

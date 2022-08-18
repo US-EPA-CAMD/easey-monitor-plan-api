@@ -168,7 +168,7 @@ export class MonitorPlanWorkspaceService {
         false,
         false,
         false,
-        false,
+        true,
       );
       p.name = monPlan.name;
       p.locations = monPlan.locations;
