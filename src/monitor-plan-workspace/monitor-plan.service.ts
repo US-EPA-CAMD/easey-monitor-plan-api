@@ -528,7 +528,7 @@ export class MonitorPlanWorkspaceService {
 
     const mpDTO = await this.map.one(mp);
 
-    if (getUnitStacks) {
+    if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurations = uscDTO;
     }
