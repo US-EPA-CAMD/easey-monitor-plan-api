@@ -126,6 +126,7 @@ export class MonitorPlanService {
         delete l.qualifications;
       });
       delete p.comments;
+      delete p.reportingFrequencies;
     }
     results.sort((a, b) => {
       if (a.name < b.name) {
