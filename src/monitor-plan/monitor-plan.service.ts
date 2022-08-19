@@ -108,6 +108,7 @@ export class MonitorPlanService {
       );
       p.name = monPlan.name;
       p.locations = monPlan.locations;
+      p.unitStackConfigurations = monPlan.unitStackConfigurations;
       p.locations.forEach(l => {
         delete l.attributes;
         delete l.unitCapacities;
@@ -125,7 +126,6 @@ export class MonitorPlanService {
         delete l.qualifications;
       });
       delete p.comments;
-      delete p.unitStackConfigurations;
     }
     results.sort((a, b) => {
       if (a.name < b.name) {
@@ -242,12 +242,12 @@ export class MonitorPlanService {
     }
 
     if (getComments) {
-      COMMENTS = REPORTING_FREQ + 1;
+      COMMENTS = REPORTING_FREQ ? REPORTING_FREQ + 1 : 0;
       promises.push(this.commentRepository.find({ monitorPlanId: planId }));
     }
 
     if (getUnitStacks) {
-      UNIT_STACK_CONFIGS = COMMENTS + 1;
+      UNIT_STACK_CONFIGS = COMMENTS ? COMMENTS + 1 : 0;
       promises.push(
         this.unitStackConfigRepository.getUnitStackConfigsByLocationIds(
           locationIds,
@@ -256,7 +256,7 @@ export class MonitorPlanService {
     }
 
     if (getLocChildRecords) {
-      UNIT_CAPACITIES = UNIT_STACK_CONFIGS + 1;
+      UNIT_CAPACITIES = UNIT_STACK_CONFIGS ? UNIT_STACK_CONFIGS + 1 : 0;
       promises.push(
         this.unitCapacityRepository.getUnitCapacitiesByUnitIds(unitIds),
       );
@@ -472,6 +472,6 @@ export class MonitorPlanService {
       mpDTO.unitStackConfigurations = uscDTO;
     }
 
-    return this.map.one(mp);
+    return mpDTO;
   }
 }
