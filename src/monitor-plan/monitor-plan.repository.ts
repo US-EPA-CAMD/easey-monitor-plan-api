@@ -32,6 +32,13 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
       [queryDate],
     );
 
+    if (planIdsQuery.length === 0) {
+      return {
+        changedOrisCodes: [],
+        mostRecentUpdate: null,
+      };
+    }
+
     let orisCodes = [];
 
     planIdsQuery.forEach(obj => {
