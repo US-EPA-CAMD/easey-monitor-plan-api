@@ -35,6 +35,37 @@ export class MonitorPlan extends BaseEntity {
   facId: number;
 
   @Column({
+    type: 'varchar',
+    length: 7,
+    name: 'config_type_cd',
+  })
+  configTypeCode: string;
+
+  @Column({ name: 'last_updated' })
+  lastUpdated: Date;
+
+  @Column({
+    type: 'varchar',
+    length: 1,
+    name: 'updated_status_flg',
+  })
+  updatedStatusFlag: string;
+
+  @Column({
+    type: 'varchar',
+    length: 1,
+    name: 'needs_eval_flg',
+  })
+  needsEvalFlag: string;
+
+  @Column({
+    type: 'varchar',
+    length: 45,
+    name: 'chk_session_id',
+  })
+  checkSessionId: string;
+
+  @Column({
     type: 'numeric',
     precision: 38,
     scale: 0,
@@ -52,14 +83,6 @@ export class MonitorPlan extends BaseEntity {
   })
   beginReportPeriodId: number;
 
-  // pointing to needs_eval_flg because there is no eval_status_cd column in global view
-  @Column({
-    type: 'varchar',
-    length: 7,
-    name: 'needs_eval_flg',
-  })
-  evalStatusCode: string;
-
   @Column({
     type: 'varchar',
     length: 25,
@@ -72,6 +95,22 @@ export class MonitorPlan extends BaseEntity {
 
   @Column({ name: 'update_date' })
   updateDate: Date;
+
+  @Column({
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
+    name: 'submission_id',
+    transformer: new NumericColumnTransformer(),
+  })
+  submissionId: number;
+
+  @Column({
+    type: 'varchar',
+    length: 7,
+    name: 'submission_availability_cd',
+  })
+  submissionAvailabilityCode: string;
 
   @ManyToOne(
     () => Plant,
@@ -106,4 +145,7 @@ export class MonitorPlan extends BaseEntity {
   reportingFrequencies: MonitorPlanReportingFrequency[];
 
   unitStackConfigurations: UnitStackConfiguration[];
+
+  @Column({ name: 'last_evaluated_date' })
+  lastEvaluatedDate: Date;
 }

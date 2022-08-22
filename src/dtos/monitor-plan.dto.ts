@@ -27,6 +27,16 @@ export class MonitorPlanDTO {
   })
   facId: number;
 
+  configTypeCode: string;
+
+  lastUpdated: Date;
+
+  updatedStatusFlag: string;
+
+  needsEvalFlag: string;
+
+  checkSessionId: string;
+
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOName.description,
     example: propertyMetadata.monitorPlanDTOName.example,
@@ -52,8 +62,15 @@ export class MonitorPlanDTO {
   unitStackConfigurations: UnitStackConfigurationDTO[];
   reportingFrequencies: MonitorPlanReportingFreqDTO[];
   locations: MonitorLocationDTO[];
+  pendingStatusCode: string;
   evalStatusCode: string;
   userId: string;
   addDate: Date;
   updateDate: Date;
+
+  submissionId: number;
+
+  submissionAvailabilityCode: string;
+
+  lastEvaluatedDate: Date;
 }
