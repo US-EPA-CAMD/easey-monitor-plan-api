@@ -35,22 +35,42 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       ? await this.reportingFrequencyMap.many(entity.reportingFrequencies)
       : [];
 
+    let pendingStatusCode = null;
+    let evalStatusCode = null;
+
+    if (entity['pendingStatusCode']) {
+      pendingStatusCode = entity['pendingStatusCode'];
+    }
+
+    if (entity['evalStatusCode']) {
+      evalStatusCode = entity['evalStatusCode'];
+    }
+
     return {
       id: entity.id,
       facId: entity.facId,
+      configTypeCode: entity.configTypeCode,
+      lastUpdated: entity.lastUpdated,
+      updatedStatusFlag: entity.updatedStatusFlag,
+      needsEvalFlag: entity.needsEvalFlag,
+      checkSessionId: entity.checkSessionId,
       orisCode: entity.plant.orisCode,
       name: locations.map(l => l.name).join(', '),
       beginReportPeriodId: entity.beginReportPeriodId,
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
       comments,
+      pendingStatusCode,
+      evalStatusCode,
       unitStackConfigurations,
       reportingFrequencies,
       locations,
-      evalStatusCode: entity.evalStatusCode,
       userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
+      submissionId: entity.submissionId,
+      submissionAvailabilityCode: entity.submissionAvailabilityCode,
+      lastEvaluatedDate: entity.lastEvaluatedDate,
     };
   }
 }
