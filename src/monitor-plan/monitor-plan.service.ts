@@ -243,12 +243,19 @@ export class MonitorPlanService {
     }
 
     if (getComments) {
-      COMMENTS = REPORTING_FREQ ? REPORTING_FREQ + 1 : 0;
+      COMMENTS = getReportingFrquencies === true ? REPORTING_FREQ + 1 : 0;
       promises.push(this.commentRepository.find({ monitorPlanId: planId }));
     }
 
     if (getUnitStacks) {
-      UNIT_STACK_CONFIGS = COMMENTS ? COMMENTS + 1 : 0;
+      if (getComments === true) {
+        UNIT_STACK_CONFIGS = COMMENTS + 1;
+      } else if (getComments === false && getReportingFrquencies === true) {
+        UNIT_STACK_CONFIGS = REPORTING_FREQ + 1;
+      } else {
+        UNIT_STACK_CONFIGS = 0;
+      }
+
       promises.push(
         this.unitStackConfigRepository.getUnitStackConfigsByLocationIds(
           locationIds,
@@ -257,7 +264,20 @@ export class MonitorPlanService {
     }
 
     if (getLocChildRecords) {
-      UNIT_CAPACITIES = UNIT_STACK_CONFIGS ? UNIT_STACK_CONFIGS + 1 : 0;
+      if (getUnitStacks === true) {
+        UNIT_CAPACITIES = UNIT_STACK_CONFIGS + 1;
+      } else if (getComments === true && getUnitStacks === false) {
+        UNIT_CAPACITIES = COMMENTS + 1;
+      } else if (
+        getReportingFrquencies === true &&
+        getComments === false &&
+        getUnitStacks === false
+      ) {
+        UNIT_CAPACITIES = REPORTING_FREQ + 1;
+      } else {
+        UNIT_CAPACITIES = 0;
+      }
+
       promises.push(
         this.unitCapacityRepository.getUnitCapacitiesByUnitIds(unitIds),
       );
