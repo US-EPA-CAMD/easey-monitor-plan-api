@@ -30,9 +30,9 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
   async getUnitCapacitiesByUnitIds(ids: number[]): Promise<UnitCapacity[]> {
     const query = this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
-      .innerJoinAndSelect('u.unitBoilerType', 'ubt')
+      .innerJoinAndSelect('u.unitBoilerType', 'ubt');
 
-    if(ids.length > 0){
+    if (ids.length > 0) {
       query.where('u.id IN (:...ids)', { ids });
     } else {
       const id = null;

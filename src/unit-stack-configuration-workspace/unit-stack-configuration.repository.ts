@@ -29,13 +29,17 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp')
       .innerJoin('u.location', 'mlu')
-      .innerJoin('sp.location', 'mlsp')
+      .innerJoin('sp.location', 'mlsp');
 
-    if(locationIds.length > 0){
-      query.where('mlu.id IN (:...locationIds)', { locationIds }).andWhere('mlsp.id IN (:...locationIds)', { locationIds });
+    if (locationIds.length > 0) {
+      query
+        .where('mlu.id IN (:...locationIds)', { locationIds })
+        .andWhere('mlsp.id IN (:...locationIds)', { locationIds });
     } else {
       const locationId = null;
-      query.where('mlu.id = :locationId', { locationId }).andWhere('mlsp.id = :locationId', { locationId })
+      query
+        .where('mlu.id = :locationId', { locationId })
+        .andWhere('mlsp.id = :locationId', { locationId });
     }
     return query.getMany();
   }
