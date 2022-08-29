@@ -25,13 +25,18 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
   }
 
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
-    return this.createQueryBuilder('usc')
+    const query = this.createQueryBuilder('usc')
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp')
       .innerJoin('u.location', 'mlu')
       .innerJoin('sp.location', 'mlsp')
-      .where('mlu.id IN (:...locationIds)', { locationIds })
-      .andWhere('mlsp.id IN (:...locationIds)', { locationIds })
-      .getMany();
+
+    if(locationIds.length > 0){
+      query.where('mlu.id IN (:...locationIds)', { locationIds }).andWhere('mlsp.id IN (:...locationIds)', { locationIds });
+    } else {
+      const locationId = null;
+      query.where('mlu.id = :locationId', { locationId }).andWhere('mlsp.id = :locationId', { locationId })
+    }
+    return query.getMany();
   }
 }

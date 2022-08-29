@@ -31,7 +31,13 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
     const query = this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.unitBoilerType', 'ubt')
-      .where('u.id IN (:...ids)', { ids });
+
+    if(ids.length > 0){
+      query.where('u.id IN (:...ids)', { ids });
+    } else {
+      const id = null;
+      query.where('u.id = :id', { id });
+    }
 
     return query.getMany();
   }
