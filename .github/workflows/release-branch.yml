@@ -126,7 +126,7 @@ jobs:
       - name: Deployment
         run: devops/scripts/deploy.sh
   Stage-Deployment:
-    needs: Test-Deployment
+    needs: Build-Test-Package
     runs-on: ubuntu-latest
     environment:
       name: Staging
@@ -152,6 +152,47 @@ jobs:
         env:
           CF_USERNAME: ${{ secrets.CF_STG_DEPLOYMENT_SVC }}
           CF_PASSWORD: ${{ secrets.CF_STG_DEPLOYMENT_SVC_PWD }}
+      - name: Download Deployment Package
+        run: devops/scripts/download-artifact.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.ARTIFACTS_STORAGE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_STORAGE_SECRET_ACCESS_KEY }}
+      - name: Init Application
+        run: devops/scripts/cf-app-init.sh
+      - name: Configure Env Vars (secrets)
+        run: |
+          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
+        env:
+          API_KEY: ${{ secrets.MONITOR_PLAN_API_NON_PROD_API_KEY }}
+      - name: Deployment
+        run: devops/scripts/deploy.sh
+  Performance-Deployment:
+    needs: Build-Test-Package
+    runs-on: ubuntu-latest
+    environment:
+      name: Performance
+      url: https://api.epa.gov/easey/perf/monitor-plan-mgmt/swagger
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Checkout devops repo
+        uses: actions/checkout@v2
+        with:
+          repository: US-EPA-CAMD/devops
+          path: devops
+      - name: Configure Env Vars
+        run: devops/scripts/environment-variables-noTag.sh PERF
+        env:
+          ENV_VAR_PREFIX: EASEY
+      - name: Install cf cli
+        run: devops/scripts/install-cf-cli.sh
+      - name: Login to cloud.gov
+        run: devops/scripts/cf-login.sh
+        env:
+          CF_USERNAME: ${{ secrets.CF_PERF_DEPLOYMENT_SVC }}
+          CF_PASSWORD: ${{ secrets.CF_PERF_DEPLOYMENT_SVC_PWD }}
       - name: Download Deployment Package
         run: devops/scripts/download-artifact.sh
         env:
