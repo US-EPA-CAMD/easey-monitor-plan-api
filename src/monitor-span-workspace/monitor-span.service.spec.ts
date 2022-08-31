@@ -6,7 +6,7 @@ import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { MonitorSpan } from '../entities/monitor-span.entity';
+import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');

@@ -6,6 +6,8 @@ import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([]),
@@ -40,6 +42,12 @@ describe('MonitorMethodWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         MatsMethodWorkspaceService,
+        {
+          provide: MonitorPlanWorkspaceService,
+          useFactory: () => ({
+            resetToNeedsEvaluation: jest.fn(),
+          }),
+        },
         {
           provide: MatsMethodWorkspaceRepository,
           useFactory: mockRepository,
