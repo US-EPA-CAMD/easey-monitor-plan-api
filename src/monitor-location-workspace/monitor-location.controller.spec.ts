@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorLocationWorkspaceController } from './monitor-location.controller';
+import { MonitorLocationWorkspaceService } from './monitor-location.service';
 
 describe('MonitorLocationWorkspaceController', () => {
   let controller: MonitorLocationWorkspaceController;
@@ -12,7 +13,13 @@ describe('MonitorLocationWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       controllers: [MonitorLocationWorkspaceController],
-      providers: [ConfigService],
+      providers: [
+        ConfigService,
+        {
+          provide: MonitorLocationWorkspaceService,
+          useFactory: () => ({}),
+        },
+      ],
     }).compile();
 
     controller = module.get<MonitorLocationWorkspaceController>(

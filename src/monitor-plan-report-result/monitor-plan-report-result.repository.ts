@@ -1,4 +1,3 @@
-import { query } from 'express';
 import { EntityRepository, Repository } from 'typeorm';
 import { MonitorPlanReportResult } from '../entities/vw-monitor-plan-report-results.entity';
 

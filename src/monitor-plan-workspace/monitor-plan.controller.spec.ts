@@ -7,12 +7,9 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 
-import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
-// import { UserCheckOutService } from './../user-check-out/user-check-out.service';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { ImportChecksService } from '../import-checks/import-checks.service';
-import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 jest.mock('./monitor-plan.service');
 jest.mock('../user-check-out/user-check-out.service');
@@ -29,15 +26,9 @@ const evaluationRportData = [];
 evaluationRportData.push(new MPEvaluationReportDTO());
 evaluationRportData.push(new MPEvaluationReportDTO());
 
-const ucoData: UserCheckOutDTO[] = [];
-ucoData.push(new UserCheckOutDTO());
-ucoData.push(new UserCheckOutDTO());
-
 describe('MonitorPlanWorkspaceController', () => {
   let controller: MonitorPlanWorkspaceController;
   let service: MonitorPlanWorkspaceService;
-  let importService: ImportChecksService;
-  // let ucoService: UserCheckOutService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,12 +44,6 @@ describe('MonitorPlanWorkspaceController', () => {
 
     controller = module.get(MonitorPlanWorkspaceController);
     service = module.get(MonitorPlanWorkspaceService);
-    importService = module.get(ImportChecksService);
-    // ucoService = module.get(UserCheckOutService);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
   });
 
   describe('exportMonitorPlan', () => {
@@ -94,9 +79,15 @@ describe('MonitorPlanWorkspaceController', () => {
   });
 
   describe('importPlan', () => {
-    it('should return import a report plan given a planId', async () => {
+    it('should import a report plan given a planId', async () => {
       jest.spyOn(service, 'importMpPlan').mockResolvedValue(data[0]);
       expect(await controller.importPlan(planId)).toBe(data[0]);
+    });
+    it('should return success import message while imporing anew record', async () => {
+      jest.spyOn(service, 'importMpPlan').mockResolvedValue(null);
+      expect(await controller.importPlan(planId)).toEqual({
+        message: `Monitoring plan Successfully Imported.`,
+      });
     });
   });
 
@@ -106,13 +97,4 @@ describe('MonitorPlanWorkspaceController', () => {
       expect(await controller.revertToOfficialRecord(planId)).toBe(null);
     });
   });
-
-  // describe('getCheckedOutConfigurations', () => {
-  //   it('should return array of monitor plan configurations checked out', async () => {
-  //     jest
-  //       .spyOn(ucoService, 'getCheckedOutConfigurations')
-  //       .mockResolvedValue(ucoData);
-  //     expect(await controller.getCheckedOutConfigurations()).toBe(ucoData);
-  //   });
-  // });
 });

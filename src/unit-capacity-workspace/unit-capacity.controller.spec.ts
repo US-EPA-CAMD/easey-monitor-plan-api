@@ -38,10 +38,6 @@ describe('UnitCapacityController', () => {
     service = module.get(UnitCapacityWorkspaceService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('getUnitCapacities', () => {
     it('should return array of unit capacitys', async () => {
       jest
@@ -54,7 +50,7 @@ describe('UnitCapacityController', () => {
   });
 
   describe('createUnitCapacity', () => {
-    it('should return the created unit fuel record', async () => {
+    it('should return the created unit capacity record', async () => {
       jest
         .spyOn(service, 'createUnitCapacity')
         .mockResolvedValue(returnedUnitCapacity);
@@ -70,7 +66,7 @@ describe('UnitCapacityController', () => {
   });
 
   describe('updateUnitCapacity', () => {
-    it('should return updated unit fuel', async () => {
+    it('should return updated unit capacity', async () => {
       jest
         .spyOn(service, 'updateUnitCapacity')
         .mockResolvedValue(returnedUnitCapacity);

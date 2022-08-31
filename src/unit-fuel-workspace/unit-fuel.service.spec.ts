@@ -21,6 +21,7 @@ const mockRepository = () => ({
   getUnitFuels: jest.fn().mockResolvedValue([unitFuel]),
   getUnitFuel: jest.fn().mockResolvedValue(unitFuel),
   getUnitFuelBySpecs: jest.fn().mockResolvedValue(unitFuel),
+  findOne: jest.fn().mockResolvedValue(unitFuel),
   create: jest.fn().mockResolvedValue(unitFuel),
   save: jest.fn().mockResolvedValue(unitFuel),
 });
@@ -39,7 +40,12 @@ describe('UnitFuelService', () => {
       imports: [LoggerModule, HttpModule],
       providers: [
         UnitFuelWorkspaceService,
-        MonitorPlanWorkspaceService,
+        {
+          provide: MonitorPlanWorkspaceService,
+          useFactory: () => ({
+            resetToNeedsEvaluation: jest.fn(),
+          }),
+        },
         {
           provide: UnitFuelWorkspaceRepository,
           useFactory: mockRepository,

@@ -25,6 +25,7 @@ import { UnitCapacityMap } from './unit-capacity.map';
 import { UnitControlMap } from './unit-control.map';
 import { UnitFuelMap } from './unit-fuel.map';
 import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
+import { MonitorPlanReportingFrequencyMap } from './monitor-plan-reporting-freq.map';
 
 const id = '';
 const facId = 0;
@@ -52,7 +53,7 @@ entity.beginReportPeriodId = beginReportPeriodId;
 entity.endReportPeriodId = endReportPeriodId;
 entity.comments = comments;
 entity.locations = locations;
-entity.evalStatusCode = evalStatusCode;
+// entity.evalStatusCode = evalStatusCode;
 entity.userId = userId;
 entity.addDate = addDate;
 entity.updateDate = updateDate;
@@ -89,6 +90,7 @@ describe('MonitorPlanMap', () => {
         UnitControlMap,
         UnitFuelMap,
         UnitStackConfigurationMap,
+        MonitorPlanReportingFrequencyMap,
       ],
     }).compile();
 

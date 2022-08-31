@@ -23,7 +23,6 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
-import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,7 +30,6 @@ import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 export class MonitorPlanWorkspaceController {
   constructor(
     private readonly service: MonitorPlanWorkspaceService,
-    // private readonly ucoService: UserCheckOutService,
     private readonly logger: Logger,
     private readonly importChecksService: ImportChecksService,
   ) {}

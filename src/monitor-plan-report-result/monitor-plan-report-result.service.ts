@@ -10,6 +10,6 @@ export class MonitorPlanReportResultService {
   ) {}
 
   async getMPReportResults(planId: string) {
-    return await this.repository.getMPReportResults(planId);
+    return this.repository.getMPReportResults(planId);
   }
 }
