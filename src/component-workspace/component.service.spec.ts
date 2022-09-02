@@ -99,7 +99,7 @@ describe('ComponentWorkspaceService', () => {
         );
 
         expect(checkResults).toEqual([
-          '[IMPORT6-CRIT1-A]The moisture basis VALID for ComponentID undefined in UnitStackPipeID undefined/undefined does not match the moisture basis in the Workspace database.',
+          '[IMPORT6-CRIT1-B]The moisture basis VALID for ComponentID undefined in UnitStackPipeID undefined/undefined does not match the moisture basis in the Workspace database.',
         ]);
       });
 

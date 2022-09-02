@@ -53,7 +53,6 @@ entity.beginReportPeriodId = beginReportPeriodId;
 entity.endReportPeriodId = endReportPeriodId;
 entity.comments = comments;
 entity.locations = locations;
-// entity.evalStatusCode = evalStatusCode;
 entity.userId = userId;
 entity.addDate = addDate;
 entity.updateDate = updateDate;
@@ -109,7 +108,7 @@ describe('MonitorPlanMap', () => {
     expect(result.comments).toEqual(comments);
     expect(result.unitStackConfigurations).toEqual(unitStackConfigurations);
     expect(result.locations).toEqual(locations);
-    expect(result.evalStatusCode).toEqual(evalStatusCode);
+    expect(result.evalStatusCode).toEqual(null);
     expect(result.userId).toEqual(userId);
     expect(result.addDate).toEqual(addDate);
     expect(result.updateDate).toEqual(updateDate);

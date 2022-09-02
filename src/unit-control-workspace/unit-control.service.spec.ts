@@ -64,26 +64,6 @@ describe('UnitControlService', () => {
     });
   });
 
-  describe('getUnitControl', () => {
-    it('should return unit control record for a specific unit control ID', async () => {
-      const result = await repository.getUnitControl('1');
-      expect(result).toEqual(returnedUnitControl);
-    });
-
-    it('should throw error when unit control record not found', async () => {
-      jest.spyOn(repository, 'getUnitControl').mockResolvedValue(undefined);
-      let errored = false;
-
-      try {
-        await repository.getUnitControl('1');
-      } catch (err) {
-        errored = true;
-      }
-
-      expect(errored).toBe(true);
-    });
-  });
-
   describe('createUnitControl', () => {
     it('creates a unit control record for a specified unit ID', async () => {
       const result = await service.createUnitControl(
