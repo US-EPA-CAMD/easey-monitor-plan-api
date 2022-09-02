@@ -27,10 +27,6 @@ describe('MonitorPlanReportResultService', () => {
     service = module.get(MonitorPlanReportResultService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getMPReportResults', () => {
     it('should return array of monitor plan report results', async () => {
       const result = await service.getMPReportResults('5');
