@@ -7,18 +7,51 @@ import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configur
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
+import {
+  UnitStackConfigurationBaseDTO,
+  UnitStackConfigurationDTO,
+} from '../dtos/unit-stack-configuration.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
+
+const userId = 'testUser';
+const locationId = '1';
+const facilityId = 1;
+const unitID = '51';
+const unitRecordId = 'uuid';
+const stackPipeID = 'CS0AN';
+const unitStack = new UnitStackConfiguration();
+const unitStackDto = new UnitStackConfigurationDTO();
+
+const payload = new UnitStackConfigurationBaseDTO();
+payload.beginDate = new Date();
+payload.endDate = new Date();
+
+const mpPayload = new UpdateMonitorPlanDTO();
+const location = new UpdateMonitorLocationDTO();
+location.stackPipeId = stackPipeID;
+location.unitId = unitID;
+const unitStackConfig = new UnitStackConfigurationBaseDTO();
+unitStackConfig.stackPipeId = stackPipeID;
+unitStackConfig.unitId = unitID;
+
+mpPayload.unitStackConfigurations = [unitStackConfig];
+mpPayload.locations = [location];
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  getUnitStackById: jest.fn().mockResolvedValue(unitStack),
+  save: jest.fn().mockResolvedValue(unitStack),
+  find: jest.fn().mockResolvedValue(unitStack),
   findOne: jest.fn().mockResolvedValue(undefined),
   update: jest.fn(),
   create: jest.fn().mockResolvedValue('Why'),
+  getUnitStackConfigsByLocationIds: jest.fn().mockResolvedValue([unitStack]),
+  getUnitStackByUnitIdStackIdBDate: jest.fn().mockResolvedValue(unitStack),
 });
 
 const mockMap = () => ({
-  many: jest.fn().mockResolvedValue(''),
+  many: jest.fn().mockResolvedValue([unitStackDto]),
+  one: jest.fn().mockResolvedValue(unitStackDto),
 });
 
 const mockStackPipe = () => ({
@@ -63,6 +96,53 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     service = module.get<UnitStackConfigurationWorkspaceService>(
       UnitStackConfigurationWorkspaceService,
     );
+  });
+
+  describe('getUnitStackConfigsByLocationIds', () => {
+    it('should return unit stacks by Location Ids', async () => {
+      const response = await service.getUnitStackConfigsByLocationIds([
+        locationId,
+      ]);
+      expect(response).toEqual([unitStack]);
+    });
+  });
+
+  describe('getUnitStackRelationships', () => {
+    it('should return unit stack config by unit relationship ', async () => {
+      const response = await service.getUnitStackRelationships(true, unitID);
+      expect(response).toEqual([unitStackDto]);
+    });
+
+    it('should return unit stack config by unit relationship ', async () => {
+      const response = await service.getUnitStackRelationships(
+        false,
+        stackPipeID,
+      );
+      expect(response).toEqual([unitStackDto]);
+    });
+  });
+
+  describe('createUnitStackConfig', () => {
+    it('should create and return unit stack config dto', async () => {
+      const response = await service.createUnitStackConfig(
+        51,
+        stackPipeID,
+        payload,
+        userId,
+      );
+      expect(response).toEqual(unitStackDto);
+    });
+  });
+
+  describe('updateUnitStackConfig', () => {
+    it('should update and return updated unit stack config dto', async () => {
+      const response = await service.updateUnitStackConfig(
+        unitRecordId,
+        payload,
+        userId,
+      );
+      expect(response).toEqual(unitStackDto);
+    });
   });
 
   describe('Import Unit Stack Checks', () => {
@@ -182,18 +262,27 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     });
   });
 
-  /*
   describe('importUnitStack', () => {
-    it('Should create new record given an undefined one', async () => {
-      const plan = new UpdateMonitorPlanDTO();
-      plan.unitStackConfigurations = [new UnitStackConfigurationBaseDTO()];
-      await service.importUnitStack(plan, 1, '');
-      expect(repo.create).toHaveBeenCalled();
+    it('should update while importing unit stack config', async () => {
+      const response = await service.importUnitStack(
+        mpPayload,
+        facilityId,
+        userId,
+      );
+      expect(response).toEqual(true);
     });
-  });
-  */
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+    it('should create while importing unit stack config if records does not exists', async () => {
+      jest
+        .spyOn(repo, 'getUnitStackByUnitIdStackIdBDate')
+        .mockResolvedValue(undefined);
+
+      const response = await service.importUnitStack(
+        mpPayload,
+        facilityId,
+        userId,
+      );
+      expect(response).toEqual(true);
+    });
   });
 });
