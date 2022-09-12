@@ -5,7 +5,7 @@ import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
 
 const monSysId = '1';
 
-const monMethod = new SystemFuelFlow();
+const sysFuelFlow = new SystemFuelFlow();
 
 const mockQueryBuilder = () => ({
   where: jest.fn(),
@@ -36,11 +36,11 @@ describe('SystemFuelFlowRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue([monMethod]);
+      queryBuilder.getMany.mockReturnValue([sysFuelFlow]);
 
       const result = await repository.getFuelFlows(monSysId);
 
-      expect(result).toEqual([monMethod]);
+      expect(result).toEqual([sysFuelFlow]);
     });
   });
 
@@ -49,11 +49,11 @@ describe('SystemFuelFlowRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue([monMethod]);
+      queryBuilder.getMany.mockReturnValue([sysFuelFlow]);
 
       const result = await repository.getFuelFlowsBySystemIds([monSysId]);
 
-      expect(result).toEqual([monMethod]);
+      expect(result).toEqual([sysFuelFlow]);
     });
   });
 });

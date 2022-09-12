@@ -6,7 +6,7 @@ import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configur
 const locationId = '1';
 const beginDate = new Date();
 
-const monMethod = new UnitStackConfiguration();
+const unitStackConfigs = new UnitStackConfiguration();
 
 const mockQueryBuilder = () => ({
   where: jest.fn(),
@@ -39,10 +39,10 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
     it('calls createQueryBuilder and get one unit stack configuration', async () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(monMethod);
+      queryBuilder.getOne.mockReturnValue(unitStackConfigs);
 
       const result = await repository.getUnitStackById('uuid');
-      expect(result).toEqual(monMethod);
+      expect(result).toEqual(unitStackConfigs);
     });
   });
 
@@ -51,14 +51,14 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(monMethod);
+      queryBuilder.getOne.mockReturnValue(unitStackConfigs);
 
       const result = await repository.getUnitStackByUnitIdStackIdBDate(
         'uuid',
         'uuid',
         beginDate,
       );
-      expect(result).toEqual(monMethod);
+      expect(result).toEqual(unitStackConfigs);
     });
   });
 
@@ -71,12 +71,12 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
       queryBuilder.innerJoin.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue([monMethod]);
+      queryBuilder.getMany.mockReturnValue([unitStackConfigs]);
 
       const result = await repository.getUnitStackConfigsByLocationIds([
         locationId,
       ]);
-      expect(result).toEqual([monMethod]);
+      expect(result).toEqual([unitStackConfigs]);
     });
   });
 });
