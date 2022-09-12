@@ -4,20 +4,41 @@ import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceService } from './component.service';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { Component } from '../entities/component.entity';
-import { UpdateComponentBaseDTO } from '../dtos/component.dto';
+import { Component } from '../entities/workspace/component.entity';
+import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
-import { AnalyzerRangeWorkspaceModule } from '../analyzer-range-workspace/analyzer-range.module';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
+import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
+
+const userId = 'testUser';
+const locationId = '1';
+const componentID = 'SO2';
+const component = new Component();
+component.id = 'uuid';
+const componentDto = new ComponentDTO();
+
+const payload = new UpdateComponentBaseDTO();
+payload.componentId = '';
+payload.modelVersion = '';
+payload.serialNumber = '';
+payload.manufacturer = '';
+payload.componentTypeCode = '';
+payload.sampleAcquisitionMethodCode = '';
+payload.basisCode = '';
+payload.hgConverterIndicator = 1;
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
-  findOne: jest.fn().mockResolvedValue(''),
+  find: jest.fn().mockResolvedValue([component]),
+  findOne: jest.fn().mockResolvedValue(component),
+  save: jest.fn().mockResolvedValue(component),
+  create: jest.fn().mockResolvedValue(component),
+  getComponentByLocIdAndCompId: jest.fn().mockResolvedValue(component),
 });
 
 const mockMap = () => ({
-  many: jest.fn().mockResolvedValue(''),
+  one: jest.fn().mockResolvedValue(componentDto),
+  many: jest.fn().mockResolvedValue([componentDto]),
 });
 
 describe('ComponentWorkspaceService', () => {
@@ -31,7 +52,9 @@ describe('ComponentWorkspaceService', () => {
         ComponentWorkspaceService,
         {
           provide: AnalyzerRangeWorkspaceService,
-          useFactory: jest.fn(),
+          useFactory: () => ({
+            importAnalyzerRange: jest.fn(),
+          }),
         },
         {
           provide: ComponentWorkspaceRepository,
@@ -53,20 +76,22 @@ describe('ComponentWorkspaceService', () => {
       it('Should fail with component type code not matching db component type code', async () => {
         const comp = new Component();
         comp.componentTypeCode = 'NOX';
+        comp.basisCode = null;
         comp.analyzerRanges = [];
-        repository.findOne = jest.fn().mockResolvedValue(comp);
+
+        jest.spyOn(repository, 'findOne').mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
-        const component = new UpdateComponentBaseDTO();
+        const componentDto = new UpdateComponentBaseDTO();
 
-        component.componentTypeCode = 'SO2';
-        component.basisCode = null;
-        component.analyzerRanges = [];
+        componentDto.componentTypeCode = 'SO2';
+        componentDto.basisCode = null;
+        componentDto.analyzerRanges = [];
 
-        location.components = [component];
+        location.components = [componentDto];
 
         const checkResults = await service.runComponentChecks(
-          [component],
+          [componentDto],
           location,
           '1',
         );
@@ -127,68 +152,161 @@ describe('ComponentWorkspaceService', () => {
 
         expect(checkResults).toEqual([]);
       });
+    });
 
-      describe('Check32', () => {
-        it('Should fail with invalid component type code and analyzer range data', async () => {
-          const comp = new Component();
-          comp.componentTypeCode = 'ERR';
-          comp.analyzerRanges = [];
-          repository.findOne = jest.fn().mockResolvedValue(comp);
+    describe('Check32', () => {
+      it('Should fail with invalid component type code and analyzer range data', async () => {
+        const comp = new Component();
+        comp.componentTypeCode = 'ERR';
+        comp.basisCode = null;
+        comp.analyzerRanges = [];
+        repository.findOne = jest.fn().mockResolvedValue(comp);
 
-          const location = new UpdateMonitorLocationDTO();
-          const component = new UpdateComponentBaseDTO();
+        const location = new UpdateMonitorLocationDTO();
+        const component = new UpdateComponentBaseDTO();
 
-          component.componentTypeCode = 'ERR';
-          component.basisCode = null;
-          component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.componentTypeCode = 'ERR';
+        component.basisCode = null;
+        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
 
-          location.components = [component];
+        location.components = [component];
 
-          const checkResults = await service.runComponentChecks(
-            [component],
-            location,
-            '1',
-          );
+        const checkResults = await service.runComponentChecks(
+          [component],
+          location,
+          '1',
+        );
 
-          expect(checkResults).toEqual([
-            '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
-          ]);
-        });
+        expect(checkResults).toEqual([
+          '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
+        ]);
+      });
 
-        it('Should fail with invalid component type code in the file and analyzer range data', async () => {
-          repository.findOne = jest.fn().mockResolvedValue(undefined);
+      it('Should fail with invalid component type code in the file and analyzer range data', async () => {
+        jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
-          const location = new UpdateMonitorLocationDTO();
-          const component = new UpdateComponentBaseDTO();
+        const location = new UpdateMonitorLocationDTO();
+        const component = new UpdateComponentBaseDTO();
 
-          component.componentTypeCode = 'ERR';
-          component.basisCode = null;
-          component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.componentTypeCode = 'ERR';
+        component.basisCode = null;
+        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
 
-          location.components = [component];
+        location.components = [component];
 
-          const checkResults = await service.runComponentChecks(
-            [component],
-            location,
-            '1',
-          );
+        const checkResults = await service.runComponentChecks(
+          [component],
+          location,
+          '1',
+        );
 
-          expect(checkResults).toEqual([
-            '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
-          ]);
-        });
+        expect(checkResults).toEqual([
+          '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
+        ]);
+      });
+
+      it('Should fail with invalid component type code in the database and analyzer range data', async () => {
+        const comp = new Component();
+        comp.componentTypeCode = 'ERR';
+        comp.basisCode = null;
+        comp.analyzerRanges = [new AnalyzerRange()];
+        jest.spyOn(repository, 'findOne').mockResolvedValue(comp);
+
+        const location = new UpdateMonitorLocationDTO();
+        const component = new UpdateComponentBaseDTO();
+
+        component.componentTypeCode = 'ERR';
+        component.basisCode = null;
+        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+
+        location.components = [component];
+
+        const checkResults = await service.runComponentChecks(
+          [component],
+          location,
+          '1',
+        );
+
+        expect(checkResults).toEqual([
+          '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.',
+        ]);
       });
     });
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getComponents', () => {
     it('should return array of components', async () => {
-      const result = await service.getComponents(null);
-      expect(result).toEqual('');
+      const result = await service.getComponents(locationId);
+      expect(result).toEqual([componentDto]);
+    });
+  });
+
+  describe('getComponentByIdentifier', () => {
+    it('should return a component by locationId and Component ID', async () => {
+      const result = await service.getComponentByIdentifier(
+        locationId,
+        componentID,
+      );
+      expect(result).toEqual(componentDto);
+    });
+    it('should return null when component not found by locationId and Component ID', async () => {
+      jest
+        .spyOn(repository, 'getComponentByLocIdAndCompId')
+        .mockResolvedValueOnce(undefined);
+      const result = await service.getComponentByIdentifier(
+        locationId,
+        componentID,
+      );
+      expect(result).toEqual(null);
+    });
+  });
+
+  describe('createComponent', () => {
+    it('should create and return a component dto', async () => {
+      const response = await service.createComponent(
+        locationId,
+        payload,
+        userId,
+      );
+      expect(response).toEqual(componentDto);
+    });
+  });
+
+  describe('updateComponent', () => {
+    it('should update and return updated component dto', async () => {
+      const response = await service.updateComponent(
+        component,
+        payload,
+        userId,
+      );
+      expect(response).toEqual(componentDto);
+    });
+  });
+
+  describe('importUnitStack', () => {
+    const location = new UpdateMonitorLocationDTO();
+    location.components = [payload];
+    it('should update while importing a component', async () => {
+      const response = await service.importComponent(
+        location,
+        locationId,
+        userId,
+      );
+      expect(response).toEqual(true);
+    });
+
+    it('should create while importing a component if records does not exists', async () => {
+      jest
+        .spyOn(repository, 'getComponentByLocIdAndCompId')
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(component);
+
+      const response = await service.importComponent(
+        location,
+        locationId,
+        userId,
+      );
+      expect(response).toEqual(true);
     });
   });
 });
