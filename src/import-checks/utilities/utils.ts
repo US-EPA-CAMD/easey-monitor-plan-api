@@ -7,6 +7,7 @@ import { Plant } from '../../entities/plant.entity';
 import { BadRequestException } from '@nestjs/common';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 export const getEntityManager: any = () => {
   return getManager();
@@ -28,7 +29,10 @@ export const getMonLocId = async (
 
     if (stackPipe === undefined) {
       throw new BadRequestException(
-        `No stack pipe record exists for stackPipeName: ${loc.stackPipeId} and orisCode: ${oris}`,
+        CheckCatalogService.formatMessage(
+          'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',
+          { stackPipe: loc.stackPipeId, orisCode: oris },
+        ),
       );
     }
 
@@ -43,7 +47,10 @@ export const getMonLocId = async (
 
     if (unit === undefined) {
       throw new BadRequestException(
-        `No stack pipe record exists for unitName: ${loc.unitId} and orisCode: ${oris}`,
+        CheckCatalogService.formatMessage(
+          'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
+          { unit: loc.unitId, orisCode: oris },
+        ),
       );
     }
 

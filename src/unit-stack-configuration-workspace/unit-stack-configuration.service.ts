@@ -6,6 +6,7 @@ import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitService } from '../unit/unit.service';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -58,6 +59,7 @@ export class UnitStackConfigurationWorkspaceService {
     for (const stackPipe of unitStackIds) {
       if (!unitStackConfigStackIds.has(stackPipe)) {
         errorList.push(
+          //CheckCatalogService.formatResultMessage('IMPORT-3-A', { stackName: stackPipe }),
           `[IMPORT3-FATAL-A] Each stack or pipe must be associated with at least one unit. StackName ${stackPipe} is not associated with any units.`,
         );
       }
@@ -67,7 +69,7 @@ export class UnitStackConfigurationWorkspaceService {
       for (const unitId of unitUnitIds) {
         if (!unitStackConfigUnitIds.has(unitId)) {
           errorList.push(
-            `[IMPORT4-FATAL-A] Each unit must be associated with at least one unit record. Unit Name ${unitId} is not associated with any unit record`,
+            CheckCatalogService.formatResultMessage('IMPORT-4-A', { unitId: unitId }),
           );
         }
       }

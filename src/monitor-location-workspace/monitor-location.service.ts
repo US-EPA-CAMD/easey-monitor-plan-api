@@ -4,7 +4,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -34,6 +33,7 @@ import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monit
 import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
 import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
@@ -115,7 +115,10 @@ export class MonitorLocationWorkspaceService {
 
       if (unit === undefined) {
         throw new BadRequestException(
-          `No unit record exists for unitName: ${loc.unitId} and orisCode: ${orisCode}`,
+          CheckCatalogService.formatMessage(
+            'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
+            { unit: loc.unitId, orisCode: orisCode },
+          ),
         );
       }
 
@@ -134,7 +137,10 @@ export class MonitorLocationWorkspaceService {
 
       if (stackPipe === undefined) {
         throw new BadRequestException(
-          `No stack pipe record exists for stackPipeName: ${loc.stackPipeId} and orisCode: ${orisCode}`,
+          CheckCatalogService.formatMessage(
+            'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',
+            { stackPipe: loc.stackPipeId, orisCode: orisCode },
+          ),
         );
       }
 
