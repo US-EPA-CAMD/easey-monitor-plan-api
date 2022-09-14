@@ -42,4 +42,8 @@ export default registerAs('app', () => ({
   },
 
   reqSizeLimit: process.env.EASEY_MONITOR_PLAN_API_REQ_SIZE_LIMIT || '1mb',
+  enableSecretToken: parseBool(
+    process.env.EASEY_MONITOR_PLAN_API_ENABLE_SECRET_TOKEN,
+    false,
+  ),
 }));

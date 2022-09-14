@@ -5,10 +5,15 @@ import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
 import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 
+const analyzerRange = new AnalyzerRange();
+const analyzerRangeBaseDto = new AnalyzerRangeBaseDTO();
+
 const mockQueryBuilder = () => ({
+  innerJoinAndSelect: jest.fn(),
   where: jest.fn(),
   andWhere: jest.fn(),
   getOne: jest.fn(),
+  getMany: jest.fn(),
 });
 
 describe('AnalyzerRangeWorkspaceRepository', () => {
@@ -36,15 +41,34 @@ describe('AnalyzerRangeWorkspaceRepository', () => {
         .mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(new AnalyzerRange());
+      queryBuilder.getOne.mockReturnValue(analyzerRange);
 
       const result = await analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
         'componentId',
-        new AnalyzerRangeBaseDTO(),
+        analyzerRangeBaseDto,
       );
 
       expect(queryBuilder.getOne).toHaveBeenCalled();
-      expect(result).toEqual(new AnalyzerRange());
+      expect(result).toEqual(analyzerRange);
+    });
+  });
+
+  describe('getAnalyzerRangesByCompIds', () => {
+    it('calls createQueryBuilder and get analyzer rangeS from the repository with thE list of componentIdS', async () => {
+      analyzerRangeRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([analyzerRange]);
+
+      const result = await analyzerRangeRepository.getAnalyzerRangesByCompIds(
+        'componentId',
+        analyzerRangeBaseDto,
+      );
+
+      expect(queryBuilder.getMany).toHaveBeenCalled();
+      expect(result).toEqual([analyzerRange]);
     });
   });
 });
