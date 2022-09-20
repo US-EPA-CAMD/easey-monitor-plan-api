@@ -15,7 +15,7 @@ export async function bootstrap() {
     'camdecmpsmd.vw_monitor_plan_api_check_catalog_results',
   );
 
-  await applyMiddleware(AppModule, app);
+  await applyMiddleware(AppModule, app, false, true);
   await applySwagger(app);
 
   const configService = app.get(ConfigService);
