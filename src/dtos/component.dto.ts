@@ -71,7 +71,7 @@ export class ComponentBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct basis_code as "value" FROM camdecmpsmd.basis_code',
+    'SELECT distinct basis_cd as "value" FROM camdecmpsmd.basis_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
