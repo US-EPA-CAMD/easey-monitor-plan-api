@@ -20,7 +20,13 @@ export class MonitorLocationController {
     return this.service.getLocation(locationId);
   }
 
-  @Get('relationships')
+  @Get(':locId/relationships')
+  @ApiOkResponse({
+    isArray: true,
+    type: MonitorLocationDTO,
+    description:
+      'Retrieves official relationships record for a specific location ID',
+  })
   async getLocationRelationships(@Param('locId') locId: string) {
     return this.service.getLocationRelationships(locId);
   }
