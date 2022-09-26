@@ -40,7 +40,7 @@ export class SystemComponentWorkspaceController {
     return this.service.getSystemComponents(locationId, monSysId);
   }
 
-  @Put(':compId')
+  @Put(':monSysCompId')
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiOkResponse({
@@ -50,14 +50,14 @@ export class SystemComponentWorkspaceController {
   async updateSystemCompnent(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
-    @Param('compId') componentId: string,
+    @Param('monSysCompId') monSysCompId: string,
     @CurrentUser() userId: string,
     @Body() payload: SystemComponentBaseDTO,
   ): Promise<SystemComponentDTO> {
     return this.service.updateSystemComponent(
       locationId,
       monSysId,
-      componentId,
+      monSysCompId,
       payload,
       userId,
     );
