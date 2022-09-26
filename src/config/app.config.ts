@@ -22,16 +22,16 @@ export default registerAs('app', () => ({
   uri,
   apiKey: process.env.EASEY_MONITOR_PLAN_API_KEY,
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
-  enableCors: parseBool(process.env.EASEY_FACILITIES_API_ENABLE_CORS, true),
+  enableCors: parseBool(process.env.EASEY_MONITOR_PLAN_API_ENABLE_CORS, true),
   enableApiKey: parseBool(
-    process.env.EASEY_FACILITIES_API_ENABLE_API_KEY,
+    process.env.EASEY_MONITOR_PLAN_API_ENABLE_API_KEY,
     true,
   ),
   enableAuthToken: parseBool(
-    process.env.EASEY_FACILITIES_API_ENABLE_AUTH_TOKEN,
+    process.env.EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN,
   ),
   enableGlobalValidationPipes: parseBool(
-    process.env.EASEY_FACILITIES_API_ENABLE_GLOBAL_VALIDATION_PIPE,
+    process.env.EASEY_MONITOR_PLAN_API_ENABLE_GLOBAL_VALIDATION_PIPE,
     true,
   ),
   version: process.env.EASEY_MONITOR_PLAN_API_VERSION || 'v0.0.0',

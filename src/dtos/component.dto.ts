@@ -71,7 +71,7 @@ export class ComponentBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct basis_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
+    'SELECT distinct basis_cd as "value" FROM camdecmpsmd.basis_code',
     {
       message: (args: ValidationArguments) => {
         return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
