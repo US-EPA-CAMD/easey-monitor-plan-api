@@ -59,8 +59,6 @@ describe('-- Monitor Plan Repository --', () => {
       new Date(),
     );
 
-    console.log(result);
-
     expect(result.mostRecentUpdate).toEqual('Test');
   });
 
