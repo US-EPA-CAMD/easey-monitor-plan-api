@@ -13,8 +13,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import {
   MonitorSystemBaseDTO,
@@ -39,8 +41,8 @@ export class MonitorSystemWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description: 'Creates a workspace system record for a give location',
@@ -48,14 +50,14 @@ export class MonitorSystemWorkspaceController {
   createSystem(
     @Param('locId') locationId: string,
     @Body() payload: MonitorSystemBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
-    return this.service.createSystem(locationId, payload, userId);
+    return this.service.createSystem(locationId, payload, user.userId);
   }
 
   @Put(':sysId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description:
@@ -65,13 +67,13 @@ export class MonitorSystemWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemId: string,
     @Body() payload: MonitorSystemBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
     return this.service.updateSystem(
       monitoringSystemId,
       payload,
       locationId,
-      userId,
+      user.userId,
     );
   }
 }

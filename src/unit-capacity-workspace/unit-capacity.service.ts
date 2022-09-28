@@ -48,19 +48,19 @@ export class UnitCapacityWorkspaceService {
 
             if (unitCapacityRecord !== undefined) {
               await this.updateUnitCapacity(
-                userId,
                 locationId,
                 unitId,
                 unitCapacityRecord.id,
                 unitCapacity,
+                userId,
                 true,
               );
             } else {
               await this.createUnitCapacity(
-                userId,
                 locationId,
                 unitId,
                 unitCapacity,
+                userId,
                 true,
               );
             }
@@ -103,10 +103,10 @@ export class UnitCapacityWorkspaceService {
   }
 
   async createUnitCapacity(
-    userId: string,
     locationId: string,
     unitId: number,
     payload: UnitCapacityBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = this.repository.create({
@@ -130,11 +130,11 @@ export class UnitCapacityWorkspaceService {
   }
 
   async updateUnitCapacity(
-    userId: string,
     locationId: string,
     unitRecordId: number,
     unitCapacityId: string,
     payload: UnitCapacityBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<UnitCapacityDTO> {
     const unitCapacity = await this.repository.getUnitCapacity(unitCapacityId);

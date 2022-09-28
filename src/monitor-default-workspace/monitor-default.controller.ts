@@ -13,9 +13,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import {
   MonitorDefaultBaseDTO,
   MonitorDefaultDTO,
@@ -28,7 +29,6 @@ import { MonitorDefaultWorkspaceService } from './monitor-default.service';
 export class MonitorDefaultWorkspaceController {
   constructor(
     private readonly service: MonitorDefaultWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -44,8 +44,8 @@ export class MonitorDefaultWorkspaceController {
   }
 
   @Put(':defaultId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Updates a workspace default record for a monitor location',
@@ -54,20 +54,14 @@ export class MonitorDefaultWorkspaceController {
     @Param('locId') locationId: string,
     @Param('defaultId') defaultId: string,
     @Body() payload: MonitorDefaultBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorDefaultDTO> {
-    this.logger.info('Updating Monitor Default', {
-      locationId: locationId,
-      defaultId: defaultId,
-      payload: payload,
-      userId: userId,
-    });
-    return this.service.updateDefault(locationId, defaultId, payload, userId);
+    return this.service.updateDefault(locationId, defaultId, payload, user.userId);
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Creates a workspace defaults record for a monitor location',
@@ -75,13 +69,8 @@ export class MonitorDefaultWorkspaceController {
   createDefault(
     @Param('locId') locationId: string,
     @Body() payload: MonitorDefaultBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorDefaultDTO> {
-    this.logger.info('Creating new monitor default', {
-      locationId: locationId,
-      payload: payload,
-      userId: userId,
-    });
-    return this.service.createDefault(locationId, payload, userId);
+    return this.service.createDefault(locationId, payload, user.userId);
   }
 }

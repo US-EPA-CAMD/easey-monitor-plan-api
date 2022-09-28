@@ -13,8 +13,10 @@ import {
   Controller,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import {
   MonitorMethodBaseDTO,
   MonitorMethodDTO,
@@ -38,8 +40,8 @@ export class MonitorMethodWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Creates workspace Monitor Method record',
@@ -47,14 +49,14 @@ export class MonitorMethodWorkspaceController {
   createMethod(
     @Param('locId') locId: string,
     @Body() payload: MonitorMethodBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorMethodDTO> {
-    return this.service.createMethod(locId, payload, userId);
+    return this.service.createMethod(locId, payload, user.userId);
   }
 
   @Put(':methodId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',
@@ -63,8 +65,8 @@ export class MonitorMethodWorkspaceController {
     @Param('locId') locId: string,
     @Param('methodId') methodId: string,
     @Body() payload: MonitorMethodBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorMethodDTO> {
-    return this.service.updateMethod(methodId, payload, locId, userId);
+    return this.service.updateMethod(methodId, payload, locId, user.userId);
   }
 }

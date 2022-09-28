@@ -8,19 +8,20 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
-  ApiSecurity,
-  ApiOkResponse,
   ApiTags,
+  ApiSecurity,
+  ApiBearerAuth,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
 } from '../dtos/analyzer-range.dto';
-import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
+import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -28,7 +29,6 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 export class AnalyzerRangeWorkspaceController {
   constructor(
     private readonly service: AnalyzerRangeWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -45,6 +45,8 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -53,23 +55,20 @@ export class AnalyzerRangeWorkspaceController {
   createAnalyzerRange(
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
-    @CurrentUser() userId: string,
     @Body() payload: AnalyzerRangeBaseDTO,
+    @User() user: CurrentUser,
   ) {
-    this.logger.info('Creating analyzer range', {
-      userId: userId,
-      componentRecordId: componentRecordId,
-      payload: payload,
-    });
     return this.service.createAnalyzerRange(
       componentRecordId,
       payload,
       locationId,
-      userId,
+      user.userId,
     );
   }
 
   @Put(':analyzerRangeId')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -79,19 +78,14 @@ export class AnalyzerRangeWorkspaceController {
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
     @Param('analyzerRangeId') analyzerRangeId: string,
-    @CurrentUser() userId: string,
     @Body() payload: AnalyzerRangeBaseDTO,
+    @User() user: CurrentUser,
   ) {
-    this.logger.info('Updating analyzer range', {
-      userId: userId,
-      analyzerRangeId: analyzerRangeId,
-      payload: payload,
-    });
     return this.service.updateAnalyzerRange(
       analyzerRangeId,
       payload,
       locationId,
-      userId,
+      user.userId,
     );
   }
 }

@@ -78,10 +78,10 @@ export class PCTQualificationWorkspaceService {
   }
 
   async createPCTQualification(
-    userId: string,
     locationId: string,
     qualId: string,
     payload: PCTQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<PCTQualificationDTO> {
     const load = this.repository.create({
@@ -113,11 +113,11 @@ export class PCTQualificationWorkspaceService {
   }
 
   async updatePCTQualification(
-    userId: string,
     locationId: string,
     qualId: string,
     pctQualId: string,
     payload: PCTQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<PCTQualificationDTO> {
     const pctQual = await this.getPCTQualification(
@@ -169,19 +169,19 @@ export class PCTQualificationWorkspaceService {
 
             if (pctQualificationRecord) {
               await this.updatePCTQualification(
-                userId,
                 locationId,
                 qualificationId,
                 pctQualificationRecord.id,
                 pctQualification,
+                userId,
                 true,
               );
             } else {
               await this.createPCTQualification(
-                userId,
                 locationId,
                 qualificationId,
                 pctQualification,
+                userId,
                 true,
               );
             }

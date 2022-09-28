@@ -13,8 +13,10 @@ import {
   Body,
   Put,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import {
   MonitorQualificationBaseDTO,
@@ -41,35 +43,35 @@ export class MonitorQualificationWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:
       'Creates a workspace qualification record for a given location',
   })
   createQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locationId: string,
     @Body() payload: MonitorQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<MonitorQualificationDTO> {
-    return this.service.createQualification(userId, locationId, payload);
+    return this.service.createQualification(locationId, payload, user.userId);
   }
 
   @Put(':qualId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:
       'Updates a workspace monitor qualification record for a given monitor location',
   })
   updateQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Body() payload: MonitorQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<MonitorQualificationDTO> {
-    return this.service.updateQualification(userId, locId, qualId, payload);
+    return this.service.updateQualification(locId, qualId, payload, user.userId);
   }
 }

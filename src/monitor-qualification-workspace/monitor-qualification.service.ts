@@ -147,10 +147,10 @@ export class MonitorQualificationWorkspaceService {
 
             if (qualificationRecord !== undefined) {
               await this.updateQualification(
-                userId,
                 locationId,
                 qualificationRecord.id,
                 qualification,
+                userId,
                 true,
               );
 
@@ -164,9 +164,9 @@ export class MonitorQualificationWorkspaceService {
               );
             } else {
               const createdQualification = await this.createQualification(
-                userId,
                 locationId,
                 qualification,
+                userId,
                 true,
               );
 
@@ -217,9 +217,9 @@ export class MonitorQualificationWorkspaceService {
   }
 
   async createQualification(
-    userId: string,
     locationId: string,
     payload: MonitorQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<MonitorQualificationDTO> {
     const qual = this.repository.create({
@@ -243,10 +243,10 @@ export class MonitorQualificationWorkspaceService {
   }
 
   async updateQualification(
-    userId: string,
     locationId: string,
     qualId: string,
     payload: MonitorQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<MonitorQualificationDTO> {
     const qual = await this.getQualification(locationId, qualId);

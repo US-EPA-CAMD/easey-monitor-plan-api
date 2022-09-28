@@ -62,10 +62,10 @@ export class LEEQualificationWorkspaceService {
   }
 
   async createLEEQualification(
-    userId: string,
     locationId: string,
     qualId: string,
     payload: LEEQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<LEEQualificationDTO> {
     const load = this.repository.create({
@@ -93,11 +93,11 @@ export class LEEQualificationWorkspaceService {
   }
 
   async updateLEEQualification(
-    userId: string,
     locationId: string,
     qualId: string,
     pctQualId: string,
     payload: LEEQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<LEEQualificationDTO> {
     const leeQual = await this.getLEEQualification(
@@ -145,19 +145,19 @@ export class LEEQualificationWorkspaceService {
 
             if (leeQualificationRecord) {
               await this.updateLEEQualification(
-                userId,
                 locationId,
                 qualificationId,
                 leeQualificationRecord.id,
                 leeQualification,
+                userId,
                 true,
               );
             } else {
               await this.createLEEQualification(
-                userId,
                 locationId,
                 qualificationId,
                 leeQualification,
+                userId,
                 true,
               );
             }

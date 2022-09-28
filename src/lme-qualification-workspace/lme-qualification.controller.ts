@@ -13,9 +13,10 @@ import {
   Body,
   Post,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import {
   LMEQualificationBaseDTO,
   LMEQualificationDTO,
@@ -28,7 +29,6 @@ import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 export class LMEQualificationWorkspaceController {
   constructor(
     private readonly service: LMEQualificationWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -46,38 +46,32 @@ export class LMEQualificationWorkspaceController {
   }
 
   @Put(':lmeQualId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: LMEQualificationDTO,
     description:
       'Updates a workspace LME qualification by LME qualification ID, qualification ID, and location ID',
   })
   async updateLMEQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Param('lmeQualId') lmeQualId: string,
     @Body() payload: LMEQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<LMEQualificationDTO> {
-    this.logger.info('Updating LME qualification', {
-      qualId: qualId,
-      lmeQualId: lmeQualId,
-      payload: payload,
-      userId: userId,
-    });
     return this.service.updateLMEQualification(
-      userId,
       locId,
       qualId,
       lmeQualId,
       payload,
+      user.userId,
     );
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     isArray: true,
     type: LMEQualificationDTO,
@@ -85,17 +79,11 @@ export class LMEQualificationWorkspaceController {
       'Creates an LME Qualification record for a qualification and monitor location',
   })
   createLMEQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Body() payload: LMEQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<LMEQualificationDTO> {
-    this.logger.info('Creating LME Qualification', {
-      userId: userId,
-      locId: locId,
-      qualId: qualId,
-      payload: payload,
-    });
-    return this.service.createLMEQualification(userId, locId, qualId, payload);
+    return this.service.createLMEQualification(locId, qualId, payload, user.userId);
   }
 }

@@ -13,9 +13,10 @@ import {
   Body,
   Put,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import {
   MonitorAttributeBaseDTO,
   MonitorAttributeDTO,
@@ -28,7 +29,6 @@ import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 export class MonitorAttributeWorkspaceController {
   constructor(
     private readonly service: MonitorAttributeWorkspaceService,
-    private logger: Logger,
   ) {}
 
   @Get()
@@ -44,8 +44,8 @@ export class MonitorAttributeWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Creates a workspace monitor location attribute record',
@@ -53,19 +53,14 @@ export class MonitorAttributeWorkspaceController {
   createAttribute(
     @Param('locId') locationId: string,
     @Body() payload: MonitorAttributeBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorAttributeDTO> {
-    this.logger.info('Creating new monitor location attribute', {
-      locationId,
-      payload,
-      userId,
-    });
-    return this.service.createAttribute(locationId, payload, userId);
+    return this.service.createAttribute(locationId, payload, user.userId);
   }
 
   @Put(':attributeId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Updates a workspace monitor location attribute record',
@@ -74,15 +69,8 @@ export class MonitorAttributeWorkspaceController {
     @Param('locId') locationId: string,
     @Param('attributeId') id: string,
     @Body() payload: MonitorAttributeBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorAttributeDTO> {
-    this.logger.info('Upding monitor attribute', {
-      locationId,
-      id,
-      payload,
-      userId,
-    });
-
-    return this.service.updateAttribute(locationId, id, payload, userId);
+    return this.service.updateAttribute(locationId, id, payload, user.userId);
   }
 }

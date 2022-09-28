@@ -54,19 +54,19 @@ export class UnitControlWorkspaceService {
 
             if (unitControlRecord !== undefined) {
               await this.updateUnitControl(
-                userId,
                 locationId,
                 unitRecordId,
                 unitControlRecord.id,
                 unitControl,
+                userId,
                 true,
               );
             } else {
               await this.createUnitControl(
-                userId,
                 locationId,
                 unitRecordId,
                 unitControl,
+                userId,
                 true,
               );
             }
@@ -83,10 +83,10 @@ export class UnitControlWorkspaceService {
   }
 
   async createUnitControl(
-    userId: string,
     locationId: string,
     unitRecordId: number,
     payload: UnitControlBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<UnitControlDTO> {
     const unitControl = this.repository.create({
@@ -114,11 +114,11 @@ export class UnitControlWorkspaceService {
   }
 
   async updateUnitControl(
-    userId: string,
     locationId: string,
     unitRecordId: number,
     unitControlId: string,
     payload: UnitControlBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<UnitControlDTO> {
     const unitControl = await this.repository.getUnitControl(unitControlId);

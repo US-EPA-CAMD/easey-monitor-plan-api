@@ -50,10 +50,10 @@ export class UnitFuelWorkspaceService {
   }
 
   async createUnitFuel(
-    userId: string,
     locationId: string,
     unitId: number,
     payload: UnitFuelBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<UnitFuelDTO> {
     const unitFuel = this.repository.create({
@@ -81,11 +81,11 @@ export class UnitFuelWorkspaceService {
   }
 
   async updateUnitFuel(
-    userId: string,
     locationId: string,
     unitId: number,
     unitFuelId: string,
     payload: UnitFuelBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<UnitFuelDTO> {
     const unitFuel = await this.repository.findOne(unitFuelId);
@@ -129,19 +129,19 @@ export class UnitFuelWorkspaceService {
 
             if (unitFuelRecord !== undefined) {
               await this.updateUnitFuel(
-                userId,
                 locationId,
                 unitId,
                 unitFuelRecord.id,
                 unitFuel,
+                userId,
                 true,
               );
             } else {
               await this.createUnitFuel(
-                userId,
                 locationId,
                 unitId,
                 unitFuel,
+                userId,
                 true,
               );
             }

@@ -13,11 +13,12 @@ import {
   ApiTags,
   ApiSecurity,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -25,7 +26,6 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 export class DuctWafWorkspaceController {
   constructor(
     private readonly service: DuctWafWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -39,8 +39,8 @@ export class DuctWafWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Create a workspace duct waf record for a monitor location',
@@ -48,19 +48,14 @@ export class DuctWafWorkspaceController {
   async createDuctWaf(
     @Param('locId') locationId: string,
     @Body() payload: DuctWafBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<DuctWafDTO> {
-    this.logger.info('Creating duct waf', {
-      locationId: locationId,
-      payload: payload,
-      userId: userId,
-    });
-    return this.service.createDuctWaf(locationId, payload, userId);
+    return this.service.createDuctWaf(locationId, payload, user.userId);
   }
 
   @Put(':ductWafId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Updates a workspace duct waf record for a monitor location',
@@ -69,14 +64,8 @@ export class DuctWafWorkspaceController {
     @Param('locId') locationId: string,
     @Param('ductWafId') ductWafId: string,
     @Body() payload: DuctWafBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<DuctWafDTO> {
-    this.logger.info('Updating duct waf', {
-      locationId: locationId,
-      payload: payload,
-      ductWafId: ductWafId,
-      userId: userId,
-    });
-    return this.service.updateDuctWaf(locationId, ductWafId, payload, userId);
+    return this.service.updateDuctWaf(locationId, ductWafId, payload, user.userId);
   }
 }

@@ -13,8 +13,10 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import {
   SystemComponentBaseDTO,
   SystemComponentDTO,
@@ -41,8 +43,8 @@ export class SystemComponentWorkspaceController {
   }
 
   @Put(':monSysCompId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
@@ -51,21 +53,21 @@ export class SystemComponentWorkspaceController {
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @Param('monSysCompId') monSysCompId: string,
-    @CurrentUser() userId: string,
     @Body() payload: SystemComponentBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
     return this.service.updateSystemComponent(
       locationId,
       monSysId,
       monSysCompId,
       payload,
-      userId,
+      user.userId,
     );
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Creates a workspace system component for a monitor system',
@@ -73,14 +75,14 @@ export class SystemComponentWorkspaceController {
   createSystemComponent(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
-    @CurrentUser() userId: string,
     @Body() payload: SystemComponentBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
     return this.service.createSystemComponent(
       locationId,
       monSysId,
       payload,
-      userId,
+      user.userId,
     );
   }
 }

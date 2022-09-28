@@ -8,14 +8,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiTags,
+  ApiSecurity,
   ApiBearerAuth,
   ApiOkResponse,
-  ApiSecurity,
-  ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
   UserCheckOutBaseDTO,
@@ -33,7 +33,6 @@ export class CheckOutController {
     private readonly service: CheckOutService,
     private readonly ucoService: UserCheckOutService,
     private readonly mpWksService: MonitorPlanWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -48,22 +47,22 @@ export class CheckOutController {
   }
 
   @Post(':planId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Checks Out a Monitor Plan configuration',
   })
   checkOutConfiguration(
     @Param('planId') planId: string,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<UserCheckOutDTO> {
-    return this.ucoService.checkOutConfiguration(planId, userId);
+    return this.ucoService.checkOutConfiguration(planId, user.userId);
   }
 
   @Put(':planId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
@@ -75,22 +74,20 @@ export class CheckOutController {
   }
 
   @Delete(':planId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
   checkInConfiguration(
     @Param('planId') planId: string,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    var returnVal;
+    let returnVal: any;
+
     this.ucoService.checkInConfiguration(planId).then(res => {
       if (res) {
-        returnVal = this.mpWksService.updateDateAndUserId(planId, userId);
-        this.logger.info(
-          'updated update date and user id for closed/checked-in plan.',
-        );
+        returnVal = this.mpWksService.updateDateAndUserId(planId, user.userId);
       }
     });
 

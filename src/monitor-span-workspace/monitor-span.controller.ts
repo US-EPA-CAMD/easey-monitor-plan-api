@@ -13,8 +13,10 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 
@@ -35,8 +37,8 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Put(':spanId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorSpanDTO,
     description: 'Updates a workspace span record for a monitor location',
@@ -45,14 +47,14 @@ export class MonitorSpanWorkspaceController {
     @Param('locId') locationId: string,
     @Param('spanId') spanId: string,
     @Body() payload: MonitorSpanBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorSpanDTO> {
-    return this.service.updateSpan(locationId, spanId, payload, userId);
+    return this.service.updateSpan(locationId, spanId, payload, user.userId);
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,
@@ -61,8 +63,8 @@ export class MonitorSpanWorkspaceController {
   createSpan(
     @Param('locId') locationId: string,
     @Body() payload: MonitorSpanBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MonitorSpanDTO> {
-    return this.service.createSpan(locationId, payload, userId);
+    return this.service.createSpan(locationId, payload, user.userId);
   }
 }

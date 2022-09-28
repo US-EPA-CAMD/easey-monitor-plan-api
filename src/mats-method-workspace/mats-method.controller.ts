@@ -13,9 +13,10 @@ import {
   ApiTags,
   ApiSecurity,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 
@@ -25,7 +26,6 @@ import { MatsMethodWorkspaceService } from './mats-method.service';
 export class MatsMethodWorkspaceController {
   constructor(
     private readonly service: MatsMethodWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -40,8 +40,8 @@ export class MatsMethodWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
@@ -49,19 +49,14 @@ export class MatsMethodWorkspaceController {
   createMethod(
     @Param('locId') locationId: string,
     @Body() payload: MatsMethodBaseDTO,
-    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
-    this.logger.info('Creating method', {
-      locationId: locationId,
-      payload: payload,
-      userId: userId,
-    });
-    return this.service.createMethod(locationId, payload, userId);
+    return this.service.createMethod(locationId, payload, user.userId);
   }
 
   @Put(':methodId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',
@@ -69,15 +64,9 @@ export class MatsMethodWorkspaceController {
   updateMethod(
     @Param('locId') locationId: string,
     @Param('methodId') methodId: string,
-    @CurrentUser() userId: string,
     @Body() payload: MatsMethodBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
-    this.logger.info('Updating method', {
-      locationId: locationId,
-      methodId: methodId,
-      payload: payload,
-      userId: userId,
-    });
-    return this.service.updateMethod(methodId, locationId, payload, userId);
+    return this.service.updateMethod(methodId, locationId, payload, user.userId);
   }
 }

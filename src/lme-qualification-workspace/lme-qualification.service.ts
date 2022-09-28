@@ -78,10 +78,10 @@ export class LMEQualificationWorkspaceService {
   }
 
   async createLMEQualification(
-    userId: string,
     locationId: string,
     qualId: string,
     payload: LMEQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = this.repository.create({
@@ -106,11 +106,11 @@ export class LMEQualificationWorkspaceService {
   }
 
   async updateLMEQualification(
-    userId: string,
     locationId: string,
     qualId: string,
     lmeQualId: string,
     payload: LMEQualificationBaseDTO,
+    userId: string,
     isImport = false,
   ): Promise<LMEQualificationDTO> {
     const lmeQual = await this.getLMEQualification(
@@ -155,19 +155,19 @@ export class LMEQualificationWorkspaceService {
 
             if (lmeQualRecord) {
               await this.updateLMEQualification(
-                userId,
                 locationId,
                 qualificationId,
                 lmeQualRecord.id,
                 lmeQualification,
+                userId,
                 true,
               );
             } else {
               await this.createLMEQualification(
-                userId,
                 locationId,
                 qualificationId,
                 lmeQualification,
+                userId,
                 true,
               );
             }

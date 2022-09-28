@@ -13,13 +13,14 @@ import {
   Body,
   Put,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import {
   PCTQualificationBaseDTO,
   PCTQualificationDTO,
 } from '../dtos/pct-qualification.dto';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 
 @Controller()
@@ -28,7 +29,6 @@ import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 export class PCTQualificationWorkspaceController {
   constructor(
     private readonly service: PCTQualificationWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -46,38 +46,32 @@ export class PCTQualificationWorkspaceController {
   }
 
   @Put(':pctQualId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: PCTQualificationDTO,
     description:
       'Updates a workspace PCT qualification by PCT qualification ID, qualification ID, and location ID',
   })
   async updatePCTQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Param('pctQualId') pctQualId: string,
     @Body() payload: PCTQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<PCTQualificationDTO> {
-    this.logger.info('Updating PCT qualification', {
-      qualId: qualId,
-      pctQualId: pctQualId,
-      payload: payload,
-      userId: userId,
-    });
     return this.service.updatePCTQualification(
-      userId,
       locId,
       qualId,
       pctQualId,
       payload,
+      user.userId,
     );
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     isArray: true,
     type: PCTQualificationDTO,
@@ -85,17 +79,11 @@ export class PCTQualificationWorkspaceController {
       'Creates a PCT Qualification record for a qualification and monitor location',
   })
   createPCTQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Body() payload: PCTQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<PCTQualificationDTO> {
-    this.logger.info('Creating PCT Qualification', {
-      userId: userId,
-      locId: locId,
-      qualId: qualId,
-      payload: payload,
-    });
-    return this.service.createPCTQualification(userId, locId, qualId, payload);
+    return this.service.createPCTQualification(locId, qualId, payload, user.userId);
   }
 }

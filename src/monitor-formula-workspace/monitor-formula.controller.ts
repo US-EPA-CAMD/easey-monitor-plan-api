@@ -13,9 +13,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import {
   MonitorFormulaBaseDTO,
@@ -28,7 +29,6 @@ import {
 export class MonitorFormulaWorkspaceController {
   constructor(
     private readonly service: MonitorFormulaWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -44,29 +44,23 @@ export class MonitorFormulaWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorFormulaDTO,
     description: 'Creates workspace formula record for a monitor location',
   })
   createFormula(
     @Param('locId') locationId: string,
-    @Body()
-    payload: MonitorFormulaBaseDTO,
-    @CurrentUser() userId: string,
+    @Body() payload: MonitorFormulaBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<MonitorFormulaDTO> {
-    this.logger.info('Creating Formula', {
-      locationId,
-      payload,
-      userId,
-    });
-    return this.service.createFormula(locationId, payload, userId);
+    return this.service.createFormula(locationId, payload, user.userId);
   }
 
   @Put(':formulaId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: MonitorFormulaDTO,
     description: 'Updates workspace formula record for a monitor location',
@@ -74,21 +68,14 @@ export class MonitorFormulaWorkspaceController {
   updateFormula(
     @Param('locId') locationId: string,
     @Param('formulaId') formulaRecordId: string,
-    @Body()
-    payload: MonitorFormulaBaseDTO,
-    @CurrentUser() userId: string,
+    @Body() payload: MonitorFormulaBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<MonitorFormulaDTO> {
-    this.logger.info('Updating Formula', {
-      locationId,
-      formulaRecordId,
-      payload,
-      userId,
-    });
     return this.service.updateFormula(
       locationId,
       formulaRecordId,
       payload,
-      userId,
+      user.userId,
     );
   }
 }

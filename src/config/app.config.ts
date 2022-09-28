@@ -22,7 +22,10 @@ export default registerAs('app', () => ({
   uri,
   apiKey: process.env.EASEY_MONITOR_PLAN_API_KEY,
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
-  enableCors: parseBool(process.env.EASEY_MONITOR_PLAN_API_ENABLE_CORS, true),
+  enableCors: parseBool(
+    process.env.EASEY_MONITOR_PLAN_API_ENABLE_CORS,
+    true
+  ),
   enableApiKey: parseBool(
     process.env.EASEY_MONITOR_PLAN_API_ENABLE_API_KEY,
     true,
@@ -38,9 +41,8 @@ export default registerAs('app', () => ({
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
   // AUTH API MUST BE RUN LOCALLY FOR LOCAL DEVELOPMENT
   authApi: {
-    uri: process.env.EASEY_AUTH_API || 'https://localhost:8000/auth-mgmt',
+    uri: process.env.EASEY_AUTH_API || 'http://localhost:8000/auth-mgmt',
   },
-
   reqSizeLimit: process.env.EASEY_MONITOR_PLAN_API_REQ_SIZE_LIMIT || '1mb',
   enableSecretToken: parseBool(
     process.env.EASEY_MONITOR_PLAN_API_ENABLE_SECRET_TOKEN,

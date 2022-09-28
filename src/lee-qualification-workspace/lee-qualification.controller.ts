@@ -13,9 +13,10 @@ import {
   Body,
   Post,
 } from '@nestjs/common';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
 import {
   LEEQualificationBaseDTO,
@@ -28,7 +29,6 @@ import {
 export class LEEQualificationWorkspaceController {
   constructor(
     private readonly service: LEEQualificationWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -46,38 +46,32 @@ export class LEEQualificationWorkspaceController {
   }
 
   @Put(':leeQualId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: LEEQualificationDTO,
     description:
       'Updates a workspace LEE qualification by LEE qualification ID, qualification ID, and location ID',
   })
   async updateLEEQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Param('leeQualId') leeQualId: string,
     @Body() payload: LEEQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<LEEQualificationDTO> {
-    this.logger.info('Updating LEE qualification', {
-      qualId: qualId,
-      leeQualId: leeQualId,
-      payload: payload,
-      userId: userId,
-    });
     return this.service.updateLEEQualification(
-      userId,
       locId,
       qualId,
       leeQualId,
       payload,
+      user.userId,
     );
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     isArray: true,
     type: LEEQualificationDTO,
@@ -85,17 +79,11 @@ export class LEEQualificationWorkspaceController {
       'Creates a LEE Qualification record for a qualification and monitor location',
   })
   createLEEQualification(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Body() payload: LEEQualificationBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<LEEQualificationDTO> {
-    this.logger.info('Creating LEE Qualification', {
-      userId: userId,
-      locId: locId,
-      qualId: qualId,
-      payload: payload,
-    });
-    return this.service.createLEEQualification(userId, locId, qualId, payload);
+    return this.service.createLEEQualification(locId, qualId, payload, user.userId);
   }
 }

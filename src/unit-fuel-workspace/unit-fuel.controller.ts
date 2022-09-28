@@ -13,9 +13,10 @@ import {
   ApiBearerAuth,
   ApiSecurity,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import CurrentUser from '@us-epa-camd/easey-common/decorators/current-user.decorator';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 
@@ -25,7 +26,6 @@ import { UnitFuelWorkspaceService } from './unit-fuel.service';
 export class UnitFuelWorkspaceController {
   constructor(
     private readonly service: UnitFuelWorkspaceService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()
@@ -43,53 +43,42 @@ export class UnitFuelWorkspaceController {
   }
 
   @Put(':unitFuelId')
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: UnitFuelDTO,
     description: 'Updates a workspace unit control record by unit control ID',
   })
   async updateUnitFuel(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Param('unitFuelId') unitFuelId: string,
     @Body() payload: UnitFuelBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
-    this.logger.info('Updating unit fuel', {
-      unitId,
-      unitFuelId,
-      payload,
-      userId,
-    });
     return this.service.updateUnitFuel(
-      userId,
       locId,
       unitId,
       unitFuelId,
       payload,
+      user.userId,
     );
   }
 
   @Post()
-  @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     isArray: true,
     type: UnitFuelDTO,
     description: 'Creates a workspace unit control record for a unit',
   })
   createUnitFuel(
-    @CurrentUser() userId: string,
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Body() payload: UnitFuelBaseDTO,
+    @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
-    this.logger.info('Creating unit fuel', {
-      unitId,
-      payload,
-      userId,
-    });
-    return this.service.createUnitFuel(userId, locId, unitId, payload);
+    return this.service.createUnitFuel(locId, unitId, payload, user.userId);
   }
 }
