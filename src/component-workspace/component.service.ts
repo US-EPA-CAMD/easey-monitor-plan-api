@@ -187,11 +187,6 @@ export class ComponentWorkspaceService {
       updateDate: new Date(Date.now()),
     });
 
-    this.logger.info('Creating component', {
-      locationId: locationId,
-      payload: payload,
-    });
-
     const result = await this.repository.save(component);
 
     return this.map.one(result);

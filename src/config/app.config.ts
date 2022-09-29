@@ -24,11 +24,10 @@ export default registerAs('app', () => ({
   env: process.env.EASEY_MONITOR_PLAN_API_ENV || 'local-dev',
   enableCors: parseBool(
     process.env.EASEY_MONITOR_PLAN_API_ENABLE_CORS,
-    true
+    true,
   ),
   enableApiKey: parseBool(
     process.env.EASEY_MONITOR_PLAN_API_ENABLE_API_KEY,
-    true,
   ),
   enableAuthToken: parseBool(
     process.env.EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN,
@@ -39,13 +38,18 @@ export default registerAs('app', () => ({
   ),
   version: process.env.EASEY_MONITOR_PLAN_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_MONITOR_PLAN_API_PUBLISHED || 'local',
-  // AUTH API MUST BE RUN LOCALLY FOR LOCAL DEVELOPMENT
   authApi: {
-    uri: process.env.EASEY_AUTH_API || 'http://localhost:8000/auth-mgmt',
+    uri: process.env.EASEY_AUTH_API || 'https://api.epa.gov/easey/dev/auth-mgmt',
   },
   reqSizeLimit: process.env.EASEY_MONITOR_PLAN_API_REQ_SIZE_LIMIT || '1mb',
   enableSecretToken: parseBool(
     process.env.EASEY_MONITOR_PLAN_API_ENABLE_SECRET_TOKEN,
-    false,
   ),
+  // ENABLES DEBUG CONSOLE LOGS
+  enableDebug: parseBool(
+    process.env.EASEY_MONITOR_PLAN_API_ENABLE_DEBUG,
+  ),
+  // NEEDS TO BE SET IN .ENV FILE FOR LOCAL DEVELOPMENT
+  // FORMAT: { "userId": "", "roles": [ { "orisCode": 3, "role": "P" } ] }
+  currentUser: process.env.EASEY_MONITOR_PLAN_API_CURRENT_USER,
 }));
