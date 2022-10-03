@@ -23,6 +23,8 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -75,14 +77,17 @@ export class MonitorPlanWorkspaceController {
 
   @Post('import')
   @ApiBearerAuth('Token')
-  //@UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
   })
-  async importPlan(@Body() plan: MonitorPlanDTO): Promise<any> {
+  async importPlan(
+    @Body() plan: MonitorPlanDTO,
+    @User() user: CurrentUser,
+  ): Promise<any> {
     await this.importChecksService.runImportChecks(plan);
-    const mpPlan = await this.service.importMpPlan(plan, 'newUser');
+    const mpPlan = await this.service.importMpPlan(plan, user.userId);
 
     // TODO: Temporary returned message
     if (mpPlan === null) {

@@ -18,8 +18,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Checkout devops repo
         uses: actions/checkout@v2
         with:
@@ -56,11 +54,9 @@ jobs:
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
-        run: |
-          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_KEY $API_KEY
-          cf set-env $APP_NAME EASEY_MONITOR_PLAN_API_SECRET_TOKEN $API_SECRET_TOKEN
+        run: scripts/environment-variables-secrets.sh
         env:
-          API_KEY: ${{ secrets.MONITOR_PLAN_API_NON_PROD_API_KEY }}
-          API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
+          MONITOR_PLAN_API_KEY: ${{ secrets.API_KEY }}
+          MONITOR_PLAN_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
       - name: Deploy
         run: devops/scripts/deploy.sh
