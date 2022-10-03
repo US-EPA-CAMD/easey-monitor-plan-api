@@ -1,12 +1,12 @@
 #THIS FILE SHOULD CONTAIN DEV SETTINGS AND CI/CD WORKFLOW WILL CHANGE SETTINGS BASED ON ENV
-name: monitor-plan-api
-title: Monitor Plan Management
-path: monitor-plan-mgmt
-port: 8080
-memory: 1024
 disk: 1024
+memory: 1024
 instances: 1
-environment: development
+name: monitor-plan-api
 host: api-easey-dev.app.cloud.gov
+port: 8080
+path: monitor-plan-mgmt
+title: Monitor Plan Management
+description: Monitor Plan management API endpoints for all monitor plan data & operations
+environment: development
 apiHost: api.epa.gov/easey/dev
-authApiPath: auth-mgmt
