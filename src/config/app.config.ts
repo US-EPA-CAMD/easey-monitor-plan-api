@@ -56,7 +56,7 @@ export default registerAs('app', () => ({
   ),
   authApi: {
     uri: getConfigValue(
-      'EASEY_MONITOR_PLAN_API', 'https://api.epa.gov/easey/dev/auth-mgmt',
+      'EASEY_AUTH_API', 'https://api.epa.gov/easey/dev/auth-mgmt',
     ),
   },
   reqSizeLimit: getConfigValue(

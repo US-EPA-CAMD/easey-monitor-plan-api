@@ -34,6 +34,7 @@ Follow these [instructions](https://github.com/US-EPA-CAMD/devops/blob/master/GE
     ```
     $ yarn install
     ```
+
 ## Configuration
 The Monitor Plan API uses a number of environment variables to properly configure the api. The following is the list of configureble values and their default setting.
 
@@ -73,7 +74,7 @@ Database credentials are injected into the cloud.gov environments as part of the
   - EASEY_MONITOR_PLAN_API_CURRENT_USER={ "userId": "testuser", "roles": [ { "orisCode": 3, "role": "P" } ] }
 - EASEY_MONITOR_PLAN_API_ENABLE_SECRET_TOKEN=true|false
   - IF ABOVE IS TRUE
-  - EASEY_MONITOR_PLAN_SECRET_TOKEN={ask project dev/tech lead}
+  - EASEY_MONITOR_PLAN_API_SECRET_TOKEN={ask project dev/tech lead}
 
 **Please refer to our [Getting Started](https://github.com/US-EPA-CAMD/devops/blob/master/GETTING-STARTED.md) instructions on how to configure the following environment variables & connect to the database.**
 - EASEY_DB_HOST
