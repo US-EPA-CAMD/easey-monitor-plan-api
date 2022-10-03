@@ -58,7 +58,7 @@ The Monitor Plan API uses a number of environment variables to properly configur
 | published | EASEY_MONITOR_PLAN_API_PUBLISHED | local | Dynamically set by CI/CD workflow |
 | reqSizeLimit | EASEY_MONITOR_PLAN_API_REQ_SIZE_LIMIT | 1mb | Configurable |
 | enableDebug | EASEY_MONITOR_PLAN_API_ENABLE_DEBUG | false | Configurable |
-| currentUser | EASEY_MONITOR_PLAN_CURRENT_USER | {} | Configurable |
+| currentUser | EASEY_MONITOR_PLAN_API_CURRENT_USER | {} | Configurable |
 | apiHost | EASEY_API_GATEWAY_HOST | api.epa.gov/easey/dev | Configurable |
 | authApi.uri | EASEY_AUTH_API | https://api.epa.gov/easey/dev/auth-mgmt | Configurable |
 
