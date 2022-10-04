@@ -20,7 +20,7 @@ import { SystemComponent } from '../entities/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
-import { ComponentWorkspaceRepository } from 'src/component-workspace/component.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
@@ -80,7 +80,7 @@ export class SystemComponentWorkspaceService {
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
 
-    let component = await this.componentService.getComponentByIdentifier(
+    let component = await this.componentWorkspaceRepository.getComponentByLocIdAndCompId(
       locationId,
       payload.componentId,
     );
@@ -98,13 +98,8 @@ export class SystemComponentWorkspaceService {
         analyzerRanges: component.analyzerRanges,
       };
 
-      let compRecord = await this.componentWorkspaceRepository.getComponentByLocIdAndCompId(
-        locationId,
-        component.componentId,
-      );
-
-      component = await this.componentService.updateComponent(
-        compRecord,
+      await this.componentService.updateComponent(
+        component,
         componentPayload,
         userId,
       );
