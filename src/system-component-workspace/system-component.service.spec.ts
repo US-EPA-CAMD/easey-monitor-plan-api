@@ -12,6 +12,8 @@ import {
 } from '../dtos/system-component.dto';
 import { ComponentDTO } from '../dtos/component.dto';
 import { SystemComponent } from '../entities/workspace/system-component.entity';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { Component } from '../entities/workspace/component.entity';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -28,12 +30,17 @@ const repositoryFactory = () => ({
   create: jest.fn().mockResolvedValue(sysComp),
 });
 
+const componentRepository = () => ({
+  getComponentByLocIdAndCompId: jest.fn().mockResolvedValue(new Component()),
+});
+
 const mockMap = () => ({
   many: jest.fn().mockResolvedValue(sysComps),
   one: jest.fn().mockResolvedValue(sysComp),
 });
 
 const mockComponent = () => ({
+  updateComponent: jest.fn().mockResolvedValue(new ComponentDTO()),
   getComponentByIdentifier: jest.fn().mockResolvedValue(new ComponentDTO()),
   createComponent: jest.fn().mockResolvedValue(new ComponentDTO()),
 });
@@ -56,6 +63,10 @@ describe('SystemComponentWorkspaceService', () => {
         {
           provide: SystemComponentWorkspaceRepository,
           useFactory: repositoryFactory,
+        },
+        {
+          provide: ComponentWorkspaceRepository,
+          useFactory: componentRepository,
         },
         {
           provide: SystemComponentMap,
