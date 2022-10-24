@@ -14,11 +14,19 @@ jest.mock('./unit-control.service');
 const locId = '6';
 const unitRecordId = 1;
 const unitControlId = 'some unit control id';
-const currentUser = 'testuser';
 const payload = new UnitControlBaseDTO();
 
 const returnedUnitControls: UnitControlDTO[] = [];
 returnedUnitControls.push(new UnitControlDTO());
+
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const returnedLoad = new UnitControlDTO();
 
@@ -57,11 +65,11 @@ describe('UnitControlWorkspaceController', () => {
       jest.spyOn(service, 'updateUnitControl').mockResolvedValue(returnedLoad);
       expect(
         await controller.updateUnitControl(
-          currentUser,
           locId,
           unitRecordId,
           unitControlId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });
@@ -72,10 +80,10 @@ describe('UnitControlWorkspaceController', () => {
       jest.spyOn(service, 'createUnitControl').mockResolvedValue(returnedLoad);
       expect(
         await controller.createUnitControl(
-          currentUser,
           locId,
           unitRecordId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });

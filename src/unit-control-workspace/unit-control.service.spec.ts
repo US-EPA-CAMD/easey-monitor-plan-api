@@ -67,10 +67,10 @@ describe('UnitControlService', () => {
   describe('createUnitControl', () => {
     it('creates a unit control record for a specified unit ID', async () => {
       const result = await service.createUnitControl(
-        'testUser',
         '1',
         1,
         payload,
+        'testUser',
       );
       expect(result).toEqual(returnedUnitControl);
     });
@@ -81,11 +81,11 @@ describe('UnitControlService', () => {
       jest.spyOn(repository, 'getUnitControl').mockResolvedValue(unitControl);
 
       const result = await service.updateUnitControl(
-        'testUser',
         '1',
         1,
         '1',
         payload,
+        'testUser',
       );
       expect(result).toEqual(returnedUnitControl);
     });

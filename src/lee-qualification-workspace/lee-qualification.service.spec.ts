@@ -93,10 +93,10 @@ describe('LEEQualificationService', () => {
   describe('createLEEQualification', () => {
     it('creates a LEE qualification for a specific qualification ID', async () => {
       const result = await service.createLEEQualification(
-        'testUser',
         '1',
         '1',
         payload,
+        'testUser',
       );
       expect(result).toEqual(returnedLEEQualification);
     });
@@ -109,11 +109,11 @@ describe('LEEQualificationService', () => {
         .mockResolvedValue(returnedLEEQualification);
 
       const result = await service.updateLEEQualification(
-        'testUser',
         '1',
         '1',
         '1',
         payload,
+        'testUser',
       );
       expect(result).toEqual(returnedLEEQualification);
     });

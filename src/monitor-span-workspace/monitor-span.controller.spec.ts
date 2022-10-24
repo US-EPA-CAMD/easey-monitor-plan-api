@@ -13,7 +13,14 @@ jest.mock('./monitor-span.service');
 const locId = 'some location id';
 const spanId = 'someId';
 const payload = new MonitorSpanBaseDTO();
-const user = 'someUser';
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const data: MonitorSpanDTO[] = [];
 data.push(new MonitorSpanDTO());
@@ -45,7 +52,12 @@ describe('MonitorSpanWorkspaceController', () => {
     it('should return an updated monitor span', async () => {
       jest.spyOn(service, 'updateSpan').mockResolvedValue(data[0]);
 
-      const result = await controller.updateSpan(locId, spanId, payload, user);
+      const result = await controller.updateSpan(
+        locId,
+        spanId,
+        payload,
+        currentUser,
+      );
       expect(result).toBe(data[0]);
     });
   });
@@ -54,7 +66,7 @@ describe('MonitorSpanWorkspaceController', () => {
     it('should return a monitor span', async () => {
       jest.spyOn(service, 'createSpan').mockResolvedValue(data[0]);
 
-      const result = await controller.createSpan(locId, payload, user);
+      const result = await controller.createSpan(locId, payload, currentUser);
       expect(result).toBe(data[0]);
     });
   });

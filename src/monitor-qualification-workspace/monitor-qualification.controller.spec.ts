@@ -10,7 +10,6 @@ import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
 
 jest.mock('./monitor-qualification.service');
 
-const currentUser = 'testuser';
 const qualId = 'some qualification id';
 const locId = 'some location id';
 const payload = new MonitorQualificationBaseDTO();
@@ -23,6 +22,15 @@ const returnedQualifications: MonitorQualificationDTO[] = [];
 returnedQualifications.push(new MonitorQualificationDTO());
 
 const returnedQualification = new MonitorQualificationDTO();
+
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 describe('MonitorQualificationWorkspaceController', () => {
   let controller: MonitorQualificationWorkspaceController;
@@ -57,10 +65,10 @@ describe('MonitorQualificationWorkspaceController', () => {
         .mockResolvedValue(returnedQualification);
       expect(
         await controller.updateQualification(
-          currentUser,
           locId,
           qualId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedQualification);
     });
@@ -72,7 +80,7 @@ describe('MonitorQualificationWorkspaceController', () => {
         .spyOn(service, 'createQualification')
         .mockResolvedValue(returnedQualification);
       expect(
-        await controller.createQualification(currentUser, locId, payload),
+        await controller.createQualification(locId, payload, currentUser),
       ).toBe(returnedQualification);
     });
   });
