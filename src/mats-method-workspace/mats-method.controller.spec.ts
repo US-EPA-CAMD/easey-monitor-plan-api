@@ -16,7 +16,14 @@ const matsMethodPayload: MatsMethodBaseDTO = {
   endDate: new Date(Date.now()),
   endHour: 1,
 };
-const userId = 'testuser';
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const mockMatsMethodWorkspaceService = () => ({
   getMethods: jest.fn(() => []),
@@ -60,7 +67,7 @@ describe('MatsMethodWorkspaceController', () => {
   describe('createMethod', () => {
     it('should call the MatsMethodWorkspaceService.createMethod', () => {
       expect(
-        controller.createMethod(locationId, matsMethodPayload, ''),
+        controller.createMethod(locationId, matsMethodPayload, currentUser),
       ).toEqual({});
       expect(service.createMethod).toHaveBeenCalled();
     });
@@ -69,7 +76,12 @@ describe('MatsMethodWorkspaceController', () => {
   describe('createMethods', () => {
     it('should call the MatsMethodWorkspaceService.updateMethod', () => {
       expect(
-        controller.updateMethod(locationId, methodId, '', matsMethodPayload),
+        controller.updateMethod(
+          locationId,
+          methodId,
+          matsMethodPayload,
+          currentUser,
+        ),
       ).toEqual({});
       expect(service.updateMethod).toHaveBeenCalled();
     });

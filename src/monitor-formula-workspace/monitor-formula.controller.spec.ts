@@ -19,6 +19,14 @@ const matsFormulaPayload: MonitorFormulaBaseDTO = {
   endDate: new Date(Date.now()),
   endHour: 1,
 };
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const mockMonitorFormulaWorkspaceService = () => ({
   getFormulas: jest.fn(() => []),
@@ -62,7 +70,7 @@ describe('MonitorFormulaWorkspaceController', () => {
   describe('createFormula', () => {
     it('should call the MonitorFormulaWorkspaceService.createFormula', () => {
       expect(
-        controller.createFormula(locationId, matsFormulaPayload, ''),
+        controller.createFormula(locationId, matsFormulaPayload, currentUser),
       ).toEqual({});
       expect(service.createFormula).toHaveBeenCalled();
     });
@@ -71,7 +79,12 @@ describe('MonitorFormulaWorkspaceController', () => {
   describe('createFormulas', () => {
     it('should call the MonitorFormulaWorkspaceService.updateFormula', () => {
       expect(
-        controller.updateFormula(locationId, methodId, matsFormulaPayload, ''),
+        controller.updateFormula(
+          locationId,
+          methodId,
+          matsFormulaPayload,
+          currentUser,
+        ),
       ).toEqual({});
       expect(service.updateFormula).toHaveBeenCalled();
     });

@@ -16,6 +16,14 @@ const payload = new MonitorLoadBaseDTO();
 
 const returnedLoads: MonitorLoadDTO[] = [];
 returnedLoads.push(new MonitorLoadDTO());
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const returnedLoad = new MonitorLoadDTO();
 
@@ -48,16 +56,16 @@ describe('MonitorLoadWorkspaceController', () => {
   describe('updateLoad', () => {
     it('should return array of monitor loads', async () => {
       jest.spyOn(service, 'updateLoad').mockResolvedValue(returnedLoad);
-      expect(await controller.updateLoad(locId, loadId, payload, '')).toBe(
-        returnedLoad,
-      );
+      expect(
+        await controller.updateLoad(locId, loadId, payload, currentUser),
+      ).toBe(returnedLoad);
     });
   });
 
   describe('createLoad', () => {
     it('should return array of monitor loads', async () => {
       jest.spyOn(service, 'createLoad').mockResolvedValue(returnedLoad);
-      expect(await controller.createLoad(locId, payload, '')).toBe(
+      expect(await controller.createLoad(locId, payload, currentUser)).toBe(
         returnedLoad,
       );
     });

@@ -90,7 +90,7 @@ describe('UnitFuelService', () => {
 
   describe('createUnitFuel', () => {
     it('creates a unit fuel record for a specified unit ID', async () => {
-      const result = await service.createUnitFuel('testUser', '1', 1, payload);
+      const result = await service.createUnitFuel('1', 1, payload, 'testUser');
       expect(result).toEqual(returnedUnitFuel);
     });
   });
@@ -99,11 +99,11 @@ describe('UnitFuelService', () => {
     it('updates a unit fuel record for a specified unit fuel ID', async () => {
       jest.spyOn(repository, 'getUnitFuel').mockResolvedValue(unitFuel);
       const result = await service.updateUnitFuel(
-        'testUser',
         '1',
         1,
         '1',
         payload,
+        'testUser',
       );
       expect(result).toEqual(returnedUnitFuel);
     });

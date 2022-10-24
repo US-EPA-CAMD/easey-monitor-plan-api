@@ -14,8 +14,16 @@ jest.mock('./unit-fuel.service');
 const locId = '6';
 const unitRecordId = 1;
 const unitFuelId = 'some unit fuel id';
-const currentUser = 'testuser';
 const payload = new UnitFuelBaseDTO();
+
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const returnedUnitFuels: UnitFuelDTO[] = [];
 returnedUnitFuels.push(new UnitFuelDTO());
@@ -55,11 +63,11 @@ describe('UnitFuelWorkspaceController', () => {
       jest.spyOn(service, 'updateUnitFuel').mockResolvedValue(returnedLoad);
       expect(
         await controller.updateUnitFuel(
-          currentUser,
           locId,
           unitRecordId,
           unitFuelId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });
@@ -70,10 +78,10 @@ describe('UnitFuelWorkspaceController', () => {
       jest.spyOn(service, 'createUnitFuel').mockResolvedValue(returnedLoad);
       expect(
         await controller.createUnitFuel(
-          currentUser,
           locId,
           unitRecordId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });

@@ -186,9 +186,9 @@ describe('MonitorQualificationService', () => {
   describe('createQualification', () => {
     it('creates a PCT qualification for a specific qualification ID', async () => {
       const result = await loadService.createQualification(
-        userId,
         locId,
         payload,
+        userId,
       );
       expect(result).toEqual({ ...result });
     });
@@ -197,10 +197,10 @@ describe('MonitorQualificationService', () => {
   describe('updateQualification', () => {
     it('updates a PCT qualification for a specific qualification ID and location ID', async () => {
       const result = await loadService.updateQualification(
-        userId,
         locId,
         qualId,
         payload,
+        userId,
       );
       expect(result).toEqual({ ...result });
     });

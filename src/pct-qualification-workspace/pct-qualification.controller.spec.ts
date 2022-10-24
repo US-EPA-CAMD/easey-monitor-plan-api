@@ -14,7 +14,14 @@ jest.mock('./pct-qualification.service');
 const locId = '6';
 const qualId = '1';
 const pctQualId = 'some unit fuel id';
-const currentUser = 'testuser';
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 const payload = new PCTQualificationBaseDTO();
 
 const returnedPCTQualifications: PCTQualificationDTO[] = [];
@@ -59,11 +66,11 @@ describe('PCTQualificationWorkspaceController', () => {
         .mockResolvedValue(returnedLoad);
       expect(
         await controller.updatePCTQualification(
-          currentUser,
           locId,
           qualId,
           pctQualId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });
@@ -76,10 +83,10 @@ describe('PCTQualificationWorkspaceController', () => {
         .mockResolvedValue(returnedLoad);
       expect(
         await controller.createPCTQualification(
-          currentUser,
           locId,
           qualId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });

@@ -14,11 +14,19 @@ jest.mock('./lme-qualification.service');
 const locId = '6';
 const qualId = '1';
 const lmeQualId = 'some lme qualification id';
-const currentUser = 'testuser';
 const payload = new LMEQualificationBaseDTO();
 
 const returnedLMEQualifications: LMEQualificationDTO[] = [];
 returnedLMEQualifications.push(new LMEQualificationDTO());
+
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const returnedLoad = new LMEQualificationDTO();
 
@@ -59,11 +67,11 @@ describe('LMEQualificationWorkspaceController', () => {
         .mockResolvedValue(returnedLoad);
       expect(
         await controller.updateLMEQualification(
-          currentUser,
           locId,
           qualId,
           lmeQualId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });
@@ -76,10 +84,10 @@ describe('LMEQualificationWorkspaceController', () => {
         .mockResolvedValue(returnedLoad);
       expect(
         await controller.createLMEQualification(
-          currentUser,
           locId,
           qualId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });

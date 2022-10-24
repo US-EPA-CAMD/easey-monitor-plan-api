@@ -14,7 +14,14 @@ jest.mock('./unit-capacity.service');
 const locId = '6';
 const unitRecordId = 1;
 const id = '1';
-const currentUser = 'testuser';
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 const payload = new UnitCapacityBaseDTO();
 
 const returnedUnitCapacities: UnitCapacityDTO[] = [];
@@ -56,10 +63,10 @@ describe('UnitCapacityController', () => {
         .mockResolvedValue(returnedUnitCapacity);
       expect(
         await controller.createUnitCapcity(
-          currentUser,
           locId,
           unitRecordId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedUnitCapacity);
     });
