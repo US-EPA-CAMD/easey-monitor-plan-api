@@ -13,6 +13,7 @@ import {
 } from '../dtos/unit-stack-configuration.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const userId = 'testUser';
 const locationId = '1';
@@ -205,9 +206,13 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         plan.unitStackConfigurations = [unitStackConfig];
         plan.locations = [location, location2];
 
+        jest.spyOn(CheckCatalogService, 'formatResultMessage').mockImplementationOnce((a,b) => {
+          return (a === 'IMPORT-4-A') ? 'EXPECTED MSG' : 'SOMETHING ELSE';
+        });
+
         const result = service.runUnitStackChecks(plan);
         expect(result).toEqual([
-          '[IMPORT4-FATAL-A] Each unit must be associated with at least one unit record. Unit Name TESTING is not associated with any unit record',
+          'EXPECTED MSG',
         ]);
       });
     });
