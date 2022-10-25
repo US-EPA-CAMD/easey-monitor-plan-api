@@ -53,8 +53,8 @@ describe('SystemFuelFlowWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get(SystemFuelFlowWorkspaceService);
-    repo = module.get(SystemFuelFlowWorkspaceRepository);
+    service = module.get<SystemFuelFlowWorkspaceService>(SystemFuelFlowWorkspaceService);
+    repo = module.get<SystemFuelFlowWorkspaceRepository>(SystemFuelFlowWorkspaceRepository);
   });
 
   it('should be defined', () => {
