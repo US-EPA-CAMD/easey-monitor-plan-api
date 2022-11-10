@@ -61,5 +61,6 @@ import { AnalyzerRangeModule } from '../analyzer-range/analyzer-range.module';
   ],
   controllers: [MonitorPlanController],
   providers: [MonitorPlanService, MonitorPlanMap],
+  exports: [MonitorPlanService, MonitorPlanMap],
 })
 export class MonitorPlanModule {}

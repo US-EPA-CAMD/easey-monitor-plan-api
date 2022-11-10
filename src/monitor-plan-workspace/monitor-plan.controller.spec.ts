@@ -62,13 +62,6 @@ describe('MonitorPlanWorkspaceController', () => {
     });
   });
 
-  describe('getConfigurations', () => {
-    it('should return array of monitor plan configurations', async () => {
-      jest.spyOn(service, 'getConfigurationsByOris').mockResolvedValue(data);
-      expect(await controller.getConfigurations(orisCode)).toBe(data);
-    });
-  });
-
   describe('getMonitorPlan', () => {
     it('should return a monitor plan given a planId', async () => {
       jest.spyOn(service, 'getMonitorPlan').mockResolvedValue(data[0]);

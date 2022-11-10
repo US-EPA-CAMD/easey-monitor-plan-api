@@ -17,6 +17,8 @@ import { CountyCodeModule } from './county-code/county-code.module';
 import { CheckOutModule } from './check-out/check-out.module';
 import { MonitorPlanLocationModule } from './monitor-plan-location-workspace/monitor-plan-location.module';
 import { MonitorPlanReportingFreqModule } from './monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
+import { MonitorConfigurationsModule } from './monitor-configurations/monitor-configurations.module';
+import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { MonitorPlanReportingFreqModule } from './monitor-plan-reporting-freq/mo
     LoggerModule,
     CorsOptionsModule,
     MonitorPlanModule,
+    MonitorConfigurationsModule,
+    MonitorConfigurationsWorkspaceModule,
     MonitorPlanWorkspaceModule,
     CountyCodeModule,
     CheckOutModule,

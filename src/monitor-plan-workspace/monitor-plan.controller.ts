@@ -5,7 +5,6 @@ import {
   Delete,
   Param,
   Controller,
-  ParseIntPipe,
   UseGuards,
   Query,
 } from '@nestjs/common';
@@ -28,7 +27,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 @Controller()
 @ApiSecurity('APIKey')
-@ApiTags('Plans & Configurations')
+@ApiTags('Plans')
 export class MonitorPlanWorkspaceController {
   constructor(
     private readonly service: MonitorPlanWorkspaceService,
@@ -53,18 +52,6 @@ export class MonitorPlanWorkspaceController {
   })
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
-  }
-
-  @Get(':orisCode/configurations')
-  @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanDTO,
-    description: 'Retrieves workspace Monitor Plan configurations',
-  })
-  getConfigurations(
-    @Param('orisCode', ParseIntPipe) orisCode: number,
-  ): Promise<MonitorPlanDTO[]> {
-    return this.service.getConfigurationsByOris(orisCode);
   }
 
   @Get(':planId/evaluation-report')
