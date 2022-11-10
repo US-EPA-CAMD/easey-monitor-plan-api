@@ -50,6 +50,22 @@ describe('-- Monitor Plan Repository --', () => {
     expect(result).toEqual(mpArray);
   });
 
+  it('calls createQueryBuilder and gets all MonitorPlan data from the repository', async () => {
+    monitorPlanRepository.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(queryBuilder);
+    queryBuilder.innerJoin.mockReturnValue(queryBuilder);
+    queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+    queryBuilder.getMany.mockReturnValue(mpArray);
+
+    const orisCode = 123;
+    const result = await monitorPlanRepository.getMonitorPlansByOrisCodes([
+      orisCode,
+    ]);
+    expect(queryBuilder.getMany).toHaveBeenCalled();
+    expect(result).toEqual(mpArray);
+  });
+
   it('calls createQueryBuilder and gets all Oris codes that have been updated after a certain date', async () => {
     monitorPlanRepository.query = jest
       .fn()
@@ -73,6 +89,20 @@ describe('-- Monitor Plan Repository --', () => {
 
     const result = await monitorPlanRepository.getMonitorPlan(1);
     expect(queryBuilder.getOne).toHaveBeenCalled();
+    expect(result).toEqual({});
+  });
+
+  it('calls createQueryBuilder and gets data for specific MonitorPlans from the repository', async () => {
+    monitorPlanRepository.createQueryBuilder = jest
+      .fn()
+      .mockReturnValue(queryBuilder);
+    queryBuilder.innerJoin.mockReturnValue(queryBuilder);
+    queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+    queryBuilder.where.mockReturnValue(queryBuilder);
+    queryBuilder.getMany.mockReturnValue(mp);
+
+    const result = await monitorPlanRepository.getMonitorPlanByIds([1]);
+    expect(queryBuilder.getMany).toHaveBeenCalled();
     expect(result).toEqual({});
   });
 });

@@ -69,6 +69,8 @@ import { UnitCapacityWorkspaceModule } from './unit-capacity-workspace/unit-capa
 import { UnitCapacityModule } from './unit-capacity/unit-capacity.module';
 
 import { CheckOutModule } from './check-out/check-out.module';
+import { MonitorConfigurationsModule } from './monitor-configurations/monitor-configurations.module';
+import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
 
 const routes: Routes = [
   {
@@ -80,6 +82,14 @@ const routes: Routes = [
         module: MonitorPlanCommentModule,
       },
     ],
+  },
+  {
+    path: '/configurations',
+    module: MonitorConfigurationsModule,
+  },
+  {
+    path: '/workspace/configurations',
+    module: MonitorConfigurationsWorkspaceModule,
   },
   {
     path: '/workspace/plans',

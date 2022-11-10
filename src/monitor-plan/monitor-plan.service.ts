@@ -32,8 +32,6 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyRepository } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.repository';
 import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
-import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
-import { MonitorPlan } from '../entities/monitor-plan.entity';
 
 @Injectable()
 export class MonitorPlanService {
@@ -92,61 +90,6 @@ export class MonitorPlanService {
     private readonly uscMap: UnitStackConfigurationMap,
   ) {}
 
-  private async parseMonitorPlanConfigurations(plans: MonitorPlan[]) {
-    if (plans.length === 0) {
-      return [];
-    }
-    const results = await this.map.many(plans);
-
-    for (const p of results) {
-      const monPlan = await this.getMonitorPlan(
-        p.id,
-        false,
-        false,
-        false,
-        true,
-      );
-      p.name = monPlan.name;
-      p.locations = monPlan.locations;
-      p.unitStackConfigurations = monPlan.unitStackConfigurations;
-      p.locations.forEach(l => {
-        delete l.attributes;
-        delete l.unitCapacities;
-        delete l.unitControls;
-        delete l.unitFuels;
-        delete l.methods;
-        delete l.matsMethods;
-        delete l.formulas;
-        delete l.defaults;
-        delete l.spans;
-        delete l.ductWafs;
-        delete l.loads;
-        delete l.components;
-        delete l.systems;
-        delete l.qualifications;
-      });
-      delete p.comments;
-      delete p.reportingFrequencies;
-    }
-    results.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-
-      if (a.name === b.name) {
-        return 0;
-      }
-
-      return 1;
-    });
-    return results;
-  }
-
-  async getConfigurations(orisCode: number): Promise<MonitorPlanDTO[]> {
-    const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
-    return this.parseMonitorPlanConfigurations(plans);
-  }
-
   async getMonSystemFuelFlow(
     monSysId: string,
     monSysIds: string[],
@@ -157,41 +100,12 @@ export class MonitorPlanService {
     return sysFuelFlows.filter(i => i.monitoringSystemRecordId === monSysId);
   }
 
-  async getConfigurationsByLastUpdated(
-    queryTime: Date,
-  ): Promise<LastUpdatedConfigDTO> {
-    const dto = new LastUpdatedConfigDTO();
-
-    const orisCodesAndTime = await this.repository.getOrisCodesByLastUpdatedTime(
-      queryTime,
-    );
-
-    const list: MonitorPlanDTO[] = [];
-    const promises = [];
-
-    orisCodesAndTime.changedOrisCodes.forEach(orisCode => {
-      promises.push(
-        new Promise(async resolve => {
-          list.push(...(await this.getConfigurations(orisCode)));
-          resolve(true);
-        }),
-      );
-    });
-
-    await Promise.all(promises);
-
-    dto.changedConfigs = list;
-    dto.mostRecentUpdate = orisCodesAndTime.mostRecentUpdate;
-
-    return dto;
-  }
-
   async getTopLevelMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
     const mp = await this.repository.getMonitorPlan(monPlanId);
     return this.map.one(mp);
   }
 
-  async getMonitorPlan(
+  async exportMonitorPlan(
     planId: string,
     getLocChildRecords: boolean = true,
     getReportingFrquencies: boolean = true,
