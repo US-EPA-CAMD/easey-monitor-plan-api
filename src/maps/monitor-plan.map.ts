@@ -49,6 +49,7 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
     return {
       id: entity.id,
       facId: entity.facId,
+      facilityName: entity.plant.name,
       configTypeCode: entity.configTypeCode,
       lastUpdated: entity.lastUpdated,
       updatedStatusFlag: entity.updatedStatusFlag,
