@@ -23,9 +23,15 @@ export class MonitorConfigurationsWorkspaceController {
     required: true,
     explode: false,
   })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'monPlanIds',
+    required: false,
+    explode: false,
+  })
   getConfigurations(
     @Query() dto: ConfigurationMultipleParamsDTO,
   ): Promise<MonitorPlanDTO[]> {
-    return this.service.getConfigurations(dto.orisCodes);
+    return this.service.getConfigurations(dto.orisCodes, dto.monPlanIds);
   }
 }
