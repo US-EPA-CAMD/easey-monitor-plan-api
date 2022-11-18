@@ -27,6 +27,8 @@ export class MonitorPlanDTO {
   })
   facId: number;
 
+  facilityName: string;
+
   configTypeCode: string;
 
   lastUpdated: Date;
