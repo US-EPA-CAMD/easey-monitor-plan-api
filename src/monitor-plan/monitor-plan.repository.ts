@@ -16,11 +16,33 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
       .getOne();
   }
 
+  async getMonitorPlanByIds(planIds: string[]): Promise<MonitorPlan[]> {
+    return this.createQueryBuilder('plan')
+      .innerJoinAndSelect('plan.plant', 'plant')
+      .where('plan.id IN (:...planIds)', { planIds })
+      .getMany();
+  }
+
   async getMonitorPlansByOrisCode(orisCode: number): Promise<MonitorPlan[]> {
     return this.createQueryBuilder('plan')
       .innerJoinAndSelect('plan.plant', 'plant', 'plant.orisCode = :orisCode', {
         orisCode: orisCode,
       })
+      .getMany();
+  }
+
+  async getMonitorPlansByOrisCodes(
+    orisCodes: number[],
+  ): Promise<MonitorPlan[]> {
+    return this.createQueryBuilder('plan')
+      .innerJoinAndSelect(
+        'plan.plant',
+        'plant',
+        'plant.orisCode IN (:...orisCodes)',
+        {
+          orisCodes,
+        },
+      )
       .getMany();
   }
 

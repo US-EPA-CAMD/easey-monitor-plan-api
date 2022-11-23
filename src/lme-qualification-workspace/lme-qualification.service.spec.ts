@@ -117,10 +117,10 @@ describe('LMEQualificationWorkspaceService', () => {
   describe('createLMEQualification', () => {
     it('creates a LME qualification for a specific qualification ID', async () => {
       const result = await lmeQualService.createLMEQualification(
-        userId,
         locId,
         qualId,
         payload,
+        userId,
       );
       expect(result).toEqual({ ...result });
     });
@@ -129,11 +129,11 @@ describe('LMEQualificationWorkspaceService', () => {
   describe('updateLMEQualification', () => {
     it('updates a LME qualification for a specific qualification ID and location ID', async () => {
       const result = await lmeQualService.updateLMEQualification(
-        userId,
         locId,
         qualId,
         lmeQualId,
         payload,
+        userId,
       );
       expect(result).toEqual({ ...result });
     });

@@ -26,6 +26,15 @@ const evaluationRportData = [];
 evaluationRportData.push(new MPEvaluationReportDTO());
 evaluationRportData.push(new MPEvaluationReportDTO());
 
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
+
 describe('MonitorPlanWorkspaceController', () => {
   let controller: MonitorPlanWorkspaceController;
   let service: MonitorPlanWorkspaceService;
@@ -53,13 +62,6 @@ describe('MonitorPlanWorkspaceController', () => {
     });
   });
 
-  describe('getConfigurations', () => {
-    it('should return array of monitor plan configurations', async () => {
-      jest.spyOn(service, 'getConfigurationsByOris').mockResolvedValue(data);
-      expect(await controller.getConfigurations(orisCode)).toBe(data);
-    });
-  });
-
   describe('getMonitorPlan', () => {
     it('should return a monitor plan given a planId', async () => {
       jest.spyOn(service, 'getMonitorPlan').mockResolvedValue(data[0]);
@@ -81,11 +83,11 @@ describe('MonitorPlanWorkspaceController', () => {
   describe('importPlan', () => {
     it('should import a report plan given a planId', async () => {
       jest.spyOn(service, 'importMpPlan').mockResolvedValue(data[0]);
-      expect(await controller.importPlan(planId)).toBe(data[0]);
+      expect(await controller.importPlan(planId, currentUser)).toBe(data[0]);
     });
     it('should return success import message while imporing anew record', async () => {
       jest.spyOn(service, 'importMpPlan').mockResolvedValue(null);
-      expect(await controller.importPlan(planId)).toEqual({
+      expect(await controller.importPlan(planId, currentUser)).toEqual({
         message: `Monitoring plan Successfully Imported.`,
       });
     });

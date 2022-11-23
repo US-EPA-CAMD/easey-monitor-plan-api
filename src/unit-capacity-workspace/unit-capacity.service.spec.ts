@@ -88,12 +88,7 @@ describe('UnitCapacityWorkspaceService', () => {
 
   describe('createUnitCapacity', () => {
     it('creates a unit capacity record for a specified unit ID', async () => {
-      const result = await service.createUnitCapacity(
-        'testUser',
-        '1',
-        1,
-        payload,
-      );
+      const result = await service.createUnitCapacity('1', 1, payload, '');
       expect(result).toEqual(returnedUnitCapacity);
     });
   });
@@ -102,13 +97,7 @@ describe('UnitCapacityWorkspaceService', () => {
     it('updates a unit fuel record for a specified unit fuel ID', async () => {
       jest.spyOn(repository, 'getUnitCapacity').mockResolvedValue(unitCapacity);
 
-      const result = await service.updateUnitCapacity(
-        'testUser',
-        '1',
-        1,
-        '1',
-        payload,
-      );
+      const result = await service.updateUnitCapacity('1', 1, '1', payload, '');
       expect(result).toEqual(returnedUnitCapacity);
     });
   });

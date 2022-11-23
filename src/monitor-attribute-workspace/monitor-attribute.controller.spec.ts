@@ -14,7 +14,14 @@ jest.mock('./monitor-attribute.service');
 const data = {
   locId: '6',
   attributeId: '1',
-  currentUser: 'testuser',
+  currentUser: {
+    userId: 'testUser',
+    sessionId: '',
+    expiration: '',
+    clientIp: '',
+    isAdmin: false,
+    roles: [],
+  },
   payload: new MonitorAttributeBaseDTO(),
 };
 

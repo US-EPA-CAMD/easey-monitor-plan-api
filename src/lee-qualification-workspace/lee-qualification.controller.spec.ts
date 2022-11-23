@@ -14,7 +14,14 @@ jest.mock('./lee-qualification.service');
 const locId = '6';
 const qualId = '1';
 const leeQualId = 'some lee qualification id';
-const currentUser = 'testuser';
+const currentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 const payload = new LEEQualificationBaseDTO();
 
 const returnedLEEQualifications: LEEQualificationDTO[] = [];
@@ -59,11 +66,11 @@ describe('LEEQualificationWorkspaceController', () => {
         .mockResolvedValue(returnedLoad);
       expect(
         await controller.updateLEEQualification(
-          currentUser,
           locId,
           qualId,
           leeQualId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });
@@ -76,10 +83,10 @@ describe('LEEQualificationWorkspaceController', () => {
         .mockResolvedValue(returnedLoad);
       expect(
         await controller.createLEEQualification(
-          currentUser,
           locId,
           qualId,
           payload,
+          currentUser,
         ),
       ).toBe(returnedLoad);
     });

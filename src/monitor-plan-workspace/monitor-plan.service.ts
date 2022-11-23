@@ -37,8 +37,6 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -154,61 +152,6 @@ export class MonitorPlanWorkspaceService {
     await this.resetToNeedsEvaluation(locationIds[0], userId);
 
     return null;
-  }
-
-  private async parseMonitorPlanConfigurations(plans: MonitorPlan[]) {
-    if (plans.length === 0) {
-      return [];
-    }
-    const results = await this.map.many(plans);
-
-    for (const p of results) {
-      const monPlan = await this.exportMonitorPlan(
-        p.id,
-        false,
-        false,
-        false,
-        true,
-      );
-      p.name = monPlan.name;
-      p.locations = monPlan.locations;
-      p.unitStackConfigurations = monPlan.unitStackConfigurations;
-      p.locations.forEach(l => {
-        delete l.attributes;
-        delete l.unitCapacities;
-        delete l.unitControls;
-        delete l.unitFuels;
-        delete l.methods;
-        delete l.matsMethods;
-        delete l.formulas;
-        delete l.defaults;
-        delete l.spans;
-        delete l.ductWafs;
-        delete l.loads;
-        delete l.components;
-        delete l.systems;
-        delete l.qualifications;
-      });
-      delete p.comments;
-      delete p.reportingFrequencies;
-    }
-    results.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-
-      if (a.name === b.name) {
-        return 0;
-      }
-
-      return 1;
-    });
-    return results;
-  }
-
-  async getConfigurationsByOris(orisCode: number): Promise<MonitorPlanDTO[]> {
-    const plans = await this.repository.getMonitorPlansByOrisCode(orisCode);
-    return this.parseMonitorPlanConfigurations(plans);
   }
 
   async revertToOfficialRecord(monPlanId: string): Promise<void> {
