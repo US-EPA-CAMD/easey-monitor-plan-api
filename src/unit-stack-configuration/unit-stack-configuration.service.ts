@@ -10,23 +10,11 @@ export class UnitStackConfigurationService {
     private readonly map: UnitStackConfigurationMap,
   ) {}
 
-  async getUnitStackRelationships(hasUnit: boolean, id: string) {
-    let relationship: any;
-
-    if (hasUnit) {
-      relationship = await this.repository.find({
-        unitId: +id,
-      });
-    } else {
-      relationship = await this.repository.find({
-        where: {
-          stackPipeId: id,
-        },
-        order: {
-          unitId: 'ASC',
-        },
-      });
-    }
+  async getUnitStackRelationships(id: string | number, isUnit: boolean) {
+    const relationship = await this.repository.getUnitStackConfigsByUnitId(
+      id,
+      isUnit,
+    );
 
     return this.map.many(relationship);
   }

@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
+import { UnitStackConfiguration as UnitStackConfigurationWorkspace } from '../entities/workspace/unit-stack-configuration.entity';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 
 @Injectable()
 export class UnitStackConfigurationMap extends BaseMap<
-  UnitStackConfiguration,
+  UnitStackConfiguration | UnitStackConfigurationWorkspace,
   UnitStackConfigurationDTO
 > {
   public async one(
-    entity: UnitStackConfiguration,
+    entity: UnitStackConfiguration | UnitStackConfigurationWorkspace,
   ): Promise<UnitStackConfigurationDTO> {
     return {
       id: entity.id,

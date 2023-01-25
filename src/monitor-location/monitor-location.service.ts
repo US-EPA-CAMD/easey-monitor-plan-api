@@ -43,10 +43,8 @@ export class MonitorLocationService {
 
   async getLocationRelationships(locId: string) {
     const location = await this.getLocationEntity(locId);
-    const hasUnit = location.unit !== null;
-    const id = location.unit
-      ? location.unit.id.toString()
-      : location.stackPipe.id;
-    return this.uscServcie.getUnitStackRelationships(hasUnit, id);
+    const isUnit = location.unit !== null;
+    const id = location.unit ? location.unit.id : location.stackPipe.id;
+    return this.uscServcie.getUnitStackRelationships(id, isUnit);
   }
 }
