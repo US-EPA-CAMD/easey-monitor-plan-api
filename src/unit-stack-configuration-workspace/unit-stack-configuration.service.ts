@@ -129,14 +129,14 @@ export class UnitStackConfigurationWorkspaceService {
     });
   }
 
-  async getUnitStackRelationships(id: string | number, isUnit: boolean) {
-    const relationship = await this.repository.getUnitStackConfigsByUnitId(
-      id,
-      isUnit,
-    );
+  // async getUnitStackRelationships(id: string | number, isUnit: boolean) {
+  //   const relationship = await this.repository.getUnitStackConfigsByUnitId(
+  //     id,
+  //     isUnit,
+  //   );
 
-    return this.map.many(relationship);
-  }
+  //   return this.map.many(relationship);
+  // }
 
   async createUnitStackConfig(
     unitRecordId: number,

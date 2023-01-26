@@ -15,7 +15,6 @@ export class UnitStackConfigurationService {
       id,
       isUnit,
     );
-
     return this.map.many(relationship);
   }
 }
