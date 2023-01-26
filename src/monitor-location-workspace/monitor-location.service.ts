@@ -158,23 +158,6 @@ export class MonitorLocationWorkspaceService {
     return this.uscServcie.getUnitStackConfigsByLocationIds([locationId]);
   }
 
-  // async getLocationEntity(locationId: string): Promise<MonitorLocation> {
-  //   const result = await this.repository.findOne(locationId);
-  //   if (!result) {
-  //     throw new LoggingException(this.errorMsg, HttpStatus.NOT_FOUND, {
-  //       locationId: locationId,
-  //     });
-  //   }
-  //   return result;
-  // }
-
-  // async getLocationRelationships(locId: string) {
-  //   const location = await this.getLocationEntity(locId);
-  //   const isUnit = location.unit !== null;
-  //   const id = location.unit ? location.unit.id : location.stackPipe.id;
-  //   return this.uscServcie.getUnitStackRelationships(id, isUnit);
-  // }
-
   async importMonitorLocation(
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
