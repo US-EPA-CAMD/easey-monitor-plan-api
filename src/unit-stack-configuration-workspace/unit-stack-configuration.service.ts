@@ -69,7 +69,9 @@ export class UnitStackConfigurationWorkspaceService {
       for (const unitId of unitUnitIds) {
         if (!unitStackConfigUnitIds.has(unitId)) {
           errorList.push(
-            CheckCatalogService.formatResultMessage('IMPORT-4-A', { unitId: unitId }),
+            CheckCatalogService.formatResultMessage('IMPORT-4-A', {
+              unitId: unitId,
+            }),
           );
         }
       }
@@ -127,26 +129,14 @@ export class UnitStackConfigurationWorkspaceService {
     });
   }
 
-  async getUnitStackRelationships(hasUnit: boolean, id: string) {
-    let relationship: any;
+  // async getUnitStackRelationships(id: string | number, isUnit: boolean) {
+  //   const relationship = await this.repository.getUnitStackConfigsByUnitId(
+  //     id,
+  //     isUnit,
+  //   );
 
-    if (hasUnit) {
-      relationship = await this.repository.find({
-        unitId: +id,
-      });
-    } else {
-      relationship = await this.repository.find({
-        where: {
-          stackPipeId: id,
-        },
-        order: {
-          unitId: 'ASC',
-        },
-      });
-    }
-
-    return this.map.many(relationship);
-  }
+  //   return this.map.many(relationship);
+  // }
 
   async createUnitStackConfig(
     unitRecordId: number,

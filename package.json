@@ -27,7 +27,9 @@
     "up": "yarn && yarn start:dev"
   },
   "resolutions": {
-    "ansi-regex": "^5.0.1"
+    "ansi-regex": "^5.0.1",
+    "class-transformer": "0.4.0",
+    "class-validator": "0.13.1"
   },
   "dependencies": {
     "@nestjs/axios": "0.0.3",
@@ -38,9 +40,9 @@
     "@nestjs/swagger": "^5.1.5",
     "@nestjs/typeorm": "8.0.3",
     "@types/pg": "^8.6.4",
-    "@us-epa-camd/easey-common": "10.3.0",
+    "@us-epa-camd/easey-common": "11.1.0",
     "class-transformer": "0.4.0",
-    "class-validator": "^0.13.1",
+    "class-validator": "0.13.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "nest-router": "^1.0.9",
