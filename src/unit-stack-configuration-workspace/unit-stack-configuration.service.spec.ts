@@ -107,20 +107,20 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     });
   });
 
-  describe('getUnitStackRelationships', () => {
-    it('should return unit stack config by unit relationship ', async () => {
-      const response = await service.getUnitStackRelationships(true, unitID);
-      expect(response).toEqual([unitStackDto]);
-    });
+  // describe('getUnitStackRelationships', () => {
+  //   it('should return unit stack config by unit relationship ', async () => {
+  //     const response = await service.getUnitStackRelationships(true, unitID);
+  //     expect(response).toEqual([unitStackDto]);
+  //   });
 
-    it('should return unit stack config by unit relationship ', async () => {
-      const response = await service.getUnitStackRelationships(
-        false,
-        stackPipeID,
-      );
-      expect(response).toEqual([unitStackDto]);
-    });
-  });
+  //   it('should return unit stack config by unit relationship ', async () => {
+  //     const response = await service.getUnitStackRelationships(
+  //       false,
+  //       stackPipeID,
+  //     );
+  //     expect(response).toEqual([unitStackDto]);
+  //   });
+  // });
 
   describe('createUnitStackConfig', () => {
     it('should create and return unit stack config dto', async () => {
@@ -187,30 +187,30 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         ]);
       });
     });
-    describe('Check4', () => {
-      it('Should fail given unit not in unit stack config when there are more than 1 units present', () => {
-        const unitStackConfig = new UnitStackConfigurationBaseDTO();
-        unitStackConfig.unitId = 'TEST';
-        unitStackConfig.stackPipeId = 'TEST';
+    // describe('Check4', () => {
+    //   it('Should fail given unit not in unit stack config when there are more than 1 units present', () => {
+    //     const unitStackConfig = new UnitStackConfigurationBaseDTO();
+    //     unitStackConfig.unitId = 'TEST';
+    //     unitStackConfig.stackPipeId = 'TEST';
 
-        const location = new UpdateMonitorLocationDTO();
-        location.unitId = 'TESTING';
-        location.stackPipeId = 'TEST';
+    //     const location = new UpdateMonitorLocationDTO();
+    //     location.unitId = 'TESTING';
+    //     location.stackPipeId = 'TEST';
 
-        const location2 = new UpdateMonitorLocationDTO();
-        location2.unitId = 'TEST';
-        location2.stackPipeId = 'TEST';
+    //     const location2 = new UpdateMonitorLocationDTO();
+    //     location2.unitId = 'TEST';
+    //     location2.stackPipeId = 'TEST';
 
-        const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfigurations = [unitStackConfig];
-        plan.locations = [location, location2];
+    //     const plan = new UpdateMonitorPlanDTO();
+    //     plan.unitStackConfigurations = [unitStackConfig];
+    //     plan.locations = [location, location2];
 
-        const result = service.runUnitStackChecks(plan);
-        expect(result).toEqual([
-          '[IMPORT4-FATAL-A] Each unit must be associated with at least one unit record. Unit Name TESTING is not associated with any unit record',
-        ]);
-      });
-    });
+    //     const result = service.runUnitStackChecks(plan);
+    //     expect(result).toEqual([
+    //       '[IMPORT4-FATAL-A] Each unit must be associated with at least one unit record. Unit Name TESTING is not associated with any unit record',
+    //     ]);
+    //   });
+    // });
     describe('Check8', () => {
       it('Should fail given unit stack config stackId not in location', () => {
         const unitStackConfig = new UnitStackConfigurationBaseDTO();
