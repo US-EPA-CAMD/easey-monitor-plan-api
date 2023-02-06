@@ -1,24 +1,11 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Post,
-  Put,
-  Body,
-  UseGuards,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,6 +14,7 @@ export class MonitorSpanWorkspaceController {
   constructor(private service: MonitorSpanWorkspaceService) {}
 
   @Get()
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,
@@ -37,8 +25,7 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Put(':spanId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorSpanDTO,
     description: 'Updates a workspace span record for a monitor location',
@@ -53,8 +40,7 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,

@@ -7,6 +7,7 @@ import { MonitorQualificationWorkspaceController } from './monitor-qualification
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./monitor-qualification.service');
 
@@ -23,13 +24,13 @@ returnedQualifications.push(new MonitorQualificationDTO());
 
 const returnedQualification = new MonitorQualificationDTO();
 
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 describe('MonitorQualificationWorkspaceController', () => {

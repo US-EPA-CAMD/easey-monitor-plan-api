@@ -7,6 +7,7 @@ import { MonitorLoadWorkspaceController } from './monitor-load.controller';
 import { MonitorLoadBaseDTO } from '../dtos/monitor-load.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./monitor-load.service');
 
@@ -16,13 +17,13 @@ const payload = new MonitorLoadBaseDTO();
 
 const returnedLoads: MonitorLoadDTO[] = [];
 returnedLoads.push(new MonitorLoadDTO());
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const returnedLoad = new MonitorLoadDTO();
