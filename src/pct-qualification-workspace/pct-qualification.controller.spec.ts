@@ -8,19 +8,20 @@ import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./pct-qualification.service');
 
 const locId = '6';
 const qualId = '1';
 const pctQualId = 'some unit fuel id';
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 const payload = new PCTQualificationBaseDTO();
 

@@ -10,6 +10,7 @@ import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { ImportChecksService } from '../import-checks/import-checks.service';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./monitor-plan.service');
 jest.mock('../user-check-out/user-check-out.service');
@@ -26,13 +27,13 @@ const evaluationRportData = [];
 evaluationRportData.push(new MPEvaluationReportDTO());
 evaluationRportData.push(new MPEvaluationReportDTO());
 
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 describe('MonitorPlanWorkspaceController', () => {

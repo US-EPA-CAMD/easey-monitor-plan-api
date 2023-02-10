@@ -1,34 +1,20 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Post,
-  Body,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Loads')
 export class MonitorLoadWorkspaceController {
-  constructor(
-    private readonly service: MonitorLoadWorkspaceService,
-  ) {}
+  constructor(private readonly service: MonitorLoadWorkspaceService) {}
 
   @Get()
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: MonitorLoadDTO,
@@ -39,8 +25,7 @@ export class MonitorLoadWorkspaceController {
   }
 
   @Put(':loadId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorLoadDTO,
     description: 'Updates a workspace load record for a monitor location',
@@ -55,8 +40,7 @@ export class MonitorLoadWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: MonitorLoadDTO,

@@ -5,6 +5,7 @@ import { MatsMethodWorkspaceService } from './mats-method.service';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 const locationId = 'string';
 const methodId = 'string';
@@ -16,13 +17,13 @@ const matsMethodPayload: MatsMethodBaseDTO = {
   endDate: new Date(Date.now()),
   endHour: 1,
 };
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const mockMatsMethodWorkspaceService = () => ({

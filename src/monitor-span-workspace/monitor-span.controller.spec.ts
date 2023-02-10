@@ -7,19 +7,20 @@ import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanWorkspaceController } from './monitor-span.controller';
 import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./monitor-span.service');
 
 const locId = 'some location id';
 const spanId = 'someId';
 const payload = new MonitorSpanBaseDTO();
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const data: MonitorSpanDTO[] = [];

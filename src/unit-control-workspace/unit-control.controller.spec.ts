@@ -8,6 +8,7 @@ import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlWorkspaceController } from './unit-control.controller';
 import { UnitControlWorkspaceService } from './unit-control.service';
 import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./unit-control.service');
 
@@ -18,14 +19,13 @@ const payload = new UnitControlBaseDTO();
 
 const returnedUnitControls: UnitControlDTO[] = [];
 returnedUnitControls.push(new UnitControlDTO());
-
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const returnedLoad = new UnitControlDTO();

@@ -8,6 +8,7 @@ import { UnitFuelBaseDTO } from '../dtos/unit-fuel.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./unit-fuel.service');
 
@@ -16,13 +17,13 @@ const unitRecordId = 1;
 const unitFuelId = 'some unit fuel id';
 const payload = new UnitFuelBaseDTO();
 
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const returnedUnitFuels: UnitFuelDTO[] = [];
