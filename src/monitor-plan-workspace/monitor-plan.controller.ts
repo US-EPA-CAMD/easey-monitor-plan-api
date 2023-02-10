@@ -22,8 +22,9 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -63,8 +64,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Post('import')
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ bodyParam: 'locations.*.id' }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
