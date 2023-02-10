@@ -4,6 +4,8 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
 import { MonitorPlanCommentWorkspaceController } from './monitor-plan-comment.controller';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./monitor-plan-comment.service');
 
@@ -19,9 +21,9 @@ describe('MonitorPlanCommentWorkspaceController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [MonitorPlanCommentWorkspaceController],
-      providers: [MonitorPlanCommentWorkspaceService],
+      providers: [MonitorPlanCommentWorkspaceService, ConfigService],
     }).compile();
 
     controller = module.get(MonitorPlanCommentWorkspaceController);

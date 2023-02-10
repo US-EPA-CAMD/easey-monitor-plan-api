@@ -18,18 +18,17 @@ import {
   AnalyzerRangeDTO,
 } from '../dtos/analyzer-range.dto';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Analyzer Ranges')
 export class AnalyzerRangeWorkspaceController {
-  constructor(
-    private readonly service: AnalyzerRangeWorkspaceService,
-  ) {}
+  constructor(private readonly service: AnalyzerRangeWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -37,6 +36,7 @@ export class AnalyzerRangeWorkspaceController {
     type: AnalyzerRangeDTO,
     description: 'Retrieves workspace Analyzer Range records for a component',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getAnalyzerRanges(
     @Param('locId') locId: string,
     @Param('compId') compId: string,
@@ -45,8 +45,7 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -67,8 +66,7 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Put(':analyzerRangeId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
