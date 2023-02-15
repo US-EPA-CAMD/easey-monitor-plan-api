@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { RouterModule } from 'nest-router';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
 import { dbConfig } from '@us-epa-camd/easey-common/config';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
@@ -10,6 +10,7 @@ import { CorsOptionsModule } from '@us-epa-camd/easey-common/cors-options';
 
 import routes from './routes';
 import appConfig from './config/app.config';
+import { MessagesModule } from './messages/messages.module';
 import { TypeOrmConfigService } from './config/typeorm.config';
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
@@ -33,6 +34,7 @@ import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-w
     HttpModule,
     LoggerModule,
     CorsOptionsModule,
+    MessagesModule,
     MonitorPlanModule,
     MonitorConfigurationsModule,
     MonitorConfigurationsWorkspaceModule,
