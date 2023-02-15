@@ -5,7 +5,6 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { CheckOutController } from './check-out.controller';
-import { CheckOutService } from './check-out.service';
 
 describe('CheckOutController', () => {
   let controller: CheckOutController;
@@ -16,7 +15,6 @@ describe('CheckOutController', () => {
       controllers: [CheckOutController],
       providers: [
         ConfigService,
-        CheckOutService,
         {
           provide: UserCheckOutService,
           useFactory: () => ({}),
