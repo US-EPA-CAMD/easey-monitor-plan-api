@@ -6,6 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
 import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 const locationId = 'string';
 const methodId = 'string';
@@ -19,13 +20,13 @@ const matsFormulaPayload: MonitorFormulaBaseDTO = {
   endDate: new Date(Date.now()),
   endHour: 1,
 };
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const mockMonitorFormulaWorkspaceService = () => ({

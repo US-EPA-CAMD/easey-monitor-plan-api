@@ -21,7 +21,6 @@ import {
   UserCheckOutBaseDTO,
   UserCheckOutDTO,
 } from '../dtos/user-check-out.dto';
-import { CheckOutService } from './check-out.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
@@ -30,7 +29,6 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 @ApiTags('Check-Outs')
 export class CheckOutController {
   constructor(
-    private readonly service: CheckOutService,
     private readonly ucoService: UserCheckOutService,
     private readonly mpWksService: MonitorPlanWorkspaceService,
   ) {}
@@ -57,7 +55,8 @@ export class CheckOutController {
     @Param('planId') planId: string,
     @User() user: CurrentUser,
   ): Promise<UserCheckOutDTO> {
-    return this.ucoService.checkOutConfiguration(planId, user.userId);
+    const result = this.ucoService.checkOutConfiguration(planId, user.userId);
+    return result;
   }
 
   @Put(':planId')
@@ -79,18 +78,13 @@ export class CheckOutController {
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
-  checkInConfiguration(
+  async checkInConfiguration(
     @Param('planId') planId: string,
     @User() user: CurrentUser,
-  ): Promise<void> {
-    let returnVal: any;
-
-    this.ucoService.checkInConfiguration(planId).then(res => {
-      if (res) {
-        returnVal = this.mpWksService.updateDateAndUserId(planId, user.userId);
-      }
-    });
-
-    return returnVal;
+  ) {
+    const result = await this.ucoService.getCheckedOutConfiguration(planId);
+    if (result && await this.ucoService.checkInConfiguration(planId)) {
+      await this.mpWksService.updateDateAndUserId(planId, user.userId);
+    }
   }
 }

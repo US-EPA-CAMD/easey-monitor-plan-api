@@ -20,7 +20,7 @@ const data = {
     expiration: '',
     clientIp: '',
     isAdmin: false,
-    roles: [],
+    permissionSet: [],
   },
   payload: new MonitorAttributeBaseDTO(),
 };

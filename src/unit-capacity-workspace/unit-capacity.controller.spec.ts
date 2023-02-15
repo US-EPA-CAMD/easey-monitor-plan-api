@@ -8,19 +8,20 @@ import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceController } from './unit-capacity.controller';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./unit-capacity.service');
 
 const locId = '6';
 const unitRecordId = 1;
 const id = '1';
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 const payload = new UnitCapacityBaseDTO();
 

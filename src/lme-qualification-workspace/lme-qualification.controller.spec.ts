@@ -8,6 +8,7 @@ import { LMEQualificationBaseDTO } from '../dtos/lme-qualification.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./lme-qualification.service');
 
@@ -19,13 +20,13 @@ const payload = new LMEQualificationBaseDTO();
 const returnedLMEQualifications: LMEQualificationDTO[] = [];
 returnedLMEQualifications.push(new LMEQualificationDTO());
 
-const currentUser = {
+const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const returnedLoad = new LMEQualificationDTO();
