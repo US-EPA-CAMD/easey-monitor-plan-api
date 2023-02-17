@@ -13,7 +13,7 @@ import {
   Body,
   Put,
 } from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -22,14 +22,13 @@ import {
   MonitorAttributeDTO,
 } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Attributes')
 export class MonitorAttributeWorkspaceController {
-  constructor(
-    private readonly service: MonitorAttributeWorkspaceService,
-  ) {}
+  constructor(private readonly service: MonitorAttributeWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -37,6 +36,7 @@ export class MonitorAttributeWorkspaceController {
     type: MonitorAttributeDTO,
     description: 'Retrieves workspace attribute records for a monitor location',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getAttributes(
     @Param('locId') locationId: string,
   ): Promise<MonitorAttributeDTO[]> {
@@ -44,8 +44,7 @@ export class MonitorAttributeWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Creates a workspace monitor location attribute record',
@@ -59,8 +58,7 @@ export class MonitorAttributeWorkspaceController {
   }
 
   @Put(':attributeId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Updates a workspace monitor location attribute record',

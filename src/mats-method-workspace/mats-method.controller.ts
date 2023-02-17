@@ -1,20 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiTags,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
@@ -24,9 +11,7 @@ import { MatsMethodWorkspaceService } from './mats-method.service';
 @ApiSecurity('APIKey')
 @ApiTags('MATS Methods')
 export class MatsMethodWorkspaceController {
-  constructor(
-    private readonly service: MatsMethodWorkspaceService,
-  ) {}
+  constructor(private readonly service: MatsMethodWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -35,13 +20,13 @@ export class MatsMethodWorkspaceController {
     description:
       'Retrieves workspace copy MATS Method records for a monitor location',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
     return this.service.getMethods(locationId);
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
@@ -55,8 +40,7 @@ export class MatsMethodWorkspaceController {
   }
 
   @Put(':methodId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',
@@ -67,6 +51,11 @@ export class MatsMethodWorkspaceController {
     @Body() payload: MatsMethodBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
-    return this.service.updateMethod(methodId, locationId, payload, user.userId);
+    return this.service.updateMethod(
+      methodId,
+      locationId,
+      payload,
+      user.userId,
+    );
   }
 }

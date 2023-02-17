@@ -1,5 +1,7 @@
 import { Get, Controller, Query } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
@@ -29,6 +31,10 @@ export class MonitorConfigurationsWorkspaceController {
     required: false,
     explode: false,
   })
+  @RoleGuard(
+    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    LookupType.Facility,
+  )
   getConfigurations(
     @Query() dto: ConfigurationMultipleParamsDTO,
   ): Promise<MonitorPlanDTO[]> {

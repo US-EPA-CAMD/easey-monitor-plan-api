@@ -5,21 +5,14 @@ import {
   Delete,
   Param,
   Controller,
-  UseGuards,
   Query,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
@@ -41,6 +34,7 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves workspace Monitor Plan record.',
   })
+  @RoleGuard({ queryParam: 'planId' }, LookupType.MonitorPlan)
   exportMonitorPlan(@Query('planId') planId: string) {
     return this.service.exportMonitorPlan(planId);
   }
@@ -51,6 +45,7 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves information needed to refresh a monitor plan',
   })
+  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
   }
@@ -59,6 +54,7 @@ export class MonitorPlanWorkspaceController {
   @ApiOkResponse({
     description: 'Retrieves facility information and evaluation results',
   })
+  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
   getEvaluationReport(@Param('planId') planId: string) {
     return this.service.getEvaluationReport(planId);
   }
@@ -88,8 +84,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Delete(':planId/revert')
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',

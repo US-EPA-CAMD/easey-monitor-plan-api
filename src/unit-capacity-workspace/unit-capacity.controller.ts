@@ -1,20 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -27,9 +14,7 @@ import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 @ApiSecurity('APIKey')
 @ApiTags('Unit Capacities')
 export class UnitCapacityWorkspaceController {
-  constructor(
-    private readonly service: UnitCapacityWorkspaceService,
-  ) {}
+  constructor(private readonly service: UnitCapacityWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -38,6 +23,7 @@ export class UnitCapacityWorkspaceController {
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getUnitCapacities(
     @Param('locId') locationId: string,
     @Param('unitId') unitId: number,
@@ -46,8 +32,7 @@ export class UnitCapacityWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: UnitCapacityDTO,
@@ -63,8 +48,7 @@ export class UnitCapacityWorkspaceController {
   }
 
   @Put(':unitCapacityId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: UnitCapacityDTO,
     description: 'Updates a workspace unit capacity record by unit capacity ID',

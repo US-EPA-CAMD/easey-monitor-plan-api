@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Put,
-  UseGuards,
-  Body,
-  Post,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -22,14 +8,13 @@ import {
   LMEQualificationDTO,
 } from '../dtos/lme-qualification.dto';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('LME Qualifications')
 export class LMEQualificationWorkspaceController {
-  constructor(
-    private readonly service: LMEQualificationWorkspaceService,
-  ) {}
+  constructor(private readonly service: LMEQualificationWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -38,6 +23,7 @@ export class LMEQualificationWorkspaceController {
     description:
       'Retrieves workspace lme qualification records for a monitor location',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getLMEQualifications(
     @Param('locId') locationId: string,
     @Param('qualId') qualificationId: string,
@@ -46,8 +32,7 @@ export class LMEQualificationWorkspaceController {
   }
 
   @Put(':lmeQualId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: LMEQualificationDTO,
     description:
@@ -70,8 +55,7 @@ export class LMEQualificationWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: LMEQualificationDTO,
@@ -84,6 +68,11 @@ export class LMEQualificationWorkspaceController {
     @Body() payload: LMEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LMEQualificationDTO> {
-    return this.service.createLMEQualification(locId, qualId, payload, user.userId);
+    return this.service.createLMEQualification(
+      locId,
+      qualId,
+      payload,
+      user.userId,
+    );
   }
 }

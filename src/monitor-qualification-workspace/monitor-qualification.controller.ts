@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Post,
-  UseGuards,
-  Body,
-  Put,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
@@ -22,6 +8,7 @@ import {
   MonitorQualificationBaseDTO,
   MonitorQualificationDTO,
 } from '../dtos/monitor-qualification.dto';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -36,6 +23,7 @@ export class MonitorQualificationWorkspaceController {
     description:
       'Retrieves workspace qualification records for a monitor location',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getQualifications(
     @Param('locId') locationId: string,
   ): Promise<MonitorQualificationDTO[]> {
@@ -43,8 +31,7 @@ export class MonitorQualificationWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:
@@ -59,8 +46,7 @@ export class MonitorQualificationWorkspaceController {
   }
 
   @Put(':qualId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:
@@ -72,6 +58,11 @@ export class MonitorQualificationWorkspaceController {
     @Body() payload: MonitorQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorQualificationDTO> {
-    return this.service.updateQualification(locId, qualId, payload, user.userId);
+    return this.service.updateQualification(
+      locId,
+      qualId,
+      payload,
+      user.userId,
+    );
   }
 }

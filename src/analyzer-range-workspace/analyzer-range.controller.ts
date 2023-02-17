@@ -1,23 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiSecurity,
-  ApiBearerAuth,
-  ApiOkResponse,
-} from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
 import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
 } from '../dtos/analyzer-range.dto';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 

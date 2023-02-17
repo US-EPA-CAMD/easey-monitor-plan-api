@@ -4,6 +4,8 @@ import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentWorkspaceService } from './component.service';
 import { ComponentWorkspaceController } from './component.controller';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./component.service');
 
@@ -19,9 +21,9 @@ describe('ComponentWorkspaceController', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [HttpModule, LoggerModule],
       controllers: [ComponentWorkspaceController],
-      providers: [ComponentWorkspaceService],
+      providers: [ComponentWorkspaceService, ConfigService],
     }).compile();
 
     controller = module.get(ComponentWorkspaceController);

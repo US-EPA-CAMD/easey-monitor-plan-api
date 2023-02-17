@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Post,
-  UseGuards,
-  Body,
-  Put,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -22,14 +8,13 @@ import {
   PCTQualificationDTO,
 } from '../dtos/pct-qualification.dto';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('PCT Qualifications')
 export class PCTQualificationWorkspaceController {
-  constructor(
-    private readonly service: PCTQualificationWorkspaceService,
-  ) {}
+  constructor(private readonly service: PCTQualificationWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -38,6 +23,7 @@ export class PCTQualificationWorkspaceController {
     description:
       'Retrieves workspace PCT Qualification records for a qualification ID and location ID',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getPCTQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
@@ -46,8 +32,7 @@ export class PCTQualificationWorkspaceController {
   }
 
   @Put(':pctQualId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: PCTQualificationDTO,
     description:
@@ -70,8 +55,7 @@ export class PCTQualificationWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: PCTQualificationDTO,
@@ -84,6 +68,11 @@ export class PCTQualificationWorkspaceController {
     @Body() payload: PCTQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<PCTQualificationDTO> {
-    return this.service.createPCTQualification(locId, qualId, payload, user.userId);
+    return this.service.createPCTQualification(
+      locId,
+      qualId,
+      payload,
+      user.userId,
+    );
   }
 }

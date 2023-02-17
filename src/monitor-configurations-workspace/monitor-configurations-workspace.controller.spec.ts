@@ -5,6 +5,8 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
 import { MonitorConfigurationsWorkspaceController } from './monitor-configurations-workspace.controller';
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./monitor-configurations-workspace.service');
 
@@ -18,9 +20,9 @@ describe('MonitorConfigurations', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [HttpModule, LoggerModule],
       controllers: [MonitorConfigurationsWorkspaceController],
-      providers: [MonitorConfigurationsWorkspaceService],
+      providers: [MonitorConfigurationsWorkspaceService, ConfigService],
     }).compile();
 
     controller = module.get(MonitorConfigurationsWorkspaceController);
