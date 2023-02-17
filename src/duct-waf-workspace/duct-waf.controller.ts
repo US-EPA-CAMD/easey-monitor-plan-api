@@ -1,20 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiTags,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
@@ -24,9 +11,7 @@ import { DuctWafWorkspaceService } from './duct-waf.service';
 @ApiSecurity('APIKey')
 @ApiTags('Rectangular Duct WAF')
 export class DuctWafWorkspaceController {
-  constructor(
-    private readonly service: DuctWafWorkspaceService,
-  ) {}
+  constructor(private readonly service: DuctWafWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -34,13 +19,13 @@ export class DuctWafWorkspaceController {
     type: DuctWafDTO,
     description: 'Retrieves workspace duct waf records for a monitor location',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getDuctWafs(@Param('locId') locationId: string): Promise<DuctWafDTO[]> {
     return this.service.getDuctWafs(locationId);
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Create a workspace duct waf record for a monitor location',
@@ -54,8 +39,7 @@ export class DuctWafWorkspaceController {
   }
 
   @Put(':ductWafId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Updates a workspace duct waf record for a monitor location',
@@ -66,6 +50,11 @@ export class DuctWafWorkspaceController {
     @Body() payload: DuctWafBaseDTO,
     @User() user: CurrentUser,
   ): Promise<DuctWafDTO> {
-    return this.service.updateDuctWaf(locationId, ductWafId, payload, user.userId);
+    return this.service.updateDuctWaf(
+      locationId,
+      ductWafId,
+      payload,
+      user.userId,
+    );
   }
 }

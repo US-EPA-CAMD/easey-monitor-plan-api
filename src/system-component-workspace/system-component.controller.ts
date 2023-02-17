@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Post,
-  Body,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -22,6 +8,7 @@ import {
   SystemComponentDTO,
 } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -35,6 +22,7 @@ export class SystemComponentWorkspaceController {
     type: SystemComponentDTO,
     description: 'Retrieves workspace component records for a monitor system',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getSystemComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
@@ -43,8 +31,7 @@ export class SystemComponentWorkspaceController {
   }
 
   @Put(':monSysCompId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
@@ -66,8 +53,7 @@ export class SystemComponentWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Creates a workspace system component for a monitor system',

@@ -1,20 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
@@ -24,9 +11,7 @@ import { UnitFuelWorkspaceService } from './unit-fuel.service';
 @ApiSecurity('APIKey')
 @ApiTags('Unit Fuels')
 export class UnitFuelWorkspaceController {
-  constructor(
-    private readonly service: UnitFuelWorkspaceService,
-  ) {}
+  constructor(private readonly service: UnitFuelWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -35,6 +20,7 @@ export class UnitFuelWorkspaceController {
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getUnitFuels(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
@@ -43,8 +29,7 @@ export class UnitFuelWorkspaceController {
   }
 
   @Put(':unitFuelId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: UnitFuelDTO,
     description: 'Updates a workspace unit control record by unit control ID',
@@ -66,8 +51,7 @@ export class UnitFuelWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: UnitFuelDTO,
