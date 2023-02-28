@@ -1,2 +1,2 @@
-export const MAXIMUM_FUTURE_DATE = '2100-01-01';
+export const MAXIMUM_FUTURE_DATE = null;
 export const MINIMUM_DATE = '1993-01-01';
