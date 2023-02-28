@@ -12,6 +12,14 @@ import {
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
+
+const KEY = 'Monitor Span';
+const MFP_MAX_VALUE = 500000;
+const MIN_HOUR = 0;
+const MAX_HOUR = 23;
 
 export class MonitorSpanBaseDTO {
   @ApiProperty({
@@ -115,6 +123,24 @@ export class MonitorSpanBaseDTO {
       return `${args.property} [SPAN-FATAL-A] The value : ${args.value} for ${args.property} must be 10 digits or less`;
     },
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-3-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
+  @IsInRange(null, MFP_MAX_VALUE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-3-B', {
+        key: KEY,
+      });
+    }
+  })
+  @ValidateIf(o =>
+    o.componentTypeCode === 'FLOW',
+  )
   mpfValue: number;
 
   @ApiProperty({
@@ -250,7 +276,22 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOBeginDate.example,
     name: propertyMetadata.monitorSpanDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-8-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-8-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -263,12 +304,22 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOBeginHour.example,
     name: propertyMetadata.monitorSpanDTOBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
-    },
+      return CheckCatalogService.formatResultMessage('SPAN-9-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
+  @IsInt()
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-9-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
   })
   beginHour: number;
 
