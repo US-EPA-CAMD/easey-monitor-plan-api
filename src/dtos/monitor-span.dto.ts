@@ -17,7 +17,7 @@ import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 
 const KEY = 'Monitor Span';
-const MFP_MAX_VALUE = 500000;
+const MPF_MIN_VALUE = 500000;
 const MIN_HOUR = 0;
 const MAX_HOUR = 23;
 
@@ -117,7 +117,6 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOMpfValue.example,
     name: propertyMetadata.monitorSpanDTOMpfValue.fieldLabels.value,
   })
-  @IsOptional()
   @IsAtMostDigits(10, {
     message: (args: ValidationArguments) => {
       return `${args.property} [SPAN-FATAL-A] The value : ${args.value} for ${args.property} must be 10 digits or less`;
@@ -131,7 +130,7 @@ export class MonitorSpanBaseDTO {
       });
     }
   })
-  @IsInRange(null, MFP_MAX_VALUE, {
+  @IsInRange(MPF_MIN_VALUE, 99999999999999, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-3-B', {
         key: KEY,
@@ -288,6 +287,7 @@ export class MonitorSpanBaseDTO {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-8-B', {
         fieldname: args.property,
+        date: args.value,
         key: KEY,
       });
     }
@@ -312,11 +312,11 @@ export class MonitorSpanBaseDTO {
       });
     }
   })
-  @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-9-B', {
         fieldname: args.property,
+        hour: args.value,
         key: KEY,
       });
     }
