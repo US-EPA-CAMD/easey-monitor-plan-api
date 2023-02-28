@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  Min,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -130,7 +131,7 @@ export class MonitorSpanBaseDTO {
       });
     }
   })
-  @IsInRange(MPF_MIN_VALUE, 99999999999999, {
+  @Min(MPF_MIN_VALUE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-3-B', {
         key: KEY,
