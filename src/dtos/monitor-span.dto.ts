@@ -14,13 +14,11 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import { MAXIMUM_FUTURE_DATE, MAX_HOUR, MINIMUM_DATE, MIN_HOUR } from '../utilities/constants';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
-const MIN_HOUR = 0;
-const MAX_HOUR = 23;
 
 export class MonitorSpanBaseDTO {
   @ApiProperty({
