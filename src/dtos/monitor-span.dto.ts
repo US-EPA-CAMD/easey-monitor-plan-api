@@ -327,7 +327,23 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOEndDate.example,
     name: propertyMetadata.monitorSpanDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-10-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-10-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    }
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -341,7 +357,23 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOEndHour.example,
     name: propertyMetadata.monitorSpanDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-11-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-11-B', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
+    }
+  })
   @IsInt()
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
