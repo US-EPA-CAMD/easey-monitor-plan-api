@@ -53,6 +53,5 @@ export class MonitorPlanChecksService {
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.info('Completed Monitor Plan Checks');
-    return;
   }
 }
