@@ -37,6 +37,7 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { ImportChecksModule } from '../import-checks/import-checks.module';
 import { PlantModule } from '../plant/plant.module';
 import { MonitorPlanReportingFreqWorkspaceModule } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.module';
+import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 
 @Module({
   imports: [
@@ -74,7 +75,11 @@ import { MonitorPlanReportingFreqWorkspaceModule } from '../monitor-plan-reporti
     HttpModule,
   ],
   controllers: [MonitorPlanWorkspaceController],
-  providers: [MonitorPlanWorkspaceService, MonitorPlanMap],
+  providers: [
+    MonitorPlanWorkspaceService,
+    MonitorPlanMap,
+    MonitorPlanChecksService,
+  ],
   exports: [TypeOrmModule, MonitorPlanWorkspaceService, MonitorPlanMap],
 })
 export class MonitorPlanWorkspaceModule {}

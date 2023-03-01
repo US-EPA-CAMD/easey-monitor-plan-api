@@ -2,14 +2,15 @@ import {
   IsNotEmpty,
   ValidateIf,
   ValidationArguments,
-  IsInt,
-  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
 
+const KEY = 'Supplemental MATS Monitoring Method';
 export class MatsMethodBaseDTO {
   @ApiProperty({
     description:
@@ -56,10 +57,21 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOBeginDate.example,
     name: propertyMetadata.matsMethodDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-1-A');
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
     },
   })
   beginDate: Date;
@@ -69,11 +81,14 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOBeginHour.example,
     name: propertyMetadata.matsMethodDTOBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInt()
-  @IsInRange(0, 23, {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be within the range of 0 and 23`;
+  @IsNotEmpty({
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-2-A');
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-2-B');
     },
   })
   beginHour: number;
@@ -83,10 +98,21 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOEndDate.example,
     name: propertyMetadata.matsMethodDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
+    },
+  })
+  @IsNotEmpty({
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-4-A');
     },
   })
   @ValidateIf(o => o.endHour !== null)
@@ -97,13 +123,12 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOEndHour.example,
     name: propertyMetadata.matsMethodDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInRange(0, 23, {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [MATSMETHOD-FATAL-A] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} must be within the range of 0 and 23`;
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-4-B');
     },
   })
-  @ValidateIf(o => o.endDate !== null)
+  @ValidateIf(o => o.endHour !== null)
   endHour: number;
 }
 
