@@ -9,8 +9,7 @@ export class MonitorPlanChecksService {
   constructor(
     private readonly logger: Logger,
     private readonly matsMethodChecksService: MatsMethodChecksService,
-
-  ) { }
+  ) {}
 
   private async extractErrors(
     promises: Promise<string[]>[],
@@ -36,7 +35,6 @@ export class MonitorPlanChecksService {
 
     if (payload.locations) {
       for (const monitorLocation of payload.locations) {
-
         monitorLocation.matsMethods?.forEach(matsMethod => {
           promises.push(
             new Promise(async (resolve, _reject) => {
@@ -49,7 +47,7 @@ export class MonitorPlanChecksService {
               resolve(results);
             }),
           );
-        })
+        });
       }
     }
 

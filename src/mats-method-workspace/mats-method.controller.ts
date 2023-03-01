@@ -40,7 +40,7 @@ export class MatsMethodWorkspaceController {
     @Body() payload: MatsMethodBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
-    await this.checkService.runChecks(payload)
+    await this.checkService.runChecks(payload);
     return this.service.createMethod(locationId, payload, user.userId);
   }
 
