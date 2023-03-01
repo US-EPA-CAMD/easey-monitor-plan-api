@@ -6,7 +6,7 @@ import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 
-const unitId = '1';
+const unitId = 1;
 const locId = '1';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 

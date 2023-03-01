@@ -3,12 +3,14 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MatsMethodChecksService } from '../mats-method-workspace/mats-method-checks.service';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { UnitControlChecksService } from '../unit-control-workspace/unit-control-checks.service';
 
 @Injectable()
 export class MonitorPlanChecksService {
   constructor(
     private readonly logger: Logger,
     private readonly matsMethodChecksService: MatsMethodChecksService,
+    private readonly unitControlsChecksService: UnitControlChecksService
   ) {}
 
   private async extractErrors(
@@ -48,6 +50,23 @@ export class MonitorPlanChecksService {
             }),
           );
         });
+
+        monitorLocation.unitControls?.forEach(unitControl => {
+          promises.push(
+            new Promise(async (resolve, _reject) => {
+              const results = this.unitControlsChecksService.runChecks(
+                unitControl,
+                monitorLocation.unitRecordId,
+                monitorLocation.id,
+                true,
+                false,
+                monitorLocation
+              )
+
+              resolve(results)
+            })
+          )
+        })
       }
     }
 

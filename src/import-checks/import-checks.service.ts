@@ -11,7 +11,6 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { UnitControlChecksService } from '../unit-control-workspace/unit-control-checks.service';
 
 @Injectable()
 export class ImportChecksService {
@@ -26,7 +25,6 @@ export class ImportChecksService {
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly formulaService: MonitorFormulaWorkspaceService,
     private readonly spanService: MonitorSpanWorkspaceService,
-    private readonly unitControlChecksService: UnitControlChecksService,
   ) {}
 
   private checkIfThrows(errorList: string[]) {
@@ -82,20 +80,6 @@ export class ImportChecksService {
           databaseLocations[index].id,
         )),
       );
-
-      location.unitControls?.forEach(unitControl => {
-        errorList.push(
-          new Promise(async(resolve, _reject) => {
-            const results = this.unitControlChecksService.runChecks(
-              unitControl,
-              location.unitId,
-              databaseLocations[index].id,
-              true,
-              false,
-              location,
-            )
-          }))
-      })
 
       // Qualification Checks
       errorList.push(

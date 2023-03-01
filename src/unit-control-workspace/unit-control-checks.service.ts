@@ -31,7 +31,7 @@ export class UnitControlChecksService {
 
   async runChecks(
     unitControl: UnitControlBaseDTO,
-    unitId: string,
+    unitId: number,
     locId: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
@@ -67,7 +67,7 @@ export class UnitControlChecksService {
   }
 
   private async duplicateTestCheck(
-    unitId: string,
+    unitId: number,
     unitControl: UnitControlBaseDTO,
     _isImport: boolean = false,
   ): Promise<string> {
@@ -76,7 +76,7 @@ export class UnitControlChecksService {
     let RECORDTYPE: string = 'parameterCode,controlCode,';
 
     let record: UnitControl = await this.repository.findOne({
-      unitId: parseInt(unitId),
+      unitId: unitId,
       parameterCode: unitControl.parameterCode,
       controlCode: unitControl.controlCode,
       installDate: unitControl.installDate,
@@ -91,7 +91,7 @@ export class UnitControlChecksService {
       });
     } else {
       record = await this.repository.findOne({
-        unitId: parseInt(unitId),
+        unitId: unitId,
         parameterCode: unitControl.parameterCode,
         controlCode: unitControl.controlCode,
         retireDate: unitControl.retireDate,
