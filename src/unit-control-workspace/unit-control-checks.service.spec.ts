@@ -40,7 +40,7 @@ describe('Unit Control Check Service Test', () => {
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
-  describe('Linearity Injection Checks', () => {
+  describe('Unit Control Checks', () => {
     const payload = new UnitControlBaseDTO();
     it('Should pass all checks', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
