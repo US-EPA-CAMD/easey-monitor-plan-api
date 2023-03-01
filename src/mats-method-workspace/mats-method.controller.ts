@@ -5,13 +5,17 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
+import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('MATS Methods')
 export class MatsMethodWorkspaceController {
-  constructor(private readonly service: MatsMethodWorkspaceService) {}
+  constructor(
+    private readonly service: MatsMethodWorkspaceService,
+    private readonly checkService: MatsMethodChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -31,11 +35,12 @@ export class MatsMethodWorkspaceController {
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
   })
-  createMethod(
+  async createMethod(
     @Param('locId') locationId: string,
     @Body() payload: MatsMethodBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
+    await this.checkService.runChecks(payload);
     return this.service.createMethod(locationId, payload, user.userId);
   }
 
@@ -45,12 +50,13 @@ export class MatsMethodWorkspaceController {
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',
   })
-  updateMethod(
+  async updateMethod(
     @Param('locId') locationId: string,
     @Param('methodId') methodId: string,
     @Body() payload: MatsMethodBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
+    await this.checkService.runChecks(payload, false, true);
     return this.service.updateMethod(
       methodId,
       locationId,
