@@ -10,6 +10,7 @@ import { UnitStackConfigurationWorkspaceModule } from '../unit-stack-configurati
 import { MonitorFormulaWorkspaceModule } from '../monitor-formula-workspace/monitor-formula.module';
 import { MonitorSpanWorkspaceModule } from '../monitor-span-workspace/monitor-span.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
+import { UnitControlWorkspaceModule } from '../unit-control-workspace/unit-control.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monito
     PlantModule,
     UnitModule,
     UnitStackConfigurationWorkspaceModule,
+    UnitControlWorkspaceModule,
   ],
   providers: [ImportChecksService, IsInDbValuesConstraint],
   exports: [ImportChecksService],
