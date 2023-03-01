@@ -6,6 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { MatsMethodChecksService } from './mats-method-checks.service';
 
 const locationId = 'string';
 const methodId = 'string';
@@ -33,6 +34,10 @@ const mockMatsMethodWorkspaceService = () => ({
   updateMethod: jest.fn(() => ({})),
 });
 
+const mockCheckService = () => ({
+  runChecks: jest.fn(),
+});
+
 describe('MatsMethodWorkspaceController', () => {
   let controller: MatsMethodWorkspaceController;
   let service: MatsMethodWorkspaceService;
@@ -43,6 +48,10 @@ describe('MatsMethodWorkspaceController', () => {
       controllers: [MatsMethodWorkspaceController],
       providers: [
         ConfigService,
+        {
+          provide: MatsMethodChecksService,
+          useFactory: mockCheckService,
+        },
         {
           provide: MatsMethodWorkspaceService,
           useFactory: mockMatsMethodWorkspaceService,
@@ -66,18 +75,22 @@ describe('MatsMethodWorkspaceController', () => {
   });
 
   describe('createMethod', () => {
-    it('should call the MatsMethodWorkspaceService.createMethod', () => {
+    it('should call the MatsMethodWorkspaceService.createMethod', async () => {
       expect(
-        controller.createMethod(locationId, matsMethodPayload, currentUser),
+        await controller.createMethod(
+          locationId,
+          matsMethodPayload,
+          currentUser,
+        ),
       ).toEqual({});
       expect(service.createMethod).toHaveBeenCalled();
     });
   });
 
-  describe('createMethods', () => {
-    it('should call the MatsMethodWorkspaceService.updateMethod', () => {
+  describe('updateMethod', () => {
+    it('should call the MatsMethodWorkspaceService.updateMethod', async () => {
       expect(
-        controller.updateMethod(
+        await controller.updateMethod(
           locationId,
           methodId,
           matsMethodPayload,

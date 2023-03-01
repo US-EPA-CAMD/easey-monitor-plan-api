@@ -18,6 +18,7 @@ import { ImportChecksService } from '../import-checks/import-checks.service';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,6 +28,7 @@ export class MonitorPlanWorkspaceController {
     private readonly service: MonitorPlanWorkspaceService,
     private readonly logger: Logger,
     private readonly importChecksService: ImportChecksService,
+    private readonly mpChecksService: MonitorPlanChecksService,
   ) {}
 
   @Get('export')
@@ -70,6 +72,7 @@ export class MonitorPlanWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<any> {
     await this.importChecksService.runImportChecks(plan);
+    await this.mpChecksService.runChecks(plan);
     const mpPlan = await this.service.importMpPlan(plan, user.userId);
 
     // TODO: Temporary returned message

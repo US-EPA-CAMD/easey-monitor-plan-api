@@ -14,7 +14,12 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { MAXIMUM_FUTURE_DATE, MAX_HOUR, MINIMUM_DATE, MIN_HOUR } from '../utilities/constants';
+import {
+  MAXIMUM_FUTURE_DATE,
+  MAX_HOUR,
+  MINIMUM_DATE,
+  MIN_HOUR,
+} from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Monitor Span';
@@ -127,18 +132,16 @@ export class MonitorSpanBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @Min(MPF_MIN_VALUE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-3-B', {
         key: KEY,
       });
-    }
+    },
   })
-  @ValidateIf(o =>
-    o.componentTypeCode === 'FLOW',
-  )
+  @ValidateIf(o => o.componentTypeCode === 'FLOW')
   mpfValue: number;
 
   @ApiProperty({
@@ -280,7 +283,7 @@ export class MonitorSpanBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
@@ -289,7 +292,7 @@ export class MonitorSpanBaseDTO {
         date: args.value,
         key: KEY,
       });
-    }
+    },
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
@@ -309,7 +312,7 @@ export class MonitorSpanBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
@@ -318,7 +321,7 @@ export class MonitorSpanBaseDTO {
         hour: args.value,
         key: KEY,
       });
-    }
+    },
   })
   beginHour: number;
 
