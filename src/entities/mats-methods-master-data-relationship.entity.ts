@@ -1,12 +1,8 @@
-import {
-  BaseEntity,
-  Entity,
-  Column,
-} from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmpsmd.vw_matsmethods_master_data_relationships' })
 export class MatsMethodsMasterDataRelationships extends BaseEntity {
-  @Column({
+  @PrimaryColumn({
     type: 'varchar',
     name: 'parameter_code',
   })

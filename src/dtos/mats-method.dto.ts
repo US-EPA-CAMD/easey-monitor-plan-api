@@ -27,19 +27,11 @@ export class MatsMethodBaseDTO {
       return CheckCatalogService.formatResultMessage('MATSMTH-6-A');
     },
   })
-  @IsValidCode(
-    MatsMethodsMasterDataRelationships,
-    {
-      message: () => {
-        return CheckCatalogService.formatResultMessage('MATSMTH-6-B');
-      },
+  @IsValidCode(MatsMethodsMasterDataRelationships, {
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-6-B');
     },
-    (
-      args: ValidationArguments,
-    ): FindOneOptions<MatsMethodsMasterDataRelationships> => {
-      return { where: { parameterCode: args.value } };
-    },
-  )
+  })
   supplementalMATSParameterCode: string;
 
   @ApiProperty({
