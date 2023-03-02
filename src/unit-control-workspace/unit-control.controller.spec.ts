@@ -9,6 +9,7 @@ import { UnitControlWorkspaceController } from './unit-control.controller';
 import { UnitControlWorkspaceService } from './unit-control.service';
 import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { UnitControlChecksService } from './unit-control-checks.service';
 
 jest.mock('./unit-control.service');
 
@@ -38,7 +39,17 @@ describe('UnitControlWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule, LoggerModule],
       controllers: [UnitControlWorkspaceController],
-      providers: [UnitControlWorkspaceService, ConfigService, AuthGuard],
+      providers: [
+        UnitControlWorkspaceService, 
+        ConfigService, 
+        AuthGuard,
+        {
+          provide: UnitControlChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn(),
+          }),
+        },
+      ],
     }).compile();
 
     controller = module.get(UnitControlWorkspaceController);
