@@ -4,6 +4,8 @@ import { MonitorPlanCommentDTO } from './monitor-plan-comment.dto';
 import { UnitStackConfigurationDTO } from './unit-stack-configuration.dto';
 import { MonitorLocationDTO } from './monitor-location.dto';
 import { MonitorPlanReportingFreqDTO } from './monitor-plan-reporting-freq.dto';
+import { ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class MonitorPlanDTO {
   @ApiProperty({
@@ -63,7 +65,11 @@ export class MonitorPlanDTO {
   comments: MonitorPlanCommentDTO[];
   unitStackConfigurations: UnitStackConfigurationDTO[];
   reportingFrequencies: MonitorPlanReportingFreqDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorLocationDTO)
   locations: MonitorLocationDTO[];
+
   pendingStatusCode: string;
   evalStatusCode: string;
   userId: string;
