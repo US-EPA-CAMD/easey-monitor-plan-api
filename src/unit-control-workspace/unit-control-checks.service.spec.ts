@@ -5,6 +5,7 @@ import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { UnitRepository } from '../unit/unit.repository';
 
 const unitId = 1;
 const locId = '1';
@@ -27,6 +28,12 @@ describe('Unit Control Check Service Test', () => {
         },
         {
           provide: MonitorLocationWorkspaceRepository,
+          useFactory: () => ({
+            findOne: jest.fn(),
+          }),
+        },
+        {
+          provide: UnitRepository,
           useFactory: () => ({
             findOne: jest.fn(),
           }),
