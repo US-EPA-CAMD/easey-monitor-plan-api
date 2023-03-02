@@ -36,6 +36,11 @@ export class MatsMethodChecksService {
       errorList.push(error);
     }
 
+    error = this.matsMethod5Check(matsMethod);
+    if (error) {
+      errorList.push(error);
+    }
+
     this.throwIfErrors(errorList);
     this.logger.info('Completed Monitor Plan Checks');
     return errorList;
@@ -57,21 +62,39 @@ export class MatsMethodChecksService {
 
       if (matsMethod.beginDate) {
         beginDate = moment(matsMethod.beginDate);
-        if (matsMethod.beginHour) {
-          beginDate.hours(matsMethod.beginHour);
-        }
       }
       if (matsMethod.endDate) {
         endDate = moment(matsMethod.endDate);
-        if (matsMethod.endHour) {
-          endDate.hours(matsMethod.endHour);
-        }
       }
 
       if (beginDate && endDate.isBefore(beginDate)) {
         error = this.getMessage('MATSMTH-3-A');
       } else if (MAXIMUM_FUTURE_DATE && endDate.isAfter(MAXIMUM_FUTURE_DATE)) {
         error = this.getMessage('MATSMTH-3-B');
+      }
+    }
+
+    return error;
+  }
+
+  private matsMethod5Check(
+    matsMethod: MatsMethodDTO | MatsMethodBaseDTO,
+  ): string {
+    let error = null;
+
+    if (
+      matsMethod.beginDate &&
+      matsMethod.beginHour &&
+      matsMethod.endDate &&
+      matsMethod.endHour
+    ) {
+      let beginDate = moment(matsMethod.beginDate);
+      beginDate.hours(matsMethod.beginHour);
+      let endDate = moment(matsMethod.endDate);
+      endDate.hours(matsMethod.endHour);
+
+      if (beginDate.isAfter(endDate)) {
+        error = this.getMessage('MATSMTH-5-A');
       }
     }
 
