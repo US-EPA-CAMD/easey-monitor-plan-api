@@ -65,4 +65,19 @@ describe('Mats Method Checks Service Test', () => {
       }
     });
   });
+
+  describe('MATSMTH-5 Checks', () => {
+    it('Should get [MATSMTH-5-A] error', async () => {
+      payload.beginDate = new Date('2023-02-28');
+      payload.beginHour = 5;
+      payload.endDate = new Date('2023-02-28');
+      payload.endHour = 1;
+
+      try {
+        await service.runChecks(payload, false, false);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
 });

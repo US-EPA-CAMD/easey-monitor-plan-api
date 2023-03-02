@@ -36,7 +36,7 @@ export class MatsMethodChecksService {
       errorList.push(error);
     }
 
-    error = this.matsMethod4Check(matsMethod);
+    error = this.matsMethod5Check(matsMethod);
     if (error) {
       errorList.push(error);
     }
@@ -77,7 +77,7 @@ export class MatsMethodChecksService {
     return error;
   }
 
-  private matsMethod4Check(
+  private matsMethod5Check(
     matsMethod: MatsMethodDTO | MatsMethodBaseDTO,
   ): string {
     let error = null;
