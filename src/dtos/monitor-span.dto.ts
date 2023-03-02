@@ -337,7 +337,7 @@ export class MonitorSpanBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
@@ -346,7 +346,7 @@ export class MonitorSpanBaseDTO {
         date: args.value,
         key: KEY,
       });
-    }
+    },
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
@@ -357,8 +357,8 @@ export class MonitorSpanBaseDTO {
           key: KEY,
           dateFormat: DATE_FORMAT,
         },
-      )
-    }
+      );
+    },
   })
   @ValidateIf(o => o.endDate !== null)
   endDate: Date;
@@ -374,7 +374,7 @@ export class MonitorSpanBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
@@ -383,7 +383,7 @@ export class MonitorSpanBaseDTO {
         hour: args.value,
         key: KEY,
       });
-    }
+    },
   })
   @ValidateIf(o => o.endDate !== null)
   endHour: number;
