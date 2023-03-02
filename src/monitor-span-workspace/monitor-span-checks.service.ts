@@ -4,7 +4,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
+import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 
 const KEY = 'Monitor Span';
 
@@ -23,7 +23,7 @@ export class MonitorSpanChecksService {
   }
 
   async runChecks(
-    monitorSpan: MonitorSpanBaseDTO,
+    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
   ): Promise<string[]> {
     let error: string = null;
