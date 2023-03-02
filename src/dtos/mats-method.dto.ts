@@ -1,10 +1,15 @@
 import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
+import { FindOneOptions } from 'typeorm';
+import { MatsMethodsMasterDataRelationships } from 'src/entities/mats-methods-master-data-relationship.entity';
 
 const KEY = 'Supplemental MATS Monitoring Method';
 export class MatsMethodBaseDTO {
@@ -17,12 +22,22 @@ export class MatsMethodBaseDTO {
       propertyMetadata.matsMethodDTOSupplementalMATSParameterCode.fieldLabels
         .value,
   })
-  @IsInDbValues(
-    'SELECT distinct parameter_code as "value"  FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
+  @IsNotEmpty({
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-6-A');
+    },
+  })
+  @IsValidCode(
+    MatsMethodsMasterDataRelationships,
     {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
+      message: () => {
+        return CheckCatalogService.formatResultMessage('MATSMTH-6-B');
       },
+    },
+    (
+      args: ValidationArguments,
+    ): FindOneOptions<MatsMethodsMasterDataRelationships> => {
+      return { where: { parameterCode: args.value } };
     },
   )
   supplementalMATSParameterCode: string;
@@ -38,12 +53,22 @@ export class MatsMethodBaseDTO {
       propertyMetadata.matsMethodDTOSupplementalMATSMonitoringMethodCode
         .fieldLabels.value,
   })
-  @IsInDbValues(
-    'SELECT distinct method_code as "value" FROM camdecmpsmd.vw_matsmethods_master_data_relationships',
+  @IsNotEmpty({
+    message: () => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-7-A');
+    },
+  })
+  @IsValidCode(
+    MatsMethodsMasterDataRelationships,
     {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [MATSMETHOD-FATAL-B] The value for ${args.value} in the Supplemental MATS Monitoring Method record ${args.property} is invalid`;
+      message: () => {
+        return CheckCatalogService.formatResultMessage('MATSMTH-7-B');
       },
+    },
+    (
+      args: ValidationArguments,
+    ): FindOneOptions<MatsMethodsMasterDataRelationships> => {
+      return { where: { methodCode: args.value } };
     },
   )
   supplementalMATSMonitoringMethodCode: string;
