@@ -7,6 +7,8 @@ import { ComponentWorkspaceRepository } from "../component-workspace/component.r
 import { MonitorSpanBaseDTO } from "../dtos/monitor-span.dto";
 import { MonitorSpanWorkspaceRepository } from "./monitor-span.repository";
 
+
+
 const KEY = 'Monitor Span';
 
 @Injectable()
@@ -14,8 +16,6 @@ export class MonitorSpanChecksService {
 
     constructor(
         private readonly logger: Logger,
-        @InjectRepository(MonitorSpanWorkspaceRepository)
-        private readonly repository: MonitorSpanWorkspaceRepository,
         @InjectRepository(ComponentWorkspaceRepository)
         private readonly componentRepository: ComponentWorkspaceRepository,
     ) {}
@@ -27,35 +27,61 @@ export class MonitorSpanChecksService {
       }
 
       async runChecks( 
-        payload: MonitorSpanBaseDTO,
+        monitorSpan: MonitorSpanBaseDTO,
         locationId: string,
-        ) {
-
+        ): Promise<string[]> {
+          let error: string = null;
             const errorList: string[] = [];
-            this.logger.info('Running Test Summary Checks');
+            this.logger.info('Running Monitor Span Checks');
+
+            
+
+            error = await this.flowFullScaleRangeCheck(locationId, monitorSpan);
+            if (error) {
+              errorList.push(error);
+            }
+
+            this.throwIfErrors(errorList);
+            this.logger.info('Completed Monitor Span Checks');
+            return errorList;
+        
       }
 
       private async flowFullScaleRangeCheck(
         locationId: string,
-        payload: MonitorSpanBaseDTO,
-      ) {
+        monitorSpan: MonitorSpanBaseDTO,
+      ): Promise<string> {
+        let error = null;
         let FIELDNAME: string = 'flowFullScaleRange';
         const component = await this.componentRepository.findOne({
             locationId: locationId,
-            componentId: payload.componentTypeCode,
+            componentId: monitorSpan.componentTypeCode,
           });
 
           if (component) {
             if (component.componentTypeCode === 'FLOW') {
-                if(payload.flowFullScaleRange === null) {
+                if(monitorSpan.flowFullScaleRange === null) {
                     return this.getMessage('SPAN-17-A', {
                         fieldname: FIELDNAME,
                         key: KEY,
                       });
                 }
+                if (monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue) {
+                  return this.getMessage('SPAN-17-B', {
+                    fieldname: FIELDNAME,
+                    key: KEY,
+                  });
+                }
+            }
+           
+            if ( monitorSpan.componentTypeCode != 'FLOW' && monitorSpan.flowFullScaleRange != null ) {
+              return this.getMessage('SPAN-17-C', {
+                fieldname: FIELDNAME,
+                key: KEY,
+              });
             }
           }
-
+          return error
       }
       getMessage(messageKey: string, messageArgs: object): string {
         return CheckCatalogService.formatResultMessage(messageKey, messageArgs);

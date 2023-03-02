@@ -15,6 +15,7 @@ import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
+  DATE_FORMAT,
   MAXIMUM_FUTURE_DATE,
   MAX_HOUR,
   MINIMUM_DATE,
@@ -296,7 +297,7 @@ export class MonitorSpanBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value : ${args.value} for ${args.property} must be a valid ISO date format  ${DATE_FORMAT}`;
     },
   })
   beginDate: Date;
@@ -349,8 +350,15 @@ export class MonitorSpanBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
-    },
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      )
+    }
   })
   @ValidateIf(o => o.endDate !== null)
   endDate: Date;
@@ -376,12 +384,6 @@ export class MonitorSpanBaseDTO {
         key: KEY,
       });
     }
-  })
-  @IsInt()
-  @IsInRange(0, 23, {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
-    },
   })
   @ValidateIf(o => o.endDate !== null)
   endHour: number;
