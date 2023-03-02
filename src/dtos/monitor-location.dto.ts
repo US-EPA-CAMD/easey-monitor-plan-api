@@ -15,6 +15,8 @@ import { MonitorLoadDTO } from './monitor-load.dto';
 import { ComponentDTO } from './component.dto';
 import { MonitorSystemDTO } from './monitor-system.dto';
 import { MonitorQualificationDTO } from './monitor-qualification.dto';
+import { ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class MonitorLocationDTO extends MonitorLocationBaseDTO {
   @ApiProperty({
@@ -64,7 +66,11 @@ export class MonitorLocationDTO extends MonitorLocationBaseDTO {
   unitControls: UnitControlDTO[];
   unitFuels: UnitFuelDTO[];
   methods: MonitorMethodDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MatsMethodDTO)
   matsMethods: MatsMethodDTO[];
+
   formulas: MonitorFormulaDTO[];
   defaults: MonitorDefaultDTO[];
   spans: MonitorSpanDTO[];
