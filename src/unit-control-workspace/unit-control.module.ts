@@ -8,7 +8,8 @@ import { UnitControlWorkspaceRepository } from './unit-control.repository';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { UnitControlChecksService } from './unit-control-checks.service';
-import { MonitorLocationWorkspaceModule } from 'src/monitor-location-workspace/monitor-location.module';
+import { MonitorLocationWorkspaceModule } from '../monitor-location-workspace/monitor-location.module';
+import { UnitModule } from '../unit/unit.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MonitorLocationWorkspaceModule } from 'src/monitor-location-workspace/m
     HttpModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
     forwardRef(() => MonitorLocationWorkspaceModule),
+    UnitModule
   ],
   controllers: [UnitControlWorkspaceController],
   providers: [UnitControlWorkspaceService, UnitControlMap, UnitControlChecksService],

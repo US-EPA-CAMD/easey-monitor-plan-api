@@ -56,11 +56,12 @@ export class MonitorPlanChecksService {
             new Promise(async (resolve, _reject) => {
               const results = this.unitControlsChecksService.runChecks(
                 unitControl,
-                monitorLocation.unitRecordId,
-                monitorLocation.id,
+                null,
+                null,
                 true,
                 false,
-                monitorLocation
+                monitorLocation,
+                monitorLocation.unitId,
               )
 
               resolve(results)

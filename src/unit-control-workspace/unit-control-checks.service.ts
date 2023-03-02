@@ -12,6 +12,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { UnitRepository } from '../unit/unit.repository';
 
 @Injectable()
 export class UnitControlChecksService {
@@ -21,6 +22,8 @@ export class UnitControlChecksService {
     private readonly repository: UnitControlWorkspaceRepository,
     @InjectRepository(MonitorLocationWorkspaceRepository)
     private readonly monitorLocationWorkspaceRepository: MonitorLocationWorkspaceRepository,
+    @InjectRepository(UnitRepository)
+    private readonly unitRepository: UnitRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -36,14 +39,20 @@ export class UnitControlChecksService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     location?: UpdateMonitorLocationDTO,
+    importUnitId?: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     let locationRecord;
+    let unitRecord;
     this.logger.info('Running Unit Control Checks');
 
     if (isImport) {
       locationRecord = location;
+      unitRecord = await this.unitRepository.findOne({
+        name: importUnitId,
+      })
+      unitId = unitRecord.id;
     } else {
       locationRecord = await this.monitorLocationWorkspaceRepository.findOne(
         locId,
