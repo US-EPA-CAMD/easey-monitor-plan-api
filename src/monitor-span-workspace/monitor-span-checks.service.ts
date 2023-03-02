@@ -35,6 +35,11 @@ export class MonitorSpanChecksService {
       errorList.push(error);
     }
 
+    error = await this.spanComponentTypeCodeValid(locationId, monitorSpan);
+    if (error) {
+      errorList.push(error);
+    }
+
     this.throwIfErrors(errorList);
     this.logger.info('Completed Monitor Span Checks');
     return errorList;
@@ -79,6 +84,38 @@ export class MonitorSpanChecksService {
     }
     return error;
   }
+
+  private async spanComponentTypeCodeValid(
+    locationId: string,
+    monitorSpan: MonitorSpanBaseDTO,
+  ): Promise<string> {
+
+    let error = null;
+    let FIELDNAME: string = 'flowFullScaleRange';
+
+    if ( monitorSpan.componentTypeCode === null ) {
+      return this.getMessage('SPAN-20-A', {
+        fieldname: FIELDNAME,
+        key: KEY,
+      });
+    } else { 
+      const component = await this.componentRepository.findOne({
+        locationId: locationId,
+        componentId: monitorSpan.componentTypeCode,
+      });
+      if (component) {
+        return this.getMessage('SPAN-20-B', {
+          fieldname: FIELDNAME,
+          // ADD VALUE
+          key: KEY,
+        });
+      }
+    }
+    return error;
+  }
+
+  
+  
   getMessage(messageKey: string, messageArgs: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
