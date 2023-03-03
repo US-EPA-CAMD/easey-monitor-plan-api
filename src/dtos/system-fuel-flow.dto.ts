@@ -9,12 +9,13 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
+import { IsInRange, IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { DATE_FORMAT, MINIMUM_DATE, MAXIMUM_FUTURE_DATE, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
+import { MINIMUM_DATE, MAXIMUM_FUTURE_DATE, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
+import {SystemFuelMasterDataRelationship} from "../entities/system-fuel-md-relationship.entity";
+import {FindOneOptions} from "typeorm";
+import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
 
 const KEY = 'Monitoring System Fuel Flow';
 
@@ -78,17 +79,22 @@ export class SystemFuelFlowBaseDTO {
       });
     }
   })
-  @IsInDbValues(
-    'SELECT distinct max_rate_source_code as "value" FROM camdecmpsmd.vw_systemfuel_master_data_relationships',
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('FUELFLW-8-B', {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        })
+  @IsValidCode(
+      SystemFuelMasterDataRelationship,
+      {
+        message: (args: ValidationArguments) => {
+          return CheckCatalogService.formatResultMessage('FUELFLW-8-B', {
+            value: args.value,
+            fieldname: args.property,
+            key: KEY,
+          });
+        },
       },
-    },
+      (
+          args: ValidationArguments,
+      ): FindOneOptions<SystemFuelMasterDataRelationship> => {
+        return { where: { maxRateSourceCode: args.value } };
+      },
   )
   maximumFuelFlowRateSourceCode: string;
 
