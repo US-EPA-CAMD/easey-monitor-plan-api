@@ -2,9 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import {
-  IsInt,
   IsNotEmpty,
-  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -118,14 +116,16 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndHour.example,
     name: propertyMetadata.systemComponentDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @ValidateIf(o => o.endDate !== null)
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the System Component record ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('COMPON-6-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
+  @ValidateIf(o => o.endHour !== null)
   endHour: number;
 }
 
