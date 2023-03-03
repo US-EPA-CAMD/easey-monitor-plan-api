@@ -48,7 +48,7 @@ export class MonitorSpanChecksService {
     let FIELDNAME: string = 'flowFullScaleRange';
     const component = await this.componentRepository.findOne({
       locationId: locationId,
-      componentId: monitorSpan.componentTypeCode,
+      componentTypeCode: monitorSpan.componentTypeCode,
     });
 
     if (component) {

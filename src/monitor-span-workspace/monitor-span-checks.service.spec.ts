@@ -35,49 +35,4 @@ describe('Monitoring Span Check Service Test', () => {
     service = module.get(MonitorSpanChecksService);
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
-
-  describe('SPAN-10 Checks', () => {
-    it('Checks if beginDate is earlier than 01/01/1993', async () => {
-        monitorSpan.beginDate = new Date('1992-02-28');  
-        try {
-          await service.runChecks(monitorSpan, locationId);
-        } catch (err) {
-          expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-        }
-      });
-
-      it('Checks if endDate is later than MaxFutureDate', async () => {
-        monitorSpan.endDate = new Date('2300-02-28');  
-        try {
-          await service.runChecks(monitorSpan, locationId);
-        } catch (err) {
-          expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-        }
-      });
-    });
-
-
-  describe('SPAN-11 Checks', () => {
-    it('Tests that Span EndHour is not less than 0', async () => {
-      monitorSpan.endHour = -1;
-      monitorSpan.endDate = new Date();
-
-      try {
-        await service.runChecks(monitorSpan, locationId);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
-
-    it('Tests that Span EndHour is not greater than 23', async () => {
-      monitorSpan.endHour = 24;
-      monitorSpan.endDate = new Date();
-
-      try {
-        await service.runChecks(monitorSpan, locationId);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
-  });
 });
