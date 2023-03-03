@@ -13,13 +13,13 @@ const locationId = 'locationId';
 const monitorSpan = new MonitorSpanBaseDTO();
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new MonitorSpan()),
+  findOne: jest.fn().mockResolvedValue([new MonitorSpan()]),
 });
 
 describe('Monitoring Span Check Service Test', () => {
   let service: MonitorSpanChecksService;
   let componentRepository: ComponentWorkspaceRepository;
+
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [LoggerModule, LoggingException],
@@ -33,51 +33,14 @@ describe('Monitoring Span Check Service Test', () => {
     }).compile();
 
     service = module.get(MonitorSpanChecksService);
+    componentRepository = module.get(ComponentWorkspaceRepository);
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
-  describe('SPAN-10 Checks', () => {
-    it('Checks if beginDate is earlier than 01/01/1993', async () => {
-        monitorSpan.beginDate = new Date('1992-02-28');  
-        try {
-          await service.runChecks(monitorSpan, locationId);
-        } catch (err) {
-          expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-        }
-      });
-
-      it('Checks if endDate is later than MaxFutureDate', async () => {
-        monitorSpan.endDate = new Date('2300-02-28');  
-        try {
-          await service.runChecks(monitorSpan, locationId);
-        } catch (err) {
-          expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-        }
-      });
-    });
-
-
-  describe('SPAN-11 Checks', () => {
-    it('Tests that Span EndHour is not less than 0', async () => {
-      monitorSpan.endHour = -1;
-      monitorSpan.endDate = new Date();
-
-      try {
-        await service.runChecks(monitorSpan, locationId);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
-
-    it('Tests that Span EndHour is not greater than 23', async () => {
-      monitorSpan.endHour = 24;
-      monitorSpan.endDate = new Date();
-
-      try {
-        await service.runChecks(monitorSpan, locationId);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
+  describe('Monitor Span Checks Service', () => {
+    it('Should Call Component Repository findOne', async () => {
+      await service.runChecks(monitorSpan, locationId);
+      expect(componentRepository.findOne).toHaveBeenCalled();
     });
   });
 });

@@ -4,7 +4,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
+import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 
 const KEY = 'Monitor Span';
 
@@ -23,14 +23,14 @@ export class MonitorSpanChecksService {
   }
 
   async runChecks(
-    monitorSpan: MonitorSpanBaseDTO,
+    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     this.logger.info('Running Monitor Span Checks');
 
-    error = await this.flowFullScaleRangeCheck(locationId, monitorSpan);
+    error = await this.flowFullScaleRangeCheck(monitorSpan, locationId);
     if (error) {
       errorList.push(error);
     }
@@ -41,14 +41,14 @@ export class MonitorSpanChecksService {
   }
 
   private async flowFullScaleRangeCheck(
-    locationId: string,
     monitorSpan: MonitorSpanBaseDTO,
+    locationId: string,
   ): Promise<string> {
     let error = null;
     let FIELDNAME: string = 'flowFullScaleRange';
     const component = await this.componentRepository.findOne({
       locationId: locationId,
-      componentId: monitorSpan.componentTypeCode,
+      componentTypeCode: monitorSpan.componentTypeCode,
     });
 
     if (component) {
