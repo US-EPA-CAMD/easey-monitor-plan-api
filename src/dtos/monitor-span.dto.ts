@@ -297,7 +297,14 @@ export class MonitorSpanBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value : ${args.value} for ${args.property} must be a valid ISO date format  ${DATE_FORMAT}`;
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
     },
   })
   beginDate: Date;
