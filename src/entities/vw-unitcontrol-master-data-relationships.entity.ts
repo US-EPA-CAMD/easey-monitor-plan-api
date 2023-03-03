@@ -1,13 +1,13 @@
 import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmpsmd.vw_unitcontrol_master_data_relationships' })
-export class unitControlCodes extends BaseEntity {
-  @Column({
+export class VwUnitcontrolMasterDataRelationships extends BaseEntity {
+  @PrimaryColumn({
     name: 'controlequipparamcode',
   })
   unitControlCode: string;
 
-  @PrimaryColumn({
+  @Column({
     name: 'control_code',
   })
   controlCode: string;

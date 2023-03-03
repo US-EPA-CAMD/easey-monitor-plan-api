@@ -7,12 +7,11 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
-import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { DATE_FORMAT, MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
-import { ParameterCode } from '../entities/parameter-code.entity';
-import { unitControlCodes } from '../entities/unit-control-codes.entity';
+import { VwUnitcontrolMasterDataRelationships } from '../entities/vw-unitcontrol-master-data-relationships.entity';
+import { ControlCode } from '../entities/control-code.entity';
 
 const KEY = 'Unit Control';
 
@@ -31,7 +30,7 @@ export class UnitControlBaseDTO {
       });
     }
   })
-  @IsValidCode(ParameterCode, {
+  @IsValidCode(VwUnitcontrolMasterDataRelationships, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-1-B', {
         fieldname: args.property,
@@ -55,7 +54,7 @@ export class UnitControlBaseDTO {
       });
     }
   })
-  @IsValidCode(unitControlCodes, {
+  @IsValidCode(ControlCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
         'The value for [controlCode] in the Unit Control record [fieldname] is invalid', 
