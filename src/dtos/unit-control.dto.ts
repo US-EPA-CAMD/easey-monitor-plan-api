@@ -10,7 +10,7 @@ import { IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { DATE_FORMAT, MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
-import { UnitControlCode } from '../entities/unit-control-code.entity';
+import { VwUnitcontrolMasterDataRelationships } from '../entities/vw-unitcontrol-master-data-relationships.entity';
 import { ControlCode } from '../entities/control-code.entity';
 
 const KEY = 'Unit Control';
@@ -30,7 +30,7 @@ export class UnitControlBaseDTO {
       });
     }
   })
-  @IsValidCode(UnitControlCode, {
+  @IsValidCode(VwUnitcontrolMasterDataRelationships, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-1-B', {
         fieldname: args.property,
