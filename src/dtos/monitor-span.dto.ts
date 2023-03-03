@@ -338,7 +338,6 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOEndDate.example,
     name: propertyMetadata.monitorSpanDTOEndDate.fieldLabels.value,
   })
-
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-10-A', {

@@ -8,13 +8,22 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { MINIMUM_DATE, MAXIMUM_FUTURE_DATE, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
-import {SystemFuelMasterDataRelationship} from "../entities/system-fuel-md-relationship.entity";
-import {FindOneOptions} from "typeorm";
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
+import {
+  MINIMUM_DATE,
+  MAXIMUM_FUTURE_DATE,
+  MAX_HOUR,
+  MIN_HOUR,
+} from '../utilities/constants';
+import { SystemFuelMasterDataRelationship } from '../entities/system-fuel-md-relationship.entity';
+import { FindOneOptions } from 'typeorm';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Monitoring System Fuel Flow';
 
@@ -26,15 +35,14 @@ export class SystemFuelFlowBaseDTO {
     name:
       propertyMetadata.systemFuelFlowDTOMaximumFuelFlowRate.fieldLabels.value,
   })
-  @IsNotEmpty(
-      {message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('FUELFLW-2-A', {
-            fieldname: args.property,
-            key: KEY,
-          });
-        }
-      }
-  )
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUELFLW-2-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(0.1, 99999999.9, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUELFLW-2-B', {
@@ -59,7 +67,7 @@ export class SystemFuelFlowBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_systemfuel_master_data_relationships',
@@ -87,24 +95,24 @@ export class SystemFuelFlowBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsValidCode(
-      SystemFuelMasterDataRelationship,
-      {
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('FUELFLW-8-B', {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          });
-        },
+    SystemFuelMasterDataRelationship,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('FUELFLW-8-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        });
       },
-      (
-          args: ValidationArguments,
-      ): FindOneOptions<SystemFuelMasterDataRelationship> => {
-        return { where: { maxRateSourceCode: args.value } };
-      },
+    },
+    (
+      args: ValidationArguments,
+    ): FindOneOptions<SystemFuelMasterDataRelationship> => {
+      return { where: { maxRateSourceCode: args.value } };
+    },
   )
   maximumFuelFlowRateSourceCode: string;
 
@@ -119,7 +127,7 @@ export class SystemFuelFlowBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
@@ -128,7 +136,7 @@ export class SystemFuelFlowBaseDTO {
         date: args.value,
         key: KEY,
       });
-    }
+    },
   })
   beginDate: Date;
 
@@ -143,7 +151,7 @@ export class SystemFuelFlowBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
@@ -152,7 +160,7 @@ export class SystemFuelFlowBaseDTO {
         hour: args.value,
         key: KEY,
       });
-    }
+    },
   })
   beginHour: number;
 
@@ -175,7 +183,7 @@ export class SystemFuelFlowBaseDTO {
         date: args.value,
         key: KEY,
       });
-    }
+    },
   })
   endDate: Date;
 
@@ -193,7 +201,7 @@ export class SystemFuelFlowBaseDTO {
         hour: args.value,
         key: KEY,
       });
-    }
+    },
   })
   endHour: number;
 }
