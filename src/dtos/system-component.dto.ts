@@ -11,6 +11,10 @@ import {
 import { ComponentBaseDTO } from './component.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { MAX_HOUR, MIN_HOUR } from '../utilities/constants';
+
+const KEY = 'System Component';
 
 export class SystemComponentBaseDTO extends ComponentBaseDTO {
   @ApiProperty({
@@ -59,14 +63,16 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndHour.example,
     name: propertyMetadata.systemComponentDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @ValidateIf(o => o.endDate !== null)
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the System Component record ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('COMPON-6-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
+  @ValidateIf(o => o.endHour !== null)
   endHour: number;
 }
 
