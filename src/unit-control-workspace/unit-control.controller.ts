@@ -6,13 +6,17 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
+import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceService } from './unit-control.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Controls')
 export class UnitControlWorkspaceController {
-  constructor(private readonly service: UnitControlWorkspaceService) {}
+  constructor(
+    private readonly service: UnitControlWorkspaceService,
+    private readonly checksService: UnitControlChecksService,  
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -42,6 +46,7 @@ export class UnitControlWorkspaceController {
     @Body() payload: UnitControlBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitControlDTO> {
+    await this.checksService.runChecks(payload, unitId, locId, false, true);
     return this.service.updateUnitControl(
       locId,
       unitId,
@@ -58,12 +63,13 @@ export class UnitControlWorkspaceController {
     type: UnitControlDTO,
     description: 'Creates a workspace unit control record for a unit',
   })
-  createUnitControl(
+  async createUnitControl(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Body() payload: UnitControlBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitControlDTO> {
+    await this.checksService.runChecks(payload, unitId, locId);
     return this.service.createUnitControl(locId, unitId, payload, user.userId);
   }
 }

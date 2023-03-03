@@ -7,6 +7,7 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from '../mats-method-workspace/mats-method-checks.service';
+import { UnitControlChecksService } from '../unit-control-workspace/unit-control-checks.service';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -29,6 +30,12 @@ describe('Monitor Plan Checks Service Test', () => {
         MonitorPlanChecksService,
         {
           provide: MatsMethodChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: UnitControlChecksService,
           useFactory: () => ({
             runChecks: jest.fn().mockResolvedValue([]),
           }),
