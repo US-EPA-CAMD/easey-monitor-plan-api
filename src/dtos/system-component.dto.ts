@@ -2,9 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import {
-  IsInt,
   IsNotEmpty,
-  IsOptional,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
