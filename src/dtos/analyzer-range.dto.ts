@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
@@ -8,8 +9,17 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import {
+  DATE_FORMAT,
+  MAXIMUM_FUTURE_DATE,
+  MAX_HOUR,
+  MINIMUM_DATE,
+  MIN_HOUR,
+} from '../utilities/constants';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
+const KEY = 'Analyzer Range';
 export class AnalyzerRangeBaseDTO {
   @ApiProperty({
     description: propertyMetadata.analyzerRangeDTOAnalyzerRangeCode.description,
@@ -20,7 +30,7 @@ export class AnalyzerRangeBaseDTO {
     'SELECT analyzer_range_cd as "value" FROM camdecmpsmd.analyzer_range_code',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [ANALYZERRANGE-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `The value : ${args.value} for ${args.property} is invalid`;
       },
     },
   )
@@ -36,7 +46,7 @@ export class AnalyzerRangeBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
     },
   })
   dualRangeIndicator: number;
@@ -46,10 +56,33 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOBeginDate.example,
     name: propertyMetadata.analyzerRangeDTOBeginDate.fieldLabels.value,
   })
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-18-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-18-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
     },
   })
   beginDate: Date;
@@ -59,11 +92,21 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOBeginHour.example,
     name: propertyMetadata.analyzerRangeDTOBeginHour.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('COMPON-19-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-19-B', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
   beginHour: number;
@@ -73,10 +116,25 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOEndDate.example,
     name: propertyMetadata.analyzerRangeDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-20-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
     },
   })
   @ValidateIf(o => o.endDate !== null)
@@ -87,15 +145,16 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOEndHour.example,
     name: propertyMetadata.analyzerRangeDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [ANALYZERRANGE-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('COMPON-21-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
-  @IsNotEmpty()
-  @ValidateIf(o => o.endDate !== null)
+  @ValidateIf(o => o.endHour !== null)
   endHour: number;
 }
 
