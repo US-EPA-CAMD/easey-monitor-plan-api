@@ -30,7 +30,7 @@ export class MonitorSpanChecksService {
     const errorList: string[] = [];
     this.logger.info('Running Monitor Span Checks');
 
-    error = await this.flowFullScaleRangeCheck(locationId, monitorSpan);
+    error = await this.flowFullScaleRangeCheck(monitorSpan, locationId);
     if (error) {
       errorList.push(error);
     }
@@ -41,8 +41,8 @@ export class MonitorSpanChecksService {
   }
 
   private async flowFullScaleRangeCheck(
-    locationId: string,
     monitorSpan: MonitorSpanBaseDTO,
+    locationId: string,
   ): Promise<string> {
     let error = null;
     let FIELDNAME: string = 'flowFullScaleRange';
