@@ -4,7 +4,6 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   ValidateIf,
   ValidationArguments,
@@ -27,18 +26,22 @@ export class SystemFuelFlowBaseDTO {
     name:
       propertyMetadata.systemFuelFlowDTOMaximumFuelFlowRate.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsNumber(
-    { maxDecimalPlaces: 1 },
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} is allowed only one decimal place`;
-      },
-    },
+  @IsNotEmpty(
+      {message: (args: ValidationArguments) => {
+          return CheckCatalogService.formatResultMessage('FUELFLW-2-A', {
+            fieldname: args.property,
+            key: KEY,
+          });
+        }
+      }
   )
-  @IsInRange(-99999999.9, 99999999.9, {
+  @IsInRange(0.1, 99999999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be within the range of -99999999.9 and 99999999.9`;
+      return CheckCatalogService.formatResultMessage('FUELFLW-2-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   maximumFuelFlowRate: number;
@@ -50,7 +53,14 @@ export class SystemFuelFlowBaseDTO {
     name:
       propertyMetadata.systemFuelFlowDTOSystemFuelFlowUOMCode.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUELFLW-10-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_systemfuel_master_data_relationships',
     {
@@ -103,11 +113,22 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOBeginDate.example,
     name: propertyMetadata.systemFuelFlowDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsIsoFormat({
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
-    },
+      return CheckCatalogService.formatResultMessage('FUELFLW-3-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUELFLW-3-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    }
   })
   beginDate: Date;
 
@@ -116,12 +137,22 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOBeginHour.example,
     name: propertyMetadata.systemFuelFlowDTOBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be within the range of 0 and 23`;
-    },
+      return CheckCatalogService.formatResultMessage('FUELFLW-4-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUELFLW-4-B', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
+    }
   })
   beginHour: number;
 
