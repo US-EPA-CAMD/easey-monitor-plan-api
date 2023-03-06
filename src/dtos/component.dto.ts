@@ -34,7 +34,7 @@ export class ComponentBaseDTO {
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-8-B', {
-        ID: args.value,
+        id: args.value,
       });
     },
   })
