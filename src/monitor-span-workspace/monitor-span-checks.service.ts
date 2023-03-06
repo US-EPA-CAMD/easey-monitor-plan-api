@@ -96,8 +96,11 @@ export class MonitorSpanChecksService {
       componentTypeCode: monitorSpan.componentTypeCode,
     });
     if (component) {
-      if (component.componentTypeCode === 'FLOW') {
-        if (monitorSpan.flowFullScaleRange === null) {
+      if (
+        component.componentTypeCode === 'HG' ||
+        component.componentTypeCode === 'HCL'
+      ) {
+        if (monitorSpan.scaleTransitionPoint !== null) {
           return this.getMessage('SPAN-61-A', {
             fieldname: FIELDNAME,
             key: KEY,
@@ -105,7 +108,7 @@ export class MonitorSpanChecksService {
         }
       }
     }
-    return error
+    return error;
   }
   getMessage(messageKey: string, messageArgs: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
