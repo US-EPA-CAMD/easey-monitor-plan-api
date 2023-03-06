@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
+import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 
 const KEY = 'Monitor Span';
 
@@ -12,8 +12,8 @@ const KEY = 'Monitor Span';
 export class MonitorSpanChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(ComponentWorkspaceRepository)
-    private readonly componentRepository: ComponentWorkspaceRepository,
+    @InjectRepository(MonitorSpanWorkspaceRepository)
+    private readonly repository: MonitorSpanWorkspaceRepository,
   ) {}
 
   public throwIfErrors(errorList: string[]) {
@@ -24,17 +24,18 @@ export class MonitorSpanChecksService {
 
   async runChecks(
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
+    locationId: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     this.logger.info('Running Monitor Span Checks');
 
-    error = await this.flowFullScaleRangeCheck(monitorSpan);
+    error = await this.flowFullScaleRangeCheck(monitorSpan, locationId);
     if (error) {
       errorList.push(error);
     }
 
-    error = await this.spanScaleTransitionPointCheck(monitorSpan);
+    error = await this.spanScaleTransitionPointCheck(monitorSpan, locationId);
     if (error) {
       errorList.push(error);
     }
@@ -46,16 +47,21 @@ export class MonitorSpanChecksService {
 
   private async flowFullScaleRangeCheck(
     monitorSpan: MonitorSpanBaseDTO,
+    locationId: string,
   ): Promise<string> {
     let error = null;
     let FIELDNAME: string = 'flowFullScaleRange';
-    let componentTypeCode = monitorSpan.componentTypeCode;
     let flowFullScaleRange = monitorSpan.flowFullScaleRange;
     let flowSpanValue = monitorSpan.flowSpanValue;
 
-    if (componentTypeCode) {
+    const record = await this.repository.findOne({
+      locationId: locationId,
+      componentTypeCode: monitorSpan.componentTypeCode,
+    });
+
+    if (record) {
       // If the ComponentTypeCode is equal to "FLOW"
-      if (componentTypeCode === 'FLOW') {
+      if (record.componentTypeCode === 'FLOW') {
         // If the FlowFullScaleRange is null, return A
         if (flowFullScaleRange === null) {
           return this.getMessage('SPAN-17-A', {
@@ -70,13 +76,14 @@ export class MonitorSpanChecksService {
             key: KEY,
           });
         }
-      }
-      // If the ComponentTypeCode is not equal to "FLOW", and the FlowFullScaleRange is not null, return C
-      if (componentTypeCode !== 'FLOW' && flowFullScaleRange !== null) {
-        return this.getMessage('SPAN-17-C', {
-          fieldname: FIELDNAME,
-          key: KEY,
-        });
+        // If the ComponentTypeCode is not equal to "FLOW", and the FlowFullScaleRange is not null, return C
+      } else {
+        if (record.componentTypeCode !== 'FLOW' && flowFullScaleRange !== null) {
+          return this.getMessage('SPAN-17-C', {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
+        }
       }
     }
     return error;
@@ -84,19 +91,22 @@ export class MonitorSpanChecksService {
 
   private async spanScaleTransitionPointCheck(
     monitorSpan: MonitorSpanBaseDTO,
+    locationId: string,
   ): Promise<string> {
     let error = null;
     let FIELDNAME: string = 'flowFullScaleRange';
-    let componentTypeCode = monitorSpan.componentTypeCode;
-    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
 
-    // Monitoring Span record with a valid ComponentTypeCode equal to "HG" or "HCL"
+    const record = await this.repository.findOne({
+      locationId: locationId,
+      componentTypeCode: monitorSpan.componentTypeCode,
+    });
+    const componentTypeCode = record.componentTypeCode;
+
     if (componentTypeCode === 'HG' || componentTypeCode === 'HCL') {
-      // If ScaleTransitionPoint is not null
-      if (scaleTransitionPoint !== null) {
+      if (monitorSpan.scaleTransitionPoint != null) {
         return this.getMessage('SPAN-61-A', {
           fieldname: FIELDNAME,
-          condition: KEY,
+          key: KEY,
         });
       }
     }

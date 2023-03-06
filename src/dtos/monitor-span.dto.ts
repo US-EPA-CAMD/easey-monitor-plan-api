@@ -22,8 +22,8 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { VwSpanMasterDataRelationships } from '../entities/vw_span_master_data_relationships.entity';
 import { FindOneOptions } from 'typeorm';
+import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;

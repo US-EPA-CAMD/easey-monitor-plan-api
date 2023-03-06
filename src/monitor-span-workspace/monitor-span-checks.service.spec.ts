@@ -2,9 +2,9 @@ import { Test } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorSpan } from '../entities/monitor-span.entity';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanChecksService } from './monitor-span-checks.service';
+import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -18,7 +18,7 @@ const mockRepository = () => ({
 
 describe('Monitoring Span Check Service Test', () => {
   let service: MonitorSpanChecksService;
-  let componentRepository: ComponentWorkspaceRepository;
+  let repository:MonitorSpanWorkspaceRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -26,21 +26,21 @@ describe('Monitoring Span Check Service Test', () => {
       providers: [
         MonitorSpanChecksService,
         {
-          provide: ComponentWorkspaceRepository,
+          provide:MonitorSpanWorkspaceRepository,
           useFactory: mockRepository,
         },
       ],
     }).compile();
 
     service = module.get(MonitorSpanChecksService);
-    componentRepository = module.get(ComponentWorkspaceRepository);
+    repository = module.get(MonitorSpanWorkspaceRepository);
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('Monitor Span Checks Service', () => {
     it('Should Call Component Repository findOne', async () => {
       await service.runChecks(monitorSpan, locationId);
-      expect(componentRepository.findOne).toHaveBeenCalled();
+      expect(repository.findOne).toHaveBeenCalled();
     });
   });
 });
