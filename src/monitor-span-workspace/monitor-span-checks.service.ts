@@ -35,6 +35,11 @@ export class MonitorSpanChecksService {
       errorList.push(error);
     }
 
+    error = await this.spanScaleTransitionPointCheck(monitorSpan, locationId);
+    if (error) {
+      errorList.push(error);
+    }
+
     this.throwIfErrors(errorList);
     this.logger.info('Completed Monitor Span Checks');
     return errorList;
@@ -46,6 +51,7 @@ export class MonitorSpanChecksService {
   ): Promise<string> {
     let error = null;
     let FIELDNAME: string = 'flowFullScaleRange';
+
     const component = await this.componentRepository.findOne({
       locationId: locationId,
       componentTypeCode: monitorSpan.componentTypeCode,
@@ -72,6 +78,31 @@ export class MonitorSpanChecksService {
         monitorSpan.flowFullScaleRange != null
       ) {
         return this.getMessage('SPAN-17-C', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+      }
+    }
+    return error;
+  }
+
+  private async spanScaleTransitionPointCheck(
+    monitorSpan: MonitorSpanBaseDTO,
+    locationId: string,
+  ): Promise<string> {
+    let error = null;
+    let FIELDNAME: string = 'flowFullScaleRange';
+
+    const component = await this.componentRepository.findOne({
+      locationId: locationId,
+      componentTypeCode: monitorSpan.componentTypeCode,
+    });
+
+    const compTypeCode = component.componentTypeCode
+
+    if (compTypeCode === 'HG' || compTypeCode === 'HCL') {
+      if (monitorSpan.scaleTransitionPoint != null) {
+        return this.getMessage('SPAN-61-A', {
           fieldname: FIELDNAME,
           key: KEY,
         });

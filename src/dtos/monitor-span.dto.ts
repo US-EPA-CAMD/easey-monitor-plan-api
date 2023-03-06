@@ -10,7 +10,7 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -22,6 +22,8 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { VwSpanMasterDataRelationships } from '../entities/vw_span_master_data_relationships.entity';
+import { FindOneOptions } from 'typeorm';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
@@ -32,13 +34,29 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOComponentTypeCode.example,
     name: propertyMetadata.monitorSpanDTOComponentTypeCode.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInDbValues(
-    'SELECT distinct component_type_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-20-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsValidCode(
+    VwSpanMasterDataRelationships,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is invalid`;
+        return CheckCatalogService.formatResultMessage('SPAN-20-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY
+        });
       },
+    },
+    (
+      args: ValidationArguments,
+    ): FindOneOptions<VwSpanMasterDataRelationships> => {
+      return { where: { componentTypeCode: args.value } };
     },
   )
   componentTypeCode: string;
@@ -52,9 +70,11 @@ export class MonitorSpanBaseDTO {
   @IsInDbValues(
     'SELECT distinct span_scale_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
-      message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is invalid`;
-      },
+      message: () => {
+        return CheckCatalogService.formatMessage(
+          'The value for [spanScaleCode] in the Monitor Span record [fieldname] is invalid', 
+        );
+      }
     },
   )
   spanScaleCode: string;
@@ -68,9 +88,11 @@ export class MonitorSpanBaseDTO {
   @IsInDbValues(
     'SELECT distinct span_method_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
-      message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is invalid`;
-      },
+      message: () => {
+        return CheckCatalogService.formatMessage(
+          'The value for [spanMethodCode] in the Monitor Span record [fieldname] is invalid', 
+        );
+      }
     },
   )
   spanMethodCode: string;
@@ -85,13 +107,13 @@ export class MonitorSpanBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `The value : ${args.value} for ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-99999.9, 99999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
     },
   })
   mecValue: number;
@@ -106,13 +128,13 @@ export class MonitorSpanBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `The value : ${args.value} for ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-99999.9, 99999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
     },
   })
   mpcValue: number;
@@ -124,7 +146,7 @@ export class MonitorSpanBaseDTO {
   })
   @IsAtMostDigits(10, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be 10 digits or less`;
+      return `The value : ${args.value} for ${args.property} must be 10 digits or less`;
     },
   })
   @IsNotEmpty({
@@ -155,13 +177,13 @@ export class MonitorSpanBaseDTO {
     { maxDecimalPlaces: 3 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `The value : ${args.value} for ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-9999999999.999, 9999999999.999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -9999999999.999 and 9999999999.999`;
+      return `The value : ${args.value} for ${args.property} must be within the range of -9999999999.999 and 9999999999.999`;
     },
   })
   spanValue: number;
@@ -176,13 +198,13 @@ export class MonitorSpanBaseDTO {
     { maxDecimalPlaces: 3 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `The value : ${args.value} for ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-9999999999.999, 9999999999.999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -9999999999.999 and 9999999999.999`;
+      return `The value : ${args.value} for ${args.property} must be within the range of -9999999999.999 and 9999999999.999`;
     },
   })
   fullScaleRange: number;
@@ -194,36 +216,34 @@ export class MonitorSpanBaseDTO {
     name:
       propertyMetadata.monitorSpanDTOSpanUnitsOfMeasureCode.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInDbValues(
-    'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-21-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(VwSpanMasterDataRelationships, {
+    message: () => {
+      return CheckCatalogService.formatMessage(
+        'The value for [spanUnitsOfMeasureCode] in the Monitor Span record [fieldname] is invalid', 
+      );
+    }
+  })
   spanUnitsOfMeasureCode: string;
-
-  // TODO: add api property definition for monitor-span scaleTransitionPoint
-  // @ApiProperty({
-  //   description:
-  //     propertyMetadata.monitorSpanDTOScaleTransitionPoint.description,
-  //   example: propertyMetadata.monitorSpanDTOScaleTransitionPoint.example,
-  //   name: propertyMetadata.monitorSpanDTOScaleTransitionPoint.fieldLabels.value,
-  // })
   @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `The value : ${args.value} for ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-99999.9, 99999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
     },
   })
   scaleTransitionPoint: number;
@@ -237,7 +257,7 @@ export class MonitorSpanBaseDTO {
   @IsInt()
   @IsAtMostDigits(5, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be 5 digits or less`;
+      return `The value : ${args.value} for ${args.property} must be 5 digits or less`;
     },
   })
   @ValidateIf(o => o.defaultHighRange !== null)
@@ -252,7 +272,7 @@ export class MonitorSpanBaseDTO {
   @IsInt()
   @IsAtMostDigits(10, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be 10 digits or less`;
+      return `The value : ${args.value} for ${args.property} must be 10 digits or less`;
     },
   })
   @ValidateIf(o => o.flowSpanValue !== null)
@@ -267,7 +287,7 @@ export class MonitorSpanBaseDTO {
   @IsInt()
   @IsAtMostDigits(10, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be 10 digits or less`;
+      return `The value : ${args.value} for ${args.property} must be 10 digits or less`;
     },
   })
   @ValidateIf(o => o.flowFullScaleRange !== null)
