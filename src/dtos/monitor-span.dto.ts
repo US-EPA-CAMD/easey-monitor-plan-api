@@ -10,7 +10,7 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -22,6 +22,7 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
@@ -32,15 +33,23 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOComponentTypeCode.example,
     name: propertyMetadata.monitorSpanDTOComponentTypeCode.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInDbValues(
-    'SELECT distinct component_type_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-20-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(VwSpanMasterDataRelationships, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-20-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   componentTypeCode: string;
 
   @ApiProperty({
@@ -194,7 +203,14 @@ export class MonitorSpanBaseDTO {
     name:
       propertyMetadata.monitorSpanDTOSpanUnitsOfMeasureCode.fieldLabels.value,
   })
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-21-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
