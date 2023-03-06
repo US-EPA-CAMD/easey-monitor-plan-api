@@ -24,18 +24,17 @@ export class MonitorSpanChecksService {
 
   async runChecks(
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
-    locationId: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     this.logger.info('Running Monitor Span Checks');
 
-    error = await this.flowFullScaleRangeCheck(monitorSpan, locationId);
+    error = await this.flowFullScaleRangeCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
 
-    error = await this.spanScaleTransitionPointCheck(monitorSpan, locationId);
+    error = await this.spanScaleTransitionPointCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
@@ -47,36 +46,33 @@ export class MonitorSpanChecksService {
 
   private async flowFullScaleRangeCheck(
     monitorSpan: MonitorSpanBaseDTO,
-    locationId: string,
   ): Promise<string> {
     let error = null;
     let FIELDNAME: string = 'flowFullScaleRange';
+    let componentTypeCode = monitorSpan.componentTypeCode;
+    let flowFullScaleRange = monitorSpan.flowFullScaleRange;
+    let flowSpanValue = monitorSpan.flowSpanValue;
 
-    const component = await this.componentRepository.findOne({
-      locationId: locationId,
-      componentTypeCode: monitorSpan.componentTypeCode,
-    });
-
-    if (component) {
-      if (component.componentTypeCode === 'FLOW') {
-        if (monitorSpan.flowFullScaleRange === null) {
+    if (componentTypeCode) {
+      // If the ComponentTypeCode is equal to "FLOW"
+      if (componentTypeCode === 'FLOW') {
+        // If the FlowFullScaleRange is null, return A
+        if (flowFullScaleRange === null) {
           return this.getMessage('SPAN-17-A', {
             fieldname: FIELDNAME,
             key: KEY,
           });
         }
-        if (monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue) {
+        // If the FlowSpanValue is valid, and the FlowFullScaleRange is not greater than or equal to the FlowSpanValue, return B
+        if (flowFullScaleRange <= flowSpanValue) {
           return this.getMessage('SPAN-17-B', {
             fieldname: FIELDNAME,
             key: KEY,
           });
         }
       }
-
-      if (
-        monitorSpan.componentTypeCode != 'FLOW' &&
-        monitorSpan.flowFullScaleRange != null
-      ) {
+      // If the ComponentTypeCode is not equal to "FLOW", and the FlowFullScaleRange is not null, return C
+      if (componentTypeCode !== 'FLOW' && flowFullScaleRange !== null) {
         return this.getMessage('SPAN-17-C', {
           fieldname: FIELDNAME,
           key: KEY,
@@ -88,23 +84,19 @@ export class MonitorSpanChecksService {
 
   private async spanScaleTransitionPointCheck(
     monitorSpan: MonitorSpanBaseDTO,
-    locationId: string,
   ): Promise<string> {
     let error = null;
     let FIELDNAME: string = 'flowFullScaleRange';
+    let componentTypeCode = monitorSpan.componentTypeCode;
+    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
 
-    const component = await this.componentRepository.findOne({
-      locationId: locationId,
-      componentTypeCode: monitorSpan.componentTypeCode,
-    });
-
-    const compTypeCode = component.componentTypeCode
-
-    if (compTypeCode === 'HG' || compTypeCode === 'HCL') {
-      if (monitorSpan.scaleTransitionPoint != null) {
+    // Monitoring Span record with a valid ComponentTypeCode equal to "HG" or "HCL"
+    if (componentTypeCode === 'HG' || componentTypeCode === 'HCL') {
+      // If ScaleTransitionPoint is not null
+      if (scaleTransitionPoint !== null) {
         return this.getMessage('SPAN-61-A', {
           fieldname: FIELDNAME,
-          key: KEY,
+          condition: KEY,
         });
       }
     }
