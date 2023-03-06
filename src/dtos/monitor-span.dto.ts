@@ -205,7 +205,14 @@ export class MonitorSpanBaseDTO {
     name:
       propertyMetadata.monitorSpanDTOSpanUnitsOfMeasureCode.fieldLabels.value,
   })
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-21-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
