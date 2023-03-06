@@ -22,7 +22,7 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
+import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
@@ -41,7 +41,7 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
-  @IsValidCode(SystemComponentMasterDataRelationships, {
+  @IsValidCode(VwSpanMasterDataRelationships, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-20-B', {
         value: args.value,
