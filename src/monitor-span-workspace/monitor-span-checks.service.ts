@@ -90,7 +90,7 @@ export class MonitorSpanChecksService {
 
       if (
         monitorSpan.componentTypeCode !== 'FLOW' &&
-        monitorSpan.flowFullScaleRange !== null
+        monitorSpan.flowFullScaleRange != null
       ) {
         return this.getMessage('SPAN-17-C', {
           fieldname: FIELDNAME,
@@ -115,11 +115,11 @@ export class MonitorSpanChecksService {
     // For a Monitoring Span record with a valid ComponentTypeCode and a SpanScale equal to "H"
     if (record && spanScale === 'H') {
       // If ScaleTransitionPoint is not null
-      if (monitorSpan.scaleTransitionPoint !== null) {
+      if (monitorSpan.scaleTransitionPoint != null) {
         // If SpanValue is null and DefaultHighRangeValue is not null, return A
         if (
           monitorSpan.spanValue === null &&
-          monitorSpan.defaultHighRange !== null
+          monitorSpan.defaultHighRange != null
         ) {
           return this.getMessage('SPAN-58-A', {
             key: KEY,
@@ -145,10 +145,10 @@ export class MonitorSpanChecksService {
     // Monitoring Span record with a valid ComponentTypeCode and a SpanScale equal to "L"
     if (record && spanScale === 'L') {
       // If ScaleTransitionPoint is not null
-      if (scaleTransitionPoint !== null) {
+      if (scaleTransitionPoint != null) {
         // If FullScaleRangeValue is not null, and the ScaleTransitionPoint is not between 1/2 and 1 times the FullScaleRangeValue, return A
         if (
-          fullScaleRange !== null &&
+          fullScaleRange != null &&
           (scaleTransitionPoint > fullScaleRange ||
             scaleTransitionPoint < fullScaleRange * 0.5)
         ) {
