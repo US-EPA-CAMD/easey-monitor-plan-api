@@ -61,22 +61,59 @@ export class MonitorLocationDTO extends MonitorLocationBaseDTO {
   })
   active: boolean;
 
+  @ValidateNested({ each: true })
+  @Type(() => MonitorAttributeDTO)
   attributes: MonitorAttributeDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => UnitCapacityDTO)
   unitCapacities: UnitCapacityDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => UnitControlDTO)
   unitControls: UnitControlDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => UnitFuelDTO)
   unitFuels: UnitFuelDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorMethodDTO)
   methods: MonitorMethodDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MatsMethodDTO)
   matsMethods: MatsMethodDTO[];
 
+  @ValidateNested({ each: true })
+  @Type(() => MonitorFormulaDTO)
   formulas: MonitorFormulaDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorDefaultDTO)
   defaults: MonitorDefaultDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorSpanDTO)
   spans: MonitorSpanDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => DuctWafDTO)
   ductWafs: DuctWafDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorLoadDTO)
   loads: MonitorLoadDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => ComponentDTO)
   components: ComponentDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorSystemDTO)
   systems: MonitorSystemDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorQualificationDTO)
   qualifications: MonitorQualificationDTO[];
 }
