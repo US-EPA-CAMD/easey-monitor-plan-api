@@ -32,12 +32,23 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOComponentTypeCode.example,
     name: propertyMetadata.monitorSpanDTOComponentTypeCode.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-20-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct component_type_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} The value : ${args.value} for ${args.property} is invalid`;
+        return CheckCatalogService.formatResultMessage('SPAN-20-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        });
       },
     },
   )
