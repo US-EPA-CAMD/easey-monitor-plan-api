@@ -65,7 +65,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('COMPON-3-A', {
+      return CheckCatalogService.formatResultMessage('COMPON-4-A', {
         fieldname: args.property,
         key: KEY,
       });
@@ -73,7 +73,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('COMPON-3-B', {
+      return CheckCatalogService.formatResultMessage('COMPON-4-B', {
         fieldname: args.property,
         hour: args.value,
         key: KEY,
