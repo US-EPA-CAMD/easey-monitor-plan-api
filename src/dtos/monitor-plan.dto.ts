@@ -62,8 +62,17 @@ export class MonitorPlanDTO {
   })
   beginReportPeriodId: number;
   active: boolean;
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorPlanCommentDTO)
   comments: MonitorPlanCommentDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => UnitStackConfigurationDTO)
   unitStackConfigurations: UnitStackConfigurationDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => MonitorPlanReportingFreqDTO)
   reportingFrequencies: MonitorPlanReportingFreqDTO[];
 
   @ValidateNested({ each: true })
