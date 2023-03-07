@@ -26,4 +26,20 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       .andWhere('ms.beginHour = :beginHour', { beginHour })
       .getOne();
   }
+
+  async getSpanByLocIdCompTypeCdEDateEHour(
+    locationId: string,
+    componentTypeCode: string,
+    endDate: Date,
+    endHour: number,
+  ): Promise<MonitorSpan> {
+    return this.createQueryBuilder('ms')
+      .where('ms.locationId = :locationId', { locationId })
+      .andWhere('ms.componentTypeCode = :componentTypeCode', {
+        componentTypeCode,
+      })
+      .andWhere('ms.endDate = :endDate', { endDate })
+      .andWhere('ms.endHour = :endHour', { endHour })
+      .getOne();
+  }
 }

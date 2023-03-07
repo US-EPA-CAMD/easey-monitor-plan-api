@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { MonitorSpan } from '../entities/monitor-span.entity';
+import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanChecksService } from './monitor-span-checks.service';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
@@ -10,10 +10,11 @@ jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 const locationId = 'locationId';
-const monitorSpan = new MonitorSpanBaseDTO();
+const monitorSpanBaseDTO = new MonitorSpanBaseDTO();
+const monitorSpan = new MonitorSpan();
 
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue([new MonitorSpan()]),
+  findOne: jest.fn().mockResolvedValue([monitorSpan]),
 });
 
 describe('Monitoring Span Check Service Test', () => {
@@ -39,8 +40,139 @@ describe('Monitoring Span Check Service Test', () => {
 
   describe('Monitor Span Checks Service', () => {
     it('Should Call Component Repository findOne', async () => {
-      await service.runChecks(monitorSpan, locationId);
+      await service.runChecks(monitorSpanBaseDTO, locationId);
       expect(repository.findOne).toHaveBeenCalled();
+    });
+  });
+
+  describe('SPAN-55 Duplicate Span Records', () => {
+    it('Should get [SPAN-55-A] error', async () => {
+      monitorSpan.componentTypeCode = 'FLOW';
+      monitorSpan.beginDate = new Date(Date.now());
+      monitorSpan.beginHour = 21;
+      monitorSpan.endDate = new Date(Date.now());
+      monitorSpan.endHour = 21;
+
+      jest
+        .spyOn(repository, 'getSpanByLocIdCompTypeCdBDateBHour')
+        .mockResolvedValue(monitorSpan);
+      jest
+        .spyOn(repository, 'getSpanByLocIdCompTypeCdEDateEHour')
+        .mockResolvedValue(monitorSpan);
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
+  describe('SPAN-55 Duplicate Span Records', () => {
+    it('Should get [SPAN-55-A] error', async () => {
+      monitorSpan.componentTypeCode = 'FLOW';
+      monitorSpan.beginDate = new Date(Date.now());
+      monitorSpan.beginHour = 21;
+      monitorSpan.endDate = new Date(Date.now());
+      monitorSpan.endHour = 21;
+
+      jest
+        .spyOn(repository, 'getSpanByLocIdCompTypeCdBDateBHour')
+        .mockResolvedValue(monitorSpan);
+      jest
+        .spyOn(repository, 'getSpanByLocIdCompTypeCdEDateEHour')
+        .mockResolvedValue(monitorSpan);
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
+  describe('SPAN-56 MPC Value Valid', () => {
+    it('Should get [SPAN-56-A] error', async () => {
+      monitorSpan.componentTypeCode = 'NOX';
+      monitorSpan.spanScaleCode = 'H';
+      monitorSpan.mpcValue = null;
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [SPAN-56-B] error', async () => {
+      monitorSpan.componentTypeCode = 'FLOW';
+      monitorSpan.spanScaleCode = 'L';
+      monitorSpan.mpcValue = 55.0;
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [SPAN-56-B] error', async () => {
+      monitorSpan.componentTypeCode = 'FLOW';
+      monitorSpan.spanScaleCode = 'L';
+      monitorSpan.mpcValue = 0;
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
+  describe('SPAN-57 MEC Value Valid', () => {
+    it('Should get [SPAN-57-A] error', async () => {
+      monitorSpan.componentTypeCode = 'NOX';
+      monitorSpan.spanScaleCode = 'L';
+      monitorSpan.mecValue = null;
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [SPAN-57-B] error', async () => {
+      monitorSpan.componentTypeCode = 'NOX';
+      monitorSpan.spanScaleCode = 'H';
+      monitorSpan.mecValue = null;
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [SPAN-57-C] error', async () => {
+      monitorSpan.componentTypeCode = 'HG';
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [SPAN-57-D] error', async () => {
+      monitorSpan.componentTypeCode = 'FLOW';
+      monitorSpan.mecValue = 0;
+
+      try {
+        await service.runChecks(monitorSpanBaseDTO, locationId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
     });
   });
 });
