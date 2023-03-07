@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsOptional,
   MaxLength,
+  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -86,9 +87,10 @@ export class ComponentBaseDTO {
     (
       args: ValidationArguments,
     ): FindOneOptions<SystemComponentMasterDataRelationships> => {
-      return { where: { sampleAquisitionMethodCode: args.value } };
+      return { where: { sampleAcquisitionMethodCode: args.value } };
     },
   )
+  @ValidateIf(o => o.sampleAcquisitionMethodCode !== null)
   sampleAcquisitionMethodCode: string;
 
   @ApiProperty({

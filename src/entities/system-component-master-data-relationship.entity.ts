@@ -12,7 +12,7 @@ export class SystemComponentMasterDataRelationships extends BaseEntity {
     type: 'varchar',
     name: 'sample_aquisition_method_code',
   })
-  sampleAquisitionMethodCode: string;
+  sampleAcquisitionMethodCode: string;
 
   @Column({
     type: 'varchar',
