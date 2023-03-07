@@ -19,6 +19,7 @@ import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -68,7 +69,7 @@ export class MonitorPlanWorkspaceController {
     description: 'imports an entire monitor plan from JSON payload',
   })
   async importPlan(
-    @Body() plan: MonitorPlanDTO,
+    @Body() plan: UpdateMonitorPlanDTO,
     @User() user: CurrentUser,
   ): Promise<any> {
     await this.importChecksService.runImportChecks(plan);

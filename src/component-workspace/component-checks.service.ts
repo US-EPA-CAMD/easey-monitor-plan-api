@@ -3,11 +3,12 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { SystemComponentMasterDataRelationshipRepository } from '../system-component-master-data-relationship/system-component-master-data-relationship.repository';
-import { ComponentDTO } from '../dtos/component.dto';
+import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 
 @Injectable()
-export class ComponentChecksService {
+export class ComponentCheckService {
   constructor(
     private readonly logger: Logger,
     private readonly sysCompMDRelRepository: SystemComponentMasterDataRelationshipRepository,
@@ -25,7 +26,7 @@ export class ComponentChecksService {
   }
 
   async runChecks(
-    component: ComponentDTO,
+    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
     _isImport: boolean = false,
     _isUpdate: boolean = false,
   ) {
@@ -49,7 +50,9 @@ export class ComponentChecksService {
     return errorList;
   }
 
-  private component13Check(component: ComponentDTO): string {
+  private component13Check(
+    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+  ): string {
     let error = null;
 
     if (!component.sampleAcquisitionMethodCode) {
@@ -67,7 +70,9 @@ export class ComponentChecksService {
     return error;
   }
 
-  private async component14Check(component: ComponentDTO): Promise<string> {
+  private async component14Check(
+    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+  ): Promise<string> {
     let error = null;
     let errorCode = null;
 

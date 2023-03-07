@@ -37,6 +37,7 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -104,7 +105,7 @@ export class MonitorPlanWorkspaceService {
   ) {}
 
   async importMpPlan(
-    plan: MonitorPlanDTO,
+    plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
     const promises = [];

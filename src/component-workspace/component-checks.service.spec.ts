@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { ComponentChecksService } from './component-checks.service';
+import { ComponentCheckService } from './component-checks.service';
 import { ComponentDTO } from '../dtos/component.dto';
 import { SystemComponentMasterDataRelationshipRepository } from '../system-component-master-data-relationship/system-component-master-data-relationship.repository';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
@@ -15,7 +15,7 @@ const payload = new ComponentDTO();
 const usedIdentifierRecord = new UsedIdentifier();
 
 describe('Component Checks Service Test', () => {
-  let service: ComponentChecksService;
+  let service: ComponentCheckService;
   let usedIdRepository: UsedIdentifierRepository;
   let sysCompMDRelRepository: SystemComponentMasterDataRelationshipRepository;
 
@@ -23,7 +23,7 @@ describe('Component Checks Service Test', () => {
     const module = await Test.createTestingModule({
       imports: [LoggerModule, LoggingException],
       providers: [
-        ComponentChecksService,
+        ComponentCheckService,
         {
           provide: SystemComponentMasterDataRelationshipRepository,
           useFactory: () => ({
@@ -39,7 +39,7 @@ describe('Component Checks Service Test', () => {
       ],
     }).compile();
 
-    service = module.get(ComponentChecksService);
+    service = module.get(ComponentCheckService);
     usedIdRepository = module.get(UsedIdentifierRepository);
     sysCompMDRelRepository = module.get(
       SystemComponentMasterDataRelationshipRepository,
