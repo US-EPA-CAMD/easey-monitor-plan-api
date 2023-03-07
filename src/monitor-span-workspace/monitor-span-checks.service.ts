@@ -26,7 +26,7 @@ export class MonitorSpanChecksService {
     }
   }
 
-  async runChecks(
+  async runSpanChecks(
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
   ): Promise<string[]> {

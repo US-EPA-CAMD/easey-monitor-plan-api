@@ -2,16 +2,20 @@ import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
-import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { MonitorSpanChecksService } from './monitor-span-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Spans')
 export class MonitorSpanWorkspaceController {
-  constructor(private service: MonitorSpanWorkspaceService) {}
+  constructor(
+    private service: MonitorSpanWorkspaceService,
+    private checksService: MonitorSpanChecksService,
+  ) {}
 
   @Get()
   @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
@@ -36,6 +40,7 @@ export class MonitorSpanWorkspaceController {
     @Body() payload: MonitorSpanBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSpanDTO> {
+    await this.checksService.runSpanChecks(payload, locationId);
     return this.service.updateSpan(locationId, spanId, payload, user.userId);
   }
 
@@ -46,11 +51,12 @@ export class MonitorSpanWorkspaceController {
     type: MonitorSpanDTO,
     description: 'Creates a workspace span record for a monitor location',
   })
-  createSpan(
+  async createSpan(
     @Param('locId') locationId: string,
     @Body() payload: MonitorSpanBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSpanDTO> {
+    await this.checksService.runSpanChecks(payload, locationId);
     return this.service.createSpan(locationId, payload, user.userId);
   }
 }

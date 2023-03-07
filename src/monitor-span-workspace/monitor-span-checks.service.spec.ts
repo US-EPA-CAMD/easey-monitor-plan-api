@@ -42,7 +42,7 @@ describe('Monitoring Span Check Service Test', () => {
 
   describe('Monitor Span Checks Service', () => {
     it('Should Call Component Repository findOne', async () => {
-      await service.runChecks(monitorSpanBaseDTO, locationId);
+      await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       expect(repository.findOne).toHaveBeenCalled();
     });
   });
@@ -63,7 +63,7 @@ describe('Monitoring Span Check Service Test', () => {
         .mockResolvedValue(monitorSpan);
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -86,7 +86,7 @@ describe('Monitoring Span Check Service Test', () => {
         .mockResolvedValue(monitorSpan);
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -100,7 +100,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.mpcValue = null;
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -112,7 +112,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.mpcValue = 55.0;
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -124,7 +124,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.mpcValue = 0;
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -138,7 +138,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.mecValue = null;
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -150,7 +150,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.mecValue = null;
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -160,7 +160,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.componentTypeCode = 'HG';
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -171,7 +171,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.mecValue = 0;
 
       try {
-        await service.runChecks(monitorSpanBaseDTO, locationId);
+        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
