@@ -15,6 +15,8 @@ const monitorSpan = new MonitorSpan();
 
 const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue([monitorSpan]),
+  getSpanByLocIdCompTypeCdBDateBHour: jest.fn().mockResolvedValue(monitorSpan),
+  getSpanByLocIdCompTypeCdEDateEHour: jest.fn().mockResolvedValue(monitorSpan),
 });
 
 describe('Monitoring Span Check Service Test', () => {
