@@ -15,6 +15,7 @@ import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
 import { FindOneOptions } from 'typeorm';
+import { BasisCode } from '../entities/basis-code.entity';
 
 const KEY = 'Component';
 
@@ -98,23 +99,15 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOBasisCode.example,
     name: propertyMetadata.componentDTOBasisCode.fieldLabels.value,
   })
-  @IsValidCode(
-    SystemComponentMasterDataRelationships,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('COMPON-14-B', {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        });
-      },
+  @IsValidCode(BasisCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-14-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-    (
-      args: ValidationArguments,
-    ): FindOneOptions<SystemComponentMasterDataRelationships> => {
-      return { where: { basisCode: args.value } };
-    },
-  )
+  })
   basisCode: string;
 
   @ApiProperty({

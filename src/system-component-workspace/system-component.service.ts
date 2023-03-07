@@ -184,7 +184,7 @@ export class SystemComponentWorkspaceService {
     return this.map.one(createdSysComp);
   }
 
-  async importComponent(
+  async importSystemComponent(
     locationId: string,
     sysId: string,
     systemComponents: SystemComponentBaseDTO[],

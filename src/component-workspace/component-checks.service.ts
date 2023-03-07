@@ -7,6 +7,8 @@ import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 
+const KEY = 'Component';
+
 @Injectable()
 export class ComponentCheckService {
   constructor(
@@ -121,7 +123,12 @@ export class ComponentCheckService {
     }
 
     if (errorCode) {
-      error = this.getMessage(errorCode);
+      error = this.getMessage(errorCode, {
+        value: component.basisCode,
+        fieldname: 'basisCode',
+        key: KEY,
+        componentType: component.componentTypeCode,
+      });
     }
 
     return error;

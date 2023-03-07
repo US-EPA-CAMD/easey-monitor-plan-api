@@ -72,8 +72,8 @@ export class MonitorPlanWorkspaceController {
     @Body() plan: UpdateMonitorPlanDTO,
     @User() user: CurrentUser,
   ): Promise<any> {
-    await this.importChecksService.runImportChecks(plan);
     await this.mpChecksService.runChecks(plan);
+    await this.importChecksService.runImportChecks(plan);
     const mpPlan = await this.service.importMpPlan(plan, user.userId);
 
     // TODO: Temporary returned message
