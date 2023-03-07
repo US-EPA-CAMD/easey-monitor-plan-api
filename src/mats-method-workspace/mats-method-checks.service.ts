@@ -26,7 +26,7 @@ export class MatsMethodChecksService {
     _isImport: boolean = false,
     _isUpdate: boolean = false,
   ) {
-    this.logger.info('Running Monitor Plan Checks');
+    this.logger.info('Running Supplemental MATS Monitoring Method Checks');
 
     const errorList: string[] = [];
     let error: string = null;
@@ -42,7 +42,7 @@ export class MatsMethodChecksService {
     }
 
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Monitor Plan Checks');
+    this.logger.info('Completed Supplemental MATS Monitoring Method Checks');
     return errorList;
   }
 

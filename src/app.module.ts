@@ -20,6 +20,8 @@ import { MonitorPlanLocationModule } from './monitor-plan-location-workspace/mon
 import { MonitorPlanReportingFreqModule } from './monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
 import { MonitorConfigurationsModule } from './monitor-configurations/monitor-configurations.module';
 import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
+import { SystemComponentMasterDataRelationshipModule } from './system-component-master-data-relationship/system-component-master-data-relationship.module';
+import { UsedIdentifierModule } from './used-identifier/used-identifier.module';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-w
     CheckOutModule,
     MonitorPlanLocationModule,
     MonitorPlanReportingFreqModule,
+    SystemComponentMasterDataRelationshipModule,
+    UsedIdentifierModule,
   ],
   providers: [],
 })

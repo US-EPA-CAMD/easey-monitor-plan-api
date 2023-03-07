@@ -40,8 +40,8 @@ describe('UnitControlWorkspaceController', () => {
       imports: [HttpModule, LoggerModule],
       controllers: [UnitControlWorkspaceController],
       providers: [
-        UnitControlWorkspaceService, 
-        ConfigService, 
+        UnitControlWorkspaceService,
+        ConfigService,
         AuthGuard,
         {
           provide: UnitControlChecksService,

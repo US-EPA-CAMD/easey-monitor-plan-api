@@ -143,7 +143,7 @@ export class MonitorSystemWorkspaceService {
     return this.map.one(system);
   }
 
-  private async updateSysComponentAndFuelFlow(
+  private async importSysComponentAndFuelFlow(
     systemRecordId: string,
     system: MonitorSystemBaseDTO,
     locationId: string,
@@ -154,7 +154,7 @@ export class MonitorSystemWorkspaceService {
 
       if (system.components && system.components.length > 0) {
         promises.push(
-          this.systemComponentService.importComponent(
+          this.systemComponentService.importSystemComponent(
             locationId,
             systemRecordId,
             system.components,
@@ -234,7 +234,7 @@ export class MonitorSystemWorkspaceService {
               );
 
               innerPromises.push(
-                this.updateSysComponentAndFuelFlow(
+                this.importSysComponentAndFuelFlow(
                   systemRecord.id,
                   system,
                   locationId,
@@ -250,7 +250,7 @@ export class MonitorSystemWorkspaceService {
               );
 
               innerPromises.push(
-                this.updateSysComponentAndFuelFlow(
+                this.importSysComponentAndFuelFlow(
                   createdSystemRecord.id,
                   system,
                   locationId,

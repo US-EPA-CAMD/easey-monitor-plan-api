@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  ValidateIf,
-  ValidationArguments,
-} from 'class-validator';
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
+import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
   DATE_FORMAT,
@@ -17,7 +15,7 @@ import {
   MINIMUM_DATE,
   MIN_HOUR,
 } from '../utilities/constants';
-import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { AnalyzerRangeCode } from '../entities/analyzer-range-code.entity';
 
 const KEY = 'Analyzer Range';
 export class AnalyzerRangeBaseDTO {
@@ -26,14 +24,23 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOAnalyzerRangeCode.example,
     name: propertyMetadata.analyzerRangeDTOAnalyzerRangeCode.fieldLabels.value,
   })
-  @IsInDbValues(
-    'SELECT analyzer_range_cd as "value" FROM camdecmpsmd.analyzer_range_code',
-    {
-      message: (args: ValidationArguments) => {
-        return `The value : ${args.value} for ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-16-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(AnalyzerRangeCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-16-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   analyzerRangeCode: string;
 
   @ApiProperty({
@@ -42,8 +49,6 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTODualRangeIndicator.example,
     name: propertyMetadata.analyzerRangeDTODualRangeIndicator.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
