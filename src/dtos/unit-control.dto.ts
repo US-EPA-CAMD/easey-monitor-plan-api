@@ -9,7 +9,11 @@ import {
 import { IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { DATE_FORMAT, MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MAXIMUM_FUTURE_DATE,
+  MINIMUM_DATE,
+} from '../utilities/constants';
 import { VwUnitcontrolMasterDataRelationships } from '../entities/vw-unitcontrol-master-data-relationships.entity';
 import { ControlCode } from '../entities/control-code.entity';
 
@@ -28,7 +32,7 @@ export class UnitControlBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsValidCode(VwUnitcontrolMasterDataRelationships, {
     message: (args: ValidationArguments) => {
@@ -37,7 +41,7 @@ export class UnitControlBaseDTO {
         value: args.value,
         key: KEY,
       });
-    }
+    },
   })
   parameterCode: string;
 
@@ -52,18 +56,18 @@ export class UnitControlBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
-    }
+    },
   })
   @IsValidCode(ControlCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        'The value for [controlCode] in the Unit Control record [fieldname] is invalid', 
+        'The value for [controlCode] in the Unit Control record [fieldname] is invalid',
         {
           fieldname: args.property,
           controlCode: args.value,
-        }
+        },
       );
-    }
+    },
   })
   controlCode: string;
 
@@ -134,7 +138,7 @@ export class UnitControlBaseDTO {
         date: args.value,
         key: KEY,
       });
-    }
+    },
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {

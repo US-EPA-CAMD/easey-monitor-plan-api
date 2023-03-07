@@ -6,11 +6,7 @@ import {
   IsIsoFormat,
   IsValidCode,
 } from '@us-epa-camd/easey-common/pipes';
-import {
-  IsNotEmpty,
-  ValidateIf,
-  ValidationArguments,
-} from 'class-validator';
+import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
   DATE_FORMAT,
@@ -19,7 +15,7 @@ import {
   MINIMUM_DATE,
   MIN_HOUR,
 } from '../utilities/constants';
-import { AnalyzerRangeCode } from 'src/entities/analyzer-range-code.entity';
+import { AnalyzerRangeCode } from '../entities/analyzer-range-code.entity';
 
 const KEY = 'Analyzer Range';
 export class AnalyzerRangeBaseDTO {

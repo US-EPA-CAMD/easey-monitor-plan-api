@@ -11,5 +11,4 @@ export class AnalyzerRangeCode extends BaseEntity {
     name: 'analyzer_range_cd_description',
   })
   analyzerRangeDescription: string;
-
 }

@@ -10,7 +10,7 @@ export class MonitorPlanChecksService {
   constructor(
     private readonly logger: Logger,
     private readonly matsMethodChecksService: MatsMethodChecksService,
-    private readonly unitControlsChecksService: UnitControlChecksService
+    private readonly unitControlsChecksService: UnitControlChecksService,
   ) {}
 
   private async extractErrors(
@@ -62,12 +62,12 @@ export class MonitorPlanChecksService {
                 false,
                 monitorLocation,
                 monitorLocation.unitId,
-              )
+              );
 
-              resolve(results)
-            })
-          )
-        })
+              resolve(results);
+            }),
+          );
+        });
       }
     }
 

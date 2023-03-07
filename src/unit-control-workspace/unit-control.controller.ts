@@ -15,7 +15,7 @@ import { UnitControlWorkspaceService } from './unit-control.service';
 export class UnitControlWorkspaceController {
   constructor(
     private readonly service: UnitControlWorkspaceService,
-    private readonly checksService: UnitControlChecksService,  
+    private readonly checksService: UnitControlChecksService,
   ) {}
 
   @Get()
