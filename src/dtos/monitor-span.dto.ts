@@ -2,15 +2,22 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   Min,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -402,6 +409,7 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOId.example,
     name: propertyMetadata.monitorSpanDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -409,6 +417,7 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOLocationId.example,
     name: propertyMetadata.monitorSpanDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -416,6 +425,7 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOUserid.example,
     name: propertyMetadata.monitorSpanDTOUserid.fieldLabels.value,
   })
+  @IsString()
   userid: string;
 
   @ApiProperty({
@@ -423,6 +433,7 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOAddDate.example,
     name: propertyMetadata.monitorSpanDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -430,6 +441,8 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOUpdateDate.example,
     name: propertyMetadata.monitorSpanDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -437,5 +450,6 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOActive.example,
     name: propertyMetadata.monitorSpanDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

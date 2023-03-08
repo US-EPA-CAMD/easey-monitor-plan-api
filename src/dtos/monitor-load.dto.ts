@@ -4,6 +4,9 @@ import {
   IsInt,
   ValidationArguments,
   IsOptional,
+  IsString,
+  IsDateString,
+  IsBoolean,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -199,6 +202,7 @@ export class MonitorLoadDTO extends MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOId.example,
     name: propertyMetadata.monitorLoadDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -206,6 +210,7 @@ export class MonitorLoadDTO extends MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOLocationId.example,
     name: propertyMetadata.monitorLoadDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -213,6 +218,7 @@ export class MonitorLoadDTO extends MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOUserId.example,
     name: propertyMetadata.monitorLoadDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -220,6 +226,7 @@ export class MonitorLoadDTO extends MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOAddDate.example,
     name: propertyMetadata.monitorLoadDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -227,6 +234,8 @@ export class MonitorLoadDTO extends MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOUpdateDate.example,
     name: propertyMetadata.monitorLoadDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -234,5 +243,6 @@ export class MonitorLoadDTO extends MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOActive.example,
     name: propertyMetadata.monitorLoadDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

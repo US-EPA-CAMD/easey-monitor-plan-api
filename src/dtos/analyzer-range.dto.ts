@@ -3,9 +3,13 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsBoolean,
+  IsDate,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -34,6 +38,7 @@ export class AnalyzerRangeBaseDTO {
       },
     },
   )
+  @IsString()
   analyzerRangeCode: string;
 
   @ApiProperty({
@@ -164,6 +169,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOId.example,
     name: propertyMetadata.analyzerRangeDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -171,6 +177,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOComponentRecordId.example,
     name: propertyMetadata.analyzerRangeDTOComponentRecordId.fieldLabels.value,
   })
+  @IsString()
   componentRecordId: string;
 
   @ApiProperty({
@@ -178,6 +185,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOUserId.example,
     name: propertyMetadata.analyzerRangeDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -185,6 +193,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOAddDate.example,
     name: propertyMetadata.analyzerRangeDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -192,6 +201,8 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOUpdateDate.example,
     name: propertyMetadata.analyzerRangeDTOUpdateDate.fieldLabels.value,
   })
+  @IsOptional()
+  @IsDateString()
   updateDate: Date;
 
   @ApiProperty({
@@ -199,5 +210,6 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOActive.example,
     name: propertyMetadata.analyzerRangeDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

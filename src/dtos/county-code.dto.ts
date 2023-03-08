@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { IsString } from 'class-validator';
 
 export class CountyCodeDTO {
   @ApiProperty({
@@ -7,8 +8,10 @@ export class CountyCodeDTO {
     example: propertyMetadata.countyCode.example,
     name: propertyMetadata.countyCode.fieldLabels.value,
   })
+  @IsString()
   countyCode: string;
 
+  @IsString()
   countyNumber: string;
 
   @ApiProperty({
@@ -16,6 +19,7 @@ export class CountyCodeDTO {
     example: propertyMetadata.county.example,
     name: propertyMetadata.county.fieldLabels.value,
   })
+  @IsString()
   countyName: string;
 
   @ApiProperty({
@@ -23,5 +27,6 @@ export class CountyCodeDTO {
     example: propertyMetadata.stateCode.example,
     name: propertyMetadata.stateCode.fieldLabels.value,
   })
+  @IsString()
   stateCode: string;
 }

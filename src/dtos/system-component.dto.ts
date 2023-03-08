@@ -2,7 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import {
+  IsBoolean,
+  IsDateString,
   IsNotEmpty,
+  IsOptional,
+  IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -135,6 +139,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOId.example,
     name: propertyMetadata.systemComponentDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -142,6 +147,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOLocationId.example,
     name: propertyMetadata.systemComponentDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -153,6 +159,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
       propertyMetadata.systemComponentDTOMonitoringSystemRecordId.fieldLabels
         .value,
   })
+  @IsString()
   monitoringSystemRecordId: string;
 
   @ApiProperty({
@@ -162,6 +169,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     name:
       propertyMetadata.systemComponentDTOComponentRecordId.fieldLabels.value,
   })
+  @IsString()
   componentRecordId: string;
 
   @ApiProperty({
@@ -169,6 +177,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOUserId.example,
     name: propertyMetadata.systemComponentDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -176,6 +185,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOAddDate.example,
     name: propertyMetadata.systemComponentDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -183,6 +193,8 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOUpdateDate.example,
     name: propertyMetadata.systemComponentDTOUpdateDate.fieldLabels.value,
   })
+  @IsOptional()
+  @IsDateString()
   updateDate: Date;
 
   @ApiProperty({
@@ -190,5 +202,6 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOActive.example,
     name: propertyMetadata.systemComponentDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

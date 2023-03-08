@@ -13,7 +13,7 @@ import {
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
-import { FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 
 const KEY = 'Component';
 
@@ -83,9 +83,7 @@ export class ComponentBaseDTO {
         });
       },
     },
-    (
-      args: ValidationArguments,
-    ): FindOneOptions<SystemComponentMasterDataRelationships> => {
+    (args: ValidationArguments): FindManyOptions<any> => {
       return { where: { sampleAquisitionMethodCode: args.value } };
     },
   )
@@ -107,9 +105,7 @@ export class ComponentBaseDTO {
         });
       },
     },
-    (
-      args: ValidationArguments,
-    ): FindOneOptions<SystemComponentMasterDataRelationships> => {
+    (args: ValidationArguments): FindManyOptions<any> => {
       return { where: { basisCode: args.value } };
     },
   )

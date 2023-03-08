@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -151,6 +154,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOId.example,
     name: propertyMetadata.monitorSystemDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -158,6 +162,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOLocationId.example,
     name: propertyMetadata.monitorSystemDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -165,6 +170,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOUserId.example,
     name: propertyMetadata.monitorSystemDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -172,6 +178,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOAddDate.example,
     name: propertyMetadata.monitorSystemDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -179,6 +186,8 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOUpdateDate.example,
     name: propertyMetadata.monitorSystemDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -186,5 +195,6 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOActive.example,
     name: propertyMetadata.monitorSystemDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }
