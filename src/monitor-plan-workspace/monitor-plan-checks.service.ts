@@ -79,14 +79,13 @@ export class MonitorPlanChecksService {
         promises.push(
           new Promise(async (resolve, _reject) => {
             const results = this.unitControlChecksService.runChecks(
+              locationId,
+              null,
               unitControl,
-              null,
-              null,
               true,
               false,
-              monitorLocation,
-              monitorLocation.unitId,
               `locations.${locIdx}.unitControls.${ucIdx}.`,
+              monitorLocation,
             );
 
             resolve(results);

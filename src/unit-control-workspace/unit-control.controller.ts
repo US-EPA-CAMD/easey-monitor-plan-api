@@ -46,7 +46,7 @@ export class UnitControlWorkspaceController {
     @Body() payload: UnitControlBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitControlDTO> {
-    await this.checksService.runChecks(payload, unitId, locId, false, true);
+    await this.checksService.runChecks(locId, unitId, payload, false, true);
     return this.service.updateUnitControl(
       locId,
       unitId,
@@ -69,7 +69,7 @@ export class UnitControlWorkspaceController {
     @Body() payload: UnitControlBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitControlDTO> {
-    await this.checksService.runChecks(payload, unitId, locId);
+    await this.checksService.runChecks(locId, unitId, payload);
     return this.service.createUnitControl(locId, unitId, payload, user.userId);
   }
 }

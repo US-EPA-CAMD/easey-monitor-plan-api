@@ -31,14 +31,13 @@ export class UnitControlChecksService {
   }
 
   async runChecks(
-    unitControl: UnitControlBaseDTO,
-    unitId: number,
     locId: string,
+    unitId: number,
+    unitControl: UnitControlBaseDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
-    location?: UpdateMonitorLocationDTO,
-    importUnitId?: string,
     errorLocation: string = '',
+    location?: UpdateMonitorLocationDTO,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -49,7 +48,7 @@ export class UnitControlChecksService {
     if (isImport) {
       locationRecord = location;
       unitRecord = await this.unitRepository.findOne({
-        name: importUnitId,
+        name: location.unitId,
       });
       unitId = unitRecord.id;
     } else {

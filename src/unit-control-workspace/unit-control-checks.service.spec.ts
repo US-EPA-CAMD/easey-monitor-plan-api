@@ -51,7 +51,7 @@ describe('Unit Control Check Service Test', () => {
     const payload = new UnitControlBaseDTO();
     it('Should pass all checks', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-      const result = await service.runChecks(payload, unitId, locId);
+      const result = await service.runChecks(locId, unitId, payload);
 
       expect(result).toEqual([]);
     });
@@ -67,7 +67,7 @@ describe('Unit Control Check Service Test', () => {
     it('Should get already exists error', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
       try {
-        await service.runChecks(payload, unitId, locId);
+        await service.runChecks(locId, unitId, payload);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
