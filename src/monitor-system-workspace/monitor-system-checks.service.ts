@@ -34,9 +34,11 @@ export class MonitorSystemCheckService {
   }
 
   async runChecks(
+    locationId: string,
     monitorSystem: MonitorSystemBaseDTO,
     _isImport: boolean = false,
     _isUpdate: boolean = false,
+    errorLocation: string = '',
   ) {
     this.logger.info('Running Monitor System Checks');
 
@@ -44,13 +46,15 @@ export class MonitorSystemCheckService {
 
     const promises: Promise<string[]>[] = [];
 
-    monitorSystem.components?.forEach(systemComponent => {
+    monitorSystem.components?.forEach((systemComponent, sysCompIdx) => {
       promises.push(
         new Promise(async (resolve, _reject) => {
           const results = this.componentChecksService.runChecks(
+            locationId,
             systemComponent,
             true,
             false,
+            `${errorLocation}components.${sysCompIdx}.`,
           );
 
           resolve(results);

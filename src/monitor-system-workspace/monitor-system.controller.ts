@@ -43,7 +43,7 @@ export class MonitorSystemWorkspaceController {
     @Body() payload: MonitorSystemBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
-    await this.checkService.runChecks(payload);
+    await this.checkService.runChecks(locationId, payload);
     return this.service.createSystem(locationId, payload, user.userId);
   }
 
@@ -60,7 +60,7 @@ export class MonitorSystemWorkspaceController {
     @Body() payload: MonitorSystemBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
-    await this.checkService.runChecks(payload, false, true);
+    await this.checkService.runChecks(locationId, payload, false, true);
     return this.service.updateSystem(
       monitoringSystemId,
       payload,

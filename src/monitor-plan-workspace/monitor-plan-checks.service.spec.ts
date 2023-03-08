@@ -14,6 +14,7 @@ import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
+import { MonitorLocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -21,6 +22,8 @@ const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const payload = new UpdateMonitorPlanDTO();
 const location = new UpdateMonitorLocationDTO();
+location.unitId = '51';
+location.stackPipeId = null;
 const matsMethod = new MatsMethodBaseDTO();
 const unitControl = new UnitControlBaseDTO();
 const component = new UpdateComponentBaseDTO();
@@ -34,6 +37,14 @@ location.components = [component];
 location.matsMethods = [matsMethod];
 payload.locations = [location];
 
+const returnLocationRunChecks = [
+  {
+    unitId: '51',
+    locationId: '1',
+    stackPipeId: null,
+  },
+];
+
 describe('Monitor Plan Checks Service Test', () => {
   let service: MonitorPlanChecksService;
   let matsMethodChecksService: MatsMethodChecksService;
@@ -46,6 +57,14 @@ describe('Monitor Plan Checks Service Test', () => {
       imports: [LoggerModule, LoggingException],
       providers: [
         MonitorPlanChecksService,
+        {
+          provide: MonitorLocationChecksService,
+          useFactory: () => ({
+            runChecks: jest
+              .fn()
+              .mockResolvedValue([returnLocationRunChecks, []]),
+          }),
+        },
         {
           provide: MatsMethodChecksService,
           useFactory: () => ({

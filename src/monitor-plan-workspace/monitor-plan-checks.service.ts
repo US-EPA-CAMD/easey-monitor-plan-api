@@ -6,11 +6,14 @@ import { UnitControlChecksService } from '../unit-control-workspace/unit-control
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorSystemCheckService } from '../monitor-system-workspace/monitor-system-checks.service';
+import { LocationIdentifiers } from 'src/interfaces/location-identifiers.interface';
+import { MonitorLocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
 
 @Injectable()
 export class MonitorPlanChecksService {
   constructor(
     private readonly logger: Logger,
+    private readonly locationChecksService: MonitorLocationChecksService,
     private readonly matsMethodChecksService: MatsMethodChecksService,
     private readonly unitControlChecksService: UnitControlChecksService,
     private readonly componentChecksService: ComponentCheckService,
@@ -39,69 +42,90 @@ export class MonitorPlanChecksService {
 
     const promises: Promise<string[]>[] = [];
 
-    if (payload.locations) {
-      for (const monitorLocation of payload.locations) {
-        monitorLocation.matsMethods?.forEach(matsMethod => {
-          promises.push(
-            new Promise(async (resolve, _reject) => {
-              const results = this.matsMethodChecksService.runChecks(
-                matsMethod,
-                true,
-                false,
-              );
+    let errors: string[] = [];
+    let errorList: string[] = [];
+    let locationIdentifiers: LocationIdentifiers[] = [];
 
-              resolve(results);
-            }),
-          );
-        });
+    [locationIdentifiers, errors] = await this.locationChecksService.runChecks(
+      payload,
+    );
+    errorList.push(...errors);
+    this.throwIfErrors(errorList);
 
-        monitorLocation.unitControls?.forEach(unitControl => {
-          promises.push(
-            new Promise(async (resolve, _reject) => {
-              const results = this.unitControlChecksService.runChecks(
-                unitControl,
-                null,
-                null,
-                true,
-                false,
-                monitorLocation,
-                monitorLocation.unitId,
-              );
+    payload.locations.forEach((monitorLocation, locIdx) => {
+      const locationId = locationIdentifiers.find(i => {
+        return (
+          i.unitId === monitorLocation.unitId &&
+          i.stackPipeId === monitorLocation.stackPipeId
+        );
+      }).locationId;
 
-              resolve(results);
-            }),
-          );
-        });
+      monitorLocation.matsMethods?.forEach((matsMethod, matsMetIdx) => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.matsMethodChecksService.runChecks(
+              matsMethod,
+              true,
+              false,
+              `locations.${locIdx}.matsMethods.${matsMetIdx}.`,
+            );
 
-        monitorLocation.components?.forEach(component => {
-          promises.push(
-            new Promise(async (resolve, _reject) => {
-              const results = this.componentChecksService.runChecks(
-                component,
-                true,
-                false,
-              );
+            resolve(results);
+          }),
+        );
+      });
 
-              resolve(results);
-            }),
-          );
-        });
+      monitorLocation.unitControls?.forEach((unitControl, ucIdx) => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.unitControlChecksService.runChecks(
+              unitControl,
+              null,
+              null,
+              true,
+              false,
+              monitorLocation,
+              monitorLocation.unitId,
+              `locations.${locIdx}.unitControls.${ucIdx}.`,
+            );
 
-        monitorLocation.systems?.forEach(system => {
-          promises.push(
-            new Promise(async (resolve, _reject) => {
-              const results = this.monSysCheckService.runChecks(
-                system,
-                true,
-                false,
-              );
+            resolve(results);
+          }),
+        );
+      });
 
-              resolve(results);
-            }),
-          );
-        });
-      }
-    }
+      monitorLocation.components?.forEach((component, compIdx) => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.componentChecksService.runChecks(
+              locationId,
+              component,
+              true,
+              false,
+              `locations.${locIdx}.components.${compIdx}.`,
+            );
+
+            resolve(results);
+          }),
+        );
+      });
+
+      monitorLocation.systems?.forEach((system, sysIdx) => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.monSysCheckService.runChecks(
+              locationId,
+              system,
+              true,
+              false,
+              `locations.${locIdx}.systems.${sysIdx}.`,
+            );
+
+            resolve(results);
+          }),
+        );
+      });
+    });
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.info('Completed Monitor Plan Checks');

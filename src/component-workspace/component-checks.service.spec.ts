@@ -6,11 +6,14 @@ import { ComponentDTO } from '../dtos/component.dto';
 import { SystemComponentMasterDataRelationshipRepository } from '../system-component-master-data-relationship/system-component-master-data-relationship.repository';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { UsedIdentifier } from '../entities/used-identifier.entity';
+import { ComponentWorkspaceRepository } from './component.repository';
+import { Component } from '../entities/workspace/component.entity';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
+const locationId = '1';
 const payload = new ComponentDTO();
 const usedIdentifierRecord = new UsedIdentifier();
 
@@ -18,6 +21,7 @@ describe('Component Checks Service Test', () => {
   let service: ComponentCheckService;
   let usedIdRepository: UsedIdentifierRepository;
   let sysCompMDRelRepository: SystemComponentMasterDataRelationshipRepository;
+  let componentRepository: ComponentWorkspaceRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -27,13 +31,19 @@ describe('Component Checks Service Test', () => {
         {
           provide: SystemComponentMasterDataRelationshipRepository,
           useFactory: () => ({
-            findOne: jest.fn(),
+            findOne: jest.fn().mockResolvedValue(null),
           }),
         },
         {
           provide: UsedIdentifierRepository,
           useFactory: () => ({
-            findOne: jest.fn(),
+            findOne: jest.fn().mockResolvedValue(null),
+          }),
+        },
+        {
+          provide: ComponentWorkspaceRepository,
+          useFactory: () => ({
+            getComponentByLocIdAndCompId: jest.fn().mockResolvedValue(null),
           }),
         },
       ],
@@ -41,6 +51,7 @@ describe('Component Checks Service Test', () => {
 
     service = module.get(ComponentCheckService);
     usedIdRepository = module.get(UsedIdentifierRepository);
+    componentRepository = module.get(ComponentWorkspaceRepository);
     sysCompMDRelRepository = module.get(
       SystemComponentMasterDataRelationshipRepository,
     );
@@ -58,7 +69,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -77,7 +88,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -94,7 +105,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -111,7 +122,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -128,7 +139,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -145,7 +156,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -167,7 +178,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -184,7 +195,31 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
+      } catch (err) {
+        errored = true;
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('COMPON-53 Checks', () => {
+    it('Should get [COMPON-53-A] error', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
+      const comp = new Component();
+      jest
+        .spyOn(componentRepository, 'getComponentByLocIdAndCompId')
+        .mockResolvedValueOnce(comp);
+
+      payload.componentId = '1';
+      payload.componentTypeCode = 'BGFF';
+      payload.basisCode = null;
+
+      let errored = false;
+
+      try {
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
