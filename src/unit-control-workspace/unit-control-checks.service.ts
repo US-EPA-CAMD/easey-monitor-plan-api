@@ -2,9 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import {
-  UnitControlBaseDTO,
-} from '../dtos/unit-control.dto';
+import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
 
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
@@ -51,7 +49,7 @@ export class UnitControlChecksService {
       locationRecord = location;
       unitRecord = await this.unitRepository.findOne({
         name: importUnitId,
-      })
+      });
       unitId = unitRecord.id;
     } else {
       locationRecord = await this.monitorLocationWorkspaceRepository.findOne(
@@ -60,11 +58,7 @@ export class UnitControlChecksService {
     }
 
     if (!isUpdate) {
-      error = await this.duplicateTestCheck(
-        unitId,
-        unitControl,
-        isImport,
-      );
+      error = await this.duplicateTestCheck(unitId, unitControl, isImport);
       if (error) {
         errorList.push(error);
       }
@@ -81,7 +75,7 @@ export class UnitControlChecksService {
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
-    let FIELDNAME: string = 'unitControl'
+    let FIELDNAME: string = 'unitControl';
     let RECORDTYPE: string = 'parameterCode,controlCode,';
 
     let record: UnitControl = await this.repository.findOne({

@@ -73,42 +73,53 @@ export class ImportChecksService {
       }
 
       // Component Checks
-      errorList.push(
-        ...(await this.componentService.runComponentChecks(
-          location.components,
-          location,
-          databaseLocations[index].id,
-        )),
-      );
+      if (location.components) {
+        errorList.push(
+          ...(await this.componentService.runComponentChecks(
+            location.components,
+            location,
+            databaseLocations[index].id,
+          )),
+        );
+      }
 
       // Qualification Checks
-      errorList.push(
-        ...(await this.qualificationService.runQualificationImportCheck(
-          location.qualifications,
-        )),
-      );
+      if (location.qualifications) {
+        errorList.push(
+          ...(await this.qualificationService.runQualificationImportCheck(
+            location.qualifications,
+          )),
+        );
+      }
 
       // Monitor System Checks
-      errorList.push(
-        ...(await this.monitorSystemService.runMonitorSystemImportCheck(
-          monPlan,
-          location,
-          databaseLocations[index].id,
-          location.systems,
-        )),
-      );
-
+      if (location.systems) {
+        errorList.push(
+          ...(await this.monitorSystemService.runMonitorSystemImportCheck(
+            monPlan,
+            location,
+            databaseLocations[index].id,
+            location.systems,
+          )),
+        );
+      }
       // Formula Checks
-      errorList.push(
-        ...(await this.formulaService.runFormulaChecks(
-          location.formulas,
-          location,
-          databaseLocations[index].id,
-        )),
-      );
+      if (location.formulas) {
+        errorList.push(
+          ...(await this.formulaService.runFormulaChecks(
+            location.formulas,
+            location,
+            databaseLocations[index].id,
+          )),
+        );
+      }
 
       // Span Checks
-      errorList.push(...(await this.spanService.runSpanChecks(location.spans)));
+      if (location.spans) {
+        errorList.push(
+          ...(await this.spanService.runSpanChecks(location.spans)),
+        );
+      }
 
       index++;
     }

@@ -11,6 +11,7 @@ import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { ComponentWorkspaceModule } from '../component-workspace/component.module';
+import { MonitorSystemCheckService } from './monitor-system-checks.service';
 
 @Module({
   imports: [
@@ -22,7 +23,16 @@ import { ComponentWorkspaceModule } from '../component-workspace/component.modul
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MonitorSystemWorkspaceController],
-  providers: [MonitorSystemWorkspaceService, MonitorSystemMap],
-  exports: [TypeOrmModule, MonitorSystemWorkspaceService, MonitorSystemMap],
+  providers: [
+    MonitorSystemWorkspaceService,
+    MonitorSystemMap,
+    MonitorSystemCheckService,
+  ],
+  exports: [
+    TypeOrmModule,
+    MonitorSystemWorkspaceService,
+    MonitorSystemMap,
+    MonitorSystemCheckService,
+  ],
 })
 export class MonitorSystemWorkspaceModule {}

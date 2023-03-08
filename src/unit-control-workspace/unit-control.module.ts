@@ -17,10 +17,19 @@ import { UnitModule } from '../unit/unit.module';
     HttpModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
     forwardRef(() => MonitorLocationWorkspaceModule),
-    UnitModule
+    UnitModule,
   ],
   controllers: [UnitControlWorkspaceController],
-  providers: [UnitControlWorkspaceService, UnitControlMap, UnitControlChecksService],
-  exports: [TypeOrmModule, UnitControlWorkspaceService, UnitControlMap, UnitControlChecksService],
+  providers: [
+    UnitControlWorkspaceService,
+    UnitControlMap,
+    UnitControlChecksService,
+  ],
+  exports: [
+    TypeOrmModule,
+    UnitControlWorkspaceService,
+    UnitControlMap,
+    UnitControlChecksService,
+  ],
 })
 export class UnitControlWorkspaceModule {}

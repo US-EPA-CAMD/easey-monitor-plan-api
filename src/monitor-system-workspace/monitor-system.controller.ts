@@ -9,12 +9,16 @@ import {
   MonitorSystemDTO,
 } from '../dtos/monitor-system.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { MonitorSystemCheckService } from './monitor-system-checks.service';
 
 @Controller()
 @ApiTags('Systems')
 @ApiSecurity('APIKey')
 export class MonitorSystemWorkspaceController {
-  constructor(private service: MonitorSystemWorkspaceService) {}
+  constructor(
+    private service: MonitorSystemWorkspaceService,
+    private checkService: MonitorSystemCheckService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -34,11 +38,12 @@ export class MonitorSystemWorkspaceController {
     type: MonitorSystemDTO,
     description: 'Creates a workspace system record for a give location',
   })
-  createSystem(
+  async createSystem(
     @Param('locId') locationId: string,
     @Body() payload: MonitorSystemBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
+    await this.checkService.runChecks(payload);
     return this.service.createSystem(locationId, payload, user.userId);
   }
 
@@ -49,12 +54,13 @@ export class MonitorSystemWorkspaceController {
     description:
       'Updates workspace monitor system record for a given monitor location',
   })
-  updateSystem(
+  async updateSystem(
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemId: string,
     @Body() payload: MonitorSystemBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
+    await this.checkService.runChecks(payload, false, true);
     return this.service.updateSystem(
       monitoringSystemId,
       payload,

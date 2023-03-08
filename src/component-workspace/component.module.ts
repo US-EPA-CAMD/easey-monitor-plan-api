@@ -8,15 +8,25 @@ import { ComponentWorkspaceController } from './component.controller';
 import { ComponentWorkspaceService } from './component.service';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { ComponentMap } from '../maps/component.map';
+import { ComponentCheckService } from './component-checks.service';
+import { SystemComponentMasterDataRelationshipModule } from '../system-component-master-data-relationship/system-component-master-data-relationship.module';
+import { UsedIdentifierModule } from '../used-identifier/used-identifier.module';
 
 @Module({
   imports: [
     AnalyzerRangeWorkspaceModule,
+    SystemComponentMasterDataRelationshipModule,
+    UsedIdentifierModule,
     TypeOrmModule.forFeature([ComponentWorkspaceRepository]),
     HttpModule,
   ],
   controllers: [ComponentWorkspaceController],
-  providers: [ComponentWorkspaceService, ComponentMap],
-  exports: [TypeOrmModule, ComponentWorkspaceService, ComponentMap],
+  providers: [ComponentWorkspaceService, ComponentMap, ComponentCheckService],
+  exports: [
+    TypeOrmModule,
+    ComponentWorkspaceService,
+    ComponentMap,
+    ComponentCheckService,
+  ],
 })
 export class ComponentWorkspaceModule {}

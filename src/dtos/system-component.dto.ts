@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
+<<<<<<< HEAD
 import {
   IsBoolean,
   IsDateString,
@@ -10,6 +11,9 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+=======
+import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+>>>>>>> f7165f68f9cfa82dd917d038010977d487c0fba8
 import { ComponentBaseDTO } from './component.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';

@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsOptional,
   MaxLength,
+  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -14,6 +15,7 @@ import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { BasisCode } from '../entities/basis-code.entity';
 
 const KEY = 'Component';
 
@@ -83,10 +85,13 @@ export class ComponentBaseDTO {
         });
       },
     },
-    (args: ValidationArguments): FindManyOptions<any> => {
-      return { where: { sampleAquisitionMethodCode: args.value } };
+    (
+      args: ValidationArguments,
+    ): FindOneOptions<SystemComponentMasterDataRelationships> => {
+      return { where: { sampleAcquisitionMethodCode: args.value } };
     },
   )
+  @ValidateIf(o => o.sampleAcquisitionMethodCode !== null)
   sampleAcquisitionMethodCode: string;
 
   @ApiProperty({
@@ -94,21 +99,15 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOBasisCode.example,
     name: propertyMetadata.componentDTOBasisCode.fieldLabels.value,
   })
-  @IsValidCode(
-    SystemComponentMasterDataRelationships,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('COMPON-14-B', {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        });
-      },
+  @IsValidCode(BasisCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-14-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-    (args: ValidationArguments): FindManyOptions<any> => {
-      return { where: { basisCode: args.value } };
-    },
-  )
+  })
   basisCode: string;
 
   @ApiProperty({
