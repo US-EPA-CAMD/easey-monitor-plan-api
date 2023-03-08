@@ -21,7 +21,11 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { AnalyzerRangeCode } from '../entities/analyzer-range-code.entity';
-import { IsInRange, IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Analyzer Range';
 export class AnalyzerRangeBaseDTO {
@@ -37,7 +41,7 @@ export class AnalyzerRangeBaseDTO {
         key: KEY,
       });
     },
-  )
+  })
   @IsValidCode(AnalyzerRangeCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-16-B', {
