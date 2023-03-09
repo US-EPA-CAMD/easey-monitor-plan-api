@@ -41,7 +41,7 @@ export class ComponentCheckService {
     const errorList: string[] = [];
     let error: string = null;
 
-    error = this.component13Check(component, errorLocation);
+    error = await this.component13Check(component, errorLocation);
     if (error) {
       errorList.push(error);
     }
@@ -56,7 +56,7 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
-    if (!isUpdate || !isImport) {
+    if (!isImport && !isUpdate) {
       error = await this.component53Check(locationId, component, errorLocation);
       if (error) {
         errorList.push(error);
@@ -68,14 +68,14 @@ export class ComponentCheckService {
     return errorList;
   }
 
-  private component13Check(
+  private async component13Check(
     component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
     errorLocation: string = '',
-  ): string {
+  ): Promise<string> {
     let error = null;
 
     if (!component.sampleAcquisitionMethodCode) {
-      const result = this.sysCompMDRelRepository.findOne({
+      const result = await this.sysCompMDRelRepository.findOne({
         sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
         componentTypeCode: component.componentTypeCode,
         basisCode: component.basisCode,
