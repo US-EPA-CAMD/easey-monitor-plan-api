@@ -59,6 +59,14 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTODualRangeIndicator.example,
     name: propertyMetadata.analyzerRangeDTODualRangeIndicator.fieldLabels.value,
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage('COMPPON-37-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
