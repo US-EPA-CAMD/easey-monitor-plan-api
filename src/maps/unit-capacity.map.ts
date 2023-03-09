@@ -7,8 +7,6 @@ import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 @Injectable()
 export class UnitCapacityMap extends BaseMap<UnitCapacity, UnitCapacityDTO> {
   public async one(entity: UnitCapacity): Promise<UnitCapacityDTO> {
-    console.log(entity.unit);
-
     return {
       id: entity.id,
       unitRecordId: entity.unitId,
