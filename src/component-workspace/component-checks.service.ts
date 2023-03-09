@@ -47,6 +47,11 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
+    error = this.component81Check(component);
+    if (error) {
+      errorList.push(error);
+    }
+
     this.throwIfErrors(errorList);
     this.logger.info('Completed Component Checks');
     return errorList;
@@ -126,6 +131,38 @@ export class ComponentCheckService {
       error = this.getMessage(errorCode, {
         value: component.basisCode,
         fieldname: 'basisCode',
+        key: KEY,
+        componentType: component.componentTypeCode,
+      });
+    }
+
+    return error;
+  }
+
+  private component81Check(
+    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+  ) {
+    let error = null;
+    let errorCode = null;
+
+    if (component.componentTypeCode === 'HG') {
+      if (!component.hgConverterIndicator) {
+        errorCode = 'COMPON-81-A';
+      }
+
+      if (![1, 0].includes(component.hgConverterIndicator)) {
+        errorCode = 'COMPON-81-B';
+      }
+    } else {
+      if (component.hgConverterIndicator) {
+        errorCode = 'COMPON-81-C';
+      }
+    }
+
+    if (errorCode) {
+      error = this.getMessage(errorCode, {
+        value: component.hgConverterIndicator,
+        fieldname: 'hgConverterIndicator',
         key: KEY,
         componentType: component.componentTypeCode,
       });

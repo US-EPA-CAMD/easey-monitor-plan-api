@@ -192,4 +192,57 @@ describe('Component Checks Service Test', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('COMPON-81 Checks', () => {
+    it('Should get [COMPON-81-A] error', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
+
+      payload.componentTypeCode = 'HG';
+      payload.hgConverterIndicator = null;
+
+      let errored = false;
+
+      try {
+        await service.runChecks(payload);
+      } catch (err) {
+        errored = true;
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+      expect(errored).toEqual(true);
+    });
+
+    it('Should get [COMPON-81-B] error', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
+
+      payload.componentTypeCode = 'HG';
+      payload.hgConverterIndicator = 2;
+
+      let errored = false;
+
+      try {
+        await service.runChecks(payload);
+      } catch (err) {
+        errored = true;
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+      expect(errored).toEqual(true);
+    });
+
+    it('Should get [COMPON-81-C] error', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
+
+      payload.componentTypeCode = 'NOX';
+      payload.hgConverterIndicator = 1;
+
+      let errored = false;
+
+      try {
+        await service.runChecks(payload);
+      } catch (err) {
+        errored = true;
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+      expect(errored).toEqual(true);
+    });
+  });
 });
