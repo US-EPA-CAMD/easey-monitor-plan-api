@@ -7,6 +7,7 @@ import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 const mockQueryBuilder = () => ({
   innerJoinAndSelect: jest.fn(),
   leftJoinAndSelect: jest.fn(),
+  leftJoin: jest.fn(),
   where: jest.fn(),
   andWhere: jest.fn(),
   addOrderBy: jest.fn(),
@@ -33,22 +34,43 @@ describe('MonitorLocationWorkspaceRepository', () => {
 
   describe('getMonitorLocationsByFacId', () => {
     it('calls createQueryBuilder and gets all MonitorLocations from the repository with the specified facId', async () => {
-      monitorLocationRepository.createQueryBuilder = jest
-        .fn()
-        .mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.addOrderBy.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue('mockMonitorLocations');
+      queryBuilder.getMany.mockReturnValue([]);
+      monitorLocationRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(queryBuilder);
 
       const result = await monitorLocationRepository.getMonitorLocationsByFacId(
         0,
       );
 
       expect(queryBuilder.getMany).toHaveBeenCalled();
-      expect(result).toEqual('mockMonitorLocations');
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getLocationsByUnitStackPipeIds test', () => {
+    it('calls the querybuilder and gets monitor location data', async () => {
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.leftJoin.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([]);
+      monitorLocationRepository.createQueryBuilder = jest
+        .fn()
+        .mockReturnValue(queryBuilder);
+
+      const result = await monitorLocationRepository.getLocationsByUnitStackPipeIds(
+        1,
+        ['1'],
+        ['1'],
+      );
+      expect(queryBuilder.getMany).toHaveBeenCalled();
+      expect(result).toEqual([]);
     });
   });
 });
