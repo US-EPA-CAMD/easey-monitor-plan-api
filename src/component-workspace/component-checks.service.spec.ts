@@ -238,7 +238,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -255,7 +255,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
@@ -272,7 +272,7 @@ describe('Component Checks Service Test', () => {
       let errored = false;
 
       try {
-        await service.runChecks(payload);
+        await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
