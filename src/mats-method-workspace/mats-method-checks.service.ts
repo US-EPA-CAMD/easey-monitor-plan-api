@@ -25,6 +25,7 @@ export class MatsMethodChecksService {
     matsMethod: MatsMethodDTO | MatsMethodBaseDTO,
     _isImport: boolean = false,
     _isUpdate: boolean = false,
+    errorLocation: string = '',
   ) {
     this.logger.info('Running Supplemental MATS Monitoring Method Checks');
 

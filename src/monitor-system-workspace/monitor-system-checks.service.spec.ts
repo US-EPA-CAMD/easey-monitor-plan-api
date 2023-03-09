@@ -9,7 +9,7 @@ import { ComponentCheckService } from '../component-workspace/component-checks.s
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
-
+const locationId = '1';
 const payload = new MonitorSystemBaseDTO();
 const systemComponent = new SystemComponentBaseDTO();
 
@@ -39,7 +39,7 @@ describe('Monitor System Check Service Tests', () => {
 
   describe('RunChecks', () => {
     it('Should Call Children.runChecks functions', async () => {
-      await service.runChecks(payload);
+      await service.runChecks(locationId, payload);
       expect(componentCheckService.runChecks).toHaveBeenCalled();
     });
   });

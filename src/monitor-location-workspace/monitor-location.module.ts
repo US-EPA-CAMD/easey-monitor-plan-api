@@ -24,6 +24,7 @@ import { MonitorLocationWorkspaceController } from './monitor-location.controlle
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
 import { UnitModule } from '../unit/unit.module';
 import { StackPipeModule } from '../stack-pipe/stack-pipe.module';
+import { MonitorLocationChecksService } from './monitor-location-checks.service';
 
 @Module({
   imports: [
@@ -48,7 +49,16 @@ import { StackPipeModule } from '../stack-pipe/stack-pipe.module';
     HttpModule,
   ],
   controllers: [MonitorLocationWorkspaceController],
-  providers: [MonitorLocationMap, MonitorLocationWorkspaceService],
-  exports: [TypeOrmModule, MonitorLocationWorkspaceService, MonitorLocationMap],
+  providers: [
+    MonitorLocationMap,
+    MonitorLocationWorkspaceService,
+    MonitorLocationChecksService,
+  ],
+  exports: [
+    TypeOrmModule,
+    MonitorLocationWorkspaceService,
+    MonitorLocationMap,
+    MonitorLocationChecksService,
+  ],
 })
 export class MonitorLocationWorkspaceModule {}

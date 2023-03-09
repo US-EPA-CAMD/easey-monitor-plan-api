@@ -6,6 +6,7 @@ import { SystemComponentMasterDataRelationshipRepository } from '../system-compo
 import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
+import { ComponentWorkspaceRepository } from './component.repository';
 
 const KEY = 'Component';
 
@@ -15,6 +16,7 @@ export class ComponentCheckService {
     private readonly logger: Logger,
     private readonly sysCompMDRelRepository: SystemComponentMasterDataRelationshipRepository,
     private readonly usedIdRepository: UsedIdentifierRepository,
+    private readonly componentRepository: ComponentWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -28,21 +30,23 @@ export class ComponentCheckService {
   }
 
   async runChecks(
+    locationId: string,
     component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
-    _isImport: boolean = false,
-    _isUpdate: boolean = false,
+    isImport: boolean = false,
+    isUpdate: boolean = false,
+    errorLocation: string = '',
   ) {
     this.logger.info('Running Component Checks');
 
     const errorList: string[] = [];
     let error: string = null;
 
-    error = this.component13Check(component);
+    error = this.component13Check(component, errorLocation);
     if (error) {
       errorList.push(error);
     }
 
-    error = await this.component14Check(component);
+    error = await this.component14Check(component, errorLocation);
     if (error) {
       errorList.push(error);
     }
@@ -52,6 +56,13 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
+    if (!isUpdate || !isImport) {
+      error = await this.component53Check(locationId, component, errorLocation);
+      if (error) {
+        errorList.push(error);
+      }
+    }
+
     this.throwIfErrors(errorList);
     this.logger.info('Completed Component Checks');
     return errorList;
@@ -59,6 +70,7 @@ export class ComponentCheckService {
 
   private component13Check(
     component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    errorLocation: string = '',
   ): string {
     let error = null;
 
@@ -70,7 +82,7 @@ export class ComponentCheckService {
       });
 
       if (!result) {
-        error = this.getMessage('COMPON-13-A');
+        error = errorLocation + this.getMessage('COMPON-13-A');
       }
     }
 
@@ -79,6 +91,7 @@ export class ComponentCheckService {
 
   private async component14Check(
     component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    errorLocation: string = '',
   ): Promise<string> {
     let error = null;
     let errorCode = null;
@@ -128,12 +141,38 @@ export class ComponentCheckService {
     }
 
     if (errorCode) {
-      error = this.getMessage(errorCode, {
-        value: component.basisCode,
-        fieldname: 'basisCode',
-        key: KEY,
-        componentType: component.componentTypeCode,
-      });
+      error =
+        errorLocation +
+        this.getMessage(errorCode, {
+          value: component.basisCode,
+          fieldname: 'basisCode',
+          key: KEY,
+          componentType: component.componentTypeCode,
+        });
+    }
+
+    return error;
+  }
+
+  private async component53Check(
+    locationId: string,
+    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    errorLocation: string = '',
+  ): Promise<string> {
+    let error = null;
+
+    let compRecord = await this.componentRepository.getComponentByLocIdAndCompId(
+      locationId,
+      component.componentId,
+    );
+
+    if (compRecord) {
+      error =
+        errorLocation +
+        this.getMessage('COMPON-53-A', {
+          recordtype: 'Component',
+          fieldnames: 'locationId, componentId',
+        });
     }
 
     return error;

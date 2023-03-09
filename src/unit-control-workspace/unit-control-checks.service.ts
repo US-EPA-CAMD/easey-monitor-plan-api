@@ -31,13 +31,13 @@ export class UnitControlChecksService {
   }
 
   async runChecks(
-    unitControl: UnitControlBaseDTO,
-    unitId: number,
     locId: string,
+    unitId: number,
+    unitControl: UnitControlBaseDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    errorLocation: string = '',
     location?: UpdateMonitorLocationDTO,
-    importUnitId?: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -48,7 +48,7 @@ export class UnitControlChecksService {
     if (isImport) {
       locationRecord = location;
       unitRecord = await this.unitRepository.findOne({
-        name: importUnitId,
+        name: location.unitId,
       });
       unitId = unitRecord.id;
     } else {
@@ -57,8 +57,8 @@ export class UnitControlChecksService {
       );
     }
 
-    if (!isUpdate) {
-      error = await this.duplicateTestCheck(unitId, unitControl, isImport);
+    if (!isUpdate || !isImport) {
+      error = await this.duplicateTestCheck(unitId, unitControl, errorLocation);
       if (error) {
         errorList.push(error);
       }
@@ -72,7 +72,7 @@ export class UnitControlChecksService {
   private async duplicateTestCheck(
     unitId: number,
     unitControl: UnitControlBaseDTO,
-    _isImport: boolean = false,
+    errorLocation: string = '',
   ): Promise<string> {
     let error: string = null;
     let FIELDNAME: string = 'unitControl';
@@ -88,10 +88,12 @@ export class UnitControlChecksService {
     if (record) {
       // CONTROL-15 Duplicate Unit Control (Result A)
       RECORDTYPE += 'installDate';
-      error = this.getMessage('CONTROL-15-A', {
-        recordtype: RECORDTYPE,
-        fieldnames: FIELDNAME,
-      });
+      error =
+        errorLocation +
+        this.getMessage('CONTROL-15-A', {
+          recordtype: RECORDTYPE,
+          fieldnames: FIELDNAME,
+        });
     } else {
       record = await this.repository.findOne({
         unitId: unitId,
@@ -102,10 +104,12 @@ export class UnitControlChecksService {
       if (record) {
         // CONTROL-15 Duplicate Unit Control (Result A)
         RECORDTYPE += 'retireDate';
-        error = this.getMessage('CONTROL-15-A', {
-          recordtype: RECORDTYPE,
-          fieldnames: FIELDNAME,
-        });
+        error =
+          errorLocation +
+          this.getMessage('CONTROL-15-A', {
+            recordtype: RECORDTYPE,
+            fieldnames: FIELDNAME,
+          });
       }
     }
     return error;
