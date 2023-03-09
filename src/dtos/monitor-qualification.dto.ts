@@ -3,7 +3,14 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { LEEQualificationBaseDTO } from './lee-qualification.dto';
 import { LMEQualificationBaseDTO } from './lme-qualification.dto';
@@ -75,6 +82,7 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOId.example,
     name: propertyMetadata.monitorQualificationDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -82,6 +90,7 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOLocationId.example,
     name: propertyMetadata.monitorQualificationDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -89,6 +98,7 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOUserId.example,
     name: propertyMetadata.monitorQualificationDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -96,6 +106,7 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOAddDate.example,
     name: propertyMetadata.monitorQualificationDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -103,6 +114,8 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOUpdateDate.example,
     name: propertyMetadata.monitorQualificationDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -110,5 +123,6 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
     example: propertyMetadata.monitorQualificationDTOActive.example,
     name: propertyMetadata.monitorQualificationDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

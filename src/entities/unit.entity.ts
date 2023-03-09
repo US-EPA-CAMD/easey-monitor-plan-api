@@ -40,7 +40,7 @@ export class Unit extends BaseEntity {
     type: 'date',
     name: 'comr_op_date',
   })
-  commercialOperationDate: Date;
+  commercialOperationDate?: Date;
 
   @Column({
     type: 'date',

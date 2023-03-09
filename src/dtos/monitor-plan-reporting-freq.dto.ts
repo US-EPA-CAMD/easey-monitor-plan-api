@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import {
+  IsDate,
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class MonitorPlanReportingFreqBaseDTO {
   @ApiProperty({
@@ -14,6 +21,7 @@ export class MonitorPlanReportingFreqBaseDTO {
         .monitorPlanReportingFreqDTOMonitoringPlanReportingFreqCode.fieldLabels
         .value,
   })
+  @IsString()
   reportFrequencyCode: string;
 
   @ApiProperty({
@@ -21,14 +29,18 @@ export class MonitorPlanReportingFreqBaseDTO {
     example: propertyMetadata.monitorPlanDTOEndReportPeriodId.example,
     name: propertyMetadata.monitorPlanDTOEndReportPeriodId.fieldLabels.value,
   })
-  beginReportPeriodId: number;
+  @IsNumber()
+  @IsOptional()
+  beginReportPeriodId?: number;
 
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOBeginReportPeriodId.description,
     example: propertyMetadata.monitorPlanDTOBeginReportPeriodId.example,
     name: propertyMetadata.monitorPlanDTOBeginReportPeriodId.fieldLabels.value,
   })
-  endReportPeriodId: number;
+  @IsOptional()
+  @IsNumber()
+  endReportPeriodId?: number;
 }
 
 export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO {
@@ -37,6 +49,7 @@ export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO
     example: propertyMetadata.monitorPlanReportingFreqDTOId.example,
     name: propertyMetadata.monitorPlanReportingFreqDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   /* @ApiProperty({
@@ -51,6 +64,7 @@ export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO
     example: propertyMetadata.monitorPlanReportingFreqDTOUserId.example,
     name: propertyMetadata.monitorPlanReportingFreqDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -59,6 +73,7 @@ export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO
     example: propertyMetadata.monitorPlanReportingFreqDTOAddDate.example,
     name: propertyMetadata.monitorPlanReportingFreqDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -68,5 +83,7 @@ export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO
     name:
       propertyMetadata.monitorPlanReportingFreqDTOUpdateDate.fieldLabels.value,
   })
-  updateDate: Date;
+  @IsDateString()
+  @IsOptional()
+  updateDate?: Date;
 }

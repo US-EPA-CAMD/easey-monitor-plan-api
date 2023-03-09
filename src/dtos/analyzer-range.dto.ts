@@ -2,11 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
-  IsInRange,
-  IsIsoFormat,
-  IsValidCode,
-} from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+  IsBoolean,
+  IsDate,
+  IsDateString,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
   DATE_FORMAT,
@@ -16,6 +21,11 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { AnalyzerRangeCode } from '../entities/analyzer-range-code.entity';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Analyzer Range';
 export class AnalyzerRangeBaseDTO {
@@ -177,6 +187,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOId.example,
     name: propertyMetadata.analyzerRangeDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -184,6 +195,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOComponentRecordId.example,
     name: propertyMetadata.analyzerRangeDTOComponentRecordId.fieldLabels.value,
   })
+  @IsString()
   componentRecordId: string;
 
   @ApiProperty({
@@ -191,6 +203,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOUserId.example,
     name: propertyMetadata.analyzerRangeDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -198,6 +211,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOAddDate.example,
     name: propertyMetadata.analyzerRangeDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -205,6 +219,8 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOUpdateDate.example,
     name: propertyMetadata.analyzerRangeDTOUpdateDate.fieldLabels.value,
   })
+  @IsOptional()
+  @IsDateString()
   updateDate: Date;
 
   @ApiProperty({
@@ -212,5 +228,6 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOActive.example,
     name: propertyMetadata.analyzerRangeDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

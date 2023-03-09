@@ -1,7 +1,10 @@
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsString,
   MaxLength,
   ValidateIf,
   ValidationArguments,
@@ -135,6 +138,7 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOId.example,
     name: propertyMetadata.monitorFormulaDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -142,6 +146,7 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOLocationId.example,
     name: propertyMetadata.monitorFormulaDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -149,6 +154,7 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOUserId.example,
     name: propertyMetadata.monitorFormulaDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -156,6 +162,7 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOAddDate.example,
     name: propertyMetadata.monitorFormulaDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -163,6 +170,8 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOUpdateDate.example,
     name: propertyMetadata.monitorFormulaDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -170,5 +179,6 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOActive.example,
     name: propertyMetadata.monitorFormulaDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

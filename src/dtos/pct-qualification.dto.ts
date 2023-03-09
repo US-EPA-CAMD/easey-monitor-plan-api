@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
@@ -231,6 +233,7 @@ export class PCTQualificationDTO extends PCTQualificationBaseDTO {
     example: propertyMetadata.pCTQualificationDTOId.example,
     name: propertyMetadata.pCTQualificationDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -239,6 +242,7 @@ export class PCTQualificationDTO extends PCTQualificationBaseDTO {
     example: propertyMetadata.pCTQualificationDTOQualificationId.example,
     name: propertyMetadata.pCTQualificationDTOQualificationId.fieldLabels.value,
   })
+  @IsString()
   qualificationId: string;
 
   @ApiProperty({
@@ -246,6 +250,7 @@ export class PCTQualificationDTO extends PCTQualificationBaseDTO {
     example: propertyMetadata.pCTQualificationDTOUserId.example,
     name: propertyMetadata.pCTQualificationDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -253,6 +258,7 @@ export class PCTQualificationDTO extends PCTQualificationBaseDTO {
     example: propertyMetadata.pCTQualificationDTOAddDate.example,
     name: propertyMetadata.pCTQualificationDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -260,5 +266,7 @@ export class PCTQualificationDTO extends PCTQualificationBaseDTO {
     example: propertyMetadata.pCTQualificationDTOUpdateDate.example,
     name: propertyMetadata.pCTQualificationDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 }

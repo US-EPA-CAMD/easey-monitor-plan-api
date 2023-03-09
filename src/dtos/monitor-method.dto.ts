@@ -1,7 +1,10 @@
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -142,6 +145,7 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOId.example,
     name: propertyMetadata.monitorMethodDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -149,6 +153,7 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOLocationId.example,
     name: propertyMetadata.monitorMethodDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -156,6 +161,7 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOUserId.example,
     name: propertyMetadata.monitorMethodDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -163,6 +169,7 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOAddDate.example,
     name: propertyMetadata.monitorMethodDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -170,6 +177,8 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOUpdateDate.example,
     name: propertyMetadata.monitorMethodDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -177,5 +186,6 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOActive.example,
     name: propertyMetadata.monitorMethodDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

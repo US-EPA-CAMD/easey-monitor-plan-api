@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UserCheckOutBaseDTO {
   @ApiProperty({
@@ -7,6 +8,7 @@ export class UserCheckOutBaseDTO {
     example: propertyMetadata.facilityId.example,
     name: propertyMetadata.facilityId.fieldLabels.value,
   })
+  @IsNumber()
   facId: number;
 
   @ApiProperty({
@@ -14,8 +16,10 @@ export class UserCheckOutBaseDTO {
     example: propertyMetadata.date.example,
     name: propertyMetadata.date.fieldLabels.value,
   })
+  @IsDateString()
   checkedOutOn: Date;
 
+  @IsString()
   checkedOutBy: string;
 
   @ApiProperty({
@@ -23,6 +27,8 @@ export class UserCheckOutBaseDTO {
     example: propertyMetadata.date.example,
     name: propertyMetadata.date.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   lastActivity: Date;
 }
 
@@ -32,5 +38,6 @@ export class UserCheckOutDTO extends UserCheckOutBaseDTO {
     example: propertyMetadata.monitorPlanDTOId.example,
     name: propertyMetadata.monitorPlanDTOId.fieldLabels.value,
   })
+  @IsString()
   monPlanId: string;
 }

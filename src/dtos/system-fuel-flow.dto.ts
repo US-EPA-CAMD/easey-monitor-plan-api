@@ -2,9 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -22,7 +25,7 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { SystemFuelMasterDataRelationship } from '../entities/system-fuel-md-relationship.entity';
-import { FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Monitoring System Fuel Flow';
@@ -108,9 +111,7 @@ export class SystemFuelFlowBaseDTO {
         });
       },
     },
-    (
-      args: ValidationArguments,
-    ): FindOneOptions<SystemFuelMasterDataRelationship> => {
+    (args: ValidationArguments): FindManyOptions<any> => {
       return { where: { maxRateSourceCode: args.value } };
     },
   )
@@ -212,6 +213,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOId.example,
     name: propertyMetadata.systemFuelFlowDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -222,6 +224,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
       propertyMetadata.systemFuelFlowDTOMonitoringSystemRecordId.fieldLabels
         .value,
   })
+  @IsString()
   monitoringSystemRecordId: string;
 
   @ApiProperty({
@@ -229,6 +232,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOFuelCode.example,
     name: propertyMetadata.systemFuelFlowDTOFuelCode.fieldLabels.value,
   })
+  @IsString()
   fuelCode: string;
 
   @ApiProperty({
@@ -236,6 +240,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOSystemTypeCode.example,
     name: propertyMetadata.systemFuelFlowDTOSystemTypeCode.fieldLabels.value,
   })
+  @IsString()
   systemTypeCode: string;
 
   @ApiProperty({
@@ -243,6 +248,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOUserId.example,
     name: propertyMetadata.systemFuelFlowDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -250,6 +256,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOAddDate.example,
     name: propertyMetadata.systemFuelFlowDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -257,6 +264,8 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOUpdateDate.example,
     name: propertyMetadata.systemFuelFlowDTOUpdateDate.fieldLabels.value,
   })
+  @IsOptional()
+  @IsDateString()
   updateDate: Date;
 
   @ApiProperty({
@@ -264,5 +273,6 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOActive.example,
     name: propertyMetadata.systemFuelFlowDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

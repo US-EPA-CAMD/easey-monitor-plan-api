@@ -1,5 +1,5 @@
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsOptional } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PaginationDTO } from './pagination.dto';
 
@@ -11,6 +11,7 @@ export class MonitorPlanParamsDTO extends PaginationDTO {
   })
   @IsOptional()
   @ApiPropertyOptional()
+  @IsNumber()
   facId: number;
 
   @ApiProperty()
@@ -19,9 +20,11 @@ export class MonitorPlanParamsDTO extends PaginationDTO {
     example: propertyMetadata.monitorPlanDTOOrisCode.example,
     name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
   })
+  @IsNumber()
   orisCode: number;
 
   @IsOptional()
+  @IsBoolean()
   @ApiPropertyOptional()
   active: boolean;
 }
