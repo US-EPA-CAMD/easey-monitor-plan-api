@@ -232,8 +232,10 @@ describe('Component Checks Service Test', () => {
     it('Should get [COMPON-81-A] error', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
 
+      payload.sampleAcquisitionMethodCode = '';
       payload.componentTypeCode = 'HG';
       payload.hgConverterIndicator = null;
+      payload.basisCode = 'D';
 
       let errored = false;
 
@@ -249,8 +251,10 @@ describe('Component Checks Service Test', () => {
     it('Should get [COMPON-81-B] error', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
 
+      payload.sampleAcquisitionMethodCode = '';
       payload.componentTypeCode = 'HG';
       payload.hgConverterIndicator = 2;
+      payload.basisCode = 'D';
 
       let errored = false;
 
@@ -266,8 +270,10 @@ describe('Component Checks Service Test', () => {
     it('Should get [COMPON-81-C] error', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
 
+      payload.sampleAcquisitionMethodCode = '';
       payload.componentTypeCode = 'NOX';
       payload.hgConverterIndicator = 1;
+      payload.basisCode = 'D';
 
       let errored = false;
 

@@ -180,6 +180,7 @@ export class ComponentCheckService {
 
   private component81Check(
     component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    errorLocation: string = '',
   ) {
     let error = null;
     let errorCode = null;
@@ -199,12 +200,14 @@ export class ComponentCheckService {
     }
 
     if (errorCode) {
-      error = this.getMessage(errorCode, {
-        value: component.hgConverterIndicator,
-        fieldname: 'hgConverterIndicator',
-        key: KEY,
-        componentType: component.componentTypeCode,
-      });
+      error =
+        errorLocation +
+        this.getMessage(errorCode, {
+          value: component.hgConverterIndicator,
+          fieldname: 'hgConverterIndicator',
+          key: KEY,
+          componentType: component.componentTypeCode,
+        });
     }
 
     return error;
