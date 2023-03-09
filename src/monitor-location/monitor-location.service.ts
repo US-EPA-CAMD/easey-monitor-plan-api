@@ -22,6 +22,8 @@ export class MonitorLocationService {
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
     const result = await this.repository.findOne(locationId);
 
+    console.log(result);
+
     if (!result) {
       throw new LoggingException(this.errorMsg, HttpStatus.NOT_FOUND, {
         locationId: locationId,

@@ -1,9 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
+  IsBoolean,
+  IsDateString,
   IsIn,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
 import { IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
@@ -154,6 +158,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOId.example,
     name: propertyMetadata.unitControlDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -161,6 +166,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOUnitId.example,
     name: propertyMetadata.unitControlDTOUnitId.fieldLabels.value,
   })
+  @IsNumber()
   unitRecordId: number;
 
   @ApiProperty({
@@ -168,6 +174,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOUserId.example,
     name: propertyMetadata.unitControlDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -175,6 +182,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOAddDate.example,
     name: propertyMetadata.unitControlDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -182,6 +190,8 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOUpdateDate.example,
     name: propertyMetadata.unitControlDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -189,5 +199,6 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOActive.example,
     name: propertyMetadata.unitControlDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

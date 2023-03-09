@@ -2,10 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -68,6 +71,7 @@ export class DuctWafBaseDTO {
       },
     },
   )
+  @IsString()
   wafMethodCode: string;
 
   @ApiProperty({
@@ -229,6 +233,7 @@ export class DuctWafDTO extends DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOId.example,
     name: propertyMetadata.ductWafDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -236,6 +241,7 @@ export class DuctWafDTO extends DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOLocationId.example,
     name: propertyMetadata.ductWafDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -243,6 +249,7 @@ export class DuctWafDTO extends DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOUserId.example,
     name: propertyMetadata.ductWafDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -250,6 +257,8 @@ export class DuctWafDTO extends DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOAddDate.example,
     name: propertyMetadata.ductWafDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   addDate: Date;
 
   @ApiProperty({
@@ -257,8 +266,11 @@ export class DuctWafDTO extends DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOUpdateDate.example,
     name: propertyMetadata.ductWafDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   // TODO: add ApiProperty
+  @IsBoolean()
   active: boolean;
 }

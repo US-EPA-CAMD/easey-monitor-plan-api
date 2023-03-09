@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
@@ -39,6 +41,7 @@ export class LEEQualificationBaseDTO {
       },
     },
   )
+  @IsString()
   parameterCode: string;
 
   @ApiProperty({
@@ -57,6 +60,7 @@ export class LEEQualificationBaseDTO {
       },
     },
   )
+  @IsString()
   qualificationTestType: string;
 
   @ApiProperty({
@@ -126,6 +130,7 @@ export class LEEQualificationBaseDTO {
       },
     },
   )
+  @IsString()
   unitsOfStandard: string;
 
   @ApiProperty({
@@ -161,6 +166,7 @@ export class LEEQualificationDTO extends LEEQualificationBaseDTO {
     example: propertyMetadata.lEEQualificationDTOId.example,
     name: propertyMetadata.lEEQualificationDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -169,6 +175,7 @@ export class LEEQualificationDTO extends LEEQualificationBaseDTO {
     example: propertyMetadata.lEEQualificationDTOQualificationId.example,
     name: propertyMetadata.lEEQualificationDTOQualificationId.fieldLabels.value,
   })
+  @IsString()
   qualificationId: string;
 
   @ApiProperty({
@@ -176,6 +183,7 @@ export class LEEQualificationDTO extends LEEQualificationBaseDTO {
     example: propertyMetadata.lEEQualificationDTOUserId.example,
     name: propertyMetadata.lEEQualificationDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -183,6 +191,7 @@ export class LEEQualificationDTO extends LEEQualificationBaseDTO {
     example: propertyMetadata.lEEQualificationDTOAddDate.example,
     name: propertyMetadata.lEEQualificationDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -190,5 +199,7 @@ export class LEEQualificationDTO extends LEEQualificationBaseDTO {
     example: propertyMetadata.lEEQualificationDTOUpdateDate.example,
     name: propertyMetadata.lEEQualificationDTOUpdateDate.fieldLabels.value,
   })
+  @IsOptional()
+  @IsDateString()
   updateDate: Date;
 }

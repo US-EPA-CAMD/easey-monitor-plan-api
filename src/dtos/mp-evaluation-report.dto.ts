@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { IsNumber, IsString } from 'class-validator';
 
 interface MPReportResults {
   unitStackInformation: string;
@@ -15,6 +16,7 @@ export class MPEvaluationReportDTO {
     example: propertyMetadata.facilityName.example,
     name: propertyMetadata.facilityName.fieldLabels.value,
   })
+  @IsString()
   facilityName: string;
 
   @ApiProperty({
@@ -22,6 +24,7 @@ export class MPEvaluationReportDTO {
     example: propertyMetadata.facilityId.example,
     name: propertyMetadata.facilityId.fieldLabels.value,
   })
+  @IsNumber()
   facilityId: number;
 
   @ApiProperty({
@@ -29,6 +32,7 @@ export class MPEvaluationReportDTO {
     example: propertyMetadata.state.example,
     name: propertyMetadata.state.fieldLabels.value,
   })
+  @IsString()
   state: string;
 
   @ApiProperty({
@@ -36,6 +40,8 @@ export class MPEvaluationReportDTO {
     example: propertyMetadata.county.example,
     name: propertyMetadata.county.fieldLabels.value,
   })
+  @IsString()
   countyName: string;
+
   mpReportResults: MPReportResults[];
 }

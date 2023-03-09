@@ -51,6 +51,11 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
+    error = this.component81Check(component);
+    if (error) {
+      errorList.push(error);
+    }
+
     if (!isUpdate || !isImport) {
       error = await this.component53Check(locationId, component, errorLocation);
       if (error) {
@@ -168,6 +173,38 @@ export class ComponentCheckService {
           recordtype: 'Component',
           fieldnames: 'locationId, componentId',
         });
+    }
+
+    return error;
+  }
+
+  private component81Check(
+    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+  ) {
+    let error = null;
+    let errorCode = null;
+
+    if (component.componentTypeCode === 'HG') {
+      if (!component.hgConverterIndicator) {
+        errorCode = 'COMPON-81-A';
+      }
+
+      if (![1, 0].includes(component.hgConverterIndicator)) {
+        errorCode = 'COMPON-81-B';
+      }
+    } else {
+      if (component.hgConverterIndicator) {
+        errorCode = 'COMPON-81-C';
+      }
+    }
+
+    if (errorCode) {
+      error = this.getMessage(errorCode, {
+        value: component.hgConverterIndicator,
+        fieldname: 'hgConverterIndicator',
+        key: KEY,
+        componentType: component.componentTypeCode,
+      });
     }
 
     return error;

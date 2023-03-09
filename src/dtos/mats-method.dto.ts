@@ -1,4 +1,12 @@
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
@@ -8,7 +16,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
-import { FindOneOptions } from 'typeorm';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { MatsMethodsMasterDataRelationships } from '../entities/mats-methods-master-data-relationship.entity';
 
 const KEY = 'Supplemental MATS Monitoring Method';
@@ -57,9 +65,7 @@ export class MatsMethodBaseDTO {
         return CheckCatalogService.formatResultMessage('MATSMTH-7-B');
       },
     },
-    (
-      args: ValidationArguments,
-    ): FindOneOptions<MatsMethodsMasterDataRelationships> => {
+    (args: ValidationArguments): FindManyOptions<any> => {
       return { where: { methodCode: args.value } };
     },
   )
@@ -151,6 +157,7 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOId.example,
     name: propertyMetadata.matsMethodDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -158,6 +165,7 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOLocationId.example,
     name: propertyMetadata.matsMethodDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -165,6 +173,7 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOUserId.example,
     name: propertyMetadata.matsMethodDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -172,6 +181,7 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOAddDate.example,
     name: propertyMetadata.matsMethodDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -179,6 +189,8 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOUpdateDate.example,
     name: propertyMetadata.matsMethodDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -186,5 +198,6 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOActive.example,
     name: propertyMetadata.matsMethodDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

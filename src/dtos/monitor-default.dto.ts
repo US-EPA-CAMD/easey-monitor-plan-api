@@ -1,8 +1,12 @@
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsSemVer,
+  IsString,
   MaxLength,
   ValidateIf,
   ValidationArguments,
@@ -28,6 +32,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @IsString()
   parameterCode: string;
 
   @ApiProperty({
@@ -87,6 +92,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @IsString()
   defaultPurposeCode: string;
 
   @ApiProperty({
@@ -103,6 +109,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @IsString()
   fuelCode: string;
 
   @ApiProperty({
@@ -122,6 +129,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @IsString()
   operatingConditionCode: string;
 
   @ApiProperty({
@@ -139,6 +147,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @IsString()
   defaultSourceCode: string;
 
   @ApiProperty({
@@ -153,6 +162,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @ValidateIf(o => o.groupId !== null)
+  @IsString()
   groupId: string;
 
   @ApiProperty({
@@ -218,6 +228,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOId.example,
     name: propertyMetadata.monitorDefaultDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -225,6 +236,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOLocationId.example,
     name: propertyMetadata.monitorDefaultDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -232,6 +244,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOUserId.example,
     name: propertyMetadata.monitorDefaultDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -239,6 +252,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOAddDate.example,
     name: propertyMetadata.monitorDefaultDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -246,6 +260,8 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOUpdateDate.example,
     name: propertyMetadata.monitorDefaultDTOUpdateDate.fieldLabels.value,
   })
+  @IsOptional()
+  @IsDateString()
   updateDate: Date;
 
   @ApiProperty({
@@ -253,5 +269,6 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOActive.example,
     name: propertyMetadata.monitorDefaultDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

@@ -1,9 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
@@ -121,6 +125,7 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOId.example,
     name: propertyMetadata.unitFuelDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -128,6 +133,7 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOUnitId.example,
     name: propertyMetadata.unitFuelDTOUnitId.fieldLabels.value,
   })
+  @IsNumber()
   unitRecordId: number;
 
   @ApiProperty({
@@ -135,6 +141,8 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOActualOrProjectCode.example,
     name: propertyMetadata.unitFuelDTOActualOrProjectCode.fieldLabels.value,
   })
+  @IsString()
+  @IsOptional()
   actualOrProjectCode: string;
 
   @ApiProperty({
@@ -142,6 +150,8 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOSulfurContent.example,
     name: propertyMetadata.unitFuelDTOSulfurContent.fieldLabels.value,
   })
+  @IsNumber()
+  @IsOptional()
   sulfurContent: number;
 
   @ApiProperty({
@@ -149,6 +159,7 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOUserId.example,
     name: propertyMetadata.unitFuelDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -156,6 +167,7 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOAddDate.example,
     name: propertyMetadata.unitFuelDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -163,6 +175,8 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOUpdateDate.example,
     name: propertyMetadata.unitFuelDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -170,5 +184,6 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOActive.example,
     name: propertyMetadata.unitFuelDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }
