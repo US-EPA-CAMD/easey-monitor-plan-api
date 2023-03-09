@@ -115,9 +115,19 @@ export class MonitorLocationMap extends BaseMap<
       stackPipeId = null;
       activeDate = null;
       retireDate = null;
-      unitCapacities = entity.unit.unitCapacities
-        ? await this.unitCapacityMap.many(entity.unit.unitCapacities)
-        : [];
+
+      if (entity.unit.unitCapacities) {
+        for (const capac of entity.unit.unitCapacities) {
+          capac.unit = entity.unit;
+        }
+
+        unitCapacities = await this.unitCapacityMap.many(
+          entity.unit.unitCapacities,
+        );
+      } else {
+        entity.unit.unitCapacities = [];
+      }
+
       unitControls = entity.unit.unitControls
         ? await this.unitControlMap.many(entity.unit.unitControls)
         : [];
