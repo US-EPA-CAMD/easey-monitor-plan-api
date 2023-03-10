@@ -8,6 +8,7 @@ import { UsedIdentifierRepository } from '../used-identifier/used-identifier.rep
 import { UsedIdentifier } from '../entities/used-identifier.entity';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { Component } from '../entities/workspace/component.entity';
+import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -31,7 +32,9 @@ describe('Component Checks Service Test', () => {
         {
           provide: SystemComponentMasterDataRelationshipRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(null),
+            findOne: jest
+              .fn()
+              .mockResolvedValue(new SystemComponentMasterDataRelationships()),
           }),
         },
         {
@@ -64,7 +67,7 @@ describe('Component Checks Service Test', () => {
 
       payload.sampleAcquisitionMethodCode = null;
       payload.componentTypeCode = 'ABC';
-      payload.basisCode = 'W';
+      payload.basisCode = null;
 
       let errored = false;
 

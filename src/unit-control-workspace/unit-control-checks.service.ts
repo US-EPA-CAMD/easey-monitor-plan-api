@@ -57,7 +57,7 @@ export class UnitControlChecksService {
       );
     }
 
-    if (!isUpdate || !isImport) {
+    if (!isUpdate && !isImport) {
       error = await this.duplicateTestCheck(unitId, unitControl, errorLocation);
       if (error) {
         errorList.push(error);
