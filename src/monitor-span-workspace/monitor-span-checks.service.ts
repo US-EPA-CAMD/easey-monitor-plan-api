@@ -30,32 +30,31 @@ export class MonitorSpanChecksService {
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
   ): Promise<string[]> {
-    let error: string = null;
-    const errorList: string[] = [];
     this.logger.info('Running Monitor Span Checks');
 
-    error = await this.flowFullScaleRangeCheck(monitorSpan, locationId);
+    let error: string = null;
+    const errorList: string[] = [];
+
+    // SPAN-17
+    error = this.flowFullScaleRangeCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
 
-    error = await this.highSpanScaleTransitionPointCheck(
-      monitorSpan,
-      locationId,
-    );
+    // SPAN-55
+    error = this.highSpanScaleTransitionPointCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
 
-    error = await this.lowSpanScaleTransitionPointCheck(
-      monitorSpan,
-      locationId,
-    );
+    // SPAN-55
+    error = this.lowSpanScaleTransitionPointCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
 
-    error = await this.spanScaleTransitionPointCheck(monitorSpan, locationId);
+    // SPAN-55
+    error = this.spanScaleTransitionPointCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
@@ -91,37 +90,32 @@ export class MonitorSpanChecksService {
     return errorList;
   }
 
-  private async flowFullScaleRangeCheck(
-    monitorSpan: MonitorSpanBaseDTO,
-    locationId: string,
-  ): Promise<string> {
+  private flowFullScaleRangeCheck(
+    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
+  ): string {
     let error = null;
-    let FIELDNAME: string = 'flowFullScaleRange';
-    const record = await this.repository.findOne({
-      locationId: locationId,
-      componentTypeCode: monitorSpan.componentTypeCode,
-    });
+    let FIELDNAME = 'flowFullScaleRange';
+    let flowFullScaleRange = monitorSpan.flowFullScaleRange;
 
-    if (record) {
-      if (record.componentTypeCode === 'FLOW') {
-        if (monitorSpan.flowFullScaleRange === null) {
-          return this.getMessage('SPAN-17-A', {
-            fieldname: FIELDNAME,
-            key: KEY,
-          });
-        }
-        if (monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue) {
-          return this.getMessage('SPAN-17-B', {
-            fieldname: FIELDNAME,
-            key: KEY,
-          });
-        }
+    // If the ComponentTypeCode is equal to "FLOW"
+    if (monitorSpan.componentTypeCode === 'FLOW') {
+      // If the FlowFullScaleRange is null, return A
+      if (!flowFullScaleRange) {
+        return this.getMessage('SPAN-17-A', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       }
-
-      if (
-        monitorSpan.componentTypeCode !== 'FLOW' &&
-        monitorSpan.flowFullScaleRange != null
-      ) {
+      // If the FlowSpanValue is valid, and the FlowFullScaleRange is not greater than or equal to the FlowSpanValue, return B
+      if (monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue) {
+        return this.getMessage('SPAN-17-B', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+      }
+    } else {
+      // If the ComponentTypeCode is not equal to "FLOW", and the FlowFullScaleRange is not null
+      if (!monitorSpan.flowFullScaleRange) {
         return this.getMessage('SPAN-17-C', {
           fieldname: FIELDNAME,
           key: KEY,
@@ -131,26 +125,21 @@ export class MonitorSpanChecksService {
     return error;
   }
 
-  private async highSpanScaleTransitionPointCheck(
+  private highSpanScaleTransitionPointCheck(
     monitorSpan: MonitorSpanBaseDTO,
-    locationId: string,
-  ): Promise<string> {
+  ): string {
     let error = null;
-    let spanScale = monitorSpan.spanScaleCode;
-    const record = await this.repository.findOne({
-      locationId: locationId,
-      componentTypeCode: monitorSpan.componentTypeCode,
-    });
+    let spanScaleCode = monitorSpan.spanScaleCode;
+    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
+    let spanValue = monitorSpan.spanValue;
+    let defaultHighRangeValue = monitorSpan.defaultHighRange;
 
     // For a Monitoring Span record with a valid ComponentTypeCode and a SpanScale equal to "H"
-    if (record && spanScale === 'H') {
+    if (spanScaleCode === 'H') {
       // If ScaleTransitionPoint is not null
-      if (monitorSpan.scaleTransitionPoint != null) {
+      if (scaleTransitionPoint) {
         // If SpanValue is null and DefaultHighRangeValue is not null, return A
-        if (
-          monitorSpan.spanValue === null &&
-          monitorSpan.defaultHighRange != null
-        ) {
+        if (!spanValue && defaultHighRangeValue) {
           return this.getMessage('SPAN-58-A', {
             key: KEY,
           });
@@ -159,26 +148,21 @@ export class MonitorSpanChecksService {
     }
     return error;
   }
-  private async lowSpanScaleTransitionPointCheck(
+  private lowSpanScaleTransitionPointCheck(
     monitorSpan: MonitorSpanBaseDTO,
-    locationId: string,
-  ): Promise<string> {
+  ): string {
     let error = null;
-    let spanScale = monitorSpan.spanScaleCode;
-    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
+    let spanScaleCode = monitorSpan.spanScaleCode;
     let fullScaleRange = monitorSpan.fullScaleRange;
-    const record = await this.repository.findOne({
-      locationId: locationId,
-      componentTypeCode: monitorSpan.componentTypeCode,
-    });
+    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
 
     // Monitoring Span record with a valid ComponentTypeCode and a SpanScale equal to "L"
-    if (record && spanScale === 'L') {
-      // If ScaleTransitionPoint is not null
-      if (scaleTransitionPoint != null) {
-        // If FullScaleRangeValue is not null, and the ScaleTransitionPoint is not between 1/2 and 1 times the FullScaleRangeValue, return A
+    if (spanScaleCode === 'L') {
+      // If ScaleTransitionPoint is not null(true)
+      if (scaleTransitionPoint) {
+        // If FullScaleRangeValue is not null(true), and the ScaleTransitionPoint is not between 1/2 and 1 times the FullScaleRangeValue(if it's not greater or not less than HALF the FSRV), return A
         if (
-          fullScaleRange != null &&
+          fullScaleRange &&
           (scaleTransitionPoint > fullScaleRange ||
             scaleTransitionPoint < fullScaleRange * 0.5)
         ) {
@@ -191,29 +175,24 @@ export class MonitorSpanChecksService {
     return error;
   }
 
-  private async spanScaleTransitionPointCheck(
-    monitorSpan: MonitorSpanBaseDTO,
-    locationId: string,
-  ): Promise<string> {
+  private spanScaleTransitionPointCheck(
+    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
+  ): string {
     let error = null;
     let FIELDNAME: string = 'spanScaleTransitionPoint';
-    const component = await this.repository.findOne({
-      locationId: locationId,
-      componentTypeCode: monitorSpan.componentTypeCode,
-    });
-    if (component) {
-      if (
-        component.componentTypeCode === 'HG' ||
-        component.componentTypeCode === 'HCL'
-      ) {
-        if (monitorSpan.scaleTransitionPoint !== null) {
-          return this.getMessage('SPAN-61-A', {
-            fieldname: FIELDNAME,
-            key: KEY,
-          });
-        }
+    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
+
+    // For a Monitoring Span record with a valid ComponentTypeCode equal to "HG" or "HCL"
+    if (['HG', 'HCL'].includes(monitorSpan.componentTypeCode)) {
+      // If ScaleTransitionPoint is not null, return A
+      if (!scaleTransitionPoint) {
+        return this.getMessage('SPAN-61-A', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       }
     }
+
     return error;
   }
 
