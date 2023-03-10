@@ -37,9 +37,9 @@ export class AnalyzerRangeChecksService {
     locationId: string,
     analyzerRange: AnalyzerRangeBaseDTO | AnalyzerRangeDTO,
     componentId?: string,
-    componentData?: UpdateComponentBaseDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    componentData?: UpdateComponentBaseDTO,
   ) {
     let errorList: string[] = [];
     let error: string = null;

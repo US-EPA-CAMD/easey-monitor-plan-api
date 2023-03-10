@@ -6,6 +6,7 @@ import { AnalyzerRangeWorkspaceController } from './analyzer-range.controller';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
 
 jest.mock('./analyzer-range.service');
 
@@ -16,6 +17,10 @@ const data: AnalyzerRangeDTO[] = [];
 data.push(new AnalyzerRangeDTO());
 data.push(new AnalyzerRangeDTO());
 
+const mockAnalyzerRangeChecksService = () => ({
+  runSpanChecks: jest.fn(),
+});
+
 describe('AnalyzerRangeWorkspaceController', () => {
   let controller: AnalyzerRangeWorkspaceController;
   let service: AnalyzerRangeWorkspaceService;
@@ -24,7 +29,14 @@ describe('AnalyzerRangeWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       controllers: [AnalyzerRangeWorkspaceController],
-      providers: [AnalyzerRangeWorkspaceService, ConfigService],
+      providers: [
+        AnalyzerRangeWorkspaceService,
+        ConfigService,
+        {
+          provide: AnalyzerRangeChecksService,
+          useFactory: mockAnalyzerRangeChecksService,
+        },
+      ],
     }).compile();
 
     controller = module.get(AnalyzerRangeWorkspaceController);
