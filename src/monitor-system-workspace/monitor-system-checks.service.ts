@@ -36,8 +36,8 @@ export class MonitorSystemCheckService {
   async runChecks(
     locationId: string,
     monitorSystem: MonitorSystemBaseDTO,
-    _isImport: boolean = false,
-    _isUpdate: boolean = false,
+    isImport: boolean = false,
+    isUpdate: boolean = false,
     errorLocation: string = '',
   ) {
     this.logger.info('Running Monitor System Checks');
@@ -52,8 +52,8 @@ export class MonitorSystemCheckService {
           const results = this.componentChecksService.runChecks(
             locationId,
             systemComponent,
-            true,
-            false,
+            isImport,
+            isUpdate,
             `${errorLocation}components.${sysCompIdx}.`,
           );
 
