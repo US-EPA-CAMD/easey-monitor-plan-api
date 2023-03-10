@@ -90,12 +90,9 @@ export class MonitorSpanChecksService {
     return errorList;
   }
 
-  private flowFullScaleRangeCheck(
-    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
-  ): string {
+  private flowFullScaleRangeCheck(monitorSpan: MonitorSpanBaseDTO): string {
     let error = null;
     let FIELDNAME = 'flowFullScaleRange';
-
 
     // If the ComponentTypeCode is equal to "FLOW"
     if (monitorSpan.componentTypeCode === 'FLOW') {
@@ -149,7 +146,6 @@ export class MonitorSpanChecksService {
   ): string {
     let error = null;
 
-
     // Monitoring Span record with a valid ComponentTypeCode and a SpanScale equal to "L"
     if (monitorSpan.spanScaleCode === 'L') {
       // If ScaleTransitionPoint is not null(true)
@@ -170,7 +166,7 @@ export class MonitorSpanChecksService {
   }
 
   private spanScaleTransitionPointCheck(
-    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
+    monitorSpan: MonitorSpanBaseDTO,
   ): string {
     let error = null;
     let FIELDNAME: string = 'spanScaleTransitionPoint';
