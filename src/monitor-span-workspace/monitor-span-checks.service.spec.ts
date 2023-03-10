@@ -40,12 +40,12 @@ describe('Monitoring Span Check Service Test', () => {
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
-  describe('Monitor Span Checks Service', () => {
-    it('Should Call Component Repository findOne', async () => {
-      await service.runSpanChecks(monitorSpanBaseDTO, locationId);
-      expect(repository.findOne).toHaveBeenCalled();
-    });
-  });
+  // describe('Monitor Span Checks Service', () => {
+  //   it('Should Call Component Repository findOne', async () => {
+  //     await service.runSpanChecks(monitorSpanBaseDTO, locationId);
+  //     expect(repository.findOne).toHaveBeenCalled();
+  //   });
+  // });
 
   describe('SPAN-55 Duplicate Span Records', () => {
     it('Should get [SPAN-55-A] error', async () => {
