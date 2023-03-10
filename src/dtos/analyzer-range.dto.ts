@@ -61,7 +61,7 @@ export class AnalyzerRangeBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage('COMPPON-37-A', {
+      return CheckCatalogService.formatMessage('COMPON-37-A', {
         fieldname: args.property,
         key: KEY,
       });
