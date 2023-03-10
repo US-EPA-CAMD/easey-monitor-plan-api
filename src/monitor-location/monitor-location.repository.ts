@@ -24,6 +24,7 @@ export class MonitorLocationRepository extends Repository<MonitorLocation> {
       .leftJoinAndSelect('ml.unit', 'u')
       .leftJoinAndSelect('ml.stackPipe', 'stp')
       .leftJoinAndSelect('u.opStatuses', 'uos')
+      .leftJoinAndSelect('u.unitBoilerType', 'ubt')
       .where('p.id = :monPlanId', { monPlanId })
       .andWhere('uos.endDate IS NULL')
       .addOrderBy('u.name, stp.name')
