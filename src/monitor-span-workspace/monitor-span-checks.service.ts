@@ -41,19 +41,19 @@ export class MonitorSpanChecksService {
       errorList.push(error);
     }
 
-    // SPAN-55
+    // SPAN-58
     error = this.highSpanScaleTransitionPointCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
 
-    // SPAN-55
+    // SPAN-59
     error = this.lowSpanScaleTransitionPointCheck(monitorSpan);
     if (error) {
       errorList.push(error);
     }
 
-    // SPAN-55
+    // SPAN-61
     error = this.spanScaleTransitionPointCheck(monitorSpan);
     if (error) {
       errorList.push(error);
