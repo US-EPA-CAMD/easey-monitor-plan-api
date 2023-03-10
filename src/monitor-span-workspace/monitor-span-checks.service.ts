@@ -95,12 +95,12 @@ export class MonitorSpanChecksService {
   ): string {
     let error = null;
     let FIELDNAME = 'flowFullScaleRange';
-    let flowFullScaleRange = monitorSpan.flowFullScaleRange;
+
 
     // If the ComponentTypeCode is equal to "FLOW"
     if (monitorSpan.componentTypeCode === 'FLOW') {
       // If the FlowFullScaleRange is null, return A
-      if (!flowFullScaleRange) {
+      if (!monitorSpan.flowFullScaleRange) {
         return this.getMessage('SPAN-17-A', {
           fieldname: FIELDNAME,
           key: KEY,
@@ -129,17 +129,13 @@ export class MonitorSpanChecksService {
     monitorSpan: MonitorSpanBaseDTO,
   ): string {
     let error = null;
-    let spanScaleCode = monitorSpan.spanScaleCode;
-    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
-    let spanValue = monitorSpan.spanValue;
-    let defaultHighRangeValue = monitorSpan.defaultHighRange;
 
     // For a Monitoring Span record with a valid ComponentTypeCode and a SpanScale equal to "H"
-    if (spanScaleCode === 'H') {
+    if (monitorSpan.spanScaleCode === 'H') {
       // If ScaleTransitionPoint is not null
-      if (scaleTransitionPoint) {
+      if (monitorSpan.scaleTransitionPoint) {
         // If SpanValue is null and DefaultHighRangeValue is not null, return A
-        if (!spanValue && defaultHighRangeValue) {
+        if (!monitorSpan.spanValue && monitorSpan.defaultHighRange) {
           return this.getMessage('SPAN-58-A', {
             key: KEY,
           });
@@ -152,19 +148,17 @@ export class MonitorSpanChecksService {
     monitorSpan: MonitorSpanBaseDTO,
   ): string {
     let error = null;
-    let spanScaleCode = monitorSpan.spanScaleCode;
-    let fullScaleRange = monitorSpan.fullScaleRange;
-    let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
+
 
     // Monitoring Span record with a valid ComponentTypeCode and a SpanScale equal to "L"
-    if (spanScaleCode === 'L') {
+    if (monitorSpan.spanScaleCode === 'L') {
       // If ScaleTransitionPoint is not null(true)
-      if (scaleTransitionPoint) {
+      if (monitorSpan.scaleTransitionPoint) {
         // If FullScaleRangeValue is not null(true), and the ScaleTransitionPoint is not between 1/2 and 1 times the FullScaleRangeValue(if it's not greater or not less than HALF the FSRV), return A
         if (
-          fullScaleRange &&
-          (scaleTransitionPoint > fullScaleRange ||
-            scaleTransitionPoint < fullScaleRange * 0.5)
+          monitorSpan.fullScaleRange &&
+          (monitorSpan.scaleTransitionPoint > monitorSpan.fullScaleRange ||
+            monitorSpan.scaleTransitionPoint < monitorSpan.fullScaleRange * 0.5)
         ) {
           return this.getMessage('SPAN-59-A', {
             key: KEY,
