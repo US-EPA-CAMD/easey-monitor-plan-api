@@ -111,7 +111,7 @@ export class MonitorSpanChecksService {
         });
       }
       // If the FlowSpanValue is valid, and the FlowFullScaleRange is not greater than or equal to the FlowSpanValue, return B
-      if (monitorSpan.flowSpanValue && monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue) {
+      if (monitorSpan.flowSpanValue && monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue) {
         return this.getMessage('SPAN-17-B', {
           fieldname: FIELDNAME,
           key: KEY,
