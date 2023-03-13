@@ -9,12 +9,16 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Analyzer Ranges')
 export class AnalyzerRangeWorkspaceController {
-  constructor(private readonly service: AnalyzerRangeWorkspaceService) {}
+  constructor(
+    private readonly service: AnalyzerRangeWorkspaceService,
+    private readonly checksService: AnalyzerRangeChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -37,12 +41,13 @@ export class AnalyzerRangeWorkspaceController {
     type: AnalyzerRangeDTO,
     description: 'Create ',
   })
-  createAnalyzerRange(
+  async createAnalyzerRange(
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
     @Body() payload: AnalyzerRangeBaseDTO,
     @User() user: CurrentUser,
   ) {
+    await this.checksService.runChecks(locationId, payload, componentRecordId);
     return this.service.createAnalyzerRange(
       componentRecordId,
       payload,
@@ -58,13 +63,20 @@ export class AnalyzerRangeWorkspaceController {
     type: AnalyzerRangeDTO,
     description: 'Updates workspace Analyzer Range record for a component',
   })
-  updateAnalyserRange(
+  async updateAnalyserRange(
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
     @Param('analyzerRangeId') analyzerRangeId: string,
     @Body() payload: AnalyzerRangeBaseDTO,
     @User() user: CurrentUser,
   ) {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      componentRecordId,
+      false,
+      true,
+    );
     return this.service.updateAnalyzerRange(
       analyzerRangeId,
       payload,

@@ -82,7 +82,12 @@ export class ComponentCheckService {
       });
 
       if (!result) {
-        error = errorLocation + this.getMessage('COMPON-13-A');
+        error =
+          errorLocation +
+          this.getMessage('COMPON-13-A', {
+            fieldname: 'sampleAcquisitionMethodCode',
+            key: KEY,
+          });
       }
     }
 
