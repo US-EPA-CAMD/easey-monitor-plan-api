@@ -38,7 +38,6 @@ import { ImportChecksModule } from '../import-checks/import-checks.module';
 import { PlantModule } from '../plant/plant.module';
 import { MonitorPlanReportingFreqWorkspaceModule } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.module';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
-import { MonitorSpanChecksService } from '../monitor-span-workspace/monitor-span-checks.service';
 
 @Module({
   imports: [
@@ -60,7 +59,6 @@ import { MonitorSpanChecksService } from '../monitor-span-workspace/monitor-span
     UnitCapacityWorkspaceModule,
     UnitControlWorkspaceModule,
     UnitFuelWorkspaceModule,
-    MonitorSpanChecksService,
     ComponentWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     AnalyzerRangeWorkspaceModule,
