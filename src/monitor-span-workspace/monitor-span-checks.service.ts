@@ -29,7 +29,11 @@ export class MonitorSpanChecksService {
   async runSpanChecks(
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
+    isImport: boolean = false,
+    isUpdate: boolean = false, 
   ): Promise<string[]> {
+
+
     this.logger.info('Running Monitor Span Checks');
 
     let error: string = null;
@@ -90,9 +94,12 @@ export class MonitorSpanChecksService {
     return errorList;
   }
 
-  private flowFullScaleRangeCheck(monitorSpan: MonitorSpanBaseDTO): string {
+  private flowFullScaleRangeCheck(
+    monitorSpan: MonitorSpanBaseDTO
+  ): string {
     let error = null;
     let FIELDNAME = 'flowFullScaleRange';
+
 
     // If the ComponentTypeCode is equal to "FLOW"
     if (monitorSpan.componentTypeCode === 'FLOW') {
@@ -104,7 +111,7 @@ export class MonitorSpanChecksService {
         });
       }
       // If the FlowSpanValue is valid, and the FlowFullScaleRange is not greater than or equal to the FlowSpanValue, return B
-      if (monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue) {
+      if (monitorSpan.flowSpanValue && monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue) {
         return this.getMessage('SPAN-17-B', {
           fieldname: FIELDNAME,
           key: KEY,
@@ -112,7 +119,7 @@ export class MonitorSpanChecksService {
       }
     } else {
       // If the ComponentTypeCode is not equal to "FLOW", and the FlowFullScaleRange is not null
-      if (!monitorSpan.flowFullScaleRange) {
+      if (monitorSpan.flowFullScaleRange) {
         return this.getMessage('SPAN-17-C', {
           fieldname: FIELDNAME,
           key: KEY,
@@ -132,7 +139,8 @@ export class MonitorSpanChecksService {
       // If ScaleTransitionPoint is not null
       if (monitorSpan.scaleTransitionPoint) {
         // If SpanValue is null and DefaultHighRangeValue is not null, return A
-        if (!monitorSpan.spanValue && monitorSpan.defaultHighRange) {
+
+        if (!monitorSpan.spanValue) {
           return this.getMessage('SPAN-58-A', {
             key: KEY,
           });
@@ -166,7 +174,7 @@ export class MonitorSpanChecksService {
   }
 
   private spanScaleTransitionPointCheck(
-    monitorSpan: MonitorSpanBaseDTO,
+    monitorSpan: MonitorSpanBaseDTO
   ): string {
     let error = null;
     let FIELDNAME: string = 'spanScaleTransitionPoint';
@@ -175,7 +183,7 @@ export class MonitorSpanChecksService {
     // For a Monitoring Span record with a valid ComponentTypeCode equal to "HG" or "HCL"
     if (['HG', 'HCL'].includes(monitorSpan.componentTypeCode)) {
       // If ScaleTransitionPoint is not null, return A
-      if (!scaleTransitionPoint) {
+      if (scaleTransitionPoint) {
         return this.getMessage('SPAN-61-A', {
           fieldname: FIELDNAME,
           key: KEY,
