@@ -99,8 +99,8 @@ export class MonitorPlanChecksService {
         promises.push(
           new Promise(async (resolve, _reject) => {
             const results = this.monSpanChecksService.runSpanChecks(
-              locationId,
               span,
+              locationId,
               true,
               false,
             );
