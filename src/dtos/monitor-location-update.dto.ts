@@ -72,8 +72,4 @@ export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
   @ValidateNested()
   @Type(() => MonitorQualificationBaseDTO)
   qualifications: MonitorQualificationBaseDTO[];
-
-  @ValidateNested()
-  @Type(() => MonitorSpanBaseDTO)
-  spans: MonitorSpanBaseDTO[];
 }
