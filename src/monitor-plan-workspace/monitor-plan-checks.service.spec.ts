@@ -15,6 +15,8 @@ import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 import { MonitorLocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
+import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
+import { MonitorSpanChecksService } from '../monitor-span-workspace/monitor-span-checks.service';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -29,6 +31,7 @@ const unitControl = new UnitControlBaseDTO();
 const component = new UpdateComponentBaseDTO();
 const monitorSystem = new MonitorSystemBaseDTO();
 const systemComponent = new SystemComponentBaseDTO();
+const monitorSpan = new MonitorSpanBaseDTO();
 
 monitorSystem.components = [systemComponent];
 location.systems = [monitorSystem];
@@ -36,6 +39,7 @@ location.unitControls = [unitControl];
 location.components = [component];
 location.matsMethods = [matsMethod];
 payload.locations = [location];
+location.spans = [monitorSpan]
 
 const returnLocationRunChecks = [
   {
@@ -51,6 +55,7 @@ describe('Monitor Plan Checks Service Test', () => {
   let unitControlChecksService: UnitControlChecksService;
   let componentCheckService: ComponentCheckService;
   let monitorSystemCheckService: MonitorSystemCheckService;
+  let monitorSpanCheckService: MonitorSpanChecksService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -89,6 +94,12 @@ describe('Monitor Plan Checks Service Test', () => {
             runChecks: jest.fn().mockResolvedValue([]),
           }),
         },
+        {
+          provide: MonitorSpanChecksService,
+          useFactory: () => ({
+            runSpanChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
       ],
     }).compile();
 
@@ -97,6 +108,7 @@ describe('Monitor Plan Checks Service Test', () => {
     unitControlChecksService = module.get(UnitControlChecksService);
     componentCheckService = module.get(ComponentCheckService);
     monitorSystemCheckService = module.get(MonitorSystemCheckService);
+    monitorSpanCheckService = module.get(MonitorSpanChecksService);
   });
 
   describe('RunChecks', () => {
@@ -106,6 +118,7 @@ describe('Monitor Plan Checks Service Test', () => {
       expect(unitControlChecksService.runChecks).toHaveBeenCalled();
       expect(componentCheckService.runChecks).toHaveBeenCalled();
       expect(monitorSystemCheckService.runChecks).toHaveBeenCalled();
+      expect(monitorSpanCheckService.runSpanChecks).toHaveBeenCalled();
     });
   });
 });
