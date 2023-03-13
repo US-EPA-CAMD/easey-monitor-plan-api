@@ -135,7 +135,7 @@ export class MonitorSpanChecksService {
       // If ScaleTransitionPoint is not null
       if (monitorSpan.scaleTransitionPoint) {
         // If SpanValue is null and DefaultHighRangeValue is not null, return A
-        if (!monitorSpan.spanValue && monitorSpan.defaultHighRange) {
+        if (!monitorSpan.spanValue) {
           return this.getMessage('SPAN-58-A', {
             key: KEY,
           });

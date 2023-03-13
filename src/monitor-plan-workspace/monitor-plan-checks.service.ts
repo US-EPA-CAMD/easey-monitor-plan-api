@@ -8,6 +8,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorSystemCheckService } from '../monitor-system-workspace/monitor-system-checks.service';
 import { LocationIdentifiers } from 'src/interfaces/location-identifiers.interface';
 import { MonitorLocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
+import { MonitorSpanChecksService } from 'src/monitor-span-workspace/monitor-span-checks.service';
 
 @Injectable()
 export class MonitorPlanChecksService {
@@ -18,6 +19,7 @@ export class MonitorPlanChecksService {
     private readonly unitControlChecksService: UnitControlChecksService,
     private readonly componentChecksService: ComponentCheckService,
     private readonly monSysCheckService: MonitorSystemCheckService,
+    private readonly monSpanCheckService: MonitorSpanChecksService,
   ) {}
 
   private async extractErrors(
@@ -124,7 +126,20 @@ export class MonitorPlanChecksService {
           }),
         );
       });
+
+      monitorLocation.spans?.forEach((span, spanIdx) => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.monSpanCheckService.runSpanChecks(
+              span,
+              locationId,
+            );
+            resolve(results);
+          }),
+        )
+      })
     });
+
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.info('Completed Monitor Plan Checks');
