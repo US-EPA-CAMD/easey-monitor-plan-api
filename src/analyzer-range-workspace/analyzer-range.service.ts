@@ -113,6 +113,10 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRanges: AnalyzerRangeBaseDTO[],
     userId: string,
   ) {
+    if (!analyzerRanges) {
+      analyzerRanges = [];
+    }
+
     return new Promise(async resolve => {
       const promises = [];
       for (const analyzerRange of analyzerRanges) {

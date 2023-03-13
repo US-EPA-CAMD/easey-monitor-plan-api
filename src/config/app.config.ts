@@ -45,12 +45,12 @@ export default registerAs('app', () => ({
   ),
   enableRoleGuard: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_ENABLE_ROLE_GUARD',
-    true,
+    false,
   ),
   enableCors: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_CORS', true),
   enableAuthToken: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN',
-    true,
+    false,
   ),
   enableGlobalValidationPipes: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_GLOBAL_VALIDATION_PIPE',
