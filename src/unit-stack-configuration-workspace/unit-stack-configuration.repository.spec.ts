@@ -79,4 +79,32 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
       expect(result).toEqual([unitStackConfigs]);
     });
   });
+
+  describe('getUnitStackConfigsByUnitId', () => {
+    it('calls createQueryBuilder and gets all Unit Stack Configations from the repository when it is a unit', async () => {
+      repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+
+      queryBuilder.getMany.mockReturnValue([unitStackConfigs]);
+
+      const result = await repository.getUnitStackConfigsByUnitId('1', true);
+
+      expect(result).toEqual([unitStackConfigs]);
+    });
+
+    it('calls createQueryBuilder and gets all Unit Stack Configations from the repository when it is not a unit', async () => {
+      repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+
+      queryBuilder.getMany.mockReturnValue([unitStackConfigs]);
+
+      const result = await repository.getUnitStackConfigsByUnitId('1', false);
+
+      expect(result).toEqual([unitStackConfigs]);
+    });
+  });
 });
