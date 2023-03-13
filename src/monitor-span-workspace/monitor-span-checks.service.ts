@@ -30,10 +30,8 @@ export class MonitorSpanChecksService {
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
     isImport: boolean = false,
-    isUpdate: boolean = false, 
+    isUpdate: boolean = false,
   ): Promise<string[]> {
-
-
     this.logger.info('Running Monitor Span Checks');
 
     let error: string = null;
@@ -94,12 +92,9 @@ export class MonitorSpanChecksService {
     return errorList;
   }
 
-  private flowFullScaleRangeCheck(
-    monitorSpan: MonitorSpanBaseDTO
-  ): string {
+  private flowFullScaleRangeCheck(monitorSpan: MonitorSpanBaseDTO): string {
     let error = null;
     let FIELDNAME = 'flowFullScaleRange';
-
 
     // If the ComponentTypeCode is equal to "FLOW"
     if (monitorSpan.componentTypeCode === 'FLOW') {
@@ -111,7 +106,10 @@ export class MonitorSpanChecksService {
         });
       }
       // If the FlowSpanValue is valid, and the FlowFullScaleRange is not greater than or equal to the FlowSpanValue, return B
-      if (monitorSpan.flowSpanValue && monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue) {
+      if (
+        monitorSpan.flowSpanValue &&
+        monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue
+      ) {
         return this.getMessage('SPAN-17-B', {
           fieldname: FIELDNAME,
           key: KEY,
@@ -174,7 +172,7 @@ export class MonitorSpanChecksService {
   }
 
   private spanScaleTransitionPointCheck(
-    monitorSpan: MonitorSpanBaseDTO
+    monitorSpan: MonitorSpanBaseDTO,
   ): string {
     let error = null;
     let FIELDNAME: string = 'spanScaleTransitionPoint';

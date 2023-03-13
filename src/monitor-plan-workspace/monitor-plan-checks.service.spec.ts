@@ -39,7 +39,7 @@ location.unitControls = [unitControl];
 location.components = [component];
 location.matsMethods = [matsMethod];
 payload.locations = [location];
-location.spans = [monitorSpan]
+location.spans = [monitorSpan];
 
 const returnLocationRunChecks = [
   {
