@@ -19,7 +19,7 @@ export class MonitorPlanChecksService {
     private readonly unitControlChecksService: UnitControlChecksService,
     private readonly componentChecksService: ComponentCheckService,
     private readonly monSysCheckService: MonitorSystemCheckService,
-    private readonly monSpanCheckService: MonitorSpanChecksService,
+    private readonly monSpanChecksService: MonitorSpanChecksService,
   ) {}
 
   private async extractErrors(
@@ -98,9 +98,11 @@ export class MonitorPlanChecksService {
       monitorLocation.spans?.forEach((span, spanIdx) => {
         promises.push(
           new Promise(async (resolve, _reject) => {
-            const results = this.monSpanCheckService.runSpanChecks(
-              span,
+            const results = this.monSpanChecksService.runSpanChecks(
               locationId,
+              span,
+              true,
+              false,
             );
             resolve(results);
           }),

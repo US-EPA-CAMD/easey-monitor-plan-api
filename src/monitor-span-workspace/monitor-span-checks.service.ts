@@ -27,9 +27,13 @@ export class MonitorSpanChecksService {
   }
 
   async runSpanChecks(
-    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
+    monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
+    isImport: boolean = false,
+    isUpdate: boolean = false, 
   ): Promise<string[]> {
+
+
     this.logger.info('Running Monitor Span Checks');
 
     let error: string = null;

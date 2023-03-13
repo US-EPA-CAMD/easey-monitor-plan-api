@@ -39,6 +39,7 @@ location.unitControls = [unitControl];
 location.components = [component];
 location.matsMethods = [matsMethod];
 payload.locations = [location];
+location.spans = [monitorSpan]
 
 const returnLocationRunChecks = [
   {
@@ -54,7 +55,7 @@ describe('Monitor Plan Checks Service Test', () => {
   let unitControlChecksService: UnitControlChecksService;
   let componentCheckService: ComponentCheckService;
   let monitorSystemCheckService: MonitorSystemCheckService;
-  let monitorSpanCheckService: MonitorSystemCheckService;
+  let monitorSpanCheckService: MonitorSpanChecksService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -96,7 +97,7 @@ describe('Monitor Plan Checks Service Test', () => {
         {
           provide: MonitorSpanChecksService,
           useFactory: () => ({
-            runChecks: jest.fn().mockResolvedValue([]),
+            runSpanChecks: jest.fn().mockResolvedValue([]),
           }),
         },
       ],
@@ -117,7 +118,7 @@ describe('Monitor Plan Checks Service Test', () => {
       expect(unitControlChecksService.runChecks).toHaveBeenCalled();
       expect(componentCheckService.runChecks).toHaveBeenCalled();
       expect(monitorSystemCheckService.runChecks).toHaveBeenCalled();
-      expect(monitorSpanCheckService.runChecks).toHaveBeenCalled();
+      expect(monitorSpanCheckService.runSpanChecks).toHaveBeenCalled();
     });
   });
 });
