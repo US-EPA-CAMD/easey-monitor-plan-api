@@ -38,8 +38,6 @@ export class ComponentCheckService {
   ) {
     this.logger.info('Running Component Checks');
 
-    console.log('I RUN');
-
     const errorList: string[] = [];
     let error: string = null;
 
