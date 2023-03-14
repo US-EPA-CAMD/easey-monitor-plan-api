@@ -38,6 +38,8 @@ export class ComponentCheckService {
   ) {
     this.logger.info('Running Component Checks');
 
+    console.log('I RUN');
+
     const errorList: string[] = [];
     let error: string = null;
 
@@ -212,6 +214,7 @@ export class ComponentCheckService {
           fieldname: 'hgConverterIndicator',
           key: KEY,
           componentType: component.componentTypeCode,
+          condition: component.componentTypeCode,
         });
     }
 
