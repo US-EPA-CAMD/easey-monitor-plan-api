@@ -154,6 +154,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOHgConverterIndicator.example,
     name: propertyMetadata.componentDTOHgConverterIndicator.fieldLabels.value,
   })
+  @IsOptional()
   hgConverterIndicator: number;
 }
 
