@@ -212,6 +212,7 @@ export class ComponentCheckService {
           fieldname: 'hgConverterIndicator',
           key: KEY,
           componentType: component.componentTypeCode,
+          condition: component.componentTypeCode,
         });
     }
 
