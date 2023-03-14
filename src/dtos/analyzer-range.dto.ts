@@ -3,15 +3,18 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsBoolean,
-  IsDate,
   IsDateString,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
   DATE_FORMAT,
@@ -21,11 +24,6 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { AnalyzerRangeCode } from '../entities/analyzer-range-code.entity';
-import {
-  IsInRange,
-  IsIsoFormat,
-  IsValidCode,
-} from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Analyzer Range';
 export class AnalyzerRangeBaseDTO {
@@ -61,7 +59,7 @@ export class AnalyzerRangeBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage('COMPON-37-A', {
+      return CheckCatalogService.formatResultMessage('COMPON-37-A', {
         fieldname: args.property,
         key: KEY,
       });
