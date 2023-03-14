@@ -33,11 +33,12 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
     queryBuilder = module.get<SelectQueryBuilder<UnitStackConfiguration>>(
       SelectQueryBuilder,
     );
+  
+    repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
   });
 
   describe('getUnitStackById', () => {
     it('calls createQueryBuilder and get one unit stack configuration', async () => {
-      repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitStackConfigs);
 
@@ -48,7 +49,6 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
 
   describe('getUnitStackByUnitIdStackIdBDate', () => {
     it('calls createQueryBuilder and get one unit stack configuration', async () => {
-      repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitStackConfigs);
@@ -64,10 +64,7 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
 
   describe('getUnitStackConfigsByLocationIds', () => {
     it('calls createQueryBuilder and get list of unit stack configuration', async () => {
-      repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
-      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
-      queryBuilder.innerJoin.mockReturnValue(queryBuilder);
       queryBuilder.innerJoin.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
@@ -82,8 +79,6 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
 
   describe('getUnitStackConfigsByUnitId', () => {
     it('calls createQueryBuilder and gets all Unit Stack Configations from the repository when it is a unit', async () => {
-      repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
-      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
 
@@ -95,8 +90,6 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
     });
 
     it('calls createQueryBuilder and gets all Unit Stack Configations from the repository when it is not a unit', async () => {
-      repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
-      queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
 
