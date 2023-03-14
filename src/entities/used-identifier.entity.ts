@@ -1,13 +1,12 @@
 import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
-import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 @Entity({ name: 'camdecmps.used_identifier' })
 export class UsedIdentifier extends BaseEntity {
   @PrimaryColumn({ name: 'idkey' })
   id: string;
 
-  @Column({ name: 'mon_loc_id', transformer: new NumericColumnTransformer() })
-  locationId: number;
+  @Column({ name: 'mon_loc_id' })
+  locationId: string;
 
   @Column({ name: 'table_cd' })
   tableCode: string;

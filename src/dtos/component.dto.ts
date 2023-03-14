@@ -155,12 +155,6 @@ export class ComponentBaseDTO {
     name: propertyMetadata.componentDTOHgConverterIndicator.fieldLabels.value,
   })
   @IsOptional()
-  @IsInRange(0, 1, {
-    message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Component record ${args.property} must be within the range of 0 and 1`;
-    },
-  })
-  @IsOptional()
   hgConverterIndicator: number;
 }
 

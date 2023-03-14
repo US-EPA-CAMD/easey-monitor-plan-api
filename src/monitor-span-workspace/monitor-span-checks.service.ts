@@ -176,6 +176,7 @@ export class MonitorSpanChecksService {
   ): string {
     let error = null;
     let FIELDNAME: string = 'spanScaleTransitionPoint';
+    let CONDITION: string = 'HG or HCL'
     let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
 
     // For a Monitoring Span record with a valid ComponentTypeCode equal to "HG" or "HCL"
@@ -184,7 +185,7 @@ export class MonitorSpanChecksService {
       if (scaleTransitionPoint) {
         return this.getMessage('SPAN-61-A', {
           fieldname: FIELDNAME,
-          key: KEY,
+          condition: CONDITION,
         });
       }
     }

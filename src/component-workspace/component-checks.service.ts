@@ -46,12 +46,12 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
-    error = await this.component14Check(component, errorLocation);
+    error = await this.component14Check(locationId, component, errorLocation);
     if (error) {
       errorList.push(error);
     }
 
-    error = this.component81Check(component);
+    error = this.component81Check(component, errorLocation);
     if (error) {
       errorList.push(error);
     }
@@ -95,6 +95,7 @@ export class ComponentCheckService {
   }
 
   private async component14Check(
+    locationId: string,
     component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
     errorLocation: string = '',
   ): Promise<string> {
@@ -106,29 +107,25 @@ export class ComponentCheckService {
         component.componentTypeCode,
       )
     ) {
-      switch (true) {
-        case !component.basisCode:
-          errorCode = 'COMPON-14-A';
-          break;
-        case !['W', 'D', 'B'].includes(component.basisCode):
+      if (!component.basisCode) {
+        errorCode = 'COMPON-14-A';
+      } else {
+        if (
+          !['W', 'D', 'B'].includes(component.basisCode) ||
+          (component.componentTypeCode === 'FLOW' &&
+            component.basisCode !== 'W') ||
+          (component.componentTypeCode === 'STRAIN' &&
+            component.basisCode !== 'D') ||
+          (component.componentTypeCode !== 'O2' && component.basisCode === 'B')
+        ) {
           errorCode = 'COMPON-14-B';
-          break;
-        case component.componentTypeCode === 'FLOW' &&
-          component.basisCode !== 'W':
-          errorCode = 'COMPON-14-B';
-          break;
-        case component.componentTypeCode === 'STRAIN' &&
-          component.basisCode !== 'D':
-          errorCode = 'COMPON-14-B';
-          break;
-        case component.componentTypeCode !== 'O2' &&
-          component.basisCode === 'B':
-          errorCode = 'COMPON-14-B';
-          break;
-        case component.basisCode !== 'B':
+        }
+
+        if (component.basisCode !== 'B') {
           const usedIdRecord = await this.usedIdRepository.findOne({
             tableCode: 'C',
             identifier: component.componentId,
+            locationId,
           });
 
           if (
@@ -137,7 +134,7 @@ export class ComponentCheckService {
           ) {
             errorCode = 'COMPON-14-C';
           }
-          break;
+        }
       }
     } else {
       if (component.basisCode) {
@@ -191,12 +188,13 @@ export class ComponentCheckService {
     let errorCode = null;
 
     if (component.componentTypeCode === 'HG') {
-      if (!component.hgConverterIndicator) {
-        errorCode = 'COMPON-81-A';
-      }
-
-      if (![1, 0].includes(component.hgConverterIndicator)) {
-        errorCode = 'COMPON-81-B';
+      switch (true) {
+        case !component.hgConverterIndicator:
+          errorCode = 'COMPON-81-A';
+          break;
+        case ![1, 0].includes(component.hgConverterIndicator):
+          errorCode = 'COMPON-81-B';
+          break;
       }
     } else {
       if (component.hgConverterIndicator) {
@@ -212,6 +210,7 @@ export class ComponentCheckService {
           fieldname: 'hgConverterIndicator',
           key: KEY,
           componentType: component.componentTypeCode,
+          condition: component.componentTypeCode,
         });
     }
 
