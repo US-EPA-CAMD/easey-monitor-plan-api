@@ -218,7 +218,7 @@ export class MonitorSystemBaseDTO {
   @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('system-4-A', {
+      return CheckCatalogService.formatResultMessage('SYSTEM-4-A', {
         fieldname: args.property,
         hour: args.value,
         key: KEY,
