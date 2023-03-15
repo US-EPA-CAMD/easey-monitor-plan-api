@@ -206,6 +206,7 @@ export class MonitorSpanChecksService {
         monitorSpan.componentTypeCode,
         monitorSpan.beginDate,
         monitorSpan.beginHour,
+        monitorSpan.spanScaleCode,
       );
 
       if (record) {

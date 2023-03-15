@@ -12,6 +12,7 @@ const mockQueryBuilder = () => ({
   andWhere: jest.fn(),
   getMany: jest.fn(),
   getOne: jest.fn(),
+  orderBy: jest.fn(),
 });
 
 describe('UnitCapacityRepository', () => {
@@ -40,6 +41,7 @@ describe('UnitCapacityRepository', () => {
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([unitCapacity]);
 
       const result = await repository.getUnitCapacities('1', 1);
@@ -54,6 +56,8 @@ describe('UnitCapacityRepository', () => {
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
+
       queryBuilder.getMany.mockReturnValue([unitCapacity]);
 
       const result = await repository.getUnitCapacitiesByUnitIds(['1']);

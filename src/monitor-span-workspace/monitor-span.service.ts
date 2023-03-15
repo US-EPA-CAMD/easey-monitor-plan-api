@@ -172,9 +172,10 @@ export class MonitorSpanWorkspaceService {
               span.componentTypeCode,
               span.beginDate,
               span.beginHour,
+              span.spanScaleCode,
             );
 
-            if (spanRecord !== undefined) {
+            if (spanRecord) {
               await this.updateSpan(
                 locationId,
                 spanRecord.id,

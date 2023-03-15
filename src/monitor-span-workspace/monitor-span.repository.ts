@@ -16,15 +16,20 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
     componentTypeCode: string,
     beginDate: Date,
     beginHour: number,
+    spanScaleCode: string,
   ): Promise<MonitorSpan> {
-    return this.createQueryBuilder('ms')
-      .where('ms.locationId = :locationId', { locationId })
-      .andWhere('ms.componentTypeCode = :componentTypeCode', {
+    return this.findOne({
+      where: {
+        locationId,
         componentTypeCode,
-      })
-      .andWhere('ms.beginDate = :beginDate', { beginDate })
-      .andWhere('ms.beginHour = :beginHour', { beginHour })
-      .getOne();
+        beginDate,
+        beginHour,
+        spanScaleCode,
+      },
+      order: {
+        id: 'ASC',
+      },
+    });
   }
 
   async getSpanByLocIdCompTypeCdEDateEHour(

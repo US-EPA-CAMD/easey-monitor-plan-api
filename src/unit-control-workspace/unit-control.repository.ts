@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, IsNull } from 'typeorm';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
 
 @EntityRepository(UnitControl)
@@ -27,18 +27,27 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
     installDate: Date,
     retireDate: Date,
   ): Promise<UnitControl> {
-    return this.createQueryBuilder('uc')
+    const query = this.createQueryBuilder('uc')
       .where('uc.unitId = :unitRecordId', {
         unitRecordId,
       })
       .andWhere('uc.parameterCode = :parameterCode', {
         parameterCode,
       })
-      .andWhere('uc.controlCode = :controlCode', { controlCode })
-      .andWhere(
-        '(uc.installDate = :installDate) OR (uc.retireDate = :retireDate)',
-        { installDate, retireDate },
-      )
-      .getOne();
+      .andWhere('uc.controlCode = :controlCode', { controlCode });
+
+    if (installDate) {
+      query
+        .andWhere('uc.installDate is not null')
+        .andWhere('uc.installDate = :installDate', { installDate });
+    } else {
+      query.andWhere('uc.installDate is null');
+    }
+
+    query.orderBy(
+      'uc.unitId, uc.parameterCode, uc.controlCode, uc.installDate',
+    );
+
+    return await query.getOne();
   }
 }

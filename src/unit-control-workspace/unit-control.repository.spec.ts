@@ -12,6 +12,7 @@ const mockQueryBuilder = () => ({
   andWhere: jest.fn(),
   getMany: jest.fn(),
   getOne: jest.fn(),
+  orderBy: jest.fn(),
 });
 
 describe('UnitControlWorkspaceRepository', () => {
@@ -37,6 +38,7 @@ describe('UnitControlWorkspaceRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitControl);
 
       const result = await repository.getUnitControl('1');
@@ -51,6 +53,7 @@ describe('UnitControlWorkspaceRepository', () => {
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([unitControl]);
 
       const result = await repository.getUnitControls('1', 1);
@@ -66,6 +69,7 @@ describe('UnitControlWorkspaceRepository', () => {
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitControl);
 
       const result = await repository.getUnitControlByUnitIdParamCdControlCd(
