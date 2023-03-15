@@ -52,7 +52,7 @@ export class UnitControlWorkspaceService {
               unitControl.retireDate,
             );
 
-            if (unitControlRecord !== undefined) {
+            if (unitControlRecord) {
               await this.updateUnitControl(
                 locationId,
                 unitRecordId,

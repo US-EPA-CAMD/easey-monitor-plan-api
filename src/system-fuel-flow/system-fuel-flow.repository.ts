@@ -17,6 +17,7 @@ export class SystemFuelFlowRepository extends Repository<SystemFuelFlow> {
     return this.createQueryBuilder('sff')
       .innerJoinAndSelect('sff.system', 'ms')
       .where('ms.id IN (:...monSysIds)', { monSysIds })
+      .orderBy('sff.id')
       .getMany();
   }
 }
