@@ -9,12 +9,16 @@ import {
 } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ComponentCheckService } from '../component-workspace/component-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Components')
 export class SystemComponentWorkspaceController {
-  constructor(private service: SystemComponentWorkspaceService) {}
+  constructor(
+    private service: SystemComponentWorkspaceService,
+    private checkService: ComponentCheckService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -43,6 +47,7 @@ export class SystemComponentWorkspaceController {
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
+    await this.checkService.runChecks(locationId, payload, false, true);
     return this.service.updateSystemComponent(
       locationId,
       monSysId,
@@ -58,12 +63,13 @@ export class SystemComponentWorkspaceController {
     type: SystemComponentDTO,
     description: 'Creates a workspace system component for a monitor system',
   })
-  createSystemComponent(
+  async createSystemComponent(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
+    await this.checkService.runChecks(locationId, payload, false, false);
     return this.service.createSystemComponent(
       locationId,
       monSysId,

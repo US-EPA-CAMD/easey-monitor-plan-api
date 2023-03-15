@@ -51,7 +51,7 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
-    error = this.component81Check(component);
+    error = this.component81Check(component, errorLocation);
     if (error) {
       errorList.push(error);
     }
@@ -82,7 +82,12 @@ export class ComponentCheckService {
       });
 
       if (!result) {
-        error = errorLocation + this.getMessage('COMPON-13-A');
+        error =
+          errorLocation +
+          this.getMessage('COMPON-13-A', {
+            fieldname: 'sampleAcquisitionMethodCode',
+            key: KEY,
+          });
       }
     }
 
@@ -183,12 +188,13 @@ export class ComponentCheckService {
     let errorCode = null;
 
     if (component.componentTypeCode === 'HG') {
-      if (!component.hgConverterIndicator) {
-        errorCode = 'COMPON-81-A';
-      }
-
-      if (![1, 0].includes(component.hgConverterIndicator)) {
-        errorCode = 'COMPON-81-B';
+      switch (true) {
+        case !component.hgConverterIndicator:
+          errorCode = 'COMPON-81-A';
+          break;
+        case ![1, 0].includes(component.hgConverterIndicator):
+          errorCode = 'COMPON-81-B';
+          break;
       }
     } else {
       if (component.hgConverterIndicator) {
@@ -204,6 +210,7 @@ export class ComponentCheckService {
           fieldname: 'hgConverterIndicator',
           key: KEY,
           componentType: component.componentTypeCode,
+          condition: component.componentTypeCode,
         });
     }
 
