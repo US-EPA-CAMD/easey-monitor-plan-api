@@ -184,7 +184,6 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOBeginHour.example,
     name: propertyMetadata.monitorSystemDTOBeginHour.fieldLabels.value,
   })
-  @IsInt()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-2-A', {
@@ -209,7 +208,6 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndHour.example,
     name: propertyMetadata.monitorSystemDTOEndHour.fieldLabels.value,
   })
-  @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-4-A', {
