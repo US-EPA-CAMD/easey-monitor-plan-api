@@ -89,12 +89,11 @@ export class MonitorSystemBaseDTO {
     name:
       propertyMetadata.monitorSystemDTOSystemDesignationCode.fieldLabels.value,
   })
-  @IsOptional()
   @IsInDbValues(
     `SELECT sys_designation_cd as "value" FROM camdecmpsmd.system_designation_code`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
+        return `The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
       },
     },
   )
@@ -105,12 +104,11 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOFuelCode.example,
     name: propertyMetadata.monitorSystemDTOFuelCode.fieldLabels.value,
   })
-  @IsOptional()
   @IsInDbValues(
     `SELECT fuel_cd as "value" FROM camdecmpsmd.fuel_code where fuel_group_cd not in ('OTHER','COAL')`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
+        return `The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
       },
     },
   )
@@ -150,7 +148,6 @@ export class MonitorSystemBaseDTO {
       );
     },
   })
-  @IsOptional()
   beginDate: Date;
 
   @ApiProperty({
@@ -158,7 +155,6 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndDate.example,
     name: propertyMetadata.monitorSystemDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-3-A', {
@@ -188,7 +184,6 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOBeginHour.example,
     name: propertyMetadata.monitorSystemDTOBeginHour.fieldLabels.value,
   })
-  @IsOptional()
   @IsInt()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -214,7 +209,6 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndHour.example,
     name: propertyMetadata.monitorSystemDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
   @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
