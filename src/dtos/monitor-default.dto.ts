@@ -33,7 +33,7 @@ export class MonitorDefaultBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is invalid`,
+          `The value for [fieldname] for [key] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -56,7 +56,7 @@ export class MonitorDefaultBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is allowed only four decimal place`,
+          `The value for [fieldname] for [key] is allowed only four decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -68,7 +68,7 @@ export class MonitorDefaultBaseDTO {
   @IsInRange(-99999999999.9999, 99999999999.9999, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be within the range of -99999999999.9999 and 99999999999.9999`,
+        `The value for [fieldname] for [key] must be within the range of -99999999999.9999 and 99999999999.9999`,
         {
           fieldname: args.property,
           key: KEY,
@@ -93,7 +93,7 @@ export class MonitorDefaultBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is invalid`,
+          `The value for [fieldname] for [key] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -117,7 +117,7 @@ export class MonitorDefaultBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is invalid`,
+          `The value for [fieldname] for [key] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -147,7 +147,7 @@ export class MonitorDefaultBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is invalid`,
+          `The value for [fieldname] for [key] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -173,7 +173,7 @@ export class MonitorDefaultBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is invalid`,
+          `The value for [fieldname] for [key] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -204,7 +204,7 @@ export class MonitorDefaultBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is invalid`,
+          `The value for [fieldname] for [key] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -225,7 +225,7 @@ export class MonitorDefaultBaseDTO {
   @MaxLength(10, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must not exceed 10 characters`,
+        `The value for [fieldname] for [key] must not exceed 10 characters`,
         {
           fieldname: args.property,
           key: KEY,
@@ -246,7 +246,7 @@ export class MonitorDefaultBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,
@@ -267,7 +267,7 @@ export class MonitorDefaultBaseDTO {
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be within the range of 0 and 23`,
+        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
         {
           fieldname: args.property,
           key: KEY,
@@ -286,7 +286,7 @@ export class MonitorDefaultBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,
@@ -308,7 +308,7 @@ export class MonitorDefaultBaseDTO {
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be within the range of 0 and 23`,
+        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
         {
           fieldname: args.property,
           key: KEY,
