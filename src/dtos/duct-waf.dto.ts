@@ -31,7 +31,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,
@@ -51,7 +51,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,
@@ -72,7 +72,7 @@ export class DuctWafBaseDTO {
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be within the range of 0 and 23`,
+        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
         {
           fieldname: args.property,
           key: KEY,
@@ -93,7 +93,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is invalid`,
+          `The value for [fieldname] for [key] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -123,7 +123,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is allowed only 4 decimal place`,
+          `The value for [fieldname] for [key] is allowed only 4 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -132,15 +132,21 @@ export class DuctWafBaseDTO {
       },
     },
   )
-  @IsInRange(0, 1, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('DEFAULT-80-D', {
-        fieldname: args.property,
-        value: args.value,
-        key: KEY,
-      });
-    },
-  })
+  @IsInRange(
+    0,
+    1, 
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('DEFAULT-80-D', {
+          fieldname: args.property,
+          value: args.value,
+          key: KEY,
+        });
+      },
+    }, 
+    false, 
+    false,
+  )
   wafValue: number;
 
   @ApiProperty({
@@ -153,7 +159,7 @@ export class DuctWafBaseDTO {
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be 2 digits or less`,
         {
           fieldname: args.property,
           key: KEY,
@@ -175,7 +181,7 @@ export class DuctWafBaseDTO {
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be 2 digits or less`,
         {
           fieldname: args.property,
           key: KEY,
@@ -195,7 +201,7 @@ export class DuctWafBaseDTO {
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be 2 digits or less`,
         {
           fieldname: args.property,
           key: KEY,
@@ -217,7 +223,7 @@ export class DuctWafBaseDTO {
   @IsAtMostDigits(2, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be 2 digits or less`,
         {
           fieldname: args.property,
           key: KEY,
@@ -245,7 +251,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is allowed only 1 decimal place`,
+          `The value for [fieldname] for [key] is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -283,7 +289,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldName] for [key] is allowed only 1 decimal place`,
+          `The value for [fieldname] for [key] is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -313,7 +319,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,
@@ -335,7 +341,7 @@ export class DuctWafBaseDTO {
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldName] for [key] must be within the range of 0 and 23`,
+        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
         {
           fieldname: args.property,
           key: KEY,
