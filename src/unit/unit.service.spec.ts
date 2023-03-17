@@ -60,7 +60,7 @@ describe('Unit Import Tests', () => {
       const unit = new Unit();
 
       const result = await service.importUnit(unit, 1);
-      console.log(result)
+      console.log(result);
       expect(result).toEqual(true);
     });
 
@@ -69,7 +69,7 @@ describe('Unit Import Tests', () => {
       const unit = new Unit();
 
       const result = await service.getUnitByNameAndFacId('1', 1);
-      console.log(result)
+      console.log(result);
       expect(result).toEqual(unit);
     });
   });

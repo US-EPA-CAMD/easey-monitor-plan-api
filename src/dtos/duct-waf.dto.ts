@@ -134,7 +134,7 @@ export class DuctWafBaseDTO {
   )
   @IsInRange(
     0,
-    1, 
+    1,
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatResultMessage('DEFAULT-80-D', {
@@ -143,8 +143,8 @@ export class DuctWafBaseDTO {
           key: KEY,
         });
       },
-    }, 
-    false, 
+    },
+    false,
     false,
   )
   wafValue: number;

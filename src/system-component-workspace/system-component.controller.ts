@@ -19,7 +19,6 @@ export class SystemComponentWorkspaceController {
   constructor(
     private service: SystemComponentWorkspaceService,
     private checkService: ComponentCheckService,
-    private readonly componentRepository: ComponentWorkspaceRepository,
   ) {}
 
   @Get()
@@ -71,14 +70,7 @@ export class SystemComponentWorkspaceController {
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
-    let compRecord = await this.componentRepository.getComponentByLocIdAndCompId(
-      locationId,
-      payload.componentId,
-    );
-
-    if (!compRecord) {
-      await this.checkService.runChecks(locationId, payload, false, false);
-    }
+    await this.checkService.runChecks(locationId, payload, false, true);
     return this.service.createSystemComponent(
       locationId,
       monSysId,
