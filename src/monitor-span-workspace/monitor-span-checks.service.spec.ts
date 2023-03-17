@@ -40,52 +40,6 @@ describe('Monitoring Span Check Service Test', () => {
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
-  describe('SPAN-55 Duplicate Span Records', () => {
-    it('Should get [SPAN-55-A] error', async () => {
-      monitorSpan.componentTypeCode = 'FLOW';
-      monitorSpan.beginDate = new Date(Date.now());
-      monitorSpan.beginHour = 21;
-      monitorSpan.endDate = new Date(Date.now());
-      monitorSpan.endHour = 21;
-
-      jest
-        .spyOn(repository, 'getSpanByLocIdCompTypeCdBDateBHour')
-        .mockResolvedValue(monitorSpan);
-      jest
-        .spyOn(repository, 'getSpanByLocIdCompTypeCdEDateEHour')
-        .mockResolvedValue(monitorSpan);
-
-      try {
-        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
-  });
-
-  describe('SPAN-55 Duplicate Span Records', () => {
-    it('Should get [SPAN-55-A] error', async () => {
-      monitorSpan.componentTypeCode = 'FLOW';
-      monitorSpan.beginDate = new Date(Date.now());
-      monitorSpan.beginHour = 21;
-      monitorSpan.endDate = new Date(Date.now());
-      monitorSpan.endHour = 21;
-
-      jest
-        .spyOn(repository, 'getSpanByLocIdCompTypeCdBDateBHour')
-        .mockResolvedValue(monitorSpan);
-      jest
-        .spyOn(repository, 'getSpanByLocIdCompTypeCdEDateEHour')
-        .mockResolvedValue(monitorSpan);
-
-      try {
-        await service.runSpanChecks(monitorSpanBaseDTO, locationId);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
-  });
-
   describe('SPAN-56 MPC Value Valid', () => {
     it('Should get [SPAN-56-A] error', async () => {
       monitorSpan.componentTypeCode = 'NOX';
@@ -141,6 +95,7 @@ describe('Monitoring Span Check Service Test', () => {
       monitorSpan.componentTypeCode = 'NOX';
       monitorSpan.spanScaleCode = 'H';
       monitorSpan.mecValue = null;
+      monitorSpan.defaultHighRange = null;
 
       try {
         await service.runSpanChecks(monitorSpanBaseDTO, locationId);

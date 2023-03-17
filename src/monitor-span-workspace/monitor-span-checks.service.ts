@@ -61,12 +61,6 @@ export class MonitorSpanChecksService {
       errorList.push(error);
     }
 
-    // SPAN-55
-    error = await this.duplicateSpanRecordCheck(locationId, monitorSpan);
-    if (error) {
-      errorList.push(error);
-    }
-
     // SPAN-56
     error = this.spanMPCValueValid(
       monitorSpan.componentTypeCode,
@@ -82,6 +76,7 @@ export class MonitorSpanChecksService {
       monitorSpan.componentTypeCode,
       monitorSpan.spanScaleCode,
       monitorSpan.mecValue,
+      monitorSpan.defaultHighRange,
     );
     if (error) {
       errorList.push(error);
@@ -176,7 +171,7 @@ export class MonitorSpanChecksService {
   ): string {
     let error = null;
     let FIELDNAME: string = 'spanScaleTransitionPoint';
-    let CONDITION: string = 'HG or HCL'
+    let CONDITION: string = 'HG or HCL';
     let scaleTransitionPoint = monitorSpan.scaleTransitionPoint;
 
     // For a Monitoring Span record with a valid ComponentTypeCode equal to "HG" or "HCL"
@@ -187,59 +182,6 @@ export class MonitorSpanChecksService {
           fieldname: FIELDNAME,
           condition: CONDITION,
         });
-      }
-    }
-
-    return error;
-  }
-
-  private async duplicateSpanRecordCheck(
-    locationId: string,
-    monitorSpan: MonitorSpanBaseDTO,
-  ): Promise<string> {
-    let error: string = null;
-    let record: MonitorSpan;
-
-    if (monitorSpan.componentTypeCode && monitorSpan.beginDate) {
-      record = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
-        locationId,
-        monitorSpan.componentTypeCode,
-        monitorSpan.beginDate,
-        monitorSpan.beginHour,
-        monitorSpan.spanScaleCode,
-      );
-
-      if (record) {
-        error = this.getMessage('SPAN-55-A', {
-          recordtype: 'Monitor Span record',
-          fieldnames: [
-            'locationId',
-            'componentTypeCode',
-            'beginDate',
-            'beginHour',
-          ],
-        });
-      }
-
-      if (!record && monitorSpan.endDate) {
-        let record: MonitorSpan = await this.repository.getSpanByLocIdCompTypeCdEDateEHour(
-          locationId,
-          monitorSpan.componentTypeCode,
-          monitorSpan.endDate,
-          monitorSpan.endHour,
-        );
-
-        if (record) {
-          error = this.getMessage('SPAN-55-A', {
-            recordtype: 'Monitor Span record',
-            fieldnames: [
-              'locationId',
-              'componentTypeCode',
-              'endDate',
-              'endHour',
-            ],
-          });
-        }
       }
     }
 
@@ -297,6 +239,7 @@ export class MonitorSpanChecksService {
     componentTypeCode: string,
     spanScaleCode: string,
     mecValue: number,
+    defaultHighRange: number,
   ): string {
     let error: string = null;
 
@@ -315,7 +258,8 @@ export class MonitorSpanChecksService {
 
         if (
           ['SO2', 'HG', 'NOX'].includes(componentTypeCode) &&
-          spanScaleCode === 'H'
+          spanScaleCode === 'H' &&
+          defaultHighRange
         ) {
           this.mecValueValid = false;
 
