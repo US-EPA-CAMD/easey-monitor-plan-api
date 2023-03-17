@@ -42,9 +42,7 @@ describe('UnitStackConfigurationRepository', () => {
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([unitStackConfiguration]);
 
-      const result = await repository.getUnitStackConfigsByLocationIds(
-        ["1"]
-      );
+      const result = await repository.getUnitStackConfigsByLocationIds(['1']);
 
       expect(result).toEqual([unitStackConfiguration]);
     });
