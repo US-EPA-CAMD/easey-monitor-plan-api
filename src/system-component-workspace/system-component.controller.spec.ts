@@ -7,6 +7,7 @@ import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentWorkspaceController } from './system-component.controller';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 
 jest.mock('./system-component.service');
 
@@ -34,15 +35,17 @@ describe('SystemComponentWorkspaceController', () => {
             runChecks: jest.fn().mockResolvedValue([]),
           }),
         },
+        {
+          provide: ComponentWorkspaceRepository,
+          useFactory: () => ({
+            getComponentByLocIdAndCompId: jest.fn().mockResolvedValue(null),
+          }),
+        },
       ],
     }).compile();
 
     controller = module.get(SystemComponentWorkspaceController);
     service = module.get(SystemComponentWorkspaceService);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
   });
 
   describe('getComponents', () => {
