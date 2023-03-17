@@ -56,12 +56,12 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
-    if (!isImport && !isUpdate) {
-      error = await this.component53Check(locationId, component, errorLocation);
-      if (error) {
-        errorList.push(error);
-      }
-    }
+    // if (!isImport && !isUpdate) {
+    //   error = await this.component53Check(locationId, component, errorLocation);
+    //   if (error) {
+    //     errorList.push(error);
+    //   }
+    // }
 
     this.throwIfErrors(errorList);
     this.logger.info('Completed Component Checks');
