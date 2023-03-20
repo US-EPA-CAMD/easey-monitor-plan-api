@@ -29,7 +29,7 @@ export class ImportChecksService {
 
   private checkIfThrows(errorList: string[]) {
     if (errorList.length > 0) {
-      throw new LoggingException(errorList.toString(), HttpStatus.BAD_REQUEST);
+      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
 
