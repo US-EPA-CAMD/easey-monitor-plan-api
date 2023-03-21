@@ -14,10 +14,15 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
+import { FuelCode } from '../entities/fuel-code.entity';
 
 const KEY = 'Monitor Default';
 
@@ -142,20 +147,15 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
-  @IsInDbValues(
-    'SELECT distinct fuel_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is invalid`,
-          {
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
-      },
+  @IsValidCode(FuelCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-53-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
   @IsString()
   fuelCode: string;
 
