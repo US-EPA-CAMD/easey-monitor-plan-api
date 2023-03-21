@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsSemVer,
   IsString,
   MaxLength,
   ValidateIf,
@@ -117,6 +116,7 @@ export class MonitorDefaultBaseDTO {
       propertyMetadata.monitorDefaultDTODefaultPurposeCode.fieldLabels.value,
   })
   @IsOptional()
+  @ValidateIf(o => o.defaultPurposeCode !== null)
   @IsInDbValues(
     'SELECT distinct purpose_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
