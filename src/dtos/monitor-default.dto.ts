@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsSemVer,
   IsString,
   MaxLength,
   ValidateIf,
