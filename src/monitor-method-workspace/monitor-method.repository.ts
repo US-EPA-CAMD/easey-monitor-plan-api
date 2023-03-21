@@ -11,12 +11,12 @@ export class MonitorMethodWorkspaceRepository extends Repository<
     parameterCode: string,
     beginDate: Date,
   ): Promise<MonitorMethod> {
-    return this.createQueryBuilder('mm')
-      .where('mm.locationId = :locationId', {
+    return this.findOne({
+      where: {
         locationId,
-      })
-      .andWhere('mm.parameterCode = :parameterCode', { parameterCode })
-      .andWhere('mm.beginDate = :beginDate', { beginDate })
-      .getOne();
+        parameterCode,
+        beginDate,
+      },
+    });
   }
 }

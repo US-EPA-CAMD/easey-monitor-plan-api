@@ -11,6 +11,7 @@ const mockQueryBuilder = () => ({
   where: jest.fn(),
   innerJoinAndSelect: jest.fn(),
   getMany: jest.fn(),
+  orderBy: jest.fn(),
 });
 
 describe('SystemFuelFlowRepository', () => {
@@ -36,6 +37,8 @@ describe('SystemFuelFlowRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
+
       queryBuilder.getMany.mockReturnValue([sysFuelFlow]);
 
       const result = await repository.getFuelFlows(monSysId);
@@ -49,6 +52,8 @@ describe('SystemFuelFlowRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
+
       queryBuilder.getMany.mockReturnValue([sysFuelFlow]);
 
       const result = await repository.getFuelFlowsBySystemIds([monSysId]);

@@ -33,7 +33,7 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
     queryBuilder = module.get<SelectQueryBuilder<UnitStackConfiguration>>(
       SelectQueryBuilder,
     );
-  
+
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
   });
 

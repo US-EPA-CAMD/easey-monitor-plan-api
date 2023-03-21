@@ -10,6 +10,7 @@ import {
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -69,7 +70,7 @@ export class SystemComponentWorkspaceController {
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
-    await this.checkService.runChecks(locationId, payload, false, false);
+    await this.checkService.runChecks(locationId, payload, false, true);
     return this.service.createSystemComponent(
       locationId,
       monSysId,

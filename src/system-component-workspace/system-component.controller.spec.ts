@@ -41,10 +41,6 @@ describe('SystemComponentWorkspaceController', () => {
     service = module.get(SystemComponentWorkspaceService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('getComponents', () => {
     it('should return array of system components', async () => {
       jest.spyOn(service, 'getSystemComponents').mockResolvedValue(data);

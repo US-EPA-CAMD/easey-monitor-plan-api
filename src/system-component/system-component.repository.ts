@@ -22,7 +22,7 @@ export class SystemComponentRepository extends Repository<SystemComponent> {
     return this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('msc.monitoringSystemRecordId IN (:...monSysIds)', { monSysIds })
-      .orderBy('c.componentId', 'ASC')
+      .orderBy('msc.id', 'ASC')
       .getMany();
   }
 }
