@@ -29,7 +29,7 @@ data.push(new MonitorSpanDTO());
 data.push(new MonitorSpanDTO());
 
 const mockMonitorSpanChecksService = () => ({
-  runSpanChecks: jest.fn(),
+  runChecks: jest.fn(),
 });
 
 describe('MonitorSpanWorkspaceController', () => {

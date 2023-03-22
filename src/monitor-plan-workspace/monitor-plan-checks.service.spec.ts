@@ -97,7 +97,7 @@ describe('Monitor Plan Checks Service Test', () => {
         {
           provide: MonitorSpanChecksService,
           useFactory: () => ({
-            runSpanChecks: jest.fn().mockResolvedValue([]),
+            runChecks: jest.fn().mockResolvedValue([]),
           }),
         },
       ],
@@ -118,7 +118,7 @@ describe('Monitor Plan Checks Service Test', () => {
       expect(unitControlChecksService.runChecks).toHaveBeenCalled();
       expect(componentCheckService.runChecks).toHaveBeenCalled();
       expect(monitorSystemCheckService.runChecks).toHaveBeenCalled();
-      expect(monitorSpanCheckService.runSpanChecks).toHaveBeenCalled();
+      expect(monitorSpanCheckService.runChecks).toHaveBeenCalled();
     });
   });
 });

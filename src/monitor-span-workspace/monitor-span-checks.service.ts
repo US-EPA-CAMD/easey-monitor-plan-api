@@ -22,11 +22,12 @@ export class MonitorSpanChecksService {
     }
   }
 
-  async runSpanChecks(
+  async runChecks(
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
     locationId: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    errorLocation: string = '',
   ): Promise<string[]> {
     this.logger.info('Running Monitor Span Checks');
 
@@ -34,7 +35,7 @@ export class MonitorSpanChecksService {
     const errorList: string[] = [];
 
     // SPAN-17
-    error = this.flowFullScaleRangeCheck(monitorSpan);
+    error = this.flowFullScaleRangeCheck(monitorSpan, errorLocation);
     if (error) {
       errorList.push(error);
     }
@@ -83,36 +84,38 @@ export class MonitorSpanChecksService {
     return errorList;
   }
 
-  private flowFullScaleRangeCheck(monitorSpan: MonitorSpanBaseDTO): string {
+  private flowFullScaleRangeCheck(
+    monitorSpan: MonitorSpanBaseDTO,
+    errorLocation: string = '',
+  ): string {
     let error = null;
+    let errorCode = null;
     let FIELDNAME = 'flowFullScaleRange';
 
-    // If the ComponentTypeCode is equal to "FLOW"
     if (monitorSpan.componentTypeCode === 'FLOW') {
-      // If the FlowFullScaleRange is null, return A
       if (!monitorSpan.flowFullScaleRange) {
-        error = this.getMessage('SPAN-17-A', {
-          fieldname: FIELDNAME,
-          key: KEY,
-        });
+        errorCode = 'SPAN-17-A';
       }
-      // If the FlowSpanValue is valid, and the FlowFullScaleRange is not greater than or equal to the FlowSpanValue, return B
+
       if (
         monitorSpan.flowSpanValue &&
-        monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue
+        monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue
       ) {
-        error = this.getMessage('SPAN-17-B', {
-          key: KEY,
-        });
+        errorCode = 'SPAN-17-B';
       }
     } else {
-      // If the ComponentTypeCode is not equal to "FLOW", and the FlowFullScaleRange is not null
       if (monitorSpan.flowFullScaleRange) {
-        error = this.getMessage('SPAN-17-C', {
+        errorCode = 'SPAN-17-C';
+      }
+    }
+
+    if (errorCode) {
+      error =
+        errorLocation +
+        this.getMessage(errorCode, {
           fieldname: FIELDNAME,
           key: KEY,
         });
-      }
     }
     return error;
   }
