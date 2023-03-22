@@ -40,7 +40,7 @@ export class MonitorSpanWorkspaceController {
     @Body() payload: MonitorSpanBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSpanDTO> {
-    await this.checksService.runSpanChecks(payload, locationId);
+    await this.checksService.runChecks(payload, locationId);
     return this.service.updateSpan(locationId, spanId, payload, user.userId);
   }
 
@@ -56,7 +56,7 @@ export class MonitorSpanWorkspaceController {
     @Body() payload: MonitorSpanBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSpanDTO> {
-    await this.checksService.runSpanChecks(payload, locationId);
+    await this.checksService.runChecks(payload, locationId);
     return this.service.createSpan(locationId, payload, user.userId);
   }
 }

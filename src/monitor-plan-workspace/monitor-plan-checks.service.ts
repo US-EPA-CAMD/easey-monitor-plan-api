@@ -98,11 +98,12 @@ export class MonitorPlanChecksService {
       monitorLocation.spans?.forEach((span, spanIdx) => {
         promises.push(
           new Promise(async (resolve, _reject) => {
-            const results = this.monSpanChecksService.runSpanChecks(
+            const results = this.monSpanChecksService.runChecks(
               span,
               locationId,
               true,
               false,
+              `locations.${locIdx}.span.${spanIdx}.`,
             );
             resolve(results);
           }),
