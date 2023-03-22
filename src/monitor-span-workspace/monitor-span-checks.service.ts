@@ -5,7 +5,6 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
-import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 
 const KEY = 'Monitor Span';
 
@@ -16,9 +15,6 @@ export class MonitorSpanChecksService {
     @InjectRepository(MonitorSpanWorkspaceRepository)
     private readonly repository: MonitorSpanWorkspaceRepository,
   ) {}
-
-  private mpcValueValid: boolean;
-  private mecValueValid: boolean;
 
   public throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
@@ -95,7 +91,7 @@ export class MonitorSpanChecksService {
     if (monitorSpan.componentTypeCode === 'FLOW') {
       // If the FlowFullScaleRange is null, return A
       if (!monitorSpan.flowFullScaleRange) {
-        return this.getMessage('SPAN-17-A', {
+        error = this.getMessage('SPAN-17-A', {
           fieldname: FIELDNAME,
           key: KEY,
         });
@@ -103,17 +99,16 @@ export class MonitorSpanChecksService {
       // If the FlowSpanValue is valid, and the FlowFullScaleRange is not greater than or equal to the FlowSpanValue, return B
       if (
         monitorSpan.flowSpanValue &&
-        monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue
+        monitorSpan.flowFullScaleRange <= monitorSpan.flowSpanValue
       ) {
-        return this.getMessage('SPAN-17-B', {
-          fieldname: FIELDNAME,
+        error = this.getMessage('SPAN-17-B', {
           key: KEY,
         });
       }
     } else {
       // If the ComponentTypeCode is not equal to "FLOW", and the FlowFullScaleRange is not null
       if (monitorSpan.flowFullScaleRange) {
-        return this.getMessage('SPAN-17-C', {
+        error = this.getMessage('SPAN-17-C', {
           fieldname: FIELDNAME,
           key: KEY,
         });
@@ -140,6 +135,7 @@ export class MonitorSpanChecksService {
         }
       }
     }
+
     return error;
   }
   private lowSpanScaleTransitionPointCheck(
@@ -201,8 +197,6 @@ export class MonitorSpanChecksService {
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'H'
         ) {
-          this.mpcValueValid = false;
-
           error = this.getMessage('SPAN-56-A', {
             key: KEY,
           });
@@ -214,15 +208,11 @@ export class MonitorSpanChecksService {
           ['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'L'
         ) {
-          this.mpcValueValid = false;
-
           error = this.getMessage('SPAN-56-B', {
             key: KEY,
           });
         } else {
           if (mpcValue <= 0) {
-            this.mpcValueValid = false;
-
             error = this.getMessage('SPAN-56-C', {
               fieldname: 'mpcValue',
               key: KEY,
@@ -249,8 +239,6 @@ export class MonitorSpanChecksService {
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'L'
         ) {
-          this.mecValueValid = false;
-
           error = this.getMessage('SPAN-57-A', {
             key: KEY,
           });
@@ -261,8 +249,6 @@ export class MonitorSpanChecksService {
           spanScaleCode === 'H' &&
           defaultHighRange
         ) {
-          this.mecValueValid = false;
-
           error = this.getMessage('SPAN-57-B', {
             key: KEY,
           });
@@ -271,15 +257,11 @@ export class MonitorSpanChecksService {
 
       if (mecValue !== null) {
         if (['FLOW', 'HG', 'O2'].includes(componentTypeCode)) {
-          this.mpcValueValid = false;
-
           error = this.getMessage('SPAN-57-C', {
             key: KEY,
           });
         } else {
           if (mecValue <= 0) {
-            this.mpcValueValid = false;
-
             error = this.getMessage('SPAN-57-D', {
               fieldname: 'mpcValue',
               key: KEY,
