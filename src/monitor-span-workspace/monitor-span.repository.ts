@@ -1,6 +1,7 @@
 import { Repository, EntityRepository } from 'typeorm';
 
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
+import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 
 @EntityRepository(MonitorSpan)
 export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
@@ -32,19 +33,30 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
     });
   }
 
-  async getSpanByLocIdCompTypeCdEDateEHour(
+  async getSpanByLocIdCompTypeCodeAndDate(
     locationId: string,
-    componentTypeCode: string,
-    endDate: Date,
-    endHour: number,
+    span: MonitorSpanBaseDTO,
   ): Promise<MonitorSpan> {
+    const componentTypeCode = span.componentTypeCode;
+    const beginDate = span.beginDate;
+    const beginHour = span.beginHour;
+    const endDate = span.endDate;
+    const endHour = span.endHour;
+
     return this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
       .andWhere('ms.componentTypeCode = :componentTypeCode', {
         componentTypeCode,
       })
-      .andWhere('ms.endDate = :endDate', { endDate })
-      .andWhere('ms.endHour = :endHour', { endHour })
+      .andWhere(
+        '(ms.beginDate = :beginDate AND ms.beginHour = :beginHour) AND (ms.endDate = :endDate AND ms.endHour = :endHour)',
+        {
+          beginDate,
+          beginHour,
+          endDate,
+          endHour,
+        },
+      )
       .getOne();
   }
 }

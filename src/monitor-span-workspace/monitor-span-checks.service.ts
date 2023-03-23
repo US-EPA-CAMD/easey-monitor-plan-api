@@ -5,6 +5,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
+import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 
 const KEY = 'Monitor Span';
 
@@ -40,6 +41,38 @@ export class MonitorSpanChecksService {
       errorList.push(error);
     }
 
+    // SPAN-55
+    error = await this.duplicateSpanRecordCheck(
+      locationId,
+      monitorSpan,
+      errorLocation,
+    );
+    if (error) {
+      errorList.push(error);
+    }
+
+    // SPAN-56
+    error = this.spanMPCValueValid(
+      monitorSpan.componentTypeCode,
+      monitorSpan.spanScaleCode,
+      monitorSpan.mpcValue,
+      errorLocation,
+    );
+    if (error) {
+      errorList.push(error);
+    }
+
+    // SPAN-57
+    error = this.spanMECValueValid(
+      monitorSpan.componentTypeCode,
+      monitorSpan.spanScaleCode,
+      monitorSpan.mecValue,
+      monitorSpan.defaultHighRange,
+    );
+    if (error) {
+      errorList.push(error);
+    }
+
     // SPAN-58
     error = this.highSpanScaleTransitionPointCheck(monitorSpan);
     if (error) {
@@ -54,27 +87,6 @@ export class MonitorSpanChecksService {
 
     // SPAN-61
     error = this.spanScaleTransitionPointCheck(monitorSpan);
-    if (error) {
-      errorList.push(error);
-    }
-
-    // SPAN-56
-    error = this.spanMPCValueValid(
-      monitorSpan.componentTypeCode,
-      monitorSpan.spanMethodCode,
-      monitorSpan.mpcValue,
-    );
-    if (error) {
-      errorList.push(error);
-    }
-
-    // SPAN-57
-    error = this.spanMECValueValid(
-      monitorSpan.componentTypeCode,
-      monitorSpan.spanScaleCode,
-      monitorSpan.mecValue,
-      monitorSpan.defaultHighRange,
-    );
     if (error) {
       errorList.push(error);
     }
@@ -117,6 +129,7 @@ export class MonitorSpanChecksService {
           key: KEY,
         });
     }
+
     return error;
   }
 
@@ -191,8 +204,11 @@ export class MonitorSpanChecksService {
     componentTypeCode: string,
     spanScaleCode: string,
     mpcValue: number,
+    errorLocation: string = '',
   ): string {
     let error: string = null;
+    let errorCode: string = null;
+    const FIELDNAME = 'mpcValue';
 
     if (componentTypeCode) {
       if (!mpcValue) {
@@ -200,9 +216,7 @@ export class MonitorSpanChecksService {
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'H'
         ) {
-          error = this.getMessage('SPAN-56-A', {
-            key: KEY,
-          });
+          errorCode = 'SPAN-56-A';
         }
       }
 
@@ -211,18 +225,22 @@ export class MonitorSpanChecksService {
           ['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'L'
         ) {
-          error = this.getMessage('SPAN-56-B', {
-            key: KEY,
-          });
+          errorCode = 'SPAN-56-B';
         } else {
           if (mpcValue <= 0) {
-            error = this.getMessage('SPAN-56-C', {
-              fieldname: 'mpcValue',
-              key: KEY,
-            });
+            errorCode = 'SPAN-56-C';
           }
         }
       }
+    }
+
+    if (errorCode) {
+      error =
+        errorLocation +
+        this.getMessage(errorCode, {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
     }
 
     return error;
@@ -272,6 +290,44 @@ export class MonitorSpanChecksService {
           }
         }
       }
+    }
+
+    return error;
+  }
+
+  private async duplicateSpanRecordCheck(
+    locationId: string,
+    monitorSpan: MonitorSpanBaseDTO,
+    errorLocation: string = '',
+  ): Promise<string> {
+    let error: string = null;
+    let errorCode: string = null;
+    let record: MonitorSpan;
+    const FIELDNAMES = [
+      'locationId',
+      'componentTypeCode',
+      'beginDate',
+      'beginHour',
+      'endDate',
+      'endHour',
+    ];
+
+    if (monitorSpan.componentTypeCode && monitorSpan.beginDate) {
+      record = await this.repository.getSpanByLocIdCompTypeCodeAndDate(
+        locationId,
+        monitorSpan,
+      );
+
+      if (record) errorCode = 'SPAN-55-A';
+    }
+
+    if (errorCode) {
+      error =
+        errorLocation +
+        this.getMessage(errorCode, {
+          fieldnames: FIELDNAMES,
+          recordtype: KEY,
+        });
     }
 
     return error;
