@@ -17,6 +17,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(monitorSpan),
   getSpanByLocIdCompTypeCdBDateBHour: jest.fn().mockResolvedValue(monitorSpan),
   getSpanByLocIdCompTypeCdEDateEHour: jest.fn().mockResolvedValue(monitorSpan),
+  getSpanByFilter: jest.fn().mockResolvedValue(monitorSpan),
 });
 
 describe('Monitoring Span Check Service Test', () => {
@@ -124,5 +125,44 @@ describe('Monitoring Span Check Service Test', () => {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
+  });
+
+  describe('duplicateSpanRecordCheck', () => {
+    const mockMonitorSpan: MonitorSpanBaseDTO = {
+      ...monitorSpan,
+      componentTypeCode: 'FLOW',
+      beginDate: new Date('2023-01-01'),
+      beginHour: 1,
+      endDate: new Date('2023-01-02'),
+      endHour: 2,
+      spanMethodCode: 'code1',
+    };
+
+    const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
+
+    it('should return null if no duplicate record is found', async () => {
+      jest.spyOn(repository, 'getSpanByFilter').mockResolvedValue(null);
+      const result = await service['duplicateSpanRecordCheck'](
+        'location1',
+        mockMonitorSpan,
+      );
+      expect(result).toBeNull();
+    });
+
+    it('should return error message if a duplicate record is found', async () => {
+      jest
+        .spyOn(repository, 'getSpanByFilter')
+        .mockResolvedValue(new MonitorSpan());
+
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service['duplicateSpanRecordCheck'](
+        'location1',
+        mockMonitorSpan,
+      );
+      expect(result).toBe(MOCK_ERROR_MSG);
+    });
+
+    // Add more test cases for different scenarios here
   });
 });

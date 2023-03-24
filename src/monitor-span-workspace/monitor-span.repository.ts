@@ -19,44 +19,54 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
     beginHour: number,
     spanScaleCode: string,
   ): Promise<MonitorSpan> {
-    return this.findOne({
-      where: {
-        locationId,
-        componentTypeCode,
-        beginDate,
-        beginHour,
-        spanScaleCode,
-      },
-      order: {
-        id: 'ASC',
-      },
-    });
-  }
-
-  async getSpanByLocIdCompTypeCodeAndDate(
-    locationId: string,
-    span: MonitorSpanBaseDTO,
-  ): Promise<MonitorSpan> {
-    const componentTypeCode = span.componentTypeCode;
-    const beginDate = span.beginDate;
-    const beginHour = span.beginHour;
-    const endDate = span.endDate;
-    const endHour = span.endHour;
-
     return this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
       .andWhere('ms.componentTypeCode = :componentTypeCode', {
         componentTypeCode,
       })
-      .andWhere(
-        '(ms.beginDate = :beginDate AND ms.beginHour = :beginHour) AND (ms.endDate = :endDate AND ms.endHour = :endHour)',
-        {
-          beginDate,
-          beginHour,
-          endDate,
-          endHour,
-        },
-      )
+      .andWhere('ms.beginDate = :beginDate', { beginDate })
+      .andWhere('ms.beginHour = :beginHour', { beginHour })
       .getOne();
+  }
+
+  async getSpanByLocIdCompTypeCdEDateEHour(
+    locationId: string,
+    componentTypeCode: string,
+    endDate: Date,
+    endHour: number,
+  ): Promise<MonitorSpan> {
+    return this.createQueryBuilder('ms')
+      .where('ms.locationId = :locationId', { locationId })
+      .andWhere('ms.componentTypeCode = :componentTypeCode', {
+        componentTypeCode,
+      })
+      .andWhere('ms.endDate = :endDate', { endDate })
+      .andWhere('ms.endHour = :endHour', { endHour })
+      .getOne();
+  }
+
+  async getSpanByFilter(
+    locationId: string,
+    componentTypeCode: string,
+    beginDate?: Date,
+    beginHour?: number,
+    endDate?: Date,
+    endHour?: number,
+    spanScaleCode?: string,
+  ) {
+    const query = this.createQueryBuilder('ms')
+      .where('ms.locationId = :locationId', { locationId })
+      .andWhere('ms.componentTypeCode = :componentTypeCode', {
+        componentTypeCode,
+      });
+
+    if (beginDate) query.andWhere('ms.beginDate = :beginDate', { beginDate });
+    if (beginHour) query.andWhere('ms.beginHour = :beginHour', { beginHour });
+    if (endDate) query.andWhere('ms.endDate = :endDate', { endDate });
+    if (endHour) query.andWhere('ms.endHour = :endHour', { endHour });
+    if (spanScaleCode)
+      query.andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode });
+
+    return query.getOne();
   }
 }
