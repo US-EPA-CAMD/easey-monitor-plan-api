@@ -54,7 +54,7 @@ export class MonitorLocationChecksService {
             i?.unit?.name === location?.unitId ||
             i?.stackPipe?.name === location?.stackPipeId,
         );
-        location.locationId = dbLocation.id;
+        location.locationId = dbLocation?.id;
       });
     }
 
