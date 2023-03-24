@@ -308,10 +308,10 @@ export class MonitorSpanChecksService {
 
     // Helper function to fetch records and set error messages
     const fetchRecordAndSetError = async (
-      beginDate: Date | null,
-      beginHour: number | null,
-      endDate: Date | null,
-      endHour: number | null,
+      beginDate: Date | undefined,
+      beginHour: number | undefined,
+      endDate: Date | undefined,
+      endHour: number | undefined,
       additionalFieldNames: string[],
     ): Promise<void> => {
       record = await this.repository.getSpanByFilter(
@@ -321,8 +321,10 @@ export class MonitorSpanChecksService {
         beginHour,
         endDate,
         endHour,
-        isFlowType ? null : monitorSpan.spanMethodCode,
+        !isFlowType ? undefined : monitorSpan.spanScaleCode,
       );
+
+      console.log(record);
 
       if (record) {
         error = this.getMessage('SPAN-55-A', {
@@ -335,18 +337,18 @@ export class MonitorSpanChecksService {
     await fetchRecordAndSetError(
       monitorSpan.beginDate,
       monitorSpan.beginHour,
-      null,
-      null,
-      ['beginDate', 'beginHour'],
+      undefined,
+      undefined,
+      ['beginDate', 'beginHour', !isFlowType ? 'spanScaleCode' : ''],
     );
 
     if (!record && monitorSpan.endDate) {
       await fetchRecordAndSetError(
-        null,
-        null,
+        undefined,
+        undefined,
         monitorSpan.endDate,
         monitorSpan.endHour,
-        ['endDate', 'endHour'],
+        ['endDate', 'endHour', !isFlowType ? 'spanScaleCode' : ''],
       );
     }
 
