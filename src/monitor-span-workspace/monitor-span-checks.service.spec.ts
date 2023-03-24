@@ -162,7 +162,5 @@ describe('Monitoring Span Check Service Test', () => {
       );
       expect(result).toBe(MOCK_ERROR_MSG);
     });
-
-    // Add more test cases for different scenarios here
   });
 });
