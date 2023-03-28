@@ -35,18 +35,16 @@ export class MonitorSpanChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    // SPAN-17
-    error = this.flowFullScaleRangeCheck(monitorSpan, errorLocation);
-    if (error) {
-      errorList.push(error);
+    if (isUpdate) {
+      // SPAN-55
+      error = await this.duplicateSpanRecordCheck(locationId, monitorSpan);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
-    // SPAN-55
-    error = await this.duplicateSpanRecordCheck(
-      locationId,
-      monitorSpan,
-      errorLocation,
-    );
+    // SPAN-17
+    error = this.flowFullScaleRangeCheck(monitorSpan, errorLocation);
     if (error) {
       errorList.push(error);
     }
@@ -216,13 +214,16 @@ export class MonitorSpanChecksService {
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'H'
         ) {
-          errorCode = 'SPAN-56-A';
+          errorCode = this.getMessage(errorCode, {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
         }
       }
 
-      if (mpcValue !== null) {
+      if (mpcValue) {
         if (
-          ['FLOW', 'O2'].includes(componentTypeCode) &&
+          ['FLOW', 'O2'].includes(componentTypeCode) ||
           spanScaleCode === 'L'
         ) {
           errorCode = 'SPAN-56-B';
@@ -298,36 +299,57 @@ export class MonitorSpanChecksService {
   private async duplicateSpanRecordCheck(
     locationId: string,
     monitorSpan: MonitorSpanBaseDTO,
-    errorLocation: string = '',
   ): Promise<string> {
     let error: string = null;
-    let errorCode: string = null;
     let record: MonitorSpan;
-    const FIELDNAMES = [
-      'locationId',
-      'componentTypeCode',
-      'beginDate',
-      'beginHour',
-      'endDate',
-      'endHour',
-    ];
 
-    if (monitorSpan.componentTypeCode && monitorSpan.beginDate) {
-      record = await this.repository.getSpanByLocIdCompTypeCodeAndDate(
+    const baseFieldNames = ['locationId', 'componentTypeCode'];
+    const isFlowType = monitorSpan.componentTypeCode === 'FLOW';
+
+    // Helper function to fetch records and set error messages
+    const fetchRecordAndSetError = async (
+      beginDate: Date | undefined,
+      beginHour: number | undefined,
+      endDate: Date | undefined,
+      endHour: number | undefined,
+      additionalFieldNames: string[],
+    ): Promise<void> => {
+      record = await this.repository.getSpanByFilter(
         locationId,
-        monitorSpan,
+        monitorSpan.componentTypeCode,
+        beginDate,
+        beginHour,
+        endDate,
+        endHour,
+        !isFlowType ? undefined : monitorSpan.spanScaleCode,
       );
 
-      if (record) errorCode = 'SPAN-55-A';
-    }
+      console.log(record);
 
-    if (errorCode) {
-      error =
-        errorLocation +
-        this.getMessage(errorCode, {
-          fieldnames: FIELDNAMES,
+      if (record) {
+        error = this.getMessage('SPAN-55-A', {
           recordtype: KEY,
+          fieldnames: [...baseFieldNames, ...additionalFieldNames],
         });
+      }
+    };
+
+    await fetchRecordAndSetError(
+      monitorSpan.beginDate,
+      monitorSpan.beginHour,
+      undefined,
+      undefined,
+      ['beginDate', 'beginHour', !isFlowType ? 'spanScaleCode' : ''],
+    );
+
+    if (!record && monitorSpan.endDate) {
+      await fetchRecordAndSetError(
+        undefined,
+        undefined,
+        monitorSpan.endDate,
+        monitorSpan.endHour,
+        ['endDate', 'endHour', !isFlowType ? 'spanScaleCode' : ''],
+      );
     }
 
     return error;
