@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { ImportChecksService } from '../import-checks/import-checks.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 
 jest.mock('./monitor-plan.service');
 jest.mock('../user-check-out/user-check-out.service');
@@ -36,6 +37,10 @@ const currentUser: CurrentUser = {
   permissionSet: [],
 };
 
+const mockCheckService = () => ({
+  runChecks: jest.fn(),
+});
+
 describe('MonitorPlanWorkspaceController', () => {
   let controller: MonitorPlanWorkspaceController;
   let service: MonitorPlanWorkspaceService;
@@ -49,6 +54,10 @@ describe('MonitorPlanWorkspaceController', () => {
         ImportChecksService,
         AuthGuard,
         ConfigService,
+        {
+          provide: MonitorPlanChecksService,
+          useFactory: mockCheckService,
+        },
       ],
     }).compile();
 

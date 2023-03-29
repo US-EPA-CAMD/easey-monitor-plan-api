@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Put,
-  Body,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -22,14 +8,13 @@ import {
   SystemFuelFlowDTO,
 } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Fuel Flows')
 export class SystemFuelFlowWorkspaceController {
-  constructor(
-    private readonly service: SystemFuelFlowWorkspaceService,
-  ) {}
+  constructor(private readonly service: SystemFuelFlowWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -37,6 +22,7 @@ export class SystemFuelFlowWorkspaceController {
     type: SystemFuelFlowDTO,
     description: 'Retrieves workspace fuel flow records for a monitor system',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getFuelFlows(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
@@ -45,8 +31,7 @@ export class SystemFuelFlowWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description: 'Creates official fuel flow records for a monitor system',
@@ -66,8 +51,7 @@ export class SystemFuelFlowWorkspaceController {
   }
 
   @Put(':fuelFlowId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description:

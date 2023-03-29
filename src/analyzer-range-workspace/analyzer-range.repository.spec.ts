@@ -9,6 +9,7 @@ const analyzerRange = new AnalyzerRange();
 const analyzerRangeBaseDto = new AnalyzerRangeBaseDTO();
 
 const mockQueryBuilder = () => ({
+  innerJoin: jest.fn(),
   innerJoinAndSelect: jest.fn(),
   where: jest.fn(),
   andWhere: jest.fn(),
@@ -39,6 +40,7 @@ describe('AnalyzerRangeWorkspaceRepository', () => {
       analyzerRangeRepository.createQueryBuilder = jest
         .fn()
         .mockReturnValue(queryBuilder);
+      queryBuilder.innerJoin.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(analyzerRange);

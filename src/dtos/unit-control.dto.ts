@@ -1,13 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
+  IsBoolean,
+  IsDateString,
   IsIn,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import {
+  DATE_FORMAT,
+  MAXIMUM_FUTURE_DATE,
+  MINIMUM_DATE,
+} from '../utilities/constants';
+import { VwUnitcontrolMasterDataRelationships } from '../entities/vw-unitcontrol-master-data-relationships.entity';
+import { ControlCode } from '../entities/control-code.entity';
+
+const KEY = 'Unit Control';
 
 export class UnitControlBaseDTO {
   // TODO: update contorlEquipParamCode to parameterCode in easey-common
@@ -16,15 +30,23 @@ export class UnitControlBaseDTO {
   //   example: propertyMetadata.parameterCode.example,
   //   name: propertyMetadata.parameterCode.fieldLabels.value,
   // })
-  @IsNotEmpty()
-  @IsInDbValues(
-    `SELECT distinct controlequipparamcode as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [UNITCONTROL-FATAL-B] The value for ${args.value} in the Unit Control record ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CONTROL-1-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(VwUnitcontrolMasterDataRelationships, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CONTROL-1-B', {
+        fieldname: args.property,
+        value: args.value,
+        key: KEY,
+      });
+    },
+  })
   parameterCode: string;
 
   @ApiProperty({
@@ -32,15 +54,25 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOControlCode.example,
     name: propertyMetadata.unitControlDTOControlCode.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInDbValues(
-    `SELECT distinct control_code as "value" FROM camdecmpsmd.vw_unitcontrol_master_data_relationships`,
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [UNITCONTROL-FATAL-B] The value for ${args.value} in the Unit Control record ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CONTROL-2-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(ControlCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'The value for [controlCode] in the Unit Control record [fieldname] is invalid',
+        {
+          fieldname: args.property,
+          controlCode: args.value,
+        },
+      );
+    },
+  })
   controlCode: string;
 
   @ApiProperty({
@@ -51,7 +83,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIn(['0', '1'], {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
+      return `The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
     },
   })
   originalCode: string;
@@ -64,7 +96,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
     },
   })
   installDate: Date;
@@ -77,7 +109,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
     },
   })
   optimizationDate: Date;
@@ -93,7 +125,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIn(['0', '1'], {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
+      return `The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
     },
   })
   seasonalControlsIndicator: string;
@@ -103,10 +135,18 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTORetireDate.example,
     name: propertyMetadata.unitControlDTORetireDate.fieldLabels.value,
   })
-  @IsOptional()
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CONTROL-6-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCONTROL-FATAL-A] The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
     },
   })
   retireDate: Date;
@@ -118,6 +158,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOId.example,
     name: propertyMetadata.unitControlDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -125,6 +166,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOUnitId.example,
     name: propertyMetadata.unitControlDTOUnitId.fieldLabels.value,
   })
+  @IsNumber()
   unitRecordId: number;
 
   @ApiProperty({
@@ -132,6 +174,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOUserId.example,
     name: propertyMetadata.unitControlDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -139,6 +182,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOAddDate.example,
     name: propertyMetadata.unitControlDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -146,6 +190,8 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOUpdateDate.example,
     name: propertyMetadata.unitControlDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -153,5 +199,6 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTOActive.example,
     name: propertyMetadata.unitControlDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

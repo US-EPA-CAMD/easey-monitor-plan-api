@@ -46,7 +46,7 @@ export class UnitCapacityWorkspaceService {
               unitCapacity.endDate,
             );
 
-            if (unitCapacityRecord !== undefined) {
+            if (unitCapacityRecord) {
               await this.updateUnitCapacity(
                 locationId,
                 unitId,

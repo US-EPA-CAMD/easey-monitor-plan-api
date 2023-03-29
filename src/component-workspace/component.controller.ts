@@ -3,6 +3,8 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentWorkspaceService } from './component.service';
+import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,6 +18,7 @@ export class ComponentWorkspaceController {
     type: ComponentDTO,
     description: 'Retrieves workspace component records for a monitor location',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
     return this.service.getComponents(locationId);
   }

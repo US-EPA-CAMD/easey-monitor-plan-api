@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
+  IsDateString,
   IsInt,
   IsNumber,
   IsOptional,
+  IsSemVer,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
@@ -23,6 +26,7 @@ export class LMEQualificationBaseDTO {
       return `${args.property} [QUALLME-FATAL-A] The value for ${args.value} in the Qualification LME record ${args.property} is not formatted properly`;
     },
   })
+  @IsNumber()
   qualificationDataYear: number;
 
   @ApiProperty({
@@ -91,6 +95,7 @@ export class LMEQualificationDTO extends LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOId.example,
     name: propertyMetadata.lMEQualificationDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -99,6 +104,7 @@ export class LMEQualificationDTO extends LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOQualificationId.example,
     name: propertyMetadata.lMEQualificationDTOQualificationId.fieldLabels.value,
   })
+  @IsString()
   qualificationId: string;
 
   @ApiProperty({
@@ -106,6 +112,7 @@ export class LMEQualificationDTO extends LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOUserId.example,
     name: propertyMetadata.lMEQualificationDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -113,6 +120,7 @@ export class LMEQualificationDTO extends LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOAddDate.example,
     name: propertyMetadata.lMEQualificationDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -120,5 +128,7 @@ export class LMEQualificationDTO extends LMEQualificationBaseDTO {
     example: propertyMetadata.lMEQualificationDTOUpdateDate.example,
     name: propertyMetadata.lMEQualificationDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 }

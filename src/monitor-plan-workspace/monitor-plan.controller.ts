@@ -5,26 +5,21 @@ import {
   Delete,
   Param,
   Controller,
-  UseGuards,
   Query,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { MonitorPlanChecksService } from './monitor-plan-checks.service';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -34,6 +29,7 @@ export class MonitorPlanWorkspaceController {
     private readonly service: MonitorPlanWorkspaceService,
     private readonly logger: Logger,
     private readonly importChecksService: ImportChecksService,
+    private readonly mpChecksService: MonitorPlanChecksService,
   ) {}
 
   @Get('export')
@@ -41,6 +37,7 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves workspace Monitor Plan record.',
   })
+  @RoleGuard({ queryParam: 'planId' }, LookupType.MonitorPlan)
   exportMonitorPlan(@Query('planId') planId: string) {
     return this.service.exportMonitorPlan(planId);
   }
@@ -51,6 +48,7 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves information needed to refresh a monitor plan',
   })
+  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
   }
@@ -59,6 +57,7 @@ export class MonitorPlanWorkspaceController {
   @ApiOkResponse({
     description: 'Retrieves facility information and evaluation results',
   })
+  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
   getEvaluationReport(@Param('planId') planId: string) {
     return this.service.getEvaluationReport(planId);
   }
@@ -70,9 +69,10 @@ export class MonitorPlanWorkspaceController {
     description: 'imports an entire monitor plan from JSON payload',
   })
   async importPlan(
-    @Body() plan: MonitorPlanDTO,
+    @Body() plan: UpdateMonitorPlanDTO,
     @User() user: CurrentUser,
   ): Promise<any> {
+    await this.mpChecksService.runChecks(plan);
     await this.importChecksService.runImportChecks(plan);
     const mpPlan = await this.service.importMpPlan(plan, user.userId);
 
@@ -88,8 +88,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Delete(':planId/revert')
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',

@@ -2,9 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsBoolean,
+  IsDate,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
@@ -69,6 +73,7 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOId.example,
     name: propertyMetadata.unitCapacityDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -76,6 +81,7 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOUnitId.example,
     name: propertyMetadata.unitCapacityDTOUnitId.fieldLabels.value,
   })
+  @IsNumber()
   unitRecordId: number;
 
   @ApiProperty({
@@ -83,6 +89,8 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.commercialOperationDate.example,
     name: propertyMetadata.commercialOperationDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   commercialOperationDate: Date;
 
   @ApiProperty({
@@ -90,8 +98,11 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.date.example,
     name: propertyMetadata.date.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   operationDate: Date;
 
+  @IsString()
   boilerTurbineType: string;
 
   @ApiProperty({
@@ -99,6 +110,7 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOBeginDate.example,
     name: propertyMetadata.unitCapacityDTOBeginDate.fieldLabels.value,
   })
+  @IsDateString()
   boilerTurbineBeginDate: Date;
 
   @ApiProperty({
@@ -106,6 +118,8 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOEndDate.example,
     name: propertyMetadata.unitCapacityDTOEndDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   boilerTurbineEndDate: Date;
 
   @ApiProperty({
@@ -113,6 +127,7 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOUserId.example,
     name: propertyMetadata.unitCapacityDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -120,6 +135,7 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOAddDate.example,
     name: propertyMetadata.unitCapacityDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -127,6 +143,8 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOUpdateDate.example,
     name: propertyMetadata.unitCapacityDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -134,5 +152,6 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOActive.example,
     name: propertyMetadata.unitCapacityDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

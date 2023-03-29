@@ -6,6 +6,7 @@ import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 import { MonitorConfigurationsService } from './monitor-configurations.service';
 import { MonitorConfigurationsController } from './monitor-configurations.controller';
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
+import { ConfigService } from '@nestjs/config';
 
 jest.mock('./monitor-configurations.service');
 
@@ -23,7 +24,7 @@ describe('MonitorConfigurations', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       controllers: [MonitorConfigurationsController],
-      providers: [MonitorConfigurationsService],
+      providers: [MonitorConfigurationsService, ConfigService],
     }).compile();
 
     controller = module.get(MonitorConfigurationsController);

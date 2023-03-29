@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Put,
-  UseGuards,
-  Body,
-  Post,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
@@ -22,14 +8,13 @@ import {
   LEEQualificationBaseDTO,
   LEEQualificationDTO,
 } from '../dtos/lee-qualification.dto';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('LEE Qualifications')
 export class LEEQualificationWorkspaceController {
-  constructor(
-    private readonly service: LEEQualificationWorkspaceService,
-  ) {}
+  constructor(private readonly service: LEEQualificationWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -38,6 +23,7 @@ export class LEEQualificationWorkspaceController {
     description:
       'Retrieves workspace lee qualification records for a monitor location',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getLEEQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
@@ -46,8 +32,7 @@ export class LEEQualificationWorkspaceController {
   }
 
   @Put(':leeQualId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: LEEQualificationDTO,
     description:
@@ -70,8 +55,7 @@ export class LEEQualificationWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: LEEQualificationDTO,
@@ -84,6 +68,11 @@ export class LEEQualificationWorkspaceController {
     @Body() payload: LEEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LEEQualificationDTO> {
-    return this.service.createLEEQualification(locId, qualId, payload, user.userId);
+    return this.service.createLEEQualification(
+      locId,
+      qualId,
+      payload,
+      user.userId,
+    );
   }
 }

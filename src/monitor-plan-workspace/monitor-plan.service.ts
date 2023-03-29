@@ -37,6 +37,7 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -104,7 +105,7 @@ export class MonitorPlanWorkspaceService {
   ) {}
 
   async importMpPlan(
-    plan: MonitorPlanDTO,
+    plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
     const promises = [];
@@ -289,12 +290,18 @@ export class MonitorPlanWorkspaceService {
 
       UNIT_CONTROLS = UNIT_CAPACITIES + 1;
       promises.push(
-        this.unitControlRepository.find({ where: { unitId: In(unitIds) } }),
+        this.unitControlRepository.find({
+          where: { unitId: In(unitIds) },
+          order: { id: 'ASC' },
+        }),
       );
 
       UNIT_FUEL = UNIT_CONTROLS + 1;
       promises.push(
-        this.unitFuelRepository.find({ where: { unitId: In(unitIds) } }),
+        this.unitFuelRepository.find({
+          where: { unitId: In(unitIds) },
+          order: { id: 'ASC' },
+        }),
       );
 
       ATTRIBUTES = UNIT_FUEL + 1;
@@ -318,7 +325,10 @@ export class MonitorPlanWorkspaceService {
 
       FORMULAS = MATS_METHODS + 1;
       promises.push(
-        this.formulaRepository.find({ where: { locationId: In(locationIds) } }),
+        this.formulaRepository.find({
+          where: { locationId: In(locationIds) },
+          order: { id: 'ASC' },
+        }),
       );
 
       DEFAULTS = FORMULAS + 1;
@@ -328,7 +338,12 @@ export class MonitorPlanWorkspaceService {
 
       SPANS = DEFAULTS + 1;
       promises.push(
-        this.spanRepository.find({ where: { locationId: In(locationIds) } }),
+        this.spanRepository.find({
+          where: { locationId: In(locationIds) },
+          order: {
+            id: 'ASC',
+          },
+        }),
       );
 
       DUCT_WAFS = SPANS + 1;
@@ -338,7 +353,10 @@ export class MonitorPlanWorkspaceService {
 
       LOADS = DUCT_WAFS + 1;
       promises.push(
-        this.loadRepository.find({ where: { locationId: In(locationIds) } }),
+        this.loadRepository.find({
+          where: { locationId: In(locationIds) },
+          order: { id: 'ASC' },
+        }),
       );
 
       COMPONENTS = LOADS + 1;
@@ -346,6 +364,7 @@ export class MonitorPlanWorkspaceService {
         new Promise(async (resolve, reject) => {
           const components = await this.componentRepository.find({
             where: { locationId: In(locationIds) },
+            order: { id: 'ASC' },
           });
           if (components.length !== 0) {
             const componentIds = components.map(i => i.id);
@@ -372,6 +391,7 @@ export class MonitorPlanWorkspaceService {
         new Promise(async (resolve, reject) => {
           const systems = await this.systemRepository.find({
             where: { locationId: In(locationIds) },
+            order: { id: 'ASC' },
           });
 
           if (systems.length !== 0) {

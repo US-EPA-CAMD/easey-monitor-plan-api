@@ -44,7 +44,7 @@ export default registerAs('app', () => ({
     'EASEY_MONITOR_PLAN_API_ENABLE_SECRET_TOKEN',
   ),
   enableRoleGuard: getConfigValueBoolean(
-    'EASEY_MONITOR_PLAN_ENABLE_ROLE_GUARD',
+    'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD',
     true,
   ),
   enableCors: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_CORS', true),
@@ -63,7 +63,10 @@ export default registerAs('app', () => ({
   enableDebug: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_DEBUG'),
   // NEEDS TO BE SET IN .ENV FILE FOR LOCAL DEVELOPMENT
   // FORMAT: { "userId": "", "roles": [ { "orisCode": 3, "role": "P" } ] }
-  currentUser: getConfigValue('EASEY_MONITOR_PLAN_API_CURRENT_USER'),
+  currentUser: getConfigValue(
+    'EASEY_MONITOR_PLAN_API_CURRENT_USER',
+    '{ "userId": "", "roles": [ { "orisCode": 3, "role": "P" } ] }',
+  ),
   apiHost: apiHost,
   authApi: {
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),

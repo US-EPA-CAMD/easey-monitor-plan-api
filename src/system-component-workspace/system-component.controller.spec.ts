@@ -6,6 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { SystemComponentWorkspaceController } from './system-component.controller';
+import { ComponentCheckService } from '../component-workspace/component-checks.service';
 
 jest.mock('./system-component.service');
 
@@ -24,15 +25,20 @@ describe('SystemComponentWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       controllers: [SystemComponentWorkspaceController],
-      providers: [SystemComponentWorkspaceService, ConfigService],
+      providers: [
+        SystemComponentWorkspaceService,
+        ConfigService,
+        {
+          provide: ComponentCheckService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+      ],
     }).compile();
 
     controller = module.get(SystemComponentWorkspaceController);
     service = module.get(SystemComponentWorkspaceService);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
   });
 
   describe('getComponents', () => {

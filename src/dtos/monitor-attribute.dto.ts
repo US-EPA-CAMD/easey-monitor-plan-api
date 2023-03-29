@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
+  IsBoolean,
+  IsDateString,
   IsInt,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
@@ -160,6 +163,7 @@ export class MonitorAttributeDTO extends MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOId.example,
     name: propertyMetadata.monitorAttributeDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -167,6 +171,7 @@ export class MonitorAttributeDTO extends MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOLocationId.example,
     name: propertyMetadata.monitorAttributeDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -174,6 +179,7 @@ export class MonitorAttributeDTO extends MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOUserId.example,
     name: propertyMetadata.monitorAttributeDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -181,6 +187,7 @@ export class MonitorAttributeDTO extends MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOAddDate.example,
     name: propertyMetadata.monitorAttributeDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -188,6 +195,8 @@ export class MonitorAttributeDTO extends MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOUpdateDate.example,
     name: propertyMetadata.monitorAttributeDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -195,5 +204,6 @@ export class MonitorAttributeDTO extends MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOActive.example,
     name: propertyMetadata.monitorAttributeDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

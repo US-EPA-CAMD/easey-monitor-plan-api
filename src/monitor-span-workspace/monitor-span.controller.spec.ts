@@ -8,6 +8,7 @@ import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanWorkspaceController } from './monitor-span.controller';
 import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { MonitorSpanChecksService } from './monitor-span-checks.service';
 
 jest.mock('./monitor-span.service');
 
@@ -27,6 +28,10 @@ const data: MonitorSpanDTO[] = [];
 data.push(new MonitorSpanDTO());
 data.push(new MonitorSpanDTO());
 
+const mockMonitorSpanChecksService = () => ({
+  runChecks: jest.fn(),
+});
+
 describe('MonitorSpanWorkspaceController', () => {
   let controller: MonitorSpanWorkspaceController;
   let service: MonitorSpanWorkspaceService;
@@ -35,7 +40,14 @@ describe('MonitorSpanWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       controllers: [MonitorSpanWorkspaceController],
-      providers: [MonitorSpanWorkspaceService, ConfigService],
+      providers: [
+        MonitorSpanWorkspaceService,
+        ConfigService,
+        {
+          provide: MonitorSpanChecksService,
+          useFactory: mockMonitorSpanChecksService,
+        },
+      ],
     }).compile();
 
     controller = module.get(MonitorSpanWorkspaceController);

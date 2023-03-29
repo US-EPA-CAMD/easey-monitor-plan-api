@@ -5,11 +5,7 @@ import { CheckOutController } from './check-out.controller';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 
 @Module({
-  imports: [
-    UserCheckOutModule,
-    MonitorPlanWorkspaceModule,
-    HttpModule
-  ],
+  imports: [UserCheckOutModule, MonitorPlanWorkspaceModule, HttpModule],
   controllers: [CheckOutController],
   providers: [],
   exports: [],

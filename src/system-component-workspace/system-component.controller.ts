@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Post,
-  Body,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -22,12 +8,18 @@ import {
   SystemComponentDTO,
 } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ComponentCheckService } from '../component-workspace/component-checks.service';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Components')
 export class SystemComponentWorkspaceController {
-  constructor(private service: SystemComponentWorkspaceService) {}
+  constructor(
+    private service: SystemComponentWorkspaceService,
+    private checkService: ComponentCheckService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -35,6 +27,7 @@ export class SystemComponentWorkspaceController {
     type: SystemComponentDTO,
     description: 'Retrieves workspace component records for a monitor system',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getSystemComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
@@ -43,8 +36,7 @@ export class SystemComponentWorkspaceController {
   }
 
   @Put(':monSysCompId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
@@ -56,6 +48,7 @@ export class SystemComponentWorkspaceController {
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
+    await this.checkService.runChecks(locationId, payload, false, true);
     return this.service.updateSystemComponent(
       locationId,
       monSysId,
@@ -66,18 +59,18 @@ export class SystemComponentWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Creates a workspace system component for a monitor system',
   })
-  createSystemComponent(
+  async createSystemComponent(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
+    await this.checkService.runChecks(locationId, payload, false, true);
     return this.service.createSystemComponent(
       locationId,
       monSysId,

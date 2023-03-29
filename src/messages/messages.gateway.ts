@@ -1,15 +1,13 @@
-import {
-  UseGuards,
-} from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer
-} from "@nestjs/websockets";
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { AuthGuard } from "@us-epa-camd/easey-common/guards";
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import { Server } from 'socket.io';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
@@ -17,16 +15,13 @@ import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 @WebSocketGateway({
   cors: {
     origin: '*',
-  }
+  },
 })
 export class MessagesGateway {
-
   @WebSocketServer()
-  server: Server
+  server: Server;
 
-  constructor(
-    private readonly service: UserCheckOutService
-  ) {}
+  constructor(private readonly service: UserCheckOutService) {}
 
   @SubscribeMessage('getCheckedOutConfigurations')
   getCheckedOutConfigurations() {
@@ -54,7 +49,7 @@ export class MessagesGateway {
     @MessageBody('monPlanId') monPlanId: string,
   ) {
     const config = await this.service.getCheckedOutConfiguration(monPlanId);
-    if (config && await this.service.checkInConfiguration(monPlanId)) {
+    if (config && (await this.service.checkInConfiguration(monPlanId))) {
       this.server.emit('checkInConfiguration', config);
       //await this.mpWksService.updateDateAndUserId(monPlanId, user.userId);
     }

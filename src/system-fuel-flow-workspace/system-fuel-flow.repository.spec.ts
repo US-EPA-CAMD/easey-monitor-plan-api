@@ -12,6 +12,7 @@ const mockQueryBuilder = () => ({
   andWhere: jest.fn(),
   getMany: jest.fn(),
   getOne: jest.fn(),
+  orderBy: jest.fn().mockReturnValue(mockQueryBuilder),
 });
 
 describe('SystemFuelFlowWorkspaceRepository', () => {
@@ -37,6 +38,7 @@ describe('SystemFuelFlowWorkspaceRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(sysFuelFlow);
 
       const result = await repository.getFuelFlow('1');
@@ -50,6 +52,7 @@ describe('SystemFuelFlowWorkspaceRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([sysFuelFlow]);
 
       const result = await repository.getFuelFlows('1');
@@ -63,6 +66,7 @@ describe('SystemFuelFlowWorkspaceRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([sysFuelFlow]);
 
       const result = await repository.getFuelFlowsBySystemIds(['1']);
@@ -76,6 +80,7 @@ describe('SystemFuelFlowWorkspaceRepository', () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(sysFuelFlow);
 
       const sysFFDto = new SystemFuelFlowBaseDTO();

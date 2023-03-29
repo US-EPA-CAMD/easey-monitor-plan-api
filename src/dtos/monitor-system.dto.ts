@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-  IsInt,
+  IsBoolean,
+  IsDateString,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -12,8 +14,24 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { SystemComponentBaseDTO } from './system-component.dto';
 import { SystemFuelFlowBaseDTO } from './system-fuel-flow.dto';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import {
+  DATE_FORMAT,
+  MAXIMUM_FUTURE_DATE,
+  MAX_HOUR,
+  MINIMUM_DATE,
+  MIN_HOUR,
+} from '../utilities/constants';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { SystemTypeCode } from '../entities/system-type-code.entity';
+
+const KEY = 'Monitor System';
 
 export class MonitorSystemBaseDTO {
   @ApiProperty({
@@ -22,10 +40,19 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOMonitoringSystemId.example,
     name: propertyMetadata.monitorSystemDTOMonitoringSystemId.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-7-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} is not formatted properly`;
+      return CheckCatalogService.formatResultMessage('SYSTEM-7-B', {
+        iD: args.value,
+      });
     },
   })
   monitoringSystemId: string;
@@ -35,15 +62,23 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOSystemTypeCode.example,
     name: propertyMetadata.monitorSystemDTOSystemTypeCode.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInDbValues(
-    `SELECT sys_type_cd as "value" FROM camdecmpsmd.system_type_code`,
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-8-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(SystemTypeCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-8-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   systemTypeCode: string;
 
   @ApiProperty({
@@ -53,12 +88,11 @@ export class MonitorSystemBaseDTO {
     name:
       propertyMetadata.monitorSystemDTOSystemDesignationCode.fieldLabels.value,
   })
-  @IsOptional()
   @IsInDbValues(
     `SELECT sys_designation_cd as "value" FROM camdecmpsmd.system_designation_code`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
+        return `The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
       },
     },
   )
@@ -69,12 +103,11 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOFuelCode.example,
     name: propertyMetadata.monitorSystemDTOFuelCode.fieldLabels.value,
   })
-  @IsOptional()
   @IsInDbValues(
     `SELECT fuel_cd as "value" FROM camdecmpsmd.fuel_code where fuel_group_cd not in ('OTHER','COAL')`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSTEM-FATAL-B] The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
+        return `The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
       },
     },
   )
@@ -85,12 +118,35 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOBeginDate.example,
     name: propertyMetadata.monitorSystemDTOBeginDate.fieldLabels.value,
   })
-  @IsIsoFormat({
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return CheckCatalogService.formatResultMessage('SYSTEM-1-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
-  @IsOptional()
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-1-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -98,13 +154,28 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndDate.example,
     name: propertyMetadata.monitorSystemDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
-  @IsIsoFormat({
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return CheckCatalogService.formatResultMessage('SYSTEM-3-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
     },
   })
-  @ValidateIf(o => o.endHour !== null)
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
+    },
+  })
+  @ValidateIf(o => o['endDate'] !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -112,11 +183,21 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOBeginHour.example,
     name: propertyMetadata.monitorSystemDTOBeginHour.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('SYSTEM-2-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-2-B', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
   beginHour: number;
@@ -126,14 +207,16 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndHour.example,
     name: propertyMetadata.monitorSystemDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInt()
-  @IsInRange(0, 23, {
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSTEM-FATAL-A] The value for ${args.value} in the Monitoring System record ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('SYSTEM-4-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
-  @ValidateIf(o => o.endDate !== null)
+  @ValidateIf(o => o['endDate'] !== null)
   endHour: number;
 
   @ValidateNested()
@@ -151,6 +234,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOId.example,
     name: propertyMetadata.monitorSystemDTOId.fieldLabels.value,
   })
+  @IsString()
   id: string;
 
   @ApiProperty({
@@ -158,6 +242,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOLocationId.example,
     name: propertyMetadata.monitorSystemDTOLocationId.fieldLabels.value,
   })
+  @IsString()
   locationId: string;
 
   @ApiProperty({
@@ -165,6 +250,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOUserId.example,
     name: propertyMetadata.monitorSystemDTOUserId.fieldLabels.value,
   })
+  @IsString()
   userId: string;
 
   @ApiProperty({
@@ -172,6 +258,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOAddDate.example,
     name: propertyMetadata.monitorSystemDTOAddDate.fieldLabels.value,
   })
+  @IsDateString()
   addDate: Date;
 
   @ApiProperty({
@@ -179,6 +266,8 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOUpdateDate.example,
     name: propertyMetadata.monitorSystemDTOUpdateDate.fieldLabels.value,
   })
+  @IsDateString()
+  @IsOptional()
   updateDate: Date;
 
   @ApiProperty({
@@ -186,5 +275,6 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOActive.example,
     name: propertyMetadata.monitorSystemDTOActive.fieldLabels.value,
   })
+  @IsBoolean()
   active: boolean;
 }

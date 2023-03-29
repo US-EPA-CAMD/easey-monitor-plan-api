@@ -8,6 +8,7 @@ import { UnitService } from './unit.service';
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),
   findOne: jest.fn().mockResolvedValue(''),
+  update: jest.fn().mockResolvedValue(true),
 });
 
 describe('Unit Import Tests', () => {
@@ -52,6 +53,22 @@ describe('Unit Import Tests', () => {
       expect(result).toEqual([
         "[IMPORT2-FATAL-A] The database doesn't contain unit 1 for Oris Code 1",
       ]);
+    });
+
+    it('Should pass return true when record is updated', async () => {
+      repository.update = jest.fn().mockResolvedValue(new Unit());
+      const unit = new Unit();
+
+      const result = await service.importUnit(unit, 1);
+      expect(result).toEqual(true);
+    });
+
+    it('Should pass return true when record is updated', async () => {
+      repository.findOne = jest.fn().mockResolvedValue(new Unit());
+      const unit = new Unit();
+
+      const result = await service.getUnitByNameAndFacId('1', 1);
+      expect(result).toEqual(unit);
     });
   });
 });

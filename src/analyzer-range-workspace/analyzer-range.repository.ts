@@ -1,4 +1,4 @@
-import { AnalyzerRangeBaseDTO } from 'src/dtos/analyzer-range.dto';
+import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 import { EntityRepository, Repository } from 'typeorm';
 
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
@@ -17,7 +17,8 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
     const endHour = analyzerRange.endHour;
 
     return this.createQueryBuilder('ar')
-      .where('ar.componentRecordId = :componentId', {
+      .innerJoin('ar.component', 'c')
+      .where('c.componentId = :componentId', {
         componentId,
       })
       .andWhere(

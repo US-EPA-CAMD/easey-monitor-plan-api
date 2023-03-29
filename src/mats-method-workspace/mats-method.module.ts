@@ -7,6 +7,7 @@ import { MatsMethodWorkspaceService } from './mats-method.service';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
+import { MatsMethodChecksService } from './mats-method-checks.service';
 
 @Module({
   imports: [
@@ -15,7 +16,16 @@ import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-pl
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MatsMethodWorkspaceController],
-  providers: [MatsMethodWorkspaceService, MatsMethodMap],
-  exports: [TypeOrmModule, MatsMethodWorkspaceService, MatsMethodMap],
+  providers: [
+    MatsMethodWorkspaceService,
+    MatsMethodMap,
+    MatsMethodChecksService,
+  ],
+  exports: [
+    TypeOrmModule,
+    MatsMethodWorkspaceService,
+    MatsMethodMap,
+    MatsMethodChecksService,
+  ],
 })
 export class MatsMethodWorkspaceModule {}

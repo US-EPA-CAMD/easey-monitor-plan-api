@@ -152,7 +152,7 @@ describe('SystemComponentWorkspaceService', () => {
 
   describe('importComponent', () => {
     it('should update system component while importing a system component and a system component record exists ', async () => {
-      const result = await service.importComponent(
+      const result = await service.importSystemComponent(
         '1',
         '1',
         [payload],
@@ -166,7 +166,7 @@ describe('SystemComponentWorkspaceService', () => {
         .spyOn(repository, 'getSystemComponentByBeginOrEndDate')
         .mockResolvedValue(null);
 
-      const result = await service.importComponent(
+      const result = await service.importSystemComponent(
         '1',
         '1',
         [payload],

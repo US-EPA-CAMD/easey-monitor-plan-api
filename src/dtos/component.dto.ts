@@ -2,17 +2,22 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO } from './analyzer-range.dto';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
-  IsString,
   MaxLength,
+  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
-import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
+import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { BasisCode } from '../entities/basis-code.entity';
+
+const KEY = 'Component';
 
 export class ComponentBaseDTO {
   @ApiProperty({
@@ -20,11 +25,19 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOComponentId.example,
     name: propertyMetadata.componentDTOComponentId.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-8-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the System Component record ${args.property} is not formatted properly`;
+      return CheckCatalogService.formatResultMessage('COMPON-8-B', {
+        iD: args.value,
+      });
     },
   })
   componentId: string;
@@ -34,15 +47,23 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOComponentTypeCode.example,
     name: propertyMetadata.componentDTOComponentTypeCode.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInDbValues(
-    'SELECT distinct component_type_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-12-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(SystemComponentMasterDataRelationships, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-12-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   componentTypeCode: string;
 
   @ApiProperty({
@@ -53,15 +74,24 @@ export class ComponentBaseDTO {
       propertyMetadata.componentDTOSampleAcquisitionMethodCode.fieldLabels
         .value,
   })
-  @IsOptional()
-  @IsInDbValues(
-    'SELECT distinct sample_aquisition_method_code as "value" FROM camdecmpsmd.vw_systemcomponent_master_data_relationships',
+  @IsValidCode(
+    SystemComponentMasterDataRelationships,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
+        return CheckCatalogService.formatResultMessage('COMPON-13-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        });
       },
     },
+    (
+      args: ValidationArguments,
+    ): FindOneOptions<SystemComponentMasterDataRelationships> => {
+      return { where: { sampleAcquisitionMethodCode: args.value } };
+    },
   )
+  @ValidateIf(o => o.sampleAcquisitionMethodCode !== null)
   sampleAcquisitionMethodCode: string;
 
   @ApiProperty({
@@ -69,15 +99,15 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOBasisCode.example,
     name: propertyMetadata.componentDTOBasisCode.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInDbValues(
-    'SELECT distinct basis_cd as "value" FROM camdecmpsmd.basis_code',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [SYSCOMP-FATAL-B] The value for ${args.value} in the Component record ${args.property} is invalid`;
-      },
+  @IsValidCode(BasisCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-14-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
   basisCode: string;
 
   @ApiProperty({
@@ -88,7 +118,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(25, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 25 characters`;
+      return `The value for ${args.value} in the Component record ${args.property} must not exceed 25 characters`;
     },
   })
   manufacturer: string;
@@ -101,7 +131,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(15, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 15 characters`;
+      return `The value for ${args.value} in the Component record ${args.property} must not exceed 15 characters`;
     },
   })
   modelVersion: string;
@@ -114,7 +144,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(20, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must not exceed 20 characters`;
+      return `The value for ${args.value} in the Component record ${args.property} must not exceed 20 characters`;
     },
   })
   serialNumber: string;
@@ -123,12 +153,6 @@ export class ComponentBaseDTO {
     description: propertyMetadata.componentDTOHgConverterIndicator.description,
     example: propertyMetadata.componentDTOHgConverterIndicator.example,
     name: propertyMetadata.componentDTOHgConverterIndicator.fieldLabels.value,
-  })
-  @IsOptional()
-  @IsInRange(0, 1, {
-    message: (args: ValidationArguments) => {
-      return `${args.property} [SYSCOMP-FATAL-A] The value for ${args.value} in the Component record ${args.property} must be within the range of 0 and 1`;
-    },
   })
   @IsOptional()
   hgConverterIndicator: number;
