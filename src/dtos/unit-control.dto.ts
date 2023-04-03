@@ -3,7 +3,6 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsBoolean,
   IsDateString,
-  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
