@@ -30,13 +30,13 @@ export class UnitControl extends BaseEntity {
   optimizationDate: Date;
 
   @Column({ name: 'orig_cd' })
-  originalCode: string;
+  originalCode: number;
 
   @Column({ type: 'date', name: 'retire_date' })
   retireDate: Date;
 
   @Column({ name: 'seas_cd' })
-  seasonalControlsIndicator: string;
+  seasonalControlsIndicator: number;
 
   @Column({ name: 'userid' })
   userId: string;
