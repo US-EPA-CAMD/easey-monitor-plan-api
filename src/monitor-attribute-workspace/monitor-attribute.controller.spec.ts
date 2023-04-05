@@ -19,8 +19,8 @@ const data = {
     sessionId: '',
     expiration: '',
     clientIp: '',
-    isAdmin: false,
-    permissionSet: [],
+    facilities: [],
+    roles: [],
   },
   payload: new MonitorAttributeBaseDTO(),
 };
