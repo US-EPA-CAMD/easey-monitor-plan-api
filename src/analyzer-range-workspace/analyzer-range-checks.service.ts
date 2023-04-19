@@ -54,6 +54,7 @@ export class AnalyzerRangeChecksService {
     }
 
     // COMPON-54
+    if (!isUpdate) {
     error = await this.duplicateAnalyzerRangeChecks(
       component.componentId,
       analyzerRange,
@@ -61,7 +62,7 @@ export class AnalyzerRangeChecksService {
     if (error) {
       errorList.push(error);
     }
-
+  }
     this.throwIfErrors(errorList);
     this.logger.info('Completed Analyzer Range Checks');
   }
