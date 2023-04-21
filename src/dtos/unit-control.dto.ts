@@ -85,7 +85,7 @@ export class UnitControlBaseDTO {
       return `The value for ${args.value} in the Unit Control record ${args.property} must be string value of "0" or "1"`;
     },
   })
-  originalCode: number;
+  originalCode: string;
 
   @ApiProperty({
     description: propertyMetadata.unitControlDTOInstallDate.description,
@@ -127,7 +127,7 @@ export class UnitControlBaseDTO {
       return `The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
     },
   })
-  seasonalControlsIndicator: number;
+  seasonalControlsIndicator: string;
 
   @ApiProperty({
     description: propertyMetadata.unitControlDTORetireDate.description,
