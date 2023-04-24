@@ -23,7 +23,10 @@ export class LMEQualificationWorkspaceController {
     description:
       'Retrieves workspace lme qualification records for a monitor location',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getLMEQualifications(
     @Param('locId') locationId: string,
     @Param('qualId') qualificationId: string,

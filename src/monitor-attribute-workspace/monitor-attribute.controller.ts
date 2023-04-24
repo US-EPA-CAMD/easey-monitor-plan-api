@@ -36,7 +36,10 @@ export class MonitorAttributeWorkspaceController {
     type: MonitorAttributeDTO,
     description: 'Retrieves workspace attribute records for a monitor location',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getAttributes(
     @Param('locId') locationId: string,
   ): Promise<MonitorAttributeDTO[]> {

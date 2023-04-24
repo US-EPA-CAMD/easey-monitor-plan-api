@@ -18,13 +18,19 @@ export class MonitorLocationWorkspaceController {
     description:
       'Retrieves workspace location record from specific location ID',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getLocation(@Param('locId') locationId: string): Promise<MonitorLocationDTO> {
     return this.service.getLocation(locationId);
   }
 
   @Get(':locId/relationships')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getLocationRelationships(@Param('locId') locId: string) {
     return this.service.getLocationRelationships(locId);
   }

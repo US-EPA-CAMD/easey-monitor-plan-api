@@ -17,7 +17,10 @@ export class MonitorMethodWorkspaceController {
   constructor(private service: MonitorMethodWorkspaceService) {}
 
   @Get()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: MonitorMethodDTO,

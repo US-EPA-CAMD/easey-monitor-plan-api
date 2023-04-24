@@ -24,7 +24,10 @@ export class MatsMethodWorkspaceController {
     description:
       'Retrieves workspace copy MATS Method records for a monitor location',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
     return this.service.getMethods(locationId);
   }

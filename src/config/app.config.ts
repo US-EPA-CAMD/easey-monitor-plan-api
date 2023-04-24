@@ -47,6 +47,10 @@ export default registerAs('app', () => ({
     'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD',
     true,
   ),
+  enableRoleGuardCheckoutCheck: getConfigValueBoolean(
+    'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD_CHECKOUT',
+    true,
+  ),
   enableCors: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_CORS', true),
   enableAuthToken: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN',
