@@ -39,7 +39,6 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
     return this.createQueryBuilder('ar')
       .innerJoinAndSelect('ar.component', 'c')
       .where('c.id IN (:...componentIds)', { componentIds })
-      .orderBy('ar.id')
       .getMany();
   }
 }
