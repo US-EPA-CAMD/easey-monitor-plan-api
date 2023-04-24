@@ -47,7 +47,7 @@ export class AnalyzerRangeWorkspaceController {
     @Body() payload: AnalyzerRangeBaseDTO,
     @User() user: CurrentUser,
   ) {
-    await this.checksService.runChecks(locationId, payload, componentRecordId);
+    await this.checksService.runChecks(locationId, payload, componentRecordId, false, true);
     return this.service.createAnalyzerRange(
       componentRecordId,
       payload,
@@ -63,7 +63,7 @@ export class AnalyzerRangeWorkspaceController {
     type: AnalyzerRangeDTO,
     description: 'Updates workspace Analyzer Range record for a component',
   })
-  async updateAnalyserRange(
+  async updateAnalyzerRange(
     @Param('locId') locationId: string,
     @Param('compId') componentRecordId: string,
     @Param('analyzerRangeId') analyzerRangeId: string,

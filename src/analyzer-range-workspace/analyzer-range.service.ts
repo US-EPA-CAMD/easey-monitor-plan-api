@@ -59,7 +59,7 @@ export class AnalyzerRangeWorkspaceService {
   ): Promise<AnalyzerRangeDTO> {
     const analyzerRange = this.repository.create({
       id: uuid(),
-      componentRecordId,
+      componentRecordId: componentRecordId,
       analyzerRangeCode: payload.analyzerRangeCode,
       dualRangeIndicator: payload.dualRangeIndicator,
       beginDate: payload.beginDate,
@@ -127,7 +127,7 @@ export class AnalyzerRangeWorkspaceService {
               analyzerRange,
             );
 
-            if (analyzerRangeRecord) {
+            if (analyzerRangeRecord !== undefined) {
               await this.updateAnalyzerRange(
                 analyzerRangeRecord.id,
                 analyzerRange,
