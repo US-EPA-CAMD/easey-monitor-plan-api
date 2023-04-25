@@ -46,7 +46,7 @@ export default registerAs('app', () => ({
   ),
   enableRoleGuard: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD',
-    false,
+    true,
   ),
   enableRoleGuardCheckoutCheck: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD_CHECKOUT',
