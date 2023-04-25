@@ -55,7 +55,7 @@ export default registerAs('app', () => ({
   enableCors: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_CORS', true),
   enableAuthToken: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN',
-    false,
+    true,
   ),
 
   enableGlobalValidationPipes: getConfigValueBoolean(
