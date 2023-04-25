@@ -209,7 +209,7 @@ export class MonitorSpanChecksService {
     const FIELDNAME = 'mpcValue';
 
     if (componentTypeCode) {
-      if (!mpcValue) {
+      if (!mpcValue && mpcValue !== 0) {
         if (
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'H'
@@ -218,7 +218,7 @@ export class MonitorSpanChecksService {
         }
       }
 
-      if (mpcValue) {
+      if (mpcValue !== null) {
         if (
           ['FLOW', 'O2'].includes(componentTypeCode) ||
           spanScaleCode === 'L'
@@ -253,7 +253,7 @@ export class MonitorSpanChecksService {
     let error: string = null;
 
     if (componentTypeCode) {
-      if (!mecValue) {
+      if (!mecValue && mecValue !== 0) {
         if (
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'L'
