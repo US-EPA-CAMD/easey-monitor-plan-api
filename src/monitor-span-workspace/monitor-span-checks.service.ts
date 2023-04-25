@@ -214,7 +214,7 @@ export class MonitorSpanChecksService {
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'H'
         ) {
-          errorCode = 'SPAN-56-B';
+          errorCode = 'SPAN-56-A';
         }
       }
 
