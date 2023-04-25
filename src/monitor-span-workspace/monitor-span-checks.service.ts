@@ -214,10 +214,7 @@ export class MonitorSpanChecksService {
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'H'
         ) {
-          errorCode = this.getMessage(errorCode, {
-            fieldname: FIELDNAME,
-            key: KEY,
-          });
+          errorCode = 'SPAN-56-B';
         }
       }
 
@@ -285,7 +282,7 @@ export class MonitorSpanChecksService {
         } else {
           if (mecValue <= 0) {
             error = this.getMessage('SPAN-57-D', {
-              fieldname: 'mpcValue',
+              fieldname: 'mecValue',
               key: KEY,
             });
           }
