@@ -23,7 +23,10 @@ export class UnitCapacityWorkspaceController {
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getUnitCapacities(
     @Param('locId') locationId: string,
     @Param('unitId') unitId: number,

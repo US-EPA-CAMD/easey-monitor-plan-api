@@ -6,6 +6,7 @@ import {
   Param,
   Controller,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
@@ -37,7 +38,10 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves workspace Monitor Plan record.',
   })
-  @RoleGuard({ queryParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    { enforceCheckout: false, queryParam: 'planId' },
+    LookupType.MonitorPlan,
+  )
   exportMonitorPlan(@Query('planId') planId: string) {
     return this.service.exportMonitorPlan(planId);
   }
@@ -48,7 +52,10 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves information needed to refresh a monitor plan',
   })
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'planId' },
+    LookupType.MonitorPlan,
+  )
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
   }
@@ -57,13 +64,16 @@ export class MonitorPlanWorkspaceController {
   @ApiOkResponse({
     description: 'Retrieves facility information and evaluation results',
   })
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'planId' },
+    LookupType.MonitorPlan,
+  )
   getEvaluationReport(@Param('planId') planId: string) {
     return this.service.getEvaluationReport(planId);
   }
 
   @Post('import')
-  @RoleGuard({ bodyParam: 'locations.*.id' }, LookupType.Location)
+  @RoleGuard({ importLocationSources: ['locations'] }, LookupType.Location)
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',

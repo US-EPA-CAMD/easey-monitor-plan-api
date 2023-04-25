@@ -18,7 +18,10 @@ export class MonitorSpanWorkspaceController {
   ) {}
 
   @Get()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,
