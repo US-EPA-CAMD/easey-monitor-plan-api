@@ -52,7 +52,7 @@ export class MatsMethodChecksService {
   ): string {
     let error = null;
 
-    if (!matsMethod.endHour && matsMethod.endDate) {
+    if (matsMethod.endHour === null && matsMethod.endDate) {
       error = this.getMessage('MATSMTH-4-C');
       return error;
     }

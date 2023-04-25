@@ -17,7 +17,10 @@ export class MonitorFormulaWorkspaceController {
   constructor(private readonly service: MonitorFormulaWorkspaceService) {}
 
   @Get()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: MonitorFormulaDTO,

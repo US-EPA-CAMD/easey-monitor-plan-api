@@ -27,7 +27,10 @@ export class SystemComponentWorkspaceController {
     type: SystemComponentDTO,
     description: 'Retrieves workspace component records for a monitor system',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getSystemComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,

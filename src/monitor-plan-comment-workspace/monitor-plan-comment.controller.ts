@@ -18,7 +18,10 @@ export class MonitorPlanCommentWorkspaceController {
     type: MonitorPlanCommentDTO,
     description: 'Retrieves workspace comment records for a monitor plan',
   })
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'planId' },
+    LookupType.MonitorPlan,
+  )
   getComments(
     @Param('planId') planId: string,
   ): Promise<MonitorPlanCommentDTO[]> {

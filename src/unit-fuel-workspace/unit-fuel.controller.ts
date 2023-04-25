@@ -20,7 +20,10 @@ export class UnitFuelWorkspaceController {
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getUnitFuels(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
