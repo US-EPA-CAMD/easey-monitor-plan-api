@@ -12,6 +12,12 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+import {CheckCatalogService} from "@us-epa-camd/easey-common/check-catalog";
+import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
+import {MAXIMUM_FUTURE_DATE, MINIMUM_DATE} from "../utilities/constants";
+import {BeginEndDatesConsistent} from "../utils";
+
+const KEY = 'Unit Capacity'
 
 export class UnitCapacityBaseDTO {
   @ApiProperty({
@@ -44,7 +50,23 @@ export class UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOBeginDate.example,
     name: propertyMetadata.unitCapacityDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CAPAC-5-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CAPAC-5-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -57,13 +79,33 @@ export class UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOEndDate.example,
     name: propertyMetadata.unitCapacityDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
+  @ValidateIf(o => o.endDate !== null)
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CAPAC-2-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
-  @ValidateIf(o => o.endDate !== null)
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+          'CAPAC-1-A',
+          {
+            datefield2: 'endDate',
+            datefield1: 'beginDate',
+            key: KEY,
+          },
+      );
+    },
+  })
   endDate: Date;
 }
 

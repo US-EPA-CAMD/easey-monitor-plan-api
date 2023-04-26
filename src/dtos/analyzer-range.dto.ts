@@ -200,7 +200,6 @@ export class AnalyzerRangeBaseDTO {
     },
   })
   @BeginEndDatesConsistent({
-    //skipIf: (o) => { return o.endHour === null },
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(
           'COMPON-22-C',

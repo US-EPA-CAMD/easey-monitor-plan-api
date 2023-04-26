@@ -13,6 +13,13 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import {CheckCatalogService} from "@us-epa-camd/easey-common/check-catalog";
+import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
+import {MAX_HOUR, MAXIMUM_FUTURE_DATE, MIN_HOUR, MINIMUM_DATE} from "../utilities/constants";
+import {BeginEndDatesConsistent} from "../utils";
+
+const KEY = 'Monitoring Method';
+
 export class MonitorMethodBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorMethodDTOParameterCode.description,
@@ -87,7 +94,23 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOBeginDate.example,
     name: propertyMetadata.monitorMethodDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('METHOD-1-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('METHOD-1-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -100,11 +123,22 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOBeginHour.example,
     name: propertyMetadata.monitorMethodDTOBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
   @IsInt()
-  @IsInRange(0, 23, {
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('METHOD-2-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('METHOD-2-B', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
   beginHour: number;
@@ -114,13 +148,31 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndDate.example,
     name: propertyMetadata.monitorMethodDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
+  @IsNotEmpty({
+        message: (args: ValidationArguments) => {
+          return CheckCatalogService.formatResultMessage('METHOD-5-B', {
+            datefield2: args.property,
+            hourfield2: 'endHour',
+            key: KEY,
+          });
+        },
+      }
+  )
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('METHOD-3-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
-  @ValidateIf(o => o.endHour !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -128,14 +180,41 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndHour.example,
     name: propertyMetadata.monitorMethodDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
   @IsInt()
-  @IsInRange(0, 23, {
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsNotEmpty({
+        message: (args: ValidationArguments) => {
+          return CheckCatalogService.formatResultMessage('METHOD-5-A', {
+            hourfield2: args.property,
+            datefield2: 'endDate',
+            key: KEY,
+          });
+        },
+      }
+  )
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('METHOD-4-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
-  @ValidateIf(o => o.endDate !== null)
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+          'METHOD-5-C',
+          {
+            datefield2: 'endDate',
+            hourfield2: 'endHour',
+            datefield1: 'beginDate',
+            hourfield1: 'beginHour',
+            key: KEY,
+          },
+      );
+    },
+  })
   endHour: number;
 }
 

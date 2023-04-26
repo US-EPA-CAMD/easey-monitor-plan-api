@@ -207,7 +207,6 @@ export class MonitorFormulaBaseDTO {
     },
   })
   @BeginEndDatesConsistent({
-    //skipIf: (o) => { return o.endHour === null },
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(
           'FORMULA-5-C',
