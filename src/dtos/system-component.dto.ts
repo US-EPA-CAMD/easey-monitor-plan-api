@@ -22,6 +22,7 @@ import {
   MINIMUM_DATE,
   MIN_HOUR,
 } from '../utilities/constants';
+import {BeginEndDatesConsistent} from "../utils";
 
 const KEY = 'System Component';
 
@@ -91,6 +92,17 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndDate.example,
     name: propertyMetadata.systemComponentDTOEndDate.fieldLabels.value,
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsNotEmpty({
+        message: (args: ValidationArguments) => {
+          return CheckCatalogService.formatResultMessage('COMPON-7-B', {
+            datefield2: args.property,
+            hourfield2: 'endHour',
+            key: KEY,
+          });
+        },
+      }
+  )
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-5-A', {
@@ -112,7 +124,6 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
       );
     },
   })
-  @ValidateIf(o => o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -120,6 +131,17 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndHour.example,
     name: propertyMetadata.systemComponentDTOEndHour.fieldLabels.value,
   })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
+  @IsNotEmpty({
+        message: (args: ValidationArguments) => {
+          return CheckCatalogService.formatResultMessage('COMPON-7-A', {
+            hourfield2: args.property,
+            datefield2: 'endDate',
+            key: KEY,
+          });
+        },
+      }
+  )
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-6-A', {
@@ -129,7 +151,20 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
       });
     },
   })
-  @ValidateIf(o => o.endHour !== null)
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+          'COMPON-7-C',
+          {
+            datefield2: 'endDate',
+            hourfield2: 'endHour',
+            datefield1: 'beginDate',
+            hourfield1: 'beginHour',
+            key: KEY,
+          },
+      );
+    },
+  })
   endHour: number;
 }
 
