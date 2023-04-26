@@ -128,14 +128,14 @@ export class ComponentWorkspaceService {
                 locationId,
                 component.componentId,
               );
-            }
 
-            await this.analyzerRangeService.importAnalyzerRange(
-              compRecord.id,
-              locationId,
-              component.analyzerRanges,
-              userId,
-            );
+              await this.analyzerRangeService.importAnalyzerRange(
+                compRecord.id,
+                locationId,
+                component.analyzerRanges,
+                userId,
+              );
+            }
 
             innerResolve(true);
           }),
