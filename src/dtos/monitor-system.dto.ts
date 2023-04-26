@@ -254,11 +254,11 @@ export class MonitorSystemBaseDTO {
   })
   endHour: number;
 
-  @ValidateNested()
+  @ValidateNested({ each: true} )
   @Type(() => SystemComponentBaseDTO)
   components: SystemComponentBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => SystemFuelFlowBaseDTO)
   fuelFlows: SystemFuelFlowBaseDTO[];
 }

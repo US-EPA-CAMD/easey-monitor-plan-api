@@ -171,7 +171,7 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOEndDate.example,
     name: propertyMetadata.systemFuelFlowDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDAte !==null)
+  @ValidateIf(o => o.endHour !== null || o.endDate !==null)
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
