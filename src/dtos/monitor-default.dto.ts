@@ -213,6 +213,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @IsOptional()
   @IsString()
   defaultSourceCode: string;
 
