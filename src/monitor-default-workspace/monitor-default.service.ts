@@ -137,9 +137,13 @@ export class MonitorDefaultWorkspaceService {
             const monDefaultRecord = await this.repository.getDefaultBySpecs(
               locationId,
               monDefault.parameterCode,
-              monDefault.defaultValue,
+              monDefault.defaultPurposeCode,
+              monDefault.fuelCode,
+              monDefault.operatingConditionCode,
               monDefault.beginDate,
               monDefault.beginHour,
+              monDefault.endDate,
+              monDefault.endHour,
             );
 
             if (monDefaultRecord !== undefined) {

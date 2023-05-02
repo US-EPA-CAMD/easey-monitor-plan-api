@@ -16,16 +16,27 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
   async getDefaultBySpecs(
     locationId: string,
     parameterCode: string,
-    defaultValue: number,
+    defaultPurposeCode: string,
+    fuelCode: string,
+    operatingConditionCode: string,
     beginDate: Date,
     beginHour: number,
+    endDate: Date,
+    endHour: number,
   ): Promise<MonitorDefault> {
     return this.createQueryBuilder('md')
       .where('md.locationId = :locationId', { locationId })
       .andWhere('md.parameterCode = :parameterCode', { parameterCode })
-      .andWhere('md.defaultValue = :defaultValue', { defaultValue })
-      .andWhere('md.beginDate = :beginDate', { beginDate })
-      .andWhere('md.beginHour = :beginHour', { beginHour })
+      .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
+      .andWhere('md.fuelCode = :fuelCode', { fuelCode })
+      .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
+      .andWhere('((md.beginDate = :beginDate AND md.beginHour = :beginHour) OR ((md.endDate is not null and md.endHour is not null) AND ( md.endDate = :endDate AND md.endHour = :endHour )))',
+      {
+        beginDate,
+        beginHour,
+        endDate,
+        endHour,
+      })
       .getOne();
   }
 }
