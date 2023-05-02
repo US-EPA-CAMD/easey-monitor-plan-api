@@ -24,7 +24,6 @@ export class DuctWafWorkspaceRepository extends Repository<DuctWaf> {
           wafEndDate,
           wafBeginHour,
           wafEndHour,
-          wafValue,
         },
       )
       .getOne();
