@@ -10,12 +10,15 @@ export class MonitorMethodWorkspaceRepository extends Repository<
     locationId: string,
     parameterCode: string,
     beginDate: Date,
+    endDate: Date,
+
   ): Promise<MonitorMethod> {
     return this.findOne({
       where: {
         locationId,
         parameterCode,
         beginDate,
+        endDate,
       },
     });
   }

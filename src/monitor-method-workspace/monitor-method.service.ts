@@ -127,6 +127,7 @@ export class MonitorMethodWorkspaceService {
               locationId,
               method.parameterCode,
               method.beginDate,
+              method.endDate,
             );
 
             if (methodRecord !== undefined) {
