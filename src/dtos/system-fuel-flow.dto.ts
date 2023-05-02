@@ -27,7 +27,7 @@ import {
 import { SystemFuelMasterDataRelationship } from '../entities/system-fuel-md-relationship.entity';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {BeginEndDatesConsistent} from "../utils";
+import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Monitoring System Fuel Flow';
 
@@ -171,22 +171,21 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOEndDate.example,
     name: propertyMetadata.systemFuelFlowDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !==null)
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('FUELFLW-7-B', {
-            hourfield2: 'endHour',
-            datefield2: args.property,
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUELFLW-7-B', {
+        hourfield2: 'endHour',
+        datefield2: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUELFLW-5-A', {
@@ -214,27 +213,23 @@ export class SystemFuelFlowBaseDTO {
     },
   })
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('FUELFLW-7-A', {
-            hourfield2: args.property,
-            datefield2: 'endDate',
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUELFLW-7-A', {
+        hourfield2: args.property,
+        datefield2: 'endDate',
+        key: KEY,
+      });
+    },
+  })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'FUELFLW-7-C',
-          {
-            datefield2: 'endDate',
-            hourfield2: 'endHour',
-            datefield1: 'beginDate',
-            hourfield1: 'beginHour',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('FUELFLW-7-C', {
+        datefield2: 'endDate',
+        hourfield2: 'endHour',
+        datefield1: 'beginDate',
+        hourfield1: 'beginHour',
+        key: KEY,
+      });
     },
   })
   endHour: number;

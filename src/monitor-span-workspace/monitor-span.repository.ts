@@ -15,18 +15,35 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
   async getSpanByLocIdCompTypeCdBDateBHour(
     locationId: string,
     componentTypeCode: string,
+    spanScaleCode: string,
     beginDate: Date,
     beginHour: number,
-    spanScaleCode: string,
+    endDate: Date,
+    endHour: number,
   ): Promise<MonitorSpan> {
-    return this.createQueryBuilder('ms')
+    const query = this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
       .andWhere('ms.componentTypeCode = :componentTypeCode', {
         componentTypeCode,
-      })
-      .andWhere('ms.beginDate = :beginDate', { beginDate })
-      .andWhere('ms.beginHour = :beginHour', { beginHour })
-      .getOne();
+      });
+
+    if (spanScaleCode) {
+      query.andWhere('ms.spanScaleCode = :spanScaleCode', {
+        spanScaleCode,
+      });
+    }
+
+    query.andWhere(
+      '((ms.beginDate = :beginDate AND ms.beginHour = :beginHour) OR (ms.endDate = :endDate AND ms.endHour = :endHour))',
+      {
+        beginDate,
+        beginHour,
+        endDate,
+        endHour,
+      },
+    );
+
+    return query.getOne();
   }
 
   async getSpanByLocIdCompTypeCdEDateEHour(

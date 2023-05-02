@@ -17,17 +17,21 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {DATE_FORMAT, MAX_HOUR, MAXIMUM_FUTURE_DATE, MIN_HOUR} from '../utilities/constants';
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
+import {
+  DATE_FORMAT,
+  MAX_HOUR,
+  MAXIMUM_FUTURE_DATE,
+  MIN_HOUR,
+} from '../utilities/constants';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Rectangular Duct Waf';
 const MINIMUM_DATE = '2004-01-01';
 const CURRENT_DATE = () => {
   return new Date().toISOString().split('T')[0];
-}
+};
 
 export class DuctWafBaseDTO {
-
   @ApiProperty({
     description: propertyMetadata.ductWafDTOWafDeterminationDate.description,
     example: propertyMetadata.ductWafDTOWafDeterminationDate.example,
@@ -375,14 +379,11 @@ export class DuctWafBaseDTO {
   @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-        'DEFAULT-85-A',
-        {
-          fieldname: args.property,
-          hour: args.value,
-          key: KEY,
-        },
-      );
+      return CheckCatalogService.formatResultMessage('DEFAULT-85-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
   wafEndHour: number;
@@ -435,5 +436,3 @@ export class DuctWafDTO extends DuctWafBaseDTO {
   @IsBoolean()
   active: boolean;
 }
-
-

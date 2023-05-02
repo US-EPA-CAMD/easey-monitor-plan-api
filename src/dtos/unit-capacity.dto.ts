@@ -12,12 +12,12 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import {CheckCatalogService} from "@us-epa-camd/easey-common/check-catalog";
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
-import {MAXIMUM_FUTURE_DATE, MINIMUM_DATE} from "../utilities/constants";
-import {BeginEndDatesConsistent} from "../utils";
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
 
-const KEY = 'Unit Capacity'
+const KEY = 'Unit Capacity';
 
 export class UnitCapacityBaseDTO {
   @ApiProperty({
@@ -96,14 +96,11 @@ export class UnitCapacityBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'CAPAC-1-A',
-          {
-            datefield2: 'endDate',
-            datefield1: 'beginDate',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('CAPAC-1-A', {
+        datefield2: 'endDate',
+        datefield1: 'beginDate',
+        key: KEY,
+      });
     },
   })
   endDate: Date;
