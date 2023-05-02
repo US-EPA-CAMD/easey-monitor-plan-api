@@ -61,6 +61,8 @@ export class MonitorLoadWorkspaceService {
               locationId,
               load.beginDate,
               load.beginHour,
+              load.endDate,
+              load.endHour,
             );
 
             if (loadRecord !== undefined) {
