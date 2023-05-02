@@ -15,10 +15,16 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import {CheckCatalogService} from "@us-epa-camd/easey-common/check-catalog";
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
-import {DATE_FORMAT, MAX_HOUR, MAXIMUM_FUTURE_DATE, MIN_HOUR, MINIMUM_DATE} from "../utilities/constants";
-import {BeginEndDatesConsistent} from "../utils";
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import {
+  DATE_FORMAT,
+  MAX_HOUR,
+  MAXIMUM_FUTURE_DATE,
+  MIN_HOUR,
+  MINIMUM_DATE,
+} from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Formula';
 
@@ -106,12 +112,12 @@ export class MonitorFormulaBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-          `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
-          {
-            fieldName: args.property,
-            key: KEY,
-            dateFormat: DATE_FORMAT,
-          },
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
       );
     },
   })
@@ -148,15 +154,14 @@ export class MonitorFormulaBaseDTO {
   })
   @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('FORMULA-5-B', {
-            datefield2: args.property,
-            hourfield2: 'endHour',
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FORMULA-5-B', {
+        datefield2: args.property,
+        hourfield2: 'endHour',
+        key: KEY,
+      });
+    },
+  })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-3-A', {
@@ -169,12 +174,12 @@ export class MonitorFormulaBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-          `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
-          {
-            fieldName: args.property,
-            key: KEY,
-            dateFormat: DATE_FORMAT,
-          },
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
       );
     },
   })
@@ -188,15 +193,14 @@ export class MonitorFormulaBaseDTO {
   @IsInt()
   @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('FORMULA-5-A', {
-            hourfield2: args.property,
-            datefield2: 'endDate',
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FORMULA-5-A', {
+        hourfield2: args.property,
+        datefield2: 'endDate',
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-4-A', {
@@ -208,16 +212,13 @@ export class MonitorFormulaBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'FORMULA-5-C',
-          {
-            datefield2: 'endDate',
-            hourfield2: 'endHour',
-            datefield1: 'beginDate',
-            hourfield1: 'beginHour',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('FORMULA-5-C', {
+        datefield2: 'endDate',
+        hourfield2: 'endHour',
+        datefield1: 'beginDate',
+        hourfield1: 'beginHour',
+        key: KEY,
+      });
     },
   })
   endHour: number;
