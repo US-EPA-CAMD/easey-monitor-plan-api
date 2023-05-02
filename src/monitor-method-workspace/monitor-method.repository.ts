@@ -13,13 +13,20 @@ export class MonitorMethodWorkspaceRepository extends Repository<
     endDate: Date,
 
   ): Promise<MonitorMethod> {
-    return this.findOne({
-      where: {
+    const result = this.createQueryBuilder('mme')
+      .where('mme.locationId = :locationId', {
         locationId,
-        parameterCode,
-        beginDate,
-        endDate,
-      },
-    });
+      })
+      .andWhere(
+        '(mme.beginDate = :beginDate AND mme.beginHour = :beginHour) OR ( mme.endDate = :endDate AND mme.endHour = :endHour )',
+        {
+          parameterCode,
+          beginDate,
+          endDate,
+        },
+      )
+      .getOne();
+
+    return result;
   }
 }

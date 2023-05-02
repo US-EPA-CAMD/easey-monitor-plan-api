@@ -12,13 +12,22 @@ export class DuctWafWorkspaceRepository extends Repository<DuctWaf> {
     wafEndHour: number,
     wafValue: number,
   ): Promise<DuctWaf> {
-    return this.createQueryBuilder('dw')
-      .where('dw.locationId = :locationId', { locationId })
-      .andWhere('dw.wafBeginDate = :wafBeginDate', { wafBeginDate })
-      .andWhere('dw.wafBeginHour = :wafBeginHour', { wafBeginHour })
-      .andWhere('dw.wafEndDate = :wafEndDate', { wafEndDate })
-      .andWhere('dw.wafEndHour = :wafEndHour', { wafEndHour })
-      .andWhere('dw.wafValue = :wafValue', { wafValue })
+    const result = this.createQueryBuilder('dw')
+      .where('dw.locationId = :locId', {
+        locationId,
+      })
+      .andWhere(
+        '(dw.beginDate = :beginDate AND dw.beginHour = :beginHour) OR ( dw.endDate = :endDate AND dw.endHour = :endHour )',
+        {
+          wafBeginDate,
+          wafEndDate,
+          wafBeginHour,
+          wafEndHour,
+          wafValue,
+        },
+      )
       .getOne();
+
+    return result;
   }
 }
