@@ -30,7 +30,7 @@ import {
 } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
-import {BeginEndDatesConsistent} from "../utils";
+import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
@@ -364,15 +364,14 @@ export class MonitorSpanBaseDTO {
   })
   @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('SPAN-12-B', {
-            datefield2: args.property,
-            hourfield2: 'endHour',
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-12-B', {
+        datefield2: args.property,
+        hourfield2: 'endHour',
+        key: KEY,
+      });
+    },
+  })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-10-A', {
@@ -403,15 +402,14 @@ export class MonitorSpanBaseDTO {
   })
   @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('SPAN-12-A', {
-            hourfield2: args.property,
-            datefield2: 'endDate',
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-12-A', {
+        hourfield2: args.property,
+        datefield2: 'endDate',
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-11-A', {
@@ -423,16 +421,13 @@ export class MonitorSpanBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'SPAN-12-C',
-          {
-            datefield2: 'endDate',
-            hourfield2: 'endHour',
-            datefield1: 'beginDate',
-            hourfield1: 'beginHour',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('SPAN-12-C', {
+        datefield2: 'endDate',
+        hourfield2: 'endHour',
+        datefield1: 'beginDate',
+        hourfield1: 'beginHour',
+        key: KEY,
+      });
     },
   })
   endHour: number;
