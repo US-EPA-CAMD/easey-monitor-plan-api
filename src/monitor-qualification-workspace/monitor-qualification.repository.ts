@@ -17,7 +17,7 @@ export class MonitorQualificationWorkspaceRepository extends Repository<
         locId,
       })
       .andWhere(
-        '(c.beginDate = :beginDate AND c.beginHour = :beginHour) OR ( c.endDate = :endDate AND c.endHour = :endHour )',
+        '(c.qualificationTypeCode = :qualType AND c.beginDate = :beginDate AND c.beginHour = :beginHour) OR ( c.endDate = :endDate AND c.endHour = :endHour )',
         {
           qualType,
           beginDate,
