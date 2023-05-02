@@ -17,7 +17,8 @@ export class DuctWafWorkspaceRepository extends Repository<DuctWaf> {
         locationId,
       })
       .andWhere(
-        '(dw.beginDate = :beginDate AND dw.beginHour = :beginHour) OR ( dw.endDate = :endDate AND dw.endHour = :endHour )',
+        '((dw.beginDate = :beginDate AND dw.beginHour = :beginHour) OR ((dw.endDate is not null) AND ( dw.endDate = :endDate AND dw.endHour = :endHour )))',
+
         {
           wafBeginDate,
           wafEndDate,
