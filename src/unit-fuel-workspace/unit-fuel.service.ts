@@ -125,6 +125,7 @@ export class UnitFuelWorkspaceService {
               unitId,
               unitFuel.fuelCode,
               unitFuel.beginDate,
+              unitFuel.endDate,
             );
 
             if (unitFuelRecord !== undefined) {

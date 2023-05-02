@@ -46,7 +46,7 @@ const mockRepository = () => ({
   update: jest.fn(),
   create: jest.fn().mockResolvedValue('Why'),
   getUnitStackConfigsByLocationIds: jest.fn().mockResolvedValue([unitStack]),
-  getUnitStackByUnitIdStackIdBDate: jest.fn().mockResolvedValue(unitStack),
+  getUnitStackConfigByUnitIdStackId: jest.fn().mockResolvedValue(unitStack),
 });
 
 const mockMap = () => ({
@@ -274,7 +274,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
 
     it('should create while importing unit stack config if records does not exists', async () => {
       jest
-        .spyOn(repo, 'getUnitStackByUnitIdStackIdBDate')
+        .spyOn(repo, 'getUnitStackConfigByUnitIdStackId')
         .mockResolvedValue(undefined);
 
       const response = await service.importUnitStack(

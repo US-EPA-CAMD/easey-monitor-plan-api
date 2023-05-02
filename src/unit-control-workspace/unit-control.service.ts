@@ -44,7 +44,7 @@ export class UnitControlWorkspaceService {
       for (const unitControl of unitControls) {
         promises.push(
           new Promise(async innerResolve => {
-            const unitControlRecord = await this.repository.getUnitControlByUnitIdParamCdControlCd(
+            const unitControlRecord = await this.repository.getUnitControlBySpecs(
               unitRecordId,
               unitControl.parameterCode,
               unitControl.controlCode,

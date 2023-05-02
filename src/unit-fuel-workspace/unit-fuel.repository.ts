@@ -25,17 +25,20 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
     unitId: number,
     fuelCode: string,
     beginDate: Date,
+    endDate: Date,
   ): Promise<UnitFuel> {
-    return this.createQueryBuilder('u')
+    const qb = this.createQueryBuilder('u')
       .where('u.unitId = :unitId', {
         unitId,
       })
       .andWhere('u.fuelCode = :fuelCode', {
         fuelCode,
       })
-      .andWhere('u.beginDate = :beginDate', {
+      .andWhere('u.beginDate = :beginDate OR (u.endDate IS NOT NULL AND u.endDate = :endDate', {
         beginDate,
-      })
-      .getOne();
+        endDate,
+      });
+
+    return qb.getOne();
   }
 }

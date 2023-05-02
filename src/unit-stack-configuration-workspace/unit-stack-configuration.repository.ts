@@ -12,15 +12,13 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
       .getOne();
   }
 
-  async getUnitStackByUnitIdStackIdBDate(
+  async getUnitStackConfigByUnitIdStackId(
     unitRecordId: number,
     stackPipeRecordId: string,
-    beginDate: Date,
   ): Promise<UnitStackConfiguration> {
     return this.createQueryBuilder('usc')
       .where('usc.unitId = :unitRecordId', { unitRecordId })
       .andWhere('usc.stackPipeId = :stackPipeRecordId', { stackPipeRecordId })
-      .andWhere('usc.beginDate = :beginDate', { beginDate })
       .getOne();
   }
 
