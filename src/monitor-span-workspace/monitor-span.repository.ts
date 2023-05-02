@@ -25,22 +25,23 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       .where('ms.locationId = :locationId', { locationId })
       .andWhere('ms.componentTypeCode = :componentTypeCode', {
         componentTypeCode,
-      })
-      .andWhere(
-        '((ms.beginDate = :beginDate AND ms.beginHour = :beginHour) OR (ms.endDate = :endDate AND ms.endHour = :endHour))',
-        {
-          beginDate,
-          beginHour,
-          endDate,
-          endHour,
-        },
-      );
+      });
 
     if (spanScaleCode) {
       query.andWhere('ms.spanScaleCode = :spanScaleCode', {
         spanScaleCode,
       });
     }
+
+    query.andWhere(
+      '((ms.beginDate = :beginDate AND ms.beginHour = :beginHour) OR (ms.endDate = :endDate AND ms.endHour = :endHour))',
+      {
+        beginDate,
+        beginHour,
+        endDate,
+        endHour,
+      },
+    );
 
     return query.getOne();
   }
