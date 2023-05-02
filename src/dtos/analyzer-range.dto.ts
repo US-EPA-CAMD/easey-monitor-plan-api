@@ -16,7 +16,7 @@ import {
   IsValidCode,
   //BeginEndDatesConsistent,
 } from '@us-epa-camd/easey-common/pipes';
-import {BeginEndDatesConsistent} from "../utils";
+import { BeginEndDatesConsistent } from '../utils';
 
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
@@ -142,15 +142,14 @@ export class AnalyzerRangeBaseDTO {
   })
   @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('COMPON-22-B', {
-            datefield2: args.property,
-            hourfield2: 'endHour',
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-22-B', {
+        datefield2: args.property,
+        hourfield2: 'endHour',
+        key: KEY,
+      });
+    },
+  })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-20-A', {
@@ -181,15 +180,14 @@ export class AnalyzerRangeBaseDTO {
   })
   @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
-        message: (args: ValidationArguments) => {
-          return CheckCatalogService.formatResultMessage('COMPON-22-A', {
-            hourfield2: args.property,
-            datefield2: 'endDate',
-            key: KEY,
-          });
-        },
-      }
-  )
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-22-A', {
+        hourfield2: args.property,
+        datefield2: 'endDate',
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-21-A', {
@@ -201,16 +199,13 @@ export class AnalyzerRangeBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'COMPON-22-C',
-          {
-            datefield2: 'endDate',
-            hourfield2: 'endHour',
-            datefield1: 'beginDate',
-            hourfield1: 'beginHour',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('COMPON-22-C', {
+        datefield2: 'endDate',
+        hourfield2: 'endHour',
+        datefield1: 'beginDate',
+        hourfield1: 'beginHour',
+        key: KEY,
+      });
     },
   })
   endHour: number;

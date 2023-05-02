@@ -7,15 +7,16 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsString, ValidateIf,
+  IsString,
+  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import {CheckCatalogService} from "@us-epa-camd/easey-common/check-catalog";
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
-import {MAXIMUM_FUTURE_DATE, MINIMUM_DATE} from "../utilities/constants";
-import {BeginEndDatesConsistent} from "../utils";
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Unit Fuel';
 
@@ -149,14 +150,11 @@ export class UnitFuelBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'FUEL-44-A',
-          {
-            datefield2: 'endDate',
-            datefield1: 'beginDate',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('FUEL-44-A', {
+        datefield2: 'endDate',
+        datefield1: 'beginDate',
+        key: KEY,
+      });
     },
   })
   endDate: Date;

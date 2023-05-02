@@ -58,10 +58,11 @@ export class AnalyzerRangeChecksService {
       error = await this.duplicateAnalyzerRangeChecks(
         component.componentId,
         analyzerRange,
-      )};
-      if (error) {
-        errorList.push(error);
-      }
+      );
+    }
+    if (error) {
+      errorList.push(error);
+    }
 
     this.throwIfErrors(errorList);
     this.logger.info('Completed Analyzer Range Checks');

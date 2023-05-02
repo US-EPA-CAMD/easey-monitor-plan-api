@@ -8,19 +8,20 @@ import {
   IsDateString,
   IsNotEmpty,
   IsOptional,
-  IsString, ValidateIf,
+  IsString,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { LEEQualificationBaseDTO } from './lee-qualification.dto';
 import { LMEQualificationBaseDTO } from './lme-qualification.dto';
 import { PCTQualificationBaseDTO } from './pct-qualification.dto';
-import {CheckCatalogService} from "@us-epa-camd/easey-common/check-catalog";
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
-import {MAXIMUM_FUTURE_DATE, MINIMUM_DATE} from "../utilities/constants";
-import {BeginEndDatesConsistent} from "../utils";
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
 
-const KEY = 'Monitoring Qualification'
+const KEY = 'Monitoring Qualification';
 
 export class MonitorQualificationBaseDTO {
   @ApiProperty({
@@ -85,14 +86,11 @@ export class MonitorQualificationBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'QUAL-20-A',
-          {
-            datefield2: 'endDate',
-            datefield1: 'beginDate',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('QUAL-20-A', {
+        datefield2: 'endDate',
+        datefield1: 'beginDate',
+        key: KEY,
+      });
     },
   })
   endDate: Date;
