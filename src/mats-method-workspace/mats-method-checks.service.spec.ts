@@ -4,7 +4,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
-import {MAXIMUM_FUTURE_DATE} from "../utilities/constants";
+import { MAXIMUM_FUTURE_DATE } from '../utilities/constants';
 const moment = require('moment');
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');

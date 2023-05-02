@@ -26,10 +26,15 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       .andWhere('ms.componentTypeCode = :componentTypeCode', {
         componentTypeCode,
       })
-      .andWhere('ms.beginDate = :beginDate AND ms.beginHour = :beginHour', {
-        beginDate,
-        beginHour,
-      });
+      .andWhere(
+        '((ms.beginDate = :beginDate AND ms.beginHour = :beginHour) OR (ms.endDate = :endDate AND ms.endHour = :endHour))',
+        {
+          beginDate,
+          beginHour,
+          endDate,
+          endHour,
+        },
+      );
 
     if (spanScaleCode) {
       query.andWhere('ms.spanScaleCode = :spanScaleCode', {
@@ -37,12 +42,6 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       });
     }
 
-    if (endDate) {
-      query.andWhere('ms.endDate = :endDate AND ms.endHour = :endHour', {
-        endDate,
-        endHour,
-      });
-    }
     return query.getOne();
   }
 
