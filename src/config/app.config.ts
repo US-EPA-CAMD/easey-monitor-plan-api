@@ -40,6 +40,7 @@ export default registerAs('app', () => ({
   apiKey: getConfigValue('EASEY_MONITOR_PLAN_API_KEY'),
   enableApiKey: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_API_KEY'),
   secretToken: getConfigValue('EASEY_MONITOR_PLAN_API_SECRET_TOKEN'),
+
   enableSecretToken: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_SECRET_TOKEN',
   ),
@@ -47,11 +48,16 @@ export default registerAs('app', () => ({
     'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD',
     true,
   ),
+  enableRoleGuardCheckoutCheck: getConfigValueBoolean(
+    'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD_CHECKOUT',
+    true,
+  ),
   enableCors: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_CORS', true),
   enableAuthToken: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN',
     true,
   ),
+
   enableGlobalValidationPipes: getConfigValueBoolean(
     'EASEY_MONITOR_PLAN_API_ENABLE_GLOBAL_VALIDATION_PIPE',
     true,

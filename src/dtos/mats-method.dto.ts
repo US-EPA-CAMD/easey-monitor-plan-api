@@ -18,6 +18,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
 import { FindManyOptions, FindOneOptions } from 'typeorm';
 import { MatsMethodsMasterDataRelationships } from '../entities/mats-methods-master-data-relationship.entity';
+import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Supplemental MATS Monitoring Method';
 export class MatsMethodBaseDTO {
@@ -148,6 +149,12 @@ export class MatsMethodBaseDTO {
     },
   })
   @ValidateIf(o => o.endHour !== null)
+  @BeginEndDatesConsistent({
+    //skipIf: (o) => { return o.endHour === null },
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-5-A', {});
+    },
+  })
   endHour: number;
 }
 

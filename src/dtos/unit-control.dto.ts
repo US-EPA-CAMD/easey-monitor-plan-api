@@ -3,14 +3,17 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsBoolean,
   IsDateString,
-  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   ValidationArguments,
 } from 'class-validator';
-import { IsIsoFormat, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
@@ -81,9 +84,9 @@ export class UnitControlBaseDTO {
     name: propertyMetadata.unitControlDTOOriginalCode.fieldLabels.value,
   })
   @IsOptional()
-  @IsIn(['0', '1'], {
+  @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
+      return `The value for ${args.value} in the Unit Control record ${args.property} must be string value of "0" or "1"`;
     },
   })
   originalCode: string;
@@ -123,7 +126,7 @@ export class UnitControlBaseDTO {
         .value,
   })
   @IsOptional()
-  @IsIn(['0', '1'], {
+  @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return `The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
     },

@@ -8,10 +8,17 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
+
+const KEY = 'Unit Fuel';
 
 export class UnitFuelBaseDTO {
   @ApiProperty({
@@ -97,7 +104,23 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOBeginDate.example,
     name: propertyMetadata.unitFuelDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUEL-42-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUEL-42-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value} in the Unit Fuel record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -110,10 +133,28 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOEndDate.example,
     name: propertyMetadata.unitFuelDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
+  @ValidateIf(o => o.endDate !== null)
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUEL-43-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [UNITFUEL-FATAL-A] The value for ${args.value} in the Unit Fuel record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
+  })
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FUEL-44-A', {
+        datefield2: 'endDate',
+        datefield1: 'beginDate',
+        key: KEY,
+      });
     },
   })
   endDate: Date;

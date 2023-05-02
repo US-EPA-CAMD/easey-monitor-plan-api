@@ -19,7 +19,10 @@ export class DuctWafWorkspaceController {
     type: DuctWafDTO,
     description: 'Retrieves workspace duct waf records for a monitor location',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getDuctWafs(@Param('locId') locationId: string): Promise<DuctWafDTO[]> {
     return this.service.getDuctWafs(locationId);
   }

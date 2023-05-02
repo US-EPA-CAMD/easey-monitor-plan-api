@@ -160,40 +160,40 @@ export class MonitorSpanWorkspaceService {
     locationId: string,
     spans: MonitorSpanBaseDTO[],
     userId: string,
-  ) {
-    return new Promise(async resolve => {
-      const promises = [];
+  ): Promise<boolean> {
+    const promises = [];
 
-      for (const span of spans) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const spanRecord = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
+    for (const span of spans) {
+      promises.push(
+        new Promise(async innerResolve => {
+          const spanRecord = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
+            locationId,
+            span.componentTypeCode,
+            span.spanScaleCode,
+            span.beginDate,
+            span.beginHour,
+            span.endDate,
+            span.endHour,
+          );
+
+          if (spanRecord) {
+            await this.updateSpan(
               locationId,
-              span.componentTypeCode,
-              span.beginDate,
-              span.beginHour,
-              span.spanScaleCode,
+              spanRecord.id,
+              span,
+              userId,
+              true,
             );
+          } else {
+            await this.createSpan(locationId, span, userId, true);
+          }
 
-            if (spanRecord) {
-              await this.updateSpan(
-                locationId,
-                spanRecord.id,
-                span,
-                userId,
-                true,
-              );
-            } else {
-              await this.createSpan(locationId, span, userId, true);
-            }
+          innerResolve(true);
+        }),
+      );
+    }
 
-            innerResolve(true);
-          }),
-        );
-
-        await Promise.all(promises);
-        resolve(true);
-      }
-    });
+    await Promise.all(promises);
+    return true;
   }
 }

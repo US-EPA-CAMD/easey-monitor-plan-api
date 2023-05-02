@@ -22,7 +22,10 @@ export class SystemFuelFlowWorkspaceController {
     type: SystemFuelFlowDTO,
     description: 'Retrieves workspace fuel flow records for a monitor system',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getFuelFlows(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,

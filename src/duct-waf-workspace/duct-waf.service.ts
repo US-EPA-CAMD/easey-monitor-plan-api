@@ -128,7 +128,9 @@ export class DuctWafWorkspaceService {
             const ductWafRecord = await this.repository.getDuctWafByLocIdBDateBHourWafValue(
               locationId,
               ductWaf.wafBeginDate,
+              ductWaf.wafEndDate,
               ductWaf.wafBeginHour,
+              ductWaf.wafEndHour,
               ductWaf.wafValue,
             );
 

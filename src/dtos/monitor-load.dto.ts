@@ -13,6 +13,17 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import {
+  MAX_HOUR,
+  MAXIMUM_FUTURE_DATE,
+  MIN_HOUR,
+  MINIMUM_DATE,
+} from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
+
+const KEY = 'Monitoring Load';
 
 export class MonitorLoadBaseDTO {
   @ApiProperty({
@@ -144,7 +155,23 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOBeginDate.example,
     name: propertyMetadata.monitorLoadDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LOAD-2-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LOAD-2-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
@@ -157,11 +184,22 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOBeginHour.example,
     name: propertyMetadata.monitorLoadDTOBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
   @IsInt()
-  @IsInRange(0, 23, {
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('LOAD-3-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LOAD-3-B', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
   beginHour: number;
@@ -171,13 +209,30 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOEndDate.example,
     name: propertyMetadata.monitorLoadDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LOAD-6-B', {
+        datefield2: args.property,
+        hourfield2: 'endHour',
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LOAD-4-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
-  @ValidateIf(o => o.endHour !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -185,14 +240,36 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOEndHour.example,
     name: propertyMetadata.monitorLoadDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInt()
-  @IsInRange(0, 23, {
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 23`;
+      return CheckCatalogService.formatResultMessage('LOAD-6-A', {
+        hourfield2: args.property,
+        datefield2: 'endDate',
+        key: KEY,
+      });
     },
   })
-  @ValidateIf(o => o.endDate !== null)
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LOAD-5-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
+    },
+  })
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LOAD-6-C', {
+        datefield2: 'endDate',
+        hourfield2: 'endHour',
+        datefield1: 'beginDate',
+        hourfield1: 'beginHour',
+        key: KEY,
+      });
+    },
+  })
   endHour: number;
 }
 

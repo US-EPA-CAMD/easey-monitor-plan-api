@@ -209,19 +209,16 @@ export class MonitorSpanChecksService {
     const FIELDNAME = 'mpcValue';
 
     if (componentTypeCode) {
-      if (!mpcValue) {
+      if (!mpcValue && mpcValue !== 0) {
         if (
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'H'
         ) {
-          errorCode = this.getMessage(errorCode, {
-            fieldname: FIELDNAME,
-            key: KEY,
-          });
+          errorCode = 'SPAN-56-A';
         }
       }
 
-      if (mpcValue) {
+      if (mpcValue !== null) {
         if (
           ['FLOW', 'O2'].includes(componentTypeCode) ||
           spanScaleCode === 'L'
@@ -256,7 +253,7 @@ export class MonitorSpanChecksService {
     let error: string = null;
 
     if (componentTypeCode) {
-      if (!mecValue) {
+      if (!mecValue && mecValue !== 0) {
         if (
           !['FLOW', 'O2'].includes(componentTypeCode) &&
           spanScaleCode === 'L'
@@ -285,7 +282,7 @@ export class MonitorSpanChecksService {
         } else {
           if (mecValue <= 0) {
             error = this.getMessage('SPAN-57-D', {
-              fieldname: 'mpcValue',
+              fieldname: 'mecValue',
               key: KEY,
             });
           }

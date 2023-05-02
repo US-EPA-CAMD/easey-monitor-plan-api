@@ -3,6 +3,7 @@ applications:
     memory: ((memory))M
     disk_quota: ((disk))M
     instances: ((instances))
+    stack: cflinuxfs4
     buildpacks:
       - nodejs_buildpack
     env:
@@ -18,6 +19,7 @@ applications:
       EASEY_MONITOR_PLAN_API_ENABLE_CORS: true
       EASEY_MONITOR_PLAN_ENABLE_ROLE_GUARD: true
       EASEY_MONITOR_PLAN_API_ENABLE_AUTH_TOKEN: true
+      EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD_CHECKOUT: true
       EASEY_MONITOR_PLAN_API_ENABLE_GLOBAL_VALIDATION_PIPE: true
       EASEY_API_GATEWAY_HOST: ((apiHost))
       EASEY_AUTH_API: https://((apiHost))/auth-mgmt

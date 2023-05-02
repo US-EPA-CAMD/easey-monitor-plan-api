@@ -143,6 +143,8 @@ export class MonitorQualificationWorkspaceService {
               locationId,
               qualification.qualificationTypeCode,
               qualification.beginDate,
+              qualification.endDate,
+
             );
 
             if (qualificationRecord !== undefined) {

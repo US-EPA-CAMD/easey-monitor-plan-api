@@ -17,9 +17,19 @@ import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MAX_HOUR,
+  MAXIMUM_FUTURE_DATE,
+  MIN_HOUR,
+} from '../utilities/constants';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Rectangular Duct Waf';
+const MINIMUM_DATE = '2004-01-01';
+const CURRENT_DATE = () => {
+  return new Date().toISOString().split('T')[0];
+};
 
 export class DuctWafBaseDTO {
   @ApiProperty({
@@ -47,7 +57,23 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafBeginDate.example,
     name: propertyMetadata.ductWafDTOWafBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-82-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, CURRENT_DATE(), {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-82-B', {
+        Fieldname: args.property,
+        Date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -67,17 +93,22 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafBeginHour.example,
     name: propertyMetadata.ductWafDTOWafBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
   @IsInt()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-83-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
-        {
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+      return CheckCatalogService.formatResultMessage('DEFAULT-83-B', {
+        Fieldname: args.property,
+        Hour: args.value,
+        key: KEY,
+      });
     },
   })
   wafBeginHour: number;
@@ -314,8 +345,16 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafEndDate.example,
     name: propertyMetadata.ductWafDTOWafEndDate.fieldLabels.value,
   })
-  @IsOptional()
-  @ValidateIf(o => o.wafEndHour !== null)
+  @ValidateIf(o => o.wafEndDate !== null)
+  @IsInDateRange(MINIMUM_DATE, CURRENT_DATE(), {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-84-A', {
+        Fieldname: args.property,
+        Date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -336,17 +375,15 @@ export class DuctWafBaseDTO {
     name: propertyMetadata.ductWafDTOWafEndHour.fieldLabels.value,
   })
   @IsOptional()
-  @ValidateIf(o => o.wafEndDate !== null)
+  @ValidateIf(o => o.wafEndHour !== null)
   @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
-        {
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+      return CheckCatalogService.formatResultMessage('DEFAULT-85-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
   wafEndHour: number;

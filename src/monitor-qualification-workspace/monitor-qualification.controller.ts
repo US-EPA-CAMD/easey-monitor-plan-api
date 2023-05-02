@@ -23,7 +23,10 @@ export class MonitorQualificationWorkspaceController {
     description:
       'Retrieves workspace qualification records for a monitor location',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getQualifications(
     @Param('locId') locationId: string,
   ): Promise<MonitorQualificationDTO[]> {

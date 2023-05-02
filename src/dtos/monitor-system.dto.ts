@@ -30,6 +30,7 @@ import {
 } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { SystemTypeCode } from '../entities/system-type-code.entity';
+import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Monitor System';
 
@@ -154,6 +155,16 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndDate.example,
     name: propertyMetadata.monitorSystemDTOEndDate.fieldLabels.value,
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-5-B', {
+        datefield2: args.property,
+        hourfield2: 'endHour',
+        key: KEY,
+      });
+    },
+  })
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-3-A', {
@@ -175,7 +186,6 @@ export class MonitorSystemBaseDTO {
       );
     },
   })
-  @ValidateIf(o => o['endDate'] !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -207,6 +217,16 @@ export class MonitorSystemBaseDTO {
     example: propertyMetadata.monitorSystemDTOEndHour.example,
     name: propertyMetadata.monitorSystemDTOEndHour.fieldLabels.value,
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-5-A', {
+        hourfield2: args.property,
+        datefield2: 'endDate',
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-4-A', {
@@ -216,14 +236,24 @@ export class MonitorSystemBaseDTO {
       });
     },
   })
-  @ValidateIf(o => o['endDate'] !== null)
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SYSTEM-5-C', {
+        datefield2: 'endDate',
+        hourfield2: 'endHour',
+        datefield1: 'beginDate',
+        hourfield1: 'beginHour',
+        key: KEY,
+      });
+    },
+  })
   endHour: number;
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => SystemComponentBaseDTO)
   components: SystemComponentBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => SystemFuelFlowBaseDTO)
   fuelFlows: SystemFuelFlowBaseDTO[];
 }

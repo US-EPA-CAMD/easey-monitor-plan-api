@@ -17,7 +17,10 @@ export class MonitorDefaultWorkspaceController {
   constructor(private readonly service: MonitorDefaultWorkspaceService) {}
 
   @Get()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: MonitorDefaultDTO,
