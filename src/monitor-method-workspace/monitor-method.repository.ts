@@ -10,13 +10,26 @@ export class MonitorMethodWorkspaceRepository extends Repository<
     locationId: string,
     parameterCode: string,
     beginDate: Date,
+    beginHour: number,
+    endDate: Date,
+    endHour: number,
   ): Promise<MonitorMethod> {
-    return this.findOne({
-      where: {
+    const result = this.createQueryBuilder('mme')
+      .where('mme.locationId = :locationId', {
         locationId,
-        parameterCode,
-        beginDate,
-      },
-    });
+      })
+      .andWhere('mme.parameterCode = :parameterCode', {
+        parameterCode
+      })
+      .andWhere(
+        '(mme.beginDate = :beginDate AND mme.beginHour = :beginHour) OR (mme.endDate is not null AND mme.endDate = :endDate AND mme.endHour = :endHour)',
+        {
+          beginDate,
+          endDate,
+        },
+      )
+      .getOne();
+
+    return result;
   }
 }
