@@ -18,7 +18,7 @@ export class MonitorMethodWorkspaceRepository extends Repository<
         locationId,
       })
       .andWhere(
-        '((mm.beginDate = :beginDate AND mm.beginHour = :beginHour) OR ((mm.endDate is not null) AND ( mm.endDate = :endDate AND mm.endHour = :endHour )))',
+        '((mme.beginDate = :beginDate AND mme.beginHour = :beginHour) OR ((mme.endDate is not null) AND ( mme.endDate = :endDate AND mme.endHour = :endHour )))',
         {
           parameterCode,
           beginDate,
