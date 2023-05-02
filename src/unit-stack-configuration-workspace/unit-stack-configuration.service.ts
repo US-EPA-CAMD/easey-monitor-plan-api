@@ -100,10 +100,9 @@ export class UnitStackConfigurationWorkspaceService {
               facilityId,
             );
 
-            const unitStackConfigRecord = await this.repository.getUnitStackByUnitIdStackIdBDate(
+            const unitStackConfigRecord = await this.repository.getUnitStackConfigByUnitIdStackId(
               unit.id,
               stackPipe.id,
-              unitStackConfig.beginDate,
             );
 
             if (unitStackConfigRecord !== undefined) {

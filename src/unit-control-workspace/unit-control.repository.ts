@@ -20,7 +20,7 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       .getOne();
   }
 
-  async getUnitControlByUnitIdParamCdControlCd(
+  async getUnitControlBySpecs(
     unitRecordId: number,
     parameterCode: string,
     controlCode: string,
@@ -36,13 +36,15 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       })
       .andWhere('uc.controlCode = :controlCode', { controlCode });
 
-    if (installDate) {
-      query
-        .andWhere('uc.installDate is not null')
-        .andWhere('uc.installDate = :installDate', { installDate });
-    } else {
-      query.andWhere('uc.installDate is null');
-    }
+    if(installDate)
+      query.andWhere('uc.installDate = :installDate OR (uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate)', {
+        installDate,
+        retireDate
+      });
+    else
+      query.andWhere('uc.installDate IS NULL OR (uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate)', {
+        retireDate
+      });
 
     query.orderBy(
       'uc.unitId, uc.parameterCode, uc.controlCode, uc.installDate',

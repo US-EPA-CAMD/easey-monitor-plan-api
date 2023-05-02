@@ -47,13 +47,13 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
     });
   });
 
-  describe('getUnitStackByUnitIdStackIdBDate', () => {
+  describe('getUnitStackConfigByUnitIdStackId', () => {
     it('calls createQueryBuilder and get one unit stack configuration', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitStackConfigs);
 
-      const result = await repository.getUnitStackByUnitIdStackIdBDate(
+      const result = await repository.getUnitStackConfigByUnitIdStackId(
         'uuid',
         'uuid',
         beginDate,

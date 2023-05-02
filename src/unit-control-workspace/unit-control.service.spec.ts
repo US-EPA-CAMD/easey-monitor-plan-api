@@ -20,7 +20,7 @@ const payload: UnitControlBaseDTO = new UnitControlBaseDTO();
 const mockRepository = () => ({
   getUnitControls: jest.fn().mockResolvedValue([unitControl]),
   getUnitControl: jest.fn().mockResolvedValue(unitControl),
-  getUnitControlByUnitIdParamCdControlCd: jest
+  getUnitControlBySpecs: jest
     .fn()
     .mockResolvedValue(unitControl),
   create: jest.fn().mockResolvedValue(unitControl),
@@ -103,7 +103,7 @@ describe('UnitControlService', () => {
     });
     it('should create while importing monitor default', async () => {
       jest
-        .spyOn(repository, 'getUnitControlByUnitIdParamCdControlCd')
+        .spyOn(repository, 'getUnitControlBySpecs')
         .mockResolvedValue(undefined);
 
       const result = await service.importUnitControl(

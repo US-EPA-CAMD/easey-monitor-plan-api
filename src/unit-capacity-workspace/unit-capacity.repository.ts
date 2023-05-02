@@ -42,15 +42,17 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
     beginDate: Date,
     endDate: Date,
   ): Promise<UnitCapacity> {
-    return this.createQueryBuilder('c')
+    const query = this.createQueryBuilder('c')
       .where('c.unitId = :unitId', {
         unitId,
-      })
-      .andWhere('c.beginDate = :beginDate OR c.endDate = :endDate', {
-        beginDate,
-        endDate,
-      })
-      .orderBy('c.unitId, c.endDate, c.maximumHourlyHeatInputCapacity')
-      .getOne();
+      });
+
+    query.andWhere('c.beginDate = :beginDate OR (c.endDate IS NOT NULL AND c.endDate = :endDate)', {
+      beginDate,
+      endDate,
+    });
+
+    query.orderBy('c.unitId, c.endDate, c.maximumHourlyHeatInputCapacity')
+    return query.getOne();
   }
 }
