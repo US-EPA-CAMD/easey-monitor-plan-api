@@ -15,12 +15,17 @@ import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/sy
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
   constructor(
     @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly repository: MonitorSystemWorkspaceRepository,
+
+    @InjectRepository(UsedIdentifierRepository)
+    private readonly usedIdRepo: UsedIdentifierRepository,
+
     private readonly map: MonitorSystemMap,
     private readonly logger: Logger,
 
@@ -219,10 +224,23 @@ export class MonitorSystemWorkspaceService {
         promises.push(
           new Promise(async innerResolve => {
             const innerPromises = [];
-            const systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
+            let systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
               locationId,
               system.monitoringSystemId,
             );
+
+            if(systemRecord === undefined ) {
+              // Check used_identifier table to see if the sysIdentifier has already
+              // been used, and if so grab that monitor-system record for update
+              let usedIdentifier = await this.usedIdRepo.findOne({
+                locationId: locationId,
+                identifier: system.monitoringSystemId,
+                tableCode: 'S',
+              });
+
+              if(usedIdentifier)
+                systemRecord = await this.repository.findOne({ id: usedIdentifier.id})
+            }
 
             if (systemRecord !== undefined) {
               await this.updateSystem(
