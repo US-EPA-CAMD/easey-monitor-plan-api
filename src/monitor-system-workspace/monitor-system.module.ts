@@ -12,13 +12,14 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { ComponentWorkspaceModule } from '../component-workspace/component.module';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
+import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
 
 @Module({
   imports: [
     ComponentWorkspaceModule,
     SystemFuelFlowWorkspaceModule,
     SystemComponentWorkspaceModule,
-    TypeOrmModule.forFeature([MonitorSystemWorkspaceRepository]),
+    TypeOrmModule.forFeature([MonitorSystemWorkspaceRepository, UsedIdentifierRepository]),
     HttpModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],

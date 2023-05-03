@@ -17,6 +17,7 @@ import { SystemComponentWorkspaceService } from '../system-component-workspace/s
 import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
 import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
 import { MonitorSystem } from '../entities/monitor-system.entity';
+import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -32,6 +33,10 @@ const mockRepository = () => ({
   },
 });
 
+const mockUsedIdRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(null)
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(''),
   many: jest.fn().mockResolvedValue(''),
@@ -40,6 +45,7 @@ const mockMap = () => ({
 describe('MonitorSystemWorkspaceService', () => {
   let service: MonitorSystemWorkspaceService;
   let repository: MonitorSystemWorkspaceRepository;
+  let usedIdRepo: UsedIdentifierRepository;
   let componentService: ComponentWorkspaceService;
 
   beforeAll(async () => {
@@ -67,6 +73,10 @@ describe('MonitorSystemWorkspaceService', () => {
         {
           provide: MonitorSystemWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: UsedIdentifierRepository,
+          useFactory: mockUsedIdRepo,
         },
         {
           provide: MonitorSystemMap,
