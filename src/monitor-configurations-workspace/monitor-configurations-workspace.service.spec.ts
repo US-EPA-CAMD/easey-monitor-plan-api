@@ -4,8 +4,12 @@ import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monito
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { EvalStatusCodeRepository } from './eval-status.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
+import { EvalStatusCode } from '../entities/eval-status-code.entity';
+import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
+import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
@@ -51,7 +55,21 @@ describe('MonitorConfigurationsWorkspaceService', () => {
           useFactory: mockMonitorPlanService,
         },
         {
-          provide: MonitorPlanMap,
+          provide: EvalStatusCodeRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(new EvalStatusCode()),
+          }),
+        },
+        {
+          provide: SubmissionsAvailabilityStatusCodeRepository,
+          useFactory: () => ({
+            findOne: jest
+              .fn()
+              .mockResolvedValue(new SubmissionAvailabilityCode()),
+          }),
+        },
+        {
+          provide: MonitorPlanConfigurationMap,
           useFactory: mockMonitorPlanMap,
         },
       ],
