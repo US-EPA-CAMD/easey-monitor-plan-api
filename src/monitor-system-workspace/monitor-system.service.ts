@@ -232,11 +232,8 @@ export class MonitorSystemWorkspaceService {
             if(systemRecord === undefined ) {
               // Check used_identifier table to see if the sysIdentifier has already
               // been used, and if so grab that monitor-system record for update
-              let usedIdentifier = await this.usedIdRepo.findOne({
-                locationId: locationId,
-                identifier: system.monitoringSystemId,
-                tableCode: 'S',
-              });
+              let usedIdentifier = await this.usedIdRepo.getBySpecs(
+                  locationId, system.monitoringSystemId, 'S');
 
               if(usedIdentifier)
                 systemRecord = await this.repository.findOne({ id: usedIdentifier.id})
