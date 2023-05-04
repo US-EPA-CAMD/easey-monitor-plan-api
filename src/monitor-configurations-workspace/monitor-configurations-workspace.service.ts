@@ -1,18 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { EvalStatusCodeRepository } from './eval-status.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
+import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 
 @Injectable()
 export class MonitorConfigurationsWorkspaceService {
   constructor(
     @InjectRepository(MonitorPlanWorkspaceRepository)
     private readonly repository: MonitorPlanWorkspaceRepository,
-    private readonly map: MonitorPlanMap,
+    private readonly map: MonitorPlanConfigurationMap,
     private readonly monitorPlanService: MonitorPlanWorkspaceService,
+    @InjectRepository(EvalStatusCodeRepository)
+    private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
+    @InjectRepository(SubmissionsAvailabilityStatusCodeRepository)
+    private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
   ) {}
 
   private async parseMonitorPlanConfigurations(plans: MonitorPlan[]) {
@@ -29,6 +35,17 @@ export class MonitorConfigurationsWorkspaceService {
         false,
         true,
       );
+
+      p.evalStatusCodeDescription = (
+        await this.evalStatusCodeRepository.findOne(p.evalStatusCode)
+      ).evalStatusCodeDescription;
+
+      p.submissionAvailabilityCodeDescription = (
+        await this.submissionStatusCodeRepository.findOne(
+          p.submissionAvailabilityCode,
+        )
+      ).subAvailabilityCodeDescription;
+
       p.name = monPlan.name;
       p.locations = monPlan.locations;
       p.unitStackConfigurations = monPlan.unitStackConfigurations;
