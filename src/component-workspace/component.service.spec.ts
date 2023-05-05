@@ -10,6 +10,7 @@ import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
+import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
 
 const userId = 'testUser';
 const locationId = '1';
@@ -36,6 +37,10 @@ const mockRepository = () => ({
   getComponentByLocIdAndCompId: jest.fn().mockResolvedValue(component),
 });
 
+const mockUsedIdRepo = () => ({
+  getBySpecs: jest.fn().mockResolvedValue(null),
+})
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(componentDto),
   many: jest.fn().mockResolvedValue([componentDto]),
@@ -59,6 +64,10 @@ describe('ComponentWorkspaceService', () => {
         {
           provide: ComponentWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: UsedIdentifierRepository,
+          useFactory: mockUsedIdRepo,
         },
         {
           provide: ComponentMap,
