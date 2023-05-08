@@ -30,8 +30,6 @@ export class MonitorSpanChecksService {
     isUpdate: boolean = false,
     errorLocation: string = '',
   ): Promise<string[]> {
-    this.logger.info('Running Monitor Span Checks');
-
     let error: string = null;
     const errorList: string[] = [];
 
@@ -90,7 +88,6 @@ export class MonitorSpanChecksService {
     }
 
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Monitor Span Checks');
     return errorList;
   }
 
@@ -320,8 +317,6 @@ export class MonitorSpanChecksService {
         endHour,
         !isFlowType ? undefined : monitorSpan.spanScaleCode,
       );
-
-      console.log(record);
 
       if (record) {
         error = this.getMessage('SPAN-55-A', {

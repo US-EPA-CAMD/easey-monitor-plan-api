@@ -7,22 +7,23 @@ export class DuctWafWorkspaceRepository extends Repository<DuctWaf> {
   async getDuctWafByLocIdBDateBHourWafValue(
     locationId: string,
     wafBeginDate: Date,
-    wafEndDate: Date,
     wafBeginHour: number,
+    wafEndDate: Date,
     wafEndHour: number,
-    wafValue: number,
   ): Promise<DuctWaf> {
     const result = this.createQueryBuilder('dw')
-      .where('dw.locationId = :locId', {
+      .where('dw.locationId = :locationId', {
         locationId,
       })
-      .andWhere(
-        '((dw.beginDate = :beginDate AND dw.beginHour = :beginHour) OR ((dw.endDate is not null) AND ( dw.endDate = :endDate AND dw.endHour = :endHour )))',
-
+      .andWhere(`((
+          dw.wafBeginDate = :wafBeginDate AND dw.wafBeginHour = :wafBeginHour
+        ) OR (
+          dw.wafEndDate IS NOT NULL AND dw.wafEndDate = :wafEndDate AND dw.wafEndHour = :wafEndHour
+        ))`,
         {
           wafBeginDate,
-          wafEndDate,
           wafBeginHour,
+          wafEndDate,
           wafEndHour,
         },
       )

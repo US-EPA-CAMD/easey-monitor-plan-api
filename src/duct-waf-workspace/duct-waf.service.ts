@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -128,10 +127,9 @@ export class DuctWafWorkspaceService {
             const ductWafRecord = await this.repository.getDuctWafByLocIdBDateBHourWafValue(
               locationId,
               ductWaf.wafBeginDate,
-              ductWaf.wafEndDate,
               ductWaf.wafBeginHour,
+              ductWaf.wafEndDate,
               ductWaf.wafEndHour,
-              ductWaf.wafValue,
             );
 
             if (ductWafRecord !== undefined) {

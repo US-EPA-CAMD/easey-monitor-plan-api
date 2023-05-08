@@ -43,7 +43,6 @@ export class UnitControlChecksService {
     const errorList: string[] = [];
     let locationRecord;
     let unitRecord;
-    this.logger.info('Running Unit Control Checks');
 
     if (isImport) {
       locationRecord = location;
@@ -65,7 +64,6 @@ export class UnitControlChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Unit Control Checks');
     return errorList;
   }
 

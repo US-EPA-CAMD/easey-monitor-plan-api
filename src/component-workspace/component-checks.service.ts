@@ -36,8 +36,6 @@ export class ComponentCheckService {
     isUpdate: boolean = false,
     errorLocation: string = '',
   ) {
-    this.logger.info('Running Component Checks');
-
     const errorList: string[] = [];
     let error: string = null;
 
@@ -64,7 +62,6 @@ export class ComponentCheckService {
     }
 
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Component Checks');
     return errorList;
   }
 

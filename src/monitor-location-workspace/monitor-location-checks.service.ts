@@ -36,8 +36,6 @@ export class MonitorLocationChecksService {
   async runChecks(
     payload: UpdateMonitorPlanDTO,
   ): Promise<[LocationIdentifiers[], string[]]> {
-    this.logger.info('Running Unit/Stack Location Checks');
-
     let errorList = [];
     const locations: LocationIdentifiers[] = this.processLocations(payload);
 
@@ -58,7 +56,6 @@ export class MonitorLocationChecksService {
       });
     }
 
-    this.logger.info('Completed Unit/Stack Location Checks');
     return [locations, errorList];
   }
 }

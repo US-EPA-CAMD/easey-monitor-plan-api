@@ -34,10 +34,8 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { CountyCodeService } from '../county-code/county-code.service';
-import { MonitorPlanReportResultService } from '../monitor-plan-report-result/monitor-plan-report-result.service';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { CountyCodeDTO } from '../dtos/county-code.dto';
-import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 import { Plant } from '../entities/workspace/plant.entity';
 import { MonitorPlanComment } from '../entities/workspace/monitor-plan-comment.entity';
 import { MonitorAttribute } from '../entities/workspace/monitor-attribute.entity';
@@ -319,10 +317,6 @@ describe('Monitor Plan Service', () => {
           useFactory: mockCountyCodeService,
         },
         {
-          provide: MonitorPlanReportResultService,
-          useFactory: mockMpReportResultService,
-        },
-        {
           provide: MonitorPlanMap,
           useFactory: mockMap,
         },
@@ -357,13 +351,6 @@ describe('Monitor Plan Service', () => {
   describe('updateDateAndUserId', () => {
     it('Should call updateDateAndUserId on the repo', async () => {
       const result = await service.updateDateAndUserId(MON_PLAN_ID, USER_ID);
-    });
-  });
-
-  describe('getEvaluationReport', () => {
-    it('Should return and MPEvaluationReportDTO', async () => {
-      const result = await service.getEvaluationReport(MON_PLAN_ID);
-      expect(result).toBeInstanceOf(MPEvaluationReportDTO);
     });
   });
 
