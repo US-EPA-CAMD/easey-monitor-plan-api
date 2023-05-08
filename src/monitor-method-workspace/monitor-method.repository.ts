@@ -21,11 +21,16 @@ export class MonitorMethodWorkspaceRepository extends Repository<
       .andWhere('mme.parameterCode = :parameterCode', {
         parameterCode
       })
-      .andWhere(
-        '(mme.beginDate = :beginDate AND mme.beginHour = :beginHour) OR (mme.endDate is not null AND mme.endDate = :endDate AND mme.endHour = :endHour)',
+      .andWhere(`((
+          mme.beginDate = :beginDate AND mme.beginHour = :beginHour
+        ) OR (
+          mme.endDate IS NOT NULL AND mme.endDate = :endDate AND mme.endHour = :endHour
+        ))`,
         {
           beginDate,
+          beginHour,
           endDate,
+          endHour,
         },
       )
       .getOne();

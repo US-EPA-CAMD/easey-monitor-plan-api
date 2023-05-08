@@ -18,6 +18,7 @@ import {
 } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {
@@ -66,8 +67,8 @@ export class SystemFuelFlowWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(fuelFlow);
@@ -97,6 +98,8 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.endDate = payload.endDate;
     fuelFlow.beginHour = payload.beginHour;
     fuelFlow.endHour = payload.endHour;
+    fuelFlow.userId = userId;
+    fuelFlow.updateDate = currentDateTime();
 
     await this.repository.save(fuelFlow);
 

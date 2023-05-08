@@ -8,12 +8,16 @@ import { ComponentWorkspaceRepository } from './component.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 import { Component } from '../entities/component.entity';
+import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class ComponentWorkspaceService {
   constructor(
     @InjectRepository(ComponentWorkspaceRepository)
     private readonly repository: ComponentWorkspaceRepository,
+    private readonly usedIdRepo: UsedIdentifierRepository,
+
     private readonly map: ComponentMap,
     private readonly logger: Logger,
 
@@ -120,6 +124,16 @@ export class ComponentWorkspaceService {
               component.componentId,
             );
 
+            if(compRecord === undefined ) {
+              // Check used_identifier table to see if the componentId has already
+              // been used, and if so grab that component record for update
+              let usedIdentifier = await this.usedIdRepo.getBySpecs(
+                  locationId, component.componentId, 'C');
+
+              if(usedIdentifier)
+                compRecord = await this.repository.findOne({ id: usedIdentifier.id})
+            }
+
             if (compRecord) {
               await this.updateComponent(compRecord, component, userId);
             } else {
@@ -160,7 +174,7 @@ export class ComponentWorkspaceService {
       payload.sampleAcquisitionMethodCode;
     componentRecord.basisCode = payload.basisCode;
     componentRecord.userId = userId;
-    componentRecord.updateDate = new Date(Date.now());
+    componentRecord.updateDate = currentDateTime();
 
     const result = await this.repository.save(componentRecord);
     return this.map.one(result);
@@ -183,8 +197,8 @@ export class ComponentWorkspaceService {
       basisCode: payload.basisCode,
       hgConverterIndicator: payload.hgConverterIndicator,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(component);

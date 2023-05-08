@@ -18,12 +18,18 @@ import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
   constructor(
     @InjectRepository(MonitorFormulaWorkspaceRepository)
     private readonly repository: MonitorFormulaWorkspaceRepository,
+
+    @InjectRepository(UsedIdentifierRepository)
+    private readonly usedIdRepo: UsedIdentifierRepository,
+
     private readonly map: MonitorFormulaMap,
     private readonly logger: Logger,
 
@@ -77,8 +83,8 @@ export class MonitorFormulaWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(formula);
@@ -108,7 +114,7 @@ export class MonitorFormulaWorkspaceService {
     formula.endDate = payload.endDate;
     formula.endHour = payload.endHour;
     formula.userId = userId;
-    formula.updateDate = new Date(Date.now());
+    formula.updateDate = currentDateTime();
 
     await this.repository.save(formula);
 
@@ -164,10 +170,20 @@ export class MonitorFormulaWorkspaceService {
       for (const formula of formulas) {
         promises.push(
           new Promise(async innerResolve => {
-            const formulaRecord = await this.repository.getFormulaByLocIdAndFormulaIdentifier(
+            let formulaRecord = await this.repository.getFormulaByLocIdAndFormulaIdentifier(
               locationId,
               formula.formulaId,
             );
+
+            if(formulaRecord === undefined ) {
+              // Check used_identifier table to see if the formulaId has already
+              // been used, and if so grab that monitor-formula record for update
+              let usedIdentifier = await this.usedIdRepo.getBySpecs(
+                  locationId, formula.formulaId, 'F');
+
+              if(usedIdentifier)
+                formulaRecord = await this.repository.findOne({ id: usedIdentifier.id})
+            }
 
             if (formulaRecord !== undefined) {
               await this.updateFormula(

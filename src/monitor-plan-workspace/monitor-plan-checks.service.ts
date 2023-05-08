@@ -40,8 +40,6 @@ export class MonitorPlanChecksService {
   }
 
   async runChecks(payload: UpdateMonitorPlanDTO) {
-    this.logger.info('Running Monitor Plan Checks');
-
     const promises: Promise<string[]>[] = [];
 
     let errors: string[] = [];
@@ -144,6 +142,5 @@ export class MonitorPlanChecksService {
     });
 
     this.throwIfErrors(await this.extractErrors(promises));
-    this.logger.info('Completed Monitor Plan Checks');
   }
 }

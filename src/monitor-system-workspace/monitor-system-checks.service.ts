@@ -40,10 +40,7 @@ export class MonitorSystemCheckService {
     isUpdate: boolean = false,
     errorLocation: string = '',
   ) {
-    this.logger.info('Running Monitor System Checks');
-
     let errorList: string[] = [];
-
     const promises: Promise<string[]>[] = [];
 
     monitorSystem.components?.forEach((systemComponent, sysCompIdx) => {
@@ -64,7 +61,6 @@ export class MonitorSystemCheckService {
 
     errorList = await this.extractErrors(promises);
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Monitor System Checks');
     return errorList;
   }
 }

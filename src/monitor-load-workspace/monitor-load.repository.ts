@@ -20,7 +20,11 @@ export class MonitorLoadWorkspaceRepository extends Repository<MonitorLoad> {
   ): Promise<MonitorLoad> {
     return this.createQueryBuilder('ml')
       .where('ml.locationId = :locationId', { locationId })
-      .andWhere('((ml.beginDate = :beginDate AND ml.beginHour = :beginHour) OR ((ml.endDate is not null) AND ( ml.endDate = :endDate AND ml.endHour = :endHour )))',
+      .andWhere(`((
+        ml.beginDate = :beginDate AND ml.beginHour = :beginHour
+      ) OR (
+        ml.endDate IS NOT NULL AND ml.endDate = :endDate AND ml.endHour = :endHour
+      ))`,
       {
         beginDate,
         beginHour,

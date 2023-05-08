@@ -11,6 +11,7 @@ import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class UnitControlWorkspaceService {
@@ -100,8 +101,8 @@ export class UnitControlWorkspaceService {
       retireDate: payload.retireDate,
       seasonalControlsIndicator: payload.seasonalControlsIndicator,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(unitControl);
@@ -131,7 +132,7 @@ export class UnitControlWorkspaceService {
     unitControl.retireDate = payload.retireDate;
     unitControl.seasonalControlsIndicator = payload.seasonalControlsIndicator;
     unitControl.userId = userId;
-    unitControl.updateDate = new Date(Date.now());
+    unitControl.updateDate = currentDateTime();
 
     await this.repository.save(unitControl);
 

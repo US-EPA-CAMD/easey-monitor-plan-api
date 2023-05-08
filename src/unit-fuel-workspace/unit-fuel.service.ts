@@ -13,6 +13,7 @@ import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class UnitFuelWorkspaceService {
@@ -67,8 +68,8 @@ export class UnitFuelWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(unitFuel);
@@ -98,7 +99,7 @@ export class UnitFuelWorkspaceService {
     unitFuel.beginDate = payload.beginDate;
     unitFuel.endDate = payload.endDate;
     unitFuel.userId = userId;
-    unitFuel.updateDate = new Date(Date.now());
+    unitFuel.updateDate = currentDateTime();
 
     await this.repository.save(unitFuel);
 

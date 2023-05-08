@@ -16,6 +16,7 @@ import {
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -116,8 +117,8 @@ export class UnitCapacityWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(unitCapacity);
@@ -144,7 +145,7 @@ export class UnitCapacityWorkspaceService {
     unitCapacity.beginDate = payload.beginDate;
     unitCapacity.endDate = payload.endDate;
     unitCapacity.userId = userId;
-    unitCapacity.updateDate = new Date(Date.now());
+    unitCapacity.updateDate = currentDateTime();
 
     await this.repository.save(unitCapacity);
 

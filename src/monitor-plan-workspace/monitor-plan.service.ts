@@ -3,10 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { CountyCodeService } from '../county-code/county-code.service';
-import { MonitorPlanReportResultService } from '../monitor-plan-report-result/monitor-plan-report-result.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
@@ -95,8 +92,6 @@ export class MonitorPlanWorkspaceService {
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
-    private readonly countyCodeService: CountyCodeService,
-    private readonly mpReportResultService: MonitorPlanReportResultService,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
@@ -166,28 +161,6 @@ export class MonitorPlanWorkspaceService {
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
     return this.repository.updateDateAndUserId(monPlanId, userId);
-  }
-
-  async getEvaluationReport(planId: string) {
-    const mpEvalReport: MPEvaluationReportDTO = new MPEvaluationReportDTO();
-
-    const mp = await this.repository.getMonitorPlan(planId);
-
-    const county = await this.countyCodeService.getCountyCode(
-      mp.plant.countyCode,
-    );
-
-    const mpReportResults = await this.mpReportResultService.getMPReportResults(
-      planId,
-    );
-
-    mpEvalReport.facilityName = mp.plant.name;
-    mpEvalReport.facilityId = mp.plant.orisCode;
-    mpEvalReport.state = county.stateCode;
-    mpEvalReport.countyName = county.countyName;
-    mpEvalReport.mpReportResults = mpReportResults;
-
-    return mpEvalReport;
   }
 
   async resetToNeedsEvaluation(locId: string, userId: string): Promise<void> {

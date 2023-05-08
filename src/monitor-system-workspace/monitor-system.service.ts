@@ -15,12 +15,18 @@ import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/sy
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
   constructor(
     @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly repository: MonitorSystemWorkspaceRepository,
+
+    @InjectRepository(UsedIdentifierRepository)
+    private readonly usedIdRepo: UsedIdentifierRepository,
+
     private readonly map: MonitorSystemMap,
     private readonly logger: Logger,
 
@@ -130,8 +136,8 @@ export class MonitorSystemWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(system);
@@ -196,7 +202,7 @@ export class MonitorSystemWorkspaceService {
     system.endDate = payload.endDate;
     system.endHour = payload.endHour;
     system.userId = userId;
-    system.updateDate = new Date(Date.now());
+    system.updateDate = currentDateTime();
 
     await this.repository.save(system);
 
@@ -219,10 +225,20 @@ export class MonitorSystemWorkspaceService {
         promises.push(
           new Promise(async innerResolve => {
             const innerPromises = [];
-            const systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
+            let systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
               locationId,
               system.monitoringSystemId,
             );
+
+            if(systemRecord === undefined ) {
+              // Check used_identifier table to see if the sysIdentifier has already
+              // been used, and if so grab that monitor-system record for update
+              let usedIdentifier = await this.usedIdRepo.getBySpecs(
+                  locationId, system.monitoringSystemId, 'S');
+
+              if(usedIdentifier)
+                systemRecord = await this.repository.findOne({ id: usedIdentifier.id})
+            }
 
             if (systemRecord !== undefined) {
               await this.updateSystem(

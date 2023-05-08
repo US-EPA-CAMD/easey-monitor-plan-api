@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -14,6 +13,7 @@ import { DuctWaf } from '../entities/duct-waf.entity';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class DuctWafWorkspaceService {
@@ -67,8 +67,8 @@ export class DuctWafWorkspaceService {
       wafEndDate: payload.wafEndDate,
       wafEndHour: payload.wafEndHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(ductWaf);
@@ -103,7 +103,7 @@ export class DuctWafWorkspaceService {
     ductWaf.wafEndDate = payload.wafEndDate;
     ductWaf.wafEndHour = payload.wafEndHour;
     ductWaf.userId = userId;
-    ductWaf.updateDate = new Date(Date.now());
+    ductWaf.updateDate = currentDateTime();
 
     await this.repository.save(ductWaf);
 
@@ -128,10 +128,9 @@ export class DuctWafWorkspaceService {
             const ductWafRecord = await this.repository.getDuctWafByLocIdBDateBHourWafValue(
               locationId,
               ductWaf.wafBeginDate,
-              ductWaf.wafEndDate,
               ductWaf.wafBeginHour,
+              ductWaf.wafEndDate,
               ductWaf.wafEndHour,
-              ductWaf.wafValue,
             );
 
             if (ductWafRecord !== undefined) {

@@ -1,4 +1,4 @@
-import { EntityRepository, Repository, IsNull } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
 
 @EntityRepository(UnitControl)
@@ -36,15 +36,28 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       })
       .andWhere('uc.controlCode = :controlCode', { controlCode });
 
-    if(installDate)
-      query.andWhere('uc.installDate = :installDate OR (uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate)', {
-        installDate,
-        retireDate
-      });
-    else
-      query.andWhere('uc.installDate IS NULL OR (uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate)', {
-        retireDate
-      });
+    if (installDate) {
+      query.andWhere(`((
+          uc.installDate = :installDate
+        ) OR (
+          uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate
+        ))`,
+        {
+          installDate,
+          retireDate
+        }
+      );
+    } else {
+      query.andWhere(`((
+          uc.installDate IS NULL
+        ) OR (
+          uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate
+        ))`,
+        {
+          retireDate
+        }
+      );
+    }
 
     query.orderBy(
       'uc.unitId, uc.parameterCode, uc.controlCode, uc.installDate',

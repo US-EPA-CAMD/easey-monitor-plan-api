@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @EntityRepository(MonitorPlan)
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
@@ -45,7 +46,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
 
   async updateDateAndUserId(monPlanId: string, userId: string) {
     try {
-      const currDate = new Date(Date.now());
+      const currDate = currentDateTime();
       await this.query(
         'UPDATE camdecmpswks.monitor_plan SET update_date = $1, userid = $2 WHERE mon_plan_id = $3',
         [currDate, userId, monPlanId],

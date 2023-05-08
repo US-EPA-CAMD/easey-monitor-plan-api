@@ -30,7 +30,11 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
       .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
       .andWhere('md.fuelCode = :fuelCode', { fuelCode })
       .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
-      .andWhere('((md.beginDate = :beginDate AND md.beginHour = :beginHour) OR ((md.endDate is not null) AND ( md.endDate = :endDate AND md.endHour = :endHour )))',
+      .andWhere(`((
+          md.beginDate = :beginDate AND md.beginHour = :beginHour
+        ) OR (
+          md.endDate IS NOT NULL AND md.endDate = :endDate AND md.endHour = :endHour
+        ))`,
       {
         beginDate,
         beginHour,
