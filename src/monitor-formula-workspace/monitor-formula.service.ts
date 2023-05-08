@@ -19,6 +19,7 @@ import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository'
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
@@ -82,8 +83,8 @@ export class MonitorFormulaWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(formula);
@@ -113,7 +114,7 @@ export class MonitorFormulaWorkspaceService {
     formula.endDate = payload.endDate;
     formula.endHour = payload.endHour;
     formula.userId = userId;
-    formula.updateDate = new Date(Date.now());
+    formula.updateDate = currentDateTime();
 
     await this.repository.save(formula);
 

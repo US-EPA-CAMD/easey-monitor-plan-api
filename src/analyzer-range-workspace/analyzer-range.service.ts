@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -18,6 +17,7 @@ import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class AnalyzerRangeWorkspaceService {
@@ -67,8 +67,8 @@ export class AnalyzerRangeWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(analyzerRange);
@@ -96,7 +96,7 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.endDate = payload.endDate;
     analyzerRange.endHour = payload.endHour;
     analyzerRange.userId = userId;
-    analyzerRange.updateDate = new Date(Date.now());
+    analyzerRange.updateDate = currentDateTime();
 
     await this.repository.save(analyzerRange);
 

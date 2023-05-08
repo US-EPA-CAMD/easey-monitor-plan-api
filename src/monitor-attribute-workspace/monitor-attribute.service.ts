@@ -16,6 +16,7 @@ import {
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {
@@ -74,8 +75,8 @@ export class MonitorAttributeWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(attribute);
@@ -107,7 +108,7 @@ export class MonitorAttributeWorkspaceService {
     attribute.beginDate = payload.beginDate;
     attribute.endDate = payload.endDate;
     attribute.userId = userId;
-    attribute.updateDate = new Date(Date.now());
+    attribute.updateDate = currentDateTime();
 
     await this.repository.save(attribute);
 

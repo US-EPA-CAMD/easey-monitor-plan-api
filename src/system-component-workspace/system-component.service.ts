@@ -21,6 +21,7 @@ import { ComponentWorkspaceService } from '../component-workspace/component.serv
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class SystemComponentWorkspaceService {
@@ -115,7 +116,7 @@ export class SystemComponentWorkspaceService {
     systemComponent.endDate = payload.endDate;
     systemComponent.endHour = payload.endHour;
     systemComponent.userId = userId;
-    systemComponent.updateDate = new Date(Date.now());
+    systemComponent.updateDate = currentDateTime();
 
     await this.repository.save(systemComponent);
 
@@ -167,8 +168,8 @@ export class SystemComponentWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(systemComponent);

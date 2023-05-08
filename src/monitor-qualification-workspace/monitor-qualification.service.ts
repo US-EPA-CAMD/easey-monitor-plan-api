@@ -21,6 +21,7 @@ import { MonitorQualificationWorkspaceRepository } from './monitor-qualification
 import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -231,8 +232,8 @@ export class MonitorQualificationWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(qual);
@@ -259,7 +260,7 @@ export class MonitorQualificationWorkspaceService {
     qual.endDate = payload.endDate;
     qual.userId = userId;
     qual.addDate = new Date(Date.now());
-    qual.updateDate = new Date(Date.now());
+    qual.updateDate = currentDateTime();
 
     const result = await this.repository.save(qual);
 

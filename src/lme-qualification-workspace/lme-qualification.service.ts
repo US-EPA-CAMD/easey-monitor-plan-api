@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -16,6 +15,7 @@ import {
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class LMEQualificationWorkspaceService {
@@ -92,8 +92,8 @@ export class LMEQualificationWorkspaceService {
       so2Tons: payload.so2Tons,
       noxTons: payload.noxTons,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(lmeQual);
@@ -125,7 +125,7 @@ export class LMEQualificationWorkspaceService {
     lmeQual.so2Tons = payload.so2Tons;
     lmeQual.noxTons = payload.noxTons;
     lmeQual.userId = userId;
-    lmeQual.updateDate = new Date(Date.now());
+    lmeQual.updateDate = currentDateTime();
 
     const result = await this.repository.save(lmeQual);
 
