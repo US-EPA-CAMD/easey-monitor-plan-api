@@ -7,6 +7,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitService } from '../unit/unit.service';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -149,8 +150,8 @@ export class UnitStackConfigurationWorkspaceService {
       stackPipeId: stackPipeRecordId,
       beginDate: payload.beginDate,
       endDate: payload.endDate,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
       userId,
     });
 
@@ -167,7 +168,7 @@ export class UnitStackConfigurationWorkspaceService {
 
     unitStackConfig.endDate = payload.endDate;
     unitStackConfig.userId = userId;
-    unitStackConfig.updateDate = new Date(Date.now());
+    unitStackConfig.updateDate = currentDateTime();
 
     await this.repository.save(unitStackConfig);
     return this.map.one(unitStackConfig);

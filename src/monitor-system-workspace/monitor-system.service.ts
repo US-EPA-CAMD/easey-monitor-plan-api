@@ -16,6 +16,7 @@ import { ComponentWorkspaceService } from '../component-workspace/component.serv
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -135,8 +136,8 @@ export class MonitorSystemWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(system);
@@ -201,7 +202,7 @@ export class MonitorSystemWorkspaceService {
     system.endDate = payload.endDate;
     system.endHour = payload.endHour;
     system.userId = userId;
-    system.updateDate = new Date(Date.now());
+    system.updateDate = currentDateTime();
 
     await this.repository.save(system);
 

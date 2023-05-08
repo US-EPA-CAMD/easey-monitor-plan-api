@@ -18,6 +18,7 @@ import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
@@ -70,8 +71,8 @@ export class MonitorMethodWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(monMethod);
@@ -101,7 +102,7 @@ export class MonitorMethodWorkspaceService {
     method.endDate = payload.endDate;
     method.endHour = payload.endHour;
     method.userId = userId;
-    method.updateDate = new Date(Date.now());
+    method.updateDate = currentDateTime();
 
     await this.repository.save(method);
 

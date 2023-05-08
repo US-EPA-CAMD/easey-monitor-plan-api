@@ -16,6 +16,7 @@ import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class LEEQualificationWorkspaceService {
@@ -79,8 +80,8 @@ export class LEEQualificationWorkspaceService {
       unitsOfStandard: payload.unitsOfStandard,
       percentageOfEmissionStandard: payload.percentageOfEmissionStandard,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(load);
@@ -115,7 +116,7 @@ export class LEEQualificationWorkspaceService {
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
     leeQual.userId = userId;
-    leeQual.updateDate = new Date(Date.now());
+    leeQual.updateDate = currentDateTime();
 
     const result = await this.repository.save(leeQual);
 
