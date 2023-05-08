@@ -1,7 +1,6 @@
 import { Repository, EntityRepository } from 'typeorm';
 
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
-import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 
 @EntityRepository(MonitorSpan)
 export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
@@ -33,8 +32,11 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       });
     }
 
-    query.andWhere(
-      '((ms.beginDate = :beginDate AND ms.beginHour = :beginHour) OR (ms.endDate = :endDate AND ms.endHour = :endHour))',
+    query.andWhere(`((
+        ms.beginDate = :beginDate AND ms.beginHour = :beginHour
+      ) OR (
+        ms.endDate = :endDate AND ms.endHour = :endHour
+      ))`,
       {
         beginDate,
         beginHour,

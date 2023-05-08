@@ -47,10 +47,16 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
         unitId,
       });
 
-    query.andWhere('c.beginDate = :beginDate OR (c.endDate IS NOT NULL AND c.endDate = :endDate)', {
-      beginDate,
-      endDate,
-    });
+    query.andWhere(`((
+        c.beginDate = :beginDate
+      ) OR (
+        c.endDate IS NOT NULL AND c.endDate = :endDate
+      ))`,
+      {
+        beginDate,
+        endDate,
+      }
+    );
 
     query.orderBy('c.unitId, c.endDate, c.maximumHourlyHeatInputCapacity')
     return query.getOne();

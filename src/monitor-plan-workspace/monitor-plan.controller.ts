@@ -6,7 +6,6 @@ import {
   Param,
   Controller,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
@@ -60,18 +59,6 @@ export class MonitorPlanWorkspaceController {
     return this.service.getMonitorPlan(planId);
   }
 
-  @Get(':planId/evaluation-report')
-  @ApiOkResponse({
-    description: 'Retrieves facility information and evaluation results',
-  })
-  @RoleGuard(
-    { enforceCheckout: false, pathParam: 'planId' },
-    LookupType.MonitorPlan,
-  )
-  getEvaluationReport(@Param('planId') planId: string) {
-    return this.service.getEvaluationReport(planId);
-  }
-
   @Post('import')
   @RoleGuard({ importLocationSources: ['locations'] }, LookupType.Location)
   @ApiOkResponse({
@@ -86,11 +73,9 @@ export class MonitorPlanWorkspaceController {
     await this.importChecksService.runImportChecks(plan);
     const mpPlan = await this.service.importMpPlan(plan, user.userId);
 
-    // TODO: Temporary returned message
     if (mpPlan === null) {
-      this.logger.info(`Monitoring plan Successfully Imported.`);
       return {
-        message: `Monitoring plan Successfully Imported.`,
+        message: `Monitoring plan imported successfully`,
       };
     }
 

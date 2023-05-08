@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { PlantService } from '../plant/plant.service';
@@ -34,7 +34,6 @@ export class ImportChecksService {
   }
 
   public async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
-    this.logger.info('Running import validation checks');
     let errorList = [];
 
     // Plant Check
@@ -86,7 +85,7 @@ export class ImportChecksService {
       // Qualification Checks
       if (location.qualifications) {
         errorList.push(
-          ...(await this.qualificationService.runQualificationImportCheck(
+          ...(this.qualificationService.runQualificationImportCheck(
             location.qualifications,
           )),
         );
@@ -125,7 +124,5 @@ export class ImportChecksService {
     }
 
     this.checkIfThrows(errorList);
-
-    this.logger.info('Import validation checks ran successfully');
   }
 }

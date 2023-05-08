@@ -45,8 +45,6 @@ export class AnalyzerRangeChecksService {
     let error: string = null;
     let component: ComponentBaseDTO | UpdateComponentBaseDTO;
 
-    this.logger.info('Running Analyzer Range Checks');
-
     if (isImport) {
       component = componentData;
     } else {
@@ -65,7 +63,6 @@ export class AnalyzerRangeChecksService {
     }
 
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Analyzer Range Checks');
   }
 
   async duplicateAnalyzerRangeChecks(
