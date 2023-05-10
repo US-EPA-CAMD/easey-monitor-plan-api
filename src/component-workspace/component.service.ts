@@ -9,6 +9,7 @@ import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 import { Component } from '../entities/component.entity';
 import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -173,7 +174,7 @@ export class ComponentWorkspaceService {
       payload.sampleAcquisitionMethodCode;
     componentRecord.basisCode = payload.basisCode;
     componentRecord.userId = userId;
-    componentRecord.updateDate = new Date(Date.now());
+    componentRecord.updateDate = currentDateTime();
 
     const result = await this.repository.save(componentRecord);
     return this.map.one(result);
@@ -196,8 +197,8 @@ export class ComponentWorkspaceService {
       basisCode: payload.basisCode,
       hgConverterIndicator: payload.hgConverterIndicator,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     const result = await this.repository.save(component);

@@ -34,7 +34,7 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
   }
 
   async getUnitStackConfigsByUnitId(id: number | string, isUnit: boolean) {
-    const query = await this.createQueryBuilder('usc')
+    const query = this.createQueryBuilder('usc')
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp');
     if (isUnit) {

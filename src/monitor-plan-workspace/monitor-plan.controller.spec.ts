@@ -5,7 +5,6 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
-import { MPEvaluationReportDTO } from '../dtos/mp-evaluation-report.dto';
 
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
@@ -23,10 +22,6 @@ const planId = null;
 const data: MonitorPlanDTO[] = [];
 data.push(new MonitorPlanDTO());
 data.push(new MonitorPlanDTO());
-
-const evaluationRportData = [];
-evaluationRportData.push(new MPEvaluationReportDTO());
-evaluationRportData.push(new MPEvaluationReportDTO());
 
 const currentUser: CurrentUser = {
   userId: 'testUser',
@@ -79,17 +74,6 @@ describe('MonitorPlanWorkspaceController', () => {
     });
   });
 
-  describe('getEvaluationReport', () => {
-    it('should return an evaluation report given a planId', async () => {
-      jest
-        .spyOn(service, 'getEvaluationReport')
-        .mockResolvedValue(evaluationRportData[0]);
-      expect(await controller.getEvaluationReport(planId)).toBe(
-        evaluationRportData[0],
-      );
-    });
-  });
-
   describe('importPlan', () => {
     it('should import a report plan given a planId', async () => {
       jest.spyOn(service, 'importMpPlan').mockResolvedValue(data[0]);
@@ -98,7 +82,7 @@ describe('MonitorPlanWorkspaceController', () => {
     it('should return success import message while imporing anew record', async () => {
       jest.spyOn(service, 'importMpPlan').mockResolvedValue(null);
       expect(await controller.importPlan(planId, currentUser)).toEqual({
-        message: `Monitoring plan Successfully Imported.`,
+        message: `Monitoring plan imported successfully`,
       });
     });
   });

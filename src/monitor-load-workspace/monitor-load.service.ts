@@ -14,6 +14,7 @@ import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
@@ -109,8 +110,8 @@ export class MonitorLoadWorkspaceService {
       secondLevelCode: payload.secondLevelCode,
       maximumLoadUnitsOfMeasureCode: payload.maximumLoadUnitsOfMeasureCode,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(load);
@@ -144,7 +145,7 @@ export class MonitorLoadWorkspaceService {
     load.secondLevelCode = payload.secondLevelCode;
     load.maximumLoadUnitsOfMeasureCode = payload.maximumLoadUnitsOfMeasureCode;
     load.userId = userId;
-    load.updateDate = new Date(Date.now());
+    load.updateDate = currentDateTime();
 
     await this.repository.save(load);
     await this.mpService.resetToNeedsEvaluation(locationId, userId);

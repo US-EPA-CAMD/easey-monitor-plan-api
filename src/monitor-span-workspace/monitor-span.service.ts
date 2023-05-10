@@ -14,6 +14,7 @@ import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorSpanWorkspaceService {
@@ -76,8 +77,8 @@ export class MonitorSpanWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(span);
@@ -116,7 +117,7 @@ export class MonitorSpanWorkspaceService {
     span.endDate = payload.endDate;
     span.endHour = payload.endHour;
     span.userId = userId;
-    span.updateDate = new Date(Date.now());
+    span.updateDate = currentDateTime();
 
     await this.repository.save(span);
 

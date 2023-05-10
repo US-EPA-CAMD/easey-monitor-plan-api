@@ -21,8 +21,11 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
       .where('c.componentId = :componentId', {
         componentId,
       })
-      .andWhere(
-        '(ar.beginDate = :beginDate AND ar.beginHour = :beginHour) OR (ar.endDate IS NOT NULL AND ar.endDate = :endDate AND ar.endHour = :endHour)',
+      .andWhere(`((
+          ar.beginDate = :beginDate AND ar.beginHour = :beginHour
+        ) OR (
+          ar.endDate IS NOT NULL AND ar.endDate = :endDate AND ar.endHour = :endHour
+        ))`,
         {
           beginDate,
           beginHour,

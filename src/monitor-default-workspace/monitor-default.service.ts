@@ -17,6 +17,7 @@ import {
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
@@ -77,8 +78,8 @@ export class MonitorDefaultWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(monDefault);
@@ -112,7 +113,7 @@ export class MonitorDefaultWorkspaceService {
     monDefault.endDate = payload.endDate;
     monDefault.endHour = payload.endHour;
     monDefault.userId = userId;
-    monDefault.updateDate = new Date(Date.now());
+    monDefault.updateDate = currentDateTime();
 
     await this.repository.save(monDefault);
 

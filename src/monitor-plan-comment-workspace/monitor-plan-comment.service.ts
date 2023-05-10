@@ -9,6 +9,7 @@ import {
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { v4 } from 'uuid';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MonitorPlanCommentWorkspaceService {
@@ -57,8 +58,8 @@ export class MonitorPlanCommentWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
     const result = await this.repository.save(comment);
     return this.map.one(result);
@@ -76,7 +77,7 @@ export class MonitorPlanCommentWorkspaceService {
     );
     comment.endDate = payload.endDate;
     comment.userId = userId;
-    comment.updateDate = new Date(Date.now());
+    comment.updateDate = currentDateTime();
     const result = await this.repository.save(comment);
     return this.map.one(result);
   }

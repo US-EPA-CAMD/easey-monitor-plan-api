@@ -13,6 +13,7 @@ import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
 
 @Injectable()
 export class MatsMethodWorkspaceService {
@@ -64,8 +65,8 @@ export class MatsMethodWorkspaceService {
       endDate: payload.endDate,
       endHour: payload.endHour,
       userId: userId,
-      addDate: new Date(Date.now()),
-      updateDate: new Date(Date.now()),
+      addDate: currentDateTime(),
+      updateDate: currentDateTime(),
     });
 
     await this.repository.save(method);
@@ -95,7 +96,7 @@ export class MatsMethodWorkspaceService {
     method.endDate = payload.endDate;
     method.endHour = payload.endHour;
     method.userId = userId;
-    method.updateDate = new Date(Date.now());
+    method.updateDate = currentDateTime();
 
     await this.repository.save(method);
 
