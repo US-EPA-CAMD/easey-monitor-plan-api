@@ -62,7 +62,7 @@ export class MonitorPlanChecksService {
 
       monitorLocation.matsMethods?.forEach((matsMethod, matsMetIdx) => {
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.matsMethodChecksService.runChecks(
               matsMethod,
               true,
@@ -77,7 +77,7 @@ export class MonitorPlanChecksService {
 
       monitorLocation.unitControls?.forEach((unitControl, ucIdx) => {
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.unitControlChecksService.runChecks(
               locationId,
               null,
@@ -95,7 +95,7 @@ export class MonitorPlanChecksService {
 
       monitorLocation.spans?.forEach((span, spanIdx) => {
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.monSpanChecksService.runChecks(
               span,
               locationId,
@@ -110,7 +110,7 @@ export class MonitorPlanChecksService {
 
       monitorLocation.components?.forEach((component, compIdx) => {
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.componentChecksService.runChecks(
               locationId,
               component,
@@ -126,7 +126,7 @@ export class MonitorPlanChecksService {
 
       monitorLocation.systems?.forEach((system, sysIdx) => {
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.monSysCheckService.runChecks(
               locationId,
               system,
