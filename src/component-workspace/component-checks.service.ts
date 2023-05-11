@@ -49,7 +49,7 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
-    error = this.component81Check(component, errorLocation);
+    error = await this.component81Check(component, errorLocation);
     if (error) {
       errorList.push(error);
     }
@@ -183,15 +183,14 @@ export class ComponentCheckService {
   ) {
     let error = null;
     let errorCode = null;
-
     if (component.componentTypeCode === 'HG') {
-      switch (true) {
-        case !component.hgConverterIndicator:
-          errorCode = 'COMPON-81-A';
-          break;
-        case ![1, 0].includes(component.hgConverterIndicator):
-          errorCode = 'COMPON-81-B';
-          break;
+      if (
+        component.hgConverterIndicator === null ||
+        component.hgConverterIndicator === undefined
+      ) {
+        errorCode = 'COMPON-81-A';
+      } else if (![1, 0].includes(component.hgConverterIndicator)) {
+        errorCode = 'COMPON-81-B';
       }
     } else {
       if (component.hgConverterIndicator) {
