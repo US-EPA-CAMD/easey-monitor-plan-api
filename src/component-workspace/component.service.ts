@@ -8,8 +8,8 @@ import { ComponentWorkspaceRepository } from './component.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 import { Component } from '../entities/component.entity';
-import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -124,14 +124,19 @@ export class ComponentWorkspaceService {
               component.componentId,
             );
 
-            if(compRecord === undefined ) {
+            if (compRecord === undefined) {
               // Check used_identifier table to see if the componentId has already
               // been used, and if so grab that component record for update
               let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                  locationId, component.componentId, 'C');
+                locationId,
+                component.componentId,
+                'C',
+              );
 
-              if(usedIdentifier)
-                compRecord = await this.repository.findOne({ id: usedIdentifier.id})
+              if (usedIdentifier)
+                compRecord = await this.repository.findOne({
+                  id: usedIdentifier.id,
+                });
             }
 
             if (compRecord) {

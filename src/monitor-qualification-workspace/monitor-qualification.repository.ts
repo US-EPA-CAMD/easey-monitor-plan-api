@@ -15,7 +15,8 @@ export class MonitorQualificationWorkspaceRepository extends Repository<
     const result = this.createQueryBuilder('c')
       .where('c.locationId = :locationId', { locationId })
       .andWhere('c.qualificationTypeCode = :qualType', { qualType })
-      .andWhere(`((
+      .andWhere(
+        `((
           c.beginDate = :beginDate
         ) OR (
           c.endDate IS NOT NULL AND c.endDate = :endDate
@@ -24,7 +25,7 @@ export class MonitorQualificationWorkspaceRepository extends Repository<
           qualType,
           beginDate,
           endDate,
-        }
+        },
       )
       .getOne();
 

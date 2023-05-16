@@ -11,7 +11,7 @@ import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class UnitControlWorkspaceService {

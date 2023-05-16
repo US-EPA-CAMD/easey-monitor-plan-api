@@ -32,7 +32,8 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       });
     }
 
-    query.andWhere(`((
+    query.andWhere(
+      `((
         ms.beginDate = :beginDate AND ms.beginHour = :beginHour
       ) OR (
         ms.endDate = :endDate AND ms.endHour = :endHour

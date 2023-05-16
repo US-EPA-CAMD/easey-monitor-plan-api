@@ -47,10 +47,10 @@ export class UnitCapacity extends BaseEntity {
   @Column({ type: 'varchar', nullable: false, length: 8, name: 'userid' })
   userId: string;
 
-  @Column({ type: 'date', nullable: false, name: 'add_date' })
+  @Column({ type: 'timestamp', nullable: false, name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', name: 'update_date' })
+  @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
   @ManyToOne(

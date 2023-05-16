@@ -21,7 +21,8 @@ export class MatsMethodWorkspaceRepository extends Repository<MatsMethod> {
       .andWhere('mm.supplementalMATSParameterCode = :paramCode', {
         paramCode,
       })
-      .andWhere(`((
+      .andWhere(
+        `((
           mm.beginDate = :beginDate AND mm.beginHour = :beginHour
         ) OR (
           mm.endDate IS NOT NULL AND mm.endDate = :endDate AND mm.endHour = :endHour

@@ -17,7 +17,7 @@ import { SystemComponentWorkspaceService } from '../system-component-workspace/s
 import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
 import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
 import { MonitorSystem } from '../entities/monitor-system.entity';
-import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -34,7 +34,7 @@ const mockRepository = () => ({
 });
 
 const mockUsedIdRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(null)
+  findOne: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({

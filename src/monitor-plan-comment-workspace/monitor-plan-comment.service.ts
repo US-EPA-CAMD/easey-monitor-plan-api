@@ -9,7 +9,7 @@ import {
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { v4 } from 'uuid';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorPlanCommentWorkspaceService {

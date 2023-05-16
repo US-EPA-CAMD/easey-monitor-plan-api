@@ -85,9 +85,9 @@ export class ImportChecksService {
       // Qualification Checks
       if (location.qualifications) {
         errorList.push(
-          ...(this.qualificationService.runQualificationImportCheck(
+          ...this.qualificationService.runQualificationImportCheck(
             location.qualifications,
-          )),
+          ),
         );
       }
 

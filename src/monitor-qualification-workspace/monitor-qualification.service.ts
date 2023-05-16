@@ -21,7 +21,7 @@ import { MonitorQualificationWorkspaceRepository } from './monitor-qualification
 import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -145,7 +145,6 @@ export class MonitorQualificationWorkspaceService {
               qualification.qualificationTypeCode,
               qualification.beginDate,
               qualification.endDate,
-
             );
 
             if (qualificationRecord !== undefined) {

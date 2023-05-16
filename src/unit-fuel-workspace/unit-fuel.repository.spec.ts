@@ -68,7 +68,12 @@ describe('UnitFuelWorkspaceRepository', () => {
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitFuel);
 
-      const result = await repository.getUnitFuelBySpecs(1, 'CODE', new Date(), new Date());
+      const result = await repository.getUnitFuelBySpecs(
+        1,
+        'CODE',
+        new Date(),
+        new Date(),
+      );
 
       expect(result).toEqual(unitFuel);
     });
