@@ -22,6 +22,7 @@ import { MonitorConfigurationsModule } from './monitor-configurations/monitor-co
 import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
 import { SystemComponentMasterDataRelationshipModule } from './system-component-master-data-relationship/system-component-master-data-relationship.module';
 import { UsedIdentifierModule } from './used-identifier/used-identifier.module';
+import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UsedIdentifierModule } from './used-identifier/used-identifier.module';
     MonitorPlanReportingFreqModule,
     SystemComponentMasterDataRelationshipModule,
     UsedIdentifierModule,
+    WhatHasDataModule,
   ],
   providers: [],
 })
