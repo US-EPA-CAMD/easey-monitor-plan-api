@@ -18,7 +18,7 @@ import {
 } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {

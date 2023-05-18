@@ -13,7 +13,7 @@ import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class UnitFuelWorkspaceService {

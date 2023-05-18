@@ -16,7 +16,7 @@ import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class LEEQualificationWorkspaceService {

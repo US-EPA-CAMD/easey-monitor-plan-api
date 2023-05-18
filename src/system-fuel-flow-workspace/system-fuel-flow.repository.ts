@@ -40,10 +40,12 @@ export class SystemFuelFlowWorkspaceRepository extends Repository<
     const endDate = fuelFlow.endDate;
     const endHour = fuelFlow.endHour;
 
-    const query = this.createQueryBuilder('sff')
-      .where('sff.monitoringSystemRecordId = :monSysId', { monSysId });
+    const query = this.createQueryBuilder(
+      'sff',
+    ).where('sff.monitoringSystemRecordId = :monSysId', { monSysId });
 
-    query.andWhere(`((
+    query.andWhere(
+      `((
         sff.beginDate = :beginDate AND sff.beginHour = :beginHour
       ) OR (
         sff.endDate IS NOT NULL AND sff.endDate = :endDate AND sff.endHour = :endHour

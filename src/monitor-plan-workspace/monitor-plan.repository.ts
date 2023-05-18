@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Repository, EntityRepository } from 'typeorm';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @EntityRepository(MonitorPlan)
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {

@@ -34,7 +34,8 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
       .andWhere('u.fuelCode = :fuelCode', {
         fuelCode,
       })
-      .andWhere(`((
+      .andWhere(
+        `((
           u.beginDate = :beginDate
         ) OR (
           u.endDate IS NOT NULL AND u.endDate = :endDate
@@ -42,9 +43,9 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
         {
           beginDate,
           endDate,
-        }
+        },
       );
-    
+
     return qb.getOne();
   }
 }

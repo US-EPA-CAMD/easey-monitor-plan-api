@@ -21,7 +21,7 @@ const commonSQL = (schema: string) => {
     ) AS d USING(mon_plan_id)
     JOIN ${schema}.monitor_plan mp USING(mon_plan_id)
     JOIN camd.plant p USING(fac_id)`;
-}
+};
 
 @Injectable()
 export class WhatHasDataService {
@@ -35,9 +35,9 @@ export class WhatHasDataService {
     isWorkspace: boolean = false,
   ): Promise<any> {
     let sql = null;
-    const schema = isWorkspace ? "camdecmpswks" : "camdecmps";
+    const schema = isWorkspace ? 'camdecmpswks' : 'camdecmps';
 
-    switch(dataType) {
+    switch (dataType) {
       case MonitorPlanDataTypes.ANALYZER_RANGES:
         sql = `
           SELECT DISTINCT

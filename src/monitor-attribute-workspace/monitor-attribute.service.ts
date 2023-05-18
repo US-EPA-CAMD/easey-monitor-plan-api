@@ -16,7 +16,7 @@ import {
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {

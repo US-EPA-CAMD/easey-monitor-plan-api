@@ -8,7 +8,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';
-import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -22,7 +22,7 @@ const mockRepository = () => ({
 
 const mockUsedIdRepo = () => ({
   findOne: jest.fn().mockResolvedValue(null),
-})
+});
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue({}),

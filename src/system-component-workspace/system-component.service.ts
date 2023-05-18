@@ -21,7 +21,7 @@ import { ComponentWorkspaceService } from '../component-workspace/component.serv
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
