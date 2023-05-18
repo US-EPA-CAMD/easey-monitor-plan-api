@@ -16,7 +16,6 @@ const KEY = 'Unit Control';
 
 @Injectable()
 export class UnitControlChecksService {
-
   constructor(
     private readonly logger: Logger,
     @InjectRepository(UnitControlWorkspaceRepository)
@@ -66,21 +65,32 @@ export class UnitControlChecksService {
     return errorList;
   }
 
-  checkDatesForConsistency(unitControl: UnitControlBaseDTO, errorList: string[]) {
-    if(unitControl.optimizationDate) {
-      if( (unitControl.installDate && unitControl.optimizationDate < unitControl.installDate) ||
-          (unitControl.retireDate && unitControl.optimizationDate > unitControl.retireDate) )
+  checkDatesForConsistency(
+    unitControl: UnitControlBaseDTO,
+    errorList: string[],
+  ) {
+    if (unitControl.optimizationDate) {
+      if (
+        (unitControl.installDate &&
+          unitControl.optimizationDate < unitControl.installDate) ||
+        (unitControl.retireDate &&
+          unitControl.optimizationDate > unitControl.retireDate)
+      )
         errorList.push(
-            this.getMessage('CONTROL-4-A',
-                {date: unitControl.optimizationDate, key: KEY} ));
+          this.getMessage('CONTROL-4-A', {
+            date: unitControl.optimizationDate,
+            key: KEY,
+          }),
+        );
     }
 
-    if(unitControl.installDate) {
-      if(unitControl.originalCode === '1')
-        errorList.push(this.getMessage('CONTROL-5-D', {key: KEY}));
-    } else if(unitControl.originalCode !== '1')
-      errorList.push(this.getMessage('CONTROL-5-A', {fieldname: 'installDate', key: KEY}));
-
+    if (unitControl.installDate) {
+      if (unitControl.originalCode === '1')
+        errorList.push(this.getMessage('CONTROL-5-D', { key: KEY }));
+    } else if (unitControl.originalCode !== '1')
+      errorList.push(
+        this.getMessage('CONTROL-5-A', { fieldname: 'installDate', key: KEY }),
+      );
   }
 
   private async duplicateTestCheck(

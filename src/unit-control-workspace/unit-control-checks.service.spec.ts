@@ -51,7 +51,7 @@ describe('Unit Control Check Service Test', () => {
     const payload = new UnitControlBaseDTO();
     it('Should pass all checks', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(service,'checkDatesForConsistency').mockReturnValue(null);
+      jest.spyOn(service, 'checkDatesForConsistency').mockReturnValue(null);
       const result = await service.runChecks(locId, unitId, payload);
 
       expect(result).toEqual([]);
@@ -67,7 +67,7 @@ describe('Unit Control Check Service Test', () => {
 
     it('Should get already exists error', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
-      jest.spyOn(service,'checkDatesForConsistency').mockReturnValue(null);
+      jest.spyOn(service, 'checkDatesForConsistency').mockReturnValue(null);
       try {
         await service.runChecks(locId, unitId, payload);
       } catch (err) {
@@ -89,7 +89,7 @@ describe('Unit Control Check Service Test', () => {
       dto.optimizationDate = new Date('2023-04-15'); // Invalid, after RetireDate
       service.checkDatesForConsistency(dto, errorList);
       expect(errorList.length).toEqual(1);
-    })
+    });
 
     it('Should throw error for Null Install Date When originalCode = 1', async () => {
       const dto = new UnitControlBaseDTO();
@@ -101,7 +101,7 @@ describe('Unit Control Check Service Test', () => {
       dto.originalCode = '0';
       service.checkDatesForConsistency(dto, errorList);
       expect(errorList.length).toEqual(1);
-    })
+    });
 
     it('Should throw error for Non-null Install Date when originalcode != 1', async () => {
       const dto = new UnitControlBaseDTO();
@@ -114,6 +114,6 @@ describe('Unit Control Check Service Test', () => {
       dto.originalCode = '1';
       service.checkDatesForConsistency(dto, errorList);
       expect(errorList.length).toEqual(1);
-    })
-  })
+    });
+  });
 });

@@ -6,16 +6,17 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
-  IsString, ValidateIf,
+  IsString,
+  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import {CheckCatalogService} from "@us-epa-camd/easey-common/check-catalog";
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
-import {MAXIMUM_FUTURE_DATE, MINIMUM_DATE} from "../utilities/constants";
-import {BeginEndDatesConsistent} from "../utils";
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Monitoring Location Attribute';
 

@@ -21,9 +21,15 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {DATE_FORMAT, MAX_HOUR, MAXIMUM_FUTURE_DATE, MIN_HOUR, MINIMUM_DATE} from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MAX_HOUR,
+  MAXIMUM_FUTURE_DATE,
+  MIN_HOUR,
+  MINIMUM_DATE,
+} from '../utilities/constants';
 import { FuelCode } from '../entities/fuel-code.entity';
-import {IsInDateRange} from "../import-checks/pipes/is-in-date-range.pipe";
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Monitor Default';
 
@@ -315,12 +321,12 @@ export class MonitorDefaultBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-          `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
-          {
-            fieldName: args.property,
-            key: KEY,
-            dateFormat: DATE_FORMAT,
-          },
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
       );
     },
   })
