@@ -102,6 +102,15 @@ export class UnitControlBaseDTO {
       return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
     },
   })
+  @IsInDateRange('1930-01-01', MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('CONTROL-5-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   installDate: Date;
 
   @ApiProperty({
@@ -138,6 +147,7 @@ export class UnitControlBaseDTO {
     example: propertyMetadata.unitControlDTORetireDate.example,
     name: propertyMetadata.unitControlDTORetireDate.fieldLabels.value,
   })
+  @IsOptional()
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-6-A', {

@@ -12,6 +12,8 @@ import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { UnitRepository } from '../unit/unit.repository';
 
+const KEY = 'Unit Control';
+
 @Injectable()
 export class UnitControlChecksService {
   constructor(
@@ -41,19 +43,12 @@ export class UnitControlChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    let locationRecord;
-    let unitRecord;
 
     if (isImport) {
-      locationRecord = location;
-      unitRecord = await this.unitRepository.findOne({
+      const unitRecord = await this.unitRepository.findOne({
         name: location.unitId,
       });
       unitId = unitRecord.id;
-    } else {
-      locationRecord = await this.monitorLocationWorkspaceRepository.findOne(
-        locId,
-      );
     }
 
     if (!isUpdate && !isImport) {
@@ -63,8 +58,39 @@ export class UnitControlChecksService {
       }
     }
 
+    // Check that InstallDate, OptimizationDAte, and RetireDate make sense
+    this.checkDatesForConsistency(unitControl, errorList);
+
     this.throwIfErrors(errorList, isImport);
     return errorList;
+  }
+
+  checkDatesForConsistency(
+    unitControl: UnitControlBaseDTO,
+    errorList: string[],
+  ) {
+    if (unitControl.optimizationDate) {
+      if (
+        (unitControl.installDate &&
+          unitControl.optimizationDate < unitControl.installDate) ||
+        (unitControl.retireDate &&
+          unitControl.optimizationDate > unitControl.retireDate)
+      )
+        errorList.push(
+          this.getMessage('CONTROL-4-A', {
+            date: unitControl.optimizationDate,
+            key: KEY,
+          }),
+        );
+    }
+
+    if (unitControl.installDate) {
+      if (unitControl.originalCode === '1')
+        errorList.push(this.getMessage('CONTROL-5-D', { key: KEY }));
+    } else if (unitControl.originalCode !== '1')
+      errorList.push(
+        this.getMessage('CONTROL-5-A', { fieldname: 'installDate', key: KEY }),
+      );
   }
 
   private async duplicateTestCheck(
