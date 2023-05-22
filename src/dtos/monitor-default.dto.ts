@@ -401,7 +401,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     name: propertyMetadata.monitorDefaultDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOUpdateDate.description,
@@ -410,7 +410,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOActive.description,

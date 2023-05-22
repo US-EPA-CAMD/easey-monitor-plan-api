@@ -17,8 +17,8 @@ export class MonitorPlanCommentMap extends BaseMap<
       beginDate: entity.beginDate,
       endDate: entity.endDate,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
     };
   }

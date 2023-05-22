@@ -255,7 +255,7 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
     name: propertyMetadata.monitorFormulaDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorFormulaDTOUpdateDate.description,
@@ -264,7 +264,7 @@ export class MonitorFormulaDTO extends MonitorFormulaBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorFormulaDTOActive.description,

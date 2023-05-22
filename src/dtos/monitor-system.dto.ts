@@ -289,7 +289,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
     name: propertyMetadata.monitorSystemDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOUpdateDate.description,
@@ -298,7 +298,7 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOActive.description,

@@ -28,8 +28,8 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       serialNumber: entity.serialNumber,
       hgConverterIndicator: entity.hgConverterIndicator,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       analyzerRanges: analyzerRanges,
     };
   }

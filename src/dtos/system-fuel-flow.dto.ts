@@ -285,7 +285,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
     name: propertyMetadata.systemFuelFlowDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.systemFuelFlowDTOUpdateDate.description,
@@ -294,7 +294,7 @@ export class SystemFuelFlowDTO extends SystemFuelFlowBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.systemFuelFlowDTOActive.description,

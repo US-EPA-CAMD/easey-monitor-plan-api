@@ -85,7 +85,18 @@ export class MatsMethodWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<MatsMethodDTO> {
-    const method = await this.getMethod(methodId);
+
+    const method = await this.repository.findOne(methodId);
+
+    if (!method) {
+      throw new LoggingException(
+          'Mats Method not found.',
+          HttpStatus.NOT_FOUND,
+          {
+            methodId: methodId,
+          },
+      );
+    }
 
     method.supplementalMATSParameterCode =
       payload.supplementalMATSParameterCode;
@@ -104,7 +115,7 @@ export class MatsMethodWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return method;
+    return this.map.one(method);
   }
 
   async importMatsMethod(

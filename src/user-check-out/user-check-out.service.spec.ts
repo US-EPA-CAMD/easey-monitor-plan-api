@@ -84,10 +84,10 @@ describe('UserCheckOutService', () => {
   describe('updateLastActivity', () => {
     it('should update a configuration and return it', async () => {
       jest
-        .spyOn(service, 'getCheckedOutConfiguration')
-        .mockResolvedValue(userCheckoutDto);
-      userCheckoutDto.lastActivity = new Date(Date.now());
-      jest.spyOn(repository, 'save').mockResolvedValue(userCheckoutDto);
+        .spyOn(repository, 'findOne')
+        .mockResolvedValue(userCheckout);
+      userCheckoutDto.lastActivity = (new Date(Date.now())).toISOString();
+      jest.spyOn(repository, 'save').mockResolvedValue(userCheckout);
 
       const result = await service.updateLastActivity(monPlanId);
       expect(result).toEqual(userCheckoutDto);

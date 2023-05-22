@@ -118,11 +118,11 @@ export class MonitorPlanDTO {
   userId: string;
 
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @IsNumber()
   @IsOptional()

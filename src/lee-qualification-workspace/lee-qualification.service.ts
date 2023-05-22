@@ -116,7 +116,7 @@ export class LEEQualificationWorkspaceService {
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
     leeQual.userId = userId;
-    leeQual.updateDate = currentDateTime();
+    leeQual.updateDate = currentDateTime().toISOString();
 
     const result = await this.repository.save(leeQual);
 

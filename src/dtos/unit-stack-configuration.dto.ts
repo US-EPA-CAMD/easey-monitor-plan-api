@@ -92,7 +92,7 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
     name: propertyMetadata.unitStackConfigurationDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description:
@@ -103,7 +103,7 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitStackConfigurationDTOActive.description,

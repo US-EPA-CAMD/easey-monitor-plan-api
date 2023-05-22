@@ -192,7 +192,7 @@ export class LEEQualificationDTO extends LEEQualificationBaseDTO {
     name: propertyMetadata.lEEQualificationDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.lEEQualificationDTOUpdateDate.description,
@@ -201,5 +201,5 @@ export class LEEQualificationDTO extends LEEQualificationBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  updateDate: Date;
+  updateDate: string;
 }

@@ -20,8 +20,8 @@ export class UnitFuelMap extends BaseMap<UnitFuel, UnitFuelDTO> {
       actualOrProjectCode: entity.actualOrProjectedCode,
       sulfurContent: entity.sulfurContent,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
     };
   }

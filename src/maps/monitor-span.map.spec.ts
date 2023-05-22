@@ -65,7 +65,7 @@ describe('MonitorSpanMap', () => {
     expect(result.spanScaleCode).toEqual(spanScaleCode);
     expect(result.spanMethodCode).toEqual(spanMethodCode);
     expect(result.userid).toEqual(userId);
-    expect(result.updateDate).toEqual(updateDate);
+    expect(result.updateDate).toEqual(updateDate.toISOString());
     expect(result.spanUnitsOfMeasureCode).toEqual(spanUnitsOfMeasureCode);
     expect(result.active).toEqual(false);
   });

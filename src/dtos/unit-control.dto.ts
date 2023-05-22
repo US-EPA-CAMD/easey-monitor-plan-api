@@ -196,7 +196,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
     name: propertyMetadata.unitControlDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitControlDTOUpdateDate.description,
@@ -205,7 +205,7 @@ export class UnitControlDTO extends UnitControlBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitControlDTOActive.description,

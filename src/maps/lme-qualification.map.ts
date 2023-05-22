@@ -18,8 +18,8 @@ export class LMEQualificationMap extends BaseMap<
       so2Tons: entity.so2Tons,
       noxTons: entity.noxTons,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
     };
   }
 }
