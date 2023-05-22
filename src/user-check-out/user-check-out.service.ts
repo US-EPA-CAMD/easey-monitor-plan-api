@@ -60,7 +60,7 @@ export class UserCheckOutService {
     }
 
     record.lastActivity = new Date(Date.now());
-    this.repository.save(record)
+    await this.repository.save(record)
 
     return this.map.one(record);
   }
