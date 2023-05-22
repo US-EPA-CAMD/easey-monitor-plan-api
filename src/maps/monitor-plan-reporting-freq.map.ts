@@ -17,8 +17,8 @@ export class MonitorPlanReportingFrequencyMap extends BaseMap<
       beginReportPeriodId: entity.beginReportPeriodId,
       endReportPeriodId: entity.endReportPeriodId,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
     };
   }
 }

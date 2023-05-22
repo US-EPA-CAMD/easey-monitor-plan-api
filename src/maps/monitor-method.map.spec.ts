@@ -45,8 +45,8 @@ describe('MonitorMethodMap', () => {
     expect(result.endDate).toEqual(endDate);
     expect(result.endHour).toEqual(endHour);
     expect(result.userId).toEqual(userId);
-    expect(result.addDate).toEqual(addDate);
-    expect(result.updateDate).toEqual(updateDate);
+    expect(result.addDate).toEqual(addDate.toISOString());
+    expect(result.updateDate).toEqual(updateDate.toISOString());
     expect(result.active).toEqual(false);
   });
 });

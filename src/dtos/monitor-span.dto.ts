@@ -464,7 +464,7 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
     name: propertyMetadata.monitorSpanDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOUpdateDate.description,
@@ -473,7 +473,7 @@ export class MonitorSpanDTO extends MonitorSpanBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOActive.description,

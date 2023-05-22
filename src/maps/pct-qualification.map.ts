@@ -25,8 +25,8 @@ export class PCTQualificationMap extends BaseMap<
       yr3QualificationDataTypeCode: entity.yr3QualificationDataTypeCode,
       yr3PercentageValue: entity.yr3PercentageValue,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
     };
   }
 }

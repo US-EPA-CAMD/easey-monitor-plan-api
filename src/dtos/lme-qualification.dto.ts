@@ -121,7 +121,7 @@ export class LMEQualificationDTO extends LMEQualificationBaseDTO {
     name: propertyMetadata.lMEQualificationDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.lMEQualificationDTOUpdateDate.description,
@@ -130,5 +130,5 @@ export class LMEQualificationDTO extends LMEQualificationBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 }

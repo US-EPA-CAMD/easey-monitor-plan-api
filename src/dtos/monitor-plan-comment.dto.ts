@@ -94,7 +94,7 @@ export class MonitorPlanCommentDTO extends MonitorPlanCommentBaseDTO {
     name: propertyMetadata.monitorPlanCommentDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorPlanCommentDTOUpdateDate.description,
@@ -103,7 +103,7 @@ export class MonitorPlanCommentDTO extends MonitorPlanCommentBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorPlanCommentDTOActive.description,

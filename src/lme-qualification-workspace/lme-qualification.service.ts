@@ -11,6 +11,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import {LMEQualification} from "../entities/workspace/lme-qualification.entity";
 
 @Injectable()
 export class LMEQualificationWorkspaceService {
@@ -69,7 +70,6 @@ export class LMEQualificationWorkspaceService {
     if (result) {
       return this.map.one(result);
     }
-    return result;
   }
 
   async createLMEQualification(
@@ -108,11 +108,8 @@ export class LMEQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<LMEQualificationDTO> {
-    const lmeQual = await this.getLMEQualification(
-      locationId,
-      qualId,
-      lmeQualId,
-    );
+
+    const lmeQual = await this.repository.getLMEQualification(locationId, qualId, lmeQualId);
 
     lmeQual.qualificationId = qualId;
     lmeQual.qualificationDataYear = payload.qualificationDataYear;

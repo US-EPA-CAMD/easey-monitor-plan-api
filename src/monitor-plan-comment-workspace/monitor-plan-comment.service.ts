@@ -70,11 +70,15 @@ export class MonitorPlanCommentWorkspaceService {
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
   ): Promise<MonitorPlanCommentDTO> {
-    const comment = await this.getCommentsByPlanIdCommentBD(
-      monPlanId,
-      payload.monitoringPlanComment,
-      payload.beginDate,
-    );
+
+    const comment = await this.repository.findOne({
+      where: {
+        monitorPlanId: monPlanId,
+        monitorPlanComment: payload.monitoringPlanComment,
+        beginDate: payload.beginDate,
+      },
+    });
+
     comment.endDate = payload.endDate;
     comment.userId = userId;
     comment.updateDate = currentDateTime();

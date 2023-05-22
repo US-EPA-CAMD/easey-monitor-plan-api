@@ -175,7 +175,7 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
     name: propertyMetadata.unitCapacityDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitCapacityDTOUpdateDate.description,
@@ -184,7 +184,7 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitCapacityDTOActive.description,

@@ -1,26 +1,31 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpStatus, Injectable } from '@nestjs/common';
+import {HttpStatus, Inject, Injectable} from '@nestjs/common';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {UserCheckOutMap} from "../maps/user-check-out.map";
 
 @Injectable()
 export class UserCheckOutService {
   constructor(
     @InjectRepository(UserCheckOutRepository)
     private readonly repository: UserCheckOutRepository,
+    @Inject(UserCheckOutMap)
+    private readonly map: UserCheckOutMap,
   ) {}
 
   async getCheckedOutConfigurations(): Promise<UserCheckOutDTO[]> {
-    return this.repository.find();
+    const userCheckOuts = await this.repository.find();
+    return this.map.many(userCheckOuts);
   }
 
   async checkOutConfiguration(
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOutDTO> {
-    return this.repository.checkOutConfiguration(monPlanId, username);
+    const entity = await this.repository.checkOutConfiguration(monPlanId, username);
+    return this.map.one(entity);
   }
 
   async getCheckedOutConfiguration(
@@ -38,13 +43,26 @@ export class UserCheckOutService {
       );
     }
 
-    return record;
+    return this.map.one(record);
   }
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOutDTO> {
-    const record = await this.getCheckedOutConfiguration(monPlanId);
+    const record = await this.repository.findOne({
+      monPlanId,
+    });
+
+    if (!record) {
+      throw new LoggingException(
+          'Check-out configuration not found',
+          HttpStatus.NOT_FOUND,
+          { monPlanId: monPlanId },
+      );
+    }
+
     record.lastActivity = new Date(Date.now());
-    return this.repository.save(record);
+    this.repository.save(record)
+
+    return this.map.one(record);
   }
 
   async checkInConfiguration(monPlanId: string): Promise<Boolean> {

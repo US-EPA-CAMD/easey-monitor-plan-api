@@ -421,7 +421,7 @@ export class DuctWafDTO extends DuctWafBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.ductWafDTOUpdateDate.description,
@@ -430,7 +430,7 @@ export class DuctWafDTO extends DuctWafBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   // TODO: add ApiProperty
   @IsBoolean()

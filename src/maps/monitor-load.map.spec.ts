@@ -56,8 +56,8 @@ describe('MonitorLoadMap', () => {
     expect(result.normalLevelCode).toEqual(normalLevelCode);
     expect(result.secondLevelCode).toEqual(secondLevelCode);
     expect(result.userId).toEqual(userId);
-    expect(result.addDate).toEqual(addDate);
-    expect(result.updateDate).toEqual(updateDate);
+    expect(result.addDate).toEqual(addDate.toISOString());
+    expect(result.updateDate).toEqual(updateDate.toISOString());
     expect(result.maximumLoadUnitsOfMeasureCode).toEqual(
       maximumLoadUnitsOfMeasureCode,
     );

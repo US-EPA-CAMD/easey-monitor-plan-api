@@ -209,7 +209,7 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
     name: propertyMetadata.unitFuelDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitFuelDTOUpdateDate.description,
@@ -218,7 +218,7 @@ export class UnitFuelDTO extends UnitFuelBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitFuelDTOActive.description,

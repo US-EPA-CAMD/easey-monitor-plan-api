@@ -26,8 +26,8 @@ export class MonitorDefaultMap extends BaseMap<
       endDate: entity.endDate,
       endHour: entity.endHour,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
     };
   }

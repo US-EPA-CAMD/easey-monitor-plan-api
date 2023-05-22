@@ -191,12 +191,12 @@ export class ComponentDTO extends UpdateComponentBaseDTO {
     example: propertyMetadata.componentDTOAddDate.example,
     name: propertyMetadata.componentDTOAddDate.fieldLabels.value,
   })
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.componentDTOUpdateDate.description,
     example: propertyMetadata.componentDTOUpdateDate.example,
     name: propertyMetadata.componentDTOUpdateDate.fieldLabels.value,
   })
-  updateDate: Date;
+  updateDate: string;
 }

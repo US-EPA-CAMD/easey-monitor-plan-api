@@ -17,7 +17,7 @@ export class UserCheckOutBaseDTO {
     name: propertyMetadata.date.fieldLabels.value,
   })
   @IsDateString()
-  checkedOutOn: Date;
+  checkedOutOn: string;
 
   @IsString()
   checkedOutBy: string;
@@ -29,7 +29,7 @@ export class UserCheckOutBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  lastActivity: Date;
+  lastActivity: string;
 }
 
 export class UserCheckOutDTO extends UserCheckOutBaseDTO {
