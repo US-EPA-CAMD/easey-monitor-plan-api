@@ -224,6 +224,7 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<MonitorQualificationDTO> {
+    const timestamp = currentDateTime();
     const qual = this.repository.create({
       id: uuid(),
       locationId,
@@ -231,8 +232,8 @@ export class MonitorQualificationWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       userId: userId,
-      addDate: currentDateTime(),
-      updateDate: currentDateTime(),
+      addDate: timestamp,
+      updateDate: timestamp,
     });
 
     await this.repository.save(qual);
@@ -258,7 +259,6 @@ export class MonitorQualificationWorkspaceService {
     qual.beginDate = payload.beginDate;
     qual.endDate = payload.endDate;
     qual.userId = userId;
-    qual.addDate = new Date(Date.now());
     qual.updateDate = currentDateTime();
 
     const result = await this.repository.save(qual);
