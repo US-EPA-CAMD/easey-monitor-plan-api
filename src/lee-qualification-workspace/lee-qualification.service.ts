@@ -100,11 +100,23 @@ export class LEEQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<LEEQualificationDTO> {
-    const leeQual = await this.getLEEQualification(
+    const leeQual = await this.repository.getLEEQualification(
       locationId,
       qualId,
       pctQualId,
     );
+
+    if (!leeQual) {
+      throw new LoggingException(
+        'LEE Qualification Not Found',
+        HttpStatus.NOT_FOUND,
+        {
+          locId: locationId,
+          qualId: qualId,
+          pctQualId: pctQualId,
+        },
+      );
+    }
 
     leeQual.qualificationId = qualId;
     leeQual.qualificationTestDate = payload.qualificationTestDate;
@@ -115,7 +127,7 @@ export class LEEQualificationWorkspaceService {
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
     leeQual.userId = userId;
-    leeQual.updateDate = currentDateTime().toISOString();
+    leeQual.updateDate = currentDateTime();
 
     await this.repository.save(leeQual);
 
@@ -123,11 +135,7 @@ export class LEEQualificationWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return this.getLEEQualification(
-      locationId,
-      qualId,
-      pctQualId,
-    );
+    return this.map.one(leeQual);
   }
 
   async importLEEQualification(
