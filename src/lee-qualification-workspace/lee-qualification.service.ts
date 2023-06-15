@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -118,13 +117,17 @@ export class LEEQualificationWorkspaceService {
     leeQual.userId = userId;
     leeQual.updateDate = currentDateTime().toISOString();
 
-    const result = await this.repository.save(leeQual);
+    await this.repository.save(leeQual);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return this.map.one(result);
+    return this.getLEEQualification(
+      locationId,
+      qualId,
+      pctQualId,
+    );
   }
 
   async importLEEQualification(
