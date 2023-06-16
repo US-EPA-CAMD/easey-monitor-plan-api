@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -101,11 +100,23 @@ export class LEEQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<LEEQualificationDTO> {
-    const leeQual = await this.getLEEQualification(
+    const leeQual = await this.repository.getLEEQualification(
       locationId,
       qualId,
       pctQualId,
     );
+
+    if (!leeQual) {
+      throw new LoggingException(
+        'LEE Qualification Not Found',
+        HttpStatus.NOT_FOUND,
+        {
+          locId: locationId,
+          qualId: qualId,
+          pctQualId: pctQualId,
+        },
+      );
+    }
 
     leeQual.qualificationId = qualId;
     leeQual.qualificationTestDate = payload.qualificationTestDate;
@@ -116,15 +127,15 @@ export class LEEQualificationWorkspaceService {
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
     leeQual.userId = userId;
-    leeQual.updateDate = currentDateTime().toISOString();
+    leeQual.updateDate = currentDateTime();
 
-    const result = await this.repository.save(leeQual);
+    await this.repository.save(leeQual);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return this.map.one(result);
+    return this.map.one(leeQual);
   }
 
   async importLEEQualification(
