@@ -13,9 +13,9 @@ import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class UnitStackConfigurationBaseDTO {
   @IsString()
-  @MatchesRegEx('^[A-z0-9 -*#]{1,6}$', {
+  @MatchesRegEx('^[A-Za-z0-9*#-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
+      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Za-z0-9*#-]{1,6}`;
     },
   })
   unitId: string;
