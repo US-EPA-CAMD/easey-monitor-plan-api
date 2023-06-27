@@ -7,7 +7,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UnitService } from '../unit/unit.service';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {

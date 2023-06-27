@@ -139,7 +139,7 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
     name: propertyMetadata.monitorQualificationDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorQualificationDTOUpdateDate.description,
@@ -148,7 +148,7 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorQualificationDTOActive.description,

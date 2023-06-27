@@ -11,14 +11,17 @@ import { ComponentMap } from '../maps/component.map';
 import { ComponentCheckService } from './component-checks.service';
 import { SystemComponentMasterDataRelationshipModule } from '../system-component-master-data-relationship/system-component-master-data-relationship.module';
 import { UsedIdentifierModule } from '../used-identifier/used-identifier.module';
-import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 
 @Module({
   imports: [
     AnalyzerRangeWorkspaceModule,
     SystemComponentMasterDataRelationshipModule,
     UsedIdentifierModule,
-    TypeOrmModule.forFeature([ComponentWorkspaceRepository, UsedIdentifierRepository]),
+    TypeOrmModule.forFeature([
+      ComponentWorkspaceRepository,
+      UsedIdentifierRepository,
+    ]),
     HttpModule,
   ],
   controllers: [ComponentWorkspaceController],

@@ -16,7 +16,7 @@ import {
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class PCTQualificationWorkspaceService {
@@ -74,8 +74,9 @@ export class PCTQualificationWorkspaceService {
     );
     if (result) {
       return this.map.one(result);
+    } else {
+      return null;
     }
-    return result;
   }
 
   async createPCTQualification(
@@ -140,7 +141,7 @@ export class PCTQualificationWorkspaceService {
     pctQual.yr3QualificationDataTypeCode = payload.yr3QualificationDataTypeCode;
     pctQual.yr3PercentageValue = payload.yr3PercentageValue;
     pctQual.userId = userId;
-    pctQual.updateDate = currentDateTime();
+    pctQual.updateDate = currentDateTime().toISOString();
 
     await this.repository.save(pctQual);
 

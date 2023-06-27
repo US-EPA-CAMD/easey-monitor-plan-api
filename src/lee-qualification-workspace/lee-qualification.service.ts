@@ -3,7 +3,6 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -16,7 +15,7 @@ import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class LEEQualificationWorkspaceService {
@@ -101,11 +100,23 @@ export class LEEQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<LEEQualificationDTO> {
-    const leeQual = await this.getLEEQualification(
+    const leeQual = await this.repository.getLEEQualification(
       locationId,
       qualId,
       pctQualId,
     );
+
+    if (!leeQual) {
+      throw new LoggingException(
+        'LEE Qualification Not Found',
+        HttpStatus.NOT_FOUND,
+        {
+          locId: locationId,
+          qualId: qualId,
+          pctQualId: pctQualId,
+        },
+      );
+    }
 
     leeQual.qualificationId = qualId;
     leeQual.qualificationTestDate = payload.qualificationTestDate;
@@ -118,13 +129,13 @@ export class LEEQualificationWorkspaceService {
     leeQual.userId = userId;
     leeQual.updateDate = currentDateTime();
 
-    const result = await this.repository.save(leeQual);
+    await this.repository.save(leeQual);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return this.map.one(result);
+    return this.map.one(leeQual);
   }
 
   async importLEEQualification(

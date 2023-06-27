@@ -189,7 +189,7 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
     name: propertyMetadata.matsMethodDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.matsMethodDTOUpdateDate.description,
@@ -198,7 +198,7 @@ export class MatsMethodDTO extends MatsMethodBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.matsMethodDTOActive.description,

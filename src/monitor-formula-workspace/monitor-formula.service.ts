@@ -18,8 +18,8 @@ import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
@@ -175,14 +175,19 @@ export class MonitorFormulaWorkspaceService {
               formula.formulaId,
             );
 
-            if(formulaRecord === undefined ) {
+            if (formulaRecord === undefined) {
               // Check used_identifier table to see if the formulaId has already
               // been used, and if so grab that monitor-formula record for update
               let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                  locationId, formula.formulaId, 'F');
+                locationId,
+                formula.formulaId,
+                'F',
+              );
 
-              if(usedIdentifier)
-                formulaRecord = await this.repository.findOne({ id: usedIdentifier.id})
+              if (usedIdentifier)
+                formulaRecord = await this.repository.findOne({
+                  id: usedIdentifier.id,
+                });
             }
 
             if (formulaRecord !== undefined) {

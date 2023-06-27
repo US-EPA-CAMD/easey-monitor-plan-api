@@ -25,7 +25,7 @@ const lmeQualifications = [new LMEQualification()];
 const pctQualifications = [new PCTQualification()];
 
 const leeQualDto: LEEQualificationDTO = {
-  addDate: undefined,
+  addDate: null,
   applicableEmissionStandard: undefined,
   id: undefined,
   parameterCode: undefined,
@@ -35,28 +35,28 @@ const leeQualDto: LEEQualificationDTO = {
   qualificationTestDate: undefined,
   qualificationTestType: undefined,
   unitsOfStandard: undefined,
-  updateDate: undefined,
+  updateDate: null,
   userId: undefined,
 };
 
 const lmeQualDto: LMEQualificationDTO = {
-  addDate: undefined,
+  addDate: null,
   id: undefined,
   noxTons: undefined,
   operatingHours: undefined,
   qualificationDataYear: undefined,
   qualificationId: undefined,
   so2Tons: undefined,
-  updateDate: undefined,
+  updateDate: null,
   userId: undefined,
 };
 const pctQualDto: PCTQualificationDTO = {
-  addDate: undefined,
+  addDate: null,
   averagePercentValue: undefined,
   id: undefined,
   qualificationId: undefined,
   qualificationYear: undefined,
-  updateDate: undefined,
+  updateDate: null,
   userId: undefined,
   yr1PercentageValue: undefined,
   yr1QualificationDataTypeCode: undefined,
@@ -110,8 +110,8 @@ describe('MonitorQualification', () => {
     expect(result.beginDate).toEqual(beginDate);
     expect(result.endDate).toEqual(endDate);
     expect(result.userId).toEqual(userId);
-    expect(result.addDate).toEqual(addDate);
-    expect(result.updateDate).toEqual(updateDate);
+    expect(result.addDate).toEqual(addDate.toISOString());
+    expect(result.updateDate).toEqual(updateDate.toISOString());
     expect(result.leeQualifications).toEqual([leeQualDto]);
     expect(result.lmeQualifications).toEqual([lmeQualDto]);
     expect(result.pctQualifications).toEqual([pctQualDto]);

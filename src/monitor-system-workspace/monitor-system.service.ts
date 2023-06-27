@@ -15,8 +15,8 @@ import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/sy
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import {UsedIdentifierRepository} from "../used-identifier/used-identifier.repository";
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
@@ -230,14 +230,19 @@ export class MonitorSystemWorkspaceService {
               system.monitoringSystemId,
             );
 
-            if(systemRecord === undefined ) {
+            if (systemRecord === undefined) {
               // Check used_identifier table to see if the sysIdentifier has already
               // been used, and if so grab that monitor-system record for update
               let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                  locationId, system.monitoringSystemId, 'S');
+                locationId,
+                system.monitoringSystemId,
+                'S',
+              );
 
-              if(usedIdentifier)
-                systemRecord = await this.repository.findOne({ id: usedIdentifier.id})
+              if (usedIdentifier)
+                systemRecord = await this.repository.findOne({
+                  id: usedIdentifier.id,
+                });
             }
 
             if (systemRecord !== undefined) {

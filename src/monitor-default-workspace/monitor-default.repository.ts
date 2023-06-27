@@ -27,20 +27,26 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
     return this.createQueryBuilder('md')
       .where('md.locationId = :locationId', { locationId })
       .andWhere('md.parameterCode = :parameterCode', { parameterCode })
-      .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
+      .andWhere('md.defaultPurposeCode = :defaultPurposeCode', {
+        defaultPurposeCode,
+      })
       .andWhere('md.fuelCode = :fuelCode', { fuelCode })
-      .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
-      .andWhere(`((
+      .andWhere('md.operatingConditionCode = :operatingConditionCode', {
+        operatingConditionCode,
+      })
+      .andWhere(
+        `((
           md.beginDate = :beginDate AND md.beginHour = :beginHour
         ) OR (
           md.endDate IS NOT NULL AND md.endDate = :endDate AND md.endHour = :endHour
         ))`,
-      {
-        beginDate,
-        beginHour,
-        endDate,
-        endHour,
-      })
+        {
+          beginDate,
+          beginHour,
+          endDate,
+          endHour,
+        },
+      )
       .getOne();
   }
 }

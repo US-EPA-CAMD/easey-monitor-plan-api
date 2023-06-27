@@ -37,25 +37,27 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       .andWhere('uc.controlCode = :controlCode', { controlCode });
 
     if (installDate) {
-      query.andWhere(`((
+      query.andWhere(
+        `((
           uc.installDate = :installDate
         ) OR (
           uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate
         ))`,
         {
           installDate,
-          retireDate
-        }
+          retireDate,
+        },
       );
     } else {
-      query.andWhere(`((
+      query.andWhere(
+        `((
           uc.installDate IS NULL
         ) OR (
           uc.retireDate IS NOT NULL AND uc.retireDate = :retireDate
         ))`,
         {
-          retireDate
-        }
+          retireDate,
+        },
       );
     }
 

@@ -9,7 +9,7 @@ import {
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { v4 } from 'uuid';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorPlanCommentWorkspaceService {
@@ -70,11 +70,15 @@ export class MonitorPlanCommentWorkspaceService {
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
   ): Promise<MonitorPlanCommentDTO> {
-    const comment = await this.getCommentsByPlanIdCommentBD(
-      monPlanId,
-      payload.monitoringPlanComment,
-      payload.beginDate,
-    );
+
+    const comment = await this.repository.findOne({
+      where: {
+        monitorPlanId: monPlanId,
+        monitorPlanComment: payload.monitoringPlanComment,
+        beginDate: payload.beginDate,
+      },
+    });
+
     comment.endDate = payload.endDate;
     comment.userId = userId;
     comment.updateDate = currentDateTime();

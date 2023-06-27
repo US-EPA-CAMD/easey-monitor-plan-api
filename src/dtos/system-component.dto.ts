@@ -216,7 +216,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
     name: propertyMetadata.systemComponentDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.systemComponentDTOUpdateDate.description,
@@ -225,7 +225,7 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.systemComponentDTOActive.description,

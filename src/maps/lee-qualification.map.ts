@@ -21,8 +21,8 @@ export class LEEQualificationMap extends BaseMap<
       unitsOfStandard: entity.unitsOfStandard,
       percentageOfEmissionStandard: entity.percentageOfEmissionStandard,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
     };
   }
 }

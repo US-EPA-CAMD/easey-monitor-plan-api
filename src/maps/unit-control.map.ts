@@ -18,8 +18,8 @@ export class UnitControlMap extends BaseMap<UnitControl, UnitControlDTO> {
       seasonalControlsIndicator: entity.seasonalControlsIndicator,
       retireDate: entity.retireDate,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.retireDate === null,
     };
   }

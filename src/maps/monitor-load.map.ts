@@ -22,8 +22,8 @@ export class MonitorLoadMap extends BaseMap<MonitorLoad, MonitorLoadDTO> {
       normalLevelCode: entity.normalLevelCode,
       secondLevelCode: entity.secondLevelCode,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       maximumLoadUnitsOfMeasureCode: entity.maximumLoadUnitsOfMeasureCode,
       active: entity.endDate === null,
     };

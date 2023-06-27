@@ -21,7 +21,7 @@ import { MonitorQualificationWorkspaceRepository } from './monitor-qualification
 import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -145,7 +145,6 @@ export class MonitorQualificationWorkspaceService {
               qualification.qualificationTypeCode,
               qualification.beginDate,
               qualification.endDate,
-
             );
 
             if (qualificationRecord !== undefined) {
@@ -225,6 +224,7 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<MonitorQualificationDTO> {
+    const timestamp = currentDateTime();
     const qual = this.repository.create({
       id: uuid(),
       locationId,
@@ -232,8 +232,8 @@ export class MonitorQualificationWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       userId: userId,
-      addDate: currentDateTime(),
-      updateDate: currentDateTime(),
+      addDate: timestamp,
+      updateDate: timestamp,
     });
 
     await this.repository.save(qual);
@@ -259,7 +259,6 @@ export class MonitorQualificationWorkspaceService {
     qual.beginDate = payload.beginDate;
     qual.endDate = payload.endDate;
     qual.userId = userId;
-    qual.addDate = new Date(Date.now());
     qual.updateDate = currentDateTime();
 
     const result = await this.repository.save(qual);

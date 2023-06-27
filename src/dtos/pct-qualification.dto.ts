@@ -259,7 +259,7 @@ export class PCTQualificationDTO extends PCTQualificationBaseDTO {
     name: propertyMetadata.pCTQualificationDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.pCTQualificationDTOUpdateDate.description,
@@ -268,5 +268,5 @@ export class PCTQualificationDTO extends PCTQualificationBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 }

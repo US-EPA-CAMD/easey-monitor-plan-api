@@ -110,7 +110,7 @@ describe('MonitorPlanMap', () => {
     expect(result.locations).toEqual(locations);
     expect(result.evalStatusCode).toEqual(null);
     expect(result.userId).toEqual(userId);
-    expect(result.addDate).toEqual(addDate);
-    expect(result.updateDate).toEqual(updateDate);
+    expect(result.addDate).toEqual(addDate.toISOString());
+    expect(result.updateDate).toEqual(updateDate.toISOString());
   });
 });

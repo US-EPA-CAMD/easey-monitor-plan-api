@@ -104,9 +104,7 @@ describe('LEEQualificationService', () => {
 
   describe('updateLEEQualification', () => {
     it('updates a LEE qualification for a specific qualification ID and location ID', async () => {
-      jest
-        .spyOn(service, 'getLEEQualification')
-        .mockResolvedValue(returnedLEEQualification);
+      jest.spyOn(repository, 'getLEEQualification').mockResolvedValue(leeQual);
 
       const result = await service.updateLEEQualification(
         '1',

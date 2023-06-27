@@ -249,7 +249,7 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
     name: propertyMetadata.monitorMethodDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorMethodDTOUpdateDate.description,
@@ -258,7 +258,7 @@ export class MonitorMethodDTO extends MonitorMethodBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorMethodDTOActive.description,

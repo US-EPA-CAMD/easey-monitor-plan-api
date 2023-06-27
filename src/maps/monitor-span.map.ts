@@ -28,8 +28,8 @@ export class MonitorSpanMap extends BaseMap<MonitorSpan, MonitorSpanDTO> {
       endDate: entity.endDate,
       endHour: entity.endHour,
       userid: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
     };
   }

@@ -20,9 +20,7 @@ const payload: UnitControlBaseDTO = new UnitControlBaseDTO();
 const mockRepository = () => ({
   getUnitControls: jest.fn().mockResolvedValue([unitControl]),
   getUnitControl: jest.fn().mockResolvedValue(unitControl),
-  getUnitControlBySpecs: jest
-    .fn()
-    .mockResolvedValue(unitControl),
+  getUnitControlBySpecs: jest.fn().mockResolvedValue(unitControl),
   create: jest.fn().mockResolvedValue(unitControl),
   save: jest.fn().mockResolvedValue(unitControl),
 });

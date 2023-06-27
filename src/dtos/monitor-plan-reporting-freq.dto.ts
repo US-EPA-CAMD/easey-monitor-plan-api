@@ -74,7 +74,7 @@ export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO
     name: propertyMetadata.monitorPlanReportingFreqDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description:
@@ -85,5 +85,5 @@ export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO
   })
   @IsDateString()
   @IsOptional()
-  updateDate?: Date;
+  updateDate?: string;
 }

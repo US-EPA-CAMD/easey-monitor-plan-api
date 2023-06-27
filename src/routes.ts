@@ -71,8 +71,13 @@ import { UnitCapacityModule } from './unit-capacity/unit-capacity.module';
 import { CheckOutModule } from './check-out/check-out.module';
 import { MonitorConfigurationsModule } from './monitor-configurations/monitor-configurations.module';
 import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
+import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 
 const routes: Routes = [
+  {
+    path: '/what-has-data',
+    module: WhatHasDataModule,
+  },
   {
     path: '/plans',
     module: MonitorPlanModule,

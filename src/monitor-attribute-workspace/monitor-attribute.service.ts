@@ -16,7 +16,7 @@ import {
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {currentDateTime} from "@us-epa-camd/easey-common/utilities/functions";
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {
@@ -95,7 +95,18 @@ export class MonitorAttributeWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<MonitorAttributeDTO> {
-    const attribute = await this.getAttribute(locationId, id);
+    const attribute = await this.repository.getAttribute(locationId, id);
+
+    if (!attribute) {
+      throw new LoggingException(
+          'Monitor Location Attribute not found',
+          HttpStatus.NOT_FOUND,
+          {
+            locationId,
+            id,
+          },
+      );
+    }
 
     attribute.ductIndicator = payload.ductIndicator;
     attribute.bypassIndicator = payload.bypassIndicator;
@@ -116,7 +127,7 @@ export class MonitorAttributeWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
     }
 
-    return this.getAttribute(locationId, id);
+    return this.map.one(attribute);
   }
 
   async importAttributes(

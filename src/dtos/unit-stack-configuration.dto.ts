@@ -13,9 +13,9 @@ import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
 export class UnitStackConfigurationBaseDTO {
   @IsString()
-  @MatchesRegEx('^[A-z0-9 -*#]{1,6}$', {
+  @MatchesRegEx('^[A-Za-z0-9*#-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
+      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Za-z0-9*#-]{1,6}`;
     },
   })
   unitId: string;
@@ -92,7 +92,7 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
     name: propertyMetadata.unitStackConfigurationDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description:
@@ -103,7 +103,7 @@ export class UnitStackConfigurationDTO extends UnitStackConfigurationBaseDTO {
   })
   @IsDateString()
   @IsOptional()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.unitStackConfigurationDTOActive.description,

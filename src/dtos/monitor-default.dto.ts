@@ -12,6 +12,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { BeginEndDatesConsistent } from '../utils';
 
 import {
   IsInRange,
@@ -20,8 +21,15 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MAX_HOUR,
+  MAXIMUM_FUTURE_DATE,
+  MIN_HOUR,
+  MINIMUM_DATE,
+} from '../utilities/constants';
 import { FuelCode } from '../entities/fuel-code.entity';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Monitor Default';
 
@@ -243,17 +251,21 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOBeginDate.example,
     name: propertyMetadata.monitorDefaultDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsIsoFormat({
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
-        {
-          fieldname: args.property,
-          key: KEY,
-          dateFormat: DATE_FORMAT,
-        },
-      );
+      return CheckCatalogService.formatResultMessage('DEFAULT-39-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-39-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
     },
   })
   beginDate: Date;
@@ -263,17 +275,21 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOBeginHour.example,
     name: propertyMetadata.monitorDefaultDTOBeginHour.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInt()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-40-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
-        {
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+      return CheckCatalogService.formatResultMessage('DEFAULT-40-B', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
     },
   })
   beginHour: number;
@@ -283,20 +299,37 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOEndDate.example,
     name: propertyMetadata.monitorDefaultDTOEndDate.fieldLabels.value,
   })
-  @IsOptional()
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-38-B', {
+        datefield2: args.property,
+        hourfield2: 'endHour',
+        key: KEY,
+      });
+    },
+  })
+  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-41-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
         {
-          fieldname: args.property,
+          fieldName: args.property,
           key: KEY,
           dateFormat: DATE_FORMAT,
         },
       );
     },
   })
-  @ValidateIf(o => o.endHour !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -304,20 +337,36 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOEndHour.example,
     name: propertyMetadata.monitorDefaultDTOEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInt()
-  @IsInRange(MIN_HOUR, MAX_HOUR, {
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be within the range of 0 and 23`,
-        {
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+      return CheckCatalogService.formatResultMessage('DEFAULT-38-A', {
+        hourfield2: args.property,
+        datefield2: 'endDate',
+        key: KEY,
+      });
     },
   })
-  @ValidateIf(o => o.endDate !== null)
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-42-A', {
+        fieldname: args.property,
+        hour: args.value,
+        key: KEY,
+      });
+    },
+  })
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-38-C', {
+        datefield2: 'endDate',
+        hourfield2: 'endHour',
+        datefield1: 'beginDate',
+        hourfield1: 'beginHour',
+        key: KEY,
+      });
+    },
+  })
   endHour: number;
 }
 
@@ -352,7 +401,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
     name: propertyMetadata.monitorDefaultDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOUpdateDate.description,
@@ -361,7 +410,7 @@ export class MonitorDefaultDTO extends MonitorDefaultBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOActive.description,

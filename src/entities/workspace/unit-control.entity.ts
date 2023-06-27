@@ -41,10 +41,10 @@ export class UnitControl extends BaseEntity {
   @Column({ name: 'userid' })
   userId: string;
 
-  @Column({ type: 'date', name: 'add_date' })
+  @Column({ type: 'timestamp', name: 'add_date' })
   addDate: Date;
 
-  @Column({ type: 'date', name: 'update_date' })
+  @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
   @ManyToOne(

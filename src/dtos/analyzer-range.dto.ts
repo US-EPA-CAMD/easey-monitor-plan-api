@@ -242,7 +242,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
     name: propertyMetadata.analyzerRangeDTOAddDate.fieldLabels.value,
   })
   @IsDateString()
-  addDate: Date;
+  addDate: string;
 
   @ApiProperty({
     description: propertyMetadata.analyzerRangeDTOUpdateDate.description,
@@ -251,7 +251,7 @@ export class AnalyzerRangeDTO extends AnalyzerRangeBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  updateDate: Date;
+  updateDate: string;
 
   @ApiProperty({
     description: propertyMetadata.analyzerRangeDTOActive.description,
