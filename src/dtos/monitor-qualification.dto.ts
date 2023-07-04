@@ -20,6 +20,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
+import { CPMSQualificationBaseDTO } from './cpms-qualification.dto';
 
 const KEY = 'Monitoring Qualification';
 
@@ -106,6 +107,10 @@ export class MonitorQualificationBaseDTO {
   @ValidateNested()
   @Type(() => PCTQualificationBaseDTO)
   pctQualifications: PCTQualificationBaseDTO[];
+
+  @ValidateNested()
+  @Type(() => CPMSQualificationBaseDTO)
+  cpmsQualifications: CPMSQualificationBaseDTO[];
 }
 
 export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
