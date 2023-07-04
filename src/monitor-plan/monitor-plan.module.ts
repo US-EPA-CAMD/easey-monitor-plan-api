@@ -30,6 +30,7 @@ import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorPlanReportingFreqModule } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
 import { AnalyzerRangeModule } from '../analyzer-range/analyzer-range.module';
+import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualification.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { AnalyzerRangeModule } from '../analyzer-range/analyzer-range.module';
     LEEQualificationModule,
     LMEQualificationModule,
     PCTQualificationModule,
+    CPMSQualificationModule,
     UnitCapacityModule,
     UnitControlModule,
     UnitFuelModule,
