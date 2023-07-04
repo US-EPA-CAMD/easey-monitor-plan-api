@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -14,7 +9,7 @@ import {
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -48,7 +43,7 @@ export class LEEQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      throw new LoggingException(
+      throw new EaseyException(
         'LEE Qualification Not Found',
         HttpStatus.NOT_FOUND,
         {
@@ -107,7 +102,7 @@ export class LEEQualificationWorkspaceService {
     );
 
     if (!leeQual) {
-      throw new LoggingException(
+      throw new EaseyException(
         'LEE Qualification Not Found',
         HttpStatus.NOT_FOUND,
         {

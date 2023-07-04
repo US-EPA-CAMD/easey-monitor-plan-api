@@ -10,7 +10,7 @@ import { UnitService } from '../unit/unit.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class ImportChecksService {
@@ -29,7 +29,7 @@ export class ImportChecksService {
 
   private checkIfThrows(errorList: string[]) {
     if (errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(errorList.join(', '), HttpStatus.BAD_REQUEST);
     }
   }
 

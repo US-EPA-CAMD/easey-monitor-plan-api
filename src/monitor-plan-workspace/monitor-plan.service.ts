@@ -35,6 +35,7 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { CPMSQualificationWorkspaceService } from '../cpms-qualification-workspace/cpms-qualification-workspace.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -95,6 +96,7 @@ export class MonitorPlanWorkspaceService {
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
+    private readonly cpmsQualService: CPMSQualificationWorkspaceService,
 
     private map: MonitorPlanMap,
   ) {}
@@ -422,6 +424,10 @@ export class MonitorPlanWorkspaceService {
               );
               q.pctQualifications = qualResults[2].filter(
                 i => i.qualificationId === q.id,
+              );
+              q.cpmsQualifications = await this.cpmsQualService.getCPMSQualifications(
+                q.locationId,
+                q.id,
               );
             });
           }

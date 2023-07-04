@@ -6,7 +6,7 @@ import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
 
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
@@ -28,7 +28,7 @@ export class UnitControlChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(errorList.join(', '), HttpStatus.BAD_REQUEST);
     }
   }
 

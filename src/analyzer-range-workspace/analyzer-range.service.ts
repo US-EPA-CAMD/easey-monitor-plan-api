@@ -11,7 +11,7 @@ import { AnalyzerRange } from '../entities/analyzer-range.entity';
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class AnalyzerRangeWorkspaceService {
     const result = await this.repository.findOne(analyzerRangeId);
 
     if (!result) {
-      throw new LoggingException(
+      throw new EaseyException(
         'Analyzer Range Not Found',
         HttpStatus.NOT_FOUND,
         { analyzerRangeId: analyzerRangeId },

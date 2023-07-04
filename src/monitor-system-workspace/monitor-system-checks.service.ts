@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
 import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
@@ -25,7 +25,7 @@ export class MonitorSystemCheckService {
 
   private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(errorList.join(', '), HttpStatus.BAD_REQUEST);
     }
   }
 

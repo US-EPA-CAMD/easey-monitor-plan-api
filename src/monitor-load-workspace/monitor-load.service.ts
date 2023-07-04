@@ -13,7 +13,7 @@ import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -37,11 +37,9 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
-      throw new LoggingException(
-        'Monitor Load Not Found',
-        HttpStatus.NOT_FOUND,
-        { loadId: loadId },
-      );
+      throw new EaseyException('Monitor Load Not Found', HttpStatus.NOT_FOUND, {
+        loadId: loadId,
+      });
     }
 
     return result;

@@ -12,7 +12,7 @@ import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -36,13 +36,9 @@ export class MatsMethodWorkspaceService {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
-      throw new LoggingException(
-        'Mats Method not found.',
-        HttpStatus.NOT_FOUND,
-        {
-          methodId: methodId,
-        },
-      );
+      throw new EaseyException('Mats Method not found.', HttpStatus.NOT_FOUND, {
+        methodId: methodId,
+      });
     }
 
     return this.map.one(result);
@@ -85,17 +81,12 @@ export class MatsMethodWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<MatsMethodDTO> {
-
     const method = await this.repository.findOne(methodId);
 
     if (!method) {
-      throw new LoggingException(
-          'Mats Method not found.',
-          HttpStatus.NOT_FOUND,
-          {
-            methodId: methodId,
-          },
-      );
+      throw new EaseyException('Mats Method not found.', HttpStatus.NOT_FOUND, {
+        methodId: methodId,
+      });
     }
 
     method.supplementalMATSParameterCode =

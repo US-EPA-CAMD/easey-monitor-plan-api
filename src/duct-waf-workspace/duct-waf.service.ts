@@ -7,7 +7,7 @@ import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWaf } from '../entities/duct-waf.entity';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class DuctWafWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException('Duct Waf Not Found', HttpStatus.NOT_FOUND, {
+      throw new EaseyException('Duct Waf Not Found', HttpStatus.NOT_FOUND, {
         id: id,
       });
     }

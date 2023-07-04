@@ -9,7 +9,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
   UnitCapacityBaseDTO,
@@ -91,7 +91,7 @@ export class UnitCapacityWorkspaceService {
   ): Promise<UnitCapacityDTO> {
     const result = await this.repository.getUnitCapacity(unitCapacityId);
     if (!result) {
-      throw new LoggingException(
+      throw new EaseyException(
         'Unit Capacity Not Found.',
         HttpStatus.NOT_FOUND,
         {

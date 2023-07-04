@@ -17,7 +17,7 @@ import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
@@ -52,7 +52,7 @@ export class MonitorFormulaWorkspaceService {
     );
 
     if (!result) {
-      throw new LoggingException(
+      throw new EaseyException(
         'Monitor Formula Not Found',
         HttpStatus.NOT_FOUND,
         {

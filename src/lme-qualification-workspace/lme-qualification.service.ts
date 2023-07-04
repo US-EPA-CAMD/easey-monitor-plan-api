@@ -9,9 +9,9 @@ import {
 } from '../dtos/lme-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import {LMEQualification} from "../entities/workspace/lme-qualification.entity";
+import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
 
 @Injectable()
 export class LMEQualificationWorkspaceService {
@@ -44,7 +44,7 @@ export class LMEQualificationWorkspaceService {
       lmeQualId,
     );
     if (!result) {
-      throw new LoggingException(
+      throw new EaseyException(
         'LME Qualification Not Found',
         HttpStatus.NOT_FOUND,
         {
@@ -108,8 +108,11 @@ export class LMEQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<LMEQualificationDTO> {
-
-    const lmeQual = await this.repository.getLMEQualification(locationId, qualId, lmeQualId);
+    const lmeQual = await this.repository.getLMEQualification(
+      locationId,
+      qualId,
+      lmeQualId,
+    );
 
     lmeQual.qualificationId = qualId;
     lmeQual.qualificationDataYear = payload.qualificationDataYear;

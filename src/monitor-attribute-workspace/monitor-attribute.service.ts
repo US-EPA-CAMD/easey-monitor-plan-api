@@ -15,7 +15,7 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -42,7 +42,7 @@ export class MonitorAttributeWorkspaceService {
     const result = await this.repository.getAttribute(locationId, id);
 
     if (!result) {
-      throw new LoggingException(
+      throw new EaseyException(
         'Monitor Location Attribute not found',
         HttpStatus.NOT_FOUND,
         {
@@ -98,13 +98,13 @@ export class MonitorAttributeWorkspaceService {
     const attribute = await this.repository.getAttribute(locationId, id);
 
     if (!attribute) {
-      throw new LoggingException(
-          'Monitor Location Attribute not found',
-          HttpStatus.NOT_FOUND,
-          {
-            locationId,
-            id,
-          },
+      throw new EaseyException(
+        'Monitor Location Attribute not found',
+        HttpStatus.NOT_FOUND,
+        {
+          locationId,
+          id,
+        },
       );
     }
 
