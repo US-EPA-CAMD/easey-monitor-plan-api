@@ -1,18 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CpmsQualificationController } from './cpms-qualification.controller';
-import { CpmsQualificationService } from './cpms-qualification.service';
+import { CPMSQualificationController } from './cpms-qualification.controller';
+import { CPMSQualificationService } from './cpms-qualification.service';
+import { CPMSQualificationRepository } from './cpms-qualification.repository';
 
-describe('CpmsQualificationController', () => {
-  let controller: CpmsQualificationController;
+describe('CPMSQualificationController', () => {
+  let controller: CPMSQualificationController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CpmsQualificationController],
-      providers: [CpmsQualificationService],
+      controllers: [CPMSQualificationController],
+      providers: [CPMSQualificationService, CPMSQualificationRepository],
     }).compile();
 
-    controller = module.get<CpmsQualificationController>(
-      CpmsQualificationController,
+    controller = module.get<CPMSQualificationController>(
+      CPMSQualificationController,
     );
   });
 

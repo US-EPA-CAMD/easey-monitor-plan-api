@@ -44,7 +44,7 @@ export class MonitorDefaultWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        'Monitor Default Not Found',
+        new Error('Monitor Default Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locationId: locationId,

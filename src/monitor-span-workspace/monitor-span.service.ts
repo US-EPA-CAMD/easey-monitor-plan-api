@@ -37,7 +37,7 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      throw new EaseyException('Monitor Span not found', HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error('Monitor Span not found'), HttpStatus.NOT_FOUND, {
         locationId: locationId,
         spanId: spanId,
       });

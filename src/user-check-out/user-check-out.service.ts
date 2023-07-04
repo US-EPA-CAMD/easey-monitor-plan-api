@@ -40,7 +40,7 @@ export class UserCheckOutService {
 
     if (!record) {
       throw new EaseyException(
-        'Check-out configuration not found',
+        new Error('Check-out configuration not found'),
         HttpStatus.NOT_FOUND,
         { monPlanId: monPlanId },
       );
@@ -56,7 +56,7 @@ export class UserCheckOutService {
 
     if (!record) {
       throw new EaseyException(
-        'Check-out configuration not found',
+        new Error('Check-out configuration not found'),
         HttpStatus.NOT_FOUND,
         { monPlanId: monPlanId },
       );

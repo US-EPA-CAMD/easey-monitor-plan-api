@@ -41,7 +41,7 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      throw new EaseyException('Fuel Flow not found.', HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error('Fuel Flow not found.'), HttpStatus.NOT_FOUND, {
         fuelFlowId: fuelFlowId,
       });
     }

@@ -50,7 +50,7 @@ export class PCTQualificationWorkspaceService {
     );
     if (!result) {
       throw new EaseyException(
-        'PCT Qualification Not Found',
+        new Error('PCT Qualification Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locId: locId,

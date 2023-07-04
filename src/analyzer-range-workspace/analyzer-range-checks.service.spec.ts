@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -35,7 +34,7 @@ describe('Analyzer Range Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule],
       providers: [
         AnalyzerRangeChecksService,
         {
@@ -76,7 +75,7 @@ describe('Analyzer Range Checks Service Test', () => {
       try {
         await service.runChecks(locationId, analyzerRange);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
     });
   });

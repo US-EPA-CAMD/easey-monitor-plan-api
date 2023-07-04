@@ -44,7 +44,7 @@ export class LEEQualificationWorkspaceService {
     );
     if (!result) {
       throw new EaseyException(
-        'LEE Qualification Not Found',
+        new Error('LEE Qualification Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locId: locId,
@@ -103,7 +103,7 @@ export class LEEQualificationWorkspaceService {
 
     if (!leeQual) {
       throw new EaseyException(
-        'LEE Qualification Not Found',
+        new Error('LEE Qualification Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locId: locationId,

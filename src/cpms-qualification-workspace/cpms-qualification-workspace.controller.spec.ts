@@ -1,18 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CpmsQualificationWorkspaceController } from './cpms-qualification-workspace.controller';
-import { CpmsQualificationWorkspaceService } from './cpms-qualification-workspace.service';
+import { CPMSQualificationWorkspaceController } from './cpms-qualification-workspace.controller';
+import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
+import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
 
-describe('CpmsQualificationWorkspaceController', () => {
-  let controller: CpmsQualificationWorkspaceController;
+describe('CPMSQualificationWorkspaceController', () => {
+  let controller: CPMSQualificationWorkspaceController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [CpmsQualificationWorkspaceController],
-      providers: [CpmsQualificationWorkspaceService],
+      controllers: [CPMSQualificationWorkspaceController],
+      providers: [
+        CPMSQualificationWorkspaceService,
+        CPMSQualificationWorkspaceRepository,
+      ],
     }).compile();
 
-    controller = module.get<CpmsQualificationWorkspaceController>(
-      CpmsQualificationWorkspaceController,
+    controller = module.get<CPMSQualificationWorkspaceController>(
+      CPMSQualificationWorkspaceController,
     );
   });
 

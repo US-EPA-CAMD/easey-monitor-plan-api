@@ -40,11 +40,15 @@ export class UnitFuelWorkspaceService {
     const result = await this.repository.getUnitFuel(unitFuelId);
 
     if (!result) {
-      throw new EaseyException('Unit Fuel Not Found', HttpStatus.NOT_FOUND, {
-        locId: locId,
-        unitId: unitId,
-        unitFuelId: unitFuelId,
-      });
+      throw new EaseyException(
+        new Error('Unit Fuel Not Found'),
+        HttpStatus.NOT_FOUND,
+        {
+          locId: locId,
+          unitId: unitId,
+          unitFuelId: unitFuelId,
+        },
+      );
     }
 
     return this.map.one(result);

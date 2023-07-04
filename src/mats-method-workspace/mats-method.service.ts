@@ -36,7 +36,7 @@ export class MatsMethodWorkspaceService {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
-      throw new EaseyException('Mats Method not found.', HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error('Mats Method not found.'), HttpStatus.NOT_FOUND, {
         methodId: methodId,
       });
     }
@@ -84,7 +84,7 @@ export class MatsMethodWorkspaceService {
     const method = await this.repository.findOne(methodId);
 
     if (!method) {
-      throw new EaseyException('Mats Method not found.', HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error('Mats Method not found.'), HttpStatus.NOT_FOUND, {
         methodId: methodId,
       });
     }

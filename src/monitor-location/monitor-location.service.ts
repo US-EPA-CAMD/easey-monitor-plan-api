@@ -23,7 +23,7 @@ export class MonitorLocationService {
     const result = await this.repository.findOne(locationId);
 
     if (!result) {
-      throw new EaseyException(this.errorMsg, HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error(this.errorMsg), HttpStatus.NOT_FOUND, {
         locationId: locationId,
       });
     }
@@ -34,7 +34,7 @@ export class MonitorLocationService {
   async getLocationEntity(locationId: string): Promise<MonitorLocation> {
     const result = await this.repository.findOne(locationId);
     if (!result) {
-      throw new EaseyException(this.errorMsg, HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error(this.errorMsg), HttpStatus.NOT_FOUND, {
         locationId: locationId,
       });
     }

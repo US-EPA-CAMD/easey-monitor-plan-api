@@ -53,7 +53,7 @@ export class MonitorFormulaWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        'Monitor Formula Not Found',
+        new Error('Monitor Formula Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locationId: locationId,

@@ -19,7 +19,10 @@ export class MonitorSpanChecksService {
 
   public throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
-      throw new EaseyException(errorList.join(', '), HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

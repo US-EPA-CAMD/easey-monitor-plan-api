@@ -58,6 +58,8 @@ import { SystemComponent } from '../entities/workspace/system-component.entity';
 import { LEEQualification } from '../entities/workspace/lee-qualification.entity';
 import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
 import { PCTQualification } from '../entities/workspace/pct-qualification.entity';
+import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
+import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
@@ -171,6 +173,10 @@ const mockUnitStackConfigRepo = () => ({
 });
 const mockReportingFreqRepo = () => ({
   find: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
+});
+
+const mockCpmsQual = () => ({
+  find: jest.fn().mockResolvedValue([new CPMSQualificationDTO()]),
 });
 const mockUscMap = () => ({});
 const mockCountyCodeService = () => ({
@@ -299,6 +305,10 @@ describe('Monitor Plan Service', () => {
         {
           provide: PCTQualificationWorkspaceRepository,
           useFactory: mockPctQualificationRepo,
+        },
+        {
+          provide: CPMSQualificationWorkspaceRepository,
+          useFactory: mockCpmsQual,
         },
         {
           provide: UnitStackConfigurationWorkspaceRepository,

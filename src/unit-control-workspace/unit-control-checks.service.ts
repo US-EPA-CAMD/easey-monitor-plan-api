@@ -28,7 +28,10 @@ export class UnitControlChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new EaseyException(errorList.join(', '), HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

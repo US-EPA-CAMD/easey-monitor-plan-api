@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CpmsQualificationService } from './cpms-qualification.service';
+import { CPMSQualificationService } from './cpms-qualification.service';
+import { CPMSQualificationRepository } from './cpms-qualification.repository';
 
-describe('CpmsQualificationService', () => {
-  let service: CpmsQualificationService;
+describe('CPMSQualificationService', () => {
+  let service: CPMSQualificationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CpmsQualificationService],
+      providers: [CPMSQualificationService, CPMSQualificationRepository],
     }).compile();
 
-    service = module.get<CpmsQualificationService>(CpmsQualificationService);
+    service = module.get<CPMSQualificationService>(CPMSQualificationService);
   });
 
   it('should be defined', () => {

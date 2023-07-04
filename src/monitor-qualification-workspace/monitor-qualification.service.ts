@@ -207,7 +207,7 @@ export class MonitorQualificationWorkspaceService {
     const result = await this.repository.getQualification(locId, qualId);
     if (!result) {
       throw new EaseyException(
-        'Qualification Not Found',
+        new Error('Qualification Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locId: locId,

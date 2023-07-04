@@ -45,7 +45,7 @@ export class LMEQualificationWorkspaceService {
     );
     if (!result) {
       throw new EaseyException(
-        'LME Qualification Not Found',
+        new Error('LME Qualification Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locId: locId,

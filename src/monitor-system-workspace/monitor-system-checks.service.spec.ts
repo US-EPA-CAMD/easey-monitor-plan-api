@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
 import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
@@ -21,7 +20,7 @@ describe('Monitor System Check Service Tests', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule],
       providers: [
         MonitorSystemCheckService,
         {

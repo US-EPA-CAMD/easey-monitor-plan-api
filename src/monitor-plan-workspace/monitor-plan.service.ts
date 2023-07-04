@@ -35,7 +35,7 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { CPMSQualificationWorkspaceRepository } from 'src/cpms-qualification-workspace/cpms-qualification-workspace.repository';
+import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {

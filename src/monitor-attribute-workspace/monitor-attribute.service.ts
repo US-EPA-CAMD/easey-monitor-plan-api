@@ -43,7 +43,7 @@ export class MonitorAttributeWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        'Monitor Location Attribute not found',
+        new Error('Monitor Location Attribute not found'),
         HttpStatus.NOT_FOUND,
         {
           locationId,
@@ -99,7 +99,7 @@ export class MonitorAttributeWorkspaceService {
 
     if (!attribute) {
       throw new EaseyException(
-        'Monitor Location Attribute not found',
+        new Error('Monitor Location Attribute not found'),
         HttpStatus.NOT_FOUND,
         {
           locationId,

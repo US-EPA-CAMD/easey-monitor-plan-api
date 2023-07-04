@@ -31,7 +31,7 @@ export class DuctWafWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new EaseyException('Duct Waf Not Found', HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error('Duct Waf Not Found'), HttpStatus.NOT_FOUND, {
         id: id,
       });
     }

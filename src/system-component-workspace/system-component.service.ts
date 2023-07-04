@@ -59,7 +59,7 @@ export class SystemComponentWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        'System component was not found',
+        new Error('System component was not found'),
         HttpStatus.NOT_FOUND,
         {
           sysId: sysId,

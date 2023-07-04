@@ -92,7 +92,7 @@ export class UnitCapacityWorkspaceService {
     const result = await this.repository.getUnitCapacity(unitCapacityId);
     if (!result) {
       throw new EaseyException(
-        'Unit Capacity Not Found.',
+        new Error('Unit Capacity Not Found.'),
         HttpStatus.NOT_FOUND,
         {
           unitId,

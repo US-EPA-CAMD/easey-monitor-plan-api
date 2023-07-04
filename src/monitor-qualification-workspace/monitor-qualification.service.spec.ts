@@ -31,6 +31,7 @@ const payload: MonitorQualificationBaseDTO = {
   leeQualifications: [],
   lmeQualifications: [],
   pctQualifications: [],
+  cpmsQualifications: [],
 };
 
 const mockRepository = () => ({

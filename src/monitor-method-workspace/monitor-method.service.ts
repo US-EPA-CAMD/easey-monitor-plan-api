@@ -42,7 +42,7 @@ export class MonitorMethodWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        'Monitor Method Not Found',
+        new Error('Monitor Method Not Found'),
         HttpStatus.NOT_FOUND,
         {
           methodId: methodId,

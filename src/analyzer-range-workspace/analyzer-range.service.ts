@@ -36,7 +36,7 @@ export class AnalyzerRangeWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        'Analyzer Range Not Found',
+        new Error('Analyzer Range Not Found'),
         HttpStatus.NOT_FOUND,
         { analyzerRangeId: analyzerRangeId },
       );
