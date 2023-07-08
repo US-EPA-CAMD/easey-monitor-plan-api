@@ -16,7 +16,7 @@ import {
 } from '../dtos/monitor-default.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -43,8 +43,8 @@ export class MonitorDefaultWorkspaceService {
     const result = await this.repository.getDefault(locationId, defaultId);
 
     if (!result) {
-      throw new LoggingException(
-        'Monitor Default Not Found',
+      throw new EaseyException(
+        new Error('Monitor Default Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locationId: locationId,

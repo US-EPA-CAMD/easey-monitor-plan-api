@@ -32,6 +32,7 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyRepository } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.repository';
 import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
+import { CPMSQualificationRepository } from '../cpms-qualification/cpms-qualification.repository';
 
 @Injectable()
 export class MonitorPlanService {
@@ -86,6 +87,8 @@ export class MonitorPlanService {
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyRepository,
     @InjectRepository(AnalyzerRangeRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeRepository,
+    @InjectRepository(CPMSQualificationRepository)
+    private readonly cpmsQualRepository: CPMSQualificationRepository,
     private readonly map: MonitorPlanMap,
     private readonly uscMap: UnitStackConfigurationMap,
   ) {}
@@ -345,8 +348,11 @@ export class MonitorPlanService {
             const q3 = this.pctQualificationRepository.find({
               where: { qualificationId: In(qualIds) },
             });
+            const q4 = this.cpmsQualRepository.find({
+              where: { qualificationId: In(qualIds) },
+            });
 
-            const qualResults = await Promise.all([q1, q2, q3]);
+            const qualResults = await Promise.all([q1, q2, q3, q4]);
 
             quals.forEach(async q => {
               q.leeQualifications = qualResults[0].filter(
@@ -356,6 +362,9 @@ export class MonitorPlanService {
                 i => i.qualificationId === q.id,
               );
               q.pctQualifications = qualResults[2].filter(
+                i => i.qualificationId === q.id,
+              );
+              q.cpmsQualifications = qualResults[3].filter(
                 i => i.qualificationId === q.id,
               );
             });

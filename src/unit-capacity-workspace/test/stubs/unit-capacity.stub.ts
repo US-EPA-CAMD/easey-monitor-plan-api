@@ -13,8 +13,8 @@ export const unitCapacityStub = (): UnitCapacityDTO => {
     beginDate: new Date(Date.now()),
     endDate: new Date(Date.now()),
     userId: 'testUser',
-    addDate: (new Date(Date.now())).toISOString(),
-    updateDate: (new Date(Date.now())).toISOString(),
+    addDate: new Date(Date.now()).toISOString(),
+    updateDate: new Date(Date.now()).toISOString(),
     active: true,
   };
 };

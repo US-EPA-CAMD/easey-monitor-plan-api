@@ -35,6 +35,7 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -89,6 +90,8 @@ export class MonitorPlanWorkspaceService {
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
     @InjectRepository(MonitorPlanReportingFrequencyWorkspaceRepository)
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
+    @InjectRepository(CPMSQualificationWorkspaceRepository)
+    private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -410,8 +413,11 @@ export class MonitorPlanWorkspaceService {
             const q3 = this.pctQualificationRepository.find({
               where: { qualificationId: In(qualIds) },
             });
+            const q4 = this.cpmsQualRepository.find({
+              where: { qualificationId: In(qualIds) },
+            });
 
-            const qualResults = await Promise.all([q1, q2, q3]);
+            const qualResults = await Promise.all([q1, q2, q3, q4]);
 
             quals.forEach(async q => {
               q.leeQualifications = qualResults[0].filter(
@@ -421,6 +427,9 @@ export class MonitorPlanWorkspaceService {
                 i => i.qualificationId === q.id,
               );
               q.pctQualifications = qualResults[2].filter(
+                i => i.qualificationId === q.id,
+              );
+              q.cpmsQualifications = qualResults[3].filter(
                 i => i.qualificationId === q.id,
               );
             });

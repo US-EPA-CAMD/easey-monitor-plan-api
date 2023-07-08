@@ -8,7 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
   SystemComponentBaseDTO,
@@ -58,8 +58,8 @@ export class SystemComponentWorkspaceService {
     );
 
     if (!result) {
-      throw new LoggingException(
-        'System component was not found',
+      throw new EaseyException(
+        new Error('System component was not found'),
         HttpStatus.NOT_FOUND,
         {
           sysId: sysId,

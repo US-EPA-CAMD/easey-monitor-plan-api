@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
@@ -59,7 +59,7 @@ describe('Monitor Plan Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule],
       providers: [
         MonitorPlanChecksService,
         {
