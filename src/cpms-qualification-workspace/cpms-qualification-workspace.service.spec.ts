@@ -27,10 +27,10 @@ const payload: CPMSQualificationBaseDTO = {
 };
 
 const mockRepository = () => ({
-  getCPMSQualification: jest.fn().mockResolvedValue(cpmsQualificationDto),
+  getCPMSQualification: jest.fn().mockResolvedValue(cpmsQualification),
   getCPMSQualificationByStackTestNumber: jest
     .fn()
-    .mockResolvedValue(cpmsQualificationDto),
+    .mockResolvedValue(cpmsQualification),
   create: jest.fn().mockResolvedValue(cpmsQualification),
   save: jest.fn().mockResolvedValue(cpmsQualification),
 });
