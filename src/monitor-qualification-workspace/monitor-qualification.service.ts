@@ -3,11 +3,9 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
@@ -22,6 +20,7 @@ import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { CPMSQualificationWorkspaceService } from '../cpms-qualification-workspace/cpms-qualification-workspace.service';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -29,7 +28,6 @@ export class MonitorQualificationWorkspaceService {
     @InjectRepository(MonitorQualificationWorkspaceRepository)
     private readonly repository: MonitorQualificationWorkspaceRepository,
     private readonly map: MonitorQualificationMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -37,6 +35,7 @@ export class MonitorQualificationWorkspaceService {
     private readonly leeQualificationService: LEEQualificationWorkspaceService,
     private readonly lmeQualificationService: LMEQualificationWorkspaceService,
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
+    private readonly cpmsQualificationService: CPMSQualificationWorkspaceService,
   ) {}
 
   runQualificationImportCheck(qualifications: MonitorQualificationBaseDTO[]) {
@@ -75,122 +74,112 @@ export class MonitorQualificationWorkspaceService {
     return errorList;
   }
 
-  private async importQualPctLeeLme(
+  private async importQualPctLeeLmeCpms(
     locationId: string,
     qualificationRecordId: string,
     qualification: MonitorQualificationBaseDTO,
     userId: string,
-  ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      if (
-        qualification.leeQualifications &&
-        qualification.leeQualifications.length > 0
-      ) {
-        promises.push(
-          this.leeQualificationService.importLEEQualification(
-            locationId,
-            qualificationRecordId,
-            qualification.leeQualifications,
-            userId,
-          ),
-        );
-      }
+  ): Promise<void> {
+    const promises = [];
+    if (qualification.leeQualifications?.length > 0) {
+      promises.push(
+        this.leeQualificationService.importLEEQualification(
+          locationId,
+          qualificationRecordId,
+          qualification.leeQualifications,
+          userId,
+        ),
+      );
+    }
 
-      if (
-        qualification.lmeQualifications &&
-        qualification.lmeQualifications.length > 0
-      ) {
-        promises.push(
-          this.lmeQualificationService.importLMEQualification(
-            locationId,
-            qualificationRecordId,
-            qualification.lmeQualifications,
-            userId,
-          ),
-        );
-      }
+    if (qualification.lmeQualifications?.length > 0) {
+      promises.push(
+        this.lmeQualificationService.importLMEQualification(
+          locationId,
+          qualificationRecordId,
+          qualification.lmeQualifications,
+          userId,
+        ),
+      );
+    }
 
-      if (
-        qualification.pctQualifications &&
-        qualification.pctQualifications.length > 0
-      ) {
-        promises.push(
-          this.pctQualificationService.importPCTQualification(
-            locationId,
-            qualificationRecordId,
-            qualification.pctQualifications,
-            userId,
-          ),
-        );
-      }
-      await Promise.all(promises);
-      resolve(true);
-    });
+    if (qualification.pctQualifications?.length > 0) {
+      promises.push(
+        this.pctQualificationService.importPCTQualification(
+          locationId,
+          qualificationRecordId,
+          qualification.pctQualifications,
+          userId,
+        ),
+      );
+    }
+
+    if (qualification.cpmsQualifications?.length > 0) {
+      promises.push(
+        this.cpmsQualificationService.importCPMSQualifications(
+          locationId,
+          qualificationRecordId,
+          qualification.cpmsQualifications,
+          userId,
+        ),
+      );
+    }
+    await Promise.all(promises);
   }
 
   async importQualification(
     qualifications: MonitorQualificationBaseDTO[],
     locationId: string,
     userId: string,
-  ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const qualification of qualifications) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const innerPromises = [];
-            const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
-              locationId,
-              qualification.qualificationTypeCode,
-              qualification.beginDate,
-              qualification.endDate,
-            );
+  ): Promise<void> {
+    const promises = qualifications.map(async qualification => {
+      const innerPromises = [];
+      const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
+        locationId,
+        qualification.qualificationTypeCode,
+        qualification.beginDate,
+        qualification.endDate,
+      );
 
-            if (qualificationRecord !== undefined) {
-              await this.updateQualification(
-                locationId,
-                qualificationRecord.id,
-                qualification,
-                userId,
-                true,
-              );
+      if (qualificationRecord) {
+        await this.updateQualification(
+          locationId,
+          qualificationRecord.id,
+          qualification,
+          userId,
+          true,
+        );
 
-              innerPromises.push(
-                this.importQualPctLeeLme(
-                  locationId,
-                  qualificationRecord.id,
-                  qualification,
-                  userId,
-                ),
-              );
-            } else {
-              const createdQualification = await this.createQualification(
-                locationId,
-                qualification,
-                userId,
-                true,
-              );
+        innerPromises.push(
+          this.importQualPctLeeLmeCpms(
+            locationId,
+            qualificationRecord.id,
+            qualification,
+            userId,
+          ),
+        );
+      } else {
+        const createdQualification = await this.createQualification(
+          locationId,
+          qualification,
+          userId,
+          true,
+        );
 
-              innerPromises.push(
-                this.importQualPctLeeLme(
-                  locationId,
-                  createdQualification.id,
-                  qualification,
-                  userId,
-                ),
-              );
-            }
-
-            await Promise.all(innerPromises);
-            innerResolve(true);
-          }),
+        innerPromises.push(
+          this.importQualPctLeeLmeCpms(
+            locationId,
+            createdQualification.id,
+            qualification,
+            userId,
+          ),
         );
       }
 
-      await Promise.all(promises);
-      resolve(true);
+      await Promise.all(innerPromises);
     });
+
+    await Promise.all(promises);
   }
 
   async getQualifications(

@@ -10,7 +10,10 @@ describe('CPMSQualificationWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CPMSQualificationWorkspaceController],
       providers: [
-        CPMSQualificationWorkspaceService,
+        {
+          provide: CPMSQualificationWorkspaceService,
+          useFactory: () => {}
+        },
         CPMSQualificationWorkspaceRepository,
       ],
     }).compile();
