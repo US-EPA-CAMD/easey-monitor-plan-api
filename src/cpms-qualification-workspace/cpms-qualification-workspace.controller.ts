@@ -1,9 +1,13 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
 import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
-import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
-import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import {
+  CPMSQualificationBaseDTO,
+  CPMSQualificationDTO,
+} from '../dtos/cpms-qualification.dto';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,5 +31,28 @@ export class CPMSQualificationWorkspaceController {
     @Param('qualId') qualId: string,
   ): Promise<CPMSQualificationDTO[]> {
     return this.service.getCPMSQualifications(locId, qualId);
+  }
+
+  @Put(':cpmsQualId')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @ApiOkResponse({
+    type: CPMSQualificationDTO,
+    description:
+      'Updates a workspace CPMS qualification by CPMS qualification ID, qualification ID, and location ID',
+  })
+  async updateCPMSQualification(
+    @Param('locId') locId: string,
+    @Param('qualId') qualId: string,
+    @Param('cpmsQualId') cpmsQualId: string,
+    @Body() payload: CPMSQualificationBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<CPMSQualificationDTO> {
+    return this.service.updateCPMSQualification(
+      locId,
+      qualId,
+      cpmsQualId,
+      payload,
+      user.userId,
+    );
   }
 }

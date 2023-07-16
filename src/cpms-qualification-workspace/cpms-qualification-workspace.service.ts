@@ -85,7 +85,6 @@ export class CPMSQualificationWorkspaceService {
       cpmsQualId,
     );
 
-    cpmsQual.qualificationId = qualId;
     cpmsQual.qualificationDataYear = payload.qualificationDataYear;
     cpmsQual.stackTestNumber = payload.stackTestNumber;
     cpmsQual.operatingLimit = payload.operatingLimit;
