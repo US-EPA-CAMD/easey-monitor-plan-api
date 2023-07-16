@@ -15,6 +15,7 @@ const returnedCPMSQualifications = [returnedCPMSQualification];
 
 const locId = '6';
 const qualId = '1';
+const cpmsQualId = 'some lee qualification id';
 const currentUser: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
@@ -30,6 +31,9 @@ const mockService = () => ({
     .fn()
     .mockResolvedValue(returnedCPMSQualifications),
   createCPMSQualification: jest
+    .fn()
+    .mockResolvedValue(returnedCPMSQualification),
+  updateCPMSQualification: jest
     .fn()
     .mockResolvedValue(returnedCPMSQualification),
 });
@@ -70,6 +74,20 @@ describe('CPMSQualificationWorkspaceController', () => {
         await controller.createCPMSQualification(
           locId,
           qualId,
+          payload,
+          currentUser,
+        ),
+      ).toBe(returnedCPMSQualification);
+    });
+  });
+
+  describe('updateCPMSQualification', () => {
+    it('should return updated CPMS qualification', async () => {
+      expect(
+        await controller.updateCPMSQualification(
+          locId,
+          qualId,
+          cpmsQualId,
           payload,
           currentUser,
         ),

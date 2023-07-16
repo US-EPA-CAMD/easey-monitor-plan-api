@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
 import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
 import {
@@ -50,6 +50,29 @@ export class CPMSQualificationWorkspaceController {
     return this.service.createCPMSQualification(
       locId,
       qualId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':cpmsQualId')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @ApiOkResponse({
+    type: CPMSQualificationDTO,
+    description:
+      'Updates a workspace CPMS qualification by CPMS qualification ID, qualification ID, and location ID',
+  })
+  async updateCPMSQualification(
+    @Param('locId') locId: string,
+    @Param('qualId') qualId: string,
+    @Param('cpmsQualId') cpmsQualId: string,
+    @Body() payload: CPMSQualificationBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<CPMSQualificationDTO> {
+    return this.service.updateCPMSQualification(
+      locId,
+      qualId,
+      cpmsQualId,
       payload,
       user.userId,
     );
