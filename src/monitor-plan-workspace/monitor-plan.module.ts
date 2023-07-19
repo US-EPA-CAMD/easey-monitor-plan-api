@@ -37,6 +37,7 @@ import { ImportChecksModule } from '../import-checks/import-checks.module';
 import { PlantModule } from '../plant/plant.module';
 import { MonitorPlanReportingFreqWorkspaceModule } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.module';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
+import { CPMSQualificationWorkspaceModule } from '../cpms-qualification-workspace/cpms-qualification-workspace.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { MonitorPlanChecksService } from './monitor-plan-checks.service';
     LEEQualificationWorkspaceModule,
     LMEQualificationWorkspaceModule,
     PCTQualificationWorkspaceModule,
+    CPMSQualificationWorkspaceModule,
     UserCheckOutModule,
     CountyCodeModule,
     MonitorPlanLocationModule,

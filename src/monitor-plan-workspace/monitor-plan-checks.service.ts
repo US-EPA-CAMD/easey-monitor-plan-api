@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MatsMethodChecksService } from '../mats-method-workspace/mats-method-checks.service';
 import { UnitControlChecksService } from '../unit-control-workspace/unit-control-checks.service';
@@ -35,7 +35,10 @@ export class MonitorPlanChecksService {
 
   private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

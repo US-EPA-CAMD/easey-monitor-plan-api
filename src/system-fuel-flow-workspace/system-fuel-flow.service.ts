@@ -10,7 +10,7 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
   SystemFuelFlowBaseDTO,
@@ -41,7 +41,7 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      throw new LoggingException('Fuel Flow not found.', HttpStatus.NOT_FOUND, {
+      throw new EaseyException(new Error('Fuel Flow not found.'), HttpStatus.NOT_FOUND, {
         fuelFlowId: fuelFlowId,
       });
     }

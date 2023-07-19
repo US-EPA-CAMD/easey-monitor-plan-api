@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
@@ -26,7 +26,7 @@ describe('Monitoring Span Check Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule],
       providers: [
         MonitorSpanChecksService,
         {

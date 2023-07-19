@@ -9,12 +9,14 @@ import { MonitorQualificationController } from './monitor-qualification.controll
 import { MonitorQualificationService } from './monitor-qualification.service';
 import { MonitorQualificationRepository } from './monitor-qualification.repository';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
+import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualification.module';
 
 @Module({
   imports: [
     LEEQualificationModule,
     LMEQualificationModule,
     PCTQualificationModule,
+    CPMSQualificationModule,
     TypeOrmModule.forFeature([MonitorQualificationRepository]),
   ],
   controllers: [MonitorQualificationController],

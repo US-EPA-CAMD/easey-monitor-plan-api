@@ -70,7 +70,6 @@ export class MonitorPlanCommentWorkspaceService {
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
   ): Promise<MonitorPlanCommentDTO> {
-
     const comment = await this.repository.findOne({
       where: {
         monitorPlanId: monPlanId,

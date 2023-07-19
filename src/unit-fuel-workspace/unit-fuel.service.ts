@@ -12,7 +12,7 @@ import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -40,11 +40,15 @@ export class UnitFuelWorkspaceService {
     const result = await this.repository.getUnitFuel(unitFuelId);
 
     if (!result) {
-      throw new LoggingException('Unit Fuel Not Found', HttpStatus.NOT_FOUND, {
-        locId: locId,
-        unitId: unitId,
-        unitFuelId: unitFuelId,
-      });
+      throw new EaseyException(
+        new Error('Unit Fuel Not Found'),
+        HttpStatus.NOT_FOUND,
+        {
+          locId: locId,
+          unitId: unitId,
+          unitFuelId: unitFuelId,
+        },
+      );
     }
 
     return this.map.one(result);
