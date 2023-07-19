@@ -7,6 +7,7 @@ import { PCTQualificationMap } from './pct-qualification.map';
 
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
+import { CPMSQualificationMap } from './cpms-qualification.map';
 
 @Injectable()
 export class MonitorQualificationMap extends BaseMap<
@@ -17,6 +18,7 @@ export class MonitorQualificationMap extends BaseMap<
     private readonly leeMap: LEEQualificationMap,
     private readonly lmeMap: LMEQualificationMap,
     private readonly pctMap: PCTQualificationMap,
+    private readonly cpmsMap: CPMSQualificationMap,
   ) {
     super();
   }
@@ -33,6 +35,9 @@ export class MonitorQualificationMap extends BaseMap<
     const pctQualifications = entity.pctQualifications
       ? await this.pctMap.many(entity.pctQualifications)
       : [];
+    const cpmsQualifications = entity.cpmsQualifications
+      ? await this.cpmsMap.many(entity.cpmsQualifications)
+      : [];
 
     return {
       id: entity.id,
@@ -47,6 +52,7 @@ export class MonitorQualificationMap extends BaseMap<
       leeQualifications,
       lmeQualifications,
       pctQualifications,
+      cpmsQualifications,
     };
   }
 }

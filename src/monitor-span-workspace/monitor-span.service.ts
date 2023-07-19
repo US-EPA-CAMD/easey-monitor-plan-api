@@ -13,7 +13,7 @@ import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -37,14 +37,10 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      throw new LoggingException(
-        'Monitor Span not found',
-        HttpStatus.NOT_FOUND,
-        {
-          locationId: locationId,
-          spanId: spanId,
-        },
-      );
+      throw new EaseyException(new Error('Monitor Span not found'), HttpStatus.NOT_FOUND, {
+        locationId: locationId,
+        spanId: spanId,
+      });
     }
 
     return result;

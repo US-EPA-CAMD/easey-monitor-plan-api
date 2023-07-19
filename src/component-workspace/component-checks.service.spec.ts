@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { ComponentCheckService } from './component-checks.service';
 import { ComponentDTO } from '../dtos/component.dto';
 import { SystemComponentMasterDataRelationshipRepository } from '../system-component-master-data-relationship/system-component-master-data-relationship.repository';
@@ -26,7 +26,7 @@ describe('Component Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule],
       providers: [
         ComponentCheckService,
         {
@@ -75,7 +75,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -94,7 +94,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -111,7 +111,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -128,7 +128,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -145,7 +145,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -162,7 +162,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -184,7 +184,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -201,7 +201,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -225,7 +225,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -246,7 +246,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -265,7 +265,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -284,7 +284,7 @@ describe('Component Checks Service Test', () => {
         await service.runChecks(locationId, payload);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });

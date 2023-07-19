@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import {HttpStatus, Inject, Injectable} from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutRepository } from './user-check-out.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import {UserCheckOutMap} from "../maps/user-check-out.map";
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { UserCheckOutMap } from '../maps/user-check-out.map';
 
 @Injectable()
 export class UserCheckOutService {
@@ -24,7 +24,10 @@ export class UserCheckOutService {
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOutDTO> {
-    const entity = await this.repository.checkOutConfiguration(monPlanId, username);
+    const entity = await this.repository.checkOutConfiguration(
+      monPlanId,
+      username,
+    );
     return this.map.one(entity);
   }
 
@@ -36,8 +39,8 @@ export class UserCheckOutService {
     });
 
     if (!record) {
-      throw new LoggingException(
-        'Check-out configuration not found',
+      throw new EaseyException(
+        new Error('Check-out configuration not found'),
         HttpStatus.NOT_FOUND,
         { monPlanId: monPlanId },
       );
@@ -52,15 +55,15 @@ export class UserCheckOutService {
     });
 
     if (!record) {
-      throw new LoggingException(
-          'Check-out configuration not found',
-          HttpStatus.NOT_FOUND,
-          { monPlanId: monPlanId },
+      throw new EaseyException(
+        new Error('Check-out configuration not found'),
+        HttpStatus.NOT_FOUND,
+        { monPlanId: monPlanId },
       );
     }
 
     record.lastActivity = new Date(Date.now());
-    await this.repository.save(record)
+    await this.repository.save(record);
 
     return this.map.one(record);
   }

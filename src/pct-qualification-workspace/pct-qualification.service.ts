@@ -15,7 +15,7 @@ import {
 } from '../dtos/pct-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
@@ -49,8 +49,8 @@ export class PCTQualificationWorkspaceService {
       pctQualId,
     );
     if (!result) {
-      throw new LoggingException(
-        'PCT Qualification Not Found',
+      throw new EaseyException(
+        new Error('PCT Qualification Not Found'),
         HttpStatus.NOT_FOUND,
         {
           locId: locId,

@@ -71,7 +71,7 @@ describe('Unit Control Check Service Test', () => {
       try {
         await service.runChecks(locId, unitId, payload);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
     });
   });

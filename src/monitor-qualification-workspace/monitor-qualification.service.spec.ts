@@ -4,9 +4,8 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { MonitorQualificationBaseDTO } from '../dtos/monitor-qualification.dto';
+import { MonitorQualificationBaseDTO, MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
-import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { LMEQualificationBaseDTO } from '../dtos/lme-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
@@ -14,6 +13,7 @@ import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 import { LEEQualificationBaseDTO } from '../dtos/lee-qualification.dto';
 import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
+import { CPMSQualificationWorkspaceService } from '../cpms-qualification-workspace/cpms-qualification-workspace.service';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -31,6 +31,7 @@ const payload: MonitorQualificationBaseDTO = {
   leeQualifications: [],
   lmeQualifications: [],
   pctQualifications: [],
+  cpmsQualifications: [],
 };
 
 const mockRepository = () => ({
@@ -66,6 +67,10 @@ describe('MonitorQualificationService', () => {
         },
         {
           provide: PCTQualificationWorkspaceService,
+          useFactory: () => ({}),
+        },
+        {
+          provide: CPMSQualificationWorkspaceService,
           useFactory: () => ({}),
         },
         {

@@ -8,7 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
   MonitorMethodBaseDTO,
@@ -41,8 +41,8 @@ export class MonitorMethodWorkspaceService {
     const result = this.repository.findOne(methodId);
 
     if (!result) {
-      throw new LoggingException(
-        'Monitor Method Not Found',
+      throw new EaseyException(
+        new Error('Monitor Method Not Found'),
         HttpStatus.NOT_FOUND,
         {
           methodId: methodId,

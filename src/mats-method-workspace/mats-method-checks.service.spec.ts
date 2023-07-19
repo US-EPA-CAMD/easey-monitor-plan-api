@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
@@ -18,7 +18,7 @@ describe('Mats Method Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule],
       providers: [MatsMethodChecksService],
     }).compile();
 
@@ -38,7 +38,7 @@ describe('Mats Method Checks Service Test', () => {
         await service.runChecks(payload, false, false);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -59,7 +59,7 @@ describe('Mats Method Checks Service Test', () => {
         await service.runChecks(payload, false, false);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -78,7 +78,7 @@ describe('Mats Method Checks Service Test', () => {
         await service.runChecks(payload, false, false);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
@@ -99,7 +99,7 @@ describe('Mats Method Checks Service Test', () => {
         await service.runChecks(payload, false, false);
       } catch (err) {
         errored = true;
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }
       expect(errored).toEqual(true);
     });
