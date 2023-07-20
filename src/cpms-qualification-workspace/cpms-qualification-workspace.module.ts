@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
-import { CPMSQualificationMap } from 'src/maps/cpms-qualification.map';
+import { CPMSQualificationMap } from '../maps/cpms-qualification.map';
 
 @Module({
   imports: [

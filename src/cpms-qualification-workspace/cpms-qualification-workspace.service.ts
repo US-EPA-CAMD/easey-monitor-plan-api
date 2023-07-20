@@ -36,6 +36,14 @@ export class CPMSQualificationWorkspaceService {
     }
   }
 
+  async getCPMSQualifications(
+    locId: string,
+    qualId: string,
+  ): Promise<CPMSQualificationDTO[]> {
+    const results = await this.repository.getCPMSQualifications(locId, qualId);
+    return this.map.many(results);
+  }
+
   async createCPMSQualification(
     locationId: string,
     qualId: string,

@@ -28,6 +28,7 @@ const payload: CPMSQualificationBaseDTO = {
 
 const mockRepository = () => ({
   getCPMSQualification: jest.fn().mockResolvedValue(cpmsQualification),
+  getCPMSQualifications: jest.fn().mockResolvedValue([cpmsQualification]),
   getCPMSQualificationByStackTestNumber: jest
     .fn()
     .mockResolvedValue(cpmsQualification),
@@ -66,6 +67,13 @@ describe('CPMSQualificationWorkspaceService', () => {
     repository = module.get<CPMSQualificationWorkspaceRepository>(
       CPMSQualificationWorkspaceRepository,
     );
+  });
+
+  describe('getCPMSQualifications', () => {
+    it('should return array of CPMS qualifications', async () => {
+      const result = await service.getCPMSQualifications('1', '1');
+      expect(result).toEqual([cpmsQualificationDto]);
+    });
   });
 
   describe('getCPMSQualificationByStackTestNumber', () => {
