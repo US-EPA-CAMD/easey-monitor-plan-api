@@ -30,6 +30,9 @@ const mockService = () => ({
   getCPMSQualifications: jest
     .fn()
     .mockResolvedValue(returnedCPMSQualifications),
+  createCPMSQualification: jest
+    .fn()
+    .mockResolvedValue(returnedCPMSQualification),
   updateCPMSQualification: jest
     .fn()
     .mockResolvedValue(returnedCPMSQualification),
@@ -62,6 +65,19 @@ describe('CPMSQualificationWorkspaceController', () => {
       expect(await controller.getCPMSQualifications(locId, qualId)).toBe(
         returnedCPMSQualifications,
       );
+    });
+  });
+
+  describe('createCPMSQualification', () => {
+    it('should return the created CPMS qual record', async () => {
+      expect(
+        await controller.createCPMSQualification(
+          locId,
+          qualId,
+          payload,
+          currentUser,
+        ),
+      ).toBe(returnedCPMSQualification);
     });
   });
 

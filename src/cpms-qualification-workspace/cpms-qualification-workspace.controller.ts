@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
 import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
 import {
@@ -20,7 +20,7 @@ export class CPMSQualificationWorkspaceController {
     isArray: true,
     type: CPMSQualificationDTO,
     description:
-      'Retrieves workspace cpms qualification records for a monitor location',
+      'Retrieves workspace CPMS qualification records for a monitor location',
   })
   @RoleGuard(
     { enforceCheckout: false, pathParam: 'locId' },
@@ -31,6 +31,28 @@ export class CPMSQualificationWorkspaceController {
     @Param('qualId') qualId: string,
   ): Promise<CPMSQualificationDTO[]> {
     return this.service.getCPMSQualifications(locId, qualId);
+  }
+
+  @Post()
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @ApiOkResponse({
+    isArray: true,
+    type: CPMSQualificationDTO,
+    description:
+      'Creates a CPMS Qualification record for a qualification and monitor location',
+  })
+  createCPMSQualification(
+    @Param('locId') locId: string,
+    @Param('qualId') qualId: string,
+    @Body() payload: CPMSQualificationBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<CPMSQualificationDTO> {
+    return this.service.createCPMSQualification(
+      locId,
+      qualId,
+      payload,
+      user.userId,
+    );
   }
 
   @Put(':cpmsQualId')
