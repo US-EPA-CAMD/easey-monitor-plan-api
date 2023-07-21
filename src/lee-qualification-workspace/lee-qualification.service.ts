@@ -113,7 +113,6 @@ export class LEEQualificationWorkspaceService {
       );
     }
 
-    leeQual.qualificationId = qualId;
     leeQual.qualificationTestDate = payload.qualificationTestDate;
     leeQual.parameterCode = payload.parameterCode;
     leeQual.qualificationTestType = payload.qualificationTestType;
