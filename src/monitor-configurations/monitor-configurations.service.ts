@@ -80,8 +80,12 @@ export class MonitorConfigurationsService {
     return this.parseMonitorPlanConfigurations(plans);
   }
 
+  async pushToChangedConfigList(list: MonitorPlanDTO[], orisCode: number) {
+    list.push(...(await this.getConfigurations([orisCode])));
+  }
+
   async getConfigurationsByLastUpdated(
-    queryTime: Date,
+    queryTime: string,
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
 
@@ -93,12 +97,7 @@ export class MonitorConfigurationsService {
     const promises = [];
 
     orisCodesAndTime.changedOrisCodes.forEach(orisCode => {
-      promises.push(
-        new Promise(async resolve => {
-          list.push(...(await this.getConfigurations([orisCode])));
-          resolve(true);
-        }),
-      );
+      promises.push(this.pushToChangedConfigList(list, orisCode));
     });
 
     await Promise.all(promises);

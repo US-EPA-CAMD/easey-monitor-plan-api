@@ -47,12 +47,14 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
   }
 
   async getOrisCodesByLastUpdatedTime(
-    queryDate: Date,
+    queryDate: string,
   ): Promise<IorisCodesAndLastUpdatedTimes> {
     const planIdsQuery = await this.query(
       'select * from camdecmps.get_oris_codes_for_configurations_last_updated($1)',
       [queryDate],
     );
+
+    console.log(planIdsQuery);
 
     if (planIdsQuery.length === 0) {
       return {
