@@ -50,7 +50,7 @@ describe('MonitorConfigurations', () => {
       jest
         .spyOn(service, 'getConfigurationsByLastUpdated')
         .mockResolvedValue(dto);
-      expect(await controller.getLastUpdated(new Date())).toBe(dto);
+      expect(await controller.getLastUpdated('')).toBe(dto);
     });
   });
 });

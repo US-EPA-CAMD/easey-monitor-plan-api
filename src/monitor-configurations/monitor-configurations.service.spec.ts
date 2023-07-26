@@ -9,10 +9,9 @@ import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
-const DATE = new Date();
 const ORIS_CODES_AND_LAST_UPDATED = {
   changedOrisCodes: [ORIS_CODE],
-  mostRecentUpdate: DATE,
+  mostRecentUpdate: '',
 };
 const ENTITY = new MonitorPlan();
 const DTO = new MonitorPlanDTO();
@@ -76,9 +75,9 @@ describe('MonitorConfigurationsService', () => {
 
   describe('getConfigurationsByLastUpdated', () => {
     it('Should return a LastUpdatedConfigDTO for a Date', async () => {
-      const result = await service.getConfigurationsByLastUpdated(DATE);
+      const result = await service.getConfigurationsByLastUpdated('');
       expect(result.changedConfigs).toEqual([DTO]);
-      expect(result.mostRecentUpdate).toEqual(DATE);
+      expect(result.mostRecentUpdate).toEqual('');
     });
   });
 });
