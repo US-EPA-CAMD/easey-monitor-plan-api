@@ -5,5 +5,5 @@ export class LastUpdatedConfigDTO {
   changedConfigs: MonitorPlanDTO[];
 
   @IsDateString()
-  mostRecentUpdate: Date;
+  mostRecentUpdate: string;
 }
