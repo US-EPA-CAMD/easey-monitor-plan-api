@@ -103,7 +103,10 @@ export class MonitorConfigurationsService {
     await Promise.all(promises);
 
     dto.changedConfigs = list;
-    dto.mostRecentUpdate = orisCodesAndTime.mostRecentUpdate;
+    dto.mostRecentUpdate = orisCodesAndTime.mostRecentUpdate.toLocaleString(
+      'en-us',
+      { timeZone: 'America/New_York' },
+    );
 
     return dto;
   }
