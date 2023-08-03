@@ -29,7 +29,7 @@ import {
 } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 import { EquationCode } from '../entities/equation-code.entity';
-import { FormulaMdRelationshipsView } from 'src/entities/formula-md-relationships-view.entity';
+import { FormulaMdRelationshipsView } from '../entities/formula-md-relationships-view.entity';
 
 const KEY = 'Monitor Formula';
 
