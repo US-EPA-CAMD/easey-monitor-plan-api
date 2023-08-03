@@ -12,9 +12,12 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
-import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
@@ -25,8 +28,10 @@ import {
   MINIMUM_DATE,
 } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
+import { EquationCode } from '../entities/equation-code.entity';
+import { FormulaMdRelationshipsView } from 'src/entities/formula-md-relationships-view.entity';
 
-const KEY = 'Formula';
+const KEY = 'Monitor Formula';
 
 export class MonitorFormulaBaseDTO {
   @ApiProperty({
@@ -34,10 +39,19 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaId.example,
     name: propertyMetadata.monitorFormulaDTOFormulaId.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FORMULA-7-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @MatchesRegEx('^[A-Z0-9-]{1,3}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Z0-9-]{1,3}`;
+      return CheckCatalogService.formatResultMessage('FORMULA-7-B', {
+        iD: args.value,
+      });
     },
   })
   formulaId: string;
@@ -47,15 +61,23 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOParameterCode.example,
     name: propertyMetadata.monitorFormulaDTOParameterCode.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsInDbValues(
-    'SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_formula_master_data_relationships',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [FORMULA-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FORMULA-8-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(FormulaMdRelationshipsView, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FORMULA-8-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   parameterCode: string;
 
   @ApiProperty({
@@ -63,15 +85,22 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaCode.example,
     name: propertyMetadata.monitorFormulaDTOFormulaCode.fieldLabels.value,
   })
-  @IsOptional()
-  @IsInDbValues(
-    'SELECT distinct formula_code as "value" FROM camdecmpsmd.vw_formula_master_data_relationships',
-    {
-      message: (args: ValidationArguments) => {
-        return `${args.property} [FORMULA-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
-      },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FORMULA-9-A', {
+        key: KEY,
+      });
     },
-  )
+  })
+  @IsValidCode(EquationCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('FORMULA-9-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   formulaCode: string;
 
   @ApiProperty({
@@ -82,7 +111,7 @@ export class MonitorFormulaBaseDTO {
   @IsOptional()
   @MaxLength(200, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [FORMULA-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 200 characters`;
+      return `The value : ${args.value} for ${args.property} must not exceed 200 characters`;
     },
   })
   formulaText: string;
