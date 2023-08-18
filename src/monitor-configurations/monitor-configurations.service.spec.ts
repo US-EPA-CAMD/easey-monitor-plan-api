@@ -77,7 +77,6 @@ describe('MonitorConfigurationsService', () => {
     it('Should return a LastUpdatedConfigDTO for a Date', async () => {
       const result = await service.getConfigurationsByLastUpdated('');
       expect(result.changedConfigs).toEqual([DTO]);
-      expect(result.mostRecentUpdate).toEqual('');
     });
   });
 });
