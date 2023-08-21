@@ -15,6 +15,9 @@ import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
+import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
+import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
+import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 
 export async function removeNonReportedValues(dto: MonitorPlanDTO) {
   const promises = [];
@@ -161,12 +164,46 @@ async function analyzerRange(analyzerRanges: AnalyzerRangeDTO[]) {
 }
 
 async function monitorQualification(qualifications: MonitorQualificationDTO[]) {
+  const promises = [];
   qualifications?.forEach(qualification => {
+    promises.push(qualificationPCT(qualification.pctQualifications));
+    promises.push(qualificationLME(qualification.lmeQualifications));
+    promises.push(qualificationLEE(qualification.leeQualifications));
     delete qualification.id;
     delete qualification.locationId;
     delete qualification.userId;
     delete qualification.addDate;
     delete qualification.updateDate;
+  });
+}
+
+async function qualificationPCT(qualificationPercents: PCTQualificationDTO[]) {
+  qualificationPercents?.forEach(qualificationPercent => {
+    delete qualificationPercent.id;
+    delete qualificationPercent.qualificationId;
+    delete qualificationPercent.userId;
+    delete qualificationPercent.addDate;
+    delete qualificationPercent.updateDate;
+  });
+}
+
+async function qualificationLME(qualificationLMEs: LMEQualificationDTO[]) {
+  qualificationLMEs?.forEach(qualificationLME => {
+    delete qualificationLME.id;
+    delete qualificationLME.qualificationId;
+    delete qualificationLME.userId;
+    delete qualificationLME.addDate;
+    delete qualificationLME.updateDate;
+  });
+}
+
+async function qualificationLEE(qualificationLEEs: LEEQualificationDTO[]) {
+  qualificationLEEs?.forEach(qualificationLEE => {
+    delete qualificationLEE.id;
+    delete qualificationLEE.qualificationId;
+    delete qualificationLEE.userId;
+    delete qualificationLEE.addDate;
+    delete qualificationLEE.updateDate;
   });
 }
 

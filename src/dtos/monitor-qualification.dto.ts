@@ -13,9 +13,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { LEEQualificationBaseDTO } from './lee-qualification.dto';
-import { LMEQualificationBaseDTO } from './lme-qualification.dto';
-import { PCTQualificationBaseDTO } from './pct-qualification.dto';
+import { LEEQualificationDTO } from './lee-qualification.dto';
+import { LMEQualificationDTO } from './lme-qualification.dto';
+import { PCTQualificationDTO } from './pct-qualification.dto';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
@@ -97,16 +97,16 @@ export class MonitorQualificationBaseDTO {
   endDate: Date;
 
   @ValidateNested()
-  @Type(() => LEEQualificationBaseDTO)
-  leeQualifications: LEEQualificationBaseDTO[];
+  @Type(() => LEEQualificationDTO)
+  leeQualifications: LEEQualificationDTO[];
 
   @ValidateNested()
-  @Type(() => LMEQualificationBaseDTO)
-  lmeQualifications: LMEQualificationBaseDTO[];
+  @Type(() => LMEQualificationDTO)
+  lmeQualifications: LMEQualificationDTO[];
 
   @ValidateNested()
-  @Type(() => PCTQualificationBaseDTO)
-  pctQualifications: PCTQualificationBaseDTO[];
+  @Type(() => PCTQualificationDTO)
+  pctQualifications: PCTQualificationDTO[];
 
   @ValidateNested()
   @Type(() => CPMSQualificationBaseDTO)
