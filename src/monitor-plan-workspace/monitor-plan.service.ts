@@ -175,10 +175,7 @@ export class MonitorPlanWorkspaceService {
     await this.repository.resetToNeedsEvaluation(planId, userId);
   }
 
-  async export(
-    params: MonitorPlanParamsDTO,
-    rptValuesOnly: boolean,
-  ): Promise<MonitorPlanDTO> {
+  async export(params: MonitorPlanParamsDTO, rptValuesOnly: boolean) {
     const promises = [];
 
     const MONITORPLANS = 0;
@@ -187,11 +184,11 @@ export class MonitorPlanWorkspaceService {
 
     const result = await Promise.all(promises);
 
-    if (rptValuesOnly) {
-      await removeNonReportedValues(resultObject);
-    }
+    // if (rptValuesOnly) {
+    //   await removeNonReportedValues(resultObject);
+    // }
 
-    return resultObject;
+    // return resultObject;
   }
 
   async exportMonitorPlan(
