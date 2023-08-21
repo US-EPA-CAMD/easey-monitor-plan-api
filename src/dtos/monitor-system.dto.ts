@@ -11,8 +11,14 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { SystemComponentBaseDTO } from './system-component.dto';
-import { SystemFuelFlowBaseDTO } from './system-fuel-flow.dto';
+import {
+  SystemComponentBaseDTO,
+  SystemComponentDTO,
+} from './system-component.dto';
+import {
+  SystemFuelFlowBaseDTO,
+  SystemFuelFlowDTO,
+} from './system-fuel-flow.dto';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import {
   IsInRange,
@@ -250,12 +256,12 @@ export class MonitorSystemBaseDTO {
   endHour: number;
 
   @ValidateNested({ each: true })
-  @Type(() => SystemComponentBaseDTO)
-  components: SystemComponentBaseDTO[];
+  @Type(() => SystemComponentDTO)
+  components: SystemComponentDTO[];
 
   @ValidateNested({ each: true })
-  @Type(() => SystemFuelFlowBaseDTO)
-  fuelFlows: SystemFuelFlowBaseDTO[];
+  @Type(() => SystemFuelFlowDTO)
+  fuelFlows: SystemFuelFlowDTO[];
 }
 
 export class MonitorSystemDTO extends MonitorSystemBaseDTO {

@@ -36,6 +36,7 @@ import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -172,6 +173,25 @@ export class MonitorPlanWorkspaceService {
     const planId = plan.id;
 
     await this.repository.resetToNeedsEvaluation(planId, userId);
+  }
+
+  async export(
+    params: MonitorPlanParamsDTO,
+    rptValuesOnly: boolean,
+  ): Promise<MonitorPlanDTO> {
+    const promises = [];
+
+    const MONITORPLANS = 0;
+
+    promises.push();
+
+    const result = await Promise.all(promises);
+
+    if (rptValuesOnly) {
+      await removeNonReportedValues(resultObject);
+    }
+
+    return resultObject;
   }
 
   async exportMonitorPlan(
