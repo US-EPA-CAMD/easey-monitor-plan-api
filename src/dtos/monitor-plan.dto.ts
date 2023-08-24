@@ -12,7 +12,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class MonitorPlanDTO {
   @ApiProperty({
@@ -135,4 +135,9 @@ export class MonitorPlanDTO {
   @IsDateString()
   @IsOptional()
   lastEvaluatedDate: Date;
+
+  @IsOptional()
+  @ApiProperty()
+  @Transform(({ value }) => value === 'true')
+  reportedValuesOnly?: boolean;
 }

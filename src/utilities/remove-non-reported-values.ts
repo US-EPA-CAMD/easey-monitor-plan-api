@@ -149,6 +149,7 @@ async function component(components: ComponentDTO[]) {
     promises.push(analyzerRange(component.analyzerRanges));
     delete component.id;
     delete component.locationId;
+    delete component.componentId;
     delete component.userId;
     delete component.addDate;
     delete component.updateDate;

@@ -36,7 +36,6 @@ import { PlantService } from '../plant/plant.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
-import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 
 @Injectable()
@@ -176,25 +175,8 @@ export class MonitorPlanWorkspaceService {
     await this.repository.resetToNeedsEvaluation(planId, userId);
   }
 
-  async export(params: MonitorPlanParamsDTO, rptValuesOnly: boolean) {
-    const promises = [];
-
-    const MONITORPLANS = 0;
-
-    promises.push();
-
-    const result = await Promise.all(promises);
-
-    // if (rptValuesOnly) {
-    //   await removeNonReportedValues(resultObject);
-    // }
-
-    // return resultObject;
-  }
-
   async exportMonitorPlan(
     planId: string,
-    params: MonitorPlanParamsDTO,
     rptValuesOnly: boolean = false,
     getLocChildRecords: boolean = true,
     getReportingFrquencies: boolean = true,
@@ -519,12 +501,6 @@ export class MonitorPlanWorkspaceService {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurations = uscDTO;
     }
-
-    const resultObject = {
-      orisCode: params.orisCode,
-      facilityId: params.facId,
-      monitorPlanId: params.monitorPlanIds,
-    };
 
     if (rptValuesOnly) {
       await removeNonReportedValues(mpDTO);

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO, AnalyzerRangeDTO } from './analyzer-range.dto';
-import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import { IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
@@ -160,11 +160,11 @@ export class ComponentBaseDTO {
 
 export class UpdateComponentBaseDTO extends ComponentBaseDTO {
   @ValidateNested()
-  @Type(() => AnalyzerRangeDTO)
-  analyzerRanges: AnalyzerRangeDTO[];
+  @Type(() => AnalyzerRangeBaseDTO)
+  analyzerRanges: AnalyzerRangeBaseDTO[];
 }
 
-export class ComponentDTO extends UpdateComponentBaseDTO {
+export class ComponentDTO extends ComponentBaseDTO {
   @ApiProperty({
     description: propertyMetadata.componentDTOId.description,
     example: propertyMetadata.componentDTOId.example,
@@ -199,4 +199,8 @@ export class ComponentDTO extends UpdateComponentBaseDTO {
     name: propertyMetadata.componentDTOUpdateDate.fieldLabels.value,
   })
   updateDate: string;
+
+  @ValidateNested()
+  @Type(() => AnalyzerRangeDTO)
+  analyzerRanges: AnalyzerRangeDTO[];
 }

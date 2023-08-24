@@ -51,8 +51,7 @@ export class MonitorPlanWorkspaceController {
     @Query() params: MonitorPlanParamsDTO,
   ) {
     return this.service.exportMonitorPlan(
-      planId,
-      params,
+      params.monitorPlanId,
       params.reportedValuesOnly,
     );
   }
