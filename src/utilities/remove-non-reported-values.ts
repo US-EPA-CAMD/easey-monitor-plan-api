@@ -24,6 +24,8 @@ export async function removeNonReportedValues(dto: MonitorPlanDTO) {
   promises.push(removeMonitorPlanComment(dto.comments));
   promises.push(removeUnitStackConfiguration(dto.unitStackConfigurations));
   promises.push(removeMonitorLocationReportedValues(dto.locations));
+
+  await Promise.all(promises);
 }
 
 async function removeMonitorPlanComment(comments: MonitorPlanCommentDTO[]) {

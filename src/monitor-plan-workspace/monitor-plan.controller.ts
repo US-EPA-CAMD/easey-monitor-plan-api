@@ -46,8 +46,15 @@ export class MonitorPlanWorkspaceController {
     { enforceCheckout: false, queryParam: 'planId' },
     LookupType.MonitorPlan,
   )
-  exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
-    return this.service.export(params, params.reportedValuesOnly);
+  exportMonitorPlan(
+    @Param('planId') planId: string,
+    @Query() params: MonitorPlanParamsDTO,
+  ) {
+    return this.service.exportMonitorPlan(
+      planId,
+      params,
+      params.reportedValuesOnly,
+    );
   }
 
   // TEMP: unconventional route path to avoid messing with URL's before demo
