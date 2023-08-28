@@ -11,6 +11,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ImportChecksService } from '../import-checks/import-checks.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
 
 jest.mock('./monitor-plan.service');
 jest.mock('../user-check-out/user-check-out.service');
@@ -18,6 +19,7 @@ jest.mock('../import-checks/import-checks.service');
 
 const orisCode = null;
 const planId = null;
+const params: MonitorPlanParamsDTO = new MonitorPlanParamsDTO();
 
 const data: MonitorPlanDTO[] = [];
 data.push(new MonitorPlanDTO());
@@ -63,7 +65,7 @@ describe('MonitorPlanWorkspaceController', () => {
   describe('exportMonitorPlan', () => {
     it('should export a monitor plan given a plan id', async () => {
       jest.spyOn(service, 'exportMonitorPlan').mockResolvedValue(null);
-      expect(await controller.exportMonitorPlan(planId)).toBe(null);
+      expect(await controller.exportMonitorPlan(planId, params)).toBe(null);
     });
   });
 
