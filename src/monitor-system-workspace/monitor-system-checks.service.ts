@@ -3,7 +3,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
-import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
+import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
 
 @Injectable()
 export class MonitorSystemCheckService {
@@ -38,7 +38,7 @@ export class MonitorSystemCheckService {
 
   async runChecks(
     locationId: string,
-    monitorSystem: MonitorSystemBaseDTO,
+    monitorSystem: UpdateMonitorSystemDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
     errorLocation: string = '',

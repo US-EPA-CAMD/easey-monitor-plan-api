@@ -1,7 +1,7 @@
 import * as checks from './qual';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
-import { MonitorQualificationBaseDTO } from '../../dtos/monitor-qualification.dto';
+import { UpdateMonitorQualificationDTO } from '../../dtos/monitor-qualification.dto';
 import { LMEQualificationBaseDTO } from '../../dtos/lme-qualification.dto';
 import { PCTQualificationBaseDTO } from '../../dtos/pct-qualification.dto';
 
@@ -11,7 +11,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const lmeQuals = new LMEQualificationBaseDTO();
 
       lmeQuals.so2Tons = null;
@@ -29,7 +29,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const lmeQuals = new LMEQualificationBaseDTO();
 
       lmeQuals.so2Tons = 5;
@@ -49,7 +49,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
 
       quals.qualificationTypeCode = 'LME';
       quals.lmeQualifications = [];
@@ -66,7 +66,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const pctQuals = new PCTQualificationBaseDTO();
 
       quals.qualificationTypeCode = 'LME';
@@ -84,7 +84,7 @@ describe('Span Tests', () => {
       const testData = new UpdateMonitorPlanDTO();
 
       const locations = new UpdateMonitorLocationDTO();
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const lmeQuals = new LMEQualificationBaseDTO();
 
       quals.qualificationTypeCode = 'LME';

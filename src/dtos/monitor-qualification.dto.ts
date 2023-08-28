@@ -107,7 +107,9 @@ export class MonitorQualificationBaseDTO {
     },
   })
   endDate: Date;
+}
 
+export class UpdateMonitorQualificationDTO extends MonitorQualificationBaseDTO {
   @ValidateNested()
   @Type(() => LEEQualificationBaseDTO)
   leeQualifications: LEEQualificationBaseDTO[];

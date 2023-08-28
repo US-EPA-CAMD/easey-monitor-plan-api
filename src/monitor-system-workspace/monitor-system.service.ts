@@ -6,6 +6,7 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
 import {
   MonitorSystemBaseDTO,
   MonitorSystemDTO,
+  UpdateMonitorSystemDTO,
 } from '../dtos/monitor-system.dto';
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
@@ -44,7 +45,7 @@ export class MonitorSystemWorkspaceService {
     monPlan: UpdateMonitorPlanDTO,
     monitorLocation: UpdateMonitorLocationDTO,
     monitorLocationId: string,
-    systems: MonitorSystemBaseDTO[],
+    systems: UpdateMonitorSystemDTO[],
   ) {
     const errorList: string[] = [];
 
@@ -120,7 +121,7 @@ export class MonitorSystemWorkspaceService {
 
   async createSystem(
     locationId: string,
-    payload: MonitorSystemBaseDTO,
+    payload: UpdateMonitorSystemDTO,
     userId: string,
     isImport = false,
   ): Promise<MonitorSystemDTO> {
@@ -151,7 +152,7 @@ export class MonitorSystemWorkspaceService {
 
   private async importSysComponentAndFuelFlow(
     systemRecordId: string,
-    system: MonitorSystemBaseDTO,
+    system: UpdateMonitorSystemDTO,
     locationId: string,
     userId: string,
   ) {
@@ -214,7 +215,7 @@ export class MonitorSystemWorkspaceService {
   }
 
   async importSystem(
-    systems: MonitorSystemBaseDTO[],
+    systems: UpdateMonitorSystemDTO[],
     locationId: string,
     userId: string,
   ) {

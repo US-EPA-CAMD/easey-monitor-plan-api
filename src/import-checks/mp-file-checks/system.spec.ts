@@ -6,7 +6,7 @@ import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto
 import { MonitorSystem } from '../../entities/monitor-system.entity';
 import { Component } from '../../entities/workspace/component.entity';
 import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
-import { MonitorSystemBaseDTO } from '../../dtos/monitor-system.dto';
+import { UpdateMonitorSystemDTO } from '../../dtos/monitor-system.dto';
 import { SystemFuelFlowBaseDTO } from '../../dtos/system-fuel-flow.dto';
 import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
 
@@ -24,7 +24,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       system.systemTypeCode = 'LTGS';
 
       system.fuelFlows = [];
@@ -50,7 +50,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       system.systemTypeCode = 'LTGS';
 
       system.fuelFlows = [];
@@ -77,7 +77,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemComponent = new SystemComponentBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
@@ -110,7 +110,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(true);
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemComponent = new SystemComponentBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
@@ -143,7 +143,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(false);
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemComponent = new SystemComponentBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
@@ -177,7 +177,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       system.systemTypeCode = 'LTGS';
 
       system.fuelFlows = [];
@@ -200,7 +200,7 @@ describe('System Tests', () => {
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       system.systemTypeCode = 'LTGSS';
       const fuelFlow = new SystemFuelFlowBaseDTO();
 

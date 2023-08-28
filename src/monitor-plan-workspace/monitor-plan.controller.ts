@@ -7,7 +7,7 @@ import {
   Controller,
   Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 
@@ -36,19 +36,13 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description: 'Retrieves workspace Monitor Plan record.',
   })
-  @ApiQuery({
-    style: 'pipeDelimited',
-    name: 'monitorPlanIds',
-    required: false,
-    explode: false,
-  })
   @RoleGuard(
     { enforceCheckout: false, queryParam: 'planId' },
     LookupType.MonitorPlan,
   )
   exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
     return this.service.exportMonitorPlan(
-      params.monitorPlanId,
+      params.planId,
       params.reportedValuesOnly,
     );
   }

@@ -254,7 +254,9 @@ export class MonitorSystemBaseDTO {
     },
   })
   endHour: number;
+}
 
+export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => SystemComponentBaseDTO)
   components: SystemComponentBaseDTO[];

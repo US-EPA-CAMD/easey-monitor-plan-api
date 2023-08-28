@@ -6,9 +6,8 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { SystemComponentWorkspaceModule } from '../system-component-workspace/system-component.module';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
+import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
@@ -97,7 +96,7 @@ describe('MonitorSystemWorkspaceService', () => {
   describe('runMonitorSystemImportCheck', () => {
     it('Should pass with component and system found in database and systemTypeCode is valid', async () => {
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemComponent = new SystemComponentBaseDTO();
       const systemFuelFlow = new SystemFuelFlowBaseDTO();
       const component = new UpdateComponentBaseDTO();
@@ -137,7 +136,7 @@ describe('MonitorSystemWorkspaceService', () => {
 
     it('Should fail with component and system found in database and systemTypeCode is valid', async () => {
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemComponent = new SystemComponentBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
@@ -182,7 +181,7 @@ describe('MonitorSystemWorkspaceService', () => {
 
     it('Should fail when systemTypeCode in production data is invalid', async () => {
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemFuelFlow = new SystemFuelFlowBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
@@ -216,7 +215,7 @@ describe('MonitorSystemWorkspaceService', () => {
 
     it('Should fail when systemTypeCode in workspace data is invalid', async () => {
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemFuelFlow = new SystemFuelFlowBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
