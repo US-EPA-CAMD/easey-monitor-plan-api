@@ -256,12 +256,12 @@ export class MonitorSystemBaseDTO {
   endHour: number;
 
   @ValidateNested({ each: true })
-  @Type(() => SystemComponentDTO)
-  components: SystemComponentDTO[];
+  @Type(() => SystemComponentBaseDTO)
+  components: SystemComponentBaseDTO[];
 
   @ValidateNested({ each: true })
-  @Type(() => SystemFuelFlowDTO)
-  fuelFlows: SystemFuelFlowDTO[];
+  @Type(() => SystemFuelFlowBaseDTO)
+  fuelFlows: SystemFuelFlowBaseDTO[];
 }
 
 export class MonitorSystemDTO extends MonitorSystemBaseDTO {
@@ -305,6 +305,14 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
   @IsDateString()
   @IsOptional()
   updateDate: string;
+
+  @ValidateNested({ each: true })
+  @Type(() => SystemComponentDTO)
+  components: SystemComponentDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => SystemFuelFlowDTO)
+  fuelFlows: SystemFuelFlowDTO[];
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOActive.description,

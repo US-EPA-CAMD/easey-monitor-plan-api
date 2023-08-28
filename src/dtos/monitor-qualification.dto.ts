@@ -13,14 +13,26 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { LEEQualificationDTO } from './lee-qualification.dto';
-import { LMEQualificationDTO } from './lme-qualification.dto';
-import { PCTQualificationDTO } from './pct-qualification.dto';
+import {
+  LEEQualificationBaseDTO,
+  LEEQualificationDTO,
+} from './lee-qualification.dto';
+import {
+  LMEQualificationBaseDTO,
+  LMEQualificationDTO,
+} from './lme-qualification.dto';
+import {
+  PCTQualificationBaseDTO,
+  PCTQualificationDTO,
+} from './pct-qualification.dto';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
-import { CPMSQualificationBaseDTO } from './cpms-qualification.dto';
+import {
+  CPMSQualificationBaseDTO,
+  CPMSQualificationDTO,
+} from './cpms-qualification.dto';
 
 const KEY = 'Monitoring Qualification';
 
@@ -97,16 +109,16 @@ export class MonitorQualificationBaseDTO {
   endDate: Date;
 
   @ValidateNested()
-  @Type(() => LEEQualificationDTO)
-  leeQualifications: LEEQualificationDTO[];
+  @Type(() => LEEQualificationBaseDTO)
+  leeQualifications: LEEQualificationBaseDTO[];
 
   @ValidateNested()
-  @Type(() => LMEQualificationDTO)
-  lmeQualifications: LMEQualificationDTO[];
+  @Type(() => LMEQualificationBaseDTO)
+  lmeQualifications: LMEQualificationBaseDTO[];
 
   @ValidateNested()
-  @Type(() => PCTQualificationDTO)
-  pctQualifications: PCTQualificationDTO[];
+  @Type(() => PCTQualificationBaseDTO)
+  pctQualifications: PCTQualificationBaseDTO[];
 
   @ValidateNested()
   @Type(() => CPMSQualificationBaseDTO)
@@ -154,6 +166,22 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
   @IsDateString()
   @IsOptional()
   updateDate: string;
+
+  @ValidateNested()
+  @Type(() => LEEQualificationDTO)
+  leeQualifications: LEEQualificationDTO[];
+
+  @ValidateNested()
+  @Type(() => LMEQualificationDTO)
+  lmeQualifications: LMEQualificationDTO[];
+
+  @ValidateNested()
+  @Type(() => PCTQualificationDTO)
+  pctQualifications: PCTQualificationDTO[];
+
+  @ValidateNested()
+  @Type(() => CPMSQualificationDTO)
+  cpmsQualifications: CPMSQualificationDTO[];
 
   @ApiProperty({
     description: propertyMetadata.monitorQualificationDTOActive.description,
