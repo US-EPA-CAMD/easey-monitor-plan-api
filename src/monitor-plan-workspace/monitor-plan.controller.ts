@@ -46,10 +46,7 @@ export class MonitorPlanWorkspaceController {
     { enforceCheckout: false, queryParam: 'planId' },
     LookupType.MonitorPlan,
   )
-  exportMonitorPlan(
-    @Param('planId') planId: string,
-    @Query() params: MonitorPlanParamsDTO,
-  ) {
+  exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
     return this.service.exportMonitorPlan(
       params.monitorPlanId,
       params.reportedValuesOnly,
