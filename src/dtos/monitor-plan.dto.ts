@@ -135,9 +135,4 @@ export class MonitorPlanDTO {
   @IsDateString()
   @IsOptional()
   lastEvaluatedDate: Date;
-
-  @IsOptional()
-  @ApiProperty()
-  @Transform(({ value }) => value === 'true')
-  reportedValuesOnly?: boolean;
 }

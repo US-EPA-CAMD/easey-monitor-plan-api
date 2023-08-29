@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import {
-  MonitorSystemBaseDTO,
   MonitorSystemDTO,
   UpdateMonitorSystemDTO,
 } from '../dtos/monitor-system.dto';
@@ -189,7 +188,7 @@ export class MonitorSystemWorkspaceService {
 
   async updateSystem(
     monitoringSystemRecordId: string,
-    payload: MonitorSystemBaseDTO,
+    payload: UpdateMonitorSystemDTO,
     locationId: string,
     userId: string,
     isImport = false,

@@ -254,9 +254,7 @@ export class MonitorSystemBaseDTO {
     },
   })
   endHour: number;
-}
 
-export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => SystemComponentBaseDTO)
   components: SystemComponentBaseDTO[];
@@ -265,6 +263,8 @@ export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO {
   @Type(() => SystemFuelFlowBaseDTO)
   fuelFlows: SystemFuelFlowBaseDTO[];
 }
+
+export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO {}
 
 export class MonitorSystemDTO extends MonitorSystemBaseDTO {
   @ApiProperty({
