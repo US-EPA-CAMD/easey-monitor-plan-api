@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { Type } from 'class-transformer';
-import { AnalyzerRangeBaseDTO } from './analyzer-range.dto';
-import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import { AnalyzerRangeBaseDTO, AnalyzerRangeDTO } from './analyzer-range.dto';
+import { IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
@@ -14,7 +14,7 @@ import {
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
-import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { FindOneOptions } from 'typeorm';
 import { BasisCode } from '../entities/basis-code.entity';
 
 const KEY = 'Component';
@@ -164,7 +164,7 @@ export class UpdateComponentBaseDTO extends ComponentBaseDTO {
   analyzerRanges: AnalyzerRangeBaseDTO[];
 }
 
-export class ComponentDTO extends UpdateComponentBaseDTO {
+export class ComponentDTO extends ComponentBaseDTO {
   @ApiProperty({
     description: propertyMetadata.componentDTOId.description,
     example: propertyMetadata.componentDTOId.example,
@@ -199,4 +199,8 @@ export class ComponentDTO extends UpdateComponentBaseDTO {
     name: propertyMetadata.componentDTOUpdateDate.fieldLabels.value,
   })
   updateDate: string;
+
+  @ValidateNested()
+  @Type(() => AnalyzerRangeDTO)
+  analyzerRanges: AnalyzerRangeDTO[];
 }

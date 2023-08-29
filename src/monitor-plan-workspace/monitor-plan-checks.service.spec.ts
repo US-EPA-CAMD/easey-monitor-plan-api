@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
@@ -12,7 +11,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UpdateComponentBaseDTO } from '../dtos/component.dto';
-import { MonitorSystemBaseDTO } from '../dtos/monitor-system.dto';
+import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 import { MonitorLocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
 import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
@@ -29,7 +28,7 @@ location.stackPipeId = null;
 const matsMethod = new MatsMethodBaseDTO();
 const unitControl = new UnitControlBaseDTO();
 const component = new UpdateComponentBaseDTO();
-const monitorSystem = new MonitorSystemBaseDTO();
+const monitorSystem = new UpdateMonitorSystemDTO();
 const systemComponent = new SystemComponentBaseDTO();
 const monitorSpan = new MonitorSpanBaseDTO();
 

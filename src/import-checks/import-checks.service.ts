@@ -1,5 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { PlantService } from '../plant/plant.service';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
@@ -15,7 +14,6 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 @Injectable()
 export class ImportChecksService {
   constructor(
-    private readonly logger: Logger,
     private readonly componentService: ComponentWorkspaceService,
     private readonly qualificationService: MonitorQualificationWorkspaceService,
     private readonly monitorSystemService: MonitorSystemWorkspaceService,

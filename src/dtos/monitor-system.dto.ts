@@ -11,8 +11,14 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { SystemComponentBaseDTO } from './system-component.dto';
-import { SystemFuelFlowBaseDTO } from './system-fuel-flow.dto';
+import {
+  SystemComponentBaseDTO,
+  SystemComponentDTO,
+} from './system-component.dto';
+import {
+  SystemFuelFlowBaseDTO,
+  SystemFuelFlowDTO,
+} from './system-fuel-flow.dto';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import {
   IsInRange,
@@ -258,6 +264,8 @@ export class MonitorSystemBaseDTO {
   fuelFlows: SystemFuelFlowBaseDTO[];
 }
 
+export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO {}
+
 export class MonitorSystemDTO extends MonitorSystemBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
@@ -299,6 +307,14 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
   @IsDateString()
   @IsOptional()
   updateDate: string;
+
+  @ValidateNested({ each: true })
+  @Type(() => SystemComponentDTO)
+  components: SystemComponentDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => SystemFuelFlowDTO)
+  fuelFlows: SystemFuelFlowDTO[];
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOActive.description,
