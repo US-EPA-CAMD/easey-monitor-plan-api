@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
@@ -12,6 +7,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   MonitorQualificationBaseDTO,
   MonitorQualificationDTO,
+  UpdateMonitorQualificationDTO,
 } from '../dtos/monitor-qualification.dto';
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -38,7 +34,7 @@ export class MonitorQualificationWorkspaceService {
     private readonly cpmsQualificationService: CPMSQualificationWorkspaceService,
   ) {}
 
-  runQualificationImportCheck(qualifications: MonitorQualificationBaseDTO[]) {
+  runQualificationImportCheck(qualifications: UpdateMonitorQualificationDTO[]) {
     const errorList: string[] = [];
 
     for (const qual of qualifications) {
@@ -77,7 +73,7 @@ export class MonitorQualificationWorkspaceService {
   private async importQualPctLeeLmeCpms(
     locationId: string,
     qualificationRecordId: string,
-    qualification: MonitorQualificationBaseDTO,
+    qualification: UpdateMonitorQualificationDTO,
     userId: string,
   ): Promise<void> {
     const promises = [];
@@ -128,7 +124,7 @@ export class MonitorQualificationWorkspaceService {
   }
 
   async importQualification(
-    qualifications: MonitorQualificationBaseDTO[],
+    qualifications: UpdateMonitorQualificationDTO[],
     locationId: string,
     userId: string,
   ): Promise<void> {

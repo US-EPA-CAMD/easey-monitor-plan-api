@@ -33,4 +33,17 @@ export class CPMSQualificationWorkspaceRepository extends Repository<
       .andWhere('cpmsq.stackTestNumber = :stackTestNumber', { stackTestNumber })
       .getOne();
   }
+
+  async getCPMSQualifications(
+    locId: string,
+    qualificationId: string,
+  ): Promise<CPMSQualification[]> {
+    return this.createQueryBuilder('cpmsq')
+      .innerJoinAndSelect('cpmsq.qualification', 'q')
+      .innerJoinAndSelect('q.location', 'l')
+      .where('l.id = :locId', { locId })
+      .andWhere('q.id = :qualificationId', { qualificationId })
+      .addOrderBy('cpmsq.id')
+      .getMany();
+  }
 }

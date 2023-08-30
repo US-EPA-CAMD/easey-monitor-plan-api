@@ -34,13 +34,13 @@ export class UnitCapacityBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `The value of ${args.value} for ${args.property} is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(-999999.9, 999999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value of ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
     },
   })
   maximumHourlyHeatInputCapacity: number;
@@ -58,7 +58,7 @@ export class UnitCapacityBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange('1930-01-01', MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CAPAC-5-B', {
         fieldname: args.property,
@@ -69,7 +69,7 @@ export class UnitCapacityBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   beginDate: Date;
@@ -91,7 +91,7 @@ export class UnitCapacityBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITCAPACITY-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
     },
   })
   @BeginEndDatesConsistent({

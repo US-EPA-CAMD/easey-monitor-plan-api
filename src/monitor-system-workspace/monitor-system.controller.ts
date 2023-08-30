@@ -5,8 +5,8 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
 import {
-  MonitorSystemBaseDTO,
   MonitorSystemDTO,
+  UpdateMonitorSystemDTO,
 } from '../dtos/monitor-system.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
@@ -43,7 +43,7 @@ export class MonitorSystemWorkspaceController {
   })
   async createSystem(
     @Param('locId') locationId: string,
-    @Body() payload: MonitorSystemBaseDTO,
+    @Body() payload: UpdateMonitorSystemDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
     await this.checkService.runChecks(locationId, payload);
@@ -60,7 +60,7 @@ export class MonitorSystemWorkspaceController {
   async updateSystem(
     @Param('locId') locationId: string,
     @Param('sysId') monitoringSystemId: string,
-    @Body() payload: MonitorSystemBaseDTO,
+    @Body() payload: UpdateMonitorSystemDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
     await this.checkService.runChecks(locationId, payload, false, true);

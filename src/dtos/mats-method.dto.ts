@@ -16,7 +16,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
-import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { FindManyOptions } from 'typeorm';
 import { MatsMethodsMasterDataRelationships } from '../entities/mats-methods-master-data-relationship.entity';
 import { BeginEndDatesConsistent } from '../utils';
 

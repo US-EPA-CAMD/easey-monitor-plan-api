@@ -44,7 +44,7 @@ export class MonitorConfigurationsController {
       'Retrieves workspace Monitor Plan configurations that have been updated after a certain date',
   })
   getLastUpdated(
-    @Query('date') queryTime: Date,
+    @Query('date') queryTime: string,
   ): Promise<LastUpdatedConfigDTO> {
     return this.service.getConfigurationsByLastUpdated(queryTime);
   }

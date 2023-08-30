@@ -1,6 +1,6 @@
 import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
-import { MonitorSystemBaseDTO } from '../../dtos/monitor-system.dto';
+import { UpdateMonitorSystemDTO } from '../../dtos/monitor-system.dto';
 import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
 import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
@@ -72,7 +72,7 @@ describe('Monitor-Import Utilities Tests', () => {
       jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(true);
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemComponent = new SystemComponentBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
@@ -102,7 +102,7 @@ describe('Monitor-Import Utilities Tests', () => {
       jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(false);
 
       const location = new UpdateMonitorLocationDTO();
-      const system = new MonitorSystemBaseDTO();
+      const system = new UpdateMonitorSystemDTO();
       const systemComponent = new SystemComponentBaseDTO();
       const component = new UpdateComponentBaseDTO();
 

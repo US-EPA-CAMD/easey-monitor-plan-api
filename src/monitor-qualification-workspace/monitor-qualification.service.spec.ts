@@ -4,7 +4,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
-import { MonitorQualificationBaseDTO, MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
+import {
+  MonitorQualificationDTO,
+  UpdateMonitorQualificationDTO,
+} from '../dtos/monitor-qualification.dto';
 import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
 import { LMEQualificationBaseDTO } from '../dtos/lme-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -24,7 +27,7 @@ const userId = 'testuser';
 const returnedMonitorQualifications: MonitorQualificationDTO[] = [];
 const returnedMonitorQualification: MonitorQualificationDTO = new MonitorQualificationDTO();
 
-const payload: MonitorQualificationBaseDTO = {
+const payload: UpdateMonitorQualificationDTO = {
   qualificationTypeCode: '',
   beginDate: new Date(Date.now()),
   endDate: new Date(Date.now()),
@@ -93,7 +96,7 @@ describe('MonitorQualificationService', () => {
 
   describe('runQualificationImportCheck', () => {
     it('Should pass when values for qualTypeCode "LMEA" of qualfication is valid with so2 value not set', async () => {
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const lmeQual = new LMEQualificationBaseDTO();
       const leeQual = new LEEQualificationBaseDTO();
 
@@ -111,7 +114,7 @@ describe('MonitorQualificationService', () => {
     });
 
     it('Should pass when values for qualTypeCode "PK" of qualfication is valid with so2 value not set', async () => {
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const lmeQual = new LMEQualificationBaseDTO();
       const leeQual = new LEEQualificationBaseDTO();
       const pctQual = new PCTQualificationBaseDTO();
@@ -130,7 +133,7 @@ describe('MonitorQualificationService', () => {
     });
 
     it('Should fail when values for qualTypeCode "PK" of qualfication is valid with so2 value not null', async () => {
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const lmeQual = new LMEQualificationBaseDTO();
 
       lmeQual.so2Tons = 1;
@@ -152,7 +155,7 @@ describe('MonitorQualificationService', () => {
     });
 
     it('Should fail when values for qualTypeCode "LMEA" of qualfication is valid with so2 value not null', async () => {
-      const quals = new MonitorQualificationBaseDTO();
+      const quals = new UpdateMonitorQualificationDTO();
       const lmeQual = new LMEQualificationBaseDTO();
       const pctQual = new PCTQualificationBaseDTO();
 

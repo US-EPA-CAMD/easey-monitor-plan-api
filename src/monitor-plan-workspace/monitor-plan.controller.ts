@@ -13,13 +13,13 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ImportChecksService } from '../import-checks/import-checks.service';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,7 +27,6 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 export class MonitorPlanWorkspaceController {
   constructor(
     private readonly service: MonitorPlanWorkspaceService,
-    private readonly logger: Logger,
     private readonly importChecksService: ImportChecksService,
     private readonly mpChecksService: MonitorPlanChecksService,
   ) {}
@@ -41,8 +40,11 @@ export class MonitorPlanWorkspaceController {
     { enforceCheckout: false, queryParam: 'planId' },
     LookupType.MonitorPlan,
   )
-  exportMonitorPlan(@Query('planId') planId: string) {
-    return this.service.exportMonitorPlan(planId);
+  exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
+    return this.service.exportMonitorPlan(
+      params.planId,
+      params.reportedValuesOnly,
+    );
   }
 
   // TEMP: unconventional route path to avoid messing with URL's before demo
