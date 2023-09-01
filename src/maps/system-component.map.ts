@@ -17,6 +17,7 @@ export class SystemComponentMap extends BaseMap<
       componentRecordId: entity.componentRecordId,
       componentId: entity.component.componentId,
       componentTypeCode: entity.component.componentTypeCode,
+      analyticalPrincipleCode: entity.component.analyticalPrincipleCode,
       basisCode: entity.component.basisCode,
       modelVersion: entity.component.modelVersion,
       manufacturer: entity.component.manufacturer,

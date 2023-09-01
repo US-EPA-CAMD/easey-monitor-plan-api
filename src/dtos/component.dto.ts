@@ -68,6 +68,15 @@ export class ComponentBaseDTO {
 
   @ApiProperty({
     description:
+      propertyMetadata.componentDTOAnalyticalPrincipleCode.description,
+    example: propertyMetadata.componentDTOAnalyticalPrincipleCode.example,
+    name:
+      propertyMetadata.componentDTOAnalyticalPrincipleCode.fieldLabels.value,
+  })
+  analyticalPrincipleCode: string;
+
+  @ApiProperty({
+    description:
       propertyMetadata.componentDTOSampleAcquisitionMethodCode.description,
     example: propertyMetadata.componentDTOSampleAcquisitionMethodCode.example,
     name:

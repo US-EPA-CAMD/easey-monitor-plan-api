@@ -90,6 +90,7 @@ export class SystemComponentWorkspaceService {
       const componentPayload: UpdateComponentBaseDTO = {
         componentId: component.componentId,
         componentTypeCode: component.componentTypeCode,
+        analyticalPrincipleCode: component.analyticalPrincipleCode,
         sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
         basisCode: component.basisCode,
         manufacturer: payload.manufacturer,
@@ -143,6 +144,7 @@ export class SystemComponentWorkspaceService {
       const componentPayload: UpdateComponentBaseDTO = {
         componentId: payload.componentId,
         componentTypeCode: payload.componentTypeCode,
+        analyticalPrincipleCode: payload.analyticalPrincipleCode,
         sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
         basisCode: payload.basisCode,
         manufacturer: payload.manufacturer,

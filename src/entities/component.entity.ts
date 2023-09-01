@@ -37,6 +37,14 @@ export class Component extends BaseEntity {
   })
   componentTypeCode: string;
 
+  @Column({
+    type: 'varchar',
+    length: 7,
+    nullable: false,
+    name: 'analytical_principle_cd',
+  })
+  analyticalPrincipleCode: string;
+
   @Column({ type: 'varchar', length: 7, name: 'acq_cd' })
   sampleAcquisitionMethodCode: string;
 
