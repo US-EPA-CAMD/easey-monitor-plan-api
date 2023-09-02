@@ -23,6 +23,7 @@ import {
 } from '../utilities/constants';
 import { VwUnitcontrolMasterDataRelationships } from '../entities/vw-unitcontrol-master-data-relationships.entity';
 import { ControlCode } from '../entities/control-code.entity';
+import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
 
 const KEY = 'Unit Control';
 
@@ -135,9 +136,9 @@ export class UnitControlBaseDTO {
         .value,
   })
   @IsOptional()
-  @IsInRange(0, 1, {
+  @MatchesRegEx('^[01]$', {
     message: (args: ValidationArguments) => {
-      return `The value for [${args.value}] in the Unit Control record  [${args.property}] must be string value of "0" or "1"`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 character consisting 1 or 0.`;
     },
   })
   seasonalControlsIndicator: string;

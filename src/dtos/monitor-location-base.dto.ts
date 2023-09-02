@@ -30,7 +30,7 @@ export class MonitorLocationBaseDTO {
   @MaxLength(6)
   @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be match the RegEx: [A-z0-9-*#]{1,6} for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 6 characters and only consist of upper and lower case letters, numbers, and the special characters - (dash), * (asterisk), and # (pound) for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.stackPipeId === null)
@@ -45,7 +45,7 @@ export class MonitorLocationBaseDTO {
   @IsString()
   @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9-]{1,4} for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 4 characters and only consist of upper and lower case letters, numbers starting with CS, MS, XS, CP, MP, XP for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.unitId === null)

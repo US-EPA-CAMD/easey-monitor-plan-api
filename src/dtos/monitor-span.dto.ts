@@ -69,7 +69,7 @@ export class MonitorSpanBaseDTO {
     'SELECT distinct span_scale_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `[${args.property}] The value : [${args.value}] for [${args.property}] is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for ${KEY}`;
       },
     },
   )
@@ -85,7 +85,7 @@ export class MonitorSpanBaseDTO {
     'SELECT distinct span_method_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `[${args.property}] The value : [${args.value}] for [${args.property}] is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for ${KEY}`;
       },
     },
   )
