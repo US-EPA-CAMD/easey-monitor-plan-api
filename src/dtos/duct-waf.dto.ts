@@ -165,7 +165,7 @@ export class DuctWafBaseDTO {
   )
   @IsInRange(
     0,
-    1,
+    99.9999,
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatResultMessage('DEFAULT-80-D', {
@@ -187,10 +187,10 @@ export class DuctWafBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(2, {
+  @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be in range 1 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -209,10 +209,10 @@ export class DuctWafBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(2, {
+  @IsInRange(12, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be in range 12 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -229,10 +229,10 @@ export class DuctWafBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(2, {
+  @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be in range 1 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -251,10 +251,10 @@ export class DuctWafBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(2, {
+  @IsInRange(12, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be 2 digits or less`,
+        `The value for [fieldname] for [key] must be in range 12 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -277,12 +277,12 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsNumber(
+  @IsInRange(0, 9999.9,
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is allowed only 1 decimal place`,
+          `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -315,12 +315,12 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsNumber(
+  @IsInRange(0, 9999.9,
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is allowed only 1 decimal place`,
+          `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,

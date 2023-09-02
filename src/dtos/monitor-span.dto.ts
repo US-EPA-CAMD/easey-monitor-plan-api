@@ -106,9 +106,9 @@ export class MonitorSpanBaseDTO {
       },
     },
   )
-  @IsInRange(-99999.9, 99999.9, {
+  @IsInRange(0, 99999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value : ${args.value} for ${args.property} must be within the range of 0 and 99999.9`;
     },
   })
   mecValue: number;
@@ -127,9 +127,9 @@ export class MonitorSpanBaseDTO {
       },
     },
   )
-  @IsInRange(-99999.9, 99999.9, {
+  @IsInRange(0, 99999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value : ${args.value} for ${args.property} must be within the range of 0 and 99999.9`;
     },
   })
   mpcValue: number;
@@ -176,9 +176,9 @@ export class MonitorSpanBaseDTO {
       },
     },
   )
-  @IsInRange(-9999999999.999, 9999999999.999, {
+  @IsInRange(0.000, 9999999999.999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -9999999999.999 and 9999999999.999`;
+      return `The value ${args.value} for ${args.property} must be within the range of 0.000 and 9999999999.999`;
     },
   })
   spanValue: number;
@@ -197,9 +197,9 @@ export class MonitorSpanBaseDTO {
       },
     },
   )
-  @IsInRange(-9999999999.999, 9999999999.999, {
+  @IsInRange(0.000, 9999999999.999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -9999999999.999 and 9999999999.999`;
+      return `The value ${args.value} for ${args.property} must be within the range of 0.000 and 9999999999.999`;
     },
   })
   fullScaleRange: number;
@@ -245,9 +245,9 @@ export class MonitorSpanBaseDTO {
       },
     },
   )
-  @IsInRange(-99999.9, 99999.9, {
+  @IsInRange(0, 99999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value ${args.value} for ${args.property} must be within the range of 0 and 99999.9`;
     },
   })
   scaleTransitionPoint: number;
@@ -259,9 +259,9 @@ export class MonitorSpanBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(5, {
+  @IsInRange(0, 99999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be 5 digits or less`;
+      return ` The value ${args.value} for ${args.property} must be in the range 0 and 99999`;
     },
   })
   @ValidateIf(o => o.defaultHighRange !== null)
@@ -274,9 +274,9 @@ export class MonitorSpanBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(10, {
+  @IsInRange(0, 9999999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be 10 digits or less`;
+      return `The value ${args.value} for ${args.property} must be in the range 0 and 9999999999`;
     },
   })
   @ValidateIf(o => o.flowSpanValue !== null)
@@ -289,9 +289,9 @@ export class MonitorSpanBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(10, {
+  @IsInRange(0, 9999999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} The value : ${args.value} for ${args.property} must be 10 digits or less`;
+      return `The value ${args.value} for ${args.property} must be in the range 0 and 9999999999`;
     },
   })
   @ValidateIf(o => o.flowFullScaleRange !== null)

@@ -22,11 +22,11 @@ export class CPMSQualificationBaseDTO {
   })
   @IsNotEmpty()
   @IsNumber()
-  @IsInRange(1900, currentDateTime().getFullYear(), {
+  @IsInRange(1900, 2099().getFullYear(), {
     message: (args: ValidationArguments) => {
       return `You reported an invalid ${args.property} of ${
         args.value
-      } in CPMS Qualification record. The value needs to between 1900 and ${currentDateTime().getFullYear()}`;
+      } in CPMS Qualification record. The value needs to between 1900 and 2099 ().getFullYear()}`;
     },
   })
   qualificationDataYear: number;
@@ -57,9 +57,9 @@ export class CPMSQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Qualification CPMS record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value for ${args.value} in the Qualification CPMS record ${args.property} must be within the range of 0 and 9999.9`;
     },
   })
   operatingLimit: number;

@@ -112,19 +112,19 @@ export class MonitorQualificationBaseDTO {
 export class UpdateMonitorQualificationDTO extends MonitorQualificationBaseDTO {
   @ValidateNested()
   @Type(() => LEEQualificationBaseDTO)
-  leeQualifications: LEEQualificationBaseDTO[];
+  monitoringQualificationLEEData: LEEQualificationBaseDTO[];
 
   @ValidateNested()
   @Type(() => LMEQualificationBaseDTO)
-  lmeQualifications: LMEQualificationBaseDTO[];
+  monitoringQualificationLMEData: LMEQualificationBaseDTO[];
 
   @ValidateNested()
   @Type(() => PCTQualificationBaseDTO)
-  pctQualifications: PCTQualificationBaseDTO[];
+  monitoringQualificationPercentData: PCTQualificationBaseDTO[];
 
   @ValidateNested()
   @Type(() => CPMSQualificationBaseDTO)
-  cpmsQualifications: CPMSQualificationBaseDTO[];
+  monitoringQualificationCPMSData: CPMSQualificationBaseDTO[];
 }
 
 export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
