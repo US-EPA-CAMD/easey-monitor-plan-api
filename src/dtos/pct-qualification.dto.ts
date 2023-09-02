@@ -45,9 +45,9 @@ export class PCTQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
     },
   })
   averagePercentValue: number;
@@ -103,9 +103,9 @@ export class PCTQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
     },
   })
   yr1PercentageValue: number;
@@ -161,9 +161,9 @@ export class PCTQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
     },
   })
   yr2PercentageValue: number;
@@ -180,7 +180,7 @@ export class PCTQualificationBaseDTO {
   @IsOptional()
   @IsAtMostYears(1940, 2050, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
+      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
     },
   })
   yr3QualificationDataYear: number;
@@ -219,9 +219,9 @@ export class PCTQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
     },
   })
   yr3PercentageValue: number;
