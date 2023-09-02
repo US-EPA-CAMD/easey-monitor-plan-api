@@ -19,11 +19,11 @@ import {
   SystemFuelFlowBaseDTO,
   SystemFuelFlowDTO,
 } from './system-fuel-flow.dto';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';

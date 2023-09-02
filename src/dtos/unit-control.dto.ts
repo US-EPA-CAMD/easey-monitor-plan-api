@@ -13,6 +13,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
@@ -23,7 +24,6 @@ import {
 } from '../utilities/constants';
 import { VwUnitcontrolMasterDataRelationships } from '../entities/vw-unitcontrol-master-data-relationships.entity';
 import { ControlCode } from '../entities/control-code.entity';
-import { MatchesRegEx } from 'src/import-checks/pipes/matches-regex.pipe';
 
 const KEY = 'Unit Control';
 

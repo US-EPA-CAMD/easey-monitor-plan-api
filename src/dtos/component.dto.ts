@@ -2,7 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO, AnalyzerRangeDTO } from './analyzer-range.dto';
-import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsValidCode,
+  MatchesRegEx,
+} from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
@@ -11,7 +15,6 @@ import {
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
 import { FindOneOptions } from 'typeorm';

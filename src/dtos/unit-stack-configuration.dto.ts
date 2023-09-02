@@ -8,8 +8,11 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsIsoFormat, IsValidDate } from '@us-epa-camd/easey-common/pipes';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
+import {
+  IsIsoFormat,
+  IsValidDate,
+  MatchesRegEx,
+} from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DATE_FORMAT } from '../utilities/constants';
 

@@ -16,8 +16,8 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
