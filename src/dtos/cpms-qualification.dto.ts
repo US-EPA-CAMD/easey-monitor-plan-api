@@ -9,7 +9,8 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+
+const KEY = 'Monitor Qualification CPMS';
 
 export class CPMSQualificationBaseDTO {
   @ApiProperty({
@@ -22,11 +23,9 @@ export class CPMSQualificationBaseDTO {
   })
   @IsNotEmpty()
   @IsNumber()
-  @IsInRange(1900, 2099().getFullYear(), {
+  @IsInRange(1900, 2099, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid ${args.property} of ${
-        args.value
-      } in CPMS Qualification record. The value needs to between 1900 and 2099 ().getFullYear()}`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1900 and 2099.`;
     },
   })
   qualificationDataYear: number;
@@ -53,13 +52,13 @@ export class CPMSQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `The value for ${args.value} in the Qualification CPMS record ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
       },
     },
   )
   @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Qualification CPMS record ${args.property} must be within the range of 0 and 9999.9`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}]`;
     },
   })
   operatingLimit: number;

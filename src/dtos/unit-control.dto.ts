@@ -86,7 +86,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be string value of "0" or "1"`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be string value of "0" or "1"`;
     },
   })
   originalCode: string;
@@ -99,7 +99,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
   @IsInDateRange('1930-01-01', MAXIMUM_FUTURE_DATE, {
@@ -121,7 +121,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
   optimizationDate: Date;
@@ -137,7 +137,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
+      return `The value for [${args.value}] in the Unit Control record  [${args.property}] must be string value of "0" or "1"`;
     },
   })
   seasonalControlsIndicator: string;
@@ -159,7 +159,7 @@ export class UnitControlBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
   retireDate: Date;

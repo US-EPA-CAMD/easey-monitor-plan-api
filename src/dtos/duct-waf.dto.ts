@@ -15,7 +15,6 @@ import {
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   DATE_FORMAT,
@@ -153,13 +152,7 @@ export class DuctWafBaseDTO {
     { maxDecimalPlaces: 4 },
     {
       message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is allowed only 4 decimal place`,
-          {
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
+        return `The value of [${args.value}] for [${args.property}] is allowed only 4 decimal place for [${KEY}]`;
       },
     },
   )
@@ -277,17 +270,22 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsInRange(0, 9999.9,
+  @IsInRange(0, 9999.9, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
+  @IsNumber(
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
-          {
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for [${KEY}]`;
       },
     },
   )
@@ -315,17 +313,22 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsInRange(0, 9999.9,
+  @IsInRange(0, 9999.9, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
+  @IsNumber(
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
-          {
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for [${KEY}]`;
       },
     },
   )
@@ -345,7 +348,12 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafEndDate.example,
     name: propertyMetadata.ductWafDTOWafEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.wafEndDate !== null)
+  @ValidateIf(o => o.wafEndDate !== null || o.wafEndHour !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You reported [wafEndHour] but did not report an [wafEndDate] for [[${KEY}]].`;
+    },
+  })
   @IsInDateRange(MINIMUM_DATE, CURRENT_DATE(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-84-A', {
@@ -374,8 +382,7 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafEndHour.example,
     name: propertyMetadata.ductWafDTOWafEndHour.fieldLabels.value,
   })
-  @IsOptional()
-  @ValidateIf(o => o.wafEndHour !== null)
+  @ValidateIf(o => o.wafEndHour !== null || o.wafEndDate !== null)
   @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
@@ -384,6 +391,11 @@ export class DuctWafBaseDTO {
         hour: args.value,
         key: KEY,
       });
+    },
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You reported [wafEndDate] but did not report an [wafEndHour] for [[${KEY}]].`;
     },
   })
   wafEndHour: number;

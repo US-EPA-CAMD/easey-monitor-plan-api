@@ -66,7 +66,7 @@ export class SystemFuelFlowBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `The value of ${args.value} for ${args.property} is allowed only one decimal place for ${KEY}.`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}].`;
       },
     },
   )
@@ -91,7 +91,7 @@ export class SystemFuelFlowBaseDTO {
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_systemfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `The value of ${args.value} for ${args.property} is invalid for ${KEY}.`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
       },
     },
   )
@@ -188,7 +188,7 @@ export class SystemFuelFlowBaseDTO {
   @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [SYSFUEL-FATAL-A] The value for ${args.value} in the System Fuel Flow record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value to [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
   @IsNotEmpty({

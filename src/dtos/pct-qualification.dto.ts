@@ -9,10 +9,9 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { IsAtMostYears } from '../import-checks/pipes/is-at-most-years.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
+const KEY = 'Monitor Qualification Percentage';
 const qualDataTypeCodeQuery =
   'SELECT qual_data_type_cd as "value" FROM camdecmpsmd.qual_data_type_code';
 export class PCTQualificationBaseDTO {
@@ -22,9 +21,9 @@ export class PCTQualificationBaseDTO {
     name: 'qualificationYear',
   })
   @IsNotEmpty()
-  @MatchesRegEx('^(19|20)([0-9]{2})$', {
+  @IsInRange(1900, 2099, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is not formatted properly`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1900 and 2099.`;
     },
   })
   qualificationYear: number;
@@ -41,13 +40,13 @@ export class PCTQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for $[${KEY}].`;
       },
     },
   )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
+      return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
     },
   })
   averagePercentValue: number;
@@ -62,9 +61,9 @@ export class PCTQualificationBaseDTO {
         .value,
   })
   @IsOptional()
-  @IsAtMostYears(1940, 2050, {
+  @IsInRange(1940, 2050, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
+      return `The value of [${args.value}] for [${args.property}] must be between 1940 and 2050 for [${KEY}]`;
     },
   })
   yr1QualificationDataYear: number;
@@ -82,7 +81,7 @@ export class PCTQualificationBaseDTO {
   @IsOptional()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
+      return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
     },
   })
   yr1QualificationDataTypeCode: string;
@@ -99,13 +98,13 @@ export class PCTQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
       },
     },
   )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
+      return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
     },
   })
   yr1PercentageValue: number;
@@ -120,9 +119,9 @@ export class PCTQualificationBaseDTO {
         .value,
   })
   @IsOptional()
-  @IsAtMostYears(1940, 2050, {
+  @IsInRange(1940, 2050, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
+      return `The value of [${args.value}] for [${args.property}] must be between 1940 and 2050 for [${KEY}]`;
     },
   })
   yr2QualificationDataYear: number;
@@ -140,7 +139,7 @@ export class PCTQualificationBaseDTO {
   @IsOptional()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
+      return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
     },
   })
   yr2QualificationDataTypeCode: string;
@@ -157,13 +156,13 @@ export class PCTQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
       },
     },
   )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
+      return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
     },
   })
   yr2PercentageValue: number;
@@ -178,9 +177,9 @@ export class PCTQualificationBaseDTO {
         .value,
   })
   @IsOptional()
-  @IsAtMostYears(1940, 2050, {
+  @IsInRange(1940, 2050, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be between 1940 and 2050`;
+      return `The value of [${args.value}] for [${args.property}] must be between 1940 and 2050 for [${KEY}]`;
     },
   })
   yr3QualificationDataYear: number;
@@ -198,7 +197,7 @@ export class PCTQualificationBaseDTO {
   @IsOptional()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALPCT-FATAL-B] The value for ${args.value} in the Qualification PCT record ${args.property} is invalid`;
+      return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
     },
   })
   yr3QualificationDataTypeCode: string;
@@ -215,13 +214,13 @@ export class PCTQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALPCT-FATAL-A] The value for ${args.value} in the Qualification PCT record ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
       },
     },
   )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Qualification PCT record ${args.property} must be within the range of 0 and 100`;
+      return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
     },
   })
   yr3PercentageValue: number;

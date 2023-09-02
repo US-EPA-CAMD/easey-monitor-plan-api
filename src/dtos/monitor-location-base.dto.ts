@@ -6,7 +6,6 @@ import {
   IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import {
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -31,7 +30,7 @@ export class MonitorLocationBaseDTO {
   @MaxLength(6)
   @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be match the RegEx: [A-z0-9-*#]{1,6} for ${KEY}.`;
+      return `The value of [${args.value}] for [${args.property}] must be match the RegEx: [A-z0-9-*#]{1,6} for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.stackPipeId === null)
@@ -46,7 +45,7 @@ export class MonitorLocationBaseDTO {
   @IsString()
   @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9-]{1,4} for ${KEY}.`;
+      return `The value of [${args.value}] for [${args.property}] must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9-]{1,4} for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.unitId === null)
@@ -60,13 +59,13 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}].`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -80,13 +79,13 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}].`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -103,7 +102,7 @@ export class MonitorLocationBaseDTO {
   @IsNotEmpty()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be within the range of 0 and 1 for ${KEY}.`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.unitId !== null)

@@ -34,13 +34,13 @@ export class UnitCapacityBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `The value of ${args.value} for ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place`;
       },
     },
   )
   @IsInRange(0, 999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be within the range of 0 and 99999.9`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99999.9`;
     },
   })
   maximumHourlyHeatInputCapacity: number;
@@ -69,7 +69,7 @@ export class UnitCapacityBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   beginDate: Date;
@@ -91,7 +91,7 @@ export class UnitCapacityBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
   @BeginEndDatesConsistent({

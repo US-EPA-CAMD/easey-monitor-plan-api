@@ -28,12 +28,12 @@ export class MonitorPlanCommentBaseDTO {
   @IsNotEmpty()
   @MinLength(1, {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must exceed 1 character`;
+      return `The value of [${args.value}] for [${args.property}] must exceed 1 character`;
     },
   })
   @MaxLength(4000, {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must not exceed 4000 characters`;
+      return `The value of [${args.value}] for [${args.property}] must not exceed 4000 characters`;
     },
   })
   monitoringPlanComment: string;
@@ -46,13 +46,13 @@ export class MonitorPlanCommentBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -66,13 +66,13 @@ export class MonitorPlanCommentBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })

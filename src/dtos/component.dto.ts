@@ -8,7 +8,6 @@ import {
   IsOptional,
   IsString,
   MaxLength,
-  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -147,7 +146,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(25, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Component record ${args.property} must not exceed 25 characters`;
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 25 characters`;
     },
   })
   manufacturer: string;
@@ -160,7 +159,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(15, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Component record ${args.property} must not exceed 15 characters`;
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 15 characters`;
     },
   })
   modelVersion: string;
@@ -173,7 +172,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(20, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Component record ${args.property} must not exceed 20 characters`;
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 20 characters`;
     },
   })
   serialNumber: string;
@@ -186,7 +185,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be within the range of 0 and 1 for ${KEY}`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}]`;
     },
   })
   hgConverterIndicator: number;

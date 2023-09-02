@@ -19,7 +19,7 @@ export class UnitStackConfigurationBaseDTO {
   @IsString()
   @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `The value ${args.value} for ${args.property} must be match the RegEx: [A-Za-z0-9-*#]{1,6} for ${KEY}.`;
+      return `The value [${args.value}] for [${args.property}] must be match the RegEx: [A-Za-z0-9-*#]{1,6} for [${KEY}].`;
     },
   })
   unitId: string;
@@ -27,7 +27,7 @@ export class UnitStackConfigurationBaseDTO {
   @IsString()
   @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `The value ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9-]{1,4} for ${KEY}.`;
+      return `The value [${args.value}] for [${args.property}] must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9-]{1,4} for [${KEY}].`;
     },
   })
   stackPipeId: string;
@@ -40,13 +40,13 @@ export class UnitStackConfigurationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format ${DATE_FORMAT} for ${KEY}.`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [${DATE_FORMAT}] for [${KEY}].`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -59,13 +59,13 @@ export class UnitStackConfigurationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format ${DATE_FORMAT} for ${KEY}.`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [${DATE_FORMAT}] for [${KEY}].`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })

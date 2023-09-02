@@ -31,7 +31,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct fuel_type_cd as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
+        return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;
       },
     },
   )
@@ -47,7 +47,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct fuel_indicator_cd as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
+        return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;
       },
     },
   )
@@ -62,7 +62,7 @@ export class UnitFuelBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value}  in the Unit Fuel record ${args.property} must be within the range of 0 and 1`;
+      return `The value for [${args.value}]  in the Unit Fuel record [${args.property}] must be within the range of 0 and 1`;
     },
   })
   ozoneSeasonIndicator: number;
@@ -77,7 +77,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct dem_gcv as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
+        return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;
       },
     },
   )
@@ -93,7 +93,7 @@ export class UnitFuelBaseDTO {
     'SELECT distinct dem_so2 as "value" FROM camdecmpsmd.vw_unitfuel_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `The value for ${args.value} in the Unit Fuel record ${args.property} is invalid`;
+        return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;
       },
     },
   )
@@ -123,7 +123,7 @@ export class UnitFuelBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Fuel record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value for [${args.value}] in the Unit Fuel record [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   beginDate: Date;
@@ -145,7 +145,7 @@ export class UnitFuelBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Fuel record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value for [${args.value}] in the Unit Fuel record [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   @BeginEndDatesConsistent({
