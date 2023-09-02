@@ -88,6 +88,14 @@ export class MonitorDefaultBaseDTO {
       );
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 4 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of ${args.value} for ${args.property} is allowed only four decimal place for ${KEY}.`;
+      },
+    },
+  )
   defaultValue: number;
 
   @ApiProperty({
@@ -241,7 +249,6 @@ export class MonitorDefaultBaseDTO {
       );
     },
   })
-  @ValidateIf(o => o.groupId !== null)
   @IsString()
   groupID: string;
 

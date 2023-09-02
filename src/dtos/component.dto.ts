@@ -6,6 +6,7 @@ import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
+  IsString,
   MaxLength,
   ValidateIf,
   ValidateNested,
@@ -16,6 +17,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
 import { FindOneOptions } from 'typeorm';
 import { BasisCode } from '../entities/basis-code.entity';
+import { AnalyticalPrincipalCode } from 'src/entities/analytical-principal-code.entity';
 
 const KEY = 'Component';
 
@@ -64,6 +66,7 @@ export class ComponentBaseDTO {
       });
     },
   })
+  @IsString()
   componentTypeCode: string;
 
   @ApiProperty({
@@ -73,6 +76,20 @@ export class ComponentBaseDTO {
     name:
       propertyMetadata.componentDTOAnalyticalPrincipleCode.fieldLabels.value,
   })
+  @IsValidCode(AnalyticalPrincipalCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value], which is not in the list of valid values, in the field Critical Error Level [fieldname] for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
+  @IsString()
+  @IsOptional()
   analyticalPrincipleCode: string;
 
   @ApiProperty({
@@ -100,7 +117,8 @@ export class ComponentBaseDTO {
       return { where: { sampleAcquisitionMethodCode: args.value } };
     },
   )
-  @ValidateIf(o => o.sampleAcquisitionMethodCode !== null)
+  @IsString()
+  @IsOptional()
   sampleAcquisitionMethodCode: string;
 
   @ApiProperty({
@@ -117,6 +135,8 @@ export class ComponentBaseDTO {
       });
     },
   })
+  @IsString()
+  @IsOptional()
   basisCode: string;
 
   @ApiProperty({

@@ -8,10 +8,12 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { IsIsoFormat, IsValidDate } from '@us-epa-camd/easey-common/pipes';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { DATE_FORMAT } from '../utilities/constants';
 
-const KEY = "Unit Stack Configuration"
+const KEY = 'Unit Stack Configuration';
 
 export class UnitStackConfigurationBaseDTO {
   @IsString()
@@ -38,7 +40,14 @@ export class UnitStackConfigurationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format ${DATE_FORMAT} for ${KEY}.`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+      );
     },
   })
   beginDate: Date;
@@ -50,7 +59,14 @@ export class UnitStackConfigurationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format ${DATE_FORMAT} for ${KEY}.`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+      );
     },
   })
   endDate: Date;

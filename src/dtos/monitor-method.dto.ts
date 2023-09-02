@@ -184,8 +184,8 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndHour.example,
     name: propertyMetadata.monitorMethodDTOEndHour.fieldLabels.value,
   })
-  @IsInt()
   @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsInt()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('METHOD-5-A', {

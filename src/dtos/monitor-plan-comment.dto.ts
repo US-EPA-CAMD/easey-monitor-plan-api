@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { IsIsoFormat, IsValidDate } from '@us-epa-camd/easey-common/pipes';
 import {
   IsBoolean,
   IsDateString,
@@ -12,6 +13,8 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+import { DATE_FORMAT } from 'src/utilities/constants';
+
 export class MonitorPlanCommentBaseDTO {
   @ApiProperty({
     description:
@@ -25,12 +28,12 @@ export class MonitorPlanCommentBaseDTO {
   @IsNotEmpty()
   @MinLength(1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must exceed 1 character`;
+      return `The value of ${args.value} for ${args.property} must exceed 1 character`;
     },
   })
   @MaxLength(4000, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must not exceed 4000 characters`;
+      return `The value of ${args.value} for ${args.property} must not exceed 4000 characters`;
     },
   })
   monitoringPlanComment: string;
@@ -43,7 +46,14 @@ export class MonitorPlanCommentBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+      );
     },
   })
   beginDate: Date;
@@ -56,7 +66,14 @@ export class MonitorPlanCommentBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLANCOMMENT-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `${args.property} must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of ${args.value}`,
+      );
     },
   })
   @ValidateIf(o => o.endDate !== null)
