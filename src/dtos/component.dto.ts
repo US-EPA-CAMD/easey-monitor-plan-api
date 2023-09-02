@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO, AnalyzerRangeDTO } from './analyzer-range.dto';
-import { IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
@@ -164,13 +164,18 @@ export class ComponentBaseDTO {
     name: propertyMetadata.componentDTOHgConverterIndicator.fieldLabels.value,
   })
   @IsOptional()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of ${args.value} for ${args.property} must be within the range of 0 and 1 for ${KEY}`;
+    },
+  })
   hgConverterIndicator: number;
 }
 
 export class UpdateComponentBaseDTO extends ComponentBaseDTO {
   @ValidateNested()
   @Type(() => AnalyzerRangeBaseDTO)
-  analyzerRanges: AnalyzerRangeBaseDTO[];
+  analyzerRangeData: AnalyzerRangeBaseDTO[];
 }
 
 export class ComponentDTO extends ComponentBaseDTO {
@@ -211,5 +216,5 @@ export class ComponentDTO extends ComponentBaseDTO {
 
   @ValidateNested()
   @Type(() => AnalyzerRangeDTO)
-  analyzerRanges: AnalyzerRangeDTO[];
+  analyzerRangeData: AnalyzerRangeDTO[];
 }

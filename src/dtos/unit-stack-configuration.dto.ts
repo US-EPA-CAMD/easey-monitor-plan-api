@@ -11,19 +11,21 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
+const KEY = "Unit Stack Configuration"
+
 export class UnitStackConfigurationBaseDTO {
   @IsString()
-  @MatchesRegEx('^[A-Za-z0-9*#-]{1,6}$', {
+  @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-Za-z0-9*#-]{1,6}`;
+      return `The value ${args.value} for ${args.property} must be match the RegEx: [A-Za-z0-9-*#]{1,6} for ${KEY}.`;
     },
   })
   unitId: string;
 
   @IsString()
-  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}$', {
+  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}`;
+      return `The value ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9-]{1,4} for ${KEY}.`;
     },
   })
   stackPipeId: string;
@@ -36,7 +38,7 @@ export class UnitStackConfigurationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
     },
   })
   beginDate: Date;
@@ -48,7 +50,7 @@ export class UnitStackConfigurationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [UNITSTACKCONFIG-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
     },
   })
   endDate: Date;

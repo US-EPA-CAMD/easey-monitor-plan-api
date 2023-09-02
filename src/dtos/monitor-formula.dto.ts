@@ -47,7 +47,7 @@ export class MonitorFormulaBaseDTO {
       });
     },
   })
-  @MatchesRegEx('^[A-Z0-9-]{3}$', {
+  @MatchesRegEx('^[A-Z0-9\\-]{1,3}$', {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-7-B', {
         iD: args.value,

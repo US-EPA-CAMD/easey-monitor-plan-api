@@ -76,11 +76,12 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
-  @IsInRange(-99999999999.9999, 99999999999.9999, {
+  @IsInRange(0.0, 99999999999.9999, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be within the range of -99999999999.9999 and 99999999999.9999`,
+        `The value of [value] for [fieldname] must be within the range of 0.0000 and 99999999999.9999 for [key].`,
         {
+          value: args.value,
           fieldname: args.property,
           key: KEY,
         },
@@ -220,7 +221,6 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
-  @IsOptional()
   @IsString()
   defaultSourceCode: string;
 
@@ -243,7 +243,7 @@ export class MonitorDefaultBaseDTO {
   })
   @ValidateIf(o => o.groupId !== null)
   @IsString()
-  groupId: string;
+  groupID: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOBeginDate.description,

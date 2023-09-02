@@ -38,9 +38,9 @@ export class UnitCapacityBaseDTO {
       },
     },
   )
-  @IsInRange(-999999.9, 999999.9, {
+  @IsInRange(0, 999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of ${args.value} for ${args.property} must be within the range of -99999.9 and 99999.9`;
+      return `The value of ${args.value} for ${args.property} must be within the range of 0 and 99999.9`;
     },
   })
   maximumHourlyHeatInputCapacity: number;

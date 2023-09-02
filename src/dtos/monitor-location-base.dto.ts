@@ -12,6 +12,8 @@ import {
 } from 'class-validator';
 import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 
+const KEY = "Monitor Location"
+
 export class MonitorLocationBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorLocationDTOUnitId.description,
@@ -21,9 +23,9 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsString()
   @MaxLength(6)
-  @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
+  @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
+      return `The value of ${args.value} for ${args.property} must be match the RegEx: [A-z0-9-*#]{1,6} for ${KEY}.`;
     },
   })
   @ValidateIf(o => o.stackPipeId === null)
@@ -36,9 +38,9 @@ export class MonitorLocationBaseDTO {
   })
   @IsOptional()
   @IsString()
-  @MatchesRegEx('(C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}', {
+  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}`;
+      return `The value of ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9-]{1,4} for ${KEY}.`;
     },
   })
   @ValidateIf(o => o.unitId === null)
@@ -52,7 +54,7 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
     },
   })
   activeDate: Date;
@@ -65,7 +67,7 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd for ${KEY}.`;
     },
   })
   retireDate: Date;
@@ -80,8 +82,9 @@ export class MonitorLocationBaseDTO {
   })
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `The value of ${args.value} for ${args.property} must be within the range of 0 and 1 for ${KEY}.`;
     },
   })
+  @ValidateIf(o => o.unitId !== null)
   nonLoadBasedIndicator: number;
 }

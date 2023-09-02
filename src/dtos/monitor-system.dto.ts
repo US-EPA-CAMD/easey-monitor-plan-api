@@ -257,11 +257,11 @@ export class MonitorSystemBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => SystemComponentBaseDTO)
-  components: SystemComponentBaseDTO[];
+  monitoringSystemComponentData: SystemComponentBaseDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => SystemFuelFlowBaseDTO)
-  fuelFlows: SystemFuelFlowBaseDTO[];
+  monitoringSystemFuelFlowData: SystemFuelFlowBaseDTO[];
 }
 
 export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO {}
@@ -310,11 +310,11 @@ export class MonitorSystemDTO extends MonitorSystemBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => SystemComponentDTO)
-  components: SystemComponentDTO[];
+  monitoringSystemComponentData: SystemComponentDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => SystemFuelFlowDTO)
-  fuelFlows: SystemFuelFlowDTO[];
+  monitoringSystemFuelFlowData: SystemFuelFlowDTO[];
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOActive.description,

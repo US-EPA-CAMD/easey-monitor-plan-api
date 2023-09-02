@@ -47,7 +47,7 @@ export class SystemFuelFlowBaseDTO {
       });
     },
   })
-  @IsInRange(0.1, 99999999.9, {
+  @IsInRange(0, 99999999.9, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUELFLW-2-B', {
         value: args.value,
@@ -55,7 +55,7 @@ export class SystemFuelFlowBaseDTO {
         key: KEY,
       });
     },
-  })
+  }, false)
   maximumFuelFlowRate: number;
 
   @ApiProperty({
@@ -81,7 +81,7 @@ export class SystemFuelFlowBaseDTO {
       },
     },
   )
-  systemFuelFlowUOMCode: string;
+  systemFuelFlowUnitsOfMeasureCode: string;
 
   @ApiProperty({
     description:
