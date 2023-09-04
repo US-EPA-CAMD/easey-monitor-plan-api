@@ -7,12 +7,11 @@ import { ComponentCheckService } from '../component-workspace/component-checks.s
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
-const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 const locationId = '1';
 const payload = new UpdateMonitorSystemDTO();
 const systemComponent = new SystemComponentBaseDTO();
 
-payload.components = [systemComponent];
+payload.monitoringSystemComponentData = [systemComponent];
 
 describe('Monitor System Check Service Tests', () => {
   let service: MonitorSystemCheckService;

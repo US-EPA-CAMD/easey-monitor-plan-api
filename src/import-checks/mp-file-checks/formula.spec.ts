@@ -25,9 +25,9 @@ describe('Component Tests', () => {
       formula.parameterCode = 'SO2';
       formula.formulaCode = null;
 
-      location.formulas = [formula];
+      location.monitoringFormulaData = [formula];
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check9.executeCheck(testData);
 
@@ -51,9 +51,9 @@ describe('Component Tests', () => {
       formula.parameterCode = 'SO2';
       formula.formulaCode = null;
 
-      location.formulas = [formula];
+      location.monitoringFormulaData = [formula];
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check9.executeCheck(testData);
 
@@ -78,9 +78,9 @@ describe('Component Tests', () => {
       formula.parameterCode = 'SO2';
       formula.formulaCode = 'W';
 
-      location.formulas = [formula];
+      location.monitoringFormulaData = [formula];
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check9.executeCheck(testData);
 

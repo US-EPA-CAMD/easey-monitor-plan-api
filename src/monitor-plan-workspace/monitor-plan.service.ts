@@ -499,7 +499,7 @@ export class MonitorPlanWorkspaceService {
 
     if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
-      mpDTO.unitStackConfigurations = uscDTO;
+      mpDTO.unitStackConfigurationData = uscDTO;
     }
 
     if (rptValuesOnly) {

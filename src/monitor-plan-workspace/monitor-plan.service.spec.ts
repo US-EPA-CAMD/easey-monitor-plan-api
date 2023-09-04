@@ -60,12 +60,13 @@ import { LMEQualification } from '../entities/workspace/lme-qualification.entity
 import { PCTQualification } from '../entities/workspace/pct-qualification.entity';
 import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
 const LOC_ID = 'LOC_ID';
 const MON_PLAN_ID = 'MON_PLAN_ID';
-const DTO = new MonitorPlanDTO();
+const DTO = new UpdateMonitorPlanDTO();
 const MONITOR_LOCATION = new MonitorLocation();
 MONITOR_LOCATION.id = LOC_ID;
 const MONITOR_PLAN = new MonitorPlan();

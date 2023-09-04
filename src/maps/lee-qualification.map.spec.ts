@@ -12,7 +12,7 @@ const parameterCode = 'HG';
 const qualificationTestType = 'INITIAL';
 const potentialAnnualMassEmissions = null;
 const applicableEmissionStandard = 1.2;
-const unitsOfStandard = 'LBTBTU';
+const unitsofStandard = 'LBTBTU';
 const percentageOfEmissionStandard = 1.4;
 
 const entity = new LEEQualification();
@@ -23,7 +23,7 @@ entity.qualificationTestType = qualificationTestType;
 entity.qualificationTestDate = qualificationTestDate;
 entity.potentialAnnualMassEmissions = potentialAnnualMassEmissions;
 entity.applicableEmissionStandard = applicableEmissionStandard;
-entity.unitsOfStandard = unitsOfStandard;
+entity.unitsOfStandard = unitsofStandard;
 entity.percentageOfEmissionStandard = percentageOfEmissionStandard;
 entity.userId = userId;
 entity.addDate = addDate;
@@ -41,7 +41,7 @@ describe('LEEQualificationMap', () => {
     expect(result.potentialAnnualMassEmissions).toEqual(
       potentialAnnualMassEmissions,
     );
-    expect(result.unitsOfStandard).toEqual(unitsOfStandard);
+    expect(result.unitsofStandard).toEqual(unitsofStandard);
     expect(result.percentageOfEmissionStandard).toEqual(
       percentageOfEmissionStandard,
     );

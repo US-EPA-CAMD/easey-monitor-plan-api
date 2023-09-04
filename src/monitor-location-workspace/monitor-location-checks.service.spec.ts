@@ -37,7 +37,7 @@ describe('location checks service tests', () => {
 
     const location = new UpdateMonitorLocationDTO();
     location.unitId = '51';
-    payload.locations = [location];
+    payload.monitoringLocationData = [location];
     it('is able to return weith expected values', () => {
       const result = service.processLocations(payload);
 
@@ -58,7 +58,7 @@ describe('location checks service tests', () => {
     payload.orisCode = 1;
     const location = new UpdateMonitorLocationDTO();
     location.unitId = '51';
-    payload.locations = [location];
+    payload.monitoringLocationData = [location];
 
     it('returns a response successfully', async () => {
       const loc = new MonitorLocation();

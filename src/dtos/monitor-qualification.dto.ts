@@ -171,19 +171,19 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
 
   @ValidateNested()
   @Type(() => LEEQualificationDTO)
-  leeQualifications: LEEQualificationDTO[];
+  monitoringQualificationLEEData: LEEQualificationDTO[];
 
   @ValidateNested()
   @Type(() => LMEQualificationDTO)
-  lmeQualifications: LMEQualificationDTO[];
+  monitoringQualificationLMEData: LMEQualificationDTO[];
 
   @ValidateNested()
   @Type(() => PCTQualificationDTO)
-  pctQualifications: PCTQualificationDTO[];
+  monitoringQualificationPercentData: PCTQualificationDTO[];
 
   @ValidateNested()
   @Type(() => CPMSQualificationDTO)
-  cpmsQualifications: CPMSQualificationDTO[];
+  monitoringQualificationCPMSData: CPMSQualificationDTO[];
 
   @ApiProperty({
     description: propertyMetadata.monitorQualificationDTOActive.description,

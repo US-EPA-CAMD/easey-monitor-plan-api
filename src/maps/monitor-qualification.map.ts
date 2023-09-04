@@ -6,12 +6,13 @@ import { LMEQualificationMap } from './lme-qualification.map';
 import { PCTQualificationMap } from './pct-qualification.map';
 
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
+import { MonitorQualification as WorkspaceMonitorQualification } from '../entities/workspace/monitor-qualification.entity';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { CPMSQualificationMap } from './cpms-qualification.map';
 
 @Injectable()
 export class MonitorQualificationMap extends BaseMap<
-  MonitorQualification,
+  MonitorQualification | WorkspaceMonitorQualification,
   MonitorQualificationDTO
 > {
   constructor(
@@ -26,16 +27,16 @@ export class MonitorQualificationMap extends BaseMap<
   public async one(
     entity: MonitorQualification,
   ): Promise<MonitorQualificationDTO> {
-    const leeQualifications = entity.leeQualifications
+    const monitoringQualificationLEEData = entity.leeQualifications
       ? await this.leeMap.many(entity.leeQualifications)
       : [];
-    const lmeQualifications = entity.lmeQualifications
+    const monitoringQualificationLMEData = entity.lmeQualifications
       ? await this.lmeMap.many(entity.lmeQualifications)
       : [];
-    const pctQualifications = entity.pctQualifications
+    const monitoringQualificationPercentData = entity.pctQualifications
       ? await this.pctMap.many(entity.pctQualifications)
       : [];
-    const cpmsQualifications = entity.cpmsQualifications
+    const monitoringQualificationCPMSData = entity.cpmsQualifications
       ? await this.cpmsMap.many(entity.cpmsQualifications)
       : [];
 
@@ -49,10 +50,10 @@ export class MonitorQualificationMap extends BaseMap<
       addDate: entity.addDate?.toISOString() ?? null,
       updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
-      leeQualifications,
-      lmeQualifications,
-      pctQualifications,
-      cpmsQualifications,
+      monitoringQualificationLEEData,
+      monitoringQualificationLMEData,
+      monitoringQualificationPercentData,
+      monitoringQualificationCPMSData,
     };
   }
 }

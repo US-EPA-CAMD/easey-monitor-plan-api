@@ -21,9 +21,11 @@ import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 
 export async function removeNonReportedValues(dto: MonitorPlanDTO) {
   const promises = [];
-  promises.push(removeMonitorPlanComment(dto.comments));
-  promises.push(removeUnitStackConfiguration(dto.unitStackConfigurations));
-  promises.push(removeMonitorLocationReportedValues(dto.locations));
+  promises.push(removeMonitorPlanComment(dto.monitoringPlanCommentData));
+  promises.push(removeUnitStackConfiguration(dto.unitStackConfigurationData));
+  promises.push(
+    removeMonitorLocationReportedValues(dto.monitoringLocationData),
+  );
 
   await Promise.all(promises);
 }
@@ -56,16 +58,18 @@ async function removeMonitorLocationReportedValues(
 ) {
   const promises = [];
   locations?.forEach(location => {
-    promises.push(monitorLocationAttribute(location.attributes));
-    promises.push(monitorMethod(location.methods));
-    promises.push(monitorFormula(location.formulas));
-    promises.push(monitorSpan(location.spans));
-    promises.push(monitorDefault(location.defaults));
-    promises.push(monitorLoad(location.loads));
-    promises.push(rectangularDuctWaf(location.ductWafs));
-    promises.push(component(location.components));
-    promises.push(monitorQualification(location.qualifications));
-    promises.push(monitorSystem(location.systems));
+    promises.push(
+      monitorLocationAttribute(location.monitoringLocationAttribData),
+    );
+    promises.push(monitorMethod(location.monitoringMethodData));
+    promises.push(monitorFormula(location.monitoringFormulaData));
+    promises.push(monitorSpan(location.monitoringSpanData));
+    promises.push(monitorDefault(location.monitoringDefaultData));
+    promises.push(monitorLoad(location.monitoringLoadData));
+    promises.push(rectangularDuctWaf(location.rectangularDuctWAFData));
+    promises.push(component(location.componentData));
+    promises.push(monitorQualification(location.monitoringQualificationData));
+    promises.push(monitorSystem(location.monitoringSystemData));
   });
 }
 
@@ -146,7 +150,7 @@ async function component(components: ComponentDTO[]) {
   const promises = [];
 
   components?.forEach(component => {
-    promises.push(analyzerRange(component.analyzerRanges));
+    promises.push(analyzerRange(component.analyzerRangeData));
     delete component.id;
     delete component.locationId;
     delete component.componentId;
@@ -169,9 +173,15 @@ async function analyzerRange(analyzerRanges: AnalyzerRangeDTO[]) {
 async function monitorQualification(qualifications: MonitorQualificationDTO[]) {
   const promises = [];
   qualifications?.forEach(qualification => {
-    promises.push(qualificationPCT(qualification.pctQualifications));
-    promises.push(qualificationLME(qualification.lmeQualifications));
-    promises.push(qualificationLEE(qualification.leeQualifications));
+    promises.push(
+      qualificationPCT(qualification.monitoringQualificationPercentData),
+    );
+    promises.push(
+      qualificationLME(qualification.monitoringQualificationLMEData),
+    );
+    promises.push(
+      qualificationLEE(qualification.monitoringQualificationLEEData),
+    );
     delete qualification.id;
     delete qualification.locationId;
     delete qualification.userId;
@@ -213,8 +223,8 @@ async function qualificationLEE(qualificationLEEs: LEEQualificationDTO[]) {
 async function monitorSystem(systems: MonitorSystemDTO[]) {
   const promises = [];
   systems?.forEach(system => {
-    promises.push(monitorSystemFuel(system.fuelFlows));
-    promises.push(monitorSystemComponent(system.components));
+    promises.push(monitorSystemFuel(system.monitoringSystemFuelFlowData));
+    promises.push(monitorSystemComponent(system.monitoringSystemComponentData));
     delete system.id;
     delete system.locationId;
     delete system.userId;
