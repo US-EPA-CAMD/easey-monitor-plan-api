@@ -13,7 +13,7 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { DATE_FORMAT } from 'src/utilities/constants';
+import { DATE_FORMAT } from '../utilities/constants';
 
 export class MonitorPlanCommentBaseDTO {
   @ApiProperty({

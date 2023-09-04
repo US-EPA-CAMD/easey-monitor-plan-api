@@ -19,7 +19,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
 import { FindOneOptions } from 'typeorm';
 import { BasisCode } from '../entities/basis-code.entity';
-import { AnalyticalPrincipalCode } from 'src/entities/analytical-principal-code.entity';
+import { AnalyticalPrincipalCode } from '../entities/analytical-principal-code.entity';
 
 const KEY = 'Component';
 

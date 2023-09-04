@@ -15,7 +15,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { DATE_FORMAT } from 'src/utilities/constants';
+import { DATE_FORMAT } from '../utilities/constants';
 
 const KEY = 'Monitor Location';
 
