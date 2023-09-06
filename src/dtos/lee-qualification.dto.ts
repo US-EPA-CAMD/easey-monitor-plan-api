@@ -82,9 +82,9 @@ export class LEEQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of 0 and 9999.9`;
     },
   })
   potentialAnnualMassEmissions: number;
@@ -108,9 +108,9 @@ export class LEEQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-99999.9999, 99999.9999, {
+  @IsInRange(0, 99999.9999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of -99999.9999 and 99999.9999`;
+      return `The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of 0 and 99999.9999`;
     },
   })
   applicableEmissionStandard: number;
@@ -131,7 +131,7 @@ export class LEEQualificationBaseDTO {
     },
   )
   @IsString()
-  unitsOfStandard: string;
+  unitsofStandard: string;
 
   @ApiProperty({
     description:
@@ -152,9 +152,9 @@ export class LEEQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of 0 and 9999.9`;
     },
   })
   percentageOfEmissionStandard: number;

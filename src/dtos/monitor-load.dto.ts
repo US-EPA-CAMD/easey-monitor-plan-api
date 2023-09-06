@@ -33,9 +33,9 @@ export class MonitorLoadBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(6, {
+  @IsInRange(0,999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
+      return `The value ${args.value} for ${args.property} must be in the range 0 to 999999.`;
     },
   })
   maximumLoadValue: number;
@@ -68,9 +68,9 @@ export class MonitorLoadBaseDTO {
       propertyMetadata.monitorLoadDTOLowerOperationBoundary.fieldLabels.value,
   })
   @IsOptional()
-  @IsAtMostDigits(6, {
+  @IsInRange(0,999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
+      return `The value ${args.value} for ${args.property} must be in the range 0 to 999999.`;
     },
   })
   lowerOperationBoundary: number;
@@ -83,9 +83,9 @@ export class MonitorLoadBaseDTO {
       propertyMetadata.monitorLoadDTOUpperOperationBoundary.fieldLabels.value,
   })
   @IsOptional()
-  @IsAtMostDigits(6, {
+  @IsInRange(0,999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
+      return `The value ${args.value} for ${args.property} must be in the range 0 and 999999.`;
     },
   })
   upperOperationBoundary: number;
