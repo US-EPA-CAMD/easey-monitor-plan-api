@@ -3,6 +3,7 @@ import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanService } from './monitor-plan.service';
+import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -15,8 +16,13 @@ export class MonitorPlanController {
     type: MonitorPlanDTO,
     description: 'Retrieves official Monitor Plan record',
   })
-  exportMonitorPlan(@Query('planId') planId: string): Promise<MonitorPlanDTO> {
-    return this.service.exportMonitorPlan(planId);
+  exportMonitorPlan(
+    @Query() params: MonitorPlanParamsDTO,
+  ): Promise<MonitorPlanDTO> {
+    return this.service.exportMonitorPlan(
+      params.planId,
+      params.reportedValuesOnly,
+    );
   }
 
   @Get(':planId')
