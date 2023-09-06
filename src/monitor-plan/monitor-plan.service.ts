@@ -33,6 +33,7 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { MonitorPlanReportingFrequencyRepository } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.repository';
 import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
 import { CPMSQualificationRepository } from '../cpms-qualification/cpms-qualification.repository';
+import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 
 @Injectable()
 export class MonitorPlanService {
@@ -110,6 +111,7 @@ export class MonitorPlanService {
 
   async exportMonitorPlan(
     planId: string,
+    rptValuesOnly: boolean = false,
     getLocChildRecords: boolean = true,
     getReportingFrquencies: boolean = true,
     getComments: boolean = true,
@@ -433,6 +435,10 @@ export class MonitorPlanService {
     if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurations = uscDTO;
+    }
+
+    if (rptValuesOnly) {
+      await removeNonReportedValues(mpDTO);
     }
 
     return mpDTO;
