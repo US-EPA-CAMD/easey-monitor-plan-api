@@ -21,6 +21,7 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       locationId: entity.locationId,
       componentId: entity.componentId,
       componentTypeCode: entity.componentTypeCode,
+      analyticalPrincipleCode: entity.analyticalPrincipleCode,
       sampleAcquisitionMethodCode: entity.sampleAcquisitionMethodCode,
       basisCode: entity.basisCode,
       manufacturer: entity.manufacturer,

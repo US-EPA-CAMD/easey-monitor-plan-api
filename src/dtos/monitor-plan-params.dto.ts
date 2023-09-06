@@ -1,30 +1,19 @@
-import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsBoolean, IsNumber, IsOptional } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDTO } from './pagination.dto';
+import { Transform } from 'class-transformer';
 
-export class MonitorPlanParamsDTO extends PaginationDTO {
+export class MonitorPlanParamsDTO {
   @ApiProperty({
-    description: propertyMetadata.facilityId.description,
-    example: propertyMetadata.facilityId.example,
-    name: propertyMetadata.facilityId.fieldLabels.value,
+    isArray: true,
+    description:
+      'The Monintor Plan Summary ID is a unique identifier for a monitor plan record',
   })
-  @IsOptional()
-  @ApiPropertyOptional()
-  @IsNumber()
-  facId: number;
+  @Transform(({ value }) => value.split('|').map((id: string) => id.trim()))
+  planId: string;
 
+  @IsOptional()
   @ApiProperty()
-  @ApiProperty({
-    description: propertyMetadata.monitorPlanDTOOrisCode.description,
-    example: propertyMetadata.monitorPlanDTOOrisCode.example,
-    name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
-  })
-  @IsNumber()
-  orisCode: number;
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  active: boolean;
+  @Transform(({ value }) => value === 'true')
+  reportedValuesOnly?: boolean;
 }
