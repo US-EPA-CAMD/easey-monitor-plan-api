@@ -96,6 +96,12 @@ export class MonitorConfigurationsService {
     const list: MonitorPlanDTO[] = [];
     const promises = [];
 
+    if (orisCodesAndTime.changedOrisCodes.length === 0) {
+      dto.changedConfigs = [];
+      dto.mostRecentUpdate = null;
+      return dto;
+    }
+
     orisCodesAndTime.changedOrisCodes.forEach(orisCode => {
       promises.push(this.pushToChangedConfigList(list, orisCode));
     });
