@@ -73,10 +73,10 @@ export class ImportChecksService {
       }
 
       // Component Checks
-      if (location.components) {
+      if (location.componentData) {
         errorList.push(
           ...(await this.componentService.runComponentChecks(
-            location.components,
+            location.componentData,
             location,
             databaseLocations[index].id,
           )),
@@ -84,30 +84,30 @@ export class ImportChecksService {
       }
 
       // Qualification Checks
-      if (location.qualifications) {
+      if (location.monitoringQualificationData) {
         errorList.push(
           ...this.qualificationService.runQualificationImportCheck(
-            location.qualifications,
+            location.monitoringQualificationData,
           ),
         );
       }
 
       // Monitor System Checks
-      if (location.systems) {
+      if (location.monitoringSystemData) {
         errorList.push(
           ...(await this.monitorSystemService.runMonitorSystemImportCheck(
             monPlan,
             location,
             databaseLocations[index].id,
-            location.systems,
+            location.monitoringSystemData,
           )),
         );
       }
       // Formula Checks
-      if (location.formulas) {
+      if (location.monitoringFormulaData) {
         errorList.push(
           ...(await this.formulaService.runFormulaChecks(
-            location.formulas,
+            location.monitoringFormulaData,
             location,
             databaseLocations[index].id,
           )),
@@ -115,9 +115,11 @@ export class ImportChecksService {
       }
 
       // Span Checks
-      if (location.spans) {
+      if (location.monitoringSpanData) {
         errorList.push(
-          ...(await this.spanService.runSpanChecks(location.spans)),
+          ...(await this.spanService.runSpanChecks(
+            location.monitoringSpanData,
+          )),
         );
       }
 

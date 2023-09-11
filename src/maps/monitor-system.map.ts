@@ -11,17 +11,19 @@ import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
   constructor(
     private fuelFlowMap: SystemFuelFlowMap,
-    private componentMap: SystemComponentMap,
+    private systsemComponentMap: SystemComponentMap,
   ) {
     super();
   }
 
   public async one(entity: MonitorSystem): Promise<MonitorSystemDTO> {
-    const components = entity.components
-      ? await this.componentMap.many(entity.components)
+    const monitoringSystemComponentData = entity.monitoringSystemComponentData
+      ? await this.systsemComponentMap.many(
+          entity.monitoringSystemComponentData,
+        )
       : [];
-    const fuelFlows = entity.fuelFlows
-      ? await this.fuelFlowMap.many(entity.fuelFlows)
+    const monitoringSystemFuelFlowData = entity.monitoringSystemFuelFlowData
+      ? await this.fuelFlowMap.many(entity.monitoringSystemFuelFlowData)
       : [];
 
     return {
@@ -39,8 +41,8 @@ export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
       addDate: entity.addDate?.toISOString() ?? null,
       updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
-      components,
-      fuelFlows,
+      monitoringSystemComponentData,
+      monitoringSystemFuelFlowData,
     };
   }
 }

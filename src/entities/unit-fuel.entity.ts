@@ -61,7 +61,7 @@ export class UnitFuel extends BaseEntity {
 
   @ManyToOne(
     () => Unit,
-    u => u.unitFuels,
+    u => u.unitFuelData,
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;

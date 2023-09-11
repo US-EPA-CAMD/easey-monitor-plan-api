@@ -26,17 +26,17 @@ export class MonitorQualificationMap extends BaseMap<
   public async one(
     entity: MonitorQualification,
   ): Promise<MonitorQualificationDTO> {
-    const leeQualifications = entity.leeQualifications
-      ? await this.leeMap.many(entity.leeQualifications)
+    const monitoringQualificationLEEData = entity.monitoringQualificationLEEData
+      ? await this.leeMap.many(entity.monitoringQualificationLEEData)
       : [];
-    const lmeQualifications = entity.lmeQualifications
-      ? await this.lmeMap.many(entity.lmeQualifications)
+    const monitoringQualificationLMEData = entity.monitoringQualificationLMEData
+      ? await this.lmeMap.many(entity.monitoringQualificationLMEData)
       : [];
-    const pctQualifications = entity.pctQualifications
-      ? await this.pctMap.many(entity.pctQualifications)
+    const monitoringQualificationPercentData = entity.monitoringQualificationPercentData
+      ? await this.pctMap.many(entity.monitoringQualificationPercentData)
       : [];
-    const cpmsQualifications = entity.cpmsQualifications
-      ? await this.cpmsMap.many(entity.cpmsQualifications)
+    const monitoringQualificationCPMSData = entity.monitoringQualificationCPMSData
+      ? await this.cpmsMap.many(entity.monitoringQualificationCPMSData)
       : [];
 
     return {
@@ -49,10 +49,10 @@ export class MonitorQualificationMap extends BaseMap<
       addDate: entity.addDate?.toISOString() ?? null,
       updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
-      leeQualifications,
-      lmeQualifications,
-      pctQualifications,
-      cpmsQualifications,
+      monitoringQualificationLEEData,
+      monitoringQualificationLMEData,
+      monitoringQualificationPercentData,
+      monitoringQualificationCPMSData,
     };
   }
 }

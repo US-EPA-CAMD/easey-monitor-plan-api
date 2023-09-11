@@ -61,7 +61,7 @@ export class MonitorMethod extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    location => location.methods,
+    location => location.monitoringMethodData,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;

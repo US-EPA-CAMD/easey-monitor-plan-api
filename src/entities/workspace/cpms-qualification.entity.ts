@@ -46,7 +46,7 @@ export class CPMSQualification extends BaseEntity {
 
   @ManyToOne(
     () => MonitorQualification,
-    mq => mq.cpmsQualifications,
+    mq => mq.monitoringQualificationCPMSData,
   )
   @JoinColumn({ name: 'mon_qual_id' })
   qualification: MonitorQualification;

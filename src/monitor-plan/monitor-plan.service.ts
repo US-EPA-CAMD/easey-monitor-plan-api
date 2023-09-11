@@ -137,11 +137,11 @@ export class MonitorPlanService {
       QUALIFICATIONS;
 
     const mp = await this.repository.getMonitorPlan(planId);
-    mp.locations = await this.locationRepository.getMonitorLocationsByPlanId(
+    mp.monitoringLocationData = await this.locationRepository.getMonitorLocationsByPlanId(
       planId,
     );
 
-    const identifiers = mp.locations.map(l => {
+    const identifiers = mp.monitoringLocationData.map(l => {
       return {
         locationId: l.id,
         unitId: l.unit ? l.unit.id : null,
@@ -289,7 +289,7 @@ export class MonitorPlanService {
             const rangeResults = await Promise.all([analyzerRanges]);
 
             components.forEach(async c => {
-              c.analyzerRanges = rangeResults[0].filter(
+              c.analyzerRangeData = rangeResults[0].filter(
                 i => i.componentRecordId === c.id,
               );
             });
@@ -319,10 +319,10 @@ export class MonitorPlanService {
             const sysResults = await Promise.all([s1, s2]);
 
             systems.forEach(async s => {
-              s.fuelFlows = sysResults[0].filter(
+              s.monitoringSystemFuelFlowData = sysResults[0].filter(
                 i => i.monitoringSystemRecordId === s.id,
               );
-              s.components = sysResults[1].filter(
+              s.monitoringSystemComponentData = sysResults[1].filter(
                 i => i.monitoringSystemRecordId === s.id,
               );
             });
@@ -357,16 +357,16 @@ export class MonitorPlanService {
             const qualResults = await Promise.all([q1, q2, q3, q4]);
 
             quals.forEach(async q => {
-              q.leeQualifications = qualResults[0].filter(
+              q.monitoringQualificationLEEData = qualResults[0].filter(
                 i => i.qualificationId === q.id,
               );
-              q.lmeQualifications = qualResults[1].filter(
+              q.monitoringQualificationLMEData = qualResults[1].filter(
                 i => i.qualificationId === q.id,
               );
-              q.pctQualifications = qualResults[2].filter(
+              q.monitoringQualificationPercentData = qualResults[2].filter(
                 i => i.qualificationId === q.id,
               );
-              q.cpmsQualifications = qualResults[3].filter(
+              q.monitoringQualificationCPMSData = qualResults[3].filter(
                 i => i.qualificationId === q.id,
               );
             });
@@ -379,52 +379,64 @@ export class MonitorPlanService {
 
     const results = await Promise.all(promises);
     if (getComments) {
-      mp.comments = results[COMMENTS];
+      mp.monitoringPlanCommentData = results[COMMENTS];
     }
 
     if (getReportingFrquencies) {
       mp.reportingFrequencies = results[REPORTING_FREQ];
     }
 
-    mp.locations.forEach(l => {
+    mp.monitoringLocationData.forEach(l => {
       const locationId = l.id;
 
       if (l.unit) {
         const unitId = l.unit.id;
 
         if (getLocChildRecords) {
-          l.unit.unitCapacities = results[UNIT_CAPACITIES].filter(
+          l.unit.unitCapacityData = results[UNIT_CAPACITIES].filter(
             i => i.unitId === unitId,
           );
-          l.unit.unitControls = results[UNIT_CONTROLS].filter(
+          l.unit.unitControlData = results[UNIT_CONTROLS].filter(
             i => i.unitId === unitId,
           );
-          l.unit.unitFuels = results[UNIT_FUEL].filter(
+          l.unit.unitFuelData = results[UNIT_FUEL].filter(
             i => i.unitId === unitId,
           );
         }
       }
 
       if (getLocChildRecords) {
-        l.attributes = results[ATTRIBUTES].filter(
+        l.monitoringLocationAttribData = results[ATTRIBUTES].filter(
           i => i.locationId === locationId,
         );
-        l.methods = results[METHODS].filter(i => i.locationId === locationId);
-        l.matsMethods = results[MATS_METHODS].filter(
+        l.monitoringMethodData = results[METHODS].filter(
           i => i.locationId === locationId,
         );
-        l.formulas = results[FORMULAS].filter(i => i.locationId === locationId);
-        l.defaults = results[DEFAULTS].filter(i => i.locationId === locationId);
-        l.spans = results[SPANS].filter(i => i.locationId === locationId);
-        l.ductWafs = results[DUCT_WAFS].filter(
+        l.supplementalMATSMonitoringMethodData = results[MATS_METHODS].filter(
           i => i.locationId === locationId,
         );
-        l.loads = results[LOADS].filter(i => i.locationId === locationId);
-        l.components = results[COMPONENTS].filter(
+        l.monitoringFormulaData = results[FORMULAS].filter(
           i => i.locationId === locationId,
         );
-        l.systems = results[SYSTEMS].filter(i => i.locationId === locationId);
-        l.qualifications = results[QUALIFICATIONS].filter(
+        l.monitoringDefaultData = results[DEFAULTS].filter(
+          i => i.locationId === locationId,
+        );
+        l.monitoringSpanData = results[SPANS].filter(
+          i => i.locationId === locationId,
+        );
+        l.rectangularDuctWAFData = results[DUCT_WAFS].filter(
+          i => i.locationId === locationId,
+        );
+        l.monitoringLoadData = results[LOADS].filter(
+          i => i.locationId === locationId,
+        );
+        l.componentData = results[COMPONENTS].filter(
+          i => i.locationId === locationId,
+        );
+        l.monitoringSystemData = results[SYSTEMS].filter(
+          i => i.locationId === locationId,
+        );
+        l.monitoringQualificationData = results[QUALIFICATIONS].filter(
           i => i.locationId === locationId,
         );
       }
@@ -434,7 +446,7 @@ export class MonitorPlanService {
 
     if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
-      mpDTO.unitStackConfigurations = uscDTO;
+      mpDTO.unitStackConfigurationData = uscDTO;
     }
 
     if (rptValuesOnly) {

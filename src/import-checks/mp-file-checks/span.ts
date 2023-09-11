@@ -10,7 +10,7 @@ export const Check10 = new Check(
     const result = new CheckResult('IMPORT10');
 
     monPlan.locations.forEach(location => {
-      location.spans.forEach(span => {
+      location.monitoringSpanData.forEach(span => {
         let mustBeNull;
         if (span.componentTypeCode === 'FLOW') {
           mustBeNull = [

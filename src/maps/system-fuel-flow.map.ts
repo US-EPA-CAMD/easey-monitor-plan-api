@@ -16,7 +16,7 @@ export class SystemFuelFlowMap extends BaseMap<
       fuelCode: entity.system.fuelCode,
       systemTypeCode: entity.system.systemTypeCode,
       maximumFuelFlowRate: entity.maximumFuelFlowRate,
-      systemFuelFlowUOMCode: entity.systemFuelFlowUOMCode,
+      systemFuelFlowUnitsOfMeasureCode: entity.systemFuelFlowUnitsOfMeasureCode,
       maximumFuelFlowRateSourceCode: entity.maximumFuelFlowRateSourceCode,
       beginDate: entity.beginDate,
       endDate: entity.endDate,

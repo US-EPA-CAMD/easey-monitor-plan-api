@@ -12,8 +12,8 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
   }
 
   public async one(entity: Component): Promise<ComponentDTO> {
-    const analyzerRanges = entity.analyzerRanges
-      ? await this.rangeMap.many(entity.analyzerRanges)
+    const analyzerRangeData = entity.analyzerRangeData
+      ? await this.rangeMap.many(entity.analyzerRangeData)
       : [];
 
     return {
@@ -31,7 +31,7 @@ export class ComponentMap extends BaseMap<Component, ComponentDTO> {
       userId: entity.userId,
       addDate: entity.addDate?.toISOString() ?? null,
       updateDate: entity.updateDate?.toISOString() ?? null,
-      analyzerRanges: analyzerRanges,
+      analyzerRangeData,
     };
   }
 }

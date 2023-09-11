@@ -63,22 +63,24 @@ export class MonitorPlanChecksService {
         );
       }).locationId;
 
-      monitorLocation.matsMethods?.forEach((matsMethod, matsMetIdx) => {
-        promises.push(
-          new Promise((resolve, _reject) => {
-            const results = this.matsMethodChecksService.runChecks(
-              matsMethod,
-              true,
-              false,
-              `locations.${locIdx}.matsMethods.${matsMetIdx}.`,
-            );
+      monitorLocation.supplementalMATSMonitoringMethodData?.forEach(
+        (matsMethod, matsMetIdx) => {
+          promises.push(
+            new Promise((resolve, _reject) => {
+              const results = this.matsMethodChecksService.runChecks(
+                matsMethod,
+                true,
+                false,
+                `locations.${locIdx}.matsMethods.${matsMetIdx}.`,
+              );
 
-            resolve(results);
-          }),
-        );
-      });
+              resolve(results);
+            }),
+          );
+        },
+      );
 
-      monitorLocation.unitControls?.forEach((unitControl, ucIdx) => {
+      monitorLocation.unitControlData?.forEach((unitControl, ucIdx) => {
         promises.push(
           new Promise((resolve, _reject) => {
             const results = this.unitControlChecksService.runChecks(
@@ -96,7 +98,7 @@ export class MonitorPlanChecksService {
         );
       });
 
-      monitorLocation.spans?.forEach((span, spanIdx) => {
+      monitorLocation.monitoringSpanData?.forEach((span, spanIdx) => {
         promises.push(
           new Promise((resolve, _reject) => {
             const results = this.monSpanChecksService.runChecks(
@@ -111,7 +113,7 @@ export class MonitorPlanChecksService {
         );
       });
 
-      monitorLocation.components?.forEach((component, compIdx) => {
+      monitorLocation.componentData?.forEach((component, compIdx) => {
         promises.push(
           new Promise((resolve, _reject) => {
             const results = this.componentChecksService.runChecks(
@@ -127,7 +129,7 @@ export class MonitorPlanChecksService {
         );
       });
 
-      monitorLocation.systems?.forEach((system, sysIdx) => {
+      monitorLocation.monitoringSystemData?.forEach((system, sysIdx) => {
         promises.push(
           new Promise((resolve, _reject) => {
             const results = this.monSysCheckService.runChecks(

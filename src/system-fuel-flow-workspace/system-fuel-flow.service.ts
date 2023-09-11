@@ -1,13 +1,6 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
@@ -26,7 +19,6 @@ export class SystemFuelFlowWorkspaceService {
     @InjectRepository(SystemFuelFlowWorkspaceRepository)
     private readonly repository: SystemFuelFlowWorkspaceRepository,
     private readonly map: SystemFuelFlowMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -41,9 +33,13 @@ export class SystemFuelFlowWorkspaceService {
     const result = await this.repository.getFuelFlow(fuelFlowId);
 
     if (!result) {
-      throw new EaseyException(new Error('Fuel Flow not found.'), HttpStatus.NOT_FOUND, {
-        fuelFlowId: fuelFlowId,
-      });
+      throw new EaseyException(
+        new Error('Fuel Flow not found.'),
+        HttpStatus.NOT_FOUND,
+        {
+          fuelFlowId: fuelFlowId,
+        },
+      );
     }
 
     return result;
@@ -61,7 +57,8 @@ export class SystemFuelFlowWorkspaceService {
       monitoringSystemRecordId: monitoringSystemRecordId,
       maximumFuelFlowRate: payload.maximumFuelFlowRate,
       maximumFuelFlowRateSourceCode: payload.maximumFuelFlowRateSourceCode,
-      systemFuelFlowUOMCode: payload.systemFuelFlowUOMCode,
+      systemFuelFlowUnitsOfMeasureCode:
+        payload.systemFuelFlowUnitsOfMeasureCode,
       beginDate: payload.beginDate,
       beginHour: payload.beginHour,
       endDate: payload.endDate,
@@ -91,7 +88,8 @@ export class SystemFuelFlowWorkspaceService {
     const fuelFlow = await this.getFuelFlow(fuelFlowId);
 
     fuelFlow.maximumFuelFlowRate = payload.maximumFuelFlowRate;
-    fuelFlow.systemFuelFlowUOMCode = payload.systemFuelFlowUOMCode;
+    fuelFlow.systemFuelFlowUnitsOfMeasureCode =
+      payload.systemFuelFlowUnitsOfMeasureCode;
     fuelFlow.maximumFuelFlowRateSourceCode =
       payload.maximumFuelFlowRateSourceCode;
     fuelFlow.beginDate = payload.beginDate;

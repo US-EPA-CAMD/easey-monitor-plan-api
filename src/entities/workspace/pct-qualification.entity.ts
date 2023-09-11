@@ -82,7 +82,7 @@ export class PCTQualification extends BaseEntity {
 
   @ManyToOne(
     () => MonitorQualification,
-    mq => mq.pctQualifications,
+    mq => mq.monitoringQualificationPercentData,
   )
   @JoinColumn({ name: 'mon_qual_id' })
   qualification: MonitorQualification;

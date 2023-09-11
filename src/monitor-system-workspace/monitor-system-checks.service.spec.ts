@@ -12,7 +12,7 @@ const locationId = '1';
 const payload = new UpdateMonitorSystemDTO();
 const systemComponent = new SystemComponentBaseDTO();
 
-payload.components = [systemComponent];
+payload.componentData = [systemComponent];
 
 describe('Monitor System Check Service Tests', () => {
   let service: MonitorSystemCheckService;

@@ -71,38 +71,44 @@ export class MonitorLocationMap extends BaseMap<
     let unitRecordId: number;
     let stackPipeRecordId: string;
     let nonLoadBasedIndicator: number;
-    let unitCapacities = [];
-    let unitControls = [];
-    let unitFuels = [];
+    let unitCapacityData = [];
+    let unitControlData = [];
+    let unitFuelData = [];
 
-    const attributes = entity.attributes
-      ? await this.attributeMap.many(entity.attributes)
+    const monitoringLocationAttribData = entity.monitoringLocationAttribData
+      ? await this.attributeMap.many(entity.monitoringLocationAttribData)
       : [];
-    const methods = entity.methods
-      ? await this.methodMap.many(entity.methods)
+    const monitoringMethodData = entity.monitoringMethodData
+      ? await this.methodMap.many(entity.monitoringMethodData)
       : [];
-    const matsMethods = entity.matsMethods
-      ? await this.matsMethodMap.many(entity.matsMethods)
+    const supplementalMATSMonitoringMethodData = entity.supplementalMATSMonitoringMethodData
+      ? await this.matsMethodMap.many(
+          entity.supplementalMATSMonitoringMethodData,
+        )
       : [];
-    const formulas = entity.formulas
-      ? await this.formulaMap.many(entity.formulas)
+    const monitoringFormulaData = entity.monitoringFormulaData
+      ? await this.formulaMap.many(entity.monitoringFormulaData)
       : [];
-    const defaults = entity.defaults
-      ? await this.defaultMap.many(entity.defaults)
+    const monitoringDefaultData = entity.monitoringDefaultData
+      ? await this.defaultMap.many(entity.monitoringDefaultData)
       : [];
-    const spans = entity.spans ? await this.spanMap.many(entity.spans) : [];
-    const ductWafs = entity.ductWafs
-      ? await this.ductWafMap.many(entity.ductWafs)
+    const monitoringSpanData = entity.monitoringSpanData
+      ? await this.spanMap.many(entity.monitoringSpanData)
       : [];
-    const loads = entity.loads ? await this.loadMap.many(entity.loads) : [];
-    const components = entity.components
-      ? await this.componentMap.many(entity.components)
+    const rectangularDuctWAFData = entity.rectangularDuctWAFData
+      ? await this.ductWafMap.many(entity.rectangularDuctWAFData)
       : [];
-    const systems = entity.systems
-      ? await this.systemMap.many(entity.systems)
+    const monitoringLoadData = entity.monitoringLoadData
+      ? await this.loadMap.many(entity.monitoringLoadData)
       : [];
-    const qualifications = entity.qualifications
-      ? await this.qualificationMap.many(entity.qualifications)
+    const componentData = entity.componentData
+      ? await this.componentMap.many(entity.componentData)
+      : [];
+    const monitoringSystemData = entity.monitoringSystemData
+      ? await this.systemMap.many(entity.monitoringSystemData)
+      : [];
+    const monitoringQualificationData = entity.monitoringQualificationData
+      ? await this.qualificationMap.many(entity.monitoringQualificationData)
       : [];
 
     if (entity.unit) {
@@ -116,23 +122,23 @@ export class MonitorLocationMap extends BaseMap<
       activeDate = null;
       retireDate = null;
 
-      if (entity.unit.unitCapacities) {
-        for (const capac of entity.unit.unitCapacities) {
+      if (entity.unit.unitCapacityData) {
+        for (const capac of entity.unit.unitCapacityData) {
           capac.unit = entity.unit;
         }
 
-        unitCapacities = await this.unitCapacityMap.many(
-          entity.unit.unitCapacities,
+        unitCapacityData = await this.unitCapacityMap.many(
+          entity.unit.unitCapacityData,
         );
       } else {
-        entity.unit.unitCapacities = [];
+        entity.unit.unitCapacityData = [];
       }
 
-      unitControls = entity.unit.unitControls
-        ? await this.unitControlMap.many(entity.unit.unitControls)
+      unitControlData = entity.unit.unitControlData
+        ? await this.unitControlMap.many(entity.unit.unitControlData)
         : [];
-      unitFuels = entity.unit.unitFuels
-        ? await this.unitFuelMap.many(entity.unit.unitFuels)
+      unitFuelData = entity.unit.unitFuelData
+        ? await this.unitFuelMap.many(entity.unit.unitFuelData)
         : [];
     }
 
@@ -160,20 +166,20 @@ export class MonitorLocationMap extends BaseMap<
       activeDate,
       retireDate,
       nonLoadBasedIndicator,
-      attributes,
-      unitCapacities,
-      unitControls,
-      unitFuels,
-      methods,
-      matsMethods,
-      formulas,
-      defaults,
-      spans,
-      ductWafs,
-      loads,
-      components,
-      systems,
-      qualifications,
+      monitoringLocationAttribData,
+      unitCapacityData,
+      unitControlData,
+      unitFuelData,
+      monitoringMethodData,
+      supplementalMATSMonitoringMethodData,
+      monitoringFormulaData,
+      monitoringDefaultData,
+      monitoringSpanData,
+      rectangularDuctWAFData,
+      monitoringLoadData,
+      componentData,
+      monitoringSystemData,
+      monitoringQualificationData,
     };
   }
 }

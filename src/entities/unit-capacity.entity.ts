@@ -55,7 +55,7 @@ export class UnitCapacity extends BaseEntity {
 
   @ManyToOne(
     () => Unit,
-    u => u.unitCapacities,
+    u => u.unitCapacityData,
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;

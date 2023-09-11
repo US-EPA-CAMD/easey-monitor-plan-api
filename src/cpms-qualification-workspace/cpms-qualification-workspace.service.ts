@@ -4,7 +4,7 @@ import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-works
 import {
   CPMSQualificationBaseDTO,
   CPMSQualificationDTO,
-} from 'src/dtos/cpms-qualification.dto';
+} from '../dtos/cpms-qualification.dto';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';

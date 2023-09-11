@@ -124,7 +124,7 @@ export class DuctWaf extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    location => location.ductWafs,
+    location => location.rectangularDuctWAFData,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;

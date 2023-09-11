@@ -16,8 +16,8 @@ describe('Span Tests', () => {
 
       lmeQuals.so2Tons = null;
       quals.qualificationTypeCode = 'LME';
-      quals.lmeQualifications = [lmeQuals];
-      locations.qualifications = [quals];
+      quals.monitoringQualificationLMEData = [lmeQuals];
+      locations.monitoringQualificationData = [quals];
       testData.locations = [locations];
 
       const checkResults = await checks.Check11.executeCheck(testData);
@@ -34,8 +34,8 @@ describe('Span Tests', () => {
 
       lmeQuals.so2Tons = 5;
       quals.qualificationTypeCode = 'LME';
-      quals.lmeQualifications = [lmeQuals];
-      locations.qualifications = [quals];
+      quals.monitoringQualificationLMEData = [lmeQuals];
+      locations.monitoringQualificationData = [quals];
       testData.locations = [locations];
 
       const checkResults = await checks.Check11.executeCheck(testData);
@@ -52,9 +52,9 @@ describe('Span Tests', () => {
       const quals = new UpdateMonitorQualificationDTO();
 
       quals.qualificationTypeCode = 'LME';
-      quals.lmeQualifications = [];
-      quals.pctQualifications = [];
-      locations.qualifications = [quals];
+      quals.monitoringQualificationLMEData = [];
+      quals.monitoringQualificationPercentData = [];
+      locations.monitoringQualificationData = [quals];
       testData.locations = [locations];
 
       const checkResults = await checks.Check12.executeCheck(testData);
@@ -70,9 +70,9 @@ describe('Span Tests', () => {
       const pctQuals = new PCTQualificationBaseDTO();
 
       quals.qualificationTypeCode = 'LME';
-      quals.lmeQualifications = [];
-      quals.pctQualifications = [pctQuals];
-      locations.qualifications = [quals];
+      quals.monitoringQualificationLMEData = [];
+      quals.monitoringQualificationPercentData = [pctQuals];
+      locations.monitoringQualificationData = [quals];
       testData.locations = [locations];
 
       const checkResults = await checks.Check12.executeCheck(testData);
@@ -88,9 +88,9 @@ describe('Span Tests', () => {
       const lmeQuals = new LMEQualificationBaseDTO();
 
       quals.qualificationTypeCode = 'LME';
-      quals.lmeQualifications = [lmeQuals];
-      quals.pctQualifications = [];
-      locations.qualifications = [quals];
+      quals.monitoringQualificationLMEData = [lmeQuals];
+      quals.monitoringQualificationPercentData = [];
+      locations.monitoringQualificationData = [quals];
       testData.locations = [locations];
 
       const checkResults = await checks.Check12.executeCheck(testData);

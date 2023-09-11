@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystemMap } from '../maps/monitor-system.map';
 import {
   MonitorSystemDTO,
@@ -28,7 +27,6 @@ export class MonitorSystemWorkspaceService {
     private readonly usedIdRepo: UsedIdentifierRepository,
 
     private readonly map: MonitorSystemMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -52,7 +50,7 @@ export class MonitorSystemWorkspaceService {
 
     const componentIdAndTypeCodeSet: Set<string> = new Set<string>();
     for (const loc of monPlan.locations) {
-      for (const component of loc.components) {
+      for (const component of loc.componentData) {
         componentIdAndTypeCodeSet.add(
           `${component.componentId}:${component.componentTypeCode}`,
         );
@@ -71,8 +69,11 @@ export class MonitorSystemWorkspaceService {
         );
       }
 
-      if (system.components && system.components.length > 0) {
-        for (const systemComponent of system.components) {
+      if (
+        system.monitoringSystemComponentData &&
+        system.monitoringSystemComponentData.length > 0
+      ) {
+        for (const systemComponent of system.monitoringSystemComponentData) {
           if (
             !componentIdAndTypeCodeSet.has(
               `${systemComponent.componentId}:${systemComponent.componentTypeCode}`,
@@ -85,7 +86,10 @@ export class MonitorSystemWorkspaceService {
         }
       }
 
-      if (system.fuelFlows && system.fuelFlows.length > 0) {
+      if (
+        system.monitoringSystemFuelFlowData &&
+        system.monitoringSystemFuelFlowData.length > 0
+      ) {
         if (Sys && !validTypeCodes.includes(Sys.systemTypeCode)) {
           errorList.push(
             '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
@@ -158,23 +162,29 @@ export class MonitorSystemWorkspaceService {
     return new Promise(async resolve => {
       const promises = [];
 
-      if (system.components && system.components.length > 0) {
+      if (
+        system.monitoringSystemComponentData &&
+        system.monitoringSystemComponentData.length > 0
+      ) {
         promises.push(
           this.systemComponentService.importSystemComponent(
             locationId,
             systemRecordId,
-            system.components,
+            system.monitoringSystemComponentData,
             userId,
           ),
         );
       }
 
-      if (system.fuelFlows && system.fuelFlows.length > 0) {
+      if (
+        system.monitoringSystemFuelFlowData &&
+        system.monitoringSystemFuelFlowData.length > 0
+      ) {
         promises.push(
           this.systemFuelFlowService.importFuelFlow(
             locationId,
             systemRecordId,
-            system.fuelFlows,
+            system.monitoringSystemFuelFlowData,
             userId,
           ),
         );

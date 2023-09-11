@@ -65,7 +65,7 @@ export class MonitorLocation extends BaseEntity {
 
   @ManyToMany(
     () => MonitorPlan,
-    plan => plan.locations,
+    plan => plan.monitoringLocationData,
     { eager: true },
   )
   plans: MonitorPlan[];
@@ -74,65 +74,65 @@ export class MonitorLocation extends BaseEntity {
     () => Component,
     component => component.location,
   )
-  components: Component[];
+  componentData: Component[];
 
   @OneToMany(
     () => MonitorMethod,
     method => method.location,
   )
-  methods: MonitorMethod[];
+  monitoringMethodData: MonitorMethod[];
 
   @OneToMany(
     () => MatsMethod,
     matsMethod => matsMethod.location,
   )
-  matsMethods: MatsMethod[];
+  supplementalMATSMonitoringMethodData: MatsMethod[];
 
   @OneToMany(
     () => MonitorFormula,
     formula => formula.location,
   )
-  formulas: MonitorFormula[];
+  monitoringFormulaData: MonitorFormula[];
 
   @OneToMany(
     () => MonitorLoad,
     load => load.location,
   )
-  loads: MonitorLoad[];
+  monitoringLoadData: MonitorLoad[];
 
   @OneToMany(
     () => MonitorSpan,
     span => span.location,
   )
-  spans: MonitorSpan[];
+  monitoringSpanData: MonitorSpan[];
 
   @OneToMany(
     () => MonitorSystem,
     system => system.location,
   )
-  systems: MonitorSystem[];
+  monitoringSystemData: MonitorSystem[];
 
   @OneToMany(
     () => DuctWaf,
     ductWaf => ductWaf.location,
   )
-  ductWafs: DuctWaf[];
+  rectangularDuctWAFData: DuctWaf[];
 
   @OneToMany(
     () => MonitorDefault,
     defaults => defaults.location,
   )
-  defaults: MonitorDefault[];
+  monitoringDefaultData: MonitorDefault[];
 
   @OneToMany(
     () => MonitorAttribute,
     attributes => attributes.location,
   )
-  attributes: MonitorAttribute[];
+  monitoringLocationAttribData: MonitorAttribute[];
 
   @OneToMany(
     () => MonitorQualification,
     qualification => qualification.location,
   )
-  qualifications: MonitorQualification[];
+  monitoringQualificationData: MonitorQualification[];
 }

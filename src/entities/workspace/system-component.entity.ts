@@ -65,14 +65,14 @@ export class SystemComponent extends BaseEntity {
 
   @ManyToOne(
     () => Component,
-    c => c.systems,
+    c => c.monitoringSystemData,
   )
   @JoinColumn({ name: 'component_id' })
   component: Component;
 
   @ManyToOne(
     () => MonitorSystem,
-    ms => ms.components,
+    ms => ms.monitoringSystemComponentData,
   )
   @JoinColumn({ name: 'mon_sys_id' })
   system: MonitorSystem;

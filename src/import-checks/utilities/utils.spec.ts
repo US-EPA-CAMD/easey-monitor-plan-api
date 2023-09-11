@@ -82,10 +82,10 @@ describe('Monitor-Import Utilities Tests', () => {
       systemComponent.componentTypeCode = 'S02';
       systemComponent.componentId = 'AA0';
 
-      system.components = [systemComponent];
+      system.componentData = [systemComponent];
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
       testData.locations = [location];
@@ -112,10 +112,10 @@ describe('Monitor-Import Utilities Tests', () => {
       systemComponent.componentTypeCode = 'S20';
       systemComponent.componentId = 'AA00';
 
-      system.components = [systemComponent];
+      system.componentData = [systemComponent];
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
       testData.locations = [location];

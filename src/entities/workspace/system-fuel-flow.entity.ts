@@ -40,7 +40,7 @@ export class SystemFuelFlow extends BaseEntity {
     nullable: false,
     name: 'sys_fuel_uom_cd',
   })
-  systemFuelFlowUOMCode: string;
+  systemFuelFlowUnitsOfMeasureCode: string;
 
   @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
@@ -77,7 +77,7 @@ export class SystemFuelFlow extends BaseEntity {
 
   @ManyToOne(
     () => MonitorSystem,
-    ms => ms.fuelFlows,
+    ms => ms.monitoringSystemFuelFlowData,
   )
   @JoinColumn({ name: 'mon_sys_id' })
   system: MonitorSystem;

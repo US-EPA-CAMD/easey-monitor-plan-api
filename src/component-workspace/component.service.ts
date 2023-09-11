@@ -22,7 +22,7 @@ export class ComponentWorkspaceService {
     private readonly logger: Logger,
 
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
-    private readonly analyzerRangeService: AnalyzerRangeWorkspaceService,
+    private readonly analyzerRangeDataervice: AnalyzerRangeWorkspaceService,
   ) {}
 
   async runComponentChecks(
@@ -64,14 +64,14 @@ export class ComponentWorkspaceService {
 
       if (
         databaseComponent &&
-        databaseComponent.analyzerRanges &&
-        databaseComponent.analyzerRanges.length > 0 &&
+        databaseComponent.analyzerRangeData &&
+        databaseComponent.analyzerRangeData.length > 0 &&
         !validTypeCodes.includes(databaseComponent.componentTypeCode)
       ) {
         errorList.push(import32Error);
       } else if (
-        fileComponent.analyzerRanges &&
-        fileComponent.analyzerRanges.length > 0 &&
+        fileComponent.analyzerRangeData &&
+        fileComponent.analyzerRangeData.length > 0 &&
         !validTypeCodes.includes(fileComponent.componentTypeCode)
       ) {
         errorList.push(import32Error);
@@ -116,7 +116,7 @@ export class ComponentWorkspaceService {
   ) {
     return new Promise(async resolve => {
       const innerPromises = [];
-      for (const component of location.components) {
+      for (const component of location.componentData) {
         innerPromises.push(
           new Promise(async innerResolve => {
             let compRecord = await this.repository.getComponentByLocIdAndCompId(
@@ -148,10 +148,10 @@ export class ComponentWorkspaceService {
                 component.componentId,
               );
 
-              await this.analyzerRangeService.importAnalyzerRange(
+              await this.analyzerRangeDataervice.importAnalyzerRange(
                 compRecord.id,
                 locationId,
-                component.analyzerRanges,
+                component.analyzerRangeData,
                 userId,
               );
             }

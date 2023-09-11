@@ -24,7 +24,7 @@ export const Check5 = new Check(
     for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
-      for (const system of loc.systems) {
+      for (const system of loc.monitoringSystemData) {
         const Sys = await entityManager.findOne(MonitorSystem, {
           locationId: monLoc.id,
           monitoringSystemId: system.monitoringSystemId,
@@ -58,8 +58,8 @@ export const Check7 = new Check(
     for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
-      for (const system of loc.systems) {
-        for (const systemComponent of system.components) {
+      for (const system of loc.monitoringSystemData) {
+        for (const systemComponent of system.monitoringSystemComponentData) {
           const Comp = await entityManager.findOne(Component, {
             locationId: monLoc.id,
             componentId: systemComponent.componentId,
@@ -104,8 +104,8 @@ export const Check31 = new Check(
     for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
-      for (const system of loc.systems) {
-        if (system.fuelFlows.length > 0) {
+      for (const system of loc.monitoringSystemData) {
+        if (system.monitoringSystemFuelFlowData.length > 0) {
           if (!validTypeCodes.includes(system.systemTypeCode)) {
             result.addError(
               'CRIT1-A',

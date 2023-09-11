@@ -170,7 +170,7 @@ export class ComponentBaseDTO {
 export class UpdateComponentBaseDTO extends ComponentBaseDTO {
   @ValidateNested()
   @Type(() => AnalyzerRangeBaseDTO)
-  analyzerRanges: AnalyzerRangeBaseDTO[];
+  analyzerRangeData: AnalyzerRangeBaseDTO[];
 }
 
 export class ComponentDTO extends ComponentBaseDTO {
@@ -211,5 +211,5 @@ export class ComponentDTO extends ComponentBaseDTO {
 
   @ValidateNested()
   @Type(() => AnalyzerRangeDTO)
-  analyzerRanges: AnalyzerRangeDTO[];
+  analyzerRangeData: AnalyzerRangeDTO[];
 }

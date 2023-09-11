@@ -42,7 +42,7 @@ export class MonitorQualification extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    ml => ml.qualifications,
+    ml => ml.monitoringQualificationData,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
@@ -51,23 +51,23 @@ export class MonitorQualification extends BaseEntity {
     () => LEEQualification,
     lee => lee.qualification,
   )
-  leeQualifications: LEEQualification[];
+  monitoringQualificationLEEData: LEEQualification[];
 
   @OneToMany(
     () => LMEQualification,
     lme => lme.qualification,
   )
-  lmeQualifications: LMEQualification[];
+  monitoringQualificationLMEData: LMEQualification[];
 
   @OneToMany(
     () => PCTQualification,
     pct => pct.qualification,
   )
-  pctQualifications: PCTQualification[];
+  monitoringQualificationPercentData: PCTQualification[];
 
   @OneToMany(
     () => CPMSQualification,
     cpms => cpms.qualification,
   )
-  cpmsQualifications: CPMSQualification[];
+  monitoringQualificationCPMSData: CPMSQualification[];
 }

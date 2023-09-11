@@ -51,7 +51,7 @@ export class MonitorDefault extends BaseEntity {
   defaultSourceCode: string;
 
   @Column({ type: 'varchar', length: 10, name: 'group_id' })
-  groupId: string;
+  groupID: string;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;
@@ -89,7 +89,7 @@ export class MonitorDefault extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    location => location.formulas,
+    location => location.monitoringFormulaData,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;

@@ -4,7 +4,6 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsBoolean,
   IsDateString,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -25,7 +24,7 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { SystemFuelMasterDataRelationship } from '../entities/system-fuel-md-relationship.entity';
-import { FindManyOptions, FindOneOptions } from 'typeorm';
+import { FindManyOptions } from 'typeorm';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { BeginEndDatesConsistent } from '../utils';
 
@@ -81,7 +80,7 @@ export class SystemFuelFlowBaseDTO {
       },
     },
   )
-  systemFuelFlowUOMCode: string;
+  systemFuelFlowUnitsOfMeasureCode: string;
 
   @ApiProperty({
     description:

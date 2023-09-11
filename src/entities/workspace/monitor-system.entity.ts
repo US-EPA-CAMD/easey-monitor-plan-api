@@ -68,7 +68,7 @@ export class MonitorSystem extends BaseEntity {
 
   @ManyToMany(
     () => Component,
-    c => c.systems,
+    c => c.monitoringSystemData,
   )
   @JoinTable({
     name: 'camdecmps.monitor_system_component',
@@ -81,17 +81,17 @@ export class MonitorSystem extends BaseEntity {
       referencedColumnName: 'id',
     },
   })
-  components: SystemComponent[];
+  monitoringSystemComponentData: SystemComponent[];
 
   @OneToMany(
     () => SystemFuelFlow,
     sff => sff.system,
   )
-  fuelFlows: SystemFuelFlow[];
+  monitoringSystemFuelFlowData: SystemFuelFlow[];
 
   @ManyToOne(
     () => MonitorLocation,
-    location => location.systems,
+    location => location.monitoringSystemData,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;

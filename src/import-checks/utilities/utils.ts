@@ -82,7 +82,7 @@ export const checkComponentExistanceInFile = (
 ) => {
   const results = [];
   for (const loc of monPlan.locations) {
-    for (const component of loc.components) {
+    for (const component of loc.componentData) {
       if (
         component.componentId !== systemComponent.componentId &&
         component.componentTypeCode !== systemComponent.componentTypeCode

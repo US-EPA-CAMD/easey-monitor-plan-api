@@ -10,10 +10,10 @@ export const Check11 = new Check(
     const result = new CheckResult('IMPORT11');
 
     monPlan.locations.forEach(location => {
-      location.qualifications.forEach(qual => {
+      location.monitoringQualificationData.forEach(qual => {
         if (qual.qualificationTypeCode !== 'LMEA') {
-          for (let i = 0; i < qual.lmeQualifications.length; i++) {
-            if (qual.lmeQualifications[i].so2Tons !== null) {
+          for (let i = 0; i < qual.monitoringQualificationLMEData.length; i++) {
+            if (qual.monitoringQualificationLMEData[i].so2Tons !== null) {
               result.addError(
                 'NONCRIT-A',
                 `A value has been reported for SO2Tons for the Monitor Qualification LME record #${i +
@@ -39,10 +39,10 @@ export const Check12 = new Check(
     const result = new CheckResult('IMPORT12');
 
     monPlan.locations.forEach(location => {
-      location.qualifications.forEach(qual => {
+      location.monitoringQualificationData.forEach(qual => {
         if (
           !['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode) &&
-          qual.pctQualifications.length > 0
+          qual.monitoringQualificationPercentData.length > 0
         ) {
           result.addError(
             'FATAL-A',
@@ -52,7 +52,7 @@ export const Check12 = new Check(
 
         if (
           !['LMEA', 'LMES'].includes(qual.qualificationTypeCode) &&
-          qual.lmeQualifications.length > 0
+          qual.monitoringQualificationLMEData.length > 0
         ) {
           result.addError(
             'FATAL-B',

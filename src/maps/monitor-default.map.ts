@@ -20,7 +20,7 @@ export class MonitorDefaultMap extends BaseMap<
       fuelCode: entity.fuelCode,
       operatingConditionCode: entity.operatingConditionCode,
       defaultSourceCode: entity.defaultSourceCode,
-      groupId: entity.groupId,
+      groupID: entity.groupID,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,
       endDate: entity.endDate,

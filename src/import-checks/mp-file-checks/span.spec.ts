@@ -18,7 +18,7 @@ describe('Span Tests', () => {
       span.scaleTransitionPoint = null;
       span.spanScaleCode = null;
 
-      locations.spans = [span];
+      locations.monitoringSpanData = [span];
       testData.locations = [locations];
 
       const checkResults = await checks.Check10.executeCheck(testData);
@@ -35,7 +35,7 @@ describe('Span Tests', () => {
       span.componentTypeCode = 'FLOW';
       span.mpcValue = 5;
 
-      locations.spans = [span];
+      locations.monitoringSpanData = [span];
       testData.locations = [locations];
 
       const checkResults = await checks.Check10.executeCheck(testData);
@@ -52,7 +52,7 @@ describe('Span Tests', () => {
       span.componentTypeCode = 'FLOW';
       span.mecValue = 5;
 
-      locations.spans = [span];
+      locations.monitoringSpanData = [span];
       testData.locations = [locations];
 
       const checkResults = await checks.Check10.executeCheck(testData);

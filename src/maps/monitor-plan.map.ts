@@ -20,15 +20,15 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
   }
 
   public async one(entity: MonitorPlan): Promise<MonitorPlanDTO> {
-    const locations = entity.locations
-      ? await this.locationMap.many(entity.locations)
+    const monitoringLocationData = entity.monitoringLocationData
+      ? await this.locationMap.many(entity.monitoringLocationData)
       : [];
-    const comments = entity.comments
-      ? await this.commentMap.many(entity.comments)
+    const monitoringPlanCommentData = entity.monitoringPlanCommentData
+      ? await this.commentMap.many(entity.monitoringPlanCommentData)
       : [];
-    const unitStackConfigurations = entity.unitStackConfigurations
+    const unitStackConfigurationData = entity.unitStackConfigurationData
       ? await this.unitStackConfigurationMap.many(
-          entity.unitStackConfigurations,
+          entity.unitStackConfigurationData,
         )
       : [];
     const reportingFrequencies = entity.reportingFrequencies
@@ -56,16 +56,16 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
       needsEvalFlag: entity.needsEvalFlag,
       checkSessionId: entity.checkSessionId,
       orisCode: entity.plant.orisCode,
-      name: locations.map(l => l.name).join(', '),
+      name: monitoringLocationData.map(l => l.name).join(', '),
       beginReportPeriodId: entity.beginReportPeriodId,
       endReportPeriodId: entity.endReportPeriodId,
       active: entity.endReportPeriodId === null ? true : false,
-      comments,
+      monitoringPlanCommentData,
       pendingStatusCode,
       evalStatusCode,
-      unitStackConfigurations,
+      unitStackConfigurationData,
       reportingFrequencies,
-      locations,
+      monitoringLocationData,
       userId: entity.userId,
       addDate: entity.addDate?.toISOString() ?? null,
       updateDate: entity.updateDate?.toISOString() ?? null,

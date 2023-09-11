@@ -21,7 +21,7 @@ export const Check9 = new Check(
     for (const loc of monPlan.locations) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
-      for (const formula of loc.formulas) {
+      for (const formula of loc.monitoringFormulaData) {
         const Form = await entityManager.findOne(MonitorFormula, {
           locationId: monLoc.id,
           formulaId: formula.formulaId,

@@ -12,7 +12,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 
 export class MonitorPlanDTO {
   @ApiProperty({
@@ -92,11 +92,11 @@ export class MonitorPlanDTO {
 
   @ValidateNested({ each: true })
   @Type(() => MonitorPlanCommentDTO)
-  comments: MonitorPlanCommentDTO[];
+  monitoringPlanCommentData: MonitorPlanCommentDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => UnitStackConfigurationDTO)
-  unitStackConfigurations: UnitStackConfigurationDTO[];
+  unitStackConfigurationData: UnitStackConfigurationDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorPlanReportingFreqDTO)
@@ -104,7 +104,7 @@ export class MonitorPlanDTO {
 
   @ValidateNested({ each: true })
   @Type(() => MonitorLocationDTO)
-  locations: MonitorLocationDTO[];
+  monitoringLocationData: MonitorLocationDTO[];
 
   @IsString()
   @IsOptional()
