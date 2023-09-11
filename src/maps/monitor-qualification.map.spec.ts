@@ -25,8 +25,8 @@ const addDate = new Date(Date.now());
 const updateDate = new Date(Date.now());
 const monitoringQualificationLEEData = [new LEEQualification()];
 const monitoringQualificationLMEData = [new LMEQualification()];
-const pctQualifications = [new PCTQualification()];
-const cpmsQualifications = [new CPMSQualification()];
+const monitoringQualificationPercentData = [new PCTQualification()];
+const monitoringQualificationCPMSData = [new CPMSQualification()];
 
 const leeQualDto: LEEQualificationDTO = {
   addDate: null,
@@ -96,8 +96,8 @@ entity.addDate = addDate;
 entity.updateDate = updateDate;
 entity.monitoringQualificationLEEData = monitoringQualificationLEEData;
 entity.monitoringQualificationLMEData = monitoringQualificationLMEData;
-entity.monitoringQualificationPercentData = pctQualifications;
-entity.monitoringQualificationCPMSData = cpmsQualifications;
+entity.monitoringQualificationPercentData = monitoringQualificationPercentData;
+entity.monitoringQualificationCPMSData = monitoringQualificationCPMSData;
 
 describe('MonitorQualification', () => {
   let map: MonitorQualificationMap;
