@@ -69,7 +69,7 @@ export class MonitorLocationWorkspaceService {
   ): Promise<MonitorLocation[]> {
     const locations = [];
 
-    for (const loc of plan.locations) {
+    for (const loc of plan.monitoringLocationData) {
       locations.push(await this.getLocationRecord(loc, facilitId, orisCode));
     }
 
@@ -181,7 +181,7 @@ export class MonitorLocationWorkspaceService {
     return new Promise(async resolve => {
       const promises = [];
 
-      for (const location of plan.locations) {
+      for (const location of plan.monitoringLocationData) {
         promises.push(
           new Promise(async innerResolve => {
             const innerPromises = [];

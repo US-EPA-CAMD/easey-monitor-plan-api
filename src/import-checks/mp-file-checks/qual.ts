@@ -9,7 +9,7 @@ export const Check11 = new Check(
   async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
     const result = new CheckResult('IMPORT11');
 
-    monPlan.locations.forEach(location => {
+    monPlan.monitoringLocationData.forEach(location => {
       location.monitoringQualificationData.forEach(qual => {
         if (qual.qualificationTypeCode !== 'LMEA') {
           for (let i = 0; i < qual.monitoringQualificationLMEData.length; i++) {
@@ -38,7 +38,7 @@ export const Check12 = new Check(
   async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
     const result = new CheckResult('IMPORT12');
 
-    monPlan.locations.forEach(location => {
+    monPlan.monitoringLocationData.forEach(location => {
       location.monitoringQualificationData.forEach(qual => {
         if (
           !['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode) &&

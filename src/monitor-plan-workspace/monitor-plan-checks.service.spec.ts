@@ -37,7 +37,7 @@ location.monitoringSystemData = [monitorSystem];
 location.unitControlData = [unitControl];
 location.componentData = [component];
 location.supplementalMATSMonitoringMethodData = [matsMethod];
-payload.locations = [location];
+payload.monitoringLocationData = [location];
 location.monitoringSpanData = [monitorSpan];
 
 const returnLocationRunChecks = [

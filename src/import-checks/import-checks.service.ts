@@ -60,7 +60,7 @@ export class ImportChecksService {
     );
 
     let index = 0;
-    for (const location of monPlan.locations) {
+    for (const location of monPlan.monitoringLocationData) {
       // Unit Checks
       if (location.unitId) {
         errorList.push(

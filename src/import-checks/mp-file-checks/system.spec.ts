@@ -31,7 +31,7 @@ describe('System Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check5.executeCheck(testData);
 
@@ -57,7 +57,7 @@ describe('System Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check5.executeCheck(testData);
 
@@ -93,7 +93,7 @@ describe('System Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check7.executeCheck(testData);
 
@@ -126,7 +126,7 @@ describe('System Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check7.executeCheck(testData);
 
@@ -159,7 +159,7 @@ describe('System Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check7.executeCheck(testData);
 
@@ -184,7 +184,7 @@ describe('System Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check31.executeCheck(testData);
 
@@ -208,7 +208,7 @@ describe('System Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check31.executeCheck(testData);
 

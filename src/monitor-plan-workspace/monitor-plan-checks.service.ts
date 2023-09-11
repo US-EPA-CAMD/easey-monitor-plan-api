@@ -55,7 +55,7 @@ export class MonitorPlanChecksService {
     errorList.push(...errors);
     this.throwIfErrors(errorList);
 
-    payload.locations.forEach((monitorLocation, locIdx) => {
+    payload.monitoringLocationData.forEach((monitorLocation, locIdx) => {
       const locationId = locationIdentifiers.find(i => {
         return (
           i.unitId === monitorLocation.unitId &&

@@ -88,7 +88,7 @@ describe('Monitor-Import Utilities Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResult = await utils.checkComponentExistanceInFile(
         testData,
@@ -118,7 +118,7 @@ describe('Monitor-Import Utilities Tests', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResult = await utils.checkComponentExistanceInFile(
         testData,

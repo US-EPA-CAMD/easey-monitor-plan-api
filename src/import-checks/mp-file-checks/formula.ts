@@ -18,7 +18,7 @@ export const Check9 = new Check(
     const entityManager = getEntityManager();
     const facility = await getFacIdFromOris(monPlan.orisCode);
 
-    for (const loc of monPlan.locations) {
+    for (const loc of monPlan.monitoringLocationData) {
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const formula of loc.monitoringFormulaData) {

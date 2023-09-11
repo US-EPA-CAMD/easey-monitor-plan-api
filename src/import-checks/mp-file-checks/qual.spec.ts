@@ -18,7 +18,7 @@ describe('Span Tests', () => {
       quals.qualificationTypeCode = 'LME';
       quals.monitoringQualificationLMEData = [lmeQuals];
       locations.monitoringQualificationData = [quals];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check11.executeCheck(testData);
 
@@ -36,7 +36,7 @@ describe('Span Tests', () => {
       quals.qualificationTypeCode = 'LME';
       quals.monitoringQualificationLMEData = [lmeQuals];
       locations.monitoringQualificationData = [quals];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check11.executeCheck(testData);
 
@@ -55,7 +55,7 @@ describe('Span Tests', () => {
       quals.monitoringQualificationLMEData = [];
       quals.monitoringQualificationPercentData = [];
       locations.monitoringQualificationData = [quals];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check12.executeCheck(testData);
 
@@ -73,7 +73,7 @@ describe('Span Tests', () => {
       quals.monitoringQualificationLMEData = [];
       quals.monitoringQualificationPercentData = [pctQuals];
       locations.monitoringQualificationData = [quals];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check12.executeCheck(testData);
 
@@ -91,7 +91,7 @@ describe('Span Tests', () => {
       quals.monitoringQualificationLMEData = [lmeQuals];
       quals.monitoringQualificationPercentData = [];
       locations.monitoringQualificationData = [quals];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check12.executeCheck(testData);
 

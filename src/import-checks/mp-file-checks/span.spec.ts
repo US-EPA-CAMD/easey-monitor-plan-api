@@ -19,7 +19,7 @@ describe('Span Tests', () => {
       span.spanScaleCode = null;
 
       locations.monitoringSpanData = [span];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check10.executeCheck(testData);
 
@@ -36,7 +36,7 @@ describe('Span Tests', () => {
       span.mpcValue = 5;
 
       locations.monitoringSpanData = [span];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check10.executeCheck(testData);
 
@@ -53,7 +53,7 @@ describe('Span Tests', () => {
       span.mecValue = 5;
 
       locations.monitoringSpanData = [span];
-      testData.locations = [locations];
+      testData.monitoringLocationData = [locations];
 
       const checkResults = await checks.Check10.executeCheck(testData);
 

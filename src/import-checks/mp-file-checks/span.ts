@@ -9,7 +9,7 @@ export const Check10 = new Check(
   async (monPlan: UpdateMonitorPlanDTO): Promise<CheckResult> => {
     const result = new CheckResult('IMPORT10');
 
-    monPlan.locations.forEach(location => {
+    monPlan.monitoringLocationData.forEach(location => {
       location.monitoringSpanData.forEach(span => {
         let mustBeNull;
         if (span.componentTypeCode === 'FLOW') {

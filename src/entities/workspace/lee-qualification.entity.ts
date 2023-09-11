@@ -39,7 +39,7 @@ export class LEEQualification extends BaseEntity {
   applicableEmissionStandard: number;
 
   @Column({ name: 'emission_standard_uom' })
-  unitsOfStandard: string;
+  unitsofStandard: string;
 
   @Column({
     name: 'emission_standard_pct',

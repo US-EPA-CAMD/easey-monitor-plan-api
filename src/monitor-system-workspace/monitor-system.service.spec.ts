@@ -115,7 +115,7 @@ describe('MonitorSystemWorkspaceService', () => {
       location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'GAS';
       repository.findOne = jest.fn().mockResolvedValue(monSys);
@@ -156,7 +156,7 @@ describe('MonitorSystemWorkspaceService', () => {
       location.stackPipeId = 'CS0AAN';
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'GAS';
       repository.findOne = jest.fn().mockResolvedValue(monSys);
@@ -195,7 +195,7 @@ describe('MonitorSystemWorkspaceService', () => {
       location.stackPipeId = 'CS0AAN';
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'AIR';
       repository.findOne = jest.fn().mockResolvedValue(monSys);
@@ -229,7 +229,7 @@ describe('MonitorSystemWorkspaceService', () => {
       location.stackPipeId = 'CS0AAN';
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       repository.findOne = jest.fn().mockResolvedValue(null);
 

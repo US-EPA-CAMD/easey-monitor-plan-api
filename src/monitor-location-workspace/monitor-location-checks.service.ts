@@ -26,8 +26,8 @@ export class MonitorLocationChecksService {
       });
     };
 
-    if (payload.locations) {
-      payload.locations.forEach(i => addLocation(i));
+    if (payload.monitoringLocationData) {
+      payload.monitoringLocationData.forEach(i => addLocation(i));
     }
 
     return locations;

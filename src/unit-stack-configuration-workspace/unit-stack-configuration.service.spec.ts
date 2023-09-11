@@ -35,8 +35,8 @@ const unitStackConfig = new UnitStackConfigurationBaseDTO();
 unitStackConfig.stackPipeId = stackPipeID;
 unitStackConfig.unitId = unitID;
 
-mpPayload.unitStackConfigurations = [unitStackConfig];
-mpPayload.locations = [location];
+mpPayload.unitStackConfigurationData = [unitStackConfig];
+mpPayload.monitoringLocationData = [location];
 
 const mockRepository = () => ({
   getUnitStackById: jest.fn().mockResolvedValue(unitStack),
@@ -157,8 +157,8 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfigurations = [unitStackConfig];
-        plan.locations = [location];
+        plan.unitStackConfigurationData = [unitStackConfig];
+        plan.monitoringLocationData = [location];
 
         const result = service.runUnitStackChecks(plan);
         expect(result.length).toBe(0);
@@ -178,8 +178,8 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location2.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfigurations = [unitStackConfig];
-        plan.locations = [location, location2];
+        plan.unitStackConfigurationData = [unitStackConfig];
+        plan.monitoringLocationData = [location, location2];
 
         const result = service.runUnitStackChecks(plan);
         expect(result).toEqual([
@@ -226,8 +226,8 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfigurations = [unitStackConfig, unitStackConfig2];
-        plan.locations = [location];
+        plan.unitStackConfigurationData = [unitStackConfig, unitStackConfig2];
+        plan.monitoringLocationData = [location];
 
         const result = service.runUnitStackChecks(plan);
         expect(result).toEqual([
@@ -251,8 +251,8 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         location.stackPipeId = 'TEST';
 
         const plan = new UpdateMonitorPlanDTO();
-        plan.unitStackConfigurations = [unitStackConfig, unitStackConfig2];
-        plan.locations = [location];
+        plan.unitStackConfigurationData = [unitStackConfig, unitStackConfig2];
+        plan.monitoringLocationData = [location];
 
         const result = service.runUnitStackChecks(plan);
         expect(result).toEqual([

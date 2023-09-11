@@ -49,7 +49,7 @@ export class MonitorSystemWorkspaceService {
     const validTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
 
     const componentIdAndTypeCodeSet: Set<string> = new Set<string>();
-    for (const loc of monPlan.locations) {
+    for (const loc of monPlan.monitoringLocationData) {
       for (const component of loc.componentData) {
         componentIdAndTypeCodeSet.add(
           `${component.componentId}:${component.componentTypeCode}`,

@@ -27,7 +27,7 @@ describe('Component Tests', () => {
 
       location.monitoringFormulaData = [formula];
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check9.executeCheck(testData);
 
@@ -53,7 +53,7 @@ describe('Component Tests', () => {
 
       location.monitoringFormulaData = [formula];
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check9.executeCheck(testData);
 
@@ -80,7 +80,7 @@ describe('Component Tests', () => {
 
       location.monitoringFormulaData = [formula];
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check9.executeCheck(testData);
 
