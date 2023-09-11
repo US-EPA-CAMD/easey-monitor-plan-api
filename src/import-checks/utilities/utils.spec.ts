@@ -82,7 +82,7 @@ describe('Monitor-Import Utilities Tests', () => {
       systemComponent.componentTypeCode = 'S02';
       systemComponent.componentId = 'AA0';
 
-      system.componentData = [systemComponent];
+      system.monitoringSystemComponentData = [systemComponent];
 
       location.componentData = [component];
       location.monitoringSystemData = [system];
@@ -112,7 +112,7 @@ describe('Monitor-Import Utilities Tests', () => {
       systemComponent.componentTypeCode = 'S20';
       systemComponent.componentId = 'AA00';
 
-      system.componentData = [systemComponent];
+      system.monitoringSystemComponentData = [systemComponent];
 
       location.componentData = [component];
       location.monitoringSystemData = [system];

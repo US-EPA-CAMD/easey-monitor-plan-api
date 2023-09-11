@@ -32,7 +32,7 @@ const monitorSystem = new UpdateMonitorSystemDTO();
 const systemComponent = new SystemComponentBaseDTO();
 const monitorSpan = new MonitorSpanBaseDTO();
 
-monitorSystem.componentData = [systemComponent];
+monitorSystem.monitoringSystemComponentData = [systemComponent];
 location.monitoringSystemData = [monitorSystem];
 location.unitControlData = [unitControl];
 location.componentData = [component];

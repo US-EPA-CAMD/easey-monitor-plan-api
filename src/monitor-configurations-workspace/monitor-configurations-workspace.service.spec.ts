@@ -20,7 +20,7 @@ const ORIS_CODES_AND_LAST_UPDATED = {
 };
 const ENTITY = new MonitorPlan();
 const DTO = new MonitorPlanDTO();
-DTO.locations = [new MonitorLocationDTO()];
+DTO.monitoringLocationData = [new MonitorLocationDTO()];
 
 const mockRepository = () => ({
   getMonitorPlanByIds: jest.fn().mockResolvedValue([ENTITY]),
