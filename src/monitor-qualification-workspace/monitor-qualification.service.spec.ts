@@ -31,10 +31,10 @@ const payload: UpdateMonitorQualificationDTO = {
   qualificationTypeCode: '',
   beginDate: new Date(Date.now()),
   endDate: new Date(Date.now()),
-  leeQualifications: [],
-  lmeQualifications: [],
-  pctQualifications: [],
-  cpmsQualifications: [],
+  monitoringQualificationLEEData: [],
+  monitoringQualificationLMEData: [],
+  monitoringQualificationPercentData: [],
+  monitoringQualificationCPMSData: [],
 };
 
 const mockRepository = () => ({
@@ -102,9 +102,9 @@ describe('MonitorQualificationService', () => {
 
       lmeQual.so2Tons = null;
       quals.qualificationTypeCode = 'LMEA';
-      quals.lmeQualifications = [lmeQual];
-      quals.leeQualifications = [leeQual];
-      quals.pctQualifications = [];
+      quals.monitoringQualificationLMEData = [lmeQual];
+      quals.monitoringQualificationLEEData = [leeQual];
+      quals.monitoringQualificationPercentData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -121,9 +121,9 @@ describe('MonitorQualificationService', () => {
 
       lmeQual.so2Tons = null;
       quals.qualificationTypeCode = 'PK';
-      quals.lmeQualifications = [];
-      quals.leeQualifications = [leeQual];
-      quals.pctQualifications = [pctQual];
+      quals.monitoringQualificationLMEData = [];
+      quals.monitoringQualificationLEEData = [leeQual];
+      quals.monitoringQualificationPercentData = [pctQual];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -138,9 +138,9 @@ describe('MonitorQualificationService', () => {
 
       lmeQual.so2Tons = 1;
       quals.qualificationTypeCode = 'PK';
-      quals.lmeQualifications = [lmeQual];
-      quals.leeQualifications = [];
-      quals.pctQualifications = [];
+      quals.monitoringQualificationLMEData = [lmeQual];
+      quals.monitoringQualificationLEEData = [];
+      quals.monitoringQualificationPercentData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -161,9 +161,9 @@ describe('MonitorQualificationService', () => {
 
       lmeQual.so2Tons = null;
       quals.qualificationTypeCode = 'LMEA';
-      quals.lmeQualifications = [];
-      quals.leeQualifications = [];
-      quals.pctQualifications = [pctQual];
+      quals.monitoringQualificationLMEData = [];
+      quals.monitoringQualificationLEEData = [];
+      quals.monitoringQualificationPercentData = [pctQual];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,

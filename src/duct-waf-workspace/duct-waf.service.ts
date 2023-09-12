@@ -1,7 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWaf } from '../entities/duct-waf.entity';
@@ -16,7 +15,6 @@ export class DuctWafWorkspaceService {
     @InjectRepository(DuctWafWorkspaceRepository)
     private readonly repository: DuctWafWorkspaceRepository,
     private readonly map: DuctWafMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -31,9 +29,13 @@ export class DuctWafWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new EaseyException(new Error('Duct Waf Not Found'), HttpStatus.NOT_FOUND, {
-        id: id,
-      });
+      throw new EaseyException(
+        new Error('Duct Waf Not Found'),
+        HttpStatus.NOT_FOUND,
+        {
+          id: id,
+        },
+      );
     }
 
     return result;

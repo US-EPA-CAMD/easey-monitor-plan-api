@@ -63,57 +63,57 @@ export class MonitorLocationDTO extends MonitorLocationBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => MonitorAttributeDTO)
-  attributes: MonitorAttributeDTO[];
+  monitoringLocationAttribData: MonitorAttributeDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => UnitCapacityDTO)
-  unitCapacities: UnitCapacityDTO[];
+  unitCapacityData: UnitCapacityDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => UnitControlDTO)
-  unitControls: UnitControlDTO[];
+  unitControlData: UnitControlDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => UnitFuelDTO)
-  unitFuels: UnitFuelDTO[];
+  unitFuelData: UnitFuelDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorMethodDTO)
-  methods: MonitorMethodDTO[];
+  monitoringMethodData: MonitorMethodDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MatsMethodDTO)
-  matsMethods: MatsMethodDTO[];
+  supplementalMATSMonitoringMethodData: MatsMethodDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorFormulaDTO)
-  formulas: MonitorFormulaDTO[];
+  monitoringFormulaData: MonitorFormulaDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorDefaultDTO)
-  defaults: MonitorDefaultDTO[];
+  monitoringDefaultData: MonitorDefaultDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorSpanDTO)
-  spans: MonitorSpanDTO[];
+  monitoringSpanData: MonitorSpanDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => DuctWafDTO)
-  ductWafs: DuctWafDTO[];
+  rectangularDuctWAFData: DuctWafDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorLoadDTO)
-  loads: MonitorLoadDTO[];
+  monitoringLoadData: MonitorLoadDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => ComponentDTO)
-  components: ComponentDTO[];
+  componentData: ComponentDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorSystemDTO)
-  systems: MonitorSystemDTO[];
+  monitoringSystemData: MonitorSystemDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => MonitorQualificationDTO)
-  qualifications: MonitorQualificationDTO[];
+  monitoringQualificationData: MonitorQualificationDTO[];
 }

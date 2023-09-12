@@ -30,13 +30,13 @@ export class UpdateMonitorPlanDTO {
 
   @ValidateNested()
   @Type(() => MonitorPlanCommentBaseDTO)
-  comments: MonitorPlanCommentBaseDTO[];
+  monitoringPlanCommentData: MonitorPlanCommentBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitStackConfigurationBaseDTO)
-  unitStackConfigurations: UnitStackConfigurationBaseDTO[];
+  unitStackConfigurationData: UnitStackConfigurationBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorLocationDTO)
-  locations: UpdateMonitorLocationDTO[];
+  monitoringLocationData: UpdateMonitorLocationDTO[];
 }

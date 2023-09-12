@@ -22,57 +22,57 @@ import { MonitorDefaultBaseDTO } from './monitor-default.dto';
 export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
   @ValidateNested()
   @Type(() => MonitorAttributeBaseDTO)
-  attributes: MonitorAttributeBaseDTO[];
+  monitoringLocationAttribData: MonitorAttributeBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitCapacityBaseDTO)
-  unitCapacities: UnitCapacityBaseDTO[];
+  unitCapacityData: UnitCapacityBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitControlBaseDTO)
-  unitControls: UnitControlBaseDTO[];
+  unitControlData: UnitControlBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitFuelBaseDTO)
-  unitFuels: UnitFuelBaseDTO[];
+  unitFuelData: UnitFuelBaseDTO[];
 
   @ValidateNested()
   @Type(() => MonitorMethodBaseDTO)
-  methods: MonitorMethodBaseDTO[];
+  monitoringMethodData: MonitorMethodBaseDTO[];
 
   @ValidateNested()
   @Type(() => MatsMethodBaseDTO)
-  matsMethods: MatsMethodBaseDTO[];
+  supplementalMATSMonitoringMethodData: MatsMethodBaseDTO[];
 
   @ValidateNested()
   @Type(() => MonitorFormulaBaseDTO)
-  formulas: MonitorFormulaBaseDTO[];
+  monitoringFormulaData: MonitorFormulaBaseDTO[];
 
   @ValidateNested()
   @Type(() => MonitorDefaultBaseDTO)
-  defaults: MonitorDefaultBaseDTO[];
+  monitoringDefaultData: MonitorDefaultBaseDTO[];
 
   @ValidateNested()
   @Type(() => MonitorSpanBaseDTO)
-  spans: MonitorSpanBaseDTO[];
+  monitoringSpanData: MonitorSpanBaseDTO[];
 
   @ValidateNested()
   @Type(() => DuctWafBaseDTO)
-  ductWafs: DuctWafBaseDTO[];
+  rectangularDuctWAFData: DuctWafBaseDTO[];
 
   @ValidateNested()
   @Type(() => MonitorLoadBaseDTO)
-  loads: MonitorLoadBaseDTO[];
+  monitoringLoadData: MonitorLoadBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateComponentBaseDTO)
-  components: UpdateComponentBaseDTO[];
+  componentData: UpdateComponentBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorSystemDTO)
-  systems: UpdateMonitorSystemDTO[];
+  monitoringSystemData: UpdateMonitorSystemDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorQualificationDTO)
-  qualifications: UpdateMonitorQualificationDTO[];
+  monitoringQualificationData: UpdateMonitorQualificationDTO[];
 }

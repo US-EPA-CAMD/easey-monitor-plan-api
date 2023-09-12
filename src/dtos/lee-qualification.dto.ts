@@ -131,7 +131,7 @@ export class LEEQualificationBaseDTO {
     },
   )
   @IsString()
-  unitsOfStandard: string;
+  unitsofStandard: string;
 
   @ApiProperty({
     description:

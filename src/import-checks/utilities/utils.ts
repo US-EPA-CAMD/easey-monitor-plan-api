@@ -81,8 +81,8 @@ export const checkComponentExistanceInFile = (
   systemComponent: SystemComponentBaseDTO,
 ) => {
   const results = [];
-  for (const loc of monPlan.locations) {
-    for (const component of loc.components) {
+  for (const loc of monPlan.monitoringLocationData) {
+    for (const component of loc.componentData) {
       if (
         component.componentId !== systemComponent.componentId &&
         component.componentTypeCode !== systemComponent.componentTypeCode

@@ -241,9 +241,9 @@ export class MonitorDefaultBaseDTO {
       );
     },
   })
-  @ValidateIf(o => o.groupId !== null)
+  @ValidateIf(o => o.groupID !== null)
   @IsString()
-  groupId: string;
+  groupID: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOBeginDate.description,

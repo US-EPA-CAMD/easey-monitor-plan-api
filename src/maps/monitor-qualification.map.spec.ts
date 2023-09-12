@@ -23,10 +23,10 @@ const endDate = new Date(Date.now());
 const userId = '1';
 const addDate = new Date(Date.now());
 const updateDate = new Date(Date.now());
-const leeQualifications = [new LEEQualification()];
-const lmeQualifications = [new LMEQualification()];
-const pctQualifications = [new PCTQualification()];
-const cpmsQualifications = [new CPMSQualification()];
+const monitoringQualificationLEEData = [new LEEQualification()];
+const monitoringQualificationLMEData = [new LMEQualification()];
+const monitoringQualificationPercentData = [new PCTQualification()];
+const monitoringQualificationCPMSData = [new CPMSQualification()];
 
 const leeQualDto: LEEQualificationDTO = {
   addDate: null,
@@ -38,7 +38,7 @@ const leeQualDto: LEEQualificationDTO = {
   qualificationId: undefined,
   qualificationTestDate: undefined,
   qualificationTestType: undefined,
-  unitsOfStandard: undefined,
+  unitsofStandard: undefined,
   updateDate: null,
   userId: undefined,
 };
@@ -94,10 +94,10 @@ entity.endDate = endDate;
 entity.userId = userId;
 entity.addDate = addDate;
 entity.updateDate = updateDate;
-entity.leeQualifications = leeQualifications;
-entity.lmeQualifications = lmeQualifications;
-entity.pctQualifications = pctQualifications;
-entity.cpmsQualifications = cpmsQualifications;
+entity.leeQualifications = monitoringQualificationLEEData;
+entity.lmeQualifications = monitoringQualificationLMEData;
+entity.pctQualifications = monitoringQualificationPercentData;
+entity.cpmsQualifications = monitoringQualificationCPMSData;
 
 describe('MonitorQualification', () => {
   let map: MonitorQualificationMap;
@@ -129,10 +129,10 @@ describe('MonitorQualification', () => {
     expect(result.userId).toEqual(userId);
     expect(result.addDate).toEqual(addDate.toISOString());
     expect(result.updateDate).toEqual(updateDate.toISOString());
-    expect(result.leeQualifications).toEqual([leeQualDto]);
-    expect(result.lmeQualifications).toEqual([lmeQualDto]);
-    expect(result.pctQualifications).toEqual([pctQualDto]);
-    expect(result.cpmsQualifications).toEqual([cpmsQualDto]);
+    expect(result.monitoringQualificationLEEData).toEqual([leeQualDto]);
+    expect(result.monitoringQualificationLMEData).toEqual([lmeQualDto]);
+    expect(result.monitoringQualificationPercentData).toEqual([pctQualDto]);
+    expect(result.monitoringQualificationCPMSData).toEqual([cpmsQualDto]);
   });
 
   it('Should return empty array when leeQual, lmeQual and pctQual does not exists', async () => {
@@ -143,9 +143,9 @@ describe('MonitorQualification', () => {
 
     const result = await map.one(entity);
 
-    expect(result.leeQualifications).toEqual([]);
-    expect(result.lmeQualifications).toEqual([]);
-    expect(result.pctQualifications).toEqual([]);
-    expect(result.cpmsQualifications).toEqual([]);
+    expect(result.monitoringQualificationLEEData).toEqual([]);
+    expect(result.monitoringQualificationLMEData).toEqual([]);
+    expect(result.monitoringQualificationPercentData).toEqual([]);
+    expect(result.monitoringQualificationCPMSData).toEqual([]);
   });
 });
