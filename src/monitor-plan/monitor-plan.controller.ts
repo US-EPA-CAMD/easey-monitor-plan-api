@@ -20,7 +20,7 @@ export class MonitorPlanController {
     @Query() params: MonitorPlanParamsDTO,
   ): Promise<MonitorPlanDTO> {
     return this.service.exportMonitorPlan(
-      params.planId,
+      params.planId[0],
       params.reportedValuesOnly,
     );
   }

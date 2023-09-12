@@ -11,7 +11,7 @@ interface IorisCodesAndLastUpdatedTimes {
 export class MonitorPlanRepository extends Repository<MonitorPlan> {
   async getMonitorPlan(planId: string): Promise<MonitorPlan> {
     return this.createQueryBuilder('plan')
-      .innerJoinAndSelect('plan.plant', 'plant')
+    .innerJoinAndSelect('plan.plant', 'plant', 'plan.fac_id = plant.fac_id')
       .where('plan.id = :planId', { planId })
       .getOne();
   }
