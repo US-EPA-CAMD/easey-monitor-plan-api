@@ -20,7 +20,7 @@ export class ComponentWorkspaceService {
     private readonly map: ComponentMap,
 
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
-    private readonly analyzerRangeDataervice: AnalyzerRangeWorkspaceService,
+    private readonly analyzerRangeDataService: AnalyzerRangeWorkspaceService,
   ) {}
 
   async runComponentChecks(
@@ -146,7 +146,7 @@ export class ComponentWorkspaceService {
                 component.componentId,
               );
 
-              await this.analyzerRangeDataervice.importAnalyzerRange(
+              await this.analyzerRangeDataService.importAnalyzerRange(
                 compRecord.id,
                 locationId,
                 component.analyzerRangeData,
