@@ -86,7 +86,7 @@ describe('ComponentWorkspaceService', () => {
         const comp = new Component();
         comp.componentTypeCode = 'NOX';
         comp.basisCode = null;
-        comp.analyzerRangeData = [];
+        comp.analyzerRanges = [];
 
         jest.spyOn(repository, 'findOne').mockResolvedValue(comp);
 
@@ -114,7 +114,7 @@ describe('ComponentWorkspaceService', () => {
         const comp = new Component();
         comp.componentTypeCode = 'SO2';
         comp.basisCode = 'ERR';
-        comp.analyzerRangeData = [];
+        comp.analyzerRanges = [];
         repository.findOne = jest.fn().mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
@@ -141,7 +141,7 @@ describe('ComponentWorkspaceService', () => {
         const comp = new Component();
         comp.componentTypeCode = 'SO2';
         comp.basisCode = 'VALID';
-        comp.analyzerRangeData = [];
+        comp.analyzerRanges = [];
         repository.findOne = jest.fn().mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
@@ -168,7 +168,7 @@ describe('ComponentWorkspaceService', () => {
         const comp = new Component();
         comp.componentTypeCode = 'ERR';
         comp.basisCode = null;
-        comp.analyzerRangeData = [];
+        comp.analyzerRanges = [];
         repository.findOne = jest.fn().mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
@@ -218,7 +218,7 @@ describe('ComponentWorkspaceService', () => {
         const comp = new Component();
         comp.componentTypeCode = 'ERR';
         comp.basisCode = null;
-        comp.analyzerRangeData = [new AnalyzerRange()];
+        comp.analyzerRanges = [new AnalyzerRange()];
         jest.spyOn(repository, 'findOne').mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();

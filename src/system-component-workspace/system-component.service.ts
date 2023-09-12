@@ -1,13 +1,6 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
@@ -16,7 +9,7 @@ import {
 } from '../dtos/system-component.dto';
 import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { SystemComponentMap } from '../maps/system-component.map';
-import { SystemComponent } from '../entities/system-component.entity';
+import { SystemComponent } from '../entities/workspace/system-component.entity';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
@@ -30,7 +23,6 @@ export class SystemComponentWorkspaceService {
     private readonly repository: SystemComponentWorkspaceRepository,
     private readonly componentService: ComponentWorkspaceService,
     private readonly map: SystemComponentMap,
-    private readonly logger: Logger,
     private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
@@ -97,7 +89,7 @@ export class SystemComponentWorkspaceService {
         modelVersion: payload.modelVersion,
         serialNumber: payload.serialNumber,
         hgConverterIndicator: component.hgConverterIndicator,
-        analyzerRangeData: component.analyzerRangeData,
+        analyzerRangeData: component.analyzerRanges,
       };
 
       await this.componentService.updateComponent(

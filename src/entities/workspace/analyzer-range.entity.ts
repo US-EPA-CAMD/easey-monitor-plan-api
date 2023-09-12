@@ -63,7 +63,7 @@ export class AnalyzerRange extends BaseEntity {
 
   @ManyToOne(
     () => Component,
-    c => c.analyzerRangeData,
+    c => c.analyzerRanges,
   )
   @JoinColumn({ name: 'component_id' })
   component: Component;

@@ -1,13 +1,6 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
@@ -21,7 +14,6 @@ export class MatsMethodWorkspaceService {
     @InjectRepository(MatsMethodWorkspaceRepository)
     private readonly repository: MatsMethodWorkspaceRepository,
     private readonly map: MatsMethodMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -36,9 +28,13 @@ export class MatsMethodWorkspaceService {
     const result = await this.repository.findOne(methodId);
 
     if (!result) {
-      throw new EaseyException(new Error('Mats Method not found.'), HttpStatus.NOT_FOUND, {
-        methodId: methodId,
-      });
+      throw new EaseyException(
+        new Error('Mats Method not found.'),
+        HttpStatus.NOT_FOUND,
+        {
+          methodId: methodId,
+        },
+      );
     }
 
     return this.map.one(result);
@@ -84,9 +80,13 @@ export class MatsMethodWorkspaceService {
     const method = await this.repository.findOne(methodId);
 
     if (!method) {
-      throw new EaseyException(new Error('Mats Method not found.'), HttpStatus.NOT_FOUND, {
-        methodId: methodId,
-      });
+      throw new EaseyException(
+        new Error('Mats Method not found.'),
+        HttpStatus.NOT_FOUND,
+        {
+          methodId: methodId,
+        },
+      );
     }
 
     method.supplementalMATSParameterCode =

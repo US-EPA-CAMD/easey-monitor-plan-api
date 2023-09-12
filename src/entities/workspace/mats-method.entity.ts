@@ -64,7 +64,7 @@ export class MatsMethod extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    location => location.supplementalMATSMonitoringMethodData,
+    location => location.matsMethods,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;

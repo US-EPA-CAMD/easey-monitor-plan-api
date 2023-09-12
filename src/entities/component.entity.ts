@@ -96,14 +96,14 @@ export class Component extends BaseEntity {
 
   @ManyToMany(
     () => MonitorSystem,
-    ms => ms.monitoringSystemComponentData,
+    ms => ms.components,
     { eager: true },
   )
-  monitoringSystemData: MonitorSystem[];
+  systems: MonitorSystem[];
 
   @ManyToOne(
     () => MonitorLocation,
-    location => location.componentData,
+    location => location.components,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
@@ -112,5 +112,5 @@ export class Component extends BaseEntity {
     () => AnalyzerRange,
     ar => ar.component,
   )
-  analyzerRangeData: AnalyzerRange[];
+  analyzerRanges: AnalyzerRange[];
 }

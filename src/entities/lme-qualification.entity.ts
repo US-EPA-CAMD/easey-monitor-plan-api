@@ -43,7 +43,7 @@ export class LMEQualification extends BaseEntity {
 
   @ManyToOne(
     () => MonitorQualification,
-    mq => mq.monitoringQualificationLMEData,
+    mq => mq.lmeQualifications,
   )
   @JoinColumn({ name: 'mon_qual_id' })
   qualification: MonitorQualification;

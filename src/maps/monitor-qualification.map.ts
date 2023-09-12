@@ -6,12 +6,13 @@ import { LMEQualificationMap } from './lme-qualification.map';
 import { PCTQualificationMap } from './pct-qualification.map';
 
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
+import { MonitorQualification as WorkspaceMonitorQualification } from '../entities/workspace/monitor-qualification.entity';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { CPMSQualificationMap } from './cpms-qualification.map';
 
 @Injectable()
 export class MonitorQualificationMap extends BaseMap<
-  MonitorQualification,
+  MonitorQualification | WorkspaceMonitorQualification,
   MonitorQualificationDTO
 > {
   constructor(
@@ -26,17 +27,17 @@ export class MonitorQualificationMap extends BaseMap<
   public async one(
     entity: MonitorQualification,
   ): Promise<MonitorQualificationDTO> {
-    const monitoringQualificationLEEData = entity.monitoringQualificationLEEData
-      ? await this.leeMap.many(entity.monitoringQualificationLEEData)
+    const monitoringQualificationLEEData = entity.leeQualifications
+      ? await this.leeMap.many(entity.leeQualifications)
       : [];
-    const monitoringQualificationLMEData = entity.monitoringQualificationLMEData
-      ? await this.lmeMap.many(entity.monitoringQualificationLMEData)
+    const monitoringQualificationLMEData = entity.lmeQualifications
+      ? await this.lmeMap.many(entity.lmeQualifications)
       : [];
-    const monitoringQualificationPercentData = entity.monitoringQualificationPercentData
-      ? await this.pctMap.many(entity.monitoringQualificationPercentData)
+    const monitoringQualificationPercentData = entity.pctQualifications
+      ? await this.pctMap.many(entity.pctQualifications)
       : [];
-    const monitoringQualificationCPMSData = entity.monitoringQualificationCPMSData
-      ? await this.cpmsMap.many(entity.monitoringQualificationCPMSData)
+    const monitoringQualificationCPMSData = entity.cpmsQualifications
+      ? await this.cpmsMap.many(entity.cpmsQualifications)
       : [];
 
     return {

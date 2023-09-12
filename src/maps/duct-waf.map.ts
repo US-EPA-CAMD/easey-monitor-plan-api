@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWaf } from '../entities/duct-waf.entity';
+import { DuctWaf as WorkspaceDuctWaf } from '../entities/workspace/duct-waf.entity';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 
 @Injectable()
-export class DuctWafMap extends BaseMap<DuctWaf, DuctWafDTO> {
-  public async one(entity: DuctWaf): Promise<DuctWafDTO> {
+export class DuctWafMap extends BaseMap<
+  DuctWaf | WorkspaceDuctWaf,
+  DuctWafDTO
+> {
+  public async one(entity: DuctWaf | WorkspaceDuctWaf): Promise<DuctWafDTO> {
     return {
       id: entity.id,
       locationId: entity.locationId,

@@ -94,10 +94,10 @@ entity.endDate = endDate;
 entity.userId = userId;
 entity.addDate = addDate;
 entity.updateDate = updateDate;
-entity.monitoringQualificationLEEData = monitoringQualificationLEEData;
-entity.monitoringQualificationLMEData = monitoringQualificationLMEData;
-entity.monitoringQualificationPercentData = monitoringQualificationPercentData;
-entity.monitoringQualificationCPMSData = monitoringQualificationCPMSData;
+entity.leeQualifications = monitoringQualificationLEEData;
+entity.lmeQualifications = monitoringQualificationLMEData;
+entity.pctQualifications = monitoringQualificationPercentData;
+entity.cpmsQualifications = monitoringQualificationCPMSData;
 
 describe('MonitorQualification', () => {
   let map: MonitorQualificationMap;
@@ -136,10 +136,10 @@ describe('MonitorQualification', () => {
   });
 
   it('Should return empty array when leeQual, lmeQual and pctQual does not exists', async () => {
-    delete entity.monitoringQualificationLEEData;
-    delete entity.monitoringQualificationLMEData;
-    delete entity.monitoringQualificationPercentData;
-    delete entity.monitoringQualificationCPMSData;
+    delete entity.leeQualifications;
+    delete entity.lmeQualifications;
+    delete entity.pctQualifications;
+    delete entity.cpmsQualifications;
 
     const result = await map.one(entity);
 

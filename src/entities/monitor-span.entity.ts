@@ -155,7 +155,7 @@ export class MonitorSpan extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    ml => ml.monitoringSpanData,
+    ml => ml.spans,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;

@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorDefault } from '../entities/monitor-default.entity';
+import { MonitorDefault as WorkspaceMonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 
 @Injectable()
 export class MonitorDefaultMap extends BaseMap<
-  MonitorDefault,
+  MonitorDefault | WorkspaceMonitorDefault,
   MonitorDefaultDTO
 > {
-  public async one(entity: MonitorDefault): Promise<MonitorDefaultDTO> {
+  public async one(
+    entity: MonitorDefault | WorkspaceMonitorDefault,
+  ): Promise<MonitorDefaultDTO> {
     return {
       id: entity.id,
       locationId: entity.locationId,

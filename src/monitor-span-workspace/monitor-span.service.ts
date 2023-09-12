@@ -1,13 +1,6 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
@@ -22,7 +15,6 @@ export class MonitorSpanWorkspaceService {
     @InjectRepository(MonitorSpanWorkspaceRepository)
     private readonly repository: MonitorSpanWorkspaceRepository,
     private readonly map: MonitorSpanMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -37,10 +29,14 @@ export class MonitorSpanWorkspaceService {
     const result = await this.repository.getSpan(locationId, spanId);
 
     if (!result) {
-      throw new EaseyException(new Error('Monitor Span not found'), HttpStatus.NOT_FOUND, {
-        locationId: locationId,
-        spanId: spanId,
-      });
+      throw new EaseyException(
+        new Error('Monitor Span not found'),
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          spanId: spanId,
+        },
+      );
     }
 
     return result;

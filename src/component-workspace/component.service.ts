@@ -1,13 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
-import { Component } from '../entities/component.entity';
+import { Component } from '../entities/workspace/component.entity';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
@@ -19,7 +18,6 @@ export class ComponentWorkspaceService {
     private readonly usedIdRepo: UsedIdentifierRepository,
 
     private readonly map: ComponentMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
     private readonly analyzerRangeDataervice: AnalyzerRangeWorkspaceService,
@@ -64,8 +62,8 @@ export class ComponentWorkspaceService {
 
       if (
         databaseComponent &&
-        databaseComponent.analyzerRangeData &&
-        databaseComponent.analyzerRangeData.length > 0 &&
+        databaseComponent.analyzerRanges &&
+        databaseComponent.analyzerRanges.length > 0 &&
         !validTypeCodes.includes(databaseComponent.componentTypeCode)
       ) {
         errorList.push(import32Error);

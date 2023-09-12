@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 import { MonitorAttribute } from '../entities/monitor-attribute.entity';
+import { MonitorAttribute as WorkspaceMonitorAttribute } from '../entities/workspace/monitor-attribute.entity';
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 
 @Injectable()
 export class MonitorAttributeMap extends BaseMap<
-  MonitorAttribute,
+  MonitorAttribute | WorkspaceMonitorAttribute,
   MonitorAttributeDTO
 > {
-  public async one(entity: MonitorAttribute): Promise<MonitorAttributeDTO> {
+  public async one(
+    entity: MonitorAttribute | WorkspaceMonitorAttribute,
+  ): Promise<MonitorAttributeDTO> {
     return {
       id: entity.id,
       locationId: entity.locationId,

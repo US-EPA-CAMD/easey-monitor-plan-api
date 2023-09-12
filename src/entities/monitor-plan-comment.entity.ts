@@ -47,7 +47,7 @@ export class MonitorPlanComment extends BaseEntity {
 
   @ManyToOne(
     () => MonitorPlan,
-    mp => mp.monitoringPlanCommentData,
+    mp => mp.comments,
   )
   @JoinColumn({ name: 'mon_plan_id' })
   plan: MonitorPlan;

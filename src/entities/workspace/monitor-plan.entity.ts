@@ -141,17 +141,17 @@ export class MonitorPlan extends BaseEntity {
       referencedColumnName: 'id',
     },
   })
-  monitoringLocationData: MonitorLocation[];
+  locations: MonitorLocation[];
 
   @OneToMany(
     () => MonitorPlanComment,
     comment => comment.plan,
   )
-  monitoringPlanCommentData: MonitorPlanComment[];
+  comments: MonitorPlanComment[];
 
   reportingFrequencies: MonitorPlanReportingFrequency[];
 
-  unitStackConfigurationData: UnitStackConfiguration[];
+  unitStackConfigurations: UnitStackConfiguration[];
 
   @Column({ name: 'last_evaluated_date' })
   lastEvaluatedDate: Date;

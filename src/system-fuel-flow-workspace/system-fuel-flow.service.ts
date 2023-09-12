@@ -57,8 +57,7 @@ export class SystemFuelFlowWorkspaceService {
       monitoringSystemRecordId: monitoringSystemRecordId,
       maximumFuelFlowRate: payload.maximumFuelFlowRate,
       maximumFuelFlowRateSourceCode: payload.maximumFuelFlowRateSourceCode,
-      systemFuelFlowUnitsOfMeasureCode:
-        payload.systemFuelFlowUnitsOfMeasureCode,
+      systemFuelFlowUOMCode: payload.systemFuelFlowUnitsOfMeasureCode,
       beginDate: payload.beginDate,
       beginHour: payload.beginHour,
       endDate: payload.endDate,
@@ -88,8 +87,7 @@ export class SystemFuelFlowWorkspaceService {
     const fuelFlow = await this.getFuelFlow(fuelFlowId);
 
     fuelFlow.maximumFuelFlowRate = payload.maximumFuelFlowRate;
-    fuelFlow.systemFuelFlowUnitsOfMeasureCode =
-      payload.systemFuelFlowUnitsOfMeasureCode;
+    fuelFlow.systemFuelFlowUOMCode = payload.systemFuelFlowUnitsOfMeasureCode;
     fuelFlow.maximumFuelFlowRateSourceCode =
       payload.maximumFuelFlowRateSourceCode;
     fuelFlow.beginDate = payload.beginDate;

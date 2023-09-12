@@ -6,7 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MonitorLocation } from '../entities/monitor-location.entity';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';

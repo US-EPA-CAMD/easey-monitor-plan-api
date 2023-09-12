@@ -6,7 +6,7 @@ import {
   MonitorSystemDTO,
   UpdateMonitorSystemDTO,
 } from '../dtos/monitor-system.dto';
-import { MonitorSystem } from '../entities/monitor-system.entity';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';

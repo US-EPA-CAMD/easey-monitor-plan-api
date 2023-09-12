@@ -49,7 +49,7 @@ export class UnitControl extends BaseEntity {
 
   @ManyToOne(
     () => Unit,
-    u => u.unitControlData,
+    u => u.unitControls,
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;

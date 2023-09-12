@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { MonitorPlan as WorkspaceMonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorLocationMap } from './monitor-location.map';
 import { MonitorPlanCommentMap } from './monitor-plan-comment.map';
@@ -9,7 +10,10 @@ import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyMap } from './monitor-plan-reporting-freq.map';
 
 @Injectable()
-export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
+export class MonitorPlanMap extends BaseMap<
+  MonitorPlan | WorkspaceMonitorPlan,
+  MonitorPlanDTO
+> {
   constructor(
     private locationMap: MonitorLocationMap,
     private commentMap: MonitorPlanCommentMap,
@@ -19,16 +23,18 @@ export class MonitorPlanMap extends BaseMap<MonitorPlan, MonitorPlanDTO> {
     super();
   }
 
-  public async one(entity: MonitorPlan): Promise<MonitorPlanDTO> {
-    const monitoringLocationData = entity.monitoringLocationData
-      ? await this.locationMap.many(entity.monitoringLocationData)
+  public async one(
+    entity: MonitorPlan | WorkspaceMonitorPlan,
+  ): Promise<MonitorPlanDTO> {
+    const monitoringLocationData = entity.locations
+      ? await this.locationMap.many(entity.locations)
       : [];
-    const monitoringPlanCommentData = entity.monitoringPlanCommentData
-      ? await this.commentMap.many(entity.monitoringPlanCommentData)
+    const monitoringPlanCommentData = entity.comments
+      ? await this.commentMap.many(entity.comments)
       : [];
-    const unitStackConfigurationData = entity.unitStackConfigurationData
+    const unitStackConfigurationData = entity.unitStackConfigurations
       ? await this.unitStackConfigurationMap.many(
-          entity.unitStackConfigurationData,
+          entity.unitStackConfigurations,
         )
       : [];
     const reportingFrequencies = entity.reportingFrequencies

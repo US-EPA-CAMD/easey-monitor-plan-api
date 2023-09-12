@@ -39,7 +39,7 @@ export class LEEQualification extends BaseEntity {
   applicableEmissionStandard: number;
 
   @Column({ name: 'emission_standard_uom' })
-  unitsofStandard: string;
+  unitsOfStandard: string;
 
   @Column({
     name: 'emission_standard_pct',
@@ -58,7 +58,7 @@ export class LEEQualification extends BaseEntity {
 
   @ManyToOne(
     () => MonitorQualification,
-    mq => mq.monitoringQualificationLEEData,
+    mq => mq.leeQualifications,
   )
   @JoinColumn({ name: 'mon_qual_id' })
   qualification: MonitorQualification;

@@ -99,7 +99,7 @@ export class MonitorAttribute extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    location => location.monitoringFormulaData,
+    location => location.formulas,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;

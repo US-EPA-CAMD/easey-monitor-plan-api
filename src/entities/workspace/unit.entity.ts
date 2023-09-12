@@ -92,21 +92,21 @@ export class Unit extends BaseEntity {
     uf => uf.unit,
     { eager: true },
   )
-  unitFuelData: UnitFuel[];
+  unitFuels: UnitFuel[];
 
   @OneToMany(
     () => UnitControl,
     uf => uf.unit,
     { eager: true },
   )
-  unitControlData: UnitControl[];
+  unitControls: UnitControl[];
 
   @OneToMany(
     () => UnitCapacity,
     uc => uc.unit,
     { eager: true },
   )
-  unitCapacityData: UnitCapacity[];
+  unitCapacities: UnitCapacity[];
 
   @OneToMany(
     () => UnitStackConfiguration,
