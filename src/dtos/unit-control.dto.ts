@@ -13,6 +13,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
@@ -86,7 +87,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be string value of "0" or "1"`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be string value of "0" or "1"`;
     },
   })
   originalCode: string;
@@ -99,7 +100,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
   @IsInDateRange('1930-01-01', MAXIMUM_FUTURE_DATE, {
@@ -121,7 +122,7 @@ export class UnitControlBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
   optimizationDate: Date;
@@ -135,9 +136,9 @@ export class UnitControlBaseDTO {
         .value,
   })
   @IsOptional()
-  @IsInRange(0, 1, {
+  @MatchesRegEx('^[01]$', {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record  ${args.property} must be string value of "0" or "1"`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 character consisting 1 or 0.`;
     },
   })
   seasonalControlsIndicator: string;
@@ -159,7 +160,7 @@ export class UnitControlBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Unit Control record ${args.property} must be a valid ISO date format ${DATE_FORMAT}`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
   retireDate: Date;

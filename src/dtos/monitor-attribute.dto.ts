@@ -11,7 +11,6 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
@@ -30,7 +29,7 @@ export class MonitorAttributeBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be within the range of 0 and 1`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}]`;
     },
   })
   ductIndicator: number;
@@ -44,7 +43,7 @@ export class MonitorAttributeBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be within the range of 0 and 1`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}]`;
     },
   })
   bypassIndicator: number;
@@ -57,9 +56,9 @@ export class MonitorAttributeBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(5, {
+  @IsInRange(-100, 15000, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 5 digits or less`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -100 and 15000 for [${KEY}]`;
     },
   })
   groundElevation: number;
@@ -71,9 +70,9 @@ export class MonitorAttributeBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(4, {
+  @IsInRange(20, 1600, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 4 digits or less`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 20 and 1600 for [${KEY}]`;
     },
   })
   stackHeight: number;
@@ -88,7 +87,7 @@ export class MonitorAttributeBaseDTO {
     'SELECT material_cd as "value" FROM camdecmpsmd.material_code',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
+        return `The value for [${args.value}] in the Monitoring Location Attributes record [${args.property}] is invalid`;
       },
     },
   )
@@ -102,7 +101,7 @@ export class MonitorAttributeBaseDTO {
   @IsOptional()
   @IsInDbValues('SELECT shape_cd as "value" FROM camdecmpsmd.shape_code', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-B] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} is invalid`;
+      return `The value for [${args.value}] in the Monitoring Location Attributes record [${args.property}] is invalid`;
     },
   })
   shapeCode: string;
@@ -114,9 +113,9 @@ export class MonitorAttributeBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(4, {
+  @IsInRange(5, 1700, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 4 digits or less`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 5 and 1700 for [${KEY}]`;
     },
   })
   crossAreaFlow: number;
@@ -130,9 +129,9 @@ export class MonitorAttributeBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(4, {
+  @IsInRange(0, 9999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be 4 digits or less`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999 for [${KEY}]`;
     },
   })
   crossAreaStackExit: number;
@@ -161,7 +160,7 @@ export class MonitorAttributeBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
   beginDate: Date;
@@ -183,7 +182,7 @@ export class MonitorAttributeBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOCATIONATTR-FATAL-A] The value for ${args.value} in the Monitoring Location Attributes record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
   @BeginEndDatesConsistent({

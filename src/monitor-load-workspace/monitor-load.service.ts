@@ -37,9 +37,13 @@ export class MonitorLoadWorkspaceService {
     const result = await this.repository.findOne(loadId);
 
     if (!result) {
-      throw new EaseyException(new Error('Monitor Load Not Found'), HttpStatus.NOT_FOUND, {
-        loadId: loadId,
-      });
+      throw new EaseyException(
+        new Error('Monitor Load Not Found'),
+        HttpStatus.NOT_FOUND,
+        {
+          loadId: loadId,
+        },
+      );
     }
 
     return result;

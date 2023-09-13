@@ -76,17 +76,26 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
-  @IsInRange(-99999999999.9999, 99999999999.9999, {
+  @IsInRange(0.0, 99999999999.9999, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be within the range of -99999999999.9999 and 99999999999.9999`,
+        `The value of [value] for [fieldname] must be within the range of 0.0000 and 99999999999.9999 for [key].`,
         {
+          value: args.value,
           fieldname: args.property,
           key: KEY,
         },
       );
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 4 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only four decimal place for [${KEY}].`;
+      },
+    },
+  )
   defaultValue: number;
 
   @ApiProperty({
@@ -220,7 +229,6 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
-  @IsOptional()
   @IsString()
   defaultSourceCode: string;
 
@@ -241,7 +249,6 @@ export class MonitorDefaultBaseDTO {
       );
     },
   })
-  @ValidateIf(o => o.groupID !== null)
   @IsString()
   groupID: string;
 

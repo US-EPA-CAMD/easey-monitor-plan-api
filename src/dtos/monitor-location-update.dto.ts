@@ -20,59 +20,59 @@ import { MonitorFormulaBaseDTO } from './monitor-formula.dto';
 import { MonitorDefaultBaseDTO } from './monitor-default.dto';
 
 export class UpdateMonitorLocationDTO extends MonitorLocationBaseDTO {
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => MonitorAttributeBaseDTO)
   monitoringLocationAttribData: MonitorAttributeBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => UnitCapacityBaseDTO)
   unitCapacityData: UnitCapacityBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => UnitControlBaseDTO)
   unitControlData: UnitControlBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => UnitFuelBaseDTO)
   unitFuelData: UnitFuelBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => MonitorMethodBaseDTO)
   monitoringMethodData: MonitorMethodBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => MatsMethodBaseDTO)
   supplementalMATSMonitoringMethodData: MatsMethodBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => MonitorFormulaBaseDTO)
   monitoringFormulaData: MonitorFormulaBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => MonitorDefaultBaseDTO)
   monitoringDefaultData: MonitorDefaultBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => MonitorSpanBaseDTO)
   monitoringSpanData: MonitorSpanBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => DuctWafBaseDTO)
   rectangularDuctWAFData: DuctWafBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => MonitorLoadBaseDTO)
   monitoringLoadData: MonitorLoadBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => UpdateComponentBaseDTO)
   componentData: UpdateComponentBaseDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => UpdateMonitorSystemDTO)
   monitoringSystemData: UpdateMonitorSystemDTO[];
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => UpdateMonitorQualificationDTO)
   monitoringQualificationData: UpdateMonitorQualificationDTO[];
 }

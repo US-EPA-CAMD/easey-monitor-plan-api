@@ -11,9 +11,13 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
+  ValidationArguments,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-
+import { Plant } from '../entities/plant.entity';
+import { FindOneOptions } from 'typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { DbLookup } from '@us-epa-camd/easey-common/pipes';
 export class MonitorPlanDTO {
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOId.description,
@@ -28,6 +32,19 @@ export class MonitorPlanDTO {
     example: propertyMetadata.monitorPlanDTOOrisCode.example,
     name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
   })
+  @DbLookup(
+    Plant,
+    (args: ValidationArguments): FindOneOptions<Plant> => {
+      return { where: { orisCode: args.value } };
+    },
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('IMPORT-24-A', {
+          orisCode: args.value,
+        });
+      },
+    },
+  )
   @IsNumber()
   orisCode: number;
 

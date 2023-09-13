@@ -1,14 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+  MatchesRegEx,
+} from '@us-epa-camd/easey-common/pipes';
+import {
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { DATE_FORMAT } from '../utilities/constants';
+
+const KEY = 'Monitor Location';
 
 export class MonitorLocationBaseDTO {
   @ApiProperty({
@@ -19,9 +28,9 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsString()
   @MaxLength(6)
-  @MatchesRegEx('[A-z0-9 -*#]{1,6}', {
+  @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: [A-z0-9 -*#]{1,6}`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 6 characters and only consist of upper and lower case letters, numbers, and the special characters - (dash), * (asterisk), and # (pound) for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.stackPipeId === null)
@@ -34,9 +43,9 @@ export class MonitorLocationBaseDTO {
   })
   @IsOptional()
   @IsString()
-  @MatchesRegEx('(C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}', {
+  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be match the RegEx: (C|c|M|m|X|x)(S|s|P|p)[A-z0-9 -]{1,4}`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 4 characters and only consist of upper and lower case letters, numbers starting with CS, MS, XS, CP, MP, XP for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.unitId === null)
@@ -50,7 +59,14 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}].`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   activeDate: Date;
@@ -63,7 +79,14 @@ export class MonitorLocationBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}].`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   retireDate: Date;
@@ -76,10 +99,12 @@ export class MonitorLocationBaseDTO {
       propertyMetadata.monitorLocationDTONonLoadBasedIndicator.fieldLabels
         .value,
   })
+  @IsNotEmpty()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONLOC-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
     },
   })
+  @ValidateIf(o => o.unitId !== null)
   nonLoadBasedIndicator: number;
 }

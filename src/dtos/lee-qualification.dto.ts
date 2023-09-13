@@ -11,6 +11,8 @@ import {
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 
+const KEY = 'Monitor Qualification LEE';
+
 export class LEEQualificationBaseDTO {
   @ApiProperty({
     description:
@@ -23,7 +25,7 @@ export class LEEQualificationBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   qualificationTestDate: Date;
@@ -37,7 +39,7 @@ export class LEEQualificationBaseDTO {
     'SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_quallee_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLEE-FATAL-B] The value for ${args.value} in the Qualification LEE record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -56,7 +58,7 @@ export class LEEQualificationBaseDTO {
     'SELECT distinct qual_lee_test_type_cd as "value" FROM camdecmpsmd.vw_quallee_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLEE-FATAL-B] The value for ${args.value} in the Qualification LEE record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -78,13 +80,13 @@ export class LEEQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}]`;
     },
   })
   potentialAnnualMassEmissions: number;
@@ -104,13 +106,13 @@ export class LEEQualificationBaseDTO {
     { maxDecimalPlaces: 4 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} is allowed only four decimal places`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only four decimal places for [${KEY}]`;
       },
     },
   )
-  @IsInRange(-99999.9999, 99999.9999, {
+  @IsInRange(0, 99999.9999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of -99999.9999 and 99999.9999`;
+      return `The value for [${args.value}] in the Qualification LEE record [${args.property}] must be within the range of 0 and 99999.9999`;
     },
   })
   applicableEmissionStandard: number;
@@ -126,7 +128,7 @@ export class LEEQualificationBaseDTO {
     'SELECT distinct unit_of_standard_code as "value" FROM camdecmpsmd.vw_quallee_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLEE-FATAL-B] The value for ${args.value} in the Qualification LEE record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -148,13 +150,13 @@ export class LEEQualificationBaseDTO {
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} is allowed only one decimal place`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
       },
     },
   )
-  @IsInRange(-9999.9, 9999.9, {
+  @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUALLEE-FATAL-A] The value for ${args.value} in the Qualification LEE record ${args.property} must be within the range of -9999.9 and 9999.9`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}]`;
     },
   })
   percentageOfEmissionStandard: number;

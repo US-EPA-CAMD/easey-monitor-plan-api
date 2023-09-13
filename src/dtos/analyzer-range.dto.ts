@@ -70,7 +70,7 @@ export class AnalyzerRangeBaseDTO {
   })
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
     },
   })
   dualRangeIndicator: number;

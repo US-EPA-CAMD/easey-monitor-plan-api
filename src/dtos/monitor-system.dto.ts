@@ -19,11 +19,11 @@ import {
   SystemFuelFlowBaseDTO,
   SystemFuelFlowDTO,
 } from './system-fuel-flow.dto';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -37,6 +37,7 @@ import {
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { SystemTypeCode } from '../entities/system-type-code.entity';
 import { BeginEndDatesConsistent } from '../utils';
+import { SystemDesignationCode } from '../entities/system-designation-code.entity';
 
 const KEY = 'Monitor System';
 
@@ -95,14 +96,19 @@ export class MonitorSystemBaseDTO {
     name:
       propertyMetadata.monitorSystemDTOSystemDesignationCode.fieldLabels.value,
   })
-  @IsInDbValues(
-    `SELECT sys_designation_cd as "value" FROM camdecmpsmd.system_designation_code`,
-    {
-      message: (args: ValidationArguments) => {
-        return `The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
-      },
+  @IsValidCode(SystemDesignationCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `The value of [value] for [fieldname] is invalid for [key]`,
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
-  )
+  })
+  @IsOptional()
   systemDesignationCode: string;
 
   @ApiProperty({
@@ -114,10 +120,18 @@ export class MonitorSystemBaseDTO {
     `SELECT fuel_cd as "value" FROM camdecmpsmd.fuel_code where fuel_group_cd not in ('OTHER','COAL')`,
     {
       message: (args: ValidationArguments) => {
-        return `The value for ${args.value} in the Monitoring System record ${args.property} is invalid`;
+        return CheckCatalogService.formatMessage(
+          `The value of [value] for [fieldname] is invalid for [key]`,
+          {
+            value: args.value,
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
       },
     },
   )
+  @IsOptional()
   fuelCode: string;
 
   @ApiProperty({

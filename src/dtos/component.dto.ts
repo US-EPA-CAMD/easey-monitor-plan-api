@@ -2,20 +2,24 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { Type } from 'class-transformer';
 import { AnalyzerRangeBaseDTO, AnalyzerRangeDTO } from './analyzer-range.dto';
-import { IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsValidCode,
+  MatchesRegEx,
+} from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
+  IsString,
   MaxLength,
-  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
-import { MatchesRegEx } from '../import-checks/pipes/matches-regex.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
 import { FindOneOptions } from 'typeorm';
 import { BasisCode } from '../entities/basis-code.entity';
+import { AnalyticalPrincipalCode } from '../entities/analytical-principal-code.entity';
 
 const KEY = 'Component';
 
@@ -64,6 +68,7 @@ export class ComponentBaseDTO {
       });
     },
   })
+  @IsString()
   componentTypeCode: string;
 
   @ApiProperty({
@@ -73,6 +78,20 @@ export class ComponentBaseDTO {
     name:
       propertyMetadata.componentDTOAnalyticalPrincipleCode.fieldLabels.value,
   })
+  @IsValidCode(AnalyticalPrincipalCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value], which is not in the list of valid values, in the field Critical Error Level [fieldname] for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
+  @IsString()
+  @IsOptional()
   analyticalPrincipleCode: string;
 
   @ApiProperty({
@@ -100,7 +119,8 @@ export class ComponentBaseDTO {
       return { where: { sampleAcquisitionMethodCode: args.value } };
     },
   )
-  @ValidateIf(o => o.sampleAcquisitionMethodCode !== null)
+  @IsString()
+  @IsOptional()
   sampleAcquisitionMethodCode: string;
 
   @ApiProperty({
@@ -117,6 +137,8 @@ export class ComponentBaseDTO {
       });
     },
   })
+  @IsString()
+  @IsOptional()
   basisCode: string;
 
   @ApiProperty({
@@ -127,7 +149,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(25, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Component record ${args.property} must not exceed 25 characters`;
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 25 characters`;
     },
   })
   manufacturer: string;
@@ -140,7 +162,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(15, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Component record ${args.property} must not exceed 15 characters`;
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 15 characters`;
     },
   })
   modelVersion: string;
@@ -153,7 +175,7 @@ export class ComponentBaseDTO {
   @IsOptional()
   @MaxLength(20, {
     message: (args: ValidationArguments) => {
-      return `The value for ${args.value} in the Component record ${args.property} must not exceed 20 characters`;
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 20 characters`;
     },
   })
   serialNumber: string;
@@ -164,6 +186,11 @@ export class ComponentBaseDTO {
     name: propertyMetadata.componentDTOHgConverterIndicator.fieldLabels.value,
   })
   @IsOptional()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}]`;
+    },
+  })
   hgConverterIndicator: number;
 }
 
