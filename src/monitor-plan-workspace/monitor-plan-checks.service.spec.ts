@@ -32,13 +32,13 @@ const monitorSystem = new UpdateMonitorSystemDTO();
 const systemComponent = new SystemComponentBaseDTO();
 const monitorSpan = new MonitorSpanBaseDTO();
 
-monitorSystem.components = [systemComponent];
-location.systems = [monitorSystem];
-location.unitControls = [unitControl];
-location.components = [component];
-location.matsMethods = [matsMethod];
-payload.locations = [location];
-location.spans = [monitorSpan];
+monitorSystem.monitoringSystemComponentData = [systemComponent];
+location.monitoringSystemData = [monitorSystem];
+location.unitControlData = [unitControl];
+location.componentData = [component];
+location.supplementalMATSMonitoringMethodData = [matsMethod];
+payload.monitoringLocationData = [location];
+location.monitoringSpanData = [monitorSpan];
 
 const returnLocationRunChecks = [
   {

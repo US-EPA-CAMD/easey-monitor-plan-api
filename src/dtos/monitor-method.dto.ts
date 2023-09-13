@@ -36,7 +36,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct parameter_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -54,7 +54,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct method_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -71,7 +71,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct substitute_data_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -88,7 +88,7 @@ export class MonitorMethodBaseDTO {
     `SELECT distinct bypass_approach_code "value" FROM camdecmpsmd.vw_methods_master_data_relationships`,
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [METHOD-FATAL-B] The value for ${args.value} in the Monitoring Method record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -118,7 +118,7 @@ export class MonitorMethodBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
   beginDate: Date;
@@ -174,7 +174,7 @@ export class MonitorMethodBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [METHOD-FATAL-A] The value for ${args.value} in the Monitoring Method record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
   endDate: Date;
@@ -184,8 +184,8 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndHour.example,
     name: propertyMetadata.monitorMethodDTOEndHour.fieldLabels.value,
   })
-  @IsInt()
   @ValidateIf(o => o.endDate !== null || o.endHour !== null)
+  @IsInt()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('METHOD-5-A', {

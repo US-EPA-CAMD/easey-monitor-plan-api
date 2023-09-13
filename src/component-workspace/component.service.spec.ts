@@ -95,9 +95,9 @@ describe('ComponentWorkspaceService', () => {
 
         componentDto.componentTypeCode = 'SO2';
         componentDto.basisCode = null;
-        componentDto.analyzerRanges = [];
+        componentDto.analyzerRangeData = [];
 
-        location.components = [componentDto];
+        location.componentData = [componentDto];
 
         const checkResults = await service.runComponentChecks(
           [componentDto],
@@ -122,9 +122,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'SO2';
         component.basisCode = 'VALID';
-        component.analyzerRanges = [];
+        component.analyzerRangeData = [];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -149,9 +149,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'SO2';
         component.basisCode = 'VALID';
-        component.analyzerRanges = [];
+        component.analyzerRangeData = [];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -176,9 +176,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'ERR';
         component.basisCode = null;
-        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.analyzerRangeData = [new AnalyzerRangeBaseDTO()];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -199,9 +199,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'ERR';
         component.basisCode = null;
-        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.analyzerRangeData = [new AnalyzerRangeBaseDTO()];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -226,9 +226,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'ERR';
         component.basisCode = null;
-        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.analyzerRangeData = [new AnalyzerRangeBaseDTO()];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -294,7 +294,7 @@ describe('ComponentWorkspaceService', () => {
 
   describe('importUnitStack', () => {
     const location = new UpdateMonitorLocationDTO();
-    location.components = [payload];
+    location.componentData = [payload];
     it('should update while importing a component', async () => {
       const response = await service.importComponent(
         location,

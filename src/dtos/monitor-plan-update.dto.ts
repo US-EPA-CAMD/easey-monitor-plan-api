@@ -23,20 +23,20 @@ export class UpdateMonitorPlanDTO {
   @IsInt()
   @IsInRange(1, 999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [MONPLAN-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 1 and 999999`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 999999.`;
     },
   })
   orisCode: number;
 
   @ValidateNested()
   @Type(() => MonitorPlanCommentBaseDTO)
-  comments: MonitorPlanCommentBaseDTO[];
+  monitoringPlanCommentData: MonitorPlanCommentBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitStackConfigurationBaseDTO)
-  unitStackConfigurations: UnitStackConfigurationBaseDTO[];
+  unitStackConfigurationData: UnitStackConfigurationBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorLocationDTO)
-  locations: UpdateMonitorLocationDTO[];
+  monitoringLocationData: UpdateMonitorLocationDTO[];
 }

@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import {
-  IsDate,
-  IsDateString,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class MonitorPlanReportingFreqBaseDTO {
   @ApiProperty({

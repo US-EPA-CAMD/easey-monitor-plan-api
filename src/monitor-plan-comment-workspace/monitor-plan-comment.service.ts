@@ -93,7 +93,7 @@ export class MonitorPlanCommentWorkspaceService {
     return new Promise(async resolve => {
       const promises = [];
 
-      for (const comment of plan.comments) {
+      for (const comment of plan.monitoringPlanCommentData) {
         promises.push(
           new Promise(async innerResolve => {
             const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(

@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { PCTQualification } from '../entities/pct-qualification.entity';
+import { PCTQualification as WorkspacePCTQualification } from '../entities/workspace/pct-qualification.entity';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 
 @Injectable()
 export class PCTQualificationMap extends BaseMap<
-  PCTQualification,
+  PCTQualification | WorkspacePCTQualification,
   PCTQualificationDTO
 > {
-  public async one(entity: PCTQualification): Promise<PCTQualificationDTO> {
+  public async one(
+    entity: PCTQualification | WorkspacePCTQualification,
+  ): Promise<PCTQualificationDTO> {
     return {
       id: entity.id,
       qualificationId: entity.qualificationId,

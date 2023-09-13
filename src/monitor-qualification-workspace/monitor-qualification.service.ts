@@ -39,7 +39,7 @@ export class MonitorQualificationWorkspaceService {
 
     for (const qual of qualifications) {
       if (qual.qualificationTypeCode !== 'LMEA') {
-        qual.lmeQualifications.forEach((lmeQual, idx) => {
+        qual.monitoringQualificationLMEData.forEach((lmeQual, idx) => {
           if (lmeQual.so2Tons !== null) {
             errorList.push(
               `[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #${idx}. This field should be blank`,
@@ -50,7 +50,7 @@ export class MonitorQualificationWorkspaceService {
 
       if (
         !['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode) &&
-        qual.pctQualifications.length > 0
+        qual.monitoringQualificationPercentData.length > 0
       ) {
         errorList.push(
           `[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification Codes other than PK, SK or GF.`,
@@ -59,7 +59,7 @@ export class MonitorQualificationWorkspaceService {
 
       if (
         !['LMEA', 'LMES'].includes(qual.qualificationTypeCode) &&
-        qual.lmeQualifications.length > 0
+        qual.monitoringQualificationLMEData.length > 0
       ) {
         errorList.push(
           `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.`,
@@ -77,45 +77,45 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
   ): Promise<void> {
     const promises = [];
-    if (qualification.leeQualifications?.length > 0) {
+    if (qualification.monitoringQualificationLEEData?.length > 0) {
       promises.push(
         this.leeQualificationService.importLEEQualification(
           locationId,
           qualificationRecordId,
-          qualification.leeQualifications,
+          qualification.monitoringQualificationLEEData,
           userId,
         ),
       );
     }
 
-    if (qualification.lmeQualifications?.length > 0) {
+    if (qualification.monitoringQualificationLMEData?.length > 0) {
       promises.push(
         this.lmeQualificationService.importLMEQualification(
           locationId,
           qualificationRecordId,
-          qualification.lmeQualifications,
+          qualification.monitoringQualificationLMEData,
           userId,
         ),
       );
     }
 
-    if (qualification.pctQualifications?.length > 0) {
+    if (qualification.monitoringQualificationPercentData?.length > 0) {
       promises.push(
         this.pctQualificationService.importPCTQualification(
           locationId,
           qualificationRecordId,
-          qualification.pctQualifications,
+          qualification.monitoringQualificationPercentData,
           userId,
         ),
       );
     }
 
-    if (qualification.cpmsQualifications?.length > 0) {
+    if (qualification.monitoringQualificationCPMSData?.length > 0) {
       promises.push(
         this.cpmsQualificationService.importCPMSQualifications(
           locationId,
           qualificationRecordId,
-          qualification.cpmsQualifications,
+          qualification.monitoringQualificationCPMSData,
           userId,
         ),
       );

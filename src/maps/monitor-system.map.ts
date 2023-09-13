@@ -5,22 +5,28 @@ import { SystemComponentMap } from './system-component.map';
 import { SystemFuelFlowMap } from './system-fuel-flow.map';
 
 import { MonitorSystem } from '../entities/monitor-system.entity';
+import { MonitorSystem as WorkspaceMonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 
 @Injectable()
-export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
+export class MonitorSystemMap extends BaseMap<
+  MonitorSystem | WorkspaceMonitorSystem,
+  MonitorSystemDTO
+> {
   constructor(
     private fuelFlowMap: SystemFuelFlowMap,
-    private componentMap: SystemComponentMap,
+    private systsemComponentMap: SystemComponentMap,
   ) {
     super();
   }
 
-  public async one(entity: MonitorSystem): Promise<MonitorSystemDTO> {
-    const components = entity.components
-      ? await this.componentMap.many(entity.components)
+  public async one(
+    entity: MonitorSystem | WorkspaceMonitorSystem,
+  ): Promise<MonitorSystemDTO> {
+    const monitoringSystemComponentData = entity.components
+      ? await this.systsemComponentMap.many(entity.components)
       : [];
-    const fuelFlows = entity.fuelFlows
+    const monitoringSystemFuelFlowData = entity.fuelFlows
       ? await this.fuelFlowMap.many(entity.fuelFlows)
       : [];
 
@@ -39,8 +45,8 @@ export class MonitorSystemMap extends BaseMap<MonitorSystem, MonitorSystemDTO> {
       addDate: entity.addDate?.toISOString() ?? null,
       updateDate: entity.updateDate?.toISOString() ?? null,
       active: entity.endDate === null,
-      components,
-      fuelFlows,
+      monitoringSystemComponentData,
+      monitoringSystemFuelFlowData,
     };
   }
 }

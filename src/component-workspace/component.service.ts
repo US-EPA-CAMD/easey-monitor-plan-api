@@ -1,13 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
-import { Component } from '../entities/component.entity';
+import { Component } from '../entities/workspace/component.entity';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
@@ -19,10 +18,9 @@ export class ComponentWorkspaceService {
     private readonly usedIdRepo: UsedIdentifierRepository,
 
     private readonly map: ComponentMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
-    private readonly analyzerRangeService: AnalyzerRangeWorkspaceService,
+    private readonly analyzerRangeDataService: AnalyzerRangeWorkspaceService,
   ) {}
 
   async runComponentChecks(
@@ -70,8 +68,8 @@ export class ComponentWorkspaceService {
       ) {
         errorList.push(import32Error);
       } else if (
-        fileComponent.analyzerRanges &&
-        fileComponent.analyzerRanges.length > 0 &&
+        fileComponent.analyzerRangeData &&
+        fileComponent.analyzerRangeData.length > 0 &&
         !validTypeCodes.includes(fileComponent.componentTypeCode)
       ) {
         errorList.push(import32Error);
@@ -116,7 +114,7 @@ export class ComponentWorkspaceService {
   ) {
     return new Promise(async resolve => {
       const innerPromises = [];
-      for (const component of location.components) {
+      for (const component of location.componentData) {
         innerPromises.push(
           new Promise(async innerResolve => {
             let compRecord = await this.repository.getComponentByLocIdAndCompId(
@@ -148,10 +146,10 @@ export class ComponentWorkspaceService {
                 component.componentId,
               );
 
-              await this.analyzerRangeService.importAnalyzerRange(
+              await this.analyzerRangeDataService.importAnalyzerRange(
                 compRecord.id,
                 locationId,
-                component.analyzerRanges,
+                component.analyzerRangeData,
                 userId,
               );
             }

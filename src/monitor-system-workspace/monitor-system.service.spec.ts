@@ -107,15 +107,15 @@ describe('MonitorSystemWorkspaceService', () => {
       systemComponent.componentTypeCode = 'SO2';
       systemComponent.componentId = 'AA0';
 
-      system.components = [systemComponent];
-      system.fuelFlows = [systemFuelFlow];
+      system.monitoringSystemComponentData = [systemComponent];
+      system.monitoringSystemFuelFlowData = [systemFuelFlow];
       system.systemTypeCode = 'GAS';
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'GAS';
       repository.findOne = jest.fn().mockResolvedValue(monSys);
@@ -146,17 +146,17 @@ describe('MonitorSystemWorkspaceService', () => {
       systemComponent.componentTypeCode = 'SO2';
       systemComponent.componentId = 'AA0';
 
-      system.components = [systemComponent];
-      system.fuelFlows = [];
+      system.monitoringSystemComponentData = [systemComponent];
+      system.monitoringSystemFuelFlowData = [];
       system.systemTypeCode = 'OIL';
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
       location.unitId = '1';
       location.stackPipeId = 'CS0AAN';
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'GAS';
       repository.findOne = jest.fn().mockResolvedValue(monSys);
@@ -185,17 +185,17 @@ describe('MonitorSystemWorkspaceService', () => {
       const systemFuelFlow = new SystemFuelFlowBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
-      system.components = [];
-      system.fuelFlows = [systemFuelFlow];
+      system.monitoringSystemComponentData = [];
+      system.monitoringSystemFuelFlowData = [systemFuelFlow];
       system.systemTypeCode = 'AIR';
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
       location.unitId = '1';
       location.stackPipeId = 'CS0AAN';
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'AIR';
       repository.findOne = jest.fn().mockResolvedValue(monSys);
@@ -219,17 +219,17 @@ describe('MonitorSystemWorkspaceService', () => {
       const systemFuelFlow = new SystemFuelFlowBaseDTO();
       const component = new UpdateComponentBaseDTO();
 
-      system.components = [];
-      system.fuelFlows = [systemFuelFlow];
+      system.monitoringSystemComponentData = [];
+      system.monitoringSystemFuelFlowData = [systemFuelFlow];
       system.systemTypeCode = 'AIR';
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
       location.unitId = '1';
       location.stackPipeId = 'CS0AAN';
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       repository.findOne = jest.fn().mockResolvedValue(null);
 

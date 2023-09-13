@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { LMEQualification } from '../entities/lme-qualification.entity';
+import { LMEQualification as WorkspaceLMEQualification } from '../entities/workspace/lme-qualification.entity';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 
 @Injectable()
 export class LMEQualificationMap extends BaseMap<
-  LMEQualification,
+  LMEQualification | WorkspaceLMEQualification,
   LMEQualificationDTO
 > {
-  public async one(entity: LMEQualification): Promise<LMEQualificationDTO> {
+  public async one(
+    entity: LMEQualification | WorkspaceLMEQualification,
+  ): Promise<LMEQualificationDTO> {
     return {
       id: entity.id,
       qualificationId: entity.qualificationId,

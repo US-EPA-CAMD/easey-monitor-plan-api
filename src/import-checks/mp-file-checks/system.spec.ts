@@ -27,11 +27,11 @@ describe('System Tests', () => {
       const system = new UpdateMonitorSystemDTO();
       system.systemTypeCode = 'LTGS';
 
-      system.fuelFlows = [];
-      location.systems = [system];
+      system.monitoringSystemFuelFlowData = [];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check5.executeCheck(testData);
 
@@ -53,11 +53,11 @@ describe('System Tests', () => {
       const system = new UpdateMonitorSystemDTO();
       system.systemTypeCode = 'LTGS';
 
-      system.fuelFlows = [];
-      location.systems = [system];
+      system.monitoringSystemFuelFlowData = [];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check5.executeCheck(testData);
 
@@ -87,13 +87,13 @@ describe('System Tests', () => {
       systemComponent.componentTypeCode = 'SO2';
       systemComponent.basisCode = 'AA0';
 
-      system.components = [systemComponent];
+      system.monitoringSystemComponentData = [systemComponent];
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check7.executeCheck(testData);
 
@@ -120,13 +120,13 @@ describe('System Tests', () => {
       systemComponent.componentTypeCode = 'SO2';
       systemComponent.basisCode = 'AA0';
 
-      system.components = [systemComponent];
+      system.monitoringSystemComponentData = [systemComponent];
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check7.executeCheck(testData);
 
@@ -153,13 +153,13 @@ describe('System Tests', () => {
       systemComponent.componentTypeCode = 'S20';
       systemComponent.basisCode = 'AA0';
 
-      system.components = [systemComponent];
+      system.monitoringSystemComponentData = [systemComponent];
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check7.executeCheck(testData);
 
@@ -180,11 +180,11 @@ describe('System Tests', () => {
       const system = new UpdateMonitorSystemDTO();
       system.systemTypeCode = 'LTGS';
 
-      system.fuelFlows = [];
-      location.systems = [system];
+      system.monitoringSystemFuelFlowData = [];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check31.executeCheck(testData);
 
@@ -204,11 +204,11 @@ describe('System Tests', () => {
       system.systemTypeCode = 'LTGSS';
       const fuelFlow = new SystemFuelFlowBaseDTO();
 
-      system.fuelFlows = [fuelFlow];
-      location.systems = [system];
+      system.monitoringSystemFuelFlowData = [fuelFlow];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResults = await checks.Check31.executeCheck(testData);
 
