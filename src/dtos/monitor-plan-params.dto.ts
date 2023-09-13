@@ -4,7 +4,10 @@ import { PaginationDTO } from './pagination.dto';
 import { Transform } from 'class-transformer';
 
 export class MonitorPlanParamsDTO {
-  @ApiProperty()
+  @ApiProperty({
+    description:
+      'The Monintor Plan Summary ID is a unique identifier for a monitor plan record',
+  })
   planId: string;
 
   @IsOptional()
