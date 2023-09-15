@@ -9,6 +9,7 @@ import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analy
 import { Component } from '../entities/workspace/component.entity';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -21,6 +22,9 @@ export class ComponentWorkspaceService {
 
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
     private readonly analyzerRangeDataService: AnalyzerRangeWorkspaceService,
+    
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async runComponentChecks(
@@ -138,7 +142,11 @@ export class ComponentWorkspaceService {
             }
 
             if (compRecord) {
-              await this.updateComponent(compRecord, component, userId);
+              await this.updateComponent(
+                locationId, compRecord,
+                component,
+                userId,
+              );
             } else {
               await this.createComponent(locationId, component, userId);
               compRecord = await this.repository.getComponentByLocIdAndCompId(
@@ -164,6 +172,7 @@ export class ComponentWorkspaceService {
   }
 
   async updateComponent(
+    locationId: string,
     componentRecord: Component,
     payload: UpdateComponentBaseDTO,
     userId: string,
@@ -181,6 +190,8 @@ export class ComponentWorkspaceService {
     componentRecord.updateDate = currentDateTime();
 
     const result = await this.repository.save(componentRecord);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
     return this.map.one(result);
   }
 
@@ -207,7 +218,7 @@ export class ComponentWorkspaceService {
     });
 
     const result = await this.repository.save(component);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 }
