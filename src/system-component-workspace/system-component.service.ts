@@ -93,6 +93,7 @@ export class SystemComponentWorkspaceService {
       };
 
       await this.componentService.updateComponent(
+        locationId,
         component,
         componentPayload,
         userId,

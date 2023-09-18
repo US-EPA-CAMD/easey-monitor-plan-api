@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
@@ -12,6 +12,7 @@ import { ComponentCheckService } from './component-checks.service';
 import { SystemComponentMasterDataRelationshipModule } from '../system-component-master-data-relationship/system-component-master-data-relationship.module';
 import { UsedIdentifierModule } from '../used-identifier/used-identifier.module';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UsedIdentifierRepository } from '../used-identifier/used-identifier.rep
       UsedIdentifierRepository,
     ]),
     HttpModule,
+    forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [ComponentWorkspaceController],
   providers: [ComponentWorkspaceService, ComponentMap, ComponentCheckService],

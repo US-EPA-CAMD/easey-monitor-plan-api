@@ -85,6 +85,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       const needsEvalStatus = 'EVAL';
       const updatedStatusFlag = 'Y';
       const needsEvalFlag = 'Y';
+      const submissionAvailCode = 'REQUIRE';
       await this.query(
         'UPDATE camdecmpswks.monitor_plan SET ' +
           'eval_status_cd = $1, ' +
@@ -92,13 +93,15 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
           'update_date = $2,' +
           'updated_status_flg = $3, ' +
           'needs_eval_flg = $4, ' +
-          'userid = $5 ' +
-          'WHERE mon_plan_id = $6',
+          'submission_availability_cd = $5, ' +
+          'userid = $6 ' +
+          'WHERE mon_plan_id = $7',
         [
           needsEvalStatus,
           currDate,
           updatedStatusFlag,
           needsEvalFlag,
+          submissionAvailCode,
           userId,
           planId,
         ],
