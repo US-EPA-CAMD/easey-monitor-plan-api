@@ -51,7 +51,7 @@ export class MonitorQualificationBaseDTO {
     'SELECT qual_type_cd as "value" FROM camdecmpsmd.qual_type_code',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [QUAL-FATAL-B] The value for ${args.value} in the Qualification record ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
       },
     },
   )
@@ -72,7 +72,7 @@ export class MonitorQualificationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUAL-FATAL-A] The value for ${args.value} in the Qualification record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   beginDate: Date;
@@ -94,7 +94,7 @@ export class MonitorQualificationBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [QUAL-FATAL-A] The value for ${args.value} in the Qualification record ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value for [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   @BeginEndDatesConsistent({
@@ -112,19 +112,19 @@ export class MonitorQualificationBaseDTO {
 export class UpdateMonitorQualificationDTO extends MonitorQualificationBaseDTO {
   @ValidateNested()
   @Type(() => LEEQualificationBaseDTO)
-  leeQualifications: LEEQualificationBaseDTO[];
+  monitoringQualificationLEEData: LEEQualificationBaseDTO[];
 
   @ValidateNested()
   @Type(() => LMEQualificationBaseDTO)
-  lmeQualifications: LMEQualificationBaseDTO[];
+  monitoringQualificationLMEData: LMEQualificationBaseDTO[];
 
   @ValidateNested()
   @Type(() => PCTQualificationBaseDTO)
-  pctQualifications: PCTQualificationBaseDTO[];
+  monitoringQualificationPercentData: PCTQualificationBaseDTO[];
 
   @ValidateNested()
   @Type(() => CPMSQualificationBaseDTO)
-  cpmsQualifications: CPMSQualificationBaseDTO[];
+  monitoringQualificationCPMSData: CPMSQualificationBaseDTO[];
 }
 
 export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
@@ -171,19 +171,19 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
 
   @ValidateNested()
   @Type(() => LEEQualificationDTO)
-  leeQualifications: LEEQualificationDTO[];
+  monitoringQualificationLEEData: LEEQualificationDTO[];
 
   @ValidateNested()
   @Type(() => LMEQualificationDTO)
-  lmeQualifications: LMEQualificationDTO[];
+  monitoringQualificationLMEData: LMEQualificationDTO[];
 
   @ValidateNested()
   @Type(() => PCTQualificationDTO)
-  pctQualifications: PCTQualificationDTO[];
+  monitoringQualificationPercentData: PCTQualificationDTO[];
 
   @ValidateNested()
   @Type(() => CPMSQualificationDTO)
-  cpmsQualifications: CPMSQualificationDTO[];
+  monitoringQualificationCPMSData: CPMSQualificationDTO[];
 
   @ApiProperty({
     description: propertyMetadata.monitorQualificationDTOActive.description,

@@ -6,8 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorLocation } from '../entities/monitor-location.entity';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
@@ -58,7 +57,6 @@ export class MonitorLocationWorkspaceService {
     private readonly ductWafService: DuctWafWorkspaceService,
     private readonly spanService: MonitorSpanWorkspaceService,
     private readonly defaultService: MonitorDefaultWorkspaceService,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorAttributeWorkspaceService))
     private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
@@ -71,7 +69,7 @@ export class MonitorLocationWorkspaceService {
   ): Promise<MonitorLocation[]> {
     const locations = [];
 
-    for (const loc of plan.locations) {
+    for (const loc of plan.monitoringLocationData) {
       locations.push(await this.getLocationRecord(loc, facilitId, orisCode));
     }
 
@@ -183,7 +181,7 @@ export class MonitorLocationWorkspaceService {
     return new Promise(async resolve => {
       const promises = [];
 
-      for (const location of plan.locations) {
+      for (const location of plan.monitoringLocationData) {
         promises.push(
           new Promise(async innerResolve => {
             const innerPromises = [];
@@ -209,12 +207,12 @@ export class MonitorLocationWorkspaceService {
               );
 
               if (
-                location.unitCapacities &&
-                location.unitCapacities.length > 0
+                location.unitCapacityData &&
+                location.unitCapacityData.length > 0
               ) {
                 innerPromises.push(
                   this.unitCapacityService.importUnitCapacity(
-                    location.unitCapacities,
+                    location.unitCapacityData,
                     unitRecord.id,
                     monitorLocationRecord.id,
                     userId,
@@ -222,10 +220,13 @@ export class MonitorLocationWorkspaceService {
                 );
               }
 
-              if (location.unitControls && location.unitControls.length > 0) {
+              if (
+                location.unitControlData &&
+                location.unitControlData.length > 0
+              ) {
                 innerPromises.push(
                   this.unitControlService.importUnitControl(
-                    location.unitControls,
+                    location.unitControlData,
                     unitRecord.id,
                     monitorLocationRecord.id,
                     userId,
@@ -233,10 +234,10 @@ export class MonitorLocationWorkspaceService {
                 );
               }
 
-              if (location.unitFuels && location.unitFuels.length > 0) {
+              if (location.unitFuelData && location.unitFuelData.length > 0) {
                 innerPromises.push(
                   this.unitFuelService.importUnitFuel(
-                    location.unitFuels,
+                    location.unitFuelData,
                     unitRecord.id,
                     monitorLocationRecord.id,
                     userId,
@@ -259,7 +260,7 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.components && location.components.length > 0) {
+            if (location.componentData && location.componentData.length > 0) {
               innerPromises.push(
                 this.componentService.importComponent(
                   location,
@@ -269,101 +270,131 @@ export class MonitorLocationWorkspaceService {
               );
             }
 
-            if (location.systems && location.systems.length > 0) {
+            if (
+              location.monitoringSystemData &&
+              location.monitoringSystemData.length > 0
+            ) {
               innerPromises.push(
                 this.systemService.importSystem(
-                  location.systems,
+                  location.monitoringSystemData,
                   monitorLocationRecord.id,
                   userId,
                 ),
               );
             }
 
-            if (location.qualifications && location.qualifications.length > 0) {
+            if (
+              location.monitoringQualificationData &&
+              location.monitoringQualificationData.length > 0
+            ) {
               innerPromises.push(
                 this.qualificationService.importQualification(
-                  location.qualifications,
+                  location.monitoringQualificationData,
                   monitorLocationRecord.id,
                   userId,
                 ),
               );
             }
 
-            if (location.matsMethods && location.matsMethods.length > 0) {
+            if (
+              location.supplementalMATSMonitoringMethodData &&
+              location.supplementalMATSMonitoringMethodData.length > 0
+            ) {
               innerPromises.push(
                 this.matsMethodService.importMatsMethod(
                   monitorLocationRecord.id,
-                  location.matsMethods,
+                  location.supplementalMATSMonitoringMethodData,
                   userId,
                 ),
               );
             }
 
-            if (location.loads && location.loads.length > 0) {
+            if (
+              location.monitoringLoadData &&
+              location.monitoringLoadData.length > 0
+            ) {
               innerPromises.push(
                 this.loadService.importLoad(
                   monitorLocationRecord.id,
-                  location.loads,
+                  location.monitoringLoadData,
                   userId,
                 ),
               );
             }
 
-            if (location.attributes && location.attributes.length > 0) {
+            if (
+              location.monitoringLocationAttribData &&
+              location.monitoringLocationAttribData.length > 0
+            ) {
               innerPromises.push(
                 this.monitorAttributeService.importAttributes(
                   monitorLocationRecord.id,
-                  location.attributes,
+                  location.monitoringLocationAttribData,
                   userId,
                 ),
               );
             }
 
-            if (location.formulas && location.formulas.length > 0) {
+            if (
+              location.monitoringFormulaData &&
+              location.monitoringFormulaData.length > 0
+            ) {
               innerPromises.push(
                 this.formulaService.importFormula(
-                  location.formulas,
+                  location.monitoringFormulaData,
                   monitorLocationRecord.id,
                   userId,
                 ),
               );
             }
 
-            if (location.methods && location.methods.length > 0) {
+            if (
+              location.monitoringMethodData &&
+              location.monitoringMethodData.length > 0
+            ) {
               innerPromises.push(
                 this.methodService.importMethod(
                   monitorLocationRecord.id,
-                  location.methods,
+                  location.monitoringMethodData,
                   userId,
                 ),
               );
             }
 
-            if (location.ductWafs && location.ductWafs.length > 0) {
+            if (
+              location.rectangularDuctWAFData &&
+              location.rectangularDuctWAFData.length > 0
+            ) {
               innerPromises.push(
                 this.ductWafService.importDuctWaf(
                   monitorLocationRecord.id,
-                  location.ductWafs,
+                  location.rectangularDuctWAFData,
                   userId,
                 ),
               );
             }
 
-            if (location.spans && location.spans.length > 0) {
+            if (
+              location.monitoringSpanData &&
+              location.monitoringSpanData.length > 0
+            ) {
               innerPromises.push(
                 this.spanService.importSpan(
                   monitorLocationRecord.id,
-                  location.spans,
+                  location.monitoringSpanData,
                   userId,
                 ),
               );
             }
 
-            if (location.defaults && location.defaults.length > 0) {
+            if (
+              location.monitoringDefaultData &&
+              location.monitoringDefaultData.length > 0
+            ) {
               innerPromises.push(
                 this.defaultService.importDefault(
                   monitorLocationRecord.id,
-                  location.defaults,
+                  location.monitoringDefaultData,
                   userId,
                 ),
               );

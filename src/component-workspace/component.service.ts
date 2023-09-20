@@ -1,15 +1,15 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
 import { ComponentMap } from '../maps/component.map';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
-import { Component } from '../entities/component.entity';
+import { Component } from '../entities/workspace/component.entity';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class ComponentWorkspaceService {
@@ -19,10 +19,12 @@ export class ComponentWorkspaceService {
     private readonly usedIdRepo: UsedIdentifierRepository,
 
     private readonly map: ComponentMap,
-    private readonly logger: Logger,
 
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
-    private readonly analyzerRangeService: AnalyzerRangeWorkspaceService,
+    private readonly analyzerRangeDataService: AnalyzerRangeWorkspaceService,
+    
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async runComponentChecks(
@@ -70,8 +72,8 @@ export class ComponentWorkspaceService {
       ) {
         errorList.push(import32Error);
       } else if (
-        fileComponent.analyzerRanges &&
-        fileComponent.analyzerRanges.length > 0 &&
+        fileComponent.analyzerRangeData &&
+        fileComponent.analyzerRangeData.length > 0 &&
         !validTypeCodes.includes(fileComponent.componentTypeCode)
       ) {
         errorList.push(import32Error);
@@ -116,7 +118,7 @@ export class ComponentWorkspaceService {
   ) {
     return new Promise(async resolve => {
       const innerPromises = [];
-      for (const component of location.components) {
+      for (const component of location.componentData) {
         innerPromises.push(
           new Promise(async innerResolve => {
             let compRecord = await this.repository.getComponentByLocIdAndCompId(
@@ -140,7 +142,11 @@ export class ComponentWorkspaceService {
             }
 
             if (compRecord) {
-              await this.updateComponent(compRecord, component, userId);
+              await this.updateComponent(
+                locationId, compRecord,
+                component,
+                userId,
+              );
             } else {
               await this.createComponent(locationId, component, userId);
               compRecord = await this.repository.getComponentByLocIdAndCompId(
@@ -148,10 +154,10 @@ export class ComponentWorkspaceService {
                 component.componentId,
               );
 
-              await this.analyzerRangeService.importAnalyzerRange(
+              await this.analyzerRangeDataService.importAnalyzerRange(
                 compRecord.id,
                 locationId,
-                component.analyzerRanges,
+                component.analyzerRangeData,
                 userId,
               );
             }
@@ -166,6 +172,7 @@ export class ComponentWorkspaceService {
   }
 
   async updateComponent(
+    locationId: string,
     componentRecord: Component,
     payload: UpdateComponentBaseDTO,
     userId: string,
@@ -175,6 +182,7 @@ export class ComponentWorkspaceService {
     componentRecord.hgConverterIndicator = payload.hgConverterIndicator;
     componentRecord.manufacturer = payload.manufacturer;
     componentRecord.componentTypeCode = payload.componentTypeCode;
+    componentRecord.analyticalPrincipleCode = payload.analyticalPrincipleCode;
     componentRecord.sampleAcquisitionMethodCode =
       payload.sampleAcquisitionMethodCode;
     componentRecord.basisCode = payload.basisCode;
@@ -182,6 +190,8 @@ export class ComponentWorkspaceService {
     componentRecord.updateDate = currentDateTime();
 
     const result = await this.repository.save(componentRecord);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
     return this.map.one(result);
   }
 
@@ -198,6 +208,7 @@ export class ComponentWorkspaceService {
       serialNumber: payload.serialNumber,
       manufacturer: payload.manufacturer,
       componentTypeCode: payload.componentTypeCode,
+      analyticalPrincipleCode: payload.analyticalPrincipleCode,
       sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
       basisCode: payload.basisCode,
       hgConverterIndicator: payload.hgConverterIndicator,
@@ -207,7 +218,7 @@ export class ComponentWorkspaceService {
     });
 
     const result = await this.repository.save(component);
-
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
     return this.map.one(result);
   }
 }

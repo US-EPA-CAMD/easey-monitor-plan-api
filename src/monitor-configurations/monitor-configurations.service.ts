@@ -31,25 +31,25 @@ export class MonitorConfigurationsService {
         true,
       );
       p.name = monPlan.name;
-      p.locations = monPlan.locations;
-      p.unitStackConfigurations = monPlan.unitStackConfigurations;
-      p.locations.forEach(l => {
-        delete l.attributes;
-        delete l.unitCapacities;
-        delete l.unitControls;
-        delete l.unitFuels;
-        delete l.methods;
-        delete l.matsMethods;
-        delete l.formulas;
-        delete l.defaults;
-        delete l.spans;
-        delete l.ductWafs;
-        delete l.loads;
-        delete l.components;
-        delete l.systems;
-        delete l.qualifications;
+      p.monitoringLocationData = monPlan.monitoringLocationData;
+      p.unitStackConfigurationData = monPlan.unitStackConfigurationData;
+      p.monitoringLocationData.forEach(l => {
+        delete l.monitoringLocationAttribData;
+        delete l.unitCapacityData;
+        delete l.unitControlData;
+        delete l.unitFuelData;
+        delete l.monitoringMethodData;
+        delete l.supplementalMATSMonitoringMethodData;
+        delete l.monitoringFormulaData;
+        delete l.monitoringDefaultData;
+        delete l.monitoringSpanData;
+        delete l.rectangularDuctWAFData;
+        delete l.monitoringLoadData;
+        delete l.componentData;
+        delete l.monitoringSystemData;
+        delete l.monitoringQualificationData;
       });
-      delete p.comments;
+      delete p.monitoringPlanCommentData;
       delete p.reportingFrequencies;
     }
     results.sort((a, b) => {
@@ -95,6 +95,12 @@ export class MonitorConfigurationsService {
 
     const list: MonitorPlanDTO[] = [];
     const promises = [];
+
+    if (orisCodesAndTime.changedOrisCodes.length === 0) {
+      dto.changedConfigs = [];
+      dto.mostRecentUpdate = null;
+      return dto;
+    }
 
     orisCodesAndTime.changedOrisCodes.forEach(orisCode => {
       promises.push(this.pushToChangedConfigList(list, orisCode));

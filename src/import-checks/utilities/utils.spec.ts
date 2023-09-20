@@ -82,13 +82,13 @@ describe('Monitor-Import Utilities Tests', () => {
       systemComponent.componentTypeCode = 'S02';
       systemComponent.componentId = 'AA0';
 
-      system.components = [systemComponent];
+      system.monitoringSystemComponentData = [systemComponent];
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResult = await utils.checkComponentExistanceInFile(
         testData,
@@ -112,13 +112,13 @@ describe('Monitor-Import Utilities Tests', () => {
       systemComponent.componentTypeCode = 'S20';
       systemComponent.componentId = 'AA00';
 
-      system.components = [systemComponent];
+      system.monitoringSystemComponentData = [systemComponent];
 
-      location.components = [component];
-      location.systems = [system];
+      location.componentData = [component];
+      location.monitoringSystemData = [system];
 
       const testData = new UpdateMonitorPlanDTO();
-      testData.locations = [location];
+      testData.monitoringLocationData = [location];
 
       const checkResult = await utils.checkComponentExistanceInFile(
         testData,

@@ -7,11 +7,11 @@ import {
   IsString,
   IsDateString,
   IsBoolean,
+  IsNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsAtMostDigits } from '../import-checks/pipes/is-at-most-digits.pipe';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
@@ -33,9 +33,17 @@ export class MonitorLoadBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsAtMostDigits(6, {
+  @IsNumber(
+    { maxDecimalPlaces: 0 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 0 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(0, 999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
+      return `The value of [${args.value}] for [${args.property}] must be in the range 0 to 999999 for [${KEY}].`;
     },
   })
   maximumLoadValue: number;
@@ -54,7 +62,7 @@ export class MonitorLoadBaseDTO {
     'SELECT distinct unit_of_measure_code AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [LOAD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid`;
       },
     },
   )
@@ -68,9 +76,17 @@ export class MonitorLoadBaseDTO {
       propertyMetadata.monitorLoadDTOLowerOperationBoundary.fieldLabels.value,
   })
   @IsOptional()
-  @IsAtMostDigits(6, {
+  @IsNumber(
+    { maxDecimalPlaces: 0 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 0 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(0, 999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
+      return `The value [${args.value}] for [${args.property}] must be in the range 0 to 999999.`;
     },
   })
   lowerOperationBoundary: number;
@@ -83,9 +99,17 @@ export class MonitorLoadBaseDTO {
       propertyMetadata.monitorLoadDTOUpperOperationBoundary.fieldLabels.value,
   })
   @IsOptional()
-  @IsAtMostDigits(6, {
+  @IsNumber(
+    { maxDecimalPlaces: 0 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 0 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(0, 999999, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be 6 digits or less`;
+      return `The value [${args.value}] for [${args.property}] must be in the range 0 and 999999.`;
     },
   })
   upperOperationBoundary: number;
@@ -100,7 +124,7 @@ export class MonitorLoadBaseDTO {
     'SELECT distinct normal_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [LOAD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid`;
       },
     },
   )
@@ -116,7 +140,7 @@ export class MonitorLoadBaseDTO {
     'SELECT distinct second_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
     {
       message: (args: ValidationArguments) => {
-        return `${args.property} [LOAD-FATAL-B] The value : ${args.value} for ${args.property} is invalid`;
+        return `The value of [${args.value}] for [${args.property}] is invalid`;
       },
     },
   )
@@ -132,7 +156,7 @@ export class MonitorLoadBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be within the range of 0 and 1`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1`;
     },
   })
   secondNormalIndicator: number;
@@ -145,7 +169,7 @@ export class MonitorLoadBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   loadAnalysisDate: Date;
@@ -174,7 +198,7 @@ export class MonitorLoadBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   beginDate: Date;
@@ -230,7 +254,7 @@ export class MonitorLoadBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `${args.property} [LOAD-FATAL-A] The value : ${args.value} for ${args.property} must be a valid ISO date format yyyy-mm-dd`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
   endDate: Date;

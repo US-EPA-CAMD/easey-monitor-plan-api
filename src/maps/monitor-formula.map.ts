@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorFormula } from '../entities/monitor-formula.entity';
+import { MonitorFormula as WorkspaceMonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 
 @Injectable()
 export class MonitorFormulaMap extends BaseMap<
-  MonitorFormula,
+  MonitorFormula | WorkspaceMonitorFormula,
   MonitorFormulaDTO
 > {
-  public async one(entity: MonitorFormula): Promise<MonitorFormulaDTO> {
+  public async one(
+    entity: MonitorFormula | WorkspaceMonitorFormula,
+  ): Promise<MonitorFormulaDTO> {
     return {
       id: entity.id,
       locationId: entity.locationId,

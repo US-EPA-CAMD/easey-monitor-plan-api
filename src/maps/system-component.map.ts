@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { SystemComponent } from '../entities/system-component.entity';
+import { SystemComponent as WorkspaceSystemComponent } from '../entities/workspace/system-component.entity';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 
 @Injectable()
 export class SystemComponentMap extends BaseMap<
-  SystemComponent,
+  SystemComponent | WorkspaceSystemComponent,
   SystemComponentDTO
 > {
-  public async one(entity: SystemComponent): Promise<SystemComponentDTO> {
+  public async one(
+    entity: SystemComponent | WorkspaceSystemComponent,
+  ): Promise<SystemComponentDTO> {
     return {
       id: entity.id,
       locationId: entity.component.locationId,
@@ -17,6 +20,7 @@ export class SystemComponentMap extends BaseMap<
       componentRecordId: entity.componentRecordId,
       componentId: entity.component.componentId,
       componentTypeCode: entity.component.componentTypeCode,
+      analyticalPrincipleCode: entity.component.analyticalPrincipleCode,
       basisCode: entity.component.basisCode,
       modelVersion: entity.component.modelVersion,
       manufacturer: entity.component.manufacturer,

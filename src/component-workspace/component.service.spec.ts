@@ -11,6 +11,9 @@ import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const userId = 'testUser';
 const locationId = '1';
@@ -55,6 +58,8 @@ describe('ComponentWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         ComponentWorkspaceService,
+        MonitorPlanWorkspaceService,
+
         {
           provide: AnalyzerRangeWorkspaceService,
           useFactory: () => ({
@@ -95,9 +100,9 @@ describe('ComponentWorkspaceService', () => {
 
         componentDto.componentTypeCode = 'SO2';
         componentDto.basisCode = null;
-        componentDto.analyzerRanges = [];
+        componentDto.analyzerRangeData = [];
 
-        location.components = [componentDto];
+        location.componentData = [componentDto];
 
         const checkResults = await service.runComponentChecks(
           [componentDto],
@@ -122,9 +127,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'SO2';
         component.basisCode = 'VALID';
-        component.analyzerRanges = [];
+        component.analyzerRangeData = [];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -149,9 +154,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'SO2';
         component.basisCode = 'VALID';
-        component.analyzerRanges = [];
+        component.analyzerRangeData = [];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -176,9 +181,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'ERR';
         component.basisCode = null;
-        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.analyzerRangeData = [new AnalyzerRangeBaseDTO()];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -199,9 +204,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'ERR';
         component.basisCode = null;
-        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.analyzerRangeData = [new AnalyzerRangeBaseDTO()];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -226,9 +231,9 @@ describe('ComponentWorkspaceService', () => {
 
         component.componentTypeCode = 'ERR';
         component.basisCode = null;
-        component.analyzerRanges = [new AnalyzerRangeBaseDTO()];
+        component.analyzerRangeData = [new AnalyzerRangeBaseDTO()];
 
-        location.components = [component];
+        location.componentData = [component];
 
         const checkResults = await service.runComponentChecks(
           [component],
@@ -284,6 +289,7 @@ describe('ComponentWorkspaceService', () => {
   describe('updateComponent', () => {
     it('should update and return updated component dto', async () => {
       const response = await service.updateComponent(
+        locationId,
         component,
         payload,
         userId,
@@ -294,7 +300,7 @@ describe('ComponentWorkspaceService', () => {
 
   describe('importUnitStack', () => {
     const location = new UpdateMonitorLocationDTO();
-    location.components = [payload];
+    location.componentData = [payload];
     it('should update while importing a component', async () => {
       const response = await service.importComponent(
         location,

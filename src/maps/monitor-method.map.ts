@@ -2,11 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { MonitorMethod } from '../entities/monitor-method.entity';
+import { MonitorMethod as WorkspaceMonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 
 @Injectable()
-export class MonitorMethodMap extends BaseMap<MonitorMethod, MonitorMethodDTO> {
-  public async one(entity: MonitorMethod): Promise<MonitorMethodDTO> {
+export class MonitorMethodMap extends BaseMap<
+  MonitorMethod | WorkspaceMonitorMethod,
+  MonitorMethodDTO
+> {
+  public async one(
+    entity: MonitorMethod | WorkspaceMonitorMethod,
+  ): Promise<MonitorMethodDTO> {
     return {
       id: entity.id,
       locationId: entity.locationId,

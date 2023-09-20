@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsDateString,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -111,6 +112,7 @@ export class MatsMethodBaseDTO {
       return CheckCatalogService.formatResultMessage('MATSMTH-2-B');
     },
   })
+  @IsInt()
   beginHour: number;
 
   @ApiProperty({
@@ -135,7 +137,7 @@ export class MatsMethodBaseDTO {
       return CheckCatalogService.formatResultMessage('MATSMTH-4-A');
     },
   })
-  @ValidateIf(o => o.endHour !== null)
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -143,18 +145,18 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOEndHour.example,
     name: propertyMetadata.matsMethodDTOEndHour.fieldLabels.value,
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: () => {
       return CheckCatalogService.formatResultMessage('MATSMTH-4-B');
     },
   })
-  @ValidateIf(o => o.endHour !== null)
   @BeginEndDatesConsistent({
-    //skipIf: (o) => { return o.endHour === null },
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('MATSMTH-5-A', {});
+      return CheckCatalogService.formatResultMessage('MATSMTH-5-A');
     },
   })
+  @IsInt()
   endHour: number;
 }
 

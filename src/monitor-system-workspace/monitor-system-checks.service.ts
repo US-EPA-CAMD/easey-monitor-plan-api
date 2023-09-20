@@ -46,21 +46,23 @@ export class MonitorSystemCheckService {
     let errorList: string[] = [];
     const promises: Promise<string[]>[] = [];
 
-    monitorSystem.components?.forEach((systemComponent, sysCompIdx) => {
-      promises.push(
-        new Promise(async (resolve, _reject) => {
-          const results = this.componentChecksService.runChecks(
-            locationId,
-            systemComponent,
-            isImport,
-            isUpdate,
-            `${errorLocation}components.${sysCompIdx}.`,
-          );
+    monitorSystem.monitoringSystemComponentData?.forEach(
+      (systemComponent, sysCompIdx) => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.componentChecksService.runChecks(
+              locationId,
+              systemComponent,
+              isImport,
+              isUpdate,
+              `${errorLocation}components.${sysCompIdx}.`,
+            );
 
-          resolve(results);
-        }),
-      );
-    });
+            resolve(results);
+          }),
+        );
+      },
+    );
 
     errorList = await this.extractErrors(promises);
     this.throwIfErrors(errorList);

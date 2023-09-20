@@ -72,7 +72,7 @@ export class MonitorDefaultWorkspaceService {
       fuelCode: payload.fuelCode,
       operatingConditionCode: payload.operatingConditionCode,
       defaultSourceCode: payload.defaultSourceCode,
-      groupId: payload.groupId,
+      groupID: payload.groupID,
       beginDate: payload.beginDate,
       beginHour: payload.beginHour,
       endDate: payload.endDate,
@@ -107,7 +107,7 @@ export class MonitorDefaultWorkspaceService {
     monDefault.fuelCode = payload.fuelCode;
     monDefault.operatingConditionCode = payload.operatingConditionCode;
     monDefault.defaultSourceCode = payload.defaultSourceCode;
-    monDefault.groupId = payload.groupId;
+    monDefault.groupID = payload.groupID;
     monDefault.beginDate = payload.beginDate;
     monDefault.beginHour = payload.beginHour;
     monDefault.endDate = payload.endDate;
