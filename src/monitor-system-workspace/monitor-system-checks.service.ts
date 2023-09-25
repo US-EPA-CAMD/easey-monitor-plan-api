@@ -49,7 +49,7 @@ export class MonitorSystemCheckService {
     monitorSystem.monitoringSystemComponentData?.forEach(
       (systemComponent, sysCompIdx) => {
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.componentChecksService.runChecks(
               locationId,
               systemComponent,
