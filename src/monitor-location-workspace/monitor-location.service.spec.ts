@@ -5,9 +5,8 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
-import { MonitorLocation } from '../entities/monitor-location.entity';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
-import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { UnitService } from '../unit/unit.service';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
@@ -25,8 +24,11 @@ import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-s
 import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
 import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
 import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
+import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 
 const locId = '6';
+const uscDto = new UnitStackConfigurationDTO();
 
 const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
@@ -38,7 +40,7 @@ const mockMap = () => ({
 });
 
 const mockUscService = () => ({
-  getUnitStackRelationships: jest.fn().mockResolvedValue([]),
+  getUnitStackRelationships: jest.fn().mockResolvedValue([uscDto]),
   getUnitStackConfigsByLocationIds: jest.fn().mockResolvedValue([]),
 });
 
@@ -148,8 +150,13 @@ describe('MonitorLocationWorkspaceService', () => {
 
   describe('tests getLocationRelationships', () => {
     it('should return an array of monitor locations', async () => {
+      const monLoc = new MonitorLocation();
+      monLoc.stackPipe = new StackPipe();
+      monLoc.stackPipe.id = '1';
+      jest.spyOn(service, 'getLocationEntity').mockResolvedValue(monLoc);
+
       const result = await service.getLocationRelationships(locId);
-      expect(result).toEqual([]);
+      expect(result).toEqual([uscDto]);
     });
   });
 });
