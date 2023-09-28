@@ -85,7 +85,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       const needsEvalStatus = 'EVAL';
       const updatedStatusFlag = 'Y';
       const needsEvalFlag = 'Y';
-      const submissionAvailCode = 'REQUIRE';
+      const submissionAvailCode = 'GRANTED';
       await this.query(
         'UPDATE camdecmpswks.monitor_plan SET ' +
           'eval_status_cd = $1, ' +
