@@ -177,7 +177,7 @@ export class MonitorSpanBaseDTO {
   )
   @IsInRange(0, 9999999999.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0.000 and 9999999999.999 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}]`;
     },
   })
   spanValue: number;

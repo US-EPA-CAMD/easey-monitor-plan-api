@@ -38,7 +38,7 @@ const leeQualDto: LEEQualificationDTO = {
   qualificationId: undefined,
   qualificationTestDate: undefined,
   qualificationTestType: undefined,
-  unitsofStandard: undefined,
+  unitsOfStandard: undefined,
   updateDate: null,
   userId: undefined,
 };
