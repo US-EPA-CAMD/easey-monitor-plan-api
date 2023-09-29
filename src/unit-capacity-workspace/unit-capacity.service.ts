@@ -35,43 +35,47 @@ export class UnitCapacityWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const unitCapacity of unitCapacities) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
-              unitId,
-              unitCapacity.beginDate,
-              unitCapacity.endDate,
-            );
+        for (const unitCapacity of unitCapacities) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
+                  unitId,
+                  unitCapacity.beginDate,
+                  unitCapacity.endDate,
+                );
 
-            if (unitCapacityRecord) {
-              await this.updateUnitCapacity(
-                locationId,
-                unitId,
-                unitCapacityRecord.id,
-                unitCapacity,
-                userId,
-                true,
-              );
-            } else {
-              await this.createUnitCapacity(
-                locationId,
-                unitId,
-                unitCapacity,
-                userId,
-                true,
-              );
-            }
-            innerResolve(true);
-          }),
-        );
-      }
+                if (unitCapacityRecord) {
+                  await this.updateUnitCapacity(
+                    locationId,
+                    unitId,
+                    unitCapacityRecord.id,
+                    unitCapacity,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createUnitCapacity(
+                    locationId,
+                    unitId,
+                    unitCapacity,
+                    userId,
+                    true,
+                  );
+                }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 

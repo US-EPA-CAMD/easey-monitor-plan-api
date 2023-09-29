@@ -109,42 +109,45 @@ export class AnalyzerRangeWorkspaceService {
     if (!analyzerRanges) {
       analyzerRanges = [];
     }
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const analyzerRange of analyzerRanges) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const analyzerRangeRecord = await this.repository.getAnalyzerRangeByComponentIdAndDate(
+                  componentId,
+                  analyzerRange,
+                );
 
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const analyzerRange of analyzerRanges) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const analyzerRangeRecord = await this.repository.getAnalyzerRangeByComponentIdAndDate(
-              componentId,
-              analyzerRange,
-            );
+                if (analyzerRangeRecord) {
+                  await this.updateAnalyzerRange(
+                    analyzerRangeRecord.id,
+                    analyzerRange,
+                    locationId,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createAnalyzerRange(
+                    componentId,
+                    analyzerRange,
+                    locationId,
+                    userId,
+                    true,
+                  );
+                }
 
-            if (analyzerRangeRecord) {
-              await this.updateAnalyzerRange(
-                analyzerRangeRecord.id,
-                analyzerRange,
-                locationId,
-                userId,
-                true,
-              );
-            } else {
-              await this.createAnalyzerRange(
-                componentId,
-                analyzerRange,
-                locationId,
-                userId,
-                true,
-              );
-            }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-            innerResolve(true);
-          }),
-        );
-      }
-
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

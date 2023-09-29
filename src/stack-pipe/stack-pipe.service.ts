@@ -16,11 +16,13 @@ export class StackPipeService {
   }
 
   async importStackPipe(stackPipeRecord: StackPipe, retireDate: Date) {
-    return new Promise(async resolve => {
-      await this.repository.update(stackPipeRecord.id, {
-        retireDate,
-      });
-      resolve(true);
+    return new Promise(resolve => {
+      (async () => {
+        await this.repository.update(stackPipeRecord.id, {
+          retireDate,
+        });
+        resolve(true);
+      })()
     });
   }
 }

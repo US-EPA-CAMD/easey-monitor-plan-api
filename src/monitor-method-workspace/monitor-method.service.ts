@@ -30,7 +30,7 @@ export class MonitorMethodWorkspaceService {
   }
 
   async getMethod(methodId: string): Promise<MonitorMethod> {
-    const result = this.repository.findOne(methodId);
+    const result = await this.repository.findOne(methodId);
 
     if (!result) {
       throw new EaseyException(
@@ -110,41 +110,45 @@ export class MonitorMethodWorkspaceService {
     methods: MonitorMethodBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const method of methods) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const methodRecord = await this.repository.getMethodByLocIdParamCDBDate(
-              locationId,
-              method.parameterCode,
-              method.beginDate,
-              method.beginHour,
-              method.endDate,
-              method.endHour,
-            );
+        for (const method of methods) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const methodRecord = await this.repository.getMethodByLocIdParamCDBDate(
+                  locationId,
+                  method.parameterCode,
+                  method.beginDate,
+                  method.beginHour,
+                  method.endDate,
+                  method.endHour,
+                );
 
-            if (methodRecord !== undefined) {
-              await this.updateMethod(
-                methodRecord.id,
-                method,
-                locationId,
-                userId,
-                true,
-              );
-            } else {
-              await this.createMethod(locationId, method, userId, true);
-            }
+                if (methodRecord !== undefined) {
+                  await this.updateMethod(
+                    methodRecord.id,
+                    method,
+                    locationId,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createMethod(locationId, method, userId, true);
+                }
 
-            innerResolve(true);
-          }),
-        );
+                innerResolve(true);
+              })()
+            }),
+          );
 
-        await Promise.all(promises);
+          await Promise.all(promises);
 
-        resolve(true);
-      }
+          resolve(true);
+        }
+      })()
     });
   }
 }

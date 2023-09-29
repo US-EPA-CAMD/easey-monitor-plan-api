@@ -112,45 +112,49 @@ export class UnitFuelWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const unitFuel of unitFuels) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
-              unitId,
-              unitFuel.fuelCode,
-              unitFuel.beginDate,
-              unitFuel.endDate,
-            );
+        for (const unitFuel of unitFuels) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
+                  unitId,
+                  unitFuel.fuelCode,
+                  unitFuel.beginDate,
+                  unitFuel.endDate,
+                );
 
-            if (unitFuelRecord !== undefined) {
-              await this.updateUnitFuel(
-                locationId,
-                unitId,
-                unitFuelRecord.id,
-                unitFuel,
-                userId,
-                true,
-              );
-            } else {
-              await this.createUnitFuel(
-                locationId,
-                unitId,
-                unitFuel,
-                userId,
-                true,
-              );
-            }
+                if (unitFuelRecord !== undefined) {
+                  await this.updateUnitFuel(
+                    locationId,
+                    unitId,
+                    unitFuelRecord.id,
+                    unitFuel,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createUnitFuel(
+                    locationId,
+                    unitId,
+                    unitFuel,
+                    userId,
+                    true,
+                  );
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

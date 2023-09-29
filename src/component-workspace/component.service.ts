@@ -116,58 +116,62 @@ export class ComponentWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const innerPromises = [];
-      for (const component of location.componentData) {
-        innerPromises.push(
-          new Promise(async innerResolve => {
-            let compRecord = await this.repository.getComponentByLocIdAndCompId(
-              locationId,
-              component.componentId,
-            );
+    return new Promise(resolve => {
+      (async () => {
+        const innerPromises = [];
+        for (const component of location.componentData) {
+          innerPromises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                let compRecord = await this.repository.getComponentByLocIdAndCompId(
+                  locationId,
+                  component.componentId,
+                );
 
-            if (compRecord === undefined) {
-              // Check used_identifier table to see if the componentId has already
-              // been used, and if so grab that component record for update
-              let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                locationId,
-                component.componentId,
-                'C',
-              );
+                if (compRecord === undefined) {
+                  // Check used_identifier table to see if the componentId has already
+                  // been used, and if so grab that component record for update
+                  let usedIdentifier = await this.usedIdRepo.getBySpecs(
+                    locationId,
+                    component.componentId,
+                    'C',
+                  );
 
-              if (usedIdentifier)
-                compRecord = await this.repository.findOne({
-                  id: usedIdentifier.id,
-                });
-            }
+                  if (usedIdentifier)
+                    compRecord = await this.repository.findOne({
+                      id: usedIdentifier.id,
+                    });
+                }
 
-            if (compRecord) {
-              await this.updateComponent(
-                locationId, compRecord,
-                component,
-                userId,
-              );
-            } else {
-              await this.createComponent(locationId, component, userId);
-              compRecord = await this.repository.getComponentByLocIdAndCompId(
-                locationId,
-                component.componentId,
-              );
+                if (compRecord) {
+                  await this.updateComponent(
+                    locationId, compRecord,
+                    component,
+                    userId,
+                  );
+                } else {
+                  await this.createComponent(locationId, component, userId);
+                  compRecord = await this.repository.getComponentByLocIdAndCompId(
+                    locationId,
+                    component.componentId,
+                  );
 
-              await this.analyzerRangeDataService.importAnalyzerRange(
-                compRecord.id,
-                locationId,
-                component.analyzerRangeData,
-                userId,
-              );
-            }
+                  await this.analyzerRangeDataService.importAnalyzerRange(
+                    compRecord.id,
+                    locationId,
+                    component.analyzerRangeData,
+                    userId,
+                  );
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
-      await Promise.all(innerPromises);
-      resolve(true);
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
+        await Promise.all(innerPromises);
+        resolve(true);
+      })()
     });
   }
 
