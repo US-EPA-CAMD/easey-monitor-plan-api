@@ -158,30 +158,32 @@ export class MonitorSpanWorkspaceService {
 
     for (const span of spans) {
       promises.push(
-        new Promise(async innerResolve => {
-          const spanRecord = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
-            locationId,
-            span.componentTypeCode,
-            span.spanScaleCode,
-            span.beginDate,
-            span.beginHour,
-            span.endDate,
-            span.endHour,
-          );
-
-          if (spanRecord) {
-            await this.updateSpan(
+        new Promise(innerResolve => {
+          (async () => {
+            const spanRecord = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
               locationId,
-              spanRecord.id,
-              span,
-              userId,
-              true,
+              span.componentTypeCode,
+              span.spanScaleCode,
+              span.beginDate,
+              span.beginHour,
+              span.endDate,
+              span.endHour,
             );
-          } else {
-            await this.createSpan(locationId, span, userId, true);
-          }
 
-          innerResolve(true);
+            if (spanRecord) {
+              await this.updateSpan(
+                locationId,
+                spanRecord.id,
+                span,
+                userId,
+                true,
+              );
+            } else {
+              await this.createSpan(locationId, span, userId, true);
+            }
+
+            innerResolve(true);
+          })()
         }),
       );
     }

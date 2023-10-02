@@ -186,50 +186,54 @@ export class SystemComponentWorkspaceService {
     systemComponents: SystemComponentBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const component of systemComponents) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const innerPromises = [];
-            const systemComponentRecord = await this.repository.getSystemComponentByBeginOrEndDate(
-              sysId,
-              component.componentId,
-              component.beginDate,
-              component.beginHour,
-            );
-
-            if (systemComponentRecord) {
-              innerPromises.push(
-                await this.updateSystemComponent(
-                  locationId,
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const component of systemComponents) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const innerPromises = [];
+                const systemComponentRecord = await this.repository.getSystemComponentByBeginOrEndDate(
                   sysId,
-                  systemComponentRecord.id,
-                  component,
-                  userId,
-                  true,
-                ),
-              );
-            } else {
-              innerPromises.push(
-                await this.createSystemComponent(
-                  locationId,
-                  sysId,
-                  component,
-                  userId,
-                  true,
-                ),
-              );
-            }
+                  component.componentId,
+                  component.beginDate,
+                  component.beginHour,
+                );
 
-            await Promise.all(innerPromises);
-            innerResolve(true);
-          }),
-        );
-      }
+                if (systemComponentRecord) {
+                  innerPromises.push(
+                    await this.updateSystemComponent(
+                      locationId,
+                      sysId,
+                      systemComponentRecord.id,
+                      component,
+                      userId,
+                      true,
+                    ),
+                  );
+                } else {
+                  innerPromises.push(
+                    await this.createSystemComponent(
+                      locationId,
+                      sysId,
+                      component,
+                      userId,
+                      true,
+                    ),
+                  );
+                }
 
-      await Promise.all(promises);
-      resolve(true);
+                await Promise.all(innerPromises);
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
+
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

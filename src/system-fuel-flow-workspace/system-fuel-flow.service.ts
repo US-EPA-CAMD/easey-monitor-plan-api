@@ -112,47 +112,51 @@ export class SystemFuelFlowWorkspaceService {
     systemFuelFlows: SystemFuelFlowBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const fuelFlow of systemFuelFlows) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const innerPromises = [];
-            const fuelFlowRecord = await this.repository.getFuelFlowByBeginOrEndDate(
-              sysId,
-              fuelFlow,
-            );
-
-            if (fuelFlowRecord) {
-              innerPromises.push(
-                await this.updateFuelFlow(
-                  fuelFlowRecord.id,
-                  fuelFlow,
-                  locationId,
-                  userId,
-                  true,
-                ),
-              );
-            } else {
-              innerPromises.push(
-                await this.createFuelFlow(
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const fuelFlow of systemFuelFlows) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const innerPromises = [];
+                const fuelFlowRecord = await this.repository.getFuelFlowByBeginOrEndDate(
                   sysId,
                   fuelFlow,
-                  locationId,
-                  userId,
-                  true,
-                ),
-              );
-            }
+                );
 
-            await Promise.all(innerPromises);
-            innerResolve(true);
-          }),
-        );
-      }
+                if (fuelFlowRecord) {
+                  innerPromises.push(
+                    await this.updateFuelFlow(
+                      fuelFlowRecord.id,
+                      fuelFlow,
+                      locationId,
+                      userId,
+                      true,
+                    ),
+                  );
+                } else {
+                  innerPromises.push(
+                    await this.createFuelFlow(
+                      sysId,
+                      fuelFlow,
+                      locationId,
+                      userId,
+                      true,
+                    ),
+                  );
+                }
 
-      await Promise.all(promises);
-      resolve(true);
+                await Promise.all(innerPromises);
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
+
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

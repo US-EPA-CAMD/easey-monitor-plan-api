@@ -86,46 +86,50 @@ export class UnitStackConfigurationWorkspaceService {
     facilityId: number,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const unitStackConfig of plan.unitStackConfigurationData) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
-              unitStackConfig.stackPipeId,
-              facilityId,
-            );
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const unitStackConfig of plan.unitStackConfigurationData) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+                  unitStackConfig.stackPipeId,
+                  facilityId,
+                );
 
-            const unit = await this.unitServive.getUnitByNameAndFacId(
-              unitStackConfig.unitId,
-              facilityId,
-            );
+                const unit = await this.unitServive.getUnitByNameAndFacId(
+                  unitStackConfig.unitId,
+                  facilityId,
+                );
 
-            const unitStackConfigRecord = await this.repository.getUnitStackConfigByUnitIdStackId(
-              unit.id,
-              stackPipe.id,
-            );
+                const unitStackConfigRecord = await this.repository.getUnitStackConfigByUnitIdStackId(
+                  unit.id,
+                  stackPipe.id,
+                );
 
-            if (unitStackConfigRecord !== undefined) {
-              await this.updateUnitStackConfig(
-                unitStackConfigRecord.id,
-                unitStackConfig,
-                userId,
-              );
-            } else {
-              await this.createUnitStackConfig(
-                unit.id,
-                stackPipe.id,
-                unitStackConfig,
-                userId,
-              );
-            }
-            innerResolve(true);
-          }),
-        );
-      }
-      await Promise.all(promises);
-      resolve(true);
+                if (unitStackConfigRecord !== undefined) {
+                  await this.updateUnitStackConfig(
+                    unitStackConfigRecord.id,
+                    unitStackConfig,
+                    userId,
+                  );
+                } else {
+                  await this.createUnitStackConfig(
+                    unit.id,
+                    stackPipe.id,
+                    unitStackConfig,
+                    userId,
+                  );
+                }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 

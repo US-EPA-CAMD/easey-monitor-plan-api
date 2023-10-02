@@ -54,39 +54,43 @@ export class MonitorLoadWorkspaceService {
     loads: MonitorLoadBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const load of loads) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const loadRecord = await this.repository.getLoadByLocBDateBHour(
-              locationId,
-              load.beginDate,
-              load.beginHour,
-              load.endDate,
-              load.endHour,
-            );
+        for (const load of loads) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const loadRecord = await this.repository.getLoadByLocBDateBHour(
+                  locationId,
+                  load.beginDate,
+                  load.beginHour,
+                  load.endDate,
+                  load.endHour,
+                );
 
-            if (loadRecord !== undefined) {
-              await this.updateLoad(
-                locationId,
-                loadRecord.id,
-                load,
-                userId,
-                true,
-              );
-            } else {
-              await this.createLoad(locationId, load, userId, true);
-            }
+                if (loadRecord !== undefined) {
+                  await this.updateLoad(
+                    locationId,
+                    loadRecord.id,
+                    load,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createLoad(locationId, load, userId, true);
+                }
 
-            innerResolve(true);
-          }),
-        );
+                innerResolve(true);
+              })()
+            }),
+          );
 
-        await Promise.all(promises);
-        resolve(true);
-      }
+          await Promise.all(promises);
+          resolve(true);
+        }
+      })()
     });
   }
 
