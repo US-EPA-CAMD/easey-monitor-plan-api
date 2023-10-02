@@ -142,6 +142,10 @@ export class MonitorPlan extends BaseEntity {
   )
   comments: MonitorPlanComment[];
 
+  @OneToMany(
+    () => MonitorPlanReportingFrequency,
+    reportFrequency => reportFrequency.plan,
+  )
   reportingFrequencies: MonitorPlanReportingFrequency[];
 
   unitStackConfigurations: UnitStackConfiguration[];
