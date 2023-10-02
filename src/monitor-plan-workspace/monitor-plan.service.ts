@@ -340,105 +340,111 @@ export class MonitorPlanWorkspaceService {
 
       COMPONENTS = LOADS + 1;
       promises.push(
-        new Promise(async (resolve, reject) => {
-          const components = await this.componentRepository.find({
-            where: { locationId: In(locationIds) },
-            order: { id: 'ASC' },
-          });
-          if (components.length !== 0) {
-            const componentIds = components.map(i => i.id);
-
-            const analyzerRanges = this.analyzerRangeRepository.getAnalyzerRangesByCompIds(
-              componentIds,
-            );
-
-            const rangeResults = await Promise.all([analyzerRanges]);
-
-            components.forEach(async c => {
-              c.analyzerRanges = rangeResults[0].filter(
-                i => i.componentRecordId === c.id,
-              );
+        new Promise((resolve, _reject) => {
+          (async () => {
+            const components = await this.componentRepository.find({
+              where: { locationId: In(locationIds) },
+              order: { id: 'ASC' },
             });
-          }
+            if (components.length !== 0) {
+              const componentIds = components.map(i => i.id);
 
-          resolve(components);
+              const analyzerRanges = this.analyzerRangeRepository.getAnalyzerRangesByCompIds(
+                componentIds,
+              );
+
+              const rangeResults = await Promise.all([analyzerRanges]);
+
+              components.forEach(c => {
+                c.analyzerRanges = rangeResults[0].filter(
+                  i => i.componentRecordId === c.id,
+                );
+              });
+            }
+
+            resolve(components);
+          })()
         }),
       );
 
       SYSTEMS = COMPONENTS + 1;
       promises.push(
-        new Promise(async (resolve, reject) => {
-          const systems = await this.systemRepository.find({
-            where: { locationId: In(locationIds) },
-            order: { id: 'ASC' },
-          });
-
-          if (systems.length !== 0) {
-            const systemIds = systems.map(i => i.id);
-            const s1 = this.systemFuelFlowRepository.getFuelFlowsBySystemIds(
-              systemIds,
-            );
-            const s2 = this.systemComponentRepository.getSystemComponentsBySystemIds(
-              systemIds,
-            );
-
-            const sysResults = await Promise.all([s1, s2]);
-
-            systems.forEach(async s => {
-              s.fuelFlows = sysResults[0].filter(
-                i => i.monitoringSystemRecordId === s.id,
-              );
-              s.components = sysResults[1].filter(
-                i => i.monitoringSystemRecordId === s.id,
-              );
+        new Promise((resolve, _reject) => {
+          (async () => {
+            const systems = await this.systemRepository.find({
+              where: { locationId: In(locationIds) },
+              order: { id: 'ASC' },
             });
-          }
 
-          resolve(systems);
+            if (systems.length !== 0) {
+              const systemIds = systems.map(i => i.id);
+              const s1 = this.systemFuelFlowRepository.getFuelFlowsBySystemIds(
+                systemIds,
+              );
+              const s2 = this.systemComponentRepository.getSystemComponentsBySystemIds(
+                systemIds,
+              );
+
+              const sysResults = await Promise.all([s1, s2]);
+
+              systems.forEach(s => {
+                s.fuelFlows = sysResults[0].filter(
+                  i => i.monitoringSystemRecordId === s.id,
+                );
+                s.components = sysResults[1].filter(
+                  i => i.monitoringSystemRecordId === s.id,
+                );
+              });
+            }
+
+            resolve(systems);
+          })()
         }),
       );
 
       QUALIFICATIONS = SYSTEMS + 1;
       promises.push(
-        new Promise(async (resolve, reject) => {
-          const quals = await this.qualificationRepository.find({
-            where: { locationId: In(locationIds) },
-          });
-
-          if (quals.length !== 0) {
-            const qualIds = quals.map(i => i.id);
-            const q1 = this.leeQualificationRepository.find({
-              where: { qualificationId: In(qualIds) },
-            });
-            const q2 = this.lmeQualificationRepository.find({
-              where: { qualificationId: In(qualIds) },
-            });
-            const q3 = this.pctQualificationRepository.find({
-              where: { qualificationId: In(qualIds) },
-            });
-            const q4 = this.cpmsQualRepository.find({
-              where: { qualificationId: In(qualIds) },
+        new Promise((resolve, _reject) => {
+          (async () => {
+            const quals = await this.qualificationRepository.find({
+              where: { locationId: In(locationIds) },
             });
 
-            const qualResults = await Promise.all([q1, q2, q3, q4]);
+            if (quals.length !== 0) {
+              const qualIds = quals.map(i => i.id);
+              const q1 = this.leeQualificationRepository.find({
+                where: { qualificationId: In(qualIds) },
+              });
+              const q2 = this.lmeQualificationRepository.find({
+                where: { qualificationId: In(qualIds) },
+              });
+              const q3 = this.pctQualificationRepository.find({
+                where: { qualificationId: In(qualIds) },
+              });
+              const q4 = this.cpmsQualRepository.find({
+                where: { qualificationId: In(qualIds) },
+              });
 
-            quals.forEach(async q => {
-              q.leeQualifications = qualResults[0].filter(
-                i => i.qualificationId === q.id,
-              );
-              q.lmeQualifications = qualResults[1].filter(
-                i => i.qualificationId === q.id,
-              );
-              q.pctQualifications = qualResults[2].filter(
-                i => i.qualificationId === q.id,
-              );
-              q.cpmsQualifications = qualResults[3].filter(
-                i => i.qualificationId === q.id,
-              );
-            });
-          }
+              const qualResults = await Promise.all([q1, q2, q3, q4]);
 
-          resolve(quals);
+              quals.forEach(q => {
+                q.leeQualifications = qualResults[0].filter(
+                  i => i.qualificationId === q.id,
+                );
+                q.lmeQualifications = qualResults[1].filter(
+                  i => i.qualificationId === q.id,
+                );
+                q.pctQualifications = qualResults[2].filter(
+                  i => i.qualificationId === q.id,
+                );
+                q.cpmsQualifications = qualResults[3].filter(
+                  i => i.qualificationId === q.id,
+                );
+              });
+            }
+
+            resolve(quals);
+          })()
         }),
       );
     }

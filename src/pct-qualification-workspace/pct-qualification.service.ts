@@ -150,43 +150,47 @@ export class PCTQualificationWorkspaceService {
     pctQualifications: PCTQualificationBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const pctQualification of pctQualifications) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const pctQualificationRecord = await this.getPCTQualificationByDataYear(
-              locationId,
-              qualificationId,
-              pctQualification.qualificationYear,
-            );
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const pctQualification of pctQualifications) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const pctQualificationRecord = await this.getPCTQualificationByDataYear(
+                  locationId,
+                  qualificationId,
+                  pctQualification.qualificationYear,
+                );
 
-            if (pctQualificationRecord) {
-              await this.updatePCTQualification(
-                locationId,
-                qualificationId,
-                pctQualificationRecord.id,
-                pctQualification,
-                userId,
-                true,
-              );
-            } else {
-              await this.createPCTQualification(
-                locationId,
-                qualificationId,
-                pctQualification,
-                userId,
-                true,
-              );
-            }
+                if (pctQualificationRecord) {
+                  await this.updatePCTQualification(
+                    locationId,
+                    qualificationId,
+                    pctQualificationRecord.id,
+                    pctQualification,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createPCTQualification(
+                    locationId,
+                    qualificationId,
+                    pctQualification,
+                    userId,
+                    true,
+                  );
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

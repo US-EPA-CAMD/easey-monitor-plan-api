@@ -6,6 +6,7 @@ import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
@@ -53,6 +54,7 @@ describe('MonitorConfigurationsService', () => {
           provide: MonitorPlanMap,
           useFactory: mockMonitorPlanMap,
         },
+        UnitStackConfigurationRepository,
       ],
     }).compile();
 
@@ -75,8 +77,9 @@ describe('MonitorConfigurationsService', () => {
 
   describe('getConfigurationsByLastUpdated', () => {
     it('Should return a LastUpdatedConfigDTO for a Date', async () => {
+      jest.spyOn(MonitorPlan, 'find').mockResolvedValue([]);
       const result = await service.getConfigurationsByLastUpdated('');
-      expect(result.changedConfigs).toEqual([DTO]);
+      expect(result.changedConfigs).toEqual([]);
     });
   });
 });

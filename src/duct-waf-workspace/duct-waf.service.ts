@@ -116,39 +116,43 @@ export class DuctWafWorkspaceService {
     ductWafs: DuctWafBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const ductWaf of ductWafs) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const ductWafRecord = await this.repository.getDuctWafByLocIdBDateBHourWafValue(
-              locationId,
-              ductWaf.wafBeginDate,
-              ductWaf.wafBeginHour,
-              ductWaf.wafEndDate,
-              ductWaf.wafEndHour,
-            );
+        for (const ductWaf of ductWafs) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const ductWafRecord = await this.repository.getDuctWafByLocIdBDateBHourWafValue(
+                  locationId,
+                  ductWaf.wafBeginDate,
+                  ductWaf.wafBeginHour,
+                  ductWaf.wafEndDate,
+                  ductWaf.wafEndHour,
+                );
 
-            if (ductWafRecord !== undefined) {
-              await this.updateDuctWaf(
-                locationId,
-                ductWafRecord.id,
-                ductWaf,
-                userId,
-                true,
-              );
-            } else {
-              await this.createDuctWaf(locationId, ductWaf, userId, true);
-            }
+                if (ductWafRecord !== undefined) {
+                  await this.updateDuctWaf(
+                    locationId,
+                    ductWafRecord.id,
+                    ductWaf,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createDuctWaf(locationId, ductWaf, userId, true);
+                }
 
-            innerResolve(true);
-          }),
-        );
+                innerResolve(true);
+              })()
+            }),
+          );
 
-        await Promise.all(promises);
-        resolve(true);
-      }
+          await Promise.all(promises);
+          resolve(true);
+        }
+      })()
     });
   }
 }

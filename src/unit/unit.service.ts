@@ -29,11 +29,13 @@ export class UnitService {
   }
 
   async importUnit(unitRecord: Unit, nonLoadI: number) {
-    return new Promise(async resolve => {
-      await this.repository.update(unitRecord.id, {
-        nonLoadBasedIndicator: nonLoadI,
-      });
-      resolve(true);
+    return new Promise(resolve => {
+      (async () => {
+        await this.repository.update(unitRecord.id, {
+          nonLoadBasedIndicator: nonLoadI,
+        });
+        resolve(true);
+      })()
     });
   }
 

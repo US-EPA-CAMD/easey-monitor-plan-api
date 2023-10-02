@@ -174,237 +174,241 @@ export class MonitorLocationWorkspaceService {
     facilityId: number,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const location of plan.monitoringLocationData) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const innerPromises = [];
+        for (const location of plan.monitoringLocationData) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const innerPromises = [];
 
-            // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
-            const monitorLocationRecord = await this.getLocationRecord(
-              location,
-              facilityId,
-              plan.orisCode,
-            );
-
-            if (location.unitId) {
-              const unitRecord = await this.unitService.getUnitByNameAndFacId(
-                location.unitId,
-                facilityId,
-              );
-
-              innerPromises.push(
-                this.unitService.importUnit(
-                  unitRecord,
-                  location.nonLoadBasedIndicator,
-                ),
-              );
-
-              if (
-                location.unitCapacityData &&
-                location.unitCapacityData.length > 0
-              ) {
-                innerPromises.push(
-                  this.unitCapacityService.importUnitCapacity(
-                    location.unitCapacityData,
-                    unitRecord.id,
-                    monitorLocationRecord.id,
-                    userId,
-                  ),
-                );
-              }
-
-              if (
-                location.unitControlData &&
-                location.unitControlData.length > 0
-              ) {
-                innerPromises.push(
-                  this.unitControlService.importUnitControl(
-                    location.unitControlData,
-                    unitRecord.id,
-                    monitorLocationRecord.id,
-                    userId,
-                  ),
-                );
-              }
-
-              if (location.unitFuelData && location.unitFuelData.length > 0) {
-                innerPromises.push(
-                  this.unitFuelService.importUnitFuel(
-                    location.unitFuelData,
-                    unitRecord.id,
-                    monitorLocationRecord.id,
-                    userId,
-                  ),
-                );
-              }
-            }
-
-            if (location.stackPipeId) {
-              const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
-                location.stackPipeId,
-                facilityId,
-              );
-
-              innerPromises.push(
-                this.stackPipeService.importStackPipe(
-                  stackPipeRecord,
-                  location.retireDate,
-                ),
-              );
-            }
-
-            if (location.componentData && location.componentData.length > 0) {
-              innerPromises.push(
-                this.componentService.importComponent(
+                // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
+                const monitorLocationRecord = await this.getLocationRecord(
                   location,
-                  monitorLocationRecord.id,
-                  userId,
-                ),
-              );
-            }
+                  facilityId,
+                  plan.orisCode,
+                );
 
-            if (
-              location.monitoringSystemData &&
-              location.monitoringSystemData.length > 0
-            ) {
-              innerPromises.push(
-                this.systemService.importSystem(
-                  location.monitoringSystemData,
-                  monitorLocationRecord.id,
-                  userId,
-                ),
-              );
-            }
+                if (location.unitId) {
+                  const unitRecord = await this.unitService.getUnitByNameAndFacId(
+                    location.unitId,
+                    facilityId,
+                  );
 
-            if (
-              location.monitoringQualificationData &&
-              location.monitoringQualificationData.length > 0
-            ) {
-              innerPromises.push(
-                this.qualificationService.importQualification(
-                  location.monitoringQualificationData,
-                  monitorLocationRecord.id,
-                  userId,
-                ),
-              );
-            }
+                  innerPromises.push(
+                    this.unitService.importUnit(
+                      unitRecord,
+                      location.nonLoadBasedIndicator,
+                    ),
+                  );
 
-            if (
-              location.supplementalMATSMonitoringMethodData &&
-              location.supplementalMATSMonitoringMethodData.length > 0
-            ) {
-              innerPromises.push(
-                this.matsMethodService.importMatsMethod(
-                  monitorLocationRecord.id,
-                  location.supplementalMATSMonitoringMethodData,
-                  userId,
-                ),
-              );
-            }
+                  if (
+                    location.unitCapacityData &&
+                    location.unitCapacityData.length > 0
+                  ) {
+                    innerPromises.push(
+                      this.unitCapacityService.importUnitCapacity(
+                        location.unitCapacityData,
+                        unitRecord.id,
+                        monitorLocationRecord.id,
+                        userId,
+                      ),
+                    );
+                  }
 
-            if (
-              location.monitoringLoadData &&
-              location.monitoringLoadData.length > 0
-            ) {
-              innerPromises.push(
-                this.loadService.importLoad(
-                  monitorLocationRecord.id,
-                  location.monitoringLoadData,
-                  userId,
-                ),
-              );
-            }
+                  if (
+                    location.unitControlData &&
+                    location.unitControlData.length > 0
+                  ) {
+                    innerPromises.push(
+                      this.unitControlService.importUnitControl(
+                        location.unitControlData,
+                        unitRecord.id,
+                        monitorLocationRecord.id,
+                        userId,
+                      ),
+                    );
+                  }
 
-            if (
-              location.monitoringLocationAttribData &&
-              location.monitoringLocationAttribData.length > 0
-            ) {
-              innerPromises.push(
-                this.monitorAttributeService.importAttributes(
-                  monitorLocationRecord.id,
-                  location.monitoringLocationAttribData,
-                  userId,
-                ),
-              );
-            }
+                  if (location.unitFuelData && location.unitFuelData.length > 0) {
+                    innerPromises.push(
+                      this.unitFuelService.importUnitFuel(
+                        location.unitFuelData,
+                        unitRecord.id,
+                        monitorLocationRecord.id,
+                        userId,
+                      ),
+                    );
+                  }
+                }
 
-            if (
-              location.monitoringFormulaData &&
-              location.monitoringFormulaData.length > 0
-            ) {
-              innerPromises.push(
-                this.formulaService.importFormula(
-                  location.monitoringFormulaData,
-                  monitorLocationRecord.id,
-                  userId,
-                ),
-              );
-            }
+                if (location.stackPipeId) {
+                  const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
+                    location.stackPipeId,
+                    facilityId,
+                  );
 
-            if (
-              location.monitoringMethodData &&
-              location.monitoringMethodData.length > 0
-            ) {
-              innerPromises.push(
-                this.methodService.importMethod(
-                  monitorLocationRecord.id,
-                  location.monitoringMethodData,
-                  userId,
-                ),
-              );
-            }
+                  innerPromises.push(
+                    this.stackPipeService.importStackPipe(
+                      stackPipeRecord,
+                      location.retireDate,
+                    ),
+                  );
+                }
 
-            if (
-              location.rectangularDuctWAFData &&
-              location.rectangularDuctWAFData.length > 0
-            ) {
-              innerPromises.push(
-                this.ductWafService.importDuctWaf(
-                  monitorLocationRecord.id,
-                  location.rectangularDuctWAFData,
-                  userId,
-                ),
-              );
-            }
+                if (location.componentData && location.componentData.length > 0) {
+                  innerPromises.push(
+                    this.componentService.importComponent(
+                      location,
+                      monitorLocationRecord.id,
+                      userId,
+                    ),
+                  );
+                }
 
-            if (
-              location.monitoringSpanData &&
-              location.monitoringSpanData.length > 0
-            ) {
-              innerPromises.push(
-                this.spanService.importSpan(
-                  monitorLocationRecord.id,
-                  location.monitoringSpanData,
-                  userId,
-                ),
-              );
-            }
+                if (
+                  location.monitoringSystemData &&
+                  location.monitoringSystemData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.systemService.importSystem(
+                      location.monitoringSystemData,
+                      monitorLocationRecord.id,
+                      userId,
+                    ),
+                  );
+                }
 
-            if (
-              location.monitoringDefaultData &&
-              location.monitoringDefaultData.length > 0
-            ) {
-              innerPromises.push(
-                this.defaultService.importDefault(
-                  monitorLocationRecord.id,
-                  location.monitoringDefaultData,
-                  userId,
-                ),
-              );
-            }
+                if (
+                  location.monitoringQualificationData &&
+                  location.monitoringQualificationData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.qualificationService.importQualification(
+                      location.monitoringQualificationData,
+                      monitorLocationRecord.id,
+                      userId,
+                    ),
+                  );
+                }
 
-            await Promise.all(innerPromises);
-            innerResolve(true);
-          }),
-        );
-      }
+                if (
+                  location.supplementalMATSMonitoringMethodData &&
+                  location.supplementalMATSMonitoringMethodData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.matsMethodService.importMatsMethod(
+                      monitorLocationRecord.id,
+                      location.supplementalMATSMonitoringMethodData,
+                      userId,
+                    ),
+                  );
+                }
 
-      await Promise.all(promises);
+                if (
+                  location.monitoringLoadData &&
+                  location.monitoringLoadData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.loadService.importLoad(
+                      monitorLocationRecord.id,
+                      location.monitoringLoadData,
+                      userId,
+                    ),
+                  );
+                }
 
-      resolve(true);
+                if (
+                  location.monitoringLocationAttribData &&
+                  location.monitoringLocationAttribData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.monitorAttributeService.importAttributes(
+                      monitorLocationRecord.id,
+                      location.monitoringLocationAttribData,
+                      userId,
+                    ),
+                  );
+                }
+
+                if (
+                  location.monitoringFormulaData &&
+                  location.monitoringFormulaData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.formulaService.importFormula(
+                      location.monitoringFormulaData,
+                      monitorLocationRecord.id,
+                      userId,
+                    ),
+                  );
+                }
+
+                if (
+                  location.monitoringMethodData &&
+                  location.monitoringMethodData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.methodService.importMethod(
+                      monitorLocationRecord.id,
+                      location.monitoringMethodData,
+                      userId,
+                    ),
+                  );
+                }
+
+                if (
+                  location.rectangularDuctWAFData &&
+                  location.rectangularDuctWAFData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.ductWafService.importDuctWaf(
+                      monitorLocationRecord.id,
+                      location.rectangularDuctWAFData,
+                      userId,
+                    ),
+                  );
+                }
+
+                if (
+                  location.monitoringSpanData &&
+                  location.monitoringSpanData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.spanService.importSpan(
+                      monitorLocationRecord.id,
+                      location.monitoringSpanData,
+                      userId,
+                    ),
+                  );
+                }
+
+                if (
+                  location.monitoringDefaultData &&
+                  location.monitoringDefaultData.length > 0
+                ) {
+                  innerPromises.push(
+                    this.defaultService.importDefault(
+                      monitorLocationRecord.id,
+                      location.monitoringDefaultData,
+                      userId,
+                    ),
+                  );
+                }
+
+                await Promise.all(innerPromises);
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
+
+        await Promise.all(promises);
+
+        resolve(true);
+      })()
     });
   }
 }

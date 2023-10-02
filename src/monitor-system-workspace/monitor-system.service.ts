@@ -159,40 +159,42 @@ export class MonitorSystemWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      if (
-        system.monitoringSystemComponentData &&
-        system.monitoringSystemComponentData.length > 0
-      ) {
-        promises.push(
-          this.systemComponentService.importSystemComponent(
-            locationId,
-            systemRecordId,
-            system.monitoringSystemComponentData,
-            userId,
-          ),
-        );
-      }
+        if (
+          system.monitoringSystemComponentData &&
+          system.monitoringSystemComponentData.length > 0
+        ) {
+          promises.push(
+            this.systemComponentService.importSystemComponent(
+              locationId,
+              systemRecordId,
+              system.monitoringSystemComponentData,
+              userId,
+            ),
+          );
+        }
 
-      if (
-        system.monitoringSystemFuelFlowData &&
-        system.monitoringSystemFuelFlowData.length > 0
-      ) {
-        promises.push(
-          this.systemFuelFlowService.importFuelFlow(
-            locationId,
-            systemRecordId,
-            system.monitoringSystemFuelFlowData,
-            userId,
-          ),
-        );
-      }
+        if (
+          system.monitoringSystemFuelFlowData &&
+          system.monitoringSystemFuelFlowData.length > 0
+        ) {
+          promises.push(
+            this.systemFuelFlowService.importFuelFlow(
+              locationId,
+              systemRecordId,
+              system.monitoringSystemFuelFlowData,
+              userId,
+            ),
+          );
+        }
 
-      await Promise.all(promises);
+        await Promise.all(promises);
 
-      resolve(true);
+        resolve(true);
+      })()
     });
   }
 
@@ -228,77 +230,81 @@ export class MonitorSystemWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const system of systems) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const innerPromises = [];
-            let systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
-              locationId,
-              system.monitoringSystemId,
-            );
-
-            if (systemRecord === undefined) {
-              // Check used_identifier table to see if the sysIdentifier has already
-              // been used, and if so grab that monitor-system record for update
-              let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                locationId,
-                system.monitoringSystemId,
-                'S',
-              );
-
-              if (usedIdentifier)
-                systemRecord = await this.repository.findOne({
-                  id: usedIdentifier.id,
-                });
-            }
-
-            if (systemRecord !== undefined) {
-              await this.updateSystem(
-                systemRecord.id,
-                system,
-                locationId,
-                userId,
-                true,
-              );
-
-              innerPromises.push(
-                this.importSysComponentAndFuelFlow(
-                  systemRecord.id,
-                  system,
+        for (const system of systems) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const innerPromises = [];
+                let systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
                   locationId,
-                  userId,
-                ),
-              );
-            } else {
-              const createdSystemRecord = await this.createSystem(
-                locationId,
-                system,
-                userId,
-                true,
-              );
+                  system.monitoringSystemId,
+                );
 
-              innerPromises.push(
-                this.importSysComponentAndFuelFlow(
-                  createdSystemRecord.id,
-                  system,
-                  locationId,
-                  userId,
-                ),
-              );
-            }
+                if (systemRecord === undefined) {
+                  // Check used_identifier table to see if the sysIdentifier has already
+                  // been used, and if so grab that monitor-system record for update
+                  let usedIdentifier = await this.usedIdRepo.getBySpecs(
+                    locationId,
+                    system.monitoringSystemId,
+                    'S',
+                  );
 
-            await Promise.all(innerPromises);
+                  if (usedIdentifier)
+                    systemRecord = await this.repository.findOne({
+                      id: usedIdentifier.id,
+                    });
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                if (systemRecord !== undefined) {
+                  await this.updateSystem(
+                    systemRecord.id,
+                    system,
+                    locationId,
+                    userId,
+                    true,
+                  );
 
-      await Promise.all(promises);
-      resolve(true);
+                  innerPromises.push(
+                    this.importSysComponentAndFuelFlow(
+                      systemRecord.id,
+                      system,
+                      locationId,
+                      userId,
+                    ),
+                  );
+                } else {
+                  const createdSystemRecord = await this.createSystem(
+                    locationId,
+                    system,
+                    userId,
+                    true,
+                  );
+
+                  innerPromises.push(
+                    this.importSysComponentAndFuelFlow(
+                      createdSystemRecord.id,
+                      system,
+                      locationId,
+                      userId,
+                    ),
+                  );
+                }
+
+                await Promise.all(innerPromises);
+
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
+
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }
