@@ -6,12 +6,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorPlanService } from '../monitor-plan/monitor-plan.service';
+import { MoreThan } from 'typeorm';
+import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorConfigurationsService {
   constructor(
     @InjectRepository(MonitorPlanRepository)
     private readonly repository: MonitorPlanRepository,
+    private readonly uscRepository: UnitStackConfigurationRepository,
     private readonly map: MonitorPlanMap,
     private readonly monitorPlanService: MonitorPlanService,
   ) {}
@@ -80,8 +84,10 @@ export class MonitorConfigurationsService {
     return this.parseMonitorPlanConfigurations(plans);
   }
 
-  async pushToChangedConfigList(list: MonitorPlanDTO[], orisCode: number) {
-    list.push(...(await this.getConfigurations([orisCode])));
+  async lookupUnitStacks(locations: string[], config: MonitorPlan) {
+    config.unitStackConfigurations = await this.uscRepository.getUnitStackConfigsByLocationIds(
+      locations,
+    );
   }
 
   async getConfigurationsByLastUpdated(
@@ -89,43 +95,49 @@ export class MonitorConfigurationsService {
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
 
-    const orisCodesAndTime = await this.repository.getOrisCodesByLastUpdatedTime(
-      queryTime,
-    );
+    //Get current date of operation being performed
+    const processDate = currentDateTime();
 
-    const list: MonitorPlanDTO[] = [];
-    const promises = [];
-
-    if (orisCodesAndTime.changedOrisCodes.length === 0) {
-      dto.changedConfigs = [];
-      dto.mostRecentUpdate = null;
-      return dto;
-    }
-
-    orisCodesAndTime.changedOrisCodes.forEach(orisCode => {
-      promises.push(this.pushToChangedConfigList(list, orisCode));
-    });
-
-    await Promise.all(promises);
-
-    const est = orisCodesAndTime.mostRecentUpdate.toLocaleString('en-us', {
-      timeZone: 'America/New_York',
-    });
-
-    const inputDate = new Date(est);
-
-    // Convert to the desired format
-    const year = inputDate.getFullYear();
-    const month = String(inputDate.getMonth() + 1).padStart(2, '0');
-    const day = String(inputDate.getDate() - 1).padStart(2, '0'); // Subtract 1 from the day
-    const hours = String(inputDate.getHours()).padStart(2, '0');
-    const minutes = String(inputDate.getMinutes()).padStart(2, '0');
-    const seconds = String(inputDate.getSeconds()).padStart(2, '0');
+    const year = processDate.getFullYear();
+    const month = String(processDate.getMonth() + 1).padStart(2, '0');
+    const day = String(processDate.getDate() - 1).padStart(2, '0'); // Subtract 1 from the day
+    const hours = String(processDate.getHours()).padStart(2, '0');
+    const minutes = String(processDate.getMinutes()).padStart(2, '0');
+    const seconds = String(processDate.getSeconds()).padStart(2, '0');
 
     const outputDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 
-    dto.changedConfigs = list;
     dto.mostRecentUpdate = outputDateString;
+
+    // Populate the monitor plans that have been changed
+
+    dto.changedConfigs = await MonitorPlan.find({
+      where: { updateDate: MoreThan(new Date(queryTime)) },
+      relations: ['locations', 'comments', 'reportingFrequencies'],
+    });
+
+    const promises = [];
+
+    let locationList;
+    for (const config of dto.changedConfigs) {
+      locationList = [];
+      for (const loc of config.locations) {
+        if (loc.plans) {
+          //Data cleanup, only return what ERG needs
+          delete loc.plans;
+        }
+
+        if (loc.unit) {
+          delete loc.unit.unitStackConfigurations;
+          delete loc.unit.opStatuses;
+          delete loc.unit.unitBoilerType;
+        }
+        locationList.push(loc.id);
+      }
+      promises.push(this.lookupUnitStacks(locationList, config));
+    }
+
+    await Promise.all(promises);
 
     return dto;
   }

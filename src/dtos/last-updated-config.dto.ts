@@ -1,8 +1,8 @@
 import { IsDateString } from 'class-validator';
-import { MonitorPlanDTO } from './monitor-plan.dto';
+import { MonitorPlan } from '../entities/monitor-plan.entity';
 
 export class LastUpdatedConfigDTO {
-  changedConfigs: MonitorPlanDTO[];
+  changedConfigs: MonitorPlan[];
 
   @IsDateString()
   mostRecentUpdate: string;
