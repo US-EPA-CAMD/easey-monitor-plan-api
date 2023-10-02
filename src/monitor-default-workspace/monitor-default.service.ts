@@ -129,43 +129,47 @@ export class MonitorDefaultWorkspaceService {
     monDefaults: MonitorDefaultBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      promises.push(
-        new Promise(async innerResolve => {
-          for (const monDefault of monDefaults) {
-            const monDefaultRecord = await this.repository.getDefaultBySpecs(
-              locationId,
-              monDefault.parameterCode,
-              monDefault.defaultPurposeCode,
-              monDefault.fuelCode,
-              monDefault.operatingConditionCode,
-              monDefault.beginDate,
-              monDefault.beginHour,
-              monDefault.endDate,
-              monDefault.endHour,
-            );
+        promises.push(
+          new Promise(innerResolve => {
+            (async () => {
+              for (const monDefault of monDefaults) {
+                const monDefaultRecord = await this.repository.getDefaultBySpecs(
+                  locationId,
+                  monDefault.parameterCode,
+                  monDefault.defaultPurposeCode,
+                  monDefault.fuelCode,
+                  monDefault.operatingConditionCode,
+                  monDefault.beginDate,
+                  monDefault.beginHour,
+                  monDefault.endDate,
+                  monDefault.endHour,
+                );
 
-            if (monDefaultRecord !== undefined) {
-              await this.updateDefault(
-                locationId,
-                monDefaultRecord.id,
-                monDefault,
-                userId,
-                true,
-              );
-            } else {
-              await this.createDefault(locationId, monDefault, userId, true);
-            }
+                if (monDefaultRecord !== undefined) {
+                  await this.updateDefault(
+                    locationId,
+                    monDefaultRecord.id,
+                    monDefault,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createDefault(locationId, monDefault, userId, true);
+                }
 
-            innerResolve(true);
-          }
-        }),
-      );
+                innerResolve(true);
+              }
+            })()
+          }),
+        );
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }
