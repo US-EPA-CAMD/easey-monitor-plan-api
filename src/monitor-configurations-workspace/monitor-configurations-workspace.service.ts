@@ -1,74 +1,87 @@
 import { Injectable } from '@nestjs/common';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { EvalStatusCodeRepository } from './eval-status.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
+import { In } from 'typeorm';
+import { Plant } from '../entities/workspace/plant.entity';
+import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 
 @Injectable()
 export class MonitorConfigurationsWorkspaceService {
   constructor(
-    @InjectRepository(MonitorPlanWorkspaceRepository)
-    private readonly repository: MonitorPlanWorkspaceRepository,
     private readonly map: MonitorPlanConfigurationMap,
-    private readonly monitorPlanService: MonitorPlanWorkspaceService,
     @InjectRepository(EvalStatusCodeRepository)
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
     @InjectRepository(SubmissionsAvailabilityStatusCodeRepository)
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
+    private readonly locationRepository: MonitorLocationWorkspaceRepository,
+    private readonly uscRepository: UnitStackConfigurationWorkspaceRepository,
   ) {}
 
-  private async parseMonitorPlanConfigurations(plans: MonitorPlan[]) {
-    if (plans.length === 0) {
-      return [];
-    }
-    const results = await this.map.many(plans);
+  async populateLocationsAndStackConfigs(plan: MonitorPlan) {
+    const locations = await this.locationRepository.getMonitorLocationsByPlanId(
+      plan.id,
+    );
 
-    for (const p of results) {
-      const monPlan = await this.monitorPlanService.exportMonitorPlan(
-        p.id,
-        false,
-        false,
-        false,
-        true,
-      );
+    const unitStackConfigs = await this.uscRepository.getUnitStackConfigsByLocationIds(
+      locations.map(l => l.id),
+    );
 
-      p.evalStatusCodeDescription = (
-        await this.evalStatusCodeRepository.findOne(p.evalStatusCode)
-      ).evalStatusCodeDescription;
+    plan.locations = locations;
+    plan.unitStackConfigurations = unitStackConfigs;
+  }
 
-      p.submissionAvailabilityCodeDescription = (
-        await this.submissionStatusCodeRepository.findOne(
-          p.submissionAvailabilityCode,
-        )
-      ).subAvailabilityCodeDescription;
+  async populateDescriptions(plan) {
+    plan['evalStatusCodeDescription'] = (
+      await this.evalStatusCodeRepository.findOne(plan.evalStatusCode)
+    ).evalStatusCodeDescription;
 
-      p.name = monPlan.name;
-      p.monitoringLocationData = monPlan.monitoringLocationData;
-      p.unitStackConfigurationData = monPlan.unitStackConfigurationData;
-      p.monitoringLocationData.forEach(l => {
-        delete l.monitoringLocationAttribData;
-        delete l.unitCapacityData;
-        delete l.unitControlData;
-        delete l.unitFuelData;
-        delete l.monitoringMethodData;
-        delete l.supplementalMATSMonitoringMethodData;
-        delete l.monitoringFormulaData;
-        delete l.monitoringDefaultData;
-        delete l.monitoringSpanData;
-        delete l.rectangularDuctWAFData;
-        delete l.monitoringLoadData;
-        delete l.componentData;
-        delete l.monitoringSystemData;
-        delete l.monitoringQualificationData;
+    plan['submissionAvailabilityCodeDescription'] = (
+      await this.submissionStatusCodeRepository.findOne(
+        plan.submissionAvailabilityCode,
+      )
+    ).subAvailabilityCodeDescription;
+  }
+
+  async getConfigurations(
+    orisCodes: number[],
+    monPlanIds: string[] = [],
+  ): Promise<MonitorPlanDTO[]> {
+    let plans: MonitorPlan[];
+    if (monPlanIds.length > 0) {
+      plans = await MonitorPlan.find({
+        where: { id: In(monPlanIds) },
+        relations: ['plant'],
       });
-      delete p.monitoringPlanCommentData;
-      delete p.reportingFrequencies;
+    } else {
+      const plants = await Plant.find({ where: { orisCode: In(orisCodes) } });
+      plans = await MonitorPlan.find({
+        where: { facId: In(plants.map(p => p.id)) },
+        relations: ['plant'],
+      });
     }
-    results.sort((a, b) => {
+
+    let promises = [];
+
+    for (const plan of plans) {
+      promises.push(this.populateLocationsAndStackConfigs(plan));
+    }
+
+    await Promise.all(promises);
+
+    promises = [];
+    const monPlanDto = await this.map.many(plans);
+    for (const plan of monPlanDto) {
+      promises.push(this.populateDescriptions(plan));
+    }
+
+    await Promise.all(promises);
+
+    monPlanDto.sort((a, b) => {
       if (a.name < b.name) {
         return -1;
       }
@@ -79,20 +92,7 @@ export class MonitorConfigurationsWorkspaceService {
 
       return 1;
     });
-    return results;
-  }
 
-  async getConfigurations(
-    orisCodes: number[],
-    monPlanIds: string[] = [],
-  ): Promise<MonitorPlanDTO[]> {
-    let plans;
-    if (monPlanIds.length > 0) {
-      plans = await this.repository.getMonitorPlanByIds(monPlanIds);
-    } else {
-      plans = await this.repository.getMonitorPlansByOrisCodes(orisCodes);
-    }
-
-    return this.parseMonitorPlanConfigurations(plans);
+    return monPlanDto;
   }
 }
