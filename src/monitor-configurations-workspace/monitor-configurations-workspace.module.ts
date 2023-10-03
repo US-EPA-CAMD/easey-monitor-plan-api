@@ -9,6 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import { EvalStatusCodeRepository } from './eval-status.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
+import { MonitorLocationWorkspaceModule } from '../monitor-location-workspace/monitor-location.module';
+import { UnitStackConfigurationWorkspaceModule } from '../unit-stack-configuration-workspace/unit-stack-configuration.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.
       EvalStatusCodeRepository,
       SubmissionsAvailabilityStatusCodeRepository,
     ]),
+    MonitorLocationWorkspaceModule,
+    UnitStackConfigurationWorkspaceModule,
     MonitorPlanWorkspaceModule,
   ],
   controllers: [MonitorConfigurationsWorkspaceController],
