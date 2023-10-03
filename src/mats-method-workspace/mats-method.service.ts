@@ -114,35 +114,39 @@ export class MatsMethodWorkspaceService {
     matsMethods: MatsMethodBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const matsMethod of matsMethods) {
-        promises.push(
-          new Promise(async innerResolve => {
-            let method = await this.repository.getMatsMethodByLodIdParamCodeAndDate(
-              locationId,
-              matsMethod,
-            );
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const matsMethod of matsMethods) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                let method = await this.repository.getMatsMethodByLodIdParamCodeAndDate(
+                  locationId,
+                  matsMethod,
+                );
 
-            if (method) {
-              await this.updateMethod(
-                method.id,
-                method.locationId,
-                matsMethod,
-                userId,
-                true,
-              );
-            } else {
-              await this.createMethod(locationId, matsMethod, userId, true);
-            }
+                if (method) {
+                  await this.updateMethod(
+                    method.id,
+                    method.locationId,
+                    matsMethod,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createMethod(locationId, matsMethod, userId, true);
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

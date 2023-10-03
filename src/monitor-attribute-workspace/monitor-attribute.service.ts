@@ -135,35 +135,39 @@ export class MonitorAttributeWorkspaceService {
     attributes: MonitorAttributeBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const attribute of attributes) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const attributeRecord = await this.repository.getAttributeByLocIdAndDate(
-              locationId,
-              attribute.beginDate,
-            );
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const attribute of attributes) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const attributeRecord = await this.repository.getAttributeByLocIdAndDate(
+                  locationId,
+                  attribute.beginDate,
+                );
 
-            if (attributeRecord !== undefined) {
-              await this.updateAttribute(
-                locationId,
-                attributeRecord.id,
-                attribute,
-                userId,
-                true,
-              );
-            } else {
-              await this.createAttribute(locationId, attribute, userId, true);
-            }
+                if (attributeRecord !== undefined) {
+                  await this.updateAttribute(
+                    locationId,
+                    attributeRecord.id,
+                    attribute,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createAttribute(locationId, attribute, userId, true);
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

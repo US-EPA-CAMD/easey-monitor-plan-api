@@ -137,43 +137,47 @@ export class LMEQualificationWorkspaceService {
     lmeQualifications: LMEQualificationBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const lmeQualification of lmeQualifications) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const lmeQualRecord = await this.getLMEQualificationByDataYear(
-              locationId,
-              qualificationId,
-              lmeQualification.qualificationDataYear,
-            );
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const lmeQualification of lmeQualifications) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const lmeQualRecord = await this.getLMEQualificationByDataYear(
+                  locationId,
+                  qualificationId,
+                  lmeQualification.qualificationDataYear,
+                );
 
-            if (lmeQualRecord) {
-              await this.updateLMEQualification(
-                locationId,
-                qualificationId,
-                lmeQualRecord.id,
-                lmeQualification,
-                userId,
-                true,
-              );
-            } else {
-              await this.createLMEQualification(
-                locationId,
-                qualificationId,
-                lmeQualification,
-                userId,
-                true,
-              );
-            }
+                if (lmeQualRecord) {
+                  await this.updateLMEQualification(
+                    locationId,
+                    qualificationId,
+                    lmeQualRecord.id,
+                    lmeQualification,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createLMEQualification(
+                    locationId,
+                    qualificationId,
+                    lmeQualification,
+                    userId,
+                    true,
+                  );
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

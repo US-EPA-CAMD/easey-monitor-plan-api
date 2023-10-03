@@ -138,43 +138,47 @@ export class LEEQualificationWorkspaceService {
     leeQualifications: LEEQualificationBaseDTO[],
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
-      for (const leeQualification of leeQualifications) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const leeQualificationRecord = await this.repository.getLEEQualificationByTestDate(
-              locationId,
-              qualificationId,
-              leeQualification.qualificationTestDate,
-            );
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
+        for (const leeQualification of leeQualifications) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const leeQualificationRecord = await this.repository.getLEEQualificationByTestDate(
+                  locationId,
+                  qualificationId,
+                  leeQualification.qualificationTestDate,
+                );
 
-            if (leeQualificationRecord) {
-              await this.updateLEEQualification(
-                locationId,
-                qualificationId,
-                leeQualificationRecord.id,
-                leeQualification,
-                userId,
-                true,
-              );
-            } else {
-              await this.createLEEQualification(
-                locationId,
-                qualificationId,
-                leeQualification,
-                userId,
-                true,
-              );
-            }
+                if (leeQualificationRecord) {
+                  await this.updateLEEQualification(
+                    locationId,
+                    qualificationId,
+                    leeQualificationRecord.id,
+                    leeQualification,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createLEEQualification(
+                    locationId,
+                    qualificationId,
+                    leeQualification,
+                    userId,
+                    true,
+                  );
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
-      resolve(true);
+        await Promise.all(promises);
+        resolve(true);
+      })()
     });
   }
 }

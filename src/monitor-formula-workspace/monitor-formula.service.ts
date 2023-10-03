@@ -164,51 +164,55 @@ export class MonitorFormulaWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const formula of formulas) {
-        promises.push(
-          new Promise(async innerResolve => {
-            let formulaRecord = await this.repository.getFormulaByLocIdAndFormulaIdentifier(
-              locationId,
-              formula.formulaId,
-            );
+        for (const formula of formulas) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                let formulaRecord = await this.repository.getFormulaByLocIdAndFormulaIdentifier(
+                  locationId,
+                  formula.formulaId,
+                );
 
-            if (formulaRecord === undefined) {
-              // Check used_identifier table to see if the formulaId has already
-              // been used, and if so grab that monitor-formula record for update
-              let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                locationId,
-                formula.formulaId,
-                'F',
-              );
+                if (formulaRecord === undefined) {
+                  // Check used_identifier table to see if the formulaId has already
+                  // been used, and if so grab that monitor-formula record for update
+                  let usedIdentifier = await this.usedIdRepo.getBySpecs(
+                    locationId,
+                    formula.formulaId,
+                    'F',
+                  );
 
-              if (usedIdentifier)
-                formulaRecord = await this.repository.findOne({
-                  id: usedIdentifier.id,
-                });
-            }
+                  if (usedIdentifier)
+                    formulaRecord = await this.repository.findOne({
+                      id: usedIdentifier.id,
+                    });
+                }
 
-            if (formulaRecord !== undefined) {
-              await this.updateFormula(
-                locationId,
-                formulaRecord.id,
-                formula,
-                userId,
-                true,
-              );
-            } else {
-              await this.createFormula(locationId, formula, userId, true);
-            }
+                if (formulaRecord !== undefined) {
+                  await this.updateFormula(
+                    locationId,
+                    formulaRecord.id,
+                    formula,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createFormula(locationId, formula, userId, true);
+                }
 
-            innerResolve(true);
-          }),
-        );
+                innerResolve(true);
+              })()
+            }),
+          );
 
-        await Promise.all(promises);
-        resolve(true);
-      }
+          await Promise.all(promises);
+          resolve(true);
+        }
+      })()
     });
   }
 }

@@ -39,47 +39,51 @@ export class UnitControlWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-    return new Promise(async resolve => {
-      const promises = [];
+    return new Promise(resolve => {
+      (async () => {
+        const promises = [];
 
-      for (const unitControl of unitControls) {
-        promises.push(
-          new Promise(async innerResolve => {
-            const unitControlRecord = await this.repository.getUnitControlBySpecs(
-              unitRecordId,
-              unitControl.parameterCode,
-              unitControl.controlCode,
-              unitControl.installDate,
-              unitControl.retireDate,
-            );
+        for (const unitControl of unitControls) {
+          promises.push(
+            new Promise(innerResolve => {
+              (async () => {
+                const unitControlRecord = await this.repository.getUnitControlBySpecs(
+                  unitRecordId,
+                  unitControl.parameterCode,
+                  unitControl.controlCode,
+                  unitControl.installDate,
+                  unitControl.retireDate,
+                );
 
-            if (unitControlRecord) {
-              await this.updateUnitControl(
-                locationId,
-                unitRecordId,
-                unitControlRecord.id,
-                unitControl,
-                userId,
-                true,
-              );
-            } else {
-              await this.createUnitControl(
-                locationId,
-                unitRecordId,
-                unitControl,
-                userId,
-                true,
-              );
-            }
+                if (unitControlRecord) {
+                  await this.updateUnitControl(
+                    locationId,
+                    unitRecordId,
+                    unitControlRecord.id,
+                    unitControl,
+                    userId,
+                    true,
+                  );
+                } else {
+                  await this.createUnitControl(
+                    locationId,
+                    unitRecordId,
+                    unitControl,
+                    userId,
+                    true,
+                  );
+                }
 
-            innerResolve(true);
-          }),
-        );
-      }
+                innerResolve(true);
+              })()
+            }),
+          );
+        }
 
-      await Promise.all(promises);
+        await Promise.all(promises);
 
-      resolve(true);
+        resolve(true);
+      })()
     });
   }
 
