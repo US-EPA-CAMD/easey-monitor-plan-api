@@ -61,6 +61,8 @@ import { PCTQualification } from '../entities/workspace/pct-qualification.entity
 import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
+import { EvalStatusCode } from '../entities/eval-status-code.entity';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
@@ -354,6 +356,13 @@ describe('Monitor Plan Service', () => {
 
   describe('getMonitorPlan', () => {
     it('Return a MonitorPlanDTO mapped from an Entity retrieved by ID', async () => {
+      jest
+        .spyOn(SubmissionAvailabilityCode, 'findOne')
+        .mockResolvedValue(new SubmissionAvailabilityCode());
+      jest
+        .spyOn(EvalStatusCode, 'findOne')
+        .mockResolvedValue(new EvalStatusCode());
+
       const result = await service.getMonitorPlan(MON_PLAN_ID);
       expect(result).toEqual(DTO);
     });
