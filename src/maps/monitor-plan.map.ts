@@ -69,6 +69,7 @@ export class MonitorPlanMap extends BaseMap<
       monitoringPlanCommentData,
       pendingStatusCode,
       evalStatusCode,
+      evalStatusCodeDescription: '',
       unitStackConfigurationData,
       reportingFrequencies,
       monitoringLocationData,
@@ -77,6 +78,7 @@ export class MonitorPlanMap extends BaseMap<
       updateDate: entity.updateDate?.toISOString() ?? null,
       submissionId: entity.submissionId,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
+      submissionAvailabilityCodeDescription: '',
       lastEvaluatedDate: entity.lastEvaluatedDate,
     };
   }
