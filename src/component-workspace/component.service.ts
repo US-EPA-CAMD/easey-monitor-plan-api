@@ -22,10 +22,10 @@ export class ComponentWorkspaceService {
 
     @Inject(forwardRef(() => AnalyzerRangeWorkspaceService))
     private readonly analyzerRangeDataService: AnalyzerRangeWorkspaceService,
-    
+
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   async runComponentChecks(
     components: UpdateComponentBaseDTO[],
@@ -116,6 +116,7 @@ export class ComponentWorkspaceService {
     locationId: string,
     userId: string,
   ) {
+
     return new Promise(resolve => {
       (async () => {
         const innerPromises = [];
@@ -145,24 +146,27 @@ export class ComponentWorkspaceService {
 
                 if (compRecord) {
                   await this.updateComponent(
-                    locationId, compRecord,
+                    locationId,
+                    compRecord,
                     component,
                     userId,
                   );
+
                 } else {
                   await this.createComponent(locationId, component, userId);
                   compRecord = await this.repository.getComponentByLocIdAndCompId(
                     locationId,
                     component.componentId,
                   );
-
-                  await this.analyzerRangeDataService.importAnalyzerRange(
-                    compRecord.id,
-                    locationId,
-                    component.analyzerRangeData,
-                    userId,
-                  );
                 }
+
+                await this.analyzerRangeDataService.importAnalyzerRange(
+                  compRecord.componentId,
+                  locationId,
+                  component.analyzerRangeData,
+                  userId,
+                );
+
 
                 innerResolve(true);
               })()
@@ -181,6 +185,7 @@ export class ComponentWorkspaceService {
     payload: UpdateComponentBaseDTO,
     userId: string,
   ): Promise<ComponentDTO> {
+
     componentRecord.modelVersion = payload.modelVersion;
     componentRecord.serialNumber = payload.serialNumber;
     componentRecord.hgConverterIndicator = payload.hgConverterIndicator;
