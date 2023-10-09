@@ -1,62 +1,64 @@
 import { Injectable } from '@nestjs/common';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
-import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
-import { InjectRepository } from '@nestjs/typeorm';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorPlanService } from '../monitor-plan/monitor-plan.service';
-import { MoreThan } from 'typeorm';
+import { In, MoreThan } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { Plant } from '../entities/plant.entity';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 
 @Injectable()
 export class MonitorConfigurationsService {
   constructor(
-    @InjectRepository(MonitorPlanRepository)
-    private readonly repository: MonitorPlanRepository,
+    private readonly locationRepository: MonitorLocationRepository,
     private readonly uscRepository: UnitStackConfigurationRepository,
     private readonly map: MonitorPlanMap,
-    private readonly monitorPlanService: MonitorPlanService,
   ) {}
 
-  private async parseMonitorPlanConfigurations(plans: MonitorPlan[]) {
-    if (plans.length === 0) {
-      return [];
-    }
-    const results = await this.map.many(plans);
+  async populateLocationsAndStackConfigs(plan: MonitorPlan) {
+    const locations = await this.locationRepository.getMonitorLocationsByPlanId(
+      plan.id,
+    );
 
-    for (const p of results) {
-      const monPlan = await this.monitorPlanService.exportMonitorPlan(
-        p.id,
-        false,
-        false,
-        false,
-        true,
-      );
-      p.name = monPlan.name;
-      p.monitoringLocationData = monPlan.monitoringLocationData;
-      p.unitStackConfigurationData = monPlan.unitStackConfigurationData;
-      p.monitoringLocationData.forEach(l => {
-        delete l.monitoringLocationAttribData;
-        delete l.unitCapacityData;
-        delete l.unitControlData;
-        delete l.unitFuelData;
-        delete l.monitoringMethodData;
-        delete l.supplementalMATSMonitoringMethodData;
-        delete l.monitoringFormulaData;
-        delete l.monitoringDefaultData;
-        delete l.monitoringSpanData;
-        delete l.rectangularDuctWAFData;
-        delete l.monitoringLoadData;
-        delete l.componentData;
-        delete l.monitoringSystemData;
-        delete l.monitoringQualificationData;
+    const unitStackConfigs = await this.uscRepository.getUnitStackConfigsByLocationIds(
+      locations.map(l => l.id),
+    );
+
+    plan.locations = locations;
+    plan.unitStackConfigurations = unitStackConfigs;
+  }
+
+  async getConfigurations(
+    orisCodes: number[],
+    monPlanIds: string[] = [],
+  ): Promise<MonitorPlanDTO[]> {
+    let plans: MonitorPlan[];
+    if (monPlanIds.length > 0) {
+      plans = await MonitorPlan.find({
+        where: { id: In(monPlanIds) },
+        relations: ['plant'],
       });
-      delete p.monitoringPlanCommentData;
-      delete p.reportingFrequencies;
+    } else {
+      const plants = await Plant.find({ where: { orisCode: In(orisCodes) } });
+      plans = await MonitorPlan.find({
+        where: { facId: In(plants.map(p => p.id)) },
+        relations: ['plant'],
+      });
     }
-    results.sort((a, b) => {
+
+    const promises = [];
+
+    for (const plan of plans) {
+      promises.push(this.populateLocationsAndStackConfigs(plan));
+    }
+
+    await Promise.all(promises);
+
+    const dto = await this.map.many(plans);
+
+    dto.sort((a, b) => {
       if (a.name < b.name) {
         return -1;
       }
@@ -67,21 +69,8 @@ export class MonitorConfigurationsService {
 
       return 1;
     });
-    return results;
-  }
 
-  async getConfigurations(
-    orisCodes: number[],
-    monPlanIds: string[] = [],
-  ): Promise<MonitorPlanDTO[]> {
-    let plans;
-    if (monPlanIds.length > 0) {
-      plans = await this.repository.getMonitorPlanByIds(monPlanIds);
-    } else {
-      plans = await this.repository.getMonitorPlansByOrisCodes(orisCodes);
-    }
-
-    return this.parseMonitorPlanConfigurations(plans);
+    return dto;
   }
 
   async lookupUnitStacks(locations: string[], config: MonitorPlan) {

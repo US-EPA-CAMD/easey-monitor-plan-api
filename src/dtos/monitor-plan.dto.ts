@@ -132,6 +132,10 @@ export class MonitorPlanDTO {
   evalStatusCode: string;
 
   @IsString()
+  @IsOptional()
+  evalStatusCodeDescription: string;
+
+  @IsString()
   userId: string;
 
   @IsDateString()
@@ -148,6 +152,10 @@ export class MonitorPlanDTO {
   @IsString()
   @IsOptional()
   submissionAvailabilityCode: string;
+
+  @IsString()
+  @IsOptional()
+  submissionAvailabilityCodeDescription: string;
 
   @IsDateString()
   @IsOptional()

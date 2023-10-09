@@ -37,6 +37,8 @@ import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-pla
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
+import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
+import { EvalStatusCode } from '../entities/eval-status-code.entity';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -160,7 +162,17 @@ export class MonitorPlanWorkspaceService {
 
   async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
     const mp = await this.repository.getMonitorPlan(monPlanId);
-    return this.map.one(mp);
+    const dto = await this.map.one(mp);
+
+    dto.submissionAvailabilityCodeDescription = (
+      await SubmissionAvailabilityCode.findOne(mp.submissionAvailabilityCode)
+    ).subAvailabilityCodeDescription;
+
+    dto.evalStatusCodeDescription = (
+      await EvalStatusCode.findOne(mp.evalStatusCode)
+    ).evalStatusCodeDescription;
+
+    return dto;
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
@@ -363,7 +375,7 @@ export class MonitorPlanWorkspaceService {
             }
 
             resolve(components);
-          })()
+          })();
         }),
       );
 
@@ -398,7 +410,7 @@ export class MonitorPlanWorkspaceService {
             }
 
             resolve(systems);
-          })()
+          })();
         }),
       );
 
@@ -444,7 +456,7 @@ export class MonitorPlanWorkspaceService {
             }
 
             resolve(quals);
-          })()
+          })();
         }),
       );
     }

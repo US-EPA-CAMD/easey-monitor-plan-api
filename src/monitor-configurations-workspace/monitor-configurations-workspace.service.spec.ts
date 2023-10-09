@@ -10,6 +10,9 @@ import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availa
 import { EvalStatusCode } from '../entities/eval-status-code.entity';
 import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
+import { Plant } from '../entities/workspace/plant.entity';
+import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
@@ -72,6 +75,8 @@ describe('MonitorConfigurationsWorkspaceService', () => {
           provide: MonitorPlanConfigurationMap,
           useFactory: mockMonitorPlanMap,
         },
+        MonitorLocationWorkspaceRepository,
+        UnitStackConfigurationWorkspaceRepository,
       ],
     }).compile();
 
@@ -82,11 +87,15 @@ describe('MonitorConfigurationsWorkspaceService', () => {
 
   describe('getConfigurations', () => {
     it('Should return an array of MonitoringPlanDTO matching a query by monPlanId', async () => {
+      jest.spyOn(MonitorPlan, 'find').mockResolvedValue([]);
+      jest.spyOn(Plant, 'find').mockResolvedValue([]);
       const result = await service.getConfigurations([], [MON_PLAN_ID]);
       expect(result.length).toEqual(1);
     });
 
     it('Should return an array of MonitoringPlanDTO matching a query by orisCode', async () => {
+      jest.spyOn(MonitorPlan, 'find').mockResolvedValue([]);
+      jest.spyOn(Plant, 'find').mockResolvedValue([]);
       const result = await service.getConfigurations([ORIS_CODE]);
       expect(result.length).toEqual(1);
     });
