@@ -86,7 +86,7 @@ export class PCTQualificationWorkspaceService {
     if (!['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode)) {
       throw new EaseyException(
         new Error(
-          'PCT Qualification record can be created under Qualifications with [PK, SK, GF] qualificationTypeCode.',
+          'A Monitor Qualification PCT record should not be reported for qualification type codes other than PK,SK and GF.',
         ),
         HttpStatus.NOT_FOUND,
         {

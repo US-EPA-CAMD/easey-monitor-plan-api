@@ -48,12 +48,20 @@ export class MonitorQualificationWorkspaceService {
         });
       }
 
+      if (qual.qualificationTypeCode !== 'CPMS') {
+        qual.monitoringQualificationCPMSData.forEach((cpmsQual, idx) => {
+          errorList.push(
+            `[IMPORT12-FATAL-C] You have reported a MonitorQualCPMS record for a location with the Qualification Type Code not equal to CPMS. A MonitorQualCPMS record should not be reported for qualification type codes other than CPMS.`,
+          );
+        });
+      }
+
       if (
         !['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode) &&
         qual.monitoringQualificationPercentData.length > 0
       ) {
         errorList.push(
-          `[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification Codes other than PK, SK or GF.`,
+          `[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification type codes other than PK, SK or GF.`,
         );
       }
 
@@ -62,7 +70,7 @@ export class MonitorQualificationWorkspaceService {
         qual.monitoringQualificationLMEData.length > 0
       ) {
         errorList.push(
-          `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.`,
+          `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification type codes other than LMEA or LMES.`,
         );
       }
     }

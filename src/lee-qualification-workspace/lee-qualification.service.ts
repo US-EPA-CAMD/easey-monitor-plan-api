@@ -71,7 +71,7 @@ export class LEEQualificationWorkspaceService {
     if (qual.qualificationTypeCode !== 'LEE') {
       throw new EaseyException(
         new Error(
-          'LEE Qualification record can be created under Qualifications with [LEE] qualificationTypeCode.',
+          'A Monitor Qualification LEE record should not be reported for qualification type codes other than LEE.',
         ),
         HttpStatus.NOT_FOUND,
         {

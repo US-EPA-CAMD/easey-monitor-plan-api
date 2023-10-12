@@ -86,7 +86,7 @@ export class LMEQualificationWorkspaceService {
     if (!['LMEA', 'LMES'].includes(qual.qualificationTypeCode)) {
       throw new EaseyException(
         new Error(
-          'LEE Qualification record can be created only under Qualifications with [LMEA, LMES] qualificationTypeCode.',
+          'A Monitor Qualification LME record should not be reported for qualification type codes other than LMEA and LMES.',
         ),
         HttpStatus.NOT_FOUND,
         {

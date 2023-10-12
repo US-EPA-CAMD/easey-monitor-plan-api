@@ -60,7 +60,7 @@ export class CPMSQualificationWorkspaceService {
     if (qual.qualificationTypeCode !== 'CPMS') {
       throw new EaseyException(
         new Error(
-          'CPMS Qualification record can be created only under Qualifications with [CPMS] qualificationTypeCode.',
+          'A Monitor Qualification CPMS record should not be reported for qualification type codes other than CPMS.',
         ),
         HttpStatus.NOT_FOUND,
         {
