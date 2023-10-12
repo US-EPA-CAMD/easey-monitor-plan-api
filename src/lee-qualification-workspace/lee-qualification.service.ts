@@ -11,6 +11,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 
 @Injectable()
 export class LEEQualificationWorkspaceService {
@@ -22,6 +23,8 @@ export class LEEQualificationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+    @Inject(forwardRef(() => MonitorQualificationWorkspaceService))
+    private readonly mpQualService: MonitorQualificationWorkspaceService,
   ) {}
 
   async getLEEQualifications(
@@ -35,12 +38,12 @@ export class LEEQualificationWorkspaceService {
   async getLEEQualification(
     locId: string,
     qualId: string,
-    pctQualId: string,
+    leeQualId: string,
   ): Promise<LEEQualificationDTO> {
     const result = await this.repository.getLEEQualification(
       locId,
       qualId,
-      pctQualId,
+      leeQualId,
     );
     if (!result) {
       throw new EaseyException(
@@ -49,7 +52,7 @@ export class LEEQualificationWorkspaceService {
         {
           locId: locId,
           qualId: qualId,
-          pctQualId: pctQualId,
+          leeQualId: leeQualId,
         },
       );
     }
@@ -63,9 +66,24 @@ export class LEEQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<LEEQualificationDTO> {
-    const load = this.repository.create({
+    const qual = await this.mpQualService.getQualification(locationId, qualId);
+
+    if (qual.qualificationTypeCode !== 'LEE') {
+      throw new EaseyException(
+        new Error(
+          'LEE Qualification record can be created under Qualifications with [LEE] qualificationTypeCode.',
+        ),
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          qualId: qualId,
+        },
+      );
+    }
+
+    const leeQual = this.repository.create({
       id: uuid(),
-      qualificationId: qualId,
+      qualificationId: qual.id,
       qualificationTestDate: payload.qualificationTestDate,
       parameterCode: payload.parameterCode,
       qualificationTestType: payload.qualificationTestType,
@@ -78,7 +96,7 @@ export class LEEQualificationWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(load);
+    const result = await this.repository.save(leeQual);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
@@ -171,14 +189,14 @@ export class LEEQualificationWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

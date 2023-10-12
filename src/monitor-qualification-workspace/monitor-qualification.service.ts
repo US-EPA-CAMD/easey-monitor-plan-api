@@ -77,7 +77,10 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
   ): Promise<void> {
     const promises = [];
-    if (qualification.monitoringQualificationLEEData?.length > 0) {
+    if (
+      qualification.monitoringQualificationLEEData?.length > 0 &&
+      qualification.qualificationTypeCode === 'LEE'
+    ) {
       promises.push(
         this.leeQualificationService.importLEEQualification(
           locationId,
@@ -88,7 +91,10 @@ export class MonitorQualificationWorkspaceService {
       );
     }
 
-    if (qualification.monitoringQualificationLMEData?.length > 0) {
+    if (
+      qualification.monitoringQualificationLMEData?.length > 0 &&
+      ['LMEA', 'LMES'].includes(qualification.qualificationTypeCode)
+    ) {
       promises.push(
         this.lmeQualificationService.importLMEQualification(
           locationId,
@@ -99,7 +105,10 @@ export class MonitorQualificationWorkspaceService {
       );
     }
 
-    if (qualification.monitoringQualificationPercentData?.length > 0) {
+    if (
+      qualification.monitoringQualificationPercentData?.length > 0 &&
+      ['PK', 'SK', 'GF'].includes(qualification.qualificationTypeCode)
+    ) {
       promises.push(
         this.pctQualificationService.importPCTQualification(
           locationId,
@@ -110,7 +119,10 @@ export class MonitorQualificationWorkspaceService {
       );
     }
 
-    if (qualification.monitoringQualificationCPMSData?.length > 0) {
+    if (
+      qualification.monitoringQualificationCPMSData?.length > 0 &&
+      qualification.qualificationTypeCode === 'CPMS'
+    ) {
       promises.push(
         this.cpmsQualificationService.importCPMSQualifications(
           locationId,

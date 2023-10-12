@@ -10,8 +10,11 @@ import {
   PCTQualificationDTO,
 } from '../dtos/pct-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
+jest.mock('../monitor-qualification-workspace/monitor-qualification.service');
 
 const locId = '6';
 const qualId = '1';
@@ -40,6 +43,13 @@ const payload: PCTQualificationBaseDTO = {
 
 const pctQual = new PCTQualification();
 
+let qual = new MonitorQualificationDTO();
+qual.qualificationTypeCode = 'PK';
+
+const mockQualService = () => ({
+  getQualification: jest.fn().mockResolvedValue(qual),
+});
+
 const mockRepository = () => ({
   getPCTQualifications: jest.fn().mockResolvedValue(returnedPCTQualifications),
   getPCTQualification: jest.fn().mockResolvedValue(returnedPCTQualification),
@@ -67,6 +77,11 @@ describe('PCTQualificationService', () => {
       providers: [
         PCTQualificationWorkspaceService,
         MonitorPlanWorkspaceService,
+        {
+          provide: MonitorQualificationWorkspaceService,
+          useFactory: mockQualService,
+        },
+
         {
           provide: PCTQualificationWorkspaceRepository,
           useFactory: mockRepository,

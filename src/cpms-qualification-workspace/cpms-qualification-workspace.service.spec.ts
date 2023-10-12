@@ -8,8 +8,11 @@ import {
 import { CPMSQualification } from '../entities/workspace/cpms-qualification.entity';
 import { CPMSQualificationMap } from '../maps/cpms-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
+jest.mock('../monitor-qualification-workspace/monitor-qualification.service');
 
 const locId = '6';
 const qualId = '1';
@@ -25,6 +28,13 @@ const payload: CPMSQualificationBaseDTO = {
   stackTestNumber: 'Test1234',
   operatingLimit: 10,
 };
+
+let qual = new MonitorQualificationDTO();
+qual.qualificationTypeCode = 'CPMS';
+
+const mockQualService = () => ({
+  getQualification: jest.fn().mockResolvedValue(qual),
+});
 
 const mockRepository = () => ({
   getCPMSQualification: jest.fn().mockResolvedValue(cpmsQualification),
@@ -50,6 +60,10 @@ describe('CPMSQualificationWorkspaceService', () => {
       providers: [
         CPMSQualificationWorkspaceService,
         MonitorPlanWorkspaceService,
+        {
+          provide: MonitorQualificationWorkspaceService,
+          useFactory: mockQualService,
+        },
         {
           provide: CPMSQualificationWorkspaceRepository,
           useFactory: mockRepository,

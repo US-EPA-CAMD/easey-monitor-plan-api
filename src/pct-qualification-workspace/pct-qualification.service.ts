@@ -10,6 +10,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 
 @Injectable()
 export class PCTQualificationWorkspaceService {
@@ -20,6 +21,8 @@ export class PCTQualificationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+    @Inject(forwardRef(() => MonitorQualificationWorkspaceService))
+    private readonly mpQualService: MonitorQualificationWorkspaceService,
   ) {}
 
   async getPCTQualifications(
@@ -78,9 +81,24 @@ export class PCTQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<PCTQualificationDTO> {
-    const load = this.repository.create({
+    const qual = await this.mpQualService.getQualification(locationId, qualId);
+
+    if (!['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode)) {
+      throw new EaseyException(
+        new Error(
+          'PCT Qualification record can be created under Qualifications with [PK, SK, GF] qualificationTypeCode.',
+        ),
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          qualId: qualId,
+        },
+      );
+    }
+
+    const pctQual = this.repository.create({
       id: uuid(),
-      qualificationId: qualId,
+      qualificationId: qual.id,
       qualificationYear: payload.qualificationYear,
       averagePercentValue: payload.averagePercentValue,
       yr1QualificationDataYear: payload.yr1QualificationDataYear,
@@ -97,7 +115,7 @@ export class PCTQualificationWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(load);
+    const result = await this.repository.save(pctQual);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId);
@@ -183,14 +201,14 @@ export class PCTQualificationWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }
