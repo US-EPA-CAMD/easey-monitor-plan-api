@@ -85,7 +85,7 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaCode.example,
     name: propertyMetadata.monitorFormulaDTOFormulaCode.fieldLabels.value,
   })
-  @ValidateIf(o => o.formulaText === null)
+  @ValidateIf(o => o.formulaText === null || o.formulaCode !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-9-A', {
