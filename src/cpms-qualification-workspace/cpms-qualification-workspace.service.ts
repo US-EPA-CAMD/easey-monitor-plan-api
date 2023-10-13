@@ -62,7 +62,7 @@ export class CPMSQualificationWorkspaceService {
         new Error(
           'A Monitor Qualification CPMS record should not be reported for qualification type codes other than CPMS.',
         ),
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
         {
           locationId: locationId,
           qualId: qualId,

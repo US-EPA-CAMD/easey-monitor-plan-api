@@ -73,7 +73,7 @@ export class LEEQualificationWorkspaceService {
         new Error(
           'A Monitor Qualification LEE record should not be reported for qualification type codes other than LEE.',
         ),
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
         {
           locationId: locationId,
           qualId: qualId,
