@@ -10,8 +10,11 @@ import {
   LMEQualificationDTO,
 } from '../dtos/lme-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
+jest.mock('../monitor-qualification-workspace/monitor-qualification.service');
 
 const locId = '6';
 const qualId = '1';
@@ -28,6 +31,13 @@ const payload: LMEQualificationBaseDTO = {
   so2Tons: 1.5,
   noxTons: 1.5,
 };
+
+let qual = new MonitorQualificationDTO();
+qual.qualificationTypeCode = 'LMEA';
+
+const mockQualService = () => ({
+  getQualification: jest.fn().mockResolvedValue(qual),
+});
 
 const mockRepository = () => ({
   getLMEQualifications: jest.fn().mockResolvedValue(returnedLMEQualifications),
@@ -56,6 +66,11 @@ describe('LMEQualificationWorkspaceService', () => {
       providers: [
         LMEQualificationWorkspaceService,
         MonitorPlanWorkspaceService,
+        {
+          provide: MonitorQualificationWorkspaceService,
+          useFactory: mockQualService,
+        },
+
         {
           provide: LMEQualificationWorkspaceRepository,
           useFactory: mockRepository,

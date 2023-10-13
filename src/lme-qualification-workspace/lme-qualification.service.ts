@@ -11,7 +11,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 
 @Injectable()
 export class LMEQualificationWorkspaceService {
@@ -23,6 +23,8 @@ export class LMEQualificationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+    @Inject(forwardRef(() => MonitorQualificationWorkspaceService))
+    private readonly mpQualService: MonitorQualificationWorkspaceService,
   ) {}
 
   async getLMEQualifications(
@@ -79,9 +81,24 @@ export class LMEQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<LMEQualificationDTO> {
+    const qual = await this.mpQualService.getQualification(locationId, qualId);
+
+    if (!['LMEA', 'LMES'].includes(qual.qualificationTypeCode)) {
+      throw new EaseyException(
+        new Error(
+          'A Monitor Qualification LME record should not be reported for qualification type codes other than LMEA and LMES.',
+        ),
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          qualId: qualId,
+        },
+      );
+    }
+
     const lmeQual = this.repository.create({
       id: uuid(),
-      qualificationId: qualId,
+      qualificationId: qual.id,
       qualificationDataYear: payload.qualificationDataYear,
       operatingHours: payload.operatingHours,
       so2Tons: payload.so2Tons,
@@ -170,14 +187,14 @@ export class LMEQualificationWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

@@ -10,13 +10,23 @@ import {
   LEEQualificationDTO,
 } from '../dtos/lee-qualification.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
+jest.mock('../monitor-qualification-workspace/monitor-qualification.service');
 
 const returnedLEEQualification: LEEQualificationDTO = new LEEQualificationDTO();
 const leeQual = new LEEQualification();
 
 const payload = new LEEQualificationBaseDTO();
+
+let qual = new MonitorQualificationDTO();
+qual.qualificationTypeCode = 'LEE';
+
+const mockQualService = () => ({
+  getQualification: jest.fn().mockResolvedValue(qual),
+});
 
 const mockRepository = () => ({
   getLEEQualifications: jest.fn().mockResolvedValue([leeQual]),
@@ -43,6 +53,10 @@ describe('LEEQualificationService', () => {
       providers: [
         LEEQualificationWorkspaceService,
         MonitorPlanWorkspaceService,
+        {
+          provide: MonitorQualificationWorkspaceService,
+          useFactory: mockQualService,
+        },
         {
           provide: LEEQualificationWorkspaceRepository,
           useFactory: mockRepository,

@@ -98,13 +98,13 @@ describe('MonitorQualificationService', () => {
     it('Should pass when values for qualTypeCode "LMEA" of qualfication is valid with so2 value not set', async () => {
       const quals = new UpdateMonitorQualificationDTO();
       const lmeQual = new LMEQualificationBaseDTO();
-      const leeQual = new LEEQualificationBaseDTO();
 
       lmeQual.so2Tons = null;
       quals.qualificationTypeCode = 'LMEA';
       quals.monitoringQualificationLMEData = [lmeQual];
-      quals.monitoringQualificationLEEData = [leeQual];
+      quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [];
+      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -122,8 +122,9 @@ describe('MonitorQualificationService', () => {
       lmeQual.so2Tons = null;
       quals.qualificationTypeCode = 'PK';
       quals.monitoringQualificationLMEData = [];
-      quals.monitoringQualificationLEEData = [leeQual];
+      quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [pctQual];
+      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -141,6 +142,7 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLMEData = [lmeQual];
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [];
+      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -148,7 +150,7 @@ describe('MonitorQualificationService', () => {
 
       const errorList = [
         '[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #0. This field should be blank',
-        '[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.',
+        '[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification type codes other than LMEA or LMES.',
       ];
 
       expect(checkResults).toEqual(errorList);
@@ -164,13 +166,14 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLMEData = [];
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [pctQual];
+      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
       ]);
 
       const errorList = [
-        '[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification Codes other than PK, SK or GF.',
+        '[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification type codes other than PK, SK or GF.',
       ];
 
       expect(checkResults).toEqual(errorList);
