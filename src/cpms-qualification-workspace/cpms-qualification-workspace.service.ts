@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Inject, Injectable, forwardRef, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
 import {
@@ -9,6 +9,8 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { CPMSQualificationMap } from '../maps/cpms-qualification.map';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class CPMSQualificationWorkspaceService {
@@ -19,6 +21,8 @@ export class CPMSQualificationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
+    @Inject(forwardRef(() => MonitorQualificationWorkspaceService))
+    private readonly mpQualService: MonitorQualificationWorkspaceService,
   ) {}
 
   async getCPMSQualificationByStackTestNumber(
@@ -51,6 +55,21 @@ export class CPMSQualificationWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<CPMSQualificationDTO> {
+    const qual = await this.mpQualService.getQualification(locationId, qualId);
+
+    if (qual.qualificationTypeCode !== 'CPMS') {
+      throw new EaseyException(
+        new Error(
+          'A Monitor Qualification CPMS record should not be reported for qualification type codes other than CPMS.',
+        ),
+        HttpStatus.NOT_FOUND,
+        {
+          locationId: locationId,
+          qualId: qualId,
+        },
+      );
+    }
+
     const cpmsQual = this.repository.create({
       id: uuid(),
       qualificationId: qualId,

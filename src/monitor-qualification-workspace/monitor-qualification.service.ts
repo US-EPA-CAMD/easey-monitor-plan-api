@@ -53,7 +53,7 @@ export class MonitorQualificationWorkspaceService {
         qual.monitoringQualificationPercentData.length > 0
       ) {
         errorList.push(
-          `[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification Codes other than PK, SK or GF.`,
+          `[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification type codes other than PK, SK or GF.`,
         );
       }
 
@@ -62,10 +62,30 @@ export class MonitorQualificationWorkspaceService {
         qual.monitoringQualificationLMEData.length > 0
       ) {
         errorList.push(
-          `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification Codes other than LMEA or LMES.`,
+          `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification type codes other than LMEA or LMES.`,
+        );
+      }
+
+      if (
+        qual.qualificationTypeCode !== 'CPMS' &&
+        qual.monitoringQualificationCPMSData.length > 0
+      ) {
+        errorList.push(
+          `[IMPORT12-FATAL-C] You have reported a MonitorQualCPMS record for a location with the Qualification Type Code not equal to CPMS. A MonitorQualCPMS record should not be reported for qualification type codes other than CPMS.`,
+        );
+      }
+
+      if (
+        qual.qualificationTypeCode !== 'LEE' &&
+        qual.monitoringQualificationLEEData.length > 0
+      ) {
+        errorList.push(
+          `[IMPORT12-FATAL-D] You have reported a MonitorQualCPMS record for a location with the Qualification Type Code not equal to LEE. A MonitorQualCPMS record should not be reported for qualification type codes other than LEE.`,
         );
       }
     }
+
+    console.log('errorList', errorList);
 
     return errorList;
   }
@@ -77,7 +97,10 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
   ): Promise<void> {
     const promises = [];
-    if (qualification.monitoringQualificationLEEData?.length > 0) {
+    if (
+      qualification.monitoringQualificationLEEData?.length > 0 &&
+      qualification.qualificationTypeCode === 'LEE'
+    ) {
       promises.push(
         this.leeQualificationService.importLEEQualification(
           locationId,
@@ -88,7 +111,10 @@ export class MonitorQualificationWorkspaceService {
       );
     }
 
-    if (qualification.monitoringQualificationLMEData?.length > 0) {
+    if (
+      qualification.monitoringQualificationLMEData?.length > 0 &&
+      ['LMEA', 'LMES'].includes(qualification.qualificationTypeCode)
+    ) {
       promises.push(
         this.lmeQualificationService.importLMEQualification(
           locationId,
@@ -99,7 +125,10 @@ export class MonitorQualificationWorkspaceService {
       );
     }
 
-    if (qualification.monitoringQualificationPercentData?.length > 0) {
+    if (
+      qualification.monitoringQualificationPercentData?.length > 0 &&
+      ['PK', 'SK', 'GF'].includes(qualification.qualificationTypeCode)
+    ) {
       promises.push(
         this.pctQualificationService.importPCTQualification(
           locationId,
@@ -110,7 +139,10 @@ export class MonitorQualificationWorkspaceService {
       );
     }
 
-    if (qualification.monitoringQualificationCPMSData?.length > 0) {
+    if (
+      qualification.monitoringQualificationCPMSData?.length > 0 &&
+      qualification.qualificationTypeCode === 'CPMS'
+    ) {
       promises.push(
         this.cpmsQualificationService.importCPMSQualifications(
           locationId,
