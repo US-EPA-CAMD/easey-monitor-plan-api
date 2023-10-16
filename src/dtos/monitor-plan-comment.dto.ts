@@ -10,7 +10,6 @@ import {
   IsString,
   MaxLength,
   MinLength,
-  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
 import { DATE_FORMAT } from '../utilities/constants';
@@ -46,13 +45,13 @@ export class MonitorPlanCommentBaseDTO {
   @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}.`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -66,17 +65,16 @@ export class MonitorPlanCommentBaseDTO {
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
+      return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}.`;
     },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })
-  @ValidateIf(o => o.endDate !== null)
   endDate: Date;
 }
 

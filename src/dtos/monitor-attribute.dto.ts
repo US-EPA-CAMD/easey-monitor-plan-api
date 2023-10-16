@@ -10,11 +10,19 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MAXIMUM_FUTURE_DATE,
+  MINIMUM_DATE,
+} from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Monitoring Location Attribute';
@@ -29,7 +37,7 @@ export class MonitorAttributeBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer of 0 and 1 for [${KEY}]`;
     },
   })
   ductIndicator: number;
@@ -43,7 +51,7 @@ export class MonitorAttributeBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer of 0 and 1 for [${KEY}]`;
     },
   })
   bypassIndicator: number;
@@ -163,6 +171,13 @@ export class MonitorAttributeBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -170,7 +185,6 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOEndDate.example,
     name: propertyMetadata.monitorAttributeDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null)
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('MONLOC-12-A', {
@@ -194,6 +208,14 @@ export class MonitorAttributeBaseDTO {
       });
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endDate !== null)
   endDate: Date;
 }
 

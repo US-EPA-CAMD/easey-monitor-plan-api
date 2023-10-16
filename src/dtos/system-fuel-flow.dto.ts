@@ -15,6 +15,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -23,6 +24,7 @@ import {
   MAXIMUM_FUTURE_DATE,
   MAX_HOUR,
   MIN_HOUR,
+  DATE_FORMAT,
 } from '../utilities/constants';
 import { SystemFuelMasterDataRelationship } from '../entities/system-fuel-md-relationship.entity';
 import { FindManyOptions } from 'typeorm';
@@ -153,6 +155,13 @@ export class SystemFuelFlowBaseDTO {
       });
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -184,7 +193,6 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOEndDate.example,
     name: propertyMetadata.systemFuelFlowDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value to [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
@@ -208,6 +216,14 @@ export class SystemFuelFlowBaseDTO {
       });
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -215,7 +231,6 @@ export class SystemFuelFlowBaseDTO {
     example: propertyMetadata.systemFuelFlowDTOEndHour.example,
     name: propertyMetadata.systemFuelFlowDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null)
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUELFLW-6-A', {
@@ -245,6 +260,7 @@ export class SystemFuelFlowBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endHour: number;
 }
 

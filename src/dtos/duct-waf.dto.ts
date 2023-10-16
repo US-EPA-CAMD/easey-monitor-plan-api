@@ -8,18 +8,20 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   DATE_FORMAT,
   MAX_HOUR,
-  MAXIMUM_FUTURE_DATE,
   MIN_HOUR,
 } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
@@ -46,6 +48,13 @@ export class DuctWafBaseDTO {
           key: KEY,
           dateFormat: DATE_FORMAT,
         },
+      );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -82,6 +91,13 @@ export class DuctWafBaseDTO {
           key: KEY,
           dateFormat: DATE_FORMAT,
         },
+      );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -270,17 +286,22 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsInRange(0, 9999.9, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
-        {
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+  @IsInRange(
+    0,
+    9999.9,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatMessage(
+          `The value for [fieldname] for [key] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
+          {
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
+      },
     },
-  })
+    false,
+  )
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -289,15 +310,6 @@ export class DuctWafBaseDTO {
       },
     },
   )
-  @IsPositive({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('DEFAULT-78-B', {
-        fieldname: args.property,
-        value: args.value,
-        key: KEY,
-      });
-    },
-  })
   ductWidth: number;
 
   @ApiProperty({
@@ -313,17 +325,22 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsInRange(0, 9999.9, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] is in range 0 and 9999.9 and is allowed only 1 decimal place`,
-        {
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+  @IsInRange(
+    0,
+    9999.9,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatMessage(
+          `The value for [fieldname] for [key] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
+          {
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
+      },
     },
-  })
+    false,
+  )
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -332,15 +349,6 @@ export class DuctWafBaseDTO {
       },
     },
   )
-  @IsPositive({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('DEFAULT-79-B', {
-        fieldname: args.property,
-        value: args.value,
-        key: KEY,
-      });
-    },
-  })
   ductDepth: number;
 
   @ApiProperty({
@@ -348,7 +356,6 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafEndDate.example,
     name: propertyMetadata.ductWafDTOWafEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.wafEndDate !== null || o.wafEndHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return `You reported [wafEndHour] but did not report an [wafEndDate] for [[${KEY}]].`;
@@ -375,6 +382,14 @@ export class DuctWafBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.wafEndDate !== null || o.wafEndHour !== null)
   wafEndDate: Date;
 
   @ApiProperty({
@@ -382,7 +397,6 @@ export class DuctWafBaseDTO {
     example: propertyMetadata.ductWafDTOWafEndHour.example,
     name: propertyMetadata.ductWafDTOWafEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.wafEndHour !== null || o.wafEndDate !== null)
   @IsInt()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
@@ -398,6 +412,7 @@ export class DuctWafBaseDTO {
       return `You reported [wafEndDate] but did not report an [wafEndHour] for [[${KEY}]].`;
     },
   })
+  @ValidateIf(o => o.wafEndHour !== null || o.wafEndDate !== null)
   wafEndHour: number;
 }
 

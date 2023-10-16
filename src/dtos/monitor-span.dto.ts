@@ -17,6 +17,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -262,7 +263,6 @@ export class MonitorSpanBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be in the range 0 and 99999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.defaultHighRange !== null)
   defaultHighRange: number;
 
   @ApiProperty({
@@ -277,7 +277,6 @@ export class MonitorSpanBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be in the range 0 and 9999999999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.flowSpanValue !== null)
   flowSpanValue: number;
 
   @ApiProperty({
@@ -292,7 +291,6 @@ export class MonitorSpanBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be in the range 0 and 9999999999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.flowFullScaleRange !== null)
   flowFullScaleRange: number;
 
   @ApiProperty({
@@ -329,6 +327,13 @@ export class MonitorSpanBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -360,7 +365,6 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOEndDate.example,
     name: propertyMetadata.monitorSpanDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-12-B', {
@@ -391,6 +395,14 @@ export class MonitorSpanBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -398,7 +410,6 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOEndHour.example,
     name: propertyMetadata.monitorSpanDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-12-A', {
@@ -428,6 +439,7 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endHour: number;
 }
 

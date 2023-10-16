@@ -14,6 +14,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DATE_FORMAT, MAX_HOUR, MIN_HOUR } from '../utilities/constants';
@@ -95,6 +96,13 @@ export class MatsMethodBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -132,9 +140,21 @@ export class MatsMethodBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   @IsNotEmpty({
     message: () => {
       return CheckCatalogService.formatResultMessage('MATSMTH-4-A');
+    },
+  })
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('MATSMTH-3-A');
     },
   })
   @ValidateIf(o => o.endDate !== null || o.endHour !== null)
@@ -145,7 +165,6 @@ export class MatsMethodBaseDTO {
     example: propertyMetadata.matsMethodDTOEndHour.example,
     name: propertyMetadata.matsMethodDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: () => {
       return CheckCatalogService.formatResultMessage('MATSMTH-4-B');
@@ -157,6 +176,7 @@ export class MatsMethodBaseDTO {
     },
   })
   @IsInt()
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endHour: number;
 }
 

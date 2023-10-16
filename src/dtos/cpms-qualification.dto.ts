@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsDateString,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -22,7 +23,7 @@ export class CPMSQualificationBaseDTO {
         .value,
   })
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   @IsInRange(1900, 2099, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 1900 and 2099.`;

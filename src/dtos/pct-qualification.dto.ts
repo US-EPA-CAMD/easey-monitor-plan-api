@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsDateString,
+  IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   ValidationArguments,
@@ -21,6 +21,7 @@ export class PCTQualificationBaseDTO {
     name: 'qualificationYear',
   })
   @IsNotEmpty()
+  @IsInt()
   @IsInRange(1900, 2099, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 1900 and 2099.`;
@@ -36,14 +37,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOAveragePercentValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsNumber(
-    { maxDecimalPlaces: 1 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for $[${KEY}].`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
@@ -61,6 +55,7 @@ export class PCTQualificationBaseDTO {
         .value,
   })
   @IsOptional()
+  @IsInt()
   @IsInRange(1940, 2050, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be between 1940 and 2050 for [${KEY}]`;
@@ -79,6 +74,7 @@ export class PCTQualificationBaseDTO {
         .fieldLabels.value,
   })
   @IsOptional()
+  @IsString()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
@@ -94,14 +90,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr1PercentageValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsNumber(
-    { maxDecimalPlaces: 1 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
@@ -119,6 +108,7 @@ export class PCTQualificationBaseDTO {
         .value,
   })
   @IsOptional()
+  @IsInt()
   @IsInRange(1940, 2050, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be between 1940 and 2050 for [${KEY}]`;
@@ -137,6 +127,7 @@ export class PCTQualificationBaseDTO {
         .fieldLabels.value,
   })
   @IsOptional()
+  @IsString()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
@@ -152,14 +143,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr2PercentageValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsNumber(
-    { maxDecimalPlaces: 1 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
@@ -177,6 +161,7 @@ export class PCTQualificationBaseDTO {
         .value,
   })
   @IsOptional()
+  @IsInt()
   @IsInRange(1940, 2050, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be between 1940 and 2050 for [${KEY}]`;
@@ -195,6 +180,7 @@ export class PCTQualificationBaseDTO {
         .fieldLabels.value,
   })
   @IsOptional()
+  @IsString()
   @IsInDbValues(qualDataTypeCodeQuery, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
@@ -210,14 +196,7 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr3PercentageValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsNumber(
-    { maxDecimalPlaces: 1 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
