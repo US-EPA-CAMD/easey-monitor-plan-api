@@ -15,7 +15,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { DATE_FORMAT } from 'src/utilities/constants';
+import { DATE_FORMAT } from '../utilities/constants';
 
 const KEY = 'Monitor Qualification LEE';
 
