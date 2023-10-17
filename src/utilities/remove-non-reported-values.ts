@@ -37,6 +37,7 @@ async function removeMonitorPlanComment(comments: MonitorPlanCommentDTO[]) {
     delete dto.userId;
     delete dto.addDate;
     delete dto.updateDate;
+    delete dto.active;
   });
 }
 
@@ -50,6 +51,7 @@ async function removeUnitStackConfiguration(
     delete dto.userId;
     delete dto.addDate;
     delete dto.updateDate;
+    delete dto.active;
   });
 }
 // LOCATIONS
@@ -81,6 +83,7 @@ async function monitorLocationAttribute(attributes: MonitorAttributeDTO[]) {
     delete attribute.userId;
     delete attribute.addDate;
     delete attribute.updateDate;
+    delete attribute.active;
   });
 }
 
@@ -93,6 +96,7 @@ async function monitorMethod(methods: MonitorMethodDTO[]) {
     delete method.userId;
     delete method.addDate;
     delete method.updateDate;
+    delete method.active;
   });
 }
 
@@ -103,6 +107,7 @@ async function monitorFormula(formulas: MonitorFormulaDTO[]) {
     delete formula.userId;
     delete formula.addDate;
     delete formula.updateDate;
+    delete formula.active;
   });
 }
 
@@ -113,6 +118,7 @@ async function monitorDefault(defaults: MonitorDefaultDTO[]) {
     delete defaults.userId;
     delete defaults.addDate;
     delete defaults.updateDate;
+    delete defaults.active;
   });
 }
 
@@ -133,6 +139,7 @@ async function monitorLoad(loads: MonitorLoadDTO[]) {
     delete load.userId;
     delete load.addDate;
     delete load.updateDate;
+    delete load.active;
   });
 }
 
@@ -143,6 +150,7 @@ async function rectangularDuctWaf(ductWafs: DuctWafDTO[]) {
     delete ductWaf.userId;
     delete ductWaf.addDate;
     delete ductWaf.updateDate;
+    delete ductWaf.active;
   });
 }
 
@@ -166,6 +174,7 @@ async function analyzerRange(analyzerRanges: AnalyzerRangeDTO[]) {
     delete analyzerRange.userId;
     delete analyzerRange.addDate;
     delete analyzerRange.updateDate;
+    delete analyzerRange.active;
   });
 }
 
@@ -186,6 +195,7 @@ async function monitorQualification(qualifications: MonitorQualificationDTO[]) {
     delete qualification.userId;
     delete qualification.addDate;
     delete qualification.updateDate;
+    delete qualification.active;
   });
 }
 
@@ -229,6 +239,7 @@ async function monitorSystem(systems: MonitorSystemDTO[]) {
     delete system.userId;
     delete system.addDate;
     delete system.updateDate;
+    delete system.active;
   });
 }
 
@@ -241,6 +252,7 @@ async function monitorSystemFuel(fuels: SystemFuelFlowDTO[]) {
     delete fuel.userId;
     delete fuel.addDate;
     delete fuel.updateDate;
+    delete fuel.active;
   });
 }
 
@@ -253,5 +265,6 @@ async function monitorSystemComponent(systemComponents: SystemComponentDTO[]) {
     delete component.userId;
     delete component.addDate;
     delete component.updateDate;
+    delete component.active;
   });
 }
