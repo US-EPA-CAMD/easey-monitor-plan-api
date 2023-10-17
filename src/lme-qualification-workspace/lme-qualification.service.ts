@@ -88,7 +88,7 @@ export class LMEQualificationWorkspaceService {
         new Error(
           'A Monitor Qualification LME record should not be reported for qualification type codes other than LMEA and LMES.',
         ),
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
         {
           locationId: locationId,
           qualId: qualId,

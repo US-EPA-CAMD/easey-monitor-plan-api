@@ -88,7 +88,7 @@ export class PCTQualificationWorkspaceService {
         new Error(
           'A Monitor Qualification PCT record should not be reported for qualification type codes other than PK,SK and GF.',
         ),
-        HttpStatus.NOT_FOUND,
+        HttpStatus.BAD_REQUEST,
         {
           locationId: locationId,
           qualId: qualId,
