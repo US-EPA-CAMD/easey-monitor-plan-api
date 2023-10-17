@@ -7,6 +7,7 @@ import {
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -25,7 +26,6 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOUnitId.example,
     name: propertyMetadata.monitorLocationDTOUnitId.fieldLabels.value,
   })
-  @IsOptional()
   @IsString()
   @MaxLength(6)
   @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
@@ -41,7 +41,6 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOStackPipeId.example,
     name: propertyMetadata.monitorLocationDTOStackPipeId.fieldLabels.value,
   })
-  @IsOptional()
   @IsString()
   @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
@@ -69,7 +68,7 @@ export class MonitorLocationBaseDTO {
       );
     },
   })
-  activeDate: Date;
+  activeDate?: Date;
 
   @ApiProperty({
     description: propertyMetadata.monitorLocationDTORetireDate.description,
@@ -89,7 +88,7 @@ export class MonitorLocationBaseDTO {
       );
     },
   })
-  retireDate: Date;
+  retireDate?: Date;
 
   @ApiProperty({
     description:
@@ -100,11 +99,11 @@ export class MonitorLocationBaseDTO {
         .value,
   })
   @IsNotEmpty()
+  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer of 0 and 1 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.unitId !== null)
   nonLoadBasedIndicator: number;
 }

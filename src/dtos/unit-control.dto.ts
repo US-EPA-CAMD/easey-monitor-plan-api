@@ -10,9 +10,9 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import {
-  IsInRange,
   IsIsoFormat,
   IsValidCode,
+  IsValidDate,
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -85,9 +85,10 @@ export class UnitControlBaseDTO {
     name: propertyMetadata.unitControlDTOOriginalCode.fieldLabels.value,
   })
   @IsOptional()
-  @IsInRange(0, 1, {
+  @IsString()
+  @MatchesRegEx('^[01]$', {
     message: (args: ValidationArguments) => {
-      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be string value of "0" or "1"`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 character consisting 1 or 0.`;
     },
   })
   originalCode: string;
@@ -112,6 +113,13 @@ export class UnitControlBaseDTO {
       });
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   installDate: Date;
 
   @ApiProperty({
@@ -123,6 +131,13 @@ export class UnitControlBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   optimizationDate: Date;
@@ -160,7 +175,14 @@ export class UnitControlBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
+      return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format ${DATE_FORMAT}.`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   retireDate: Date;

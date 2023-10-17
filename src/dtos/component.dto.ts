@@ -29,6 +29,7 @@ export class ComponentBaseDTO {
     example: propertyMetadata.componentDTOComponentId.example,
     name: propertyMetadata.componentDTOComponentId.fieldLabels.value,
   })
+  @IsString()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-8-A', {

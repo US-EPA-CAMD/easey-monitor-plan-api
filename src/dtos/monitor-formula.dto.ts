@@ -16,6 +16,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  IsValidDate,
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -85,7 +86,6 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOFormulaCode.example,
     name: propertyMetadata.monitorFormulaDTOFormulaCode.fieldLabels.value,
   })
-  @ValidateIf(o => o.formulaText === null || o.formulaCode !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-9-A', {
@@ -102,6 +102,7 @@ export class MonitorFormulaBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.formulaText === null || o.formulaCode !== null)
   formulaCode: string;
 
   @ApiProperty({
@@ -151,6 +152,13 @@ export class MonitorFormulaBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -182,7 +190,6 @@ export class MonitorFormulaBaseDTO {
     example: propertyMetadata.monitorFormulaDTOEndDate.example,
     name: propertyMetadata.monitorFormulaDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-5-B', {
@@ -213,6 +220,14 @@ export class MonitorFormulaBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -221,7 +236,6 @@ export class MonitorFormulaBaseDTO {
     name: propertyMetadata.monitorFormulaDTOEndHour.fieldLabels.value,
   })
   @IsInt()
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-5-A', {
@@ -251,6 +265,7 @@ export class MonitorFormulaBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endHour: number;
 }
 

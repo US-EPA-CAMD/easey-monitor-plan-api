@@ -8,14 +8,21 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MAXIMUM_FUTURE_DATE,
+  MINIMUM_DATE,
+} from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Unit Fuel';
@@ -126,6 +133,13 @@ export class UnitFuelBaseDTO {
       return `The value for [${args.value}] in the Unit Fuel record [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -133,7 +147,6 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOEndDate.example,
     name: propertyMetadata.unitFuelDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null)
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUEL-43-A', {
@@ -157,6 +170,14 @@ export class UnitFuelBaseDTO {
       });
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @IsOptional()
   endDate: Date;
 }
 

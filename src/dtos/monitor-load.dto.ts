@@ -7,15 +7,19 @@ import {
   IsString,
   IsDateString,
   IsBoolean,
-  IsNumber,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
+  DATE_FORMAT,
   MAX_HOUR,
   MAXIMUM_FUTURE_DATE,
   MIN_HOUR,
@@ -33,14 +37,6 @@ export class MonitorLoadBaseDTO {
   })
   @IsOptional()
   @IsInt()
-  @IsNumber(
-    { maxDecimalPlaces: 0 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 0 decimal place for [${KEY}]`;
-      },
-    },
-  )
   @IsInRange(0, 999999, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range 0 to 999999 for [${KEY}].`;
@@ -76,14 +72,7 @@ export class MonitorLoadBaseDTO {
       propertyMetadata.monitorLoadDTOLowerOperationBoundary.fieldLabels.value,
   })
   @IsOptional()
-  @IsNumber(
-    { maxDecimalPlaces: 0 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 0 decimal place for [${KEY}]`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 999999, {
     message: (args: ValidationArguments) => {
       return `The value [${args.value}] for [${args.property}] must be in the range 0 to 999999.`;
@@ -99,14 +88,7 @@ export class MonitorLoadBaseDTO {
       propertyMetadata.monitorLoadDTOUpperOperationBoundary.fieldLabels.value,
   })
   @IsOptional()
-  @IsNumber(
-    { maxDecimalPlaces: 0 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 0 decimal place for [${KEY}]`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 999999, {
     message: (args: ValidationArguments) => {
       return `The value [${args.value}] for [${args.property}] must be in the range 0 and 999999.`;
@@ -156,7 +138,7 @@ export class MonitorLoadBaseDTO {
   @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer of 0 and 1`;
     },
   })
   secondNormalIndicator: number;
@@ -170,6 +152,13 @@ export class MonitorLoadBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   loadAnalysisDate: Date;
@@ -199,6 +188,13 @@ export class MonitorLoadBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   beginDate: Date;
@@ -233,7 +229,6 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOEndDate.example,
     name: propertyMetadata.monitorLoadDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LOAD-6-B', {
@@ -257,6 +252,14 @@ export class MonitorLoadBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -264,7 +267,6 @@ export class MonitorLoadBaseDTO {
     example: propertyMetadata.monitorLoadDTOEndHour.example,
     name: propertyMetadata.monitorLoadDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LOAD-6-A', {
@@ -294,6 +296,7 @@ export class MonitorLoadBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endHour: number;
 }
 

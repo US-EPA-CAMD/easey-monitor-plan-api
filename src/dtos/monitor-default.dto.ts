@@ -17,6 +17,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -38,7 +39,14 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOParameterCode.example,
     name: propertyMetadata.monitorDefaultDTOParameterCode.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-47-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -61,33 +69,31 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTODefaultValue.example,
     name: propertyMetadata.monitorDefaultDTODefaultValue.fieldLabels.value,
   })
-  @IsNotEmpty()
-  @IsNumber(
-    { maxDecimalPlaces: 4 },
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-49-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(
+    0,
+    99999999999.9999,
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is allowed only four decimal place`,
+          `The value of [value] for [fieldname] must be within the range of 0 and 99999999999.9999 for [key].`,
           {
+            value: args.value,
             fieldname: args.property,
             key: KEY,
           },
         );
       },
     },
+    false,
   )
-  @IsInRange(0.0, 99999999999.9999, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `The value of [value] for [fieldname] must be within the range of 0.0000 and 99999999999.9999 for [key].`,
-        {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
-    },
-  })
   @IsNumber(
     { maxDecimalPlaces: 4 },
     {
@@ -107,7 +113,14 @@ export class MonitorDefaultBaseDTO {
       propertyMetadata.monitorDefaultDTODefaultUnitsOfMeasureCode.fieldLabels
         .value,
   })
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-50-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -131,8 +144,14 @@ export class MonitorDefaultBaseDTO {
     name:
       propertyMetadata.monitorDefaultDTODefaultPurposeCode.fieldLabels.value,
   })
-  @IsOptional()
-  @ValidateIf(o => o.defaultPurposeCode !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-51-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct purpose_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -183,7 +202,14 @@ export class MonitorDefaultBaseDTO {
       propertyMetadata.monitorDefaultDTOOperatingConditionCode.fieldLabels
         .value,
   })
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-48-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct operating_condition_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -274,6 +300,13 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -305,7 +338,6 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOEndDate.example,
     name: propertyMetadata.monitorDefaultDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-38-B', {
@@ -336,6 +368,14 @@ export class MonitorDefaultBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -343,7 +383,6 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOEndHour.example,
     name: propertyMetadata.monitorDefaultDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-38-A', {
@@ -373,6 +412,7 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endHour: number;
 }
 
