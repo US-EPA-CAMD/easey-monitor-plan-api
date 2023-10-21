@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { ComponentBaseDTO } from './component.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { IsIsoFormat, IsValidDate } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
@@ -61,6 +61,13 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -92,7 +99,6 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndDate.example,
     name: propertyMetadata.systemComponentDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-7-B', {
@@ -123,6 +129,14 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -130,7 +144,6 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
     example: propertyMetadata.systemComponentDTOEndHour.example,
     name: propertyMetadata.systemComponentDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-7-A', {
@@ -160,6 +173,7 @@ export class SystemComponentBaseDTO extends ComponentBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endHour: number;
 }
 

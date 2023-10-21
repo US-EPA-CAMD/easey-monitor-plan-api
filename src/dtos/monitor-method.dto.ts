@@ -11,11 +11,16 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
+  DATE_FORMAT,
   MAX_HOUR,
   MAXIMUM_FUTURE_DATE,
   MIN_HOUR,
@@ -121,6 +126,13 @@ export class MonitorMethodBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -153,7 +165,6 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndDate.example,
     name: propertyMetadata.monitorMethodDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('METHOD-5-B', {
@@ -177,6 +188,14 @@ export class MonitorMethodBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}]`;
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -184,7 +203,6 @@ export class MonitorMethodBaseDTO {
     example: propertyMetadata.monitorMethodDTOEndHour.example,
     name: propertyMetadata.monitorMethodDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsInt()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -215,6 +233,7 @@ export class MonitorMethodBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endHour: number;
 }
 

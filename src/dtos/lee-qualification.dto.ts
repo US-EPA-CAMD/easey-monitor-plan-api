@@ -8,8 +8,14 @@ import {
   IsString,
   ValidationArguments,
 } from 'class-validator';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { DATE_FORMAT } from '../utilities/constants';
 
 const KEY = 'Monitor Qualification LEE';
 
@@ -26,6 +32,13 @@ export class LEEQualificationBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   qualificationTestDate: Date;

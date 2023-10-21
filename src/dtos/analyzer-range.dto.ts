@@ -14,7 +14,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
-  //BeginEndDatesConsistent,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import { BeginEndDatesConsistent } from '../utils';
 
@@ -109,6 +109,13 @@ export class AnalyzerRangeBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -140,7 +147,6 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOEndDate.example,
     name: propertyMetadata.analyzerRangeDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-22-B', {
@@ -171,6 +177,14 @@ export class AnalyzerRangeBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.endHour !== null || o.endDate !== null)
   endDate: Date;
 
   @ApiProperty({
@@ -178,7 +192,6 @@ export class AnalyzerRangeBaseDTO {
     example: propertyMetadata.analyzerRangeDTOEndHour.example,
     name: propertyMetadata.analyzerRangeDTOEndHour.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-22-A', {
@@ -208,6 +221,7 @@ export class AnalyzerRangeBaseDTO {
       });
     },
   })
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   endHour: number;
 }
 

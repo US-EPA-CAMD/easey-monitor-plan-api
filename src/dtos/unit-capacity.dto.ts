@@ -1,20 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import {
   IsBoolean,
-  IsDate,
   IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
-  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { MAXIMUM_FUTURE_DATE, MINIMUM_DATE } from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MAXIMUM_FUTURE_DATE,
+  MINIMUM_DATE,
+} from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Unit Capacity';
@@ -30,6 +36,7 @@ export class UnitCapacityBaseDTO {
       propertyMetadata.unitCapacityDTOMaximumHourlyHeatInputCapacity.fieldLabels
         .value,
   })
+  @IsNotEmpty()
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
@@ -72,6 +79,13 @@ export class UnitCapacityBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD]`;
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   beginDate: Date;
 
   @ApiProperty({
@@ -79,7 +93,7 @@ export class UnitCapacityBaseDTO {
     example: propertyMetadata.unitCapacityDTOEndDate.example,
     name: propertyMetadata.unitCapacityDTOEndDate.fieldLabels.value,
   })
-  @ValidateIf(o => o.endDate !== null)
+  @IsOptional()
   @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CAPAC-2-A', {
@@ -101,6 +115,13 @@ export class UnitCapacityBaseDTO {
         datefield1: 'beginDate',
         key: KEY,
       });
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
     },
   })
   endDate: Date;
