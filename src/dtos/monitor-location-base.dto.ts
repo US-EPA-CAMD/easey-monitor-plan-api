@@ -98,7 +98,7 @@ export class MonitorLocationBaseDTO {
       propertyMetadata.monitorLocationDTONonLoadBasedIndicator.fieldLabels
         .value,
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
