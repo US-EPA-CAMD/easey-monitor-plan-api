@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   ValidationArguments,
@@ -37,7 +38,14 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOAveragePercentValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
+      },
+    },
+  )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
@@ -90,7 +98,14 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr1PercentageValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
+      },
+    },
+  )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
@@ -143,7 +158,14 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr2PercentageValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
+      },
+    },
+  )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
@@ -196,7 +218,14 @@ export class PCTQualificationBaseDTO {
       propertyMetadata.pCTQualificationDTOYr3PercentageValue.fieldLabels.value,
   })
   @IsOptional()
-  @IsInt()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only one decimal place for [${KEY}]`;
+      },
+    },
+  )
   @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of 0 and 100 for [${KEY}].`;
