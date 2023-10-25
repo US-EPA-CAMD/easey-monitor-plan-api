@@ -3,9 +3,8 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { In, MoreThan } from 'typeorm';
+import { In, MoreThanOrEqual, getManager } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { Plant } from '../entities/plant.entity';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 
@@ -84,24 +83,13 @@ export class MonitorConfigurationsService {
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
 
-    //Get current date of operation being performed
-    const processDate = currentDateTime();
-
-    const year = processDate.getFullYear();
-    const month = String(processDate.getMonth() + 1).padStart(2, '0');
-    const day = String(processDate.getDate() - 1).padStart(2, '0'); // Subtract 1 from the day
-    const hours = String(processDate.getHours()).padStart(2, '0');
-    const minutes = String(processDate.getMinutes()).padStart(2, '0');
-    const seconds = String(processDate.getSeconds()).padStart(2, '0');
-
-    const outputDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
-    dto.mostRecentUpdate = outputDateString;
+    const clock: Date = (await getManager().query('SELECT now();'))[0].now;
+    dto.mostRecentUpdate = clock;
 
     // Populate the monitor plans that have been changed
 
     dto.changedConfigs = await MonitorPlan.find({
-      where: { updateDate: MoreThan(new Date(queryTime)) },
+      where: { updateDate: MoreThanOrEqual(new Date(queryTime)) },
       relations: ['locations', 'comments', 'reportingFrequencies'],
     });
 
