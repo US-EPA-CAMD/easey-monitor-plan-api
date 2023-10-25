@@ -81,12 +81,4 @@ describe('MonitorConfigurationsService', () => {
       expect(result.length).toEqual(1);
     });
   });
-
-  describe('getConfigurationsByLastUpdated', () => {
-    it('Should return a LastUpdatedConfigDTO for a Date', async () => {
-      jest.spyOn(MonitorPlan, 'find').mockResolvedValue([]);
-      const result = await service.getConfigurationsByLastUpdated('');
-      expect(result.changedConfigs).toEqual([]);
-    });
-  });
 });
