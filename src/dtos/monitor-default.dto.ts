@@ -276,7 +276,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsString()
-  groupID: string;
+  groupId: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOBeginDate.description,
