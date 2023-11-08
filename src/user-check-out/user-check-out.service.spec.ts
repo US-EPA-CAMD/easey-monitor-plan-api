@@ -6,6 +6,7 @@ import { UserCheckOutService } from './user-check-out.service';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
+import { EntityManager } from 'typeorm';
 
 const monPlanId = '1';
 const userCheckout = new UserCheckOut();
@@ -94,6 +95,9 @@ describe('UserCheckOutService', () => {
 
   describe('checkInConfiguration', () => {
     it('should check in a configuration and return it', async () => {
+      jest.spyOn(service, 'returnManager').mockReturnValue(({
+        query: jest.fn().mockResolvedValue([]),
+      } as any) as EntityManager);
       const result = await service.checkInConfiguration(monPlanId);
       expect(result).toEqual(true);
     });
