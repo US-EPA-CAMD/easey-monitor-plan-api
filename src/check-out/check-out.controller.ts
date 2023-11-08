@@ -32,7 +32,10 @@ export class CheckOutController {
   }
 
   @Post(':planId')
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    { pathParam: 'planId', enforceCheckout: false },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Checks Out a Monitor Plan configuration',
@@ -46,7 +49,10 @@ export class CheckOutController {
   }
 
   @Put(':planId')
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    { pathParam: 'planId', enforceCheckout: false },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
@@ -58,7 +64,10 @@ export class CheckOutController {
   }
 
   @Delete(':planId')
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    { pathParam: 'planId', enforceCheckout: false },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
