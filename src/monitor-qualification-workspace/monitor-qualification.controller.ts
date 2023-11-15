@@ -34,7 +34,14 @@ export class MonitorQualificationWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:
@@ -49,7 +56,14 @@ export class MonitorQualificationWorkspaceController {
   }
 
   @Put(':qualId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:

@@ -34,7 +34,14 @@ export class CPMSQualificationWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: CPMSQualificationDTO,
@@ -56,7 +63,14 @@ export class CPMSQualificationWorkspaceController {
   }
 
   @Put(':cpmsQualId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: CPMSQualificationDTO,
     description:

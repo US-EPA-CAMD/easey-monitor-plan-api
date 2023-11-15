@@ -35,7 +35,14 @@ export class LEEQualificationWorkspaceController {
   }
 
   @Put(':leeQualId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: LEEQualificationDTO,
     description:
@@ -58,7 +65,14 @@ export class LEEQualificationWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: LEEQualificationDTO,

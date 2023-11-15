@@ -32,7 +32,14 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Put(':spanId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorSpanDTO,
     description: 'Updates a workspace span record for a monitor location',
@@ -48,7 +55,14 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,

@@ -62,7 +62,14 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Post('import')
-  @RoleGuard({ importLocationSources: ['locations'] }, LookupType.Location)
+  @RoleGuard(
+    {
+      importLocationSources: ['locations'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
@@ -85,7 +92,14 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Delete(':planId/revert')
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    {
+      pathParam: 'planId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',

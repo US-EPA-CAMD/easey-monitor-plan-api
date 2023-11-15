@@ -32,7 +32,14 @@ export class UnitFuelWorkspaceController {
   }
 
   @Put(':unitFuelId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: UnitFuelDTO,
     description: 'Updates a workspace unit control record by unit control ID',
@@ -54,7 +61,14 @@ export class UnitFuelWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: UnitFuelDTO,

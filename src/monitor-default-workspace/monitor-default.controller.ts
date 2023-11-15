@@ -33,7 +33,14 @@ export class MonitorDefaultWorkspaceController {
   }
 
   @Put(':defaultId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Updates a workspace default record for a monitor location',
@@ -53,7 +60,14 @@ export class MonitorDefaultWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Creates a workspace defaults record for a monitor location',
