@@ -19,7 +19,11 @@ export class MonitorPlanCommentWorkspaceController {
     description: 'Retrieves workspace comment records for a monitor plan',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'planId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'planId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.MonitorPlan,
   )
   getComments(

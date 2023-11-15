@@ -28,7 +28,11 @@ export class SystemComponentWorkspaceController {
     description: 'Retrieves workspace component records for a monitor system',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getSystemComponents(

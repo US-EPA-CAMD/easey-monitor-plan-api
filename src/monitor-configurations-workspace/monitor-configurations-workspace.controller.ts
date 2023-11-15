@@ -32,7 +32,11 @@ export class MonitorConfigurationsWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    {
+      queryParam: 'orisCodes',
+      isPipeDelimitted: true,
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Facility,
   )
   getConfigurations(

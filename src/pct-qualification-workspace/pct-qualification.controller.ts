@@ -24,7 +24,11 @@ export class PCTQualificationWorkspaceController {
       'Retrieves workspace PCT Qualification records for a qualification ID and location ID',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getPCTQualifications(

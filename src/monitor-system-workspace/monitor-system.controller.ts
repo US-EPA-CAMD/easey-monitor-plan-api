@@ -28,7 +28,11 @@ export class MonitorSystemWorkspaceController {
       'Retrieves workspace system records for a given monitor location',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getSystems(@Param('locId') locationId: string): Promise<MonitorSystemDTO[]> {
