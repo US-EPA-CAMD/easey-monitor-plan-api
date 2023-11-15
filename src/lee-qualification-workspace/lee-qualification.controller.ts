@@ -24,7 +24,11 @@ export class LEEQualificationWorkspaceController {
       'Retrieves workspace lee qualification records for a monitor location',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getLEEQualifications(

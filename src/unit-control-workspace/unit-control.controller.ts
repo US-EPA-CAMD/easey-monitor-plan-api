@@ -26,7 +26,11 @@ export class UnitControlWorkspaceController {
       'Retrieves workspace unit control records from a specific unit ID',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getUnitControls(

@@ -37,7 +37,11 @@ export class MonitorPlanWorkspaceController {
     description: 'Retrieves workspace Monitor Plan record.',
   })
   @RoleGuard(
-    { enforceCheckout: false, queryParam: 'planId' },
+    {
+      enforceCheckout: false,
+      queryParam: 'planId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.MonitorPlan,
   )
   exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
@@ -54,7 +58,11 @@ export class MonitorPlanWorkspaceController {
     description: 'Retrieves information needed to refresh a monitor plan',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'planId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'planId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.MonitorPlan,
   )
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {

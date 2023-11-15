@@ -24,7 +24,11 @@ export class MonitorQualificationWorkspaceController {
       'Retrieves workspace qualification records for a monitor location',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getQualifications(

@@ -27,7 +27,11 @@ export class AnalyzerRangeWorkspaceController {
     description: 'Retrieves workspace Analyzer Range records for a component',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getAnalyzerRanges(

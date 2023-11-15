@@ -18,7 +18,11 @@ export class MonitorFormulaWorkspaceController {
 
   @Get()
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   @ApiOkResponse({

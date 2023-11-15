@@ -19,7 +19,11 @@ export class MonitorLocationWorkspaceController {
       'Retrieves workspace location record from specific location ID',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getLocation(@Param('locId') locationId: string): Promise<MonitorLocationDTO> {
@@ -28,7 +32,11 @@ export class MonitorLocationWorkspaceController {
 
   @Get(':locId/relationships')
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getLocationRelationships(@Param('locId') locId: string) {

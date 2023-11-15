@@ -24,7 +24,11 @@ export class UnitCapacityWorkspaceController {
       'Retrieves workspace unit capacity records from a specific unit ID',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getUnitCapacities(

@@ -23,7 +23,11 @@ export class SystemFuelFlowWorkspaceController {
     description: 'Retrieves workspace fuel flow records for a monitor system',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getFuelFlows(
