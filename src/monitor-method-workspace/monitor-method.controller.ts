@@ -18,7 +18,11 @@ export class MonitorMethodWorkspaceController {
 
   @Get()
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   @ApiOkResponse({
@@ -31,7 +35,14 @@ export class MonitorMethodWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Creates workspace Monitor Method record',
@@ -45,7 +56,14 @@ export class MonitorMethodWorkspaceController {
   }
 
   @Put(':methodId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',

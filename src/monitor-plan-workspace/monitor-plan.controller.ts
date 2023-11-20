@@ -37,7 +37,11 @@ export class MonitorPlanWorkspaceController {
     description: 'Retrieves workspace Monitor Plan record.',
   })
   @RoleGuard(
-    { enforceCheckout: false, queryParam: 'planId' },
+    {
+      enforceCheckout: false,
+      queryParam: 'planId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.MonitorPlan,
   )
   exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
@@ -54,7 +58,11 @@ export class MonitorPlanWorkspaceController {
     description: 'Retrieves information needed to refresh a monitor plan',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'planId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'planId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.MonitorPlan,
   )
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
@@ -62,7 +70,14 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Post('import')
-  @RoleGuard({ importLocationSources: ['locations'] }, LookupType.Location)
+  @RoleGuard(
+    {
+      importLocationSources: ['locations'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'imports an entire monitor plan from JSON payload',
@@ -85,7 +100,14 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Delete(':planId/revert')
-  @RoleGuard({ pathParam: 'planId' }, LookupType.MonitorPlan)
+  @RoleGuard(
+    {
+      pathParam: 'planId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',

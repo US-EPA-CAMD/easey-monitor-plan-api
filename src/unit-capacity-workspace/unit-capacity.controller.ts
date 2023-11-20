@@ -24,7 +24,11 @@ export class UnitCapacityWorkspaceController {
       'Retrieves workspace unit capacity records from a specific unit ID',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getUnitCapacities(
@@ -35,7 +39,14 @@ export class UnitCapacityWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     isArray: true,
     type: UnitCapacityDTO,
@@ -51,7 +62,14 @@ export class UnitCapacityWorkspaceController {
   }
 
   @Put(':unitCapacityId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: UnitCapacityDTO,
     description: 'Updates a workspace unit capacity record by unit capacity ID',

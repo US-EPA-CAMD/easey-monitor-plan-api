@@ -19,7 +19,11 @@ export class ComponentWorkspaceController {
     description: 'Retrieves workspace component records for a monitor location',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {

@@ -37,7 +37,11 @@ export class MonitorAttributeWorkspaceController {
     description: 'Retrieves workspace attribute records for a monitor location',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getAttributes(
@@ -47,7 +51,14 @@ export class MonitorAttributeWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Creates a workspace monitor location attribute record',
@@ -61,7 +72,14 @@ export class MonitorAttributeWorkspaceController {
   }
 
   @Put(':attributeId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Updates a workspace monitor location attribute record',
