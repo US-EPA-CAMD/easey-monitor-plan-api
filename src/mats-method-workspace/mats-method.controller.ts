@@ -25,7 +25,11 @@ export class MatsMethodWorkspaceController {
       'Retrieves workspace copy MATS Method records for a monitor location',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
@@ -33,7 +37,14 @@ export class MatsMethodWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
@@ -48,7 +59,14 @@ export class MatsMethodWorkspaceController {
   }
 
   @Put(':methodId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',

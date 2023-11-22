@@ -10,3 +10,4 @@ title: Monitor Plan Management
 description: Monitor Plan management API endpoints for all monitor plan data & operations
 environment: development
 apiHost: api.epa.gov/easey/dev
+dbSvc: camd-pg-db

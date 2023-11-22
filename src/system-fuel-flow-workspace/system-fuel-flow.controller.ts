@@ -23,7 +23,11 @@ export class SystemFuelFlowWorkspaceController {
     description: 'Retrieves workspace fuel flow records for a monitor system',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getFuelFlows(
@@ -34,7 +38,14 @@ export class SystemFuelFlowWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description: 'Creates official fuel flow records for a monitor system',
@@ -54,7 +65,14 @@ export class SystemFuelFlowWorkspaceController {
   }
 
   @Put(':fuelFlowId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description:

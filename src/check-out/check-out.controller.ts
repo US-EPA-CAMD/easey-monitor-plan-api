@@ -1,20 +1,6 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiSecurity,
-  ApiBearerAuth,
-  ApiOkResponse,
-} from '@nestjs/swagger';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -23,6 +9,7 @@ import {
 } from '../dtos/user-check-out.dto';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -45,8 +32,10 @@ export class CheckOutController {
   }
 
   @Post(':planId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard(
+    { pathParam: 'planId', enforceCheckout: false },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Checks Out a Monitor Plan configuration',
@@ -60,8 +49,10 @@ export class CheckOutController {
   }
 
   @Put(':planId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard(
+    { pathParam: 'planId', enforceCheckout: false },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
@@ -73,8 +64,10 @@ export class CheckOutController {
   }
 
   @Delete(':planId')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard(
+    { pathParam: 'planId', enforceCheckout: false },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })

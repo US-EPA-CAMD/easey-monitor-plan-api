@@ -51,7 +51,7 @@ export class MonitorDefault extends BaseEntity {
   defaultSourceCode: string;
 
   @Column({ type: 'varchar', length: 10, name: 'group_id' })
-  groupID: string;
+  groupId: string;
 
   @Column({ type: 'date', nullable: false, name: 'begin_date' })
   beginDate: Date;

@@ -28,7 +28,11 @@ export class MonitorSystemWorkspaceController {
       'Retrieves workspace system records for a given monitor location',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getSystems(@Param('locId') locationId: string): Promise<MonitorSystemDTO[]> {
@@ -36,7 +40,14 @@ export class MonitorSystemWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description: 'Creates a workspace system record for a give location',
@@ -51,7 +62,14 @@ export class MonitorSystemWorkspaceController {
   }
 
   @Put(':sysId')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSMP', 'DPMP'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description:
