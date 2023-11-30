@@ -129,6 +129,7 @@ async function monitorSpan(spans: MonitorSpanDTO[]) {
     delete span.userid;
     delete span.addDate;
     delete span.updateDate;
+    delete span.active;
   });
 }
 
