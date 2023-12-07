@@ -65,18 +65,20 @@ export class MonitorPlanChecksService {
 
       monitorLocation.supplementalMATSMonitoringMethodData?.forEach(
         (matsMethod, matsMetIdx) => {
-          promises.push(
-            new Promise((resolve, _reject) => {
-              const results = this.matsMethodChecksService.runChecks(
-                matsMethod,
-                true,
-                false,
-                `locations.${locIdx}.matsMethods.${matsMetIdx}.`,
-              );
+              if(! matsMethod.endDate) {
+                promises.push(
+                new Promise((resolve, _reject) => {
+                  const results = this.matsMethodChecksService.runChecks(
+                    matsMethod,
+                    true,
+                    false,
+                    `locations.${locIdx}.matsMethods.${matsMetIdx}.`,
+                  );
 
-              resolve(results);
-            }),
-          );
+                  resolve(results);
+                }),
+              );
+          }
         },
       );
 
@@ -99,18 +101,20 @@ export class MonitorPlanChecksService {
       });
 
       monitorLocation.monitoringSpanData?.forEach((span, spanIdx) => {
-        promises.push(
-          new Promise((resolve, _reject) => {
-            const results = this.monSpanChecksService.runChecks(
-              span,
-              locationId,
-              true,
-              false,
-              `locations.${locIdx}.span.${spanIdx}.`,
-            );
-            resolve(results);
-          }),
-        );
+        if(! span.endDate) {
+          promises.push(
+              new Promise((resolve, _reject) => {
+                const results = this.monSpanChecksService.runChecks(
+                    span,
+                    locationId,
+                    true,
+                    false,
+                    `locations.${locIdx}.span.${spanIdx}.`,
+                );
+                resolve(results);
+              }),
+          );
+        }
       });
 
       monitorLocation.componentData?.forEach((component, compIdx) => {
@@ -130,19 +134,21 @@ export class MonitorPlanChecksService {
       });
 
       monitorLocation.monitoringSystemData?.forEach((system, sysIdx) => {
-        promises.push(
-          new Promise((resolve, _reject) => {
-            const results = this.monSysCheckService.runChecks(
-              locationId,
-              system,
-              true,
-              false,
-              `locations.${locIdx}.systems.${sysIdx}.`,
-            );
+        if(! system.endDate) {
+          promises.push(
+              new Promise((resolve, _reject) => {
+                const results = this.monSysCheckService.runChecks(
+                    locationId,
+                    system,
+                    true,
+                    false,
+                    `locations.${locIdx}.systems.${sysIdx}.`,
+                );
 
-            resolve(results);
-          }),
-        );
+                resolve(results);
+              }),
+          );
+        }
       });
     });
 
