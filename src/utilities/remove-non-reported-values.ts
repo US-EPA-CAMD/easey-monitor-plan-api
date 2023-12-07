@@ -18,9 +18,38 @@ import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
+import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
+import { UnitControlDTO } from '../dtos/unit-control.dto';
+import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
+import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
+import { MatsMethodDTO } from '../dtos/mats-method.dto';
 
 export async function removeNonReportedValues(dto: MonitorPlanDTO) {
   const promises = [];
+  delete dto.id;
+  delete dto.facId;
+  delete dto.facilityName;
+  delete dto.configTypeCode;
+  delete dto.lastUpdated;
+  delete dto.updatedStatusFlag;
+  delete dto.needsEvalFlag;
+  delete dto.checkSessionId;
+  delete dto.name;
+  delete dto.beginReportPeriodId;
+  delete dto.endReportPeriodId;
+  delete dto.active;
+  delete dto.pendingStatusCode;
+  delete dto.evalStatusCode;
+  delete dto.evalStatusCodeDescription;
+  delete dto.userId;
+  delete dto.addDate;
+  delete dto.updateDate;
+  delete dto.submissionId;
+  delete dto.submissionAvailabilityCode;
+  delete dto.submissionAvailabilityCodeDescription;
+  delete dto.lastEvaluatedDate;
+  delete dto.reportingFrequencies;
+
   promises.push(removeMonitorPlanComment(dto.monitoringPlanCommentData));
   promises.push(removeUnitStackConfiguration(dto.unitStackConfigurationData));
   promises.push(
@@ -60,6 +89,13 @@ async function removeMonitorLocationReportedValues(
 ) {
   const promises = [];
   locations?.forEach(location => {
+    delete location.id;
+    delete location.unitRecordId;
+    delete location.stackPipeRecordId;
+    delete location.name;
+    delete location.type;
+    delete location.active;
+
     promises.push(
       monitorLocationAttribute(location.monitoringLocationAttribData),
     );
@@ -72,6 +108,10 @@ async function removeMonitorLocationReportedValues(
     promises.push(component(location.componentData));
     promises.push(monitorQualification(location.monitoringQualificationData));
     promises.push(monitorSystem(location.monitoringSystemData));
+    promises.push(unitCapacity(location.unitCapacityData));
+    promises.push(unitControl(location.unitControlData));
+    promises.push(unitFuel(location.unitFuelData))
+    promises.push(suppMatsMonitorMethod(location.supplementalMATSMonitoringMethodData))
   });
 }
 
@@ -86,7 +126,6 @@ async function monitorLocationAttribute(attributes: MonitorAttributeDTO[]) {
     delete attribute.active;
   });
 }
-
 async function monitorMethod(methods: MonitorMethodDTO[]) {
   const promises = [];
 
@@ -191,6 +230,10 @@ async function monitorQualification(qualifications: MonitorQualificationDTO[]) {
     promises.push(
       qualificationLEE(qualification.monitoringQualificationLEEData),
     );
+    promises.push(
+      qualificationCPMS(qualification.monitoringQualificationCPMSData),
+    );
+
     delete qualification.id;
     delete qualification.locationId;
     delete qualification.userId;
@@ -228,6 +271,16 @@ async function qualificationLEE(qualificationLEEs: LEEQualificationDTO[]) {
     delete qualificationLEE.addDate;
     delete qualificationLEE.updateDate;
   });
+}
+
+async function qualificationCPMS(qualificationCPMS: CPMSQualificationDTO[]) {
+  qualificationCPMS.forEach(cpms => {
+    delete cpms.id;
+    delete cpms.qualificationId;
+    delete cpms.userId;
+    delete cpms.addDate;
+    delete cpms.updateDate;
+  })
 }
 
 async function monitorSystem(systems: MonitorSystemDTO[]) {
@@ -268,4 +321,74 @@ async function monitorSystemComponent(systemComponents: SystemComponentDTO[]) {
     delete component.updateDate;
     delete component.active;
   });
+}
+
+async function monitoringLocation(monitorLocations: MonitorLocationDTO[]) {
+  monitorLocations?.forEach(location => {
+    delete location.unitRecordId;
+    delete location.stackPipeRecordId;
+    delete location.stackPipeId;
+    delete location.name;
+    delete location.type;
+    delete location.activeDate;
+    delete location.retireDate;
+    delete location.nonLoadBasedIndicator;
+    delete location.id;
+    delete location.active;
+
+    unitCapacity(location.unitCapacityData);
+  });
+}
+
+async function unitCapacity(unitCapacities: UnitCapacityDTO[]) {
+  unitCapacities.forEach(capacity => {
+    delete capacity.unitRecordId;
+    delete capacity.commercialOperationDate;
+    delete capacity.operationDate;
+    delete capacity.boilerTurbineType;
+    delete capacity.boilerTurbineBeginDate;
+    delete capacity.boilerTurbineEndDate;
+    delete capacity.id;
+    delete capacity.userId;
+    delete capacity.addDate;
+    delete capacity.updateDate;
+    delete capacity.active;
+  })
+}
+
+async function unitControl(unitControls: UnitControlDTO[]) {
+  unitControls.forEach(control => {
+    delete control.unitRecordId;
+    delete control.id;
+    delete control.userId;
+    delete control.addDate;
+    delete control.updateDate;
+    delete control.active;
+
+  })
+}
+
+async function unitFuel(unitFuels: UnitFuelDTO[]) {
+  unitFuels.forEach(fuel => {
+    delete fuel.unitRecordId;
+    delete fuel.actualOrProjectCode;
+    delete fuel.sulfurContent;
+    delete fuel.id;
+    delete fuel.userId;
+    delete fuel.addDate;
+    delete fuel.updateDate;
+    delete fuel.active;
+
+  })
+}
+
+async function suppMatsMonitorMethod(matsMethods: MatsMethodDTO[]) {
+  matsMethods.forEach(method => {
+    delete method.id;
+    delete method.locationId;
+    delete method.userId;
+    delete method.addDate;
+    delete method.updateDate;
+    delete method.active;
+  })
 }
