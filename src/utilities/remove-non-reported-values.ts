@@ -95,7 +95,7 @@ async function removeMonitorLocationReportedValues(
     delete location.name;
     delete location.type;
     delete location.active;
-    
+
     promises.push(
       monitorLocationAttribute(location.monitoringLocationAttribData),
     );
@@ -273,8 +273,8 @@ async function qualificationLEE(qualificationLEEs: LEEQualificationDTO[]) {
   });
 }
 
-async function qualificationCPMS(qualificationCPMS: CPMSQualificationDTO[]){
-  qualificationCPMS.forEach(cpms =>{
+async function qualificationCPMS(qualificationCPMS: CPMSQualificationDTO[]) {
+  qualificationCPMS.forEach(cpms => {
     delete cpms.id;
     delete cpms.qualificationId;
     delete cpms.userId;
@@ -323,7 +323,7 @@ async function monitorSystemComponent(systemComponents: SystemComponentDTO[]) {
   });
 }
 
-async function monitoringLocation(monitorLocations: MonitorLocationDTO[]){
+async function monitoringLocation(monitorLocations: MonitorLocationDTO[]) {
   monitorLocations?.forEach(location => {
     delete location.unitRecordId;
     delete location.stackPipeRecordId;
@@ -340,8 +340,8 @@ async function monitoringLocation(monitorLocations: MonitorLocationDTO[]){
   });
 }
 
-async function unitCapacity(unitCapacities: UnitCapacityDTO[]){
-  unitCapacities.forEach(capacity =>{
+async function unitCapacity(unitCapacities: UnitCapacityDTO[]) {
+  unitCapacities.forEach(capacity => {
     delete capacity.unitRecordId;
     delete capacity.commercialOperationDate;
     delete capacity.operationDate;
@@ -356,7 +356,7 @@ async function unitCapacity(unitCapacities: UnitCapacityDTO[]){
   })
 }
 
-async function unitControl(unitControls: UnitControlDTO[]){
+async function unitControl(unitControls: UnitControlDTO[]) {
   unitControls.forEach(control => {
     delete control.unitRecordId;
     delete control.id;
@@ -368,8 +368,8 @@ async function unitControl(unitControls: UnitControlDTO[]){
   })
 }
 
-async function unitFuel(unitFuels: UnitFuelDTO[]){
-  unitFuels.forEach(fuel =>{
+async function unitFuel(unitFuels: UnitFuelDTO[]) {
+  unitFuels.forEach(fuel => {
     delete fuel.unitRecordId;
     delete fuel.actualOrProjectCode;
     delete fuel.sulfurContent;
@@ -382,8 +382,8 @@ async function unitFuel(unitFuels: UnitFuelDTO[]){
   })
 }
 
-async function suppMatsMonitorMethod(matsMethods: MatsMethodDTO[]){
-  matsMethods.forEach(method =>{
+async function suppMatsMonitorMethod(matsMethods: MatsMethodDTO[]) {
+  matsMethods.forEach(method => {
     delete method.id;
     delete method.locationId;
     delete method.userId;
