@@ -138,7 +138,7 @@ export class MonitorFormulaWorkspaceService {
         formulaId: formula.formulaId,
       });
 
-      if (formulaRecord) {
+      if (formulaRecord && ! formulaRecord.endDate) {
         if (formulaRecord.parameterCode !== formula.parameterCode) {
           errorList.push(
             `[IMPORT9-CRIT1-A] The ParameterCode for Formula ID ${formulaRecord.formulaId} in the database is not equal to the ParameterCode ${formula.formulaId} in the incoming record`,
