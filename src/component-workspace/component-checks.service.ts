@@ -34,7 +34,7 @@ export class ComponentCheckService {
 
   async runChecks(
     locationId: string,
-    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    component: UpdateComponentBaseDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
     errorLocation: string = '',
@@ -69,7 +69,7 @@ export class ComponentCheckService {
   }
 
   private async component13Check(
-    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    component: UpdateComponentBaseDTO ,
     errorLocation: string = '',
   ): Promise<string> {
     let error = null;
@@ -96,7 +96,7 @@ export class ComponentCheckService {
 
   private async component14Check(
     locationId: string,
-    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    component: UpdateComponentBaseDTO,
     errorLocation: string = '',
   ): Promise<string> {
     let error = null;
@@ -181,7 +181,7 @@ export class ComponentCheckService {
   }
 
   private component81Check(
-    component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
+    component: UpdateComponentBaseDTO,
     errorLocation: string = '',
   ) {
     let error = null;

@@ -315,7 +315,7 @@ async function monitorSystemComponent(systemComponents: SystemComponentDTO[]) {
     delete component.id;
     delete component.locationId;
     delete component.monitoringSystemRecordId;
-    delete component.componentRecordId;
+    delete component.componentId;
     delete component.userId;
     delete component.addDate;
     delete component.updateDate;

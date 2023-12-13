@@ -73,32 +73,32 @@ export class SystemComponentWorkspaceService {
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
 
-    let component = await this.componentWorkspaceRepository.getComponentByLocIdAndCompId(
-      locationId,
-      payload.componentId,
-    );
-
-    if (component) {
-      const componentPayload: UpdateComponentBaseDTO = {
-        componentId: component.componentId,
-        componentTypeCode: component.componentTypeCode,
-        analyticalPrincipleCode: component.analyticalPrincipleCode,
-        sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
-        basisCode: component.basisCode,
-        manufacturer: payload.manufacturer,
-        modelVersion: payload.modelVersion,
-        serialNumber: payload.serialNumber,
-        hgConverterIndicator: component.hgConverterIndicator,
-        analyzerRangeData: component.analyzerRanges,
-      };
-
-      await this.componentService.updateComponent(
-        locationId,
-        component,
-        componentPayload,
-        userId,
-      );
-    }
+    // let component = await this.componentWorkspaceRepository.getComponentByLocIdAndCompId(
+    //   locationId,
+    //   payload.componentId,
+    // );
+    //
+    // if (component) {
+    //   const componentPayload: UpdateComponentBaseDTO = {
+    //     componentId: component.componentId,
+    //     componentTypeCode: component.componentTypeCode,
+    //     analyticalPrincipleCode: component.analyticalPrincipleCode,
+    //     sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
+    //     basisCode: component.basisCode,
+    //     manufacturer: payload.manufacturer,
+    //     modelVersion: payload.modelVersion,
+    //     serialNumber: payload.serialNumber,
+    //     hgConverterIndicator: component.hgConverterIndicator,
+    //     analyzerRangeData: component.analyzerRanges,
+    //   };
+    //
+    //   await this.componentService.updateComponent(
+    //     locationId,
+    //     component,
+    //     componentPayload,
+    //     userId,
+    //   );
+    // }
 
     const systemComponent = await this.getSystemComponent(
       sysId,
@@ -134,23 +134,12 @@ export class SystemComponentWorkspaceService {
     );
 
     if (!component) {
-      const componentPayload: UpdateComponentBaseDTO = {
-        componentId: payload.componentId,
-        componentTypeCode: payload.componentTypeCode,
-        analyticalPrincipleCode: payload.analyticalPrincipleCode,
-        sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
-        basisCode: payload.basisCode,
-        manufacturer: payload.manufacturer,
-        modelVersion: payload.modelVersion,
-        serialNumber: payload.serialNumber,
-        hgConverterIndicator: payload.hgConverterIndicator,
-        analyzerRangeData: [],
-      };
-
-      component = await this.componentService.createComponent(
-        locationId,
-        componentPayload,
-        userId,
+      throw new EaseyException(
+          new Error('Component was not found'),
+          HttpStatus.NOT_FOUND,
+          {
+            componentId: payload.componentId
+          },
       );
     }
 

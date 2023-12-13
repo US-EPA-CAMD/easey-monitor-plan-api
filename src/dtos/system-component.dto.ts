@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { ComponentBaseDTO } from './component.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
-import { IsIsoFormat, IsValidDate } from '@us-epa-camd/easey-common/pipes';
+import {IsIsoFormat, IsValidDate, MatchesRegEx} from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
@@ -26,7 +26,30 @@ import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'System Component';
 
-export class SystemComponentBaseDTO extends ComponentBaseDTO {
+export class SystemComponentBaseDTO {
+  @ApiProperty({
+    description: propertyMetadata.systemComponentDTOComponentId.description,
+    example: propertyMetadata.systemComponentDTOComponentId.example,
+    name: propertyMetadata.systemComponentDTOComponentId.fieldLabels.value,
+  })
+  @IsString()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-8-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @MatchesRegEx('^[A-Z0-9]{1,3}$', {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-8-B', {
+        iD: args.value,
+      });
+    },
+  })
+  componentId: string;
+
   @ApiProperty({
     description: propertyMetadata.systemComponentDTOBeginDate.description,
     example: propertyMetadata.systemComponentDTOBeginDate.example,
@@ -206,15 +229,15 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
   @IsString()
   monitoringSystemRecordId: string;
 
-  @ApiProperty({
-    description:
-      propertyMetadata.systemComponentDTOComponentRecordId.description,
-    example: propertyMetadata.systemComponentDTOComponentRecordId.example,
-    name:
-      propertyMetadata.systemComponentDTOComponentRecordId.fieldLabels.value,
-  })
-  @IsString()
-  componentRecordId: string;
+  // @ApiProperty({
+  //   description:
+  //     propertyMetadata.systemComponentDTOComponentRecordId.description,
+  //   example: propertyMetadata.systemComponentDTOComponentRecordId.example,
+  //   name:
+  //     propertyMetadata.systemComponentDTOComponentRecordId.fieldLabels.value,
+  // })
+  // @IsString()
+  // componentRecordId: string;
 
   @ApiProperty({
     description: propertyMetadata.systemComponentDTOUserId.description,

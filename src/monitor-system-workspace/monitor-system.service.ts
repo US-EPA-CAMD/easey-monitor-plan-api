@@ -48,12 +48,10 @@ export class MonitorSystemWorkspaceService {
 
     const validTypeCodes = ['LTGS', 'LTOL', 'OILM', 'OILV', 'GAS'];
 
-    const componentIdAndTypeCodeSet: Set<string> = new Set<string>();
+    const componentIdSet: Set<string> = new Set<string>();
     for (const loc of monPlan.monitoringLocationData) {
       for (const component of loc.componentData) {
-        componentIdAndTypeCodeSet.add(
-          `${component.componentId}:${component.componentTypeCode}`,
-        );
+        componentIdSet.add(component.componentId);
       }
     }
 
@@ -75,9 +73,7 @@ export class MonitorSystemWorkspaceService {
       ) {
         for (const systemComponent of system.monitoringSystemComponentData) {
           if (
-            !componentIdAndTypeCodeSet.has(
-              `${systemComponent.componentId}:${systemComponent.componentTypeCode}`,
-            )
+            !componentIdSet.has(systemComponent.componentId)
           ) {
             errorList.push(
               `[IMPORT7-CRIT1-A] The workspace database and Monitor Plan Import JSON File does not contain a Component record for ${systemComponent.componentId}`,
