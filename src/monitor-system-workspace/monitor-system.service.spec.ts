@@ -104,7 +104,6 @@ describe('MonitorSystemWorkspaceService', () => {
       component.componentTypeCode = 'SO2';
       component.componentId = 'AA0';
 
-      systemComponent.componentTypeCode = 'SO2';
       systemComponent.componentId = 'AA0';
 
       system.monitoringSystemComponentData = [systemComponent];
@@ -143,7 +142,6 @@ describe('MonitorSystemWorkspaceService', () => {
       component.componentTypeCode = 'PLC';
       component.componentId = 'AFY';
 
-      systemComponent.componentTypeCode = 'SO2';
       systemComponent.componentId = 'AA0';
 
       system.monitoringSystemComponentData = [systemComponent];

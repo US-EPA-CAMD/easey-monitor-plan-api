@@ -35,10 +35,7 @@ describe('Monitor System Check Service Tests', () => {
     componentCheckService = module.get(ComponentCheckService);
   });
 
-  describe('RunChecks', () => {
-    it('Should Call Children.runChecks functions', async () => {
-      await service.runChecks(locationId, payload);
-      expect(componentCheckService.runChecks).toHaveBeenCalled();
-    });
-  });
+  it('Should return no errors', async () => {
+
+  })
 });

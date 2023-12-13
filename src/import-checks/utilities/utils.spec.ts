@@ -79,7 +79,6 @@ describe('Monitor-Import Utilities Tests', () => {
       component.componentTypeCode = 'SO2';
       component.componentId = 'AA0';
 
-      systemComponent.componentTypeCode = 'S02';
       systemComponent.componentId = 'AA0';
 
       system.monitoringSystemComponentData = [systemComponent];
@@ -109,7 +108,6 @@ describe('Monitor-Import Utilities Tests', () => {
       component.componentTypeCode = 'SO2';
       component.componentId = 'AA0';
 
-      systemComponent.componentTypeCode = 'S20';
       systemComponent.componentId = 'AA00';
 
       system.monitoringSystemComponentData = [systemComponent];
