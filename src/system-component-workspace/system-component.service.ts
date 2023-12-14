@@ -71,35 +71,7 @@ export class SystemComponentWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<SystemComponentDTO> {
-    // Saving System Component fields
-
-    // let component = await this.componentWorkspaceRepository.getComponentByLocIdAndCompId(
-    //   locationId,
-    //   payload.componentId,
-    // );
-    //
-    // if (component) {
-    //   const componentPayload: UpdateComponentBaseDTO = {
-    //     componentId: component.componentId,
-    //     componentTypeCode: component.componentTypeCode,
-    //     analyticalPrincipleCode: component.analyticalPrincipleCode,
-    //     sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
-    //     basisCode: component.basisCode,
-    //     manufacturer: payload.manufacturer,
-    //     modelVersion: payload.modelVersion,
-    //     serialNumber: payload.serialNumber,
-    //     hgConverterIndicator: component.hgConverterIndicator,
-    //     analyzerRangeData: component.analyzerRanges,
-    //   };
-    //
-    //   await this.componentService.updateComponent(
-    //     locationId,
-    //     component,
-    //     componentPayload,
-    //     userId,
-    //   );
-    // }
-
+ 
     const systemComponent = await this.getSystemComponent(
       sysId,
       sysComponentRecordId,
