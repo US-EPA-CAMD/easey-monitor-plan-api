@@ -10,7 +10,6 @@ import { Component } from '../entities/workspace/component.entity';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class ComponentWorkspaceService {
