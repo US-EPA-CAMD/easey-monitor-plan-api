@@ -17,7 +17,7 @@ export class SystemComponentMap extends BaseMap<
       id: entity.id,
       locationId: entity.component.locationId,
       monitoringSystemRecordId: entity.monitoringSystemRecordId,
-      componentId: entity.componentRecordId,
+      componentId: entity.component.componentId,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,
       endDate: entity.endDate,
