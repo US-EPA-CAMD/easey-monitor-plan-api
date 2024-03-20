@@ -84,9 +84,6 @@ describe('System Tests', () => {
       component.componentTypeCode = 'SO2';
       component.basisCode = 'AA0';
 
-      systemComponent.componentTypeCode = 'SO2';
-      systemComponent.basisCode = 'AA0';
-
       system.monitoringSystemComponentData = [systemComponent];
 
       location.componentData = [component];
@@ -117,9 +114,6 @@ describe('System Tests', () => {
       component.componentTypeCode = 'SO2';
       component.basisCode = 'AA0';
 
-      systemComponent.componentTypeCode = 'SO2';
-      systemComponent.basisCode = 'AA0';
-
       system.monitoringSystemComponentData = [systemComponent];
 
       location.componentData = [component];
@@ -149,9 +143,6 @@ describe('System Tests', () => {
 
       component.componentTypeCode = 'SO2';
       component.basisCode = 'AA0';
-
-      systemComponent.componentTypeCode = 'S20';
-      systemComponent.basisCode = 'AA0';
 
       system.monitoringSystemComponentData = [systemComponent];
 

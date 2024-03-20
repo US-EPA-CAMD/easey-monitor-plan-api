@@ -138,7 +138,7 @@ describe('SystemComponentWorkspaceService', () => {
     it('should create a component and also create and return system component when component not found', async () => {
       jest
         .spyOn(componentService, 'getComponentByIdentifier')
-        .mockResolvedValue(null);
+        .mockResolvedValue(new ComponentDTO());
 
       const result = await service.createSystemComponent(
         '1',
@@ -165,6 +165,9 @@ describe('SystemComponentWorkspaceService', () => {
       jest
         .spyOn(repository, 'getSystemComponentByBeginOrEndDate')
         .mockResolvedValue(null);
+
+      jest.spyOn(componentService, 'getComponentByIdentifier')
+          .mockResolvedValue(new ComponentDTO());
 
       const result = await service.importSystemComponent(
         '1',

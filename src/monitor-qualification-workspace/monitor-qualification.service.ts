@@ -38,6 +38,9 @@ export class MonitorQualificationWorkspaceService {
     const errorList: string[] = [];
 
     for (const qual of qualifications) {
+
+      if(qual.endDate) continue; // Don't perform checks on Inactive MonitorQualification Record
+      
       if (qual.qualificationTypeCode !== 'LMEA') {
         qual.monitoringQualificationLMEData.forEach((lmeQual, idx) => {
           if (lmeQual.so2Tons !== null) {
