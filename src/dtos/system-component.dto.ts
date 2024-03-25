@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { FindOneOptions } from 'typeorm';
 
 import {
   IsBoolean,
@@ -7,12 +8,13 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MaxLength,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
 import { ComponentBaseDTO } from './component.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
-import {IsIsoFormat, IsValidDate, MatchesRegEx} from '@us-epa-camd/easey-common/pipes';
+import {IsIsoFormat, IsValidDate, MatchesRegEx, IsValidCode} from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
@@ -23,6 +25,9 @@ import {
   MIN_HOUR,
 } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
+import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
+import { AnalyticalPrincipalCode } from '../entities/analytical-principal-code.entity';
+import { BasisCode } from '../entities/basis-code.entity';
 
 const KEY = 'System Component';
 
@@ -49,6 +54,153 @@ export class SystemComponentBaseDTO {
     },
   })
   componentId: string;
+
+  @ApiProperty({
+    description: propertyMetadata.systemComponentDTOComponentTypeCode.description,
+    example: propertyMetadata.systemComponentDTOComponentTypeCode.example,
+    name: propertyMetadata.systemComponentDTOComponentTypeCode.fieldLabels.value,
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-12-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsValidCode(SystemComponentMasterDataRelationships, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-12-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsString()
+  componentTypeCode: string;
+
+  @ApiProperty({
+    description:
+      propertyMetadata.componentDTOAnalyticalPrincipleCode.description,
+    example: propertyMetadata.componentDTOAnalyticalPrincipleCode.example,
+    name:
+      propertyMetadata.componentDTOAnalyticalPrincipleCode.fieldLabels.value,
+  })
+  @IsValidCode(AnalyticalPrincipalCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value], which is not in the list of valid values, in the field Critical Error Level [fieldname] for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
+  @IsString()
+  @IsOptional()
+  analyticalPrincipleCode: string;
+
+  @ApiProperty({
+    description:
+      propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode.description,
+    example: propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode.example,
+    name:
+      propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode.fieldLabels
+        .value,
+  })
+  @IsValidCode(
+    SystemComponentMasterDataRelationships,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('COMPON-13-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        });
+      },
+    },
+    (
+      args: ValidationArguments,
+    ): FindOneOptions<SystemComponentMasterDataRelationships> => {
+      return { where: { sampleAcquisitionMethodCode: args.value } };
+    },
+  )
+  @IsString()
+  @IsOptional()
+  sampleAcquisitionMethodCode: string;
+
+  @ApiProperty({
+    description: propertyMetadata.systemComponentDTOBasisCode.description,
+    example: propertyMetadata.systemComponentDTOBasisCode.example,
+    name: propertyMetadata.systemComponentDTOBasisCode.fieldLabels.value,
+  })
+  @IsValidCode(BasisCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('COMPON-14-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsString()
+  @IsOptional()
+  basisCode: string;
+
+  @ApiProperty({
+    description: propertyMetadata.systemComponentDTOManufacturer.description,
+    example: propertyMetadata.systemComponentDTOManufacturer.example,
+    name: propertyMetadata.systemComponentDTOManufacturer.fieldLabels.value,
+  })
+  @IsOptional()
+  @MaxLength(25, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 25 characters`;
+    },
+  })
+  manufacturer: string;
+
+  @ApiProperty({
+    description: propertyMetadata.systemComponentDTOModelVersion.description,
+    example: propertyMetadata.systemComponentDTOModelVersion.example,
+    name: propertyMetadata.systemComponentDTOModelVersion.fieldLabels.value,
+  })
+  @IsOptional()
+  @MaxLength(15, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 15 characters`;
+    },
+  })
+  modelVersion: string;
+
+  @ApiProperty({
+    description: propertyMetadata.systemComponentDTOSerialNumber.description,
+    example: propertyMetadata.systemComponentDTOSerialNumber.example,
+    name: propertyMetadata.systemComponentDTOSerialNumber.fieldLabels.value,
+  })
+  @IsOptional()
+  @MaxLength(20, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 20 characters`;
+    },
+  })
+  serialNumber: string;
+
+  @ApiProperty({
+    description: propertyMetadata.systemComponentDTOHgConverterIndicator.description,
+    example: propertyMetadata.systemComponentDTOHgConverterIndicator.example,
+    name: propertyMetadata.systemComponentDTOHgConverterIndicator.fieldLabels.value,
+  })
+  @IsOptional()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}]`;
+    },
+  })
+  hgConverterIndicator: number;
 
   @ApiProperty({
     description: propertyMetadata.systemComponentDTOBeginDate.description,
@@ -229,15 +381,15 @@ export class SystemComponentDTO extends SystemComponentBaseDTO {
   @IsString()
   monitoringSystemRecordId: string;
 
-  // @ApiProperty({
-  //   description:
-  //     propertyMetadata.systemComponentDTOComponentRecordId.description,
-  //   example: propertyMetadata.systemComponentDTOComponentRecordId.example,
-  //   name:
-  //     propertyMetadata.systemComponentDTOComponentRecordId.fieldLabels.value,
-  // })
-  // @IsString()
-  // componentRecordId: string;
+  @ApiProperty({
+    description:
+      propertyMetadata.systemComponentDTOComponentRecordId.description,
+    example: propertyMetadata.systemComponentDTOComponentRecordId.example,
+    name:
+      propertyMetadata.systemComponentDTOComponentRecordId.fieldLabels.value,
+  })
+  @IsString()
+  componentRecordId: string;
 
   @ApiProperty({
     description: propertyMetadata.systemComponentDTOUserId.description,
