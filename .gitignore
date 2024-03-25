@@ -12,6 +12,8 @@ package-lock.json
 .DS_Store
 .env
 .env.*
+.envrc
+.npmrc
 
 npm-debug.log*
 

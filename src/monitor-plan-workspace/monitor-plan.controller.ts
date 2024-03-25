@@ -74,7 +74,7 @@ export class MonitorPlanWorkspaceController {
     {
       importLocationSources: ['locations'],
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )
@@ -104,7 +104,7 @@ export class MonitorPlanWorkspaceController {
     {
       pathParam: 'planId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.MonitorPlan,
   )
