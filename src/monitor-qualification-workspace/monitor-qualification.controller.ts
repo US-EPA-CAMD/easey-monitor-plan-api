@@ -42,7 +42,7 @@ export class MonitorQualificationWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )
@@ -64,7 +64,7 @@ export class MonitorQualificationWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )

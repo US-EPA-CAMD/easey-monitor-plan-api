@@ -41,7 +41,7 @@ export class MatsMethodWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )
@@ -63,7 +63,7 @@ export class MatsMethodWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )
