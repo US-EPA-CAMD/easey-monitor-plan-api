@@ -15,9 +15,7 @@ import { ComponentCheckService } from '../component-workspace/component-checks.s
 @ApiSecurity('APIKey')
 @ApiTags('System Components')
 export class SystemComponentWorkspaceController {
-  constructor(
-    private service: SystemComponentWorkspaceService,
-  ) {}
+  constructor(private service: SystemComponentWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -45,7 +43,7 @@ export class SystemComponentWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )
@@ -74,7 +72,7 @@ export class SystemComponentWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )

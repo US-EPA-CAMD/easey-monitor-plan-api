@@ -14,7 +14,7 @@ import { ComponentCheckService } from './component-checks.service';
 export class ComponentWorkspaceController {
   constructor(
     private readonly service: ComponentWorkspaceService,
-    private readonly checkService: ComponentCheckService
+    private readonly checkService: ComponentCheckService,
   ) {}
 
   @Get()
@@ -40,7 +40,7 @@ export class ComponentWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSMP', 'DPMP'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
   )
