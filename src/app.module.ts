@@ -9,10 +9,7 @@ import { dbConfig } from '@us-epa-camd/easey-common/config';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { CorsOptionsModule } from '@us-epa-camd/easey-common/cors-options';
 import { ConnectionModule } from '@us-epa-camd/easey-common/connection';
-import {
-  DbLookupValidator,
-  IsValidCodeValidator,
-} from '@us-epa-camd/easey-common/validators';
+import { DbLookupValidator } from '@us-epa-camd/easey-common/validators';
 
 import routes from './routes';
 import appConfig from './config/app.config';
@@ -64,6 +61,6 @@ import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification
     CPMSQualificationWorkspaceModule,
     CPMSQualificationModule,
   ],
-  providers: [DbLookupValidator, IsValidCodeValidator],
+  providers: [DbLookupValidator],
 })
 export class AppModule {}
