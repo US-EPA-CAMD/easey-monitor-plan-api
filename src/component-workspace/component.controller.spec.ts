@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { ComponentWorkspaceService } from './component.service';
@@ -38,6 +39,10 @@ describe('ComponentWorkspaceController', () => {
         SystemComponentMasterDataRelationshipRepository,
         UsedIdentifierRepository,
         ComponentWorkspaceRepository,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
       ],
     }).compile();
 

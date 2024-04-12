@@ -6,7 +6,7 @@ import { MonitorSpanService } from './monitor-span.service';
 import { MonitorSpanRepository } from './monitor-span.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

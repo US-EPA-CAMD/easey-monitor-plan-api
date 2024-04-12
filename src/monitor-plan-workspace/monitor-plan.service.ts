@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
@@ -72,6 +72,7 @@ export class MonitorPlanWorkspaceService {
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
+    @Inject(forwardRef(() => MonitorLocationWorkspaceService))
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
 

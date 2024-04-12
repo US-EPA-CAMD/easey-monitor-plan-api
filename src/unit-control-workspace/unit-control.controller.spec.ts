@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlWorkspaceController } from './unit-control.controller';
@@ -43,6 +44,10 @@ describe('UnitControlWorkspaceController', () => {
         UnitControlWorkspaceService,
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: UnitControlChecksService,
           useFactory: () => ({

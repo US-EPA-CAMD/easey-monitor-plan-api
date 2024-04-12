@@ -1,14 +1,16 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CPMSQualificationWorkspaceController } from './cpms-qualification-workspace.controller';
-import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   CPMSQualificationBaseDTO,
   CPMSQualificationDTO,
 } from '../dtos/cpms-qualification.dto';
-import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { CPMSQualificationWorkspaceController } from './cpms-qualification-workspace.controller';
+import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
 
 const returnedCPMSQualification = new CPMSQualificationDTO();
 const returnedCPMSQualifications = [returnedCPMSQualification];
@@ -49,6 +51,10 @@ describe('CPMSQualificationWorkspaceController', () => {
         {
           provide: CPMSQualificationWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: DataSource,
+          useValue: {},
         },
         ConfigService,
         AuthGuard,

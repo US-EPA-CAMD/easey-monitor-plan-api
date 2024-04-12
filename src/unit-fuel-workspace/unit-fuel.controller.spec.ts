@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceController } from './unit-fuel.controller';
@@ -38,7 +39,15 @@ describe('UnitFuelWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule, LoggerModule],
       controllers: [UnitFuelWorkspaceController],
-      providers: [UnitFuelWorkspaceService, ConfigService, AuthGuard],
+      providers: [
+        UnitFuelWorkspaceService,
+        ConfigService,
+        AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get(UnitFuelWorkspaceController);

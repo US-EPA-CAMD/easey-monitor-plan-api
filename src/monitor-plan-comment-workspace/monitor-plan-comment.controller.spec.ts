@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
@@ -23,7 +24,14 @@ describe('MonitorPlanCommentWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       controllers: [MonitorPlanCommentWorkspaceController],
-      providers: [MonitorPlanCommentWorkspaceService, ConfigService],
+      providers: [
+        MonitorPlanCommentWorkspaceService,
+        ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get(MonitorPlanCommentWorkspaceController);

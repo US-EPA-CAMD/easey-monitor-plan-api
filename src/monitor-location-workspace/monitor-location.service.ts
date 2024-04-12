@@ -41,6 +41,7 @@ export class MonitorLocationWorkspaceService {
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
     private readonly unitService: UnitService,
     private readonly stackPipeService: StackPipeService,
+    @Inject(forwardRef(() => ComponentWorkspaceService))
     private readonly componentService: ComponentWorkspaceService,
     private readonly unitCapacityService: UnitCapacityWorkspaceService,
     private readonly unitControlService: UnitControlWorkspaceService,

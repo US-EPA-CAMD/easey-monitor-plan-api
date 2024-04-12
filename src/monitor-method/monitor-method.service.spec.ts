@@ -6,7 +6,7 @@ import { MonitorMethodService } from './monitor-method.service';
 import { MonitorMethodRepository } from './monitor-method.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

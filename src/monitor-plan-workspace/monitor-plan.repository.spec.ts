@@ -16,7 +16,7 @@ const mockQueryBuilder = () => ({
   andWhere: jest.fn(),
   innerJoin: jest.fn(),
   innerJoinAndSelect: jest.fn(() => mpArray),
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('Monitor Plan Repository', () => {
@@ -126,7 +126,7 @@ describe('Monitor Plan Repository', () => {
 
   it('calls resetToNeedsEvaluation to update the evaluation status of a monitor plan to Needs Evaluation', async () => {
     monitorPlanRepository.query = jest.fn();
-    monitorPlanRepository.findOne = jest.fn();
+    monitorPlanRepository.findOneBy = jest.fn();
     await monitorPlanRepository.resetToNeedsEvaluation(1);
     expect(monitorPlanRepository.query).toHaveBeenCalled();
   });
@@ -136,7 +136,7 @@ describe('Monitor Plan Repository', () => {
       monitorPlanRepository.query = jest.fn(() => {
         throw new BadRequestException();
       });
-      monitorPlanRepository.findOne = jest.fn();
+      monitorPlanRepository.findOneBy = jest.fn();
       await monitorPlanRepository.resetToNeedsEvaluation(1);
     } catch (e) {
       const exception = new BadRequestException();

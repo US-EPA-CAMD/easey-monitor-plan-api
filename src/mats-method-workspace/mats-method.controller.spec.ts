@@ -1,12 +1,14 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
+
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
+import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceController } from './mats-method.controller';
 import { MatsMethodWorkspaceService } from './mats-method.service';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { MatsMethodChecksService } from './mats-method-checks.service';
 
 const locationId = 'string';
 const methodId = 'string';
@@ -48,6 +50,10 @@ describe('MatsMethodWorkspaceController', () => {
       controllers: [MatsMethodWorkspaceController],
       providers: [
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: MatsMethodChecksService,
           useFactory: mockCheckService,

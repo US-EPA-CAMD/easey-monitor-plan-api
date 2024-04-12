@@ -6,7 +6,7 @@ import { DuctWafRepository } from './duct-waf.repository';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

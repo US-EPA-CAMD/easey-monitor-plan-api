@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationWorkspaceController } from './pct-qualification.controller';
@@ -38,7 +39,15 @@ describe('PCTQualificationWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule, LoggerModule],
       controllers: [PCTQualificationWorkspaceController],
-      providers: [PCTQualificationWorkspaceService, ConfigService, AuthGuard],
+      providers: [
+        PCTQualificationWorkspaceService,
+        ConfigService,
+        AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get(PCTQualificationWorkspaceController);

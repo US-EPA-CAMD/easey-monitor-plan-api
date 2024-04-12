@@ -1,17 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorPlanWorkspaceService } from './monitor-plan.service';
-import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
-
-import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { ImportChecksService } from '../import-checks/import-checks.service';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { MonitorPlanChecksService } from './monitor-plan-checks.service';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
+
 import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { ImportChecksService } from '../import-checks/import-checks.service';
+import { MonitorPlanChecksService } from './monitor-plan-checks.service';
+import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
+import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
 jest.mock('./monitor-plan.service');
 jest.mock('../user-check-out/user-check-out.service');
@@ -50,6 +50,10 @@ describe('MonitorPlanWorkspaceController', () => {
         ImportChecksService,
         AuthGuard,
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: MonitorPlanChecksService,
           useFactory: mockCheckService,

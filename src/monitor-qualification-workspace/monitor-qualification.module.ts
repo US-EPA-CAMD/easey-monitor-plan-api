@@ -16,10 +16,10 @@ import { MonitorQualificationWorkspaceService } from './monitor-qualification.se
   imports: [
     LEEQualificationWorkspaceModule,
     LMEQualificationWorkspaceModule,
-    PCTQualificationWorkspaceModule,
-    CPMSQualificationWorkspaceModule,
     TypeOrmModule.forFeature([MonitorQualificationWorkspaceRepository]),
     HttpModule,
+    forwardRef(() => CPMSQualificationWorkspaceModule),
+    forwardRef(() => PCTQualificationWorkspaceModule),
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MonitorQualificationWorkspaceController],

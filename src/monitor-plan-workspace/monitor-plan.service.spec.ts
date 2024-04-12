@@ -105,7 +105,7 @@ const mockMonitorLocationRepo = () => ({
   getMonitorLocationsByPlanId: jest.fn().mockResolvedValue([MONITOR_LOCATION]),
 });
 const mockCommentRepo = () => ({
-  find: jest.fn().mockResolvedValue([new MonitorPlanComment()]),
+  findBy: jest.fn().mockResolvedValue([new MonitorPlanComment()]),
 });
 const mockAttributeRepo = () => ({
   find: jest.fn().mockResolvedValue([new MonitorAttribute()]),
@@ -175,7 +175,7 @@ const mockUnitStackConfigRepo = () => ({
   getUnitStackConfigsByLocationIds: jest.fn(),
 });
 const mockReportingFreqRepo = () => ({
-  find: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
+  findBy: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
 });
 
 const mockCpmsQual = () => ({
@@ -354,10 +354,10 @@ describe('Monitor Plan Service', () => {
   describe('getMonitorPlan', () => {
     it('Return a MonitorPlanDTO mapped from an Entity retrieved by ID', async () => {
       jest
-        .spyOn(SubmissionAvailabilityCode, 'findOne')
+        .spyOn(SubmissionAvailabilityCode, 'findOneBy')
         .mockResolvedValue(new SubmissionAvailabilityCode());
       jest
-        .spyOn(EvalStatusCode, 'findOne')
+        .spyOn(EvalStatusCode, 'findOneBy')
         .mockResolvedValue(new EvalStatusCode());
 
       const result = await service.getMonitorPlan(MON_PLAN_ID);

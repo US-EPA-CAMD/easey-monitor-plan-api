@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
@@ -28,6 +29,10 @@ describe('SystemComponentWorkspaceController', () => {
       providers: [
         SystemComponentWorkspaceService,
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: ComponentCheckService,
           useFactory: () => ({

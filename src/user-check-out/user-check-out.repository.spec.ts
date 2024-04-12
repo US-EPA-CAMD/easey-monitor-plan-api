@@ -19,7 +19,7 @@ describe('UserCheckOutRepository', () => {
   describe('checkOutConfiguration', () => {
     it('should return checked out record', async () => {
       repository.query = jest.fn().mockReturnValue('');
-      repository.findOne = jest.fn().mockReturnValue('');
+      repository.findOneBy = jest.fn().mockReturnValue('');
       const result = await repository.checkOutConfiguration(null, null);
       expect(result).toEqual('');
     });

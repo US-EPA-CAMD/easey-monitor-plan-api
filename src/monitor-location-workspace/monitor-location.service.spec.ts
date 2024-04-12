@@ -1,7 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
 
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
@@ -9,7 +8,6 @@ import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service'
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
-import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
 import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
 import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
@@ -33,6 +31,7 @@ const uscDto = new UnitStackConfigurationDTO();
 
 const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
+  findOneBy: jest.fn().mockResolvedValue(new MonitorLocation()),
 });
 
 const mockMap = () => ({
@@ -52,11 +51,7 @@ describe('MonitorLocationWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [NotFoundException, LoggerModule],
       providers: [
-        EntityManager,
         MonitorLocationWorkspaceService,
-        MonitorLocationWorkspaceRepository,
-        MonitorLocationMap,
-        UnitStackConfigurationMap,
         {
           provide: UnitStackConfigurationWorkspaceService,
           useFactory: mockUscService,

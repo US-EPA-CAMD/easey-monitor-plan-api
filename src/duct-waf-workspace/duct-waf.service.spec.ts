@@ -19,8 +19,8 @@ const DUCT_WAF_ID = 'A DUCT WAF ID';
 const USER_ID = 'A USER ID';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
-  findOne: jest.fn().mockResolvedValue(ENTITY),
+  findBy: jest.fn().mockResolvedValue(''),
+  findOneBy: jest.fn().mockResolvedValue(ENTITY),
   create: jest.fn(),
   save: jest.fn(),
   getDuctWafByLocIdBDateBHourWafValue: jest.fn(),
@@ -76,7 +76,7 @@ describe('DuctWafWorkspaceService', () => {
     });
 
     it('Should throw a NOT FOUND error', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let error = false;
       try {

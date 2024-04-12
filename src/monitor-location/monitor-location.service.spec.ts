@@ -17,7 +17,7 @@ const locId = '6';
 const uscDto = new UnitStackConfigurationDTO();
 
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
+  findOneBy: jest.fn().mockResolvedValue(new MonitorLocation()),
 });
 
 const mockMap = () => ({

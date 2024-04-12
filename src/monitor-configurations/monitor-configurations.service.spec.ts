@@ -1,14 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MonitorConfigurationsService } from './monitor-configurations.service';
+import { EntityManager } from 'typeorm';
+
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { Plant } from '../entities/plant.entity';
+import { MonitorPlanMap } from '../maps/monitor-plan.map';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
 import { MonitorPlanService } from '../monitor-plan/monitor-plan.service';
-import { MonitorPlan } from '../entities/monitor-plan.entity';
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-import { Plant } from '../entities/plant.entity';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { MonitorConfigurationsService } from './monitor-configurations.service';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
@@ -43,6 +45,7 @@ describe('MonitorConfigurationsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       providers: [
+        EntityManager,
         MonitorConfigurationsService,
         {
           provide: MonitorPlanRepository,

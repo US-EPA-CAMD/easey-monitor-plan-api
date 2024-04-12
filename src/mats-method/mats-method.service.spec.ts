@@ -6,7 +6,7 @@ import { MatsMethodService } from './mats-method.service';
 import { MatsMethodRepository } from './mats-method.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({
