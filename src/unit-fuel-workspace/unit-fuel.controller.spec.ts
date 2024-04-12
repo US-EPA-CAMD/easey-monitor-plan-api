@@ -1,14 +1,13 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
-import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
+import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceController } from './unit-fuel.controller';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
-import { UnitFuelBaseDTO } from '../dtos/unit-fuel.dto';
-import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./unit-fuel.service');
 

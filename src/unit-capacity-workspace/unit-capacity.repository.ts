@@ -1,9 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UnitCapacity } from '../entities/workspace/unit-capacity.entity';
 
-@EntityRepository(UnitCapacity)
+@Injectable()
 export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
+  constructor(entityManager: EntityManager) {
+    super(UnitCapacity, entityManager);
+  }
+
   async getUnitCapacity(unitCapacityId: string): Promise<UnitCapacity> {
     const query = this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')

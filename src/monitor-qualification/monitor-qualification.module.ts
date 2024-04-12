@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualification.module';
 import { LEEQualificationModule } from '../lee-qualification/lee-qualification.module';
 import { LMEQualificationModule } from '../lme-qualification/lme-qualification.module';
-import { PCTQualificationModule } from '../pct-qualification/pct-qualification.module';
-
-import { MonitorQualificationController } from './monitor-qualification.controller';
-import { MonitorQualificationService } from './monitor-qualification.service';
-import { MonitorQualificationRepository } from './monitor-qualification.repository';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
-import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualification.module';
+import { PCTQualificationModule } from '../pct-qualification/pct-qualification.module';
+import { MonitorQualificationController } from './monitor-qualification.controller';
+import { MonitorQualificationRepository } from './monitor-qualification.repository';
+import { MonitorQualificationService } from './monitor-qualification.service';
 
 @Module({
   imports: [
@@ -20,9 +19,14 @@ import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualificatio
     TypeOrmModule.forFeature([MonitorQualificationRepository]),
   ],
   controllers: [MonitorQualificationController],
-  providers: [MonitorQualificationService, MonitorQualificationMap],
+  providers: [
+    MonitorQualificationRepository,
+    MonitorQualificationService,
+    MonitorQualificationMap,
+  ],
   exports: [
     TypeOrmModule,
+    MonitorQualificationRepository,
     MonitorQualificationService,
     MonitorQualificationMap,
   ],

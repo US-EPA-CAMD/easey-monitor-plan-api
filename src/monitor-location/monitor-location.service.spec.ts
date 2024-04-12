@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationService } from './monitor-location.service';
@@ -35,6 +36,7 @@ describe('MonitorLocationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [NotFoundException, LoggerModule],
       providers: [
+        EntityManager,
         MonitorLocationService,
         MonitorLocationRepository,
         MonitorLocationMap,

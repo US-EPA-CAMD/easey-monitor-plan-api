@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
+
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
 import { UnitRepository } from './unit.repository';
 
@@ -14,7 +15,7 @@ export class UnitService {
   ): Promise<string[]> {
     const errorList: string[] = [];
 
-    const databaseUnit = await this.repository.findOne({
+    const databaseUnit = await this.repository.findOneBy({
       name: location.unitId,
       facId: facilityId,
     });
@@ -35,7 +36,7 @@ export class UnitService {
           nonLoadBasedIndicator: nonLoadI,
         });
         resolve(true);
-      })()
+      })();
     });
   }
 

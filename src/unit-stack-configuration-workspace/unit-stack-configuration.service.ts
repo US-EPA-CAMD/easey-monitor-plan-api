@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
-import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
-import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UnitService } from '../unit/unit.service';
-import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
+import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { UnitService } from '../unit/unit.service';
+import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -123,13 +124,13 @@ export class UnitStackConfigurationWorkspaceService {
                   );
                 }
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 

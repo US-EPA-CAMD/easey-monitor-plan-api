@@ -1,11 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 
-@EntityRepository(MonitorDefault)
+@Injectable()
 export class MonitorDefaultWorkspaceRepository extends Repository<
   MonitorDefault
 > {
+  constructor(entityManager: EntityManager) {
+    super(MonitorDefault, entityManager);
+  }
+
   async getDefault(locationId: string, id: string): Promise<MonitorDefault> {
     return this.createQueryBuilder('md')
       .where('md.locationId = :locationId', { locationId })

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { SystemComponent } from '../entities/workspace/system-component.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 
 const sysComp = new SystemComponent();
@@ -23,6 +24,7 @@ describe('SystemComponentWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         SystemComponentWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

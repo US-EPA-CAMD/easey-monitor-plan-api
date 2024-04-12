@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { ComponentWorkspaceService } from './component.service';
@@ -30,9 +31,10 @@ describe('ComponentWorkspaceController', () => {
       imports: [HttpModule, LoggerModule],
       controllers: [ComponentWorkspaceController],
       providers: [
-        ComponentWorkspaceService, 
-        ConfigService, 
-        ComponentCheckService, 
+        ComponentWorkspaceService,
+        ConfigService,
+        ComponentCheckService,
+        EntityManager,
         SystemComponentMasterDataRelationshipRepository,
         UsedIdentifierRepository,
         ComponentWorkspaceRepository,
@@ -57,20 +59,22 @@ describe('ComponentWorkspaceController', () => {
     });
   });
 
-  describe('createComponent', ()=>{
-    it('should create a new component', async ()=>{
+  describe('createComponent', () => {
+    it('should create a new component', async () => {
       const mockedReturnDto = new ComponentDTO();
       const mockedPayloadDto = new UpdateComponentBaseDTO();
       const user: CurrentUser = {
-        userId: "",
-        sessionId: "",
-        expiration: "",
-        clientIp: "",
+        userId: '',
+        sessionId: '',
+        expiration: '',
+        clientIp: '',
         facilities: [],
         roles: [],
-    }
+      };
       jest.spyOn(service, 'createComponent').mockResolvedValue(mockedReturnDto);
-      expect(await controller.createComponent("", mockedPayloadDto, user)).toBe(mockedReturnDto)
-    })
-  })
+      expect(await controller.createComponent('', mockedPayloadDto, user)).toBe(
+        mockedReturnDto,
+      );
+    });
+  });
 });

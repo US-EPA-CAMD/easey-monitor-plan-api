@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/typeorm';
 import {
   registerDecorator,
   ValidationOptions,
@@ -7,12 +6,12 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { Connection } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsInDbValuesConstraint implements ValidatorConstraintInterface {
-  constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(private readonly connection: DataSource) {}
 
   validate(sql: string, args: ValidationArguments) {
     return this.connection.query(args.constraints[0]).then(data => {

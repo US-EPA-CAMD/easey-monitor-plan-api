@@ -1,11 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
 
-@EntityRepository(UnitStackConfiguration)
+@Injectable()
 export class UnitStackConfigurationRepository extends Repository<
   UnitStackConfiguration
 > {
+  constructor(entityManager: EntityManager) {
+    super(UnitStackConfiguration, entityManager);
+  }
+
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
     return this.createQueryBuilder('usc')
       .innerJoinAndSelect('usc.unit', 'u')

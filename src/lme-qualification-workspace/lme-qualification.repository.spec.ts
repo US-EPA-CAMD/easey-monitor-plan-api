@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
-import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
+import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 
 const mockQueryBuilder = () => ({
   innerJoinAndSelect: jest.fn(),
@@ -21,6 +21,7 @@ describe('LMEQualificationWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         LMEQualificationWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

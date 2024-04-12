@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { EvalStatusCodeRepository } from './eval-status.repository';
-import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
-import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { In } from 'typeorm';
+
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { Plant } from '../entities/workspace/plant.entity';
+import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
+import { EvalStatusCodeRepository } from './eval-status.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 
 @Injectable()
 export class MonitorConfigurationsWorkspaceService {
   constructor(
     private readonly map: MonitorPlanConfigurationMap,
-    @InjectRepository(EvalStatusCodeRepository)
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
-    @InjectRepository(SubmissionsAvailabilityStatusCodeRepository)
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
     private readonly locationRepository: MonitorLocationWorkspaceRepository,
     private readonly uscRepository: UnitStackConfigurationWorkspaceRepository,

@@ -1,22 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
-import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { v4 as uuid } from 'uuid';
 
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
+
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   SystemFuelFlowBaseDTO,
   SystemFuelFlowDTO,
 } from '../dtos/system-fuel-flow.dto';
-import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 
 @Injectable()
 export class SystemFuelFlowWorkspaceService {
   constructor(
-    @InjectRepository(SystemFuelFlowWorkspaceRepository)
     private readonly repository: SystemFuelFlowWorkspaceRepository,
     private readonly map: SystemFuelFlowMap,
 
@@ -149,14 +148,14 @@ export class SystemFuelFlowWorkspaceService {
 
                 await Promise.all(innerPromises);
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

@@ -1,31 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 } from 'uuid';
 
 import {
   MonitorPlanCommentBaseDTO,
   MonitorPlanCommentDTO,
 } from '../dtos/monitor-plan-comment.dto';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
-import { v4 } from 'uuid';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorPlanCommentWorkspaceService {
   constructor(
-    @InjectRepository(MonitorPlanCommentWorkspaceRepository)
     private readonly repository: MonitorPlanCommentWorkspaceRepository,
     private readonly map: MonitorPlanCommentMap,
   ) {}
 
   async getComments(planId: string): Promise<MonitorPlanCommentDTO[]> {
-    const results = await this.repository.find({ monitorPlanId: planId });
+    const results = await this.repository.findBy({ monitorPlanId: planId });
     return this.map.many(results);
   }
 
   async getCommentById(commentId: string): Promise<MonitorPlanCommentDTO> {
-    const result = await this.repository.findOne({ id: commentId });
+    const result = await this.repository.findOneBy({ id: commentId });
     return this.map.one(result);
   }
 
@@ -112,14 +110,14 @@ export class MonitorPlanCommentWorkspaceService {
                   }
                 }
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

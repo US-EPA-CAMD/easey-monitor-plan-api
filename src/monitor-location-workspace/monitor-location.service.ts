@@ -5,40 +5,37 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { MonitorLocationMap } from '../maps/monitor-location.map';
-import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-
-import { UnitService } from '../unit/unit.service';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
+import { MonitorLocationMap } from '../maps/monitor-location.map';
+import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
+import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
+import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
+import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
+import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
+import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monitor-method.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
+import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
-import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
 import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
-import { ComponentWorkspaceService } from '../component-workspace/component.service';
-import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
-import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
-import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
-import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
-import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
-import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
-import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monitor-method.service';
-import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
-import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
-import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { UnitService } from '../unit/unit.service';
+import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
   readonly errorMsg: 'Monitor Location Not Found';
   constructor(
-    @InjectRepository(MonitorLocationWorkspaceRepository)
     private readonly repository: MonitorLocationWorkspaceRepository,
     private readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationWorkspaceService,
@@ -87,7 +84,7 @@ export class MonitorLocationWorkspaceService {
   }
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
-    const result = await this.repository.findOne(locationId);
+    const result = await this.repository.findOneBy({ id: locationId });
 
     if (!result) {
       throw new EaseyException(new Error(this.errorMsg), HttpStatus.NOT_FOUND, {
@@ -153,7 +150,7 @@ export class MonitorLocationWorkspaceService {
   }
 
   async getLocationEntity(locationId: string): Promise<MonitorLocation> {
-    const result = await this.repository.findOne(locationId);
+    const result = await this.repository.findOneBy({ id: locationId });
     if (!result) {
       throw new EaseyException(new Error(this.errorMsg), HttpStatus.NOT_FOUND, {
         locationId: locationId,
@@ -232,7 +229,10 @@ export class MonitorLocationWorkspaceService {
                     );
                   }
 
-                  if (location.unitFuelData && location.unitFuelData.length > 0) {
+                  if (
+                    location.unitFuelData &&
+                    location.unitFuelData.length > 0
+                  ) {
                     innerPromises.push(
                       this.unitFuelService.importUnitFuel(
                         location.unitFuelData,
@@ -258,7 +258,10 @@ export class MonitorLocationWorkspaceService {
                   );
                 }
 
-                if (location.componentData && location.componentData.length > 0) {
+                if (
+                  location.componentData &&
+                  location.componentData.length > 0
+                ) {
                   innerPromises.push(
                     this.componentService.importComponent(
                       location,
@@ -400,7 +403,7 @@ export class MonitorLocationWorkspaceService {
 
                 await Promise.all(innerPromises);
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
@@ -408,7 +411,7 @@ export class MonitorLocationWorkspaceService {
         await Promise.all(promises);
 
         resolve(true);
-      })()
+      })();
     });
   }
 }

@@ -1,9 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UnitCapacity } from '../entities/unit-capacity.entity';
 
-@EntityRepository(UnitCapacity)
+@Injectable()
 export class UnitCapacityRepository extends Repository<UnitCapacity> {
+  constructor(entityManager: EntityManager) {
+    super(UnitCapacity, entityManager);
+  }
+
   async getUnitCapacities(
     locId: string,
     unitId: number,

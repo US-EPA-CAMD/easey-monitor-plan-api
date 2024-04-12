@@ -1,22 +1,20 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
+
 import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
 } from '../dtos/analyzer-range.dto';
-import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
-import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
+import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 
 @Injectable()
 export class AnalyzerRangeWorkspaceService {
   constructor(
-    @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly repository: AnalyzerRangeWorkspaceRepository,
     private readonly map: AnalyzerRangeMap,
 
@@ -25,12 +23,12 @@ export class AnalyzerRangeWorkspaceService {
   ) {}
 
   async getAnalyzerRanges(compId: string): Promise<AnalyzerRangeDTO[]> {
-    const results = await this.repository.find({ componentRecordId: compId });
+    const results = await this.repository.findBy({ componentRecordId: compId });
     return this.map.many(results);
   }
 
   async getAnalyzerRange(analyzerRangeId: string): Promise<AnalyzerRange> {
-    const result = await this.repository.findOne(analyzerRangeId);
+    const result = await this.repository.findOneBy({ id: analyzerRangeId });
 
     if (!result) {
       throw new EaseyException(
@@ -140,14 +138,14 @@ export class AnalyzerRangeWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

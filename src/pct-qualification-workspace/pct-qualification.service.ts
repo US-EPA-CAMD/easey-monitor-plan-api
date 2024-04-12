@@ -1,21 +1,20 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { PCTQualificationMap } from '../maps/pct-qualification.map';
+
 import {
   PCTQualificationBaseDTO,
   PCTQualificationDTO,
 } from '../dtos/pct-qualification.dto';
+import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 
 @Injectable()
 export class PCTQualificationWorkspaceService {
   constructor(
-    @InjectRepository(PCTQualificationWorkspaceRepository)
     private readonly repository: PCTQualificationWorkspaceRepository,
     private readonly map: PCTQualificationMap,
 

@@ -1,12 +1,12 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
-import { UnitFuelWorkspaceController } from './unit-fuel.controller';
-import { UnitFuelWorkspaceService } from './unit-fuel.service';
-import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
+import { UnitFuelWorkspaceController } from './unit-fuel.controller';
+import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
+import { UnitFuelWorkspaceService } from './unit-fuel.service';
 
 @Module({
   imports: [
@@ -15,7 +15,16 @@ import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-pl
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [UnitFuelWorkspaceController],
-  providers: [UnitFuelWorkspaceService, UnitFuelMap],
-  exports: [TypeOrmModule, UnitFuelWorkspaceService, UnitFuelMap],
+  providers: [
+    UnitFuelWorkspaceRepository,
+    UnitFuelWorkspaceService,
+    UnitFuelMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    UnitFuelWorkspaceRepository,
+    UnitFuelWorkspaceService,
+    UnitFuelMap,
+  ],
 })
 export class UnitFuelWorkspaceModule {}

@@ -4,9 +4,15 @@ import { RouterModule } from 'nest-router';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CheckCatalogModule } from '@us-epa-camd/easey-common/check-catalog';
 import { dbConfig } from '@us-epa-camd/easey-common/config';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { CorsOptionsModule } from '@us-epa-camd/easey-common/cors-options';
+import { ConnectionModule } from '@us-epa-camd/easey-common/connection';
+import {
+  DbLookupValidator,
+  IsValidCodeValidator,
+} from '@us-epa-camd/easey-common/validators';
 
 import routes from './routes';
 import appConfig from './config/app.config';
@@ -36,9 +42,13 @@ import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
+    CheckCatalogModule.register(
+      'camdecmpsmd.vw_monitor_plan_api_check_catalog_results',
+    ),
     HttpModule,
     LoggerModule,
     CorsOptionsModule,
+    ConnectionModule,
     MessagesModule,
     MonitorPlanModule,
     MonitorConfigurationsModule,
@@ -54,6 +64,6 @@ import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification
     CPMSQualificationWorkspaceModule,
     CPMSQualificationModule,
   ],
-  providers: [],
+  providers: [DbLookupValidator, IsValidCodeValidator],
 })
 export class AppModule {}

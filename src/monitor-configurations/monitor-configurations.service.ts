@@ -3,7 +3,7 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { In, MoreThanOrEqual, getManager } from 'typeorm';
+import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { Plant } from '../entities/plant.entity';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
@@ -11,6 +11,7 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 @Injectable()
 export class MonitorConfigurationsService {
   constructor(
+    private readonly entityManager: EntityManager,
     private readonly locationRepository: MonitorLocationRepository,
     private readonly uscRepository: UnitStackConfigurationRepository,
     private readonly map: MonitorPlanMap,
@@ -83,7 +84,8 @@ export class MonitorConfigurationsService {
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
 
-    const clock: Date = (await getManager().query('SELECT now();'))[0].now;
+    const clock: Date = (await this.entityManager.query('SELECT now();'))[0]
+      .now;
     dto.mostRecentUpdate = clock;
 
     // Populate the monitor plans that have been changed

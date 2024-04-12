@@ -1,18 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
-import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { EntityManager } from 'typeorm';
+
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
-import { EvalStatusCodeRepository } from './eval-status.repository';
-import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { EvalStatusCode } from '../entities/eval-status-code.entity';
 import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
-import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { Plant } from '../entities/workspace/plant.entity';
+import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
+import { EvalStatusCodeRepository } from './eval-status.repository';
+import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
+import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
@@ -48,6 +50,7 @@ describe('MonitorConfigurationsWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       providers: [
+        EntityManager,
         MonitorConfigurationsWorkspaceService,
         {
           provide: MonitorPlanWorkspaceRepository,

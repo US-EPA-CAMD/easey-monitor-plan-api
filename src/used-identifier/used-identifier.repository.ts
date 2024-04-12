@@ -1,8 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { UsedIdentifier } from '../entities/used-identifier.entity';
 
-@EntityRepository(UsedIdentifier)
+@Injectable()
 export class UsedIdentifierRepository extends Repository<UsedIdentifier> {
+  constructor(entityManager: EntityManager) {
+    super(UsedIdentifier, entityManager);
+  }
+
   async getBySpecs(
     locationId: string,
     identifier: string,

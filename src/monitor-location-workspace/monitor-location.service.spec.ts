@@ -1,31 +1,32 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
-import { MonitorLocationMap } from '../maps/monitor-location.map';
-import { MonitorLocationWorkspaceService } from './monitor-location.service';
-import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
-import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { UnitService } from '../unit/unit.service';
-import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
+import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
+import { MonitorLocationMap } from '../maps/monitor-location.map';
+import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
+import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
+import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
+import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
+import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
+import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monitor-method.service';
+import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
+import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
+import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
 import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
-import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
-import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
-import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
-import { MatsMethodWorkspaceService } from '../mats-method-workspace/mats-method.service';
-import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monitor-method.service';
-import { DuctWafWorkspaceService } from '../duct-waf-workspace/duct-waf.service';
-import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
-import { MonitorDefaultWorkspaceService } from '../monitor-default-workspace/monitor-default.service';
-import { MonitorLoadWorkspaceService } from '../monitor-load-workspace/monitor-load.service';
-import { MonitorAttributeWorkspaceService } from '../monitor-attribute-workspace/monitor-attribute.service';
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
+import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { UnitService } from '../unit/unit.service';
+import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
+import { MonitorLocationWorkspaceService } from './monitor-location.service';
 
 const locId = '6';
 const uscDto = new UnitStackConfigurationDTO();
@@ -51,6 +52,7 @@ describe('MonitorLocationWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [NotFoundException, LoggerModule],
       providers: [
+        EntityManager,
         MonitorLocationWorkspaceService,
         MonitorLocationWorkspaceRepository,
         MonitorLocationMap,

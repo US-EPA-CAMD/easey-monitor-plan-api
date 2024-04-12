@@ -1,11 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { LEEQualification } from '../entities/workspace/lee-qualification.entity';
 
-@EntityRepository(LEEQualification)
+@Injectable()
 export class LEEQualificationWorkspaceRepository extends Repository<
   LEEQualification
 > {
+  constructor(entityManager: EntityManager) {
+    super(LEEQualification, entityManager);
+  }
+
   async getLEEQualifications(
     locId: string,
     qualificationId: string,

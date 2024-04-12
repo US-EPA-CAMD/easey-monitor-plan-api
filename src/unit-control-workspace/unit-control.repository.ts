@@ -1,8 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { UnitControl } from '../entities/workspace/unit-control.entity';
 
-@EntityRepository(UnitControl)
+@Injectable()
 export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
+  constructor(entityManager: EntityManager) {
+    super(UnitControl, entityManager);
+  }
+
   async getUnitControls(
     locId: string,
     unitRecordId: number,

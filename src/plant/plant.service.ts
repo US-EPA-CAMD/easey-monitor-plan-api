@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { PlantRepository } from './plant.repository';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class PlantService {
   }
 
   public async getFacIdFromOris(orisCode: number): Promise<number> {
-    const plant = await this.repository.findOne({ orisCode: orisCode });
+    const plant = await this.repository.findOneBy({ orisCode: orisCode });
 
     if (plant) {
       return plant.id;

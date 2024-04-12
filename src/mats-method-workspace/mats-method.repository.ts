@@ -1,9 +1,15 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
 
-@EntityRepository(MatsMethod)
+@Injectable()
 export class MatsMethodWorkspaceRepository extends Repository<MatsMethod> {
+  constructor(entityManager: EntityManager) {
+    super(MatsMethod, entityManager);
+  }
+
   async getMatsMethodByLodIdParamCodeAndDate(
     locationId: string,
     matsMethod: MatsMethodBaseDTO,

@@ -1,6 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { DuctWaf } from '../entities/duct-waf.entity';
 
-@EntityRepository(DuctWaf)
-export class DuctWafRepository extends Repository<DuctWaf> {}
+@Injectable()
+export class DuctWafRepository extends Repository<DuctWaf> {
+  constructor(entityManager: EntityManager) {
+    super(DuctWaf, entityManager);
+  }
+}

@@ -1,22 +1,17 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
+
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   UnitCapacityBaseDTO,
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -68,14 +63,14 @@ export class UnitCapacityWorkspaceService {
                   );
                 }
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 

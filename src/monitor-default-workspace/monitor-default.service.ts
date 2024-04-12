@@ -1,28 +1,21 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorDefaultMap } from '../maps/monitor-default.map';
-import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
 import {
   MonitorDefaultBaseDTO,
   MonitorDefaultDTO,
 } from '../dtos/monitor-default.dto';
+import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
+import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorDefaultWorkspaceService {
   constructor(
-    @InjectRepository(MonitorDefaultWorkspaceRepository)
     private readonly repository: MonitorDefaultWorkspaceRepository,
     private readonly map: MonitorDefaultMap,
     private readonly logger: Logger,
@@ -32,7 +25,7 @@ export class MonitorDefaultWorkspaceService {
   ) {}
 
   async getDefaults(locationId: string): Promise<MonitorDefaultDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
@@ -158,18 +151,23 @@ export class MonitorDefaultWorkspaceService {
                     true,
                   );
                 } else {
-                  await this.createDefault(locationId, monDefault, userId, true);
+                  await this.createDefault(
+                    locationId,
+                    monDefault,
+                    userId,
+                    true,
+                  );
                 }
 
                 innerResolve(true);
               }
-            })()
+            })();
           }),
         );
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }
