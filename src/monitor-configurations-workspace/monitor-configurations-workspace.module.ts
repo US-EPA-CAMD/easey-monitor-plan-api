@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -12,6 +12,7 @@ import { EvalStatusCodeRepository } from './eval-status.repository';
 import { MonitorConfigurationsWorkspaceController } from './monitor-configurations-workspace.controller';
 import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
+import { PlantWorkspaceModule } from '../plant-workspace/plant.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availa
     ]),
     MonitorLocationWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,
-    MonitorPlanWorkspaceModule,
+    forwardRef(() => MonitorPlanWorkspaceModule),
+    PlantWorkspaceModule,
   ],
   controllers: [MonitorConfigurationsWorkspaceController],
   providers: [
@@ -32,6 +34,10 @@ import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availa
     MonitorConfigurationsWorkspaceService,
     MonitorPlanConfigurationMap,
     MonitorPlanWorkspaceRepository,
+    SubmissionsAvailabilityStatusCodeRepository,
+  ],
+  exports: [
+    EvalStatusCodeRepository,
     SubmissionsAvailabilityStatusCodeRepository,
   ],
 })

@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AnalyzerRangeWorkspaceModule } from '../analyzer-range-workspace/analyzer-range.module';
@@ -37,6 +37,7 @@ import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
+import { MonitorConfigurationsWorkspaceModule } from '../monitor-configurations-workspace/monitor-configurations-workspace.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
     MonitorLocationWorkspaceModule,
     MonitorMethodWorkspaceModule,
     MatsMethodWorkspaceModule,
+    forwardRef(() => MonitorConfigurationsWorkspaceModule),
     MonitorFormulaWorkspaceModule,
     MonitorSpanWorkspaceModule,
     MonitorLoadWorkspaceModule,

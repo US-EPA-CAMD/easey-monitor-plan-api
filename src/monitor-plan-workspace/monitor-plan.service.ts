@@ -7,14 +7,15 @@ import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-work
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { EvalStatusCode } from '../entities/eval-status-code.entity';
 import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
+import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
 import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
+import { EvalStatusCodeRepository } from '../monitor-configurations-workspace/eval-status.repository';
 import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
 import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
 import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
@@ -43,6 +44,8 @@ import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 export class MonitorPlanWorkspaceService {
   constructor(
     private readonly repository: MonitorPlanWorkspaceRepository,
+    private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
+    private readonly submissionsAvailabilityStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
     private readonly locationRepository: MonitorLocationWorkspaceRepository,
     private readonly commentRepository: MonitorPlanCommentWorkspaceRepository,
     private readonly attributeRepository: MonitorAttributeWorkspaceRepository,
@@ -139,13 +142,15 @@ export class MonitorPlanWorkspaceService {
     const dto = await this.map.one(mp);
 
     dto.submissionAvailabilityCodeDescription = (
-      await SubmissionAvailabilityCode.findOneBy({
+      await this.submissionsAvailabilityStatusCodeRepository.findOneBy({
         subAvailabilityCode: mp.submissionAvailabilityCode,
       })
     ).subAvailabilityCodeDescription;
 
     dto.evalStatusCodeDescription = (
-      await EvalStatusCode.findOneBy({ evalStatusCd: mp.evalStatusCode })
+      await this.evalStatusCodeRepository.findOneBy({
+        evalStatusCd: mp.evalStatusCode,
+      })
     ).evalStatusCodeDescription;
 
     return dto;

@@ -3,7 +3,9 @@ import { In } from 'typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 import { Plant } from '../entities/workspace/plant.entity';
+import { PlantWorkspaceRepository } from 'src/plant-workspace/plant.repository';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
@@ -16,6 +18,8 @@ export class MonitorConfigurationsWorkspaceService {
     private readonly map: MonitorPlanConfigurationMap,
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
+    private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
+    private readonly plantWorkspaceRepository: PlantWorkspaceRepository,
     private readonly locationRepository: MonitorLocationWorkspaceRepository,
     private readonly uscRepository: UnitStackConfigurationWorkspaceRepository,
   ) {}
@@ -51,13 +55,15 @@ export class MonitorConfigurationsWorkspaceService {
   ): Promise<MonitorPlanDTO[]> {
     let plans: MonitorPlan[];
     if (monPlanIds.length > 0) {
-      plans = await MonitorPlan.find({
+      plans = await this.monitorPlanWorkspaceRepository.find({
         where: { id: In(monPlanIds) },
         relations: ['plant'],
       });
     } else {
-      const plants = await Plant.find({ where: { orisCode: In(orisCodes) } });
-      plans = await MonitorPlan.find({
+      const plants = await this.plantWorkspaceRepository.find({
+        where: { orisCode: In(orisCodes) },
+      });
+      plans = await this.monitorPlanWorkspaceRepository.find({
         where: { facId: In(plants.map(p => p.id)) },
         relations: ['plant'],
       });
