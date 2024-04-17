@@ -7,7 +7,6 @@ import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-work
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
 import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';

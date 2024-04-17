@@ -8,6 +8,7 @@ import { CountyCodeDTO } from '../dtos/county-code.dto';
 import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { EvalStatusCode } from '../entities/eval-status-code.entity';
 import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
@@ -40,6 +41,7 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
 import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
+import { EvalStatusCodeRepository } from '../monitor-configurations-workspace/eval-status.repository';
 import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
 import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
 import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
@@ -101,6 +103,12 @@ const mockUnitStackConfigService = () => ({
   importUnitStack: jest.fn(),
 });
 
+const mockEvalStatusCodeRepo = () => ({
+  findOneBy: jest.fn().mockResolvedValue([new EvalStatusCode()]),
+});
+const mockSubmissionAvailabilityCodeRepo = () => ({
+  findOneBy: jest.fn().mockResolvedValue([new SubmissionAvailabilityCode()]),
+});
 const mockMonitorLocationRepo = () => ({
   getMonitorLocationsByPlanId: jest.fn().mockResolvedValue([MONITOR_LOCATION]),
 });
@@ -330,6 +338,14 @@ describe('Monitor Plan Service', () => {
           provide: MonitorPlanMap,
           useFactory: mockMap,
         },
+        {
+          provide: EvalStatusCodeRepository,
+          useFactory: mockEvalStatusCodeRepo,
+        },
+        {
+          provide: SubmissionsAvailabilityStatusCodeRepository,
+          useFactory: mockSubmissionAvailabilityCodeRepo,
+        },
       ],
     }).compile();
 
@@ -353,13 +369,6 @@ describe('Monitor Plan Service', () => {
 
   describe('getMonitorPlan', () => {
     it('Return a MonitorPlanDTO mapped from an Entity retrieved by ID', async () => {
-      jest
-        .spyOn(SubmissionAvailabilityCode, 'findOneBy')
-        .mockResolvedValue(new SubmissionAvailabilityCode());
-      jest
-        .spyOn(EvalStatusCode, 'findOneBy')
-        .mockResolvedValue(new EvalStatusCode());
-
       const result = await service.getMonitorPlan(MON_PLAN_ID);
       expect(result).toEqual(DTO);
     });
