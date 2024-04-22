@@ -318,7 +318,7 @@ export class MonitorSpanChecksService {
         beginHour,
         endDate,
         endHour,
-        !isFlowType ? undefined : monitorSpan.spanScaleCode,
+        isFlowType ? undefined : monitorSpan.spanScaleCode,
       );
 
       if (record) {
