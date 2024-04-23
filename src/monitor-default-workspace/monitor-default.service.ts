@@ -158,18 +158,23 @@ export class MonitorDefaultWorkspaceService {
                     true,
                   );
                 } else {
-                  await this.createDefault(locationId, monDefault, userId, true);
+                  await this.createDefault(
+                    locationId,
+                    monDefault,
+                    userId,
+                    true,
+                  );
                 }
 
                 innerResolve(true);
               }
-            })()
+            })();
           }),
         );
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

@@ -69,7 +69,7 @@ export class ComponentCheckService {
   }
 
   private async component13Check(
-    component: UpdateComponentBaseDTO ,
+    component: UpdateComponentBaseDTO,
     errorLocation: string = '',
   ): Promise<string> {
     let error = null;

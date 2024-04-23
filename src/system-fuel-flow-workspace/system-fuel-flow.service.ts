@@ -149,14 +149,14 @@ export class SystemFuelFlowWorkspaceService {
 
                 await Promise.all(innerPromises);
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

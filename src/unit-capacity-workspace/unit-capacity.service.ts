@@ -68,14 +68,14 @@ export class UnitCapacityWorkspaceService {
                   );
                 }
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 

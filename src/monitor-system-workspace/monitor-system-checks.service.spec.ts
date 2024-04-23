@@ -35,7 +35,5 @@ describe('Monitor System Check Service Tests', () => {
     componentCheckService = module.get(ComponentCheckService);
   });
 
-  it('Should return no errors', async () => {
-
-  })
+  it('Should return no errors', async () => {});
 });
