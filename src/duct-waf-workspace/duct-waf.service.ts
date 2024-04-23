@@ -56,7 +56,7 @@ export class DuctWafWorkspaceService {
       wafMethodCode: payload.wafMethodCode,
       wafValue: payload.wafValue,
       numberOfTestRuns: payload.numberOfTestRuns,
-      numberOfTraversePointsWaf: payload.numberOfTraversePointsRef,
+      numberOfTraversePointsWaf: payload.numberOfTraversePointsWaf,
       numberOfTestPorts: payload.numberOfTestPorts,
       numberOfTraversePointsRef: payload.numberOfTraversePointsRef,
       ductWidth: payload.ductWidth,
@@ -145,14 +145,14 @@ export class DuctWafWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
 
           await Promise.all(promises);
           resolve(true);
         }
-      })()
+      })();
     });
   }
 }
