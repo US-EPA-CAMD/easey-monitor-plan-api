@@ -139,14 +139,14 @@ export class MatsMethodWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

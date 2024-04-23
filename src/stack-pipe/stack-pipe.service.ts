@@ -22,7 +22,7 @@ export class StackPipeService {
           retireDate,
         });
         resolve(true);
-      })()
+      })();
     });
   }
 }

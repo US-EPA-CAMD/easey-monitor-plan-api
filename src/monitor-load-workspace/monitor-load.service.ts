@@ -83,14 +83,14 @@ export class MonitorLoadWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
 
           await Promise.all(promises);
           resolve(true);
         }
-      })()
+      })();
     });
   }
 
