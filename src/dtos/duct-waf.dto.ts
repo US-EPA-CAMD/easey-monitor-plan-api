@@ -170,7 +170,7 @@ export class DuctWafBaseDTO {
   )
   @IsInRange(
     0,
-    99.9999,
+    1,
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatResultMessage('DEFAULT-80-D', {
