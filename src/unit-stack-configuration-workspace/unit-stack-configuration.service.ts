@@ -123,13 +123,13 @@ export class UnitStackConfigurationWorkspaceService {
                   );
                 }
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 

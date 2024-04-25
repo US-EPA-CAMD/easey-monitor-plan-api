@@ -297,7 +297,7 @@ export class MonitorPlanService {
             }
 
             resolve(components);
-          })()
+          })();
         }),
       );
 
@@ -332,7 +332,7 @@ export class MonitorPlanService {
             }
 
             resolve(systems);
-          })()
+          })();
         }),
       );
 
@@ -378,7 +378,7 @@ export class MonitorPlanService {
             }
 
             resolve(quals);
-          })()
+          })();
         }),
       );
     }

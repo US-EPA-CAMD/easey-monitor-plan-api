@@ -156,18 +156,23 @@ export class MonitorAttributeWorkspaceService {
                     true,
                   );
                 } else {
-                  await this.createAttribute(locationId, attribute, userId, true);
+                  await this.createAttribute(
+                    locationId,
+                    attribute,
+                    userId,
+                    true,
+                  );
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

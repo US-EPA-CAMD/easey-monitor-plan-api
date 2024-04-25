@@ -112,14 +112,14 @@ export class MonitorPlanCommentWorkspaceService {
                   }
                 }
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

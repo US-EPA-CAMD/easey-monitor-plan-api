@@ -72,9 +72,7 @@ export class MonitorSystemWorkspaceService {
         system.monitoringSystemComponentData.length > 0
       ) {
         for (const systemComponent of system.monitoringSystemComponentData) {
-          if (
-            !componentIdSet.has(systemComponent.componentId)
-          ) {
+          if (!componentIdSet.has(systemComponent.componentId)) {
             errorList.push(
               `[IMPORT7-CRIT1-A] The workspace database and Monitor Plan Import JSON File does not contain a Component record for ${systemComponent.componentId}`,
             );
@@ -190,7 +188,7 @@ export class MonitorSystemWorkspaceService {
         await Promise.all(promises);
 
         resolve(true);
-      })()
+      })();
     });
   }
 
@@ -293,14 +291,14 @@ export class MonitorSystemWorkspaceService {
                 await Promise.all(innerPromises);
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

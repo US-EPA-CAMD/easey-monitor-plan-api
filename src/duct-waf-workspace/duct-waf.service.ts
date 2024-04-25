@@ -145,14 +145,14 @@ export class DuctWafWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
 
           await Promise.all(promises);
           resolve(true);
         }
-      })()
+      })();
     });
   }
 }

@@ -71,14 +71,13 @@ export class SystemComponentWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<SystemComponentDTO> {
-
     // Saving System Component fields
 
     let component = await this.componentWorkspaceRepository.getComponentByLocIdAndCompId(
       locationId,
       payload.componentId,
     );
-    
+
     if (component) {
       const componentPayload: UpdateComponentBaseDTO = {
         componentId: component.componentId,
@@ -92,7 +91,7 @@ export class SystemComponentWorkspaceService {
         hgConverterIndicator: component.hgConverterIndicator,
         analyzerRangeData: component.analyzerRanges,
       };
-    
+
       await this.componentService.updateComponent(
         locationId,
         component,
@@ -100,7 +99,7 @@ export class SystemComponentWorkspaceService {
         userId,
       );
     }
- 
+
     const systemComponent = await this.getSystemComponent(
       sysId,
       sysComponentRecordId,
@@ -136,11 +135,11 @@ export class SystemComponentWorkspaceService {
 
     if (!component) {
       throw new EaseyException(
-          new Error('Component was not found'),
-          HttpStatus.NOT_FOUND,
-          {
-            componentId: payload.componentId
-          },
+        new Error('Component was not found'),
+        HttpStatus.NOT_FOUND,
+        {
+          componentId: payload.componentId,
+        },
       );
     }
 
@@ -216,14 +215,14 @@ export class SystemComponentWorkspaceService {
 
                 await Promise.all(innerPromises);
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

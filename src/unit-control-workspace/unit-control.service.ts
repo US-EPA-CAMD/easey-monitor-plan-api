@@ -75,7 +75,7 @@ export class UnitControlWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
@@ -83,7 +83,7 @@ export class UnitControlWorkspaceService {
         await Promise.all(promises);
 
         resolve(true);
-      })()
+      })();
     });
   }
 

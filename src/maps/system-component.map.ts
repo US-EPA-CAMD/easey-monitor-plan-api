@@ -21,7 +21,7 @@ export class SystemComponentMap extends BaseMap<
       componentId: entity.component.componentId,
       componentTypeCode: entity.component.componentTypeCode,
       analyticalPrincipleCode: entity.component.analyticalPrincipleCode,
-      sampleAcquisitionMethodCode:entity.component.sampleAcquisitionMethodCode,
+      sampleAcquisitionMethodCode: entity.component.sampleAcquisitionMethodCode,
       basisCode: entity.component.basisCode,
       manufacturer: entity.component.manufacturer,
       modelVersion: entity.component.modelVersion,
