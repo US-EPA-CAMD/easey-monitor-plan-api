@@ -110,8 +110,10 @@ async function removeMonitorLocationReportedValues(
     promises.push(monitorSystem(location.monitoringSystemData));
     promises.push(unitCapacity(location.unitCapacityData));
     promises.push(unitControl(location.unitControlData));
-    promises.push(unitFuel(location.unitFuelData))
-    promises.push(suppMatsMonitorMethod(location.supplementalMATSMonitoringMethodData))
+    promises.push(unitFuel(location.unitFuelData));
+    promises.push(
+      suppMatsMonitorMethod(location.supplementalMATSMonitoringMethodData),
+    );
   });
 }
 
@@ -280,7 +282,7 @@ async function qualificationCPMS(qualificationCPMS: CPMSQualificationDTO[]) {
     delete cpms.userId;
     delete cpms.addDate;
     delete cpms.updateDate;
-  })
+  });
 }
 
 async function monitorSystem(systems: MonitorSystemDTO[]) {
@@ -352,7 +354,7 @@ async function unitCapacity(unitCapacities: UnitCapacityDTO[]) {
     delete capacity.addDate;
     delete capacity.updateDate;
     delete capacity.active;
-  })
+  });
 }
 
 async function unitControl(unitControls: UnitControlDTO[]) {
@@ -363,8 +365,7 @@ async function unitControl(unitControls: UnitControlDTO[]) {
     delete control.addDate;
     delete control.updateDate;
     delete control.active;
-
-  })
+  });
 }
 
 async function unitFuel(unitFuels: UnitFuelDTO[]) {
@@ -377,8 +378,7 @@ async function unitFuel(unitFuels: UnitFuelDTO[]) {
     delete fuel.addDate;
     delete fuel.updateDate;
     delete fuel.active;
-
-  })
+  });
 }
 
 async function suppMatsMonitorMethod(matsMethods: MatsMethodDTO[]) {
@@ -389,5 +389,5 @@ async function suppMatsMonitorMethod(matsMethods: MatsMethodDTO[]) {
     delete method.addDate;
     delete method.updateDate;
     delete method.active;
-  })
+  });
 }
