@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
 
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 
