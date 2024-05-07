@@ -140,7 +140,7 @@ export class MonitorMethodWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
 
@@ -148,7 +148,7 @@ export class MonitorMethodWorkspaceService {
 
           resolve(true);
         }
-      })()
+      })();
     });
   }
 }

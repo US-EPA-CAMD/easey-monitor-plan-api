@@ -14,7 +14,12 @@ import {
 } from 'class-validator';
 import { ComponentBaseDTO } from './component.dto';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
-import {IsIsoFormat, IsValidDate, MatchesRegEx, IsValidCode} from '@us-epa-camd/easey-common/pipes';
+import {
+  IsIsoFormat,
+  IsValidDate,
+  MatchesRegEx,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import {
@@ -56,9 +61,11 @@ export class SystemComponentBaseDTO {
   componentId: string;
 
   @ApiProperty({
-    description: propertyMetadata.systemComponentDTOComponentTypeCode.description,
+    description:
+      propertyMetadata.systemComponentDTOComponentTypeCode.description,
     example: propertyMetadata.systemComponentDTOComponentTypeCode.example,
-    name: propertyMetadata.systemComponentDTOComponentTypeCode.fieldLabels.value,
+    name:
+      propertyMetadata.systemComponentDTOComponentTypeCode.fieldLabels.value,
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -105,8 +112,10 @@ export class SystemComponentBaseDTO {
 
   @ApiProperty({
     description:
-      propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode.description,
-    example: propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode.example,
+      propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode
+        .description,
+    example:
+      propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode.example,
     name:
       propertyMetadata.systemComponentDTOSampleAcquisitionMethodCode.fieldLabels
         .value,
@@ -190,9 +199,11 @@ export class SystemComponentBaseDTO {
   serialNumber: string;
 
   @ApiProperty({
-    description: propertyMetadata.systemComponentDTOHgConverterIndicator.description,
+    description:
+      propertyMetadata.systemComponentDTOHgConverterIndicator.description,
     example: propertyMetadata.systemComponentDTOHgConverterIndicator.example,
-    name: propertyMetadata.systemComponentDTOHgConverterIndicator.fieldLabels.value,
+    name:
+      propertyMetadata.systemComponentDTOHgConverterIndicator.fieldLabels.value,
   })
   @IsOptional()
   @IsInRange(0, 1, {

@@ -166,8 +166,9 @@ describe('SystemComponentWorkspaceService', () => {
         .spyOn(repository, 'getSystemComponentByBeginOrEndDate')
         .mockResolvedValue(null);
 
-      jest.spyOn(componentService, 'getComponentByIdentifier')
-          .mockResolvedValue(new ComponentDTO());
+      jest
+        .spyOn(componentService, 'getComponentByIdentifier')
+        .mockResolvedValue(new ComponentDTO());
 
       const result = await service.importSystemComponent(
         '1',

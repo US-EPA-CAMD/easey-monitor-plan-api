@@ -232,7 +232,10 @@ export class MonitorLocationWorkspaceService {
                     );
                   }
 
-                  if (location.unitFuelData && location.unitFuelData.length > 0) {
+                  if (
+                    location.unitFuelData &&
+                    location.unitFuelData.length > 0
+                  ) {
                     innerPromises.push(
                       this.unitFuelService.importUnitFuel(
                         location.unitFuelData,
@@ -258,7 +261,10 @@ export class MonitorLocationWorkspaceService {
                   );
                 }
 
-                if (location.componentData && location.componentData.length > 0) {
+                if (
+                  location.componentData &&
+                  location.componentData.length > 0
+                ) {
                   innerPromises.push(
                     this.componentService.importComponent(
                       location,
@@ -400,7 +406,7 @@ export class MonitorLocationWorkspaceService {
 
                 await Promise.all(innerPromises);
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
@@ -408,7 +414,7 @@ export class MonitorLocationWorkspaceService {
         await Promise.all(promises);
 
         resolve(true);
-      })()
+      })();
     });
   }
 }

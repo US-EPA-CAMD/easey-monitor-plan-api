@@ -35,7 +35,7 @@ export class UnitService {
           nonLoadBasedIndicator: nonLoadI,
         });
         resolve(true);
-      })()
+      })();
     });
   }
 
