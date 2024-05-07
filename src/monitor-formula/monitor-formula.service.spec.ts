@@ -6,7 +6,7 @@ import { MonitorFormulaService } from './monitor-formula.service';
 import { MonitorFormulaRepository } from './monitor-formula.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

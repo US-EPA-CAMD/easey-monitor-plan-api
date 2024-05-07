@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { MonitorLocationWorkspaceController } from './monitor-location.controller';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
@@ -15,6 +16,10 @@ describe('MonitorLocationWorkspaceController', () => {
       controllers: [MonitorLocationWorkspaceController],
       providers: [
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: MonitorLocationWorkspaceService,
           useFactory: () => ({}),

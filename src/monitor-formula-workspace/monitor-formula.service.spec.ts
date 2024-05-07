@@ -13,15 +13,15 @@ import { UsedIdentifierRepository } from '../used-identifier/used-identifier.rep
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new MonitorFormula()),
+  findBy: jest.fn().mockResolvedValue([]),
+  findOneBy: jest.fn().mockResolvedValue(new MonitorFormula()),
   create: jest.fn().mockResolvedValue(new MonitorFormula()),
   save: jest.fn().mockResolvedValue(new MonitorFormula()),
   getFormula: jest.fn().mockResolvedValue(new MonitorFormula()),
 });
 
 const mockUsedIdRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(null),
+  findOneBy: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -72,7 +72,7 @@ describe('MonitorFormulaWorkspaceService', () => {
   });
 
   describe('getFormulas', () => {
-    it('calls the MatsMehtodWorkspaceRepository.find() gets all formula codes for locationId', async () => {
+    it('calls the MatsMehtodWorkspaceRepository.findBy() gets all formula codes for locationId', async () => {
       const result = await service.getFormulas(locationId);
       expect(result).toEqual([]);
     });

@@ -6,7 +6,7 @@ import { MonitorQualificationService } from './monitor-qualification.service';
 import { MonitorQualificationRepository } from './monitor-qualification.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

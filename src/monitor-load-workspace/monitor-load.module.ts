@@ -1,12 +1,12 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
-import { MonitorLoadWorkspaceController } from './monitor-load.controller';
-import { MonitorLoadWorkspaceService } from './monitor-load.service';
-import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
+import { MonitorLoadWorkspaceController } from './monitor-load.controller';
+import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
+import { MonitorLoadWorkspaceService } from './monitor-load.service';
 
 @Module({
   imports: [
@@ -15,7 +15,16 @@ import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-pl
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MonitorLoadWorkspaceController],
-  providers: [MonitorLoadWorkspaceService, MonitorLoadMap],
-  exports: [TypeOrmModule, MonitorLoadWorkspaceService, MonitorLoadMap],
+  providers: [
+    MonitorLoadWorkspaceRepository,
+    MonitorLoadWorkspaceService,
+    MonitorLoadMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    MonitorLoadWorkspaceRepository,
+    MonitorLoadWorkspaceService,
+    MonitorLoadMap,
+  ],
 })
 export class MonitorLoadWorkspaceModule {}

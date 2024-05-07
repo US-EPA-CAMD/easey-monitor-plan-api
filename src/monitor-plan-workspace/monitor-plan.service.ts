@@ -1,104 +1,80 @@
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
-import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
-import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
-import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
-import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
-import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
-import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
-import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
-import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
-import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
-import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit-capacity.repository';
-import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
-import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
-import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
+import { MonitorPlanMap } from '../maps/monitor-plan.map';
+import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
+import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
+import { EvalStatusCodeRepository } from '../monitor-configurations-workspace/eval-status.repository';
+import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
+import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
+import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
+import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
+import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
+import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
+import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
+import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
+import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
+import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
+import { PlantService } from '../plant/plant.service';
+import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
+import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
+import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit-capacity.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
-import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
-import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
-import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
-import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { PlantService } from '../plant/plant.service';
-import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
+import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
-import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
-import { EvalStatusCode } from '../entities/eval-status-code.entity';
+import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
   constructor(
-    @InjectRepository(MonitorPlanWorkspaceRepository)
     private readonly repository: MonitorPlanWorkspaceRepository,
-    @InjectRepository(MonitorLocationWorkspaceRepository)
+    private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
+    private readonly submissionsAvailabilityStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
     private readonly locationRepository: MonitorLocationWorkspaceRepository,
-    @InjectRepository(MonitorPlanCommentWorkspaceRepository)
     private readonly commentRepository: MonitorPlanCommentWorkspaceRepository,
-    @InjectRepository(MonitorAttributeWorkspaceRepository)
     private readonly attributeRepository: MonitorAttributeWorkspaceRepository,
-    @InjectRepository(MonitorMethodWorkspaceRepository)
     private readonly methodRepository: MonitorMethodWorkspaceRepository,
-    @InjectRepository(MatsMethodWorkspaceRepository)
     private readonly matsMethodRepository: MatsMethodWorkspaceRepository,
-    @InjectRepository(MonitorFormulaWorkspaceRepository)
     private readonly formulaRepository: MonitorFormulaWorkspaceRepository,
-    @InjectRepository(MonitorDefaultWorkspaceRepository)
     private readonly defaultRepository: MonitorDefaultWorkspaceRepository,
-    @InjectRepository(MonitorSpanWorkspaceRepository)
     private readonly spanRepository: MonitorSpanWorkspaceRepository,
-    @InjectRepository(DuctWafWorkspaceRepository)
     private readonly ductWafRepository: DuctWafWorkspaceRepository,
-    @InjectRepository(MonitorLoadWorkspaceRepository)
     private readonly loadRepository: MonitorLoadWorkspaceRepository,
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly systemRepository: MonitorSystemWorkspaceRepository,
-    @InjectRepository(UnitCapacityWorkspaceRepository)
     private readonly unitCapacityRepository: UnitCapacityWorkspaceRepository,
-    @InjectRepository(UnitControlWorkspaceRepository)
     private readonly unitControlRepository: UnitControlWorkspaceRepository,
-    @InjectRepository(UnitFuelWorkspaceRepository)
     private readonly unitFuelRepository: UnitFuelWorkspaceRepository,
-    @InjectRepository(MonitorQualificationWorkspaceRepository)
     private readonly qualificationRepository: MonitorQualificationWorkspaceRepository,
-    @InjectRepository(SystemFuelFlowWorkspaceRepository)
     private readonly systemFuelFlowRepository: SystemFuelFlowWorkspaceRepository,
-    @InjectRepository(SystemComponentWorkspaceRepository)
     private readonly systemComponentRepository: SystemComponentWorkspaceRepository,
-    @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
-    @InjectRepository(LEEQualificationWorkspaceRepository)
     private readonly leeQualificationRepository: LEEQualificationWorkspaceRepository,
-    @InjectRepository(LMEQualificationWorkspaceRepository)
     private readonly lmeQualificationRepository: LMEQualificationWorkspaceRepository,
-    @InjectRepository(PCTQualificationWorkspaceRepository)
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
-    @InjectRepository(UnitStackConfigurationWorkspaceRepository)
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
-    @InjectRepository(MonitorPlanReportingFrequencyWorkspaceRepository)
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
-    @InjectRepository(CPMSQualificationWorkspaceRepository)
     private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
+    @Inject(forwardRef(() => MonitorLocationWorkspaceService))
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
 
@@ -165,11 +141,15 @@ export class MonitorPlanWorkspaceService {
     const dto = await this.map.one(mp);
 
     dto.submissionAvailabilityCodeDescription = (
-      await SubmissionAvailabilityCode.findOne(mp.submissionAvailabilityCode)
+      await this.submissionsAvailabilityStatusCodeRepository.findOneBy({
+        subAvailabilityCode: mp.submissionAvailabilityCode,
+      })
     ).subAvailabilityCodeDescription;
 
     dto.evalStatusCodeDescription = (
-      await EvalStatusCode.findOne(mp.evalStatusCode)
+      await this.evalStatusCodeRepository.findOneBy({
+        evalStatusCd: mp.evalStatusCode,
+      })
     ).evalStatusCodeDescription;
 
     return dto;
@@ -235,13 +215,13 @@ export class MonitorPlanWorkspaceService {
     if (getReportingFrquencies) {
       REPORTING_FREQ = 0;
       promises.push(
-        this.reportingFreqRepository.find({ monitorPlanId: planId }),
+        this.reportingFreqRepository.findBy({ monitorPlanId: planId }),
       );
     }
 
     if (getComments) {
       COMMENTS = getReportingFrquencies === true ? REPORTING_FREQ + 1 : 0;
-      promises.push(this.commentRepository.find({ monitorPlanId: planId }));
+      promises.push(this.commentRepository.findBy({ monitorPlanId: planId }));
     }
 
     if (getUnitStacks) {

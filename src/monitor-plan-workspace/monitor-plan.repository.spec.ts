@@ -1,9 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
-import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 const mp = new MonitorPlan();
 const mpArray = [mp];
@@ -16,7 +16,7 @@ const mockQueryBuilder = () => ({
   andWhere: jest.fn(),
   innerJoin: jest.fn(),
   innerJoinAndSelect: jest.fn(() => mpArray),
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('Monitor Plan Repository', () => {
@@ -26,6 +26,7 @@ describe('Monitor Plan Repository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         MonitorPlanWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
@@ -125,7 +126,7 @@ describe('Monitor Plan Repository', () => {
 
   it('calls resetToNeedsEvaluation to update the evaluation status of a monitor plan to Needs Evaluation', async () => {
     monitorPlanRepository.query = jest.fn();
-    monitorPlanRepository.findOne = jest.fn();
+    monitorPlanRepository.findOneBy = jest.fn();
     await monitorPlanRepository.resetToNeedsEvaluation(1);
     expect(monitorPlanRepository.query).toHaveBeenCalled();
   });
@@ -135,7 +136,7 @@ describe('Monitor Plan Repository', () => {
       monitorPlanRepository.query = jest.fn(() => {
         throw new BadRequestException();
       });
-      monitorPlanRepository.findOne = jest.fn();
+      monitorPlanRepository.findOneBy = jest.fn();
       await monitorPlanRepository.resetToNeedsEvaluation(1);
     } catch (e) {
       const exception = new BadRequestException();

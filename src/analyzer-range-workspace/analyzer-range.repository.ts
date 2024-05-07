@@ -1,12 +1,17 @@
-import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
+import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
 
-@EntityRepository(AnalyzerRange)
+@Injectable()
 export class AnalyzerRangeWorkspaceRepository extends Repository<
   AnalyzerRange
 > {
+  constructor(entityManager: EntityManager) {
+    super(AnalyzerRange, entityManager);
+  }
+
   async getAnalyzerRangeByComponentIdAndDate(
     componentId: string,
     analyzerRange: AnalyzerRangeBaseDTO,

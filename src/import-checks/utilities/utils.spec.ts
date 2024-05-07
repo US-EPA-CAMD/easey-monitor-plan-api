@@ -1,3 +1,5 @@
+import { EntityManager } from 'typeorm';
+
 import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
 import { UpdateMonitorSystemDTO } from '../../dtos/monitor-system.dto';
@@ -12,9 +14,11 @@ describe('Monitor-Import Utilities Tests', () => {
       const expected = new MonitorLocation();
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(expected),
+        findOneBy: jest.fn().mockResolvedValue(expected),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
 
       const loc = new UpdateMonitorLocationDTO();
       loc.stackPipeId = 'TEST';
@@ -29,9 +33,11 @@ describe('Monitor-Import Utilities Tests', () => {
       const expected = new MonitorLocation();
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(expected),
+        findOneBy: jest.fn().mockResolvedValue(expected),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
 
       const loc = new UpdateMonitorLocationDTO();
       loc.unitId = '1';
@@ -46,9 +52,11 @@ describe('Monitor-Import Utilities Tests', () => {
   describe('getFacIdFromOris', () => {
     it('Should return null given invalid oris code', async () => {
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(undefined),
+        findOneBy: jest.fn().mockResolvedValue(undefined),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
 
       const checkResult = await utils.getFacIdFromOris(3);
 
@@ -57,9 +65,11 @@ describe('Monitor-Import Utilities Tests', () => {
 
     it('Should return facilityId given valid oris code', async () => {
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue({ id: 1 }),
+        findOneBy: jest.fn().mockResolvedValue({ id: 1 }),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
 
       const checkResult = await utils.getFacIdFromOris(1);
 

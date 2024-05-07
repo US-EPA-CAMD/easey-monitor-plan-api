@@ -1,3 +1,5 @@
+import { EntityManager } from 'typeorm';
+
 import * as utils from '../utilities/utils';
 import * as checks from './formula';
 import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
@@ -13,9 +15,11 @@ describe('Component Tests', () => {
       form.parameterCode = 'SO2';
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(form),
+        findOneBy: jest.fn().mockResolvedValue(form),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
@@ -39,9 +43,11 @@ describe('Component Tests', () => {
       form.parameterCode = 'ERROR';
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(form),
+        findOneBy: jest.fn().mockResolvedValue(form),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
@@ -66,9 +72,11 @@ describe('Component Tests', () => {
       form.formulaCode = 'ERROR';
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(form),
+        findOneBy: jest.fn().mockResolvedValue(form),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 

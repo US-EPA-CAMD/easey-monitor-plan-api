@@ -11,7 +11,7 @@ const mockCountyCodeMap = () => ({
 });
 
 const mockCountyCodeRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(''),
+  findOneBy: jest.fn().mockResolvedValue(''),
 });
 
 describe('CountyCodeService', () => {

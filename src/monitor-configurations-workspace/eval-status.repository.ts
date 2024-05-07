@@ -1,6 +1,11 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { EvalStatusCode } from '../entities/eval-status-code.entity';
 
-@EntityRepository(EvalStatusCode)
-export class EvalStatusCodeRepository extends Repository<EvalStatusCode> {}
+@Injectable()
+export class EvalStatusCodeRepository extends Repository<EvalStatusCode> {
+  constructor(entityManager: EntityManager) {
+    super(EvalStatusCode, entityManager);
+  }
+}

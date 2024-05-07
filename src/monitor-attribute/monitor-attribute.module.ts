@@ -10,7 +10,16 @@ import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 @Module({
   imports: [TypeOrmModule.forFeature([MonitorAttributeRepository]), HttpModule],
   controllers: [MonitorAttributeController],
-  providers: [MonitorAttributeService, MonitorAttributeMap],
-  exports: [TypeOrmModule, MonitorAttributeService, MonitorAttributeMap],
+  providers: [
+    MonitorAttributeRepository,
+    MonitorAttributeService,
+    MonitorAttributeMap,
+  ],
+  exports: [
+    MonitorAttributeRepository,
+    TypeOrmModule,
+    MonitorAttributeService,
+    MonitorAttributeMap,
+  ],
 })
 export class MonitorAttributeModule {}

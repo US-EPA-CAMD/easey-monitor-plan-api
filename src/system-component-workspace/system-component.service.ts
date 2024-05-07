@@ -1,25 +1,23 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
 
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import {
   SystemComponentBaseDTO,
   SystemComponentDTO,
 } from '../dtos/system-component.dto';
-import { UpdateComponentBaseDTO } from '../dtos/component.dto';
-import { SystemComponentMap } from '../maps/system-component.map';
 import { SystemComponent } from '../entities/workspace/system-component.entity';
-import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { SystemComponentMap } from '../maps/system-component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
   constructor(
-    @InjectRepository(SystemComponentWorkspaceRepository)
     private readonly repository: SystemComponentWorkspaceRepository,
     private readonly componentService: ComponentWorkspaceService,
     private readonly map: SystemComponentMap,

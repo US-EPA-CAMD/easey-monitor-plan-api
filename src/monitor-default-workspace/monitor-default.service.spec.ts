@@ -20,7 +20,7 @@ const monDefaultDto = new MonitorDefaultDTO();
 const payload = new MonitorDefaultBaseDTO();
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([monDefault]),
+  findBy: jest.fn().mockResolvedValue([monDefault]),
   create: jest.fn().mockResolvedValue(monDefault),
   save: jest.fn().mockResolvedValue(monDefault),
   getDefault: jest.fn().mockResolvedValue(monDefault),

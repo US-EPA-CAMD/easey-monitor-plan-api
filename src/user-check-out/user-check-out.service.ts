@@ -1,16 +1,15 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { EntityManager } from 'typeorm';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
-import { UserCheckOutRepository } from './user-check-out.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { UserCheckOutMap } from '../maps/user-check-out.map';
-import { getManager } from 'typeorm';
+import { UserCheckOutRepository } from './user-check-out.repository';
 
 @Injectable()
 export class UserCheckOutService {
   constructor(
-    @InjectRepository(UserCheckOutRepository)
+    private readonly entityManager: EntityManager,
     private readonly repository: UserCheckOutRepository,
     @Inject(UserCheckOutMap)
     private readonly map: UserCheckOutMap,
@@ -35,7 +34,7 @@ export class UserCheckOutService {
   async getCheckedOutConfiguration(
     monPlanId: string,
   ): Promise<UserCheckOutDTO> {
-    const record = await this.repository.findOne({
+    const record = await this.repository.findOneBy({
       monPlanId,
     });
 
@@ -51,7 +50,7 @@ export class UserCheckOutService {
   }
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOutDTO> {
-    const record = await this.repository.findOne({
+    const record = await this.repository.findOneBy({
       monPlanId,
     });
 
@@ -70,7 +69,7 @@ export class UserCheckOutService {
   }
 
   returnManager = () => {
-    return getManager();
+    return this.entityManager;
   };
 
   async checkInConfiguration(monPlanId: string): Promise<Boolean> {

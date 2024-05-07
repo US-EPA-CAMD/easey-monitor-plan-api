@@ -6,8 +6,8 @@ import { UnitRepository } from './unit.repository';
 import { UnitService } from './unit.service';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
-  findOne: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
+  findOneBy: jest.fn().mockResolvedValue(''),
   update: jest.fn().mockResolvedValue(true),
 });
 
@@ -33,7 +33,7 @@ describe('Unit Import Tests', () => {
 
   describe('Check2', () => {
     it('Should pass given a returned entry for facilityId and unitId present in location', async () => {
-      repository.findOne = jest.fn().mockResolvedValue(new Unit());
+      repository.findOneBy = jest.fn().mockResolvedValue(new Unit());
 
       const location = new UpdateMonitorLocationDTO();
 
@@ -43,7 +43,7 @@ describe('Unit Import Tests', () => {
     });
 
     it('Should error given a undefined entry for facilityId and unitId in unitStackConfigurations', async () => {
-      repository.findOne = jest.fn().mockResolvedValue(undefined);
+      repository.findOneBy = jest.fn().mockResolvedValue(undefined);
 
       const location = new UpdateMonitorLocationDTO();
       location.unitId = '1';

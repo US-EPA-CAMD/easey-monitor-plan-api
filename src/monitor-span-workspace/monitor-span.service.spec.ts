@@ -17,7 +17,7 @@ const spans = [span];
 const payload = new MonitorSpanBaseDTO();
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(spans),
+  findBy: jest.fn().mockResolvedValue(spans),
   getSpan: jest.fn().mockResolvedValue(span),
   create: jest.fn().mockResolvedValue(span),
   save: jest.fn().mockResolvedValue(span),

@@ -1,9 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UnitFuel } from '../entities/unit-fuel.entity';
 
-@EntityRepository(UnitFuel)
+@Injectable()
 export class UnitFuelRepository extends Repository<UnitFuel> {
+  constructor(entityManager: EntityManager) {
+    super(UnitFuel, entityManager);
+  }
+
   async getUnitFuels(locId: string, unitId: number): Promise<UnitFuel[]> {
     return this.createQueryBuilder('uf')
       .innerJoinAndSelect('uf.unit', 'u')

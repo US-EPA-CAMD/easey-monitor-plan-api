@@ -1,5 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager } from 'typeorm';
+
 import { UnitFuel } from '../entities/workspace/unit-fuel.entity';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 
@@ -21,6 +23,7 @@ describe('UnitFuelWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         UnitFuelWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

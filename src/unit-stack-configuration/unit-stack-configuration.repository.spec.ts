@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { UnitStackConfigurationRepository } from './unit-stack-configuration.repository';
 
 const unitStackConfiguration = new UnitStackConfiguration();
@@ -21,6 +22,7 @@ describe('UnitStackConfigurationRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         UnitStackConfigurationRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

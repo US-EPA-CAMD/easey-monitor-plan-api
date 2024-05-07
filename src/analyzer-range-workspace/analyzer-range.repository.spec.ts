@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
-import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
-import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
 import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
+import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
+import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 
 const analyzerRange = new AnalyzerRange();
 const analyzerRangeBaseDto = new AnalyzerRangeBaseDTO();
@@ -25,6 +25,7 @@ describe('AnalyzerRangeWorkspaceRepository', () => {
     const module = await Test.createTestingModule({
       providers: [
         AnalyzerRangeWorkspaceRepository,
+        EntityManager,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();

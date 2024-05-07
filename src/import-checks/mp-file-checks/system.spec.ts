@@ -1,14 +1,16 @@
-import * as utils from '../utilities/utils';
-import * as checks from './system';
-import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
-import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
+import { EntityManager } from 'typeorm';
+
+import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { UpdateMonitorSystemDTO } from '../../dtos/monitor-system.dto';
+import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
+import { SystemFuelFlowBaseDTO } from '../../dtos/system-fuel-flow.dto';
 import { MonitorSystem } from '../../entities/monitor-system.entity';
 import { Component } from '../../entities/workspace/component.entity';
-import { UpdateComponentBaseDTO } from '../../dtos/component.dto';
-import { UpdateMonitorSystemDTO } from '../../dtos/monitor-system.dto';
-import { SystemFuelFlowBaseDTO } from '../../dtos/system-fuel-flow.dto';
-import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
+import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
+import * as utils from '../utilities/utils';
+import * as checks from './system';
 
 describe('System Tests', () => {
   describe('Check5', () => {
@@ -17,9 +19,11 @@ describe('System Tests', () => {
       sys.systemTypeCode = 'LTGS';
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(sys),
+        findOneBy: jest.fn().mockResolvedValue(sys),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
@@ -43,9 +47,11 @@ describe('System Tests', () => {
       sys.systemTypeCode = 'ERROR';
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(sys),
+        findOneBy: jest.fn().mockResolvedValue(sys),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
@@ -70,9 +76,11 @@ describe('System Tests', () => {
       const comp = new Component();
 
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(comp),
+        findOneBy: jest.fn().mockResolvedValue(comp),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
@@ -99,9 +107,11 @@ describe('System Tests', () => {
 
     it('Should pass with component if not found in database but exists in monitor plan import file', async () => {
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(undefined),
+        findOneBy: jest.fn().mockResolvedValue(undefined),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
       jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(true);
@@ -129,9 +139,11 @@ describe('System Tests', () => {
 
     it('Should faill with component not found in database and in the monitor plan import file', async () => {
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(undefined),
+        findOneBy: jest.fn().mockResolvedValue(undefined),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
       jest.spyOn(utils, 'checkComponentExistanceInFile').mockReturnValue(false);
@@ -161,9 +173,11 @@ describe('System Tests', () => {
   describe('Check31', () => {
     it('Should pass with invalid system type code and no fuel flow data', async () => {
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue(undefined),
+        findOneBy: jest.fn().mockResolvedValue(undefined),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
@@ -184,9 +198,11 @@ describe('System Tests', () => {
 
     it('Should error with invalid system type code and fuel flow data', async () => {
       const mockManager = {
-        findOne: jest.fn().mockResolvedValue({}),
+        findOneBy: jest.fn().mockResolvedValue({}),
       };
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      jest
+        .spyOn(utils, 'getEntityManager')
+        .mockReturnValue((mockManager as any) as EntityManager);
       jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);
       jest.spyOn(utils, 'getMonLocId').mockResolvedValue(new MonitorLocation());
 
@@ -212,7 +228,7 @@ describe('System Tests', () => {
     //   sys.systemTypeCode = 'LTGSS';
 
     //   const mockManager = {
-    //     findOne: jest.fn().mockResolvedValue(sys),
+    //     findOneBy: jest.fn().mockResolvedValue(sys),
     //   };
     //   jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
     //   jest.spyOn(utils, 'getFacIdFromOris').mockResolvedValue(1);

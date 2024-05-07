@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CPMSQualificationRepository } from './cpms-qualification.repository';
+
 import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { CPMSQualificationMap } from '../maps/cpms-qualification.map';
+import { CPMSQualificationRepository } from './cpms-qualification.repository';
 
 @Injectable()
 export class CPMSQualificationService {
   constructor(
-    @InjectRepository(CPMSQualificationRepository)
     private readonly repository: CPMSQualificationRepository,
     private readonly map: CPMSQualificationMap,
   ) {}

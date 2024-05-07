@@ -7,7 +7,7 @@ import { MonitorAttributeService } from './monitor-attribute.service';
 import { MonitorAttributeRepository } from './monitor-attribute.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

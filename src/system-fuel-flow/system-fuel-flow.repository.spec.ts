@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
 
 const monSysId = '1';
@@ -21,6 +22,7 @@ describe('SystemFuelFlowRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         SystemFuelFlowRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

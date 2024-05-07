@@ -1,10 +1,15 @@
-import { BadRequestException } from '@nestjs/common';
-import { Repository, EntityRepository } from 'typeorm';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(MonitorPlan)
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+
+@Injectable()
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
+  constructor(entityManager: EntityManager) {
+    super(MonitorPlan, entityManager);
+  }
+
   async getMonitorPlansByOrisCode(orisCode: number): Promise<MonitorPlan[]> {
     return this.createQueryBuilder('plan')
       .innerJoinAndSelect('plan.plant', 'plant')
@@ -106,7 +111,7 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
           planId,
         ],
       );
-      return this.findOne({ id: planId });
+      return this.findOneBy({ id: planId });
     } catch (error) {
       throw new BadRequestException(error['message']);
     }

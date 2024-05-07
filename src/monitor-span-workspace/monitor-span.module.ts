@@ -1,13 +1,13 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
-import { MonitorSpanWorkspaceController } from './monitor-span.controller';
-import { MonitorSpanWorkspaceService } from './monitor-span.service';
-import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { MonitorSpanChecksService } from './monitor-span-checks.service';
+import { MonitorSpanWorkspaceController } from './monitor-span.controller';
+import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
+import { MonitorSpanWorkspaceService } from './monitor-span.service';
 
 @Module({
   imports: [
@@ -17,12 +17,14 @@ import { MonitorSpanChecksService } from './monitor-span-checks.service';
   ],
   controllers: [MonitorSpanWorkspaceController],
   providers: [
+    MonitorSpanWorkspaceRepository,
     MonitorSpanWorkspaceService,
     MonitorSpanMap,
     MonitorSpanChecksService,
   ],
   exports: [
     TypeOrmModule,
+    MonitorSpanWorkspaceRepository,
     MonitorSpanWorkspaceService,
     MonitorSpanMap,
     MonitorSpanChecksService,

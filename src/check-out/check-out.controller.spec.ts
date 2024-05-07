@@ -2,6 +2,8 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
+
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { CheckOutController } from './check-out.controller';
@@ -15,6 +17,10 @@ describe('CheckOutController', () => {
       controllers: [CheckOutController],
       providers: [
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: UserCheckOutService,
           useFactory: () => ({}),

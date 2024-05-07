@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 
+import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { UnitCapacityRepository } from './unit-capacity.repository';
 

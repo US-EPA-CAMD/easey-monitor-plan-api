@@ -15,7 +15,16 @@ import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-pl
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MonitorMethodWorkspaceController],
-  providers: [MonitorMethodWorkspaceService, MonitorMethodMap],
-  exports: [TypeOrmModule, MonitorMethodWorkspaceService, MonitorMethodMap],
+  providers: [
+    MonitorMethodWorkspaceRepository,
+    MonitorMethodWorkspaceService,
+    MonitorMethodMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    MonitorMethodWorkspaceRepository,
+    MonitorMethodWorkspaceService,
+    MonitorMethodMap,
+  ],
 })
 export class MonitorMethodWorkspaceModule {}

@@ -1,9 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { DuctWaf } from '../entities/workspace/duct-waf.entity';
 
-@EntityRepository(DuctWaf)
+@Injectable()
 export class DuctWafWorkspaceRepository extends Repository<DuctWaf> {
+  constructor(entityManager: EntityManager) {
+    super(DuctWaf, entityManager);
+  }
+
   async getDuctWafByLocIdBDateBHourWafValue(
     locationId: string,
     wafBeginDate: Date,

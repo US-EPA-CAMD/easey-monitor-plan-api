@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
@@ -21,6 +22,7 @@ describe('MonitorQualificationWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         MonitorQualificationWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

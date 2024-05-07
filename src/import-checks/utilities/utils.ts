@@ -1,16 +1,17 @@
+import { BadRequestException } from '@nestjs/common';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { ConnectionService } from '@us-epa-camd/easey-common/connection';
+
 import { UpdateMonitorLocationDTO } from '../../dtos/monitor-location-update.dto';
+import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
+import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
+import { Plant } from '../../entities/plant.entity';
 import { MonitorLocation } from '../../entities/workspace/monitor-location.entity';
 import { StackPipe } from '../../entities/workspace/stack-pipe.entity';
 import { Unit } from '../../entities/workspace/unit.entity';
-import { getManager } from 'typeorm';
-import { Plant } from '../../entities/plant.entity';
-import { BadRequestException } from '@nestjs/common';
-import { UpdateMonitorPlanDTO } from '../../dtos/monitor-plan-update.dto';
-import { SystemComponentBaseDTO } from '../../dtos/system-component.dto';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
-export const getEntityManager: any = () => {
-  return getManager();
+export const getEntityManager = () => {
+  return ConnectionService.getEntityManager();
 };
 
 export const getMonLocId = async (
@@ -22,7 +23,7 @@ export const getMonLocId = async (
 
   let monLoc;
   if (loc.stackPipeId !== null) {
-    const stackPipe = await entityManager.findOne(StackPipe, {
+    const stackPipe = await entityManager.findOneBy(StackPipe, {
       name: loc.stackPipeId,
       facId: facility,
     });
@@ -36,11 +37,11 @@ export const getMonLocId = async (
       );
     }
 
-    monLoc = await entityManager.findOne(MonitorLocation, {
-      stackPipe: stackPipe.id,
+    monLoc = await entityManager.findOneBy(MonitorLocation, {
+      stackPipeId: stackPipe.id,
     });
   } else {
-    const unit = await entityManager.findOne(Unit, {
+    const unit = await entityManager.findOneBy(Unit, {
       name: loc.unitId,
       facId: facility,
     });
@@ -54,8 +55,8 @@ export const getMonLocId = async (
       );
     }
 
-    monLoc = await entityManager.findOne(MonitorLocation, {
-      unit: unit.id,
+    monLoc = await entityManager.findOneBy(MonitorLocation, {
+      unitId: unit.id,
     });
   }
 
@@ -65,8 +66,8 @@ export const getMonLocId = async (
 export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
   const entityManager = getEntityManager();
 
-  const facResult: Plant = await entityManager.findOne(Plant, {
-    orisCode: orisCode,
+  const facResult: Plant = await entityManager.findOneBy(Plant, {
+    orisCode,
   });
 
   if (facResult === undefined) {

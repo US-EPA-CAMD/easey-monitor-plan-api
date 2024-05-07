@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { PCTQualificationRepository } from './pct-qualification.repository';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
+import { PCTQualificationRepository } from './pct-qualification.repository';
 
 @Injectable()
 export class PCTQualificationService {
   constructor(
-    @InjectRepository(PCTQualificationRepository)
     private repository: PCTQualificationRepository,
     private map: PCTQualificationMap,
   ) {}
@@ -16,7 +14,7 @@ export class PCTQualificationService {
   async getPCTQualifications(
     qualificationId: string,
   ): Promise<PCTQualificationDTO[]> {
-    const results = await this.repository.find({ qualificationId });
+    const results = await this.repository.findBy({ qualificationId });
     return this.map.many(results);
   }
 }

@@ -1,9 +1,14 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 
-@EntityRepository(MonitorSpan)
+@Injectable()
 export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
+  constructor(entityManager: EntityManager) {
+    super(MonitorSpan, entityManager);
+  }
+
   async getSpan(locationId: string, id: string): Promise<MonitorSpan> {
     return this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })

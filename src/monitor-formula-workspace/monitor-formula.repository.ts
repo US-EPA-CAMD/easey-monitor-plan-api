@@ -1,11 +1,16 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 
-@EntityRepository(MonitorFormula)
+@Injectable()
 export class MonitorFormulaWorkspaceRepository extends Repository<
   MonitorFormula
 > {
+  constructor(entityManager: EntityManager) {
+    super(MonitorFormula, entityManager);
+  }
+
   async getFormula(locationId: string, id: string): Promise<MonitorFormula> {
     return this.createQueryBuilder('mf')
       .where('mf.locationId = :locationId', { locationId })

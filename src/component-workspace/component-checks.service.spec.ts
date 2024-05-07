@@ -32,7 +32,7 @@ describe('Component Checks Service Test', () => {
         {
           provide: SystemComponentMasterDataRelationshipRepository,
           useFactory: () => ({
-            findOne: jest
+            findOneBy: jest
               .fn()
               .mockResolvedValue(new SystemComponentMasterDataRelationships()),
           }),
@@ -40,7 +40,7 @@ describe('Component Checks Service Test', () => {
         {
           provide: UsedIdentifierRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(null),
+            findOneBy: jest.fn().mockResolvedValue(null),
           }),
         },
         {
@@ -63,7 +63,9 @@ describe('Component Checks Service Test', () => {
   describe('COMPON-13 Checks', () => {
     it('Should get [COMPON-13-A] error', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
-      jest.spyOn(sysCompMDRelRepository, 'findOne').mockResolvedValueOnce(null);
+      jest
+        .spyOn(sysCompMDRelRepository, 'findOneBy')
+        .mockResolvedValueOnce(null);
 
       payload.sampleAcquisitionMethodCode = null;
       payload.componentTypeCode = 'ABC';
@@ -171,7 +173,7 @@ describe('Component Checks Service Test', () => {
       jest.spyOn(service, 'getMessage').mockReturnValueOnce(MOCK_ERROR_MSG);
       usedIdentifierRecord.formulaOrBasisCode = 'B';
       jest
-        .spyOn(usedIdRepository, 'findOne')
+        .spyOn(usedIdRepository, 'findOneBy')
         .mockResolvedValueOnce(usedIdentifierRecord);
 
       payload.componentTypeCode = 'NOX';

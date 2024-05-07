@@ -1,25 +1,18 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
-import { MonitorLoadMap } from '../maps/monitor-load.map';
-import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
-import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
+import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
+import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
+import { MonitorLoadMap } from '../maps/monitor-load.map';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 
 @Injectable()
 export class MonitorLoadWorkspaceService {
   constructor(
-    @InjectRepository(MonitorLoadWorkspaceRepository)
     private readonly repository: MonitorLoadWorkspaceRepository,
     private readonly map: MonitorLoadMap,
     private readonly logger: Logger,
@@ -29,12 +22,12 @@ export class MonitorLoadWorkspaceService {
   ) {}
 
   async getLoads(locationId: string): Promise<MonitorLoadDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
   async getLoad(loadId: string): Promise<MonitorLoad> {
-    const result = await this.repository.findOne(loadId);
+    const result = await this.repository.findOneBy({ id: loadId });
 
     if (!result) {
       throw new EaseyException(

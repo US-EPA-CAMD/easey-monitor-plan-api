@@ -11,13 +11,25 @@ import { UsedIdentifierRepository } from '../used-identifier/used-identifier.rep
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MonitorFormulaWorkspaceRepository]),
-    TypeOrmModule.forFeature([UsedIdentifierRepository]),
+    TypeOrmModule.forFeature([
+      MonitorFormulaWorkspaceRepository,
+      UsedIdentifierRepository,
+    ]),
     HttpModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MonitorFormulaWorkspaceController],
-  providers: [MonitorFormulaWorkspaceService, MonitorFormulaMap],
-  exports: [TypeOrmModule, MonitorFormulaWorkspaceService, MonitorFormulaMap],
+  providers: [
+    MonitorFormulaWorkspaceRepository,
+    UsedIdentifierRepository,
+    MonitorFormulaWorkspaceService,
+    MonitorFormulaMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    MonitorFormulaWorkspaceRepository,
+    MonitorFormulaWorkspaceService,
+    MonitorFormulaMap,
+  ],
 })
 export class MonitorFormulaWorkspaceModule {}

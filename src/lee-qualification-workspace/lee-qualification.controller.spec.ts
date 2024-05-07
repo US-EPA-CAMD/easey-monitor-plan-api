@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationWorkspaceController } from './lee-qualification.controller';
@@ -38,7 +39,15 @@ describe('LEEQualificationWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule, LoggerModule],
       controllers: [LEEQualificationWorkspaceController],
-      providers: [LEEQualificationWorkspaceService, ConfigService, AuthGuard],
+      providers: [
+        LEEQualificationWorkspaceService,
+        ConfigService,
+        AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get(LEEQualificationWorkspaceController);

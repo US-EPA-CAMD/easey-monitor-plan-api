@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
@@ -40,8 +41,8 @@ const payload: UpdateMonitorQualificationDTO = {
 const mockRepository = () => ({
   getQualifications: jest.fn().mockResolvedValue(returnedMonitorQualifications),
   getQualification: jest.fn().mockResolvedValue(returnedMonitorQualification),
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new MonitorQualification()),
+  findBy: jest.fn().mockResolvedValue([]),
+  findOneBy: jest.fn().mockResolvedValue(new MonitorQualification()),
   create: jest.fn().mockResolvedValue(new MonitorQualification()),
   save: jest.fn().mockResolvedValue(new MonitorQualification()),
 });
@@ -60,6 +61,10 @@ describe('MonitorQualificationService', () => {
       providers: [
         MonitorQualificationWorkspaceService,
         MonitorPlanWorkspaceService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: LEEQualificationWorkspaceService,
           useFactory: () => ({}),

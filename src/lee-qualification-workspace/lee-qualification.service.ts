@@ -1,22 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
 import {
   LEEQualificationBaseDTO,
   LEEQualificationDTO,
 } from '../dtos/lee-qualification.dto';
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 
 @Injectable()
 export class LEEQualificationWorkspaceService {
   constructor(
-    @InjectRepository(LEEQualificationWorkspaceRepository)
     private readonly repository: LEEQualificationWorkspaceRepository,
     private readonly map: LEEQualificationMap,
     private readonly logger: Logger,
