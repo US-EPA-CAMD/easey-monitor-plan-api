@@ -81,7 +81,7 @@ export class MonitorFormulaWorkspaceController {
     @Body() payload: MonitorFormulaBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorFormulaDTO> {
-    await this.checksService.runChecks(payload, locationId);
+    await this.checksService.runChecks(payload, locationId, formulaRecordId);
     return this.service.updateFormula(
       locationId,
       formulaRecordId,

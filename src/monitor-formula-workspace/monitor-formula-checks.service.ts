@@ -11,12 +11,15 @@ export class MonitorFormulaChecksService {
   private async duplicateFormulaIdCheck(
     locationId: string,
     monitorFormula: MonitorFormulaBaseDTO,
+    recordId?: string,
   ) {
     const formula = await this.repository.getFormulaByLocIdAndFormulaIdentifier(
       locationId,
       monitorFormula.formulaId,
     );
     if (formula) {
+      if (recordId && formula.id === recordId) return null; // Valid update
+
       return CheckCatalogService.formatResultMessage('FORMULA-18-A', {
         fieldnames: ['formulaId', 'locationId'],
         recordtype: 'Monitor Formula',
@@ -25,10 +28,14 @@ export class MonitorFormulaChecksService {
     return null;
   }
 
-  async runChecks(monitorFormula: MonitorFormulaBaseDTO, locationId: string) {
+  async runChecks(
+    monitorFormula: MonitorFormulaBaseDTO,
+    locationId: string,
+    recordId?: string,
+  ) {
     const errorList = (
       await Promise.all([
-        this.duplicateFormulaIdCheck(locationId, monitorFormula), // FORMULA-18-A
+        this.duplicateFormulaIdCheck(locationId, monitorFormula, recordId), // FORMULA-18-A
       ])
     ).filter(error => error !== null);
 
