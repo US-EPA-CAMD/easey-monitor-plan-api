@@ -19,8 +19,8 @@ const payload = new MonitorLoadBaseDTO();
 const mockRepository = () => ({
   getLoadByLocBDateBHour: jest.fn().mockRejectedValue(monLoad),
   getLoad: jest.fn().mockRejectedValue(monLoad),
-  find: jest.fn().mockResolvedValue([monLoad]),
-  findOne: jest.fn().mockResolvedValue(monLoad),
+  findBy: jest.fn().mockResolvedValue([monLoad]),
+  findOneBy: jest.fn().mockResolvedValue(monLoad),
   create: jest.fn().mockResolvedValue(monLoad),
   save: jest.fn().mockResolvedValue(monLoad),
 });
@@ -69,7 +69,7 @@ describe('MonitorLoadService', () => {
     });
 
     it('should throw error when monitor load not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

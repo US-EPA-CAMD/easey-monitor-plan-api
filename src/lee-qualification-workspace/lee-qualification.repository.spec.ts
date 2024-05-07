@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 import { LEEQualification } from '../entities/workspace/lee-qualification.entity';
@@ -21,6 +21,7 @@ describe('LEEQualificationWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         LEEQualificationWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { DataSource } from 'typeorm';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
@@ -43,6 +44,10 @@ describe('MonitorSpanWorkspaceController', () => {
       providers: [
         MonitorSpanWorkspaceService,
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: MonitorSpanChecksService,
           useFactory: mockMonitorSpanChecksService,

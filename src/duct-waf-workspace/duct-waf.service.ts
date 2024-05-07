@@ -1,18 +1,17 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
-import { DuctWafMap } from '../maps/duct-waf.map';
-import { DuctWaf } from '../entities/duct-waf.entity';
-import { DuctWafWorkspaceRepository } from './duct-waf.repository';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
+import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
+import { DuctWaf } from '../entities/duct-waf.entity';
+import { DuctWafMap } from '../maps/duct-waf.map';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 
 @Injectable()
 export class DuctWafWorkspaceService {
   constructor(
-    @InjectRepository(DuctWafWorkspaceRepository)
     private readonly repository: DuctWafWorkspaceRepository,
     private readonly map: DuctWafMap,
 
@@ -21,12 +20,12 @@ export class DuctWafWorkspaceService {
   ) {}
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
   async getDuctWaf(id: string): Promise<DuctWaf> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -56,7 +55,7 @@ export class DuctWafWorkspaceService {
       wafMethodCode: payload.wafMethodCode,
       wafValue: payload.wafValue,
       numberOfTestRuns: payload.numberOfTestRuns,
-      numberOfTraversePointsWaf: payload.numberOfTraversePointsRef,
+      numberOfTraversePointsWaf: payload.numberOfTraversePointsWaf,
       numberOfTestPorts: payload.numberOfTestPorts,
       numberOfTraversePointsRef: payload.numberOfTraversePointsRef,
       ductWidth: payload.ductWidth,
@@ -145,14 +144,14 @@ export class DuctWafWorkspaceService {
                 }
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
 
           await Promise.all(promises);
           resolve(true);
         }
-      })()
+      })();
     });
   }
 }

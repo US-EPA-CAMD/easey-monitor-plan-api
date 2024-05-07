@@ -1,8 +1,10 @@
+import { HttpModule } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
+
+import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { CPMSQualificationController } from './cpms-qualification.controller';
 import { CPMSQualificationService } from './cpms-qualification.service';
-import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
-import { HttpModule } from '@nestjs/axios';
 
 const returnedCPMSQualification = new CPMSQualificationDTO();
 const returnedCPMSQualifications = [returnedCPMSQualification];
@@ -25,6 +27,10 @@ describe('CPMSQualificationController', () => {
       imports: [HttpModule],
       controllers: [CPMSQualificationController],
       providers: [
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: CPMSQualificationService,
           useFactory: mockService,

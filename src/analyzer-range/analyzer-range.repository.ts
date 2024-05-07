@@ -1,9 +1,14 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { AnalyzerRange } from '../entities/analyzer-range.entity';
 
-@EntityRepository(AnalyzerRange)
+@Injectable()
 export class AnalyzerRangeRepository extends Repository<AnalyzerRange> {
+  constructor(entityManager: EntityManager) {
+    super(AnalyzerRange, entityManager);
+  }
+
   async getAnalyzerRangesByCompIds(
     componentIds: string[],
   ): Promise<AnalyzerRange[]> {

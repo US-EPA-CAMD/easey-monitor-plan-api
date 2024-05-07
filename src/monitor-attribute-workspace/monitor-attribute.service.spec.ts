@@ -27,7 +27,7 @@ const returnedMonitorAttribute = new MonitorAttributeDTO();
 const mockRepository = () => ({
   getAttribute: jest.fn().mockResolvedValue(monAttr),
   getAttributeByLocIdAndDate: jest.fn().mockResolvedValue(monAttr),
-  find: jest.fn().mockResolvedValue([monAttr]),
+  findBy: jest.fn().mockResolvedValue([monAttr]),
   create: jest.fn().mockResolvedValue(monAttr),
   update: jest.fn().mockResolvedValue(monAttr),
   save: jest.fn().mockResolvedValue(monAttr),

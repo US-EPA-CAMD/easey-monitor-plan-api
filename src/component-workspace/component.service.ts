@@ -1,20 +1,19 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { UpdateComponentBaseDTO, ComponentDTO } from '../dtos/component.dto';
-import { ComponentMap } from '../maps/component.map';
-import { ComponentWorkspaceRepository } from './component.repository';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
-import { Component } from '../entities/workspace/component.entity';
-import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
+import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
+import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { Component } from '../entities/workspace/component.entity';
+import { ComponentMap } from '../maps/component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { ComponentWorkspaceRepository } from './component.repository';
 
 @Injectable()
 export class ComponentWorkspaceService {
   constructor(
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly repository: ComponentWorkspaceRepository,
     private readonly usedIdRepo: UsedIdentifierRepository,
 
@@ -25,7 +24,7 @@ export class ComponentWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) { }
+  ) {}
 
   async runComponentChecks(
     components: UpdateComponentBaseDTO[],
@@ -40,7 +39,7 @@ export class ComponentWorkspaceService {
       '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.';
 
     for (const fileComponent of components) {
-      const databaseComponent = await this.repository.findOne({
+      const databaseComponent = await this.repository.findOneBy({
         locationId: monitorLocationId,
         componentId: fileComponent.componentId,
       });
@@ -116,7 +115,6 @@ export class ComponentWorkspaceService {
     locationId: string,
     userId: string,
   ) {
-
     return new Promise(resolve => {
       (async () => {
         const innerPromises = [];
@@ -139,7 +137,7 @@ export class ComponentWorkspaceService {
                   );
 
                   if (usedIdentifier)
-                    compRecord = await this.repository.findOne({
+                    compRecord = await this.repository.findOneBy({
                       id: usedIdentifier.id,
                     });
                 }
@@ -151,7 +149,6 @@ export class ComponentWorkspaceService {
                     component,
                     userId,
                   );
-
                 } else {
                   await this.createComponent(locationId, component, userId);
                   compRecord = await this.repository.getComponentByLocIdAndCompId(
@@ -167,15 +164,14 @@ export class ComponentWorkspaceService {
                   userId,
                 );
 
-
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
         await Promise.all(innerPromises);
         resolve(true);
-      })()
+      })();
     });
   }
 
@@ -185,7 +181,6 @@ export class ComponentWorkspaceService {
     payload: UpdateComponentBaseDTO,
     userId: string,
   ): Promise<ComponentDTO> {
-
     componentRecord.modelVersion = payload.modelVersion;
     componentRecord.serialNumber = payload.serialNumber;
     componentRecord.hgConverterIndicator = payload.hgConverterIndicator;

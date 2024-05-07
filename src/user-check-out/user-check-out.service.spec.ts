@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { UserCheckOutService } from './user-check-out.service';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
-import { EntityManager } from 'typeorm';
 
 const monPlanId = '1';
 const userCheckout = new UserCheckOut();
@@ -14,7 +14,7 @@ const userCheckoutDto = new UserCheckOutDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([userCheckout]),
-  findOne: jest.fn().mockResolvedValue(userCheckout),
+  findOneBy: jest.fn().mockResolvedValue(userCheckout),
   save: jest.fn().mockResolvedValue(userCheckout),
   delete: jest.fn().mockResolvedValue(userCheckout),
   checkOutConfiguration: jest.fn().mockResolvedValue(userCheckout),
@@ -34,6 +34,7 @@ describe('UserCheckOutService', () => {
       imports: [LoggerModule],
       providers: [
         UserCheckOutService,
+        EntityManager,
         {
           provide: UserCheckOutRepository,
           useFactory: mockRepository,
@@ -70,7 +71,7 @@ describe('UserCheckOutService', () => {
     });
 
     it('should throw error when a checked out configuration not found', async () => {
-      jest.spyOn(repository, 'findOne').mockReturnValue(null);
+      jest.spyOn(repository, 'findOneBy').mockReturnValue(null);
       let errored = false;
       try {
         await service.getCheckedOutConfiguration(monPlanId);
@@ -84,7 +85,7 @@ describe('UserCheckOutService', () => {
 
   describe('updateLastActivity', () => {
     it('should update a configuration and return it', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(userCheckout);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(userCheckout);
       userCheckoutDto.lastActivity = new Date(Date.now()).toISOString();
       jest.spyOn(repository, 'save').mockResolvedValue(userCheckout);
 

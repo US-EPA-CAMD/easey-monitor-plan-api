@@ -1,12 +1,13 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
-import { CPMSQualificationWorkspaceController } from './cpms-qualification-workspace.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
-import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
-import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { CPMSQualificationMap } from '../maps/cpms-qualification.map';
+import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-workspace/monitor-qualification.module';
+import { CPMSQualificationWorkspaceController } from './cpms-qualification-workspace.controller';
+import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
+import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
 
 @Module({
   imports: [
@@ -16,9 +17,14 @@ import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-wo
     forwardRef(() => MonitorQualificationWorkspaceModule),
   ],
   controllers: [CPMSQualificationWorkspaceController],
-  providers: [CPMSQualificationWorkspaceService, CPMSQualificationMap],
+  providers: [
+    CPMSQualificationWorkspaceRepository,
+    CPMSQualificationWorkspaceService,
+    CPMSQualificationMap,
+  ],
   exports: [
     TypeOrmModule,
+    CPMSQualificationWorkspaceRepository,
     CPMSQualificationWorkspaceService,
     CPMSQualificationMap,
   ],

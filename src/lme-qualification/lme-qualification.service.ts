@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { LMEQualificationRepository } from './lme-qualification.repository';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
+import { LMEQualificationRepository } from './lme-qualification.repository';
 
 @Injectable()
 export class LMEQualificationService {
   constructor(
-    @InjectRepository(LMEQualificationRepository)
     private repository: LMEQualificationRepository,
     private map: LMEQualificationMap,
   ) {}
@@ -16,7 +14,7 @@ export class LMEQualificationService {
   async getLMEQualifications(
     qualificationId: string,
   ): Promise<LMEQualificationDTO[]> {
-    const results = await this.repository.find({ qualificationId });
+    const results = await this.repository.findBy({ qualificationId });
     return this.map.many(results);
   }
 }

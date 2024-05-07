@@ -1,7 +1,8 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { MonitorAttributeBaseDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttribute } from '../entities/monitor-attribute.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 
 const returnAttribute = new MonitorAttribute();
@@ -19,6 +20,7 @@ describe('MonitorAttributeWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         MonitorAttributeWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
@@ -32,6 +33,10 @@ describe('AnalyzerRangeWorkspaceController', () => {
       providers: [
         AnalyzerRangeWorkspaceService,
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: AnalyzerRangeChecksService,
           useFactory: mockAnalyzerRangeChecksService,

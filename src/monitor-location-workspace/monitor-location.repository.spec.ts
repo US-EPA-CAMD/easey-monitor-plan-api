@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
-import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
+import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 
 const mockQueryBuilder = () => ({
   innerJoinAndSelect: jest.fn(),
@@ -21,6 +21,7 @@ describe('MonitorLocationWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         MonitorLocationWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

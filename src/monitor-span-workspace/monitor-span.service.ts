@@ -1,18 +1,17 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
-import { MonitorSpanMap } from '../maps/monitor-span.map';
-import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
+import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
+import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
+import { MonitorSpanMap } from '../maps/monitor-span.map';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 
 @Injectable()
 export class MonitorSpanWorkspaceService {
   constructor(
-    @InjectRepository(MonitorSpanWorkspaceRepository)
     private readonly repository: MonitorSpanWorkspaceRepository,
     private readonly map: MonitorSpanMap,
 
@@ -21,7 +20,7 @@ export class MonitorSpanWorkspaceService {
   ) {}
 
   async getSpans(locationId: string): Promise<MonitorSpanDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
@@ -58,7 +57,7 @@ export class MonitorSpanWorkspaceService {
       mpcValue: payload.mpcValue,
       mpfValue: payload.mpfValue,
       spanValue: payload.spanValue,
-      fullScaleRange: payload.flowFullScaleRange,
+      fullScaleRange: payload.fullScaleRange,
       spanUnitsOfMeasureCode: payload.spanUnitsOfMeasureCode,
       scaleTransitionPoint: payload.scaleTransitionPoint,
       defaultHighRange: payload.defaultHighRange,
@@ -183,7 +182,7 @@ export class MonitorSpanWorkspaceService {
             }
 
             innerResolve(true);
-          })()
+          })();
         }),
       );
     }

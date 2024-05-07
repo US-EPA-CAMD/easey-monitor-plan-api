@@ -1,94 +1,66 @@
-import { In } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { In } from 'typeorm';
 
-import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
-
-import { MonitorPlanRepository } from './monitor-plan.repository';
-import { MonitorPlanCommentRepository } from '../monitor-plan-comment/monitor-plan-comment.repository';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { MonitorAttributeRepository } from '../monitor-attribute/monitor-attribute.repository';
-import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
-import { MatsMethodRepository } from '../mats-method/mats-method.repository';
-import { MonitorFormulaRepository } from '../monitor-formula/monitor-formula.repository';
-import { MonitorDefaultRepository } from '../monitor-default/monitor-default.repository';
-import { MonitorSpanRepository } from '../monitor-span/monitor-span.repository';
-import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
-import { MonitorLoadRepository } from '../monitor-load/monitor-load.repository';
+import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
 import { ComponentRepository } from '../component/component.repository';
-import { SystemComponentRepository } from '../system-component/system-component.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.repository';
-import { MonitorQualificationRepository } from '../monitor-qualification/monitor-qualification.repository';
+import { CPMSQualificationRepository } from '../cpms-qualification/cpms-qualification.repository';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
+import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { LEEQualificationRepository } from '../lee-qualification/lee-qualification.repository';
 import { LMEQualificationRepository } from '../lme-qualification/lme-qualification.repository';
+import { MonitorPlanMap } from '../maps/monitor-plan.map';
+import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
+import { MatsMethodRepository } from '../mats-method/mats-method.repository';
+import { MonitorAttributeRepository } from '../monitor-attribute/monitor-attribute.repository';
+import { MonitorDefaultRepository } from '../monitor-default/monitor-default.repository';
+import { MonitorFormulaRepository } from '../monitor-formula/monitor-formula.repository';
+import { MonitorLoadRepository } from '../monitor-load/monitor-load.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { MonitorPlanCommentRepository } from '../monitor-plan-comment/monitor-plan-comment.repository';
+import { MonitorPlanReportingFrequencyRepository } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.repository';
+import { MonitorQualificationRepository } from '../monitor-qualification/monitor-qualification.repository';
+import { MonitorSpanRepository } from '../monitor-span/monitor-span.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { PCTQualificationRepository } from '../pct-qualification/pct-qualification.repository';
+import { SystemComponentRepository } from '../system-component/system-component.repository';
+import { SystemFuelFlowRepository } from '../system-fuel-flow/system-fuel-flow.repository';
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { MonitorPlanReportingFrequencyRepository } from '../monitor-plan-reporting-freq/monitor-plan-reporting-freq.repository';
-import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
-import { CPMSQualificationRepository } from '../cpms-qualification/cpms-qualification.repository';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
+import { MonitorPlanRepository } from './monitor-plan.repository';
 
 @Injectable()
 export class MonitorPlanService {
   constructor(
-    @InjectRepository(MonitorPlanRepository)
     private readonly repository: MonitorPlanRepository,
-    @InjectRepository(MonitorPlanCommentRepository)
     private readonly commentRepository: MonitorPlanCommentRepository,
-    @InjectRepository(MonitorLocationRepository)
     private readonly locationRepository: MonitorLocationRepository,
-    @InjectRepository(MonitorAttributeRepository)
     private readonly attributeRepository: MonitorAttributeRepository,
-    @InjectRepository(MonitorMethodRepository)
     private readonly methodRepository: MonitorMethodRepository,
-    @InjectRepository(MatsMethodRepository)
     private readonly matsMethodRepository: MatsMethodRepository,
-    @InjectRepository(MonitorFormulaRepository)
     private readonly formulaRepository: MonitorFormulaRepository,
-    @InjectRepository(MonitorDefaultRepository)
     private readonly defaultRepository: MonitorDefaultRepository,
-    @InjectRepository(MonitorSpanRepository)
     private readonly spanRepository: MonitorSpanRepository,
-    @InjectRepository(DuctWafRepository)
     private readonly ductWafRepository: DuctWafRepository,
-    @InjectRepository(MonitorLoadRepository)
     private readonly loadRepository: MonitorLoadRepository,
-    @InjectRepository(ComponentRepository)
     private readonly componentRepository: ComponentRepository,
-    @InjectRepository(MonitorSystemRepository)
     private readonly systemRepository: MonitorSystemRepository,
-    @InjectRepository(SystemComponentRepository)
     private readonly systemComponentRepository: SystemComponentRepository,
-    @InjectRepository(SystemFuelFlowRepository)
     private readonly systemFuelFlowRepository: SystemFuelFlowRepository,
-    @InjectRepository(MonitorQualificationRepository)
     private readonly qualificationRepository: MonitorQualificationRepository,
-    @InjectRepository(LEEQualificationRepository)
     private readonly leeQualificationRepository: LEEQualificationRepository,
-    @InjectRepository(LMEQualificationRepository)
     private readonly lmeQualificationRepository: LMEQualificationRepository,
-    @InjectRepository(PCTQualificationRepository)
     private readonly pctQualificationRepository: PCTQualificationRepository,
-    @InjectRepository(UnitCapacityRepository)
     private readonly unitCapacityRepository: UnitCapacityRepository,
-    @InjectRepository(UnitControlRepository)
     private readonly unitControlRepository: UnitControlRepository,
-    @InjectRepository(UnitFuelRepository)
     private readonly unitFuelRepository: UnitFuelRepository,
-    @InjectRepository(UnitStackConfigurationRepository)
     private readonly unitStackConfigRepository: UnitStackConfigurationRepository,
-    @InjectRepository(MonitorPlanReportingFrequencyRepository)
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyRepository,
-    @InjectRepository(AnalyzerRangeRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeRepository,
-    @InjectRepository(CPMSQualificationRepository)
     private readonly cpmsQualRepository: CPMSQualificationRepository,
     private readonly map: MonitorPlanMap,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -98,7 +70,7 @@ export class MonitorPlanService {
     monSysId: string,
     monSysIds: string[],
   ): Promise<SystemFuelFlow[]> {
-    const sysFuelFlows = await this.systemFuelFlowRepository.find({
+    const sysFuelFlows = await this.systemFuelFlowRepository.findBy({
       monitoringSystemRecordId: In(monSysIds),
     });
     return sysFuelFlows.filter(i => i.monitoringSystemRecordId === monSysId);
@@ -157,13 +129,13 @@ export class MonitorPlanService {
     if (getReportingFrquencies) {
       REPORTING_FREQ = 0;
       promises.push(
-        this.reportingFreqRepository.find({ monitorPlanId: planId }),
+        this.reportingFreqRepository.findBy({ monitorPlanId: planId }),
       );
     }
 
     if (getComments) {
       COMMENTS = getReportingFrquencies === true ? REPORTING_FREQ + 1 : 0;
-      promises.push(this.commentRepository.find({ monitorPlanId: planId }));
+      promises.push(this.commentRepository.findBy({ monitorPlanId: planId }));
     }
 
     if (getUnitStacks) {
@@ -297,7 +269,7 @@ export class MonitorPlanService {
             }
 
             resolve(components);
-          })()
+          })();
         }),
       );
 
@@ -332,7 +304,7 @@ export class MonitorPlanService {
             }
 
             resolve(systems);
-          })()
+          })();
         }),
       );
 
@@ -378,7 +350,7 @@ export class MonitorPlanService {
             }
 
             resolve(quals);
-          })()
+          })();
         }),
       );
     }

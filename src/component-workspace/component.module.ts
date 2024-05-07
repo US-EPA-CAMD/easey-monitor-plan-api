@@ -27,7 +27,13 @@ import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-pl
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [ComponentWorkspaceController],
-  providers: [ComponentWorkspaceService, ComponentMap, ComponentCheckService],
+  providers: [
+    ComponentWorkspaceRepository,
+    ComponentWorkspaceService,
+    ComponentMap,
+    ComponentCheckService,
+    UsedIdentifierRepository,
+  ],
   exports: [
     TypeOrmModule,
     ComponentWorkspaceService,

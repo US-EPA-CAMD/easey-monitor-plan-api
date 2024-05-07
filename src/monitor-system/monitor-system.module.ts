@@ -16,7 +16,12 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
     TypeOrmModule.forFeature([MonitorSystemRepository]),
   ],
   controllers: [MonitorSystemController],
-  providers: [MonitorSystemService, MonitorSystemMap],
-  exports: [TypeOrmModule, MonitorSystemService, MonitorSystemMap],
+  providers: [MonitorSystemRepository, MonitorSystemService, MonitorSystemMap],
+  exports: [
+    TypeOrmModule,
+    MonitorSystemRepository,
+    MonitorSystemService,
+    MonitorSystemMap,
+  ],
 })
 export class MonitorSystemModule {}

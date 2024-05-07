@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { UnitCapacity } from '../entities/unit-capacity.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { UnitCapacityRepository } from './unit-capacity.repository';
 
 const unitCapacity = new UnitCapacity();
@@ -22,6 +23,7 @@ describe('UnitCapacityRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         UnitCapacityRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

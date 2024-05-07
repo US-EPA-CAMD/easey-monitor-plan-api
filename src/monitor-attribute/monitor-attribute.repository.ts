@@ -1,6 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorAttribute } from '../entities/monitor-attribute.entity';
 
-@EntityRepository(MonitorAttribute)
-export class MonitorAttributeRepository extends Repository<MonitorAttribute> {}
+@Injectable()
+export class MonitorAttributeRepository extends Repository<MonitorAttribute> {
+  constructor(entityManager: EntityManager) {
+    super(MonitorAttribute, entityManager);
+  }
+}

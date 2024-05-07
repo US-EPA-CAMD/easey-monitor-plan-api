@@ -9,7 +9,16 @@ import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 @Module({
   imports: [TypeOrmModule.forFeature([MonitorPlanCommentRepository])],
   controllers: [MonitorPlanCommentController],
-  providers: [MonitorPlanCommentService, MonitorPlanCommentMap],
-  exports: [TypeOrmModule, MonitorPlanCommentService, MonitorPlanCommentMap],
+  providers: [
+    MonitorPlanCommentRepository,
+    MonitorPlanCommentService,
+    MonitorPlanCommentMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    MonitorPlanCommentRepository,
+    MonitorPlanCommentService,
+    MonitorPlanCommentMap,
+  ],
 })
 export class MonitorPlanCommentModule {}

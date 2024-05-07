@@ -6,7 +6,7 @@ import { PCTQualificationService } from './pct-qualification.service';
 import { PCTQualificationRepository } from './pct-qualification.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

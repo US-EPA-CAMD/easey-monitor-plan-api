@@ -34,7 +34,8 @@ payload.hgConverterIndicator = 1;
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([component]),
-  findOne: jest.fn().mockResolvedValue(component),
+  findBy: jest.fn().mockResolvedValue([component]),
+  findOneBy: jest.fn().mockResolvedValue(component),
   save: jest.fn().mockResolvedValue(component),
   create: jest.fn().mockResolvedValue(component),
   getComponentByLocIdAndCompId: jest.fn().mockResolvedValue(component),
@@ -93,7 +94,7 @@ describe('ComponentWorkspaceService', () => {
         comp.basisCode = null;
         comp.analyzerRanges = [];
 
-        jest.spyOn(repository, 'findOne').mockResolvedValue(comp);
+        jest.spyOn(repository, 'findOneBy').mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
         const componentDto = new UpdateComponentBaseDTO();
@@ -120,7 +121,7 @@ describe('ComponentWorkspaceService', () => {
         comp.componentTypeCode = 'SO2';
         comp.basisCode = 'ERR';
         comp.analyzerRanges = [];
-        repository.findOne = jest.fn().mockResolvedValue(comp);
+        repository.findOneBy = jest.fn().mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
         const component = new UpdateComponentBaseDTO();
@@ -147,7 +148,7 @@ describe('ComponentWorkspaceService', () => {
         comp.componentTypeCode = 'SO2';
         comp.basisCode = 'VALID';
         comp.analyzerRanges = [];
-        repository.findOne = jest.fn().mockResolvedValue(comp);
+        repository.findOneBy = jest.fn().mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
         const component = new UpdateComponentBaseDTO();
@@ -174,7 +175,7 @@ describe('ComponentWorkspaceService', () => {
         comp.componentTypeCode = 'ERR';
         comp.basisCode = null;
         comp.analyzerRanges = [];
-        repository.findOne = jest.fn().mockResolvedValue(comp);
+        repository.findOneBy = jest.fn().mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
         const component = new UpdateComponentBaseDTO();
@@ -197,7 +198,7 @@ describe('ComponentWorkspaceService', () => {
       });
 
       it('Should fail with invalid component type code in the file and analyzer range data', async () => {
-        jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+        jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
         const location = new UpdateMonitorLocationDTO();
         const component = new UpdateComponentBaseDTO();
@@ -224,7 +225,7 @@ describe('ComponentWorkspaceService', () => {
         comp.componentTypeCode = 'ERR';
         comp.basisCode = null;
         comp.analyzerRanges = [new AnalyzerRange()];
-        jest.spyOn(repository, 'findOne').mockResolvedValue(comp);
+        jest.spyOn(repository, 'findOneBy').mockResolvedValue(comp);
 
         const location = new UpdateMonitorLocationDTO();
         const component = new UpdateComponentBaseDTO();

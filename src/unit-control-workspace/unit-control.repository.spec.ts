@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { UnitControl } from '../entities/workspace/unit-control.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 const unitControl = new UnitControl();
@@ -22,6 +23,7 @@ describe('UnitControlWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         UnitControlWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

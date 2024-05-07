@@ -3,6 +3,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { UnitCapacityBaseDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
@@ -39,7 +40,15 @@ describe('UnitCapacityController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       controllers: [UnitCapacityWorkspaceController],
-      providers: [UnitCapacityWorkspaceService, ConfigService, AuthGuard],
+      providers: [
+        UnitCapacityWorkspaceService,
+        ConfigService,
+        AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get(UnitCapacityWorkspaceController);

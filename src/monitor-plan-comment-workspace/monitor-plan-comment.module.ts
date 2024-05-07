@@ -1,11 +1,11 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
-import { MonitorPlanCommentWorkspaceController } from './monitor-plan-comment.controller';
-import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
-import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
+import { MonitorPlanCommentWorkspaceController } from './monitor-plan-comment.controller';
+import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
+import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
 
 @Module({
   imports: [
@@ -13,9 +13,14 @@ import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
     HttpModule,
   ],
   controllers: [MonitorPlanCommentWorkspaceController],
-  providers: [MonitorPlanCommentWorkspaceService, MonitorPlanCommentMap],
+  providers: [
+    MonitorPlanCommentWorkspaceRepository,
+    MonitorPlanCommentWorkspaceService,
+    MonitorPlanCommentMap,
+  ],
   exports: [
     TypeOrmModule,
+    MonitorPlanCommentWorkspaceRepository,
     MonitorPlanCommentWorkspaceService,
     MonitorPlanCommentMap,
   ],

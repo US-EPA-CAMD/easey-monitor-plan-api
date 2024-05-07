@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { SystemComponentController } from './system-component.controller';
-import { SystemComponentService } from './system-component.service';
-import { SystemComponentRepository } from './system-component.repository';
-import { SystemComponentMap } from '../maps/system-component.map';
 import { ComponentModule } from '../component/component.module';
+import { SystemComponentMap } from '../maps/system-component.map';
+import { SystemComponentController } from './system-component.controller';
+import { SystemComponentRepository } from './system-component.repository';
+import { SystemComponentService } from './system-component.service';
 
 @Module({
   imports: [
@@ -13,7 +13,16 @@ import { ComponentModule } from '../component/component.module';
     TypeOrmModule.forFeature([SystemComponentRepository]),
   ],
   controllers: [SystemComponentController],
-  providers: [SystemComponentService, SystemComponentMap],
-  exports: [TypeOrmModule, SystemComponentService, SystemComponentMap],
+  providers: [
+    SystemComponentRepository,
+    SystemComponentService,
+    SystemComponentMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    SystemComponentRepository,
+    SystemComponentService,
+    SystemComponentMap,
+  ],
 })
 export class SystemComponentModule {}

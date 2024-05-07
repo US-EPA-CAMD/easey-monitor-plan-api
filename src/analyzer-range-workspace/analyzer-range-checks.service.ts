@@ -1,10 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
@@ -14,6 +13,7 @@ import {
   UpdateComponentBaseDTO,
 } from '../dtos/component.dto';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
+import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 
 const KEY = 'Analyzer Range';
 
@@ -21,9 +21,7 @@ const KEY = 'Analyzer Range';
 export class AnalyzerRangeChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentWorkspaceRespository: ComponentWorkspaceRepository,
-    @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeWorkspaceRepository: AnalyzerRangeWorkspaceRepository,
   ) {}
 
@@ -51,7 +49,9 @@ export class AnalyzerRangeChecksService {
     if (isImport) {
       component = componentData;
     } else {
-      component = await this.componentWorkspaceRespository.findOne(componentId);
+      component = await this.componentWorkspaceRespository.findOneBy({
+        id: componentId,
+      });
     }
 
     // COMPON-54

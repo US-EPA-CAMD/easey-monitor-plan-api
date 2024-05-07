@@ -1,8 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { CPMSQualification } from '../entities/cpms-qualification.entity';
 
-@EntityRepository(CPMSQualification)
+@Injectable()
 export class CPMSQualificationRepository extends Repository<CPMSQualification> {
+  constructor(entityManager: EntityManager) {
+    super(CPMSQualification, entityManager);
+  }
+
   async getCPMSQualifications(
     locId: string,
     qualificationId: string,

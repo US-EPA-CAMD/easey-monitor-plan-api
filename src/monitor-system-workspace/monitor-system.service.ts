@@ -1,29 +1,26 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { MonitorSystemMap } from '../maps/monitor-system.map';
+
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import {
   MonitorSystemDTO,
   UpdateMonitorSystemDTO,
 } from '../dtos/monitor-system.dto';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
+import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
-import { ComponentWorkspaceService } from '../component-workspace/component.service';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 
 @Injectable()
 export class MonitorSystemWorkspaceService {
   constructor(
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly repository: MonitorSystemWorkspaceRepository,
-
-    @InjectRepository(UsedIdentifierRepository)
     private readonly usedIdRepo: UsedIdentifierRepository,
 
     private readonly map: MonitorSystemMap,
@@ -56,7 +53,7 @@ export class MonitorSystemWorkspaceService {
     }
 
     for (const system of systems) {
-      const Sys = await this.repository.findOne({
+      const Sys = await this.repository.findOneBy({
         locationId: monitorLocationId,
         monitoringSystemId: system.monitoringSystemId,
       });
@@ -72,9 +69,7 @@ export class MonitorSystemWorkspaceService {
         system.monitoringSystemComponentData.length > 0
       ) {
         for (const systemComponent of system.monitoringSystemComponentData) {
-          if (
-            !componentIdSet.has(systemComponent.componentId)
-          ) {
+          if (!componentIdSet.has(systemComponent.componentId)) {
             errorList.push(
               `[IMPORT7-CRIT1-A] The workspace database and Monitor Plan Import JSON File does not contain a Component record for ${systemComponent.componentId}`,
             );
@@ -115,7 +110,7 @@ export class MonitorSystemWorkspaceService {
   }
 
   async getSystem(monitoringSystemRecordId: string): Promise<MonitorSystem> {
-    return this.repository.findOne(monitoringSystemRecordId);
+    return this.repository.findOneBy({ id: monitoringSystemRecordId });
   }
 
   async createSystem(
@@ -190,7 +185,7 @@ export class MonitorSystemWorkspaceService {
         await Promise.all(promises);
 
         resolve(true);
-      })()
+      })();
     });
   }
 
@@ -250,7 +245,7 @@ export class MonitorSystemWorkspaceService {
                   );
 
                   if (usedIdentifier)
-                    systemRecord = await this.repository.findOne({
+                    systemRecord = await this.repository.findOneBy({
                       id: usedIdentifier.id,
                     });
                 }
@@ -293,14 +288,14 @@ export class MonitorSystemWorkspaceService {
                 await Promise.all(innerPromises);
 
                 innerResolve(true);
-              })()
+              })();
             }),
           );
         }
 
         await Promise.all(promises);
         resolve(true);
-      })()
+      })();
     });
   }
 }

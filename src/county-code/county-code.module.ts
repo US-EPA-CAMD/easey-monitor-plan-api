@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CountyCodeService } from './county-code.service';
+
+import { CountyCodeMap } from '../maps/county-code.map';
 import { CountyCodeController } from './county-code.controller';
 import { CountyCodeRepository } from './county-code.repository';
-import { CountyCodeMap } from '../maps/county-code.map';
+import { CountyCodeService } from './county-code.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CountyCodeRepository])],
   controllers: [CountyCodeController],
-  providers: [CountyCodeService, CountyCodeMap],
+  providers: [CountyCodeRepository, CountyCodeService, CountyCodeMap],
   exports: [TypeOrmModule, CountyCodeService, CountyCodeMap],
 })
 export class CountyCodeModule {}

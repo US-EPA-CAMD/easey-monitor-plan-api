@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { DataSource } from 'typeorm';
 
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeBaseDTO } from '../dtos/monitor-attribute.dto';
@@ -37,7 +38,15 @@ describe('MonitorAttributeWorkspaceController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       controllers: [MonitorAttributeWorkspaceController],
-      providers: [MonitorAttributeWorkspaceService, ConfigService, AuthGuard],
+      providers: [
+        MonitorAttributeWorkspaceService,
+        ConfigService,
+        AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
+      ],
     }).compile();
 
     controller = module.get<MonitorAttributeWorkspaceController>(

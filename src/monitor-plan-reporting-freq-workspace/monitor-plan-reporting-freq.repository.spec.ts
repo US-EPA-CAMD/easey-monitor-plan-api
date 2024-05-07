@@ -1,4 +1,6 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
+
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from './monitor-plan-reporting-freq.repository';
 
 describe('MonitorPlanReportingFrequencyWorkspaceRepository', () => {
@@ -6,7 +8,10 @@ describe('MonitorPlanReportingFrequencyWorkspaceRepository', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [MonitorPlanReportingFrequencyWorkspaceRepository],
+      providers: [
+        EntityManager,
+        MonitorPlanReportingFrequencyWorkspaceRepository,
+      ],
     }).compile();
 
     repository = module.get(MonitorPlanReportingFrequencyWorkspaceRepository);

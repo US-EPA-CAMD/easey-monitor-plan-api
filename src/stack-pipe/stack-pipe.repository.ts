@@ -1,5 +1,11 @@
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(StackPipe)
-export class StackPipeRepository extends Repository<StackPipe> {}
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
+
+@Injectable()
+export class StackPipeRepository extends Repository<StackPipe> {
+  constructor(entityManager: EntityManager) {
+    super(StackPipe, entityManager);
+  }
+}
