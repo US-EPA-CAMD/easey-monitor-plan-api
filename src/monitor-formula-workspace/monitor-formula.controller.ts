@@ -4,6 +4,7 @@ import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
+import { MonitorFormulaChecksService } from './monitor-formula-checks.service';
 import {
   MonitorFormulaBaseDTO,
   MonitorFormulaDTO,
@@ -14,7 +15,10 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @ApiSecurity('APIKey')
 @ApiTags('Formulas')
 export class MonitorFormulaWorkspaceController {
-  constructor(private readonly service: MonitorFormulaWorkspaceService) {}
+  constructor(
+    private readonly service: MonitorFormulaWorkspaceService,
+    private readonly checksService: MonitorFormulaChecksService,
+  ) {}
 
   @Get()
   @RoleGuard(
@@ -49,11 +53,12 @@ export class MonitorFormulaWorkspaceController {
     type: MonitorFormulaDTO,
     description: 'Creates workspace formula record for a monitor location',
   })
-  createFormula(
+  async createFormula(
     @Param('locId') locationId: string,
     @Body() payload: MonitorFormulaBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorFormulaDTO> {
+    await this.checksService.runChecks(payload, locationId);
     return this.service.createFormula(locationId, payload, user.userId);
   }
 
@@ -70,12 +75,13 @@ export class MonitorFormulaWorkspaceController {
     type: MonitorFormulaDTO,
     description: 'Updates workspace formula record for a monitor location',
   })
-  updateFormula(
+  async updateFormula(
     @Param('locId') locationId: string,
     @Param('formulaId') formulaRecordId: string,
     @Body() payload: MonitorFormulaBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorFormulaDTO> {
+    await this.checksService.runChecks(payload, locationId);
     return this.service.updateFormula(
       locationId,
       formulaRecordId,

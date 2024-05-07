@@ -1,13 +1,14 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
-import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
-import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
-import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { MonitorFormulaChecksService } from './monitor-formula-checks.service';
+import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
+import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
+import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 
 @Module({
   imports: [
@@ -20,16 +21,18 @@ import { UsedIdentifierRepository } from '../used-identifier/used-identifier.rep
   ],
   controllers: [MonitorFormulaWorkspaceController],
   providers: [
-    MonitorFormulaWorkspaceRepository,
-    UsedIdentifierRepository,
-    MonitorFormulaWorkspaceService,
+    MonitorFormulaChecksService,
     MonitorFormulaMap,
+    MonitorFormulaWorkspaceRepository,
+    MonitorFormulaWorkspaceService,
+    UsedIdentifierRepository,
   ],
   exports: [
-    TypeOrmModule,
+    MonitorFormulaChecksService,
+    MonitorFormulaMap,
     MonitorFormulaWorkspaceRepository,
     MonitorFormulaWorkspaceService,
-    MonitorFormulaMap,
+    TypeOrmModule,
   ],
 })
 export class MonitorFormulaWorkspaceModule {}
