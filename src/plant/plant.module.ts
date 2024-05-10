@@ -6,6 +6,6 @@ import { PlantService } from './plant.service';
 @Module({
   imports: [TypeOrmModule.forFeature([PlantRepository])],
   providers: [PlantRepository, PlantService],
-  exports: [PlantService],
+  exports: [PlantRepository, PlantService],
 })
 export class PlantModule {}

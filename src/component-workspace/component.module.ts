@@ -36,6 +36,7 @@ import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-pl
   ],
   exports: [
     TypeOrmModule,
+    ComponentWorkspaceRepository,
     ComponentWorkspaceService,
     ComponentMap,
     ComponentCheckService,
