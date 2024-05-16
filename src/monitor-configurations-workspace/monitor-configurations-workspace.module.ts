@@ -18,7 +18,6 @@ import { PlantWorkspaceModule } from '../plant-workspace/plant.module';
   imports: [
     HttpModule,
     TypeOrmModule.forFeature([
-      MonitorPlanWorkspaceRepository,
       EvalStatusCodeRepository,
       SubmissionsAvailabilityStatusCodeRepository,
     ]),
