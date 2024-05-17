@@ -10,6 +10,11 @@ import { CountyCodeService } from './county-code.service';
   imports: [TypeOrmModule.forFeature([CountyCodeRepository])],
   controllers: [CountyCodeController],
   providers: [CountyCodeRepository, CountyCodeService, CountyCodeMap],
-  exports: [TypeOrmModule, CountyCodeService, CountyCodeMap],
+  exports: [
+    TypeOrmModule,
+    CountyCodeRepository,
+    CountyCodeService,
+    CountyCodeMap,
+  ],
 })
 export class CountyCodeModule {}

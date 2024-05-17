@@ -11,8 +11,8 @@ import { SystemComponentWorkspaceService } from './system-component.service';
 
 @Module({
   imports: [
-    ComponentWorkspaceModule,
     TypeOrmModule.forFeature([SystemComponentWorkspaceRepository]),
+    ComponentWorkspaceModule,
     HttpModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],

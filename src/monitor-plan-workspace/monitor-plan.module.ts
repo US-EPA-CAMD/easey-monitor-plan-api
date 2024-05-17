@@ -82,6 +82,11 @@ import { MonitorConfigurationsWorkspaceModule } from '../monitor-configurations-
     MonitorPlanMap,
     MonitorPlanChecksService,
   ],
-  exports: [TypeOrmModule, MonitorPlanWorkspaceService, MonitorPlanMap],
+  exports: [
+    TypeOrmModule,
+    MonitorPlanWorkspaceRepository,
+    MonitorPlanWorkspaceService,
+    MonitorPlanMap,
+  ],
 })
 export class MonitorPlanWorkspaceModule {}

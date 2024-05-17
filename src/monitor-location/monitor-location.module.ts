@@ -46,6 +46,11 @@ import { MonitorLocationService } from './monitor-location.service';
     MonitorLocationRepository,
     MonitorLocationService,
   ],
-  exports: [TypeOrmModule, MonitorLocationMap, MonitorLocationRepository],
+  exports: [
+    TypeOrmModule,
+    MonitorLocationMap,
+    MonitorLocationRepository,
+    MonitorLocationRepository,
+  ],
 })
 export class MonitorLocationModule {}

@@ -62,6 +62,11 @@ import { MonitorPlanService } from './monitor-plan.service';
   ],
   controllers: [MonitorPlanController],
   providers: [MonitorPlanRepository, MonitorPlanService, MonitorPlanMap],
-  exports: [MonitorPlanRepository, MonitorPlanService, MonitorPlanMap],
+  exports: [
+    TypeOrmModule,
+    MonitorPlanRepository,
+    MonitorPlanService,
+    MonitorPlanMap,
+  ],
 })
 export class MonitorPlanModule {}
