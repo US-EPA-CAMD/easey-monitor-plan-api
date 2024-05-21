@@ -7,21 +7,18 @@ import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
-import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { UsedIdentifierModule } from '../used-identifier/used-identifier.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      MonitorFormulaWorkspaceRepository,
-      UsedIdentifierRepository,
-    ]),
+    TypeOrmModule.forFeature([MonitorFormulaWorkspaceRepository]),
     HttpModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
+    UsedIdentifierModule,
   ],
   controllers: [MonitorFormulaWorkspaceController],
   providers: [
     MonitorFormulaWorkspaceRepository,
-    UsedIdentifierRepository,
     MonitorFormulaWorkspaceService,
     MonitorFormulaMap,
   ],

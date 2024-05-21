@@ -2,7 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { ComponentWorkspaceModule } from '../component-workspace/component.module';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
@@ -12,11 +12,9 @@ import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      AnalyzerRangeWorkspaceRepository,
-      ComponentWorkspaceRepository,
-    ]),
+    TypeOrmModule.forFeature([AnalyzerRangeWorkspaceRepository]),
     HttpModule,
+    ComponentWorkspaceModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [AnalyzerRangeWorkspaceController],
@@ -25,10 +23,10 @@ import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
     AnalyzerRangeWorkspaceService,
     AnalyzerRangeMap,
     AnalyzerRangeChecksService,
-    ComponentWorkspaceRepository,
   ],
   exports: [
     TypeOrmModule,
+    AnalyzerRangeWorkspaceRepository,
     AnalyzerRangeWorkspaceService,
     AnalyzerRangeMap,
     AnalyzerRangeChecksService,

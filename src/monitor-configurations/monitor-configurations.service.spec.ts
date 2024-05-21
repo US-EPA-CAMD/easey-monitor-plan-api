@@ -5,6 +5,7 @@ import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { Plant } from '../entities/plant.entity';
+import { PlantRepository } from '../plant/plant.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
@@ -23,6 +24,7 @@ const DTO = new MonitorPlanDTO();
 DTO.monitoringLocationData = [new MonitorLocationDTO()];
 
 const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue([]),
   getMonitorPlanByIds: jest.fn().mockResolvedValue([ENTITY]),
   getMonitorPlansByOrisCodes: jest.fn().mockResolvedValue([ENTITY]),
   getOrisCodesByLastUpdatedTime: jest
@@ -36,6 +38,10 @@ const mockMonitorPlanMap = () => ({
 
 const mockMonitorPlanService = () => ({
   exportMonitorPlan: jest.fn().mockResolvedValue(DTO),
+});
+
+const mockPlantRepository = () => ({
+  find: jest.fn().mockResolvedValue([]),
 });
 
 describe('MonitorConfigurationsService', () => {
@@ -59,6 +65,10 @@ describe('MonitorConfigurationsService', () => {
           provide: MonitorPlanMap,
           useFactory: mockMonitorPlanMap,
         },
+        {
+          provide: PlantRepository,
+          useFactory: mockPlantRepository,
+        },
         UnitStackConfigurationRepository,
         MonitorLocationRepository,
       ],
@@ -71,15 +81,11 @@ describe('MonitorConfigurationsService', () => {
 
   describe('getConfigurations', () => {
     it('Should return an array of MonitoringPlanDTO matching a query by monPlanId', async () => {
-      jest.spyOn(MonitorPlan, 'find').mockResolvedValue([]);
-      jest.spyOn(Plant, 'find').mockResolvedValue([]);
       const result = await service.getConfigurations([], [MON_PLAN_ID]);
       expect(result.length).toEqual(1);
     });
 
     it('Should return an array of MonitoringPlanDTO matching a query by orisCode', async () => {
-      jest.spyOn(MonitorPlan, 'find').mockResolvedValue([]);
-      jest.spyOn(Plant, 'find').mockResolvedValue([]);
       const result = await service.getConfigurations([ORIS_CODE]);
       expect(result.length).toEqual(1);
     });

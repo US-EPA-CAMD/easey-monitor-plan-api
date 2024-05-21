@@ -11,6 +11,10 @@ import { MonitorPlanLocationService } from './monitor-plan-location.service';
     MonitorPlanLocationWorkspaceRepository,
     MonitorPlanLocationService,
   ],
-  exports: [TypeOrmModule, MonitorPlanLocationService],
+  exports: [
+    TypeOrmModule,
+    MonitorPlanLocationWorkspaceRepository,
+    MonitorPlanLocationService,
+  ],
 })
 export class MonitorPlanLocationModule {}
