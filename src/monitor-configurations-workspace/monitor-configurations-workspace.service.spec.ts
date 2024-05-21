@@ -67,13 +67,13 @@ describe('MonitorConfigurationsWorkspaceService', () => {
         {
           provide: EvalStatusCodeRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new EvalStatusCode()),
+            findOneBy: jest.fn().mockResolvedValue(new EvalStatusCode()),
           }),
         },
         {
           provide: SubmissionsAvailabilityStatusCodeRepository,
           useFactory: () => ({
-            findOne: jest
+            findOneBy: jest
               .fn()
               .mockResolvedValue(new SubmissionAvailabilityCode()),
           }),

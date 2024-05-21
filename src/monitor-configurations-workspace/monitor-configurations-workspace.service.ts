@@ -38,13 +38,15 @@ export class MonitorConfigurationsWorkspaceService {
 
   async populateDescriptions(plan) {
     plan['evalStatusCodeDescription'] = (
-      await this.evalStatusCodeRepository.findOne(plan.evalStatusCode)
+      await this.evalStatusCodeRepository.findOneBy({
+        evalStatusCd: plan.evalStatusCode,
+      })
     ).evalStatusCodeDescription;
 
     plan['submissionAvailabilityCodeDescription'] = (
-      await this.submissionStatusCodeRepository.findOne(
-        plan.submissionAvailabilityCode,
-      )
+      await this.submissionStatusCodeRepository.findOneBy({
+        subAvailabilityCode: plan.submissionAvailabilityCode,
+      })
     ).subAvailabilityCodeDescription;
   }
 

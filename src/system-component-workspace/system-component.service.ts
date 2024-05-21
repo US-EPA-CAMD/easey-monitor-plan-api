@@ -19,10 +19,10 @@ import { SystemComponentWorkspaceRepository } from './system-component.repositor
 export class SystemComponentWorkspaceService {
   constructor(
     private readonly repository: SystemComponentWorkspaceRepository,
+    @Inject(forwardRef(() => ComponentWorkspaceService))
     private readonly componentService: ComponentWorkspaceService,
     private readonly map: SystemComponentMap,
     private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
-
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}

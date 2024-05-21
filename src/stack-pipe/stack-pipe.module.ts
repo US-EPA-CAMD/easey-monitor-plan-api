@@ -7,6 +7,6 @@ import { StackPipeService } from './stack-pipe.service';
 @Module({
   imports: [TypeOrmModule.forFeature([StackPipeRepository])],
   providers: [StackPipeRepository, StackPipeService],
-  exports: [StackPipeService],
+  exports: [TypeOrmModule, StackPipeRepository, StackPipeService],
 })
 export class StackPipeModule {}
