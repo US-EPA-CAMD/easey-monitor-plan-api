@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
 
 import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
@@ -104,7 +105,7 @@ export class UnitControlChecksService {
       unitId: unitId,
       parameterCode: unitControl.parameterCode,
       controlCode: unitControl.controlCode,
-      installDate: unitControl.installDate,
+      installDate: unitControl.installDate ?? IsNull(),
     });
 
     if (record) {
@@ -121,7 +122,7 @@ export class UnitControlChecksService {
         unitId: unitId,
         parameterCode: unitControl.parameterCode,
         controlCode: unitControl.controlCode,
-        retireDate: unitControl.retireDate,
+        retireDate: unitControl.retireDate ?? IsNull(),
       });
       if (record) {
         // CONTROL-15 Duplicate Unit Control (Result A)

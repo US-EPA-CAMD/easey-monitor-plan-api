@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { In } from 'typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlanConfigurationDTO } from '../dtos/monitor-plan-configuration.dto';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 import { PlantWorkspaceRepository } from '../plant-workspace/plant.repository';
@@ -36,7 +37,7 @@ export class MonitorConfigurationsWorkspaceService {
     plan.unitStackConfigurations = unitStackConfigs;
   }
 
-  async populateDescriptions(plan) {
+  async populateDescriptions(plan: MonitorPlanConfigurationDTO) {
     plan['evalStatusCodeDescription'] = (
       await this.evalStatusCodeRepository.findOneBy({
         evalStatusCd: plan.evalStatusCode,
