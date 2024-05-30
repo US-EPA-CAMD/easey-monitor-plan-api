@@ -14,6 +14,6 @@ import { ComponentService } from './component.service';
   ],
   controllers: [ComponentController],
   providers: [ComponentRepository, ComponentService, ComponentMap],
-  exports: [TypeOrmModule, ComponentService, ComponentMap],
+  exports: [TypeOrmModule, ComponentRepository, ComponentService, ComponentMap],
 })
 export class ComponentModule {}

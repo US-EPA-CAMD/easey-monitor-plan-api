@@ -7,7 +7,7 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { SystemComponentWorkspaceModule } from '../system-component-workspace/system-component.module';
 import { SystemFuelFlowWorkspaceModule } from '../system-fuel-flow-workspace/system-fuel-flow.module';
-import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { UsedIdentifierModule } from '../used-identifier/used-identifier.module';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
 import { MonitorSystemWorkspaceController } from './monitor-system.controller';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
@@ -18,11 +18,9 @@ import { MonitorSystemWorkspaceService } from './monitor-system.service';
     ComponentWorkspaceModule,
     SystemFuelFlowWorkspaceModule,
     SystemComponentWorkspaceModule,
-    TypeOrmModule.forFeature([
-      MonitorSystemWorkspaceRepository,
-      UsedIdentifierRepository,
-    ]),
+    TypeOrmModule.forFeature([MonitorSystemWorkspaceRepository]),
     HttpModule,
+    UsedIdentifierModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [MonitorSystemWorkspaceController],
@@ -31,7 +29,6 @@ import { MonitorSystemWorkspaceService } from './monitor-system.service';
     MonitorSystemWorkspaceService,
     MonitorSystemMap,
     MonitorSystemCheckService,
-    UsedIdentifierRepository,
   ],
   exports: [
     TypeOrmModule,

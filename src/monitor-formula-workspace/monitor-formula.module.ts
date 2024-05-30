@@ -4,20 +4,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
-import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { MonitorFormulaChecksService } from './monitor-formula-checks.service';
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
+import { UsedIdentifierModule } from '../used-identifier/used-identifier.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      MonitorFormulaWorkspaceRepository,
-      UsedIdentifierRepository,
-    ]),
+    TypeOrmModule.forFeature([MonitorFormulaWorkspaceRepository]),
     HttpModule,
     forwardRef(() => MonitorPlanWorkspaceModule),
+    UsedIdentifierModule,
   ],
   controllers: [MonitorFormulaWorkspaceController],
   providers: [
@@ -25,7 +23,6 @@ import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
     MonitorFormulaMap,
     MonitorFormulaWorkspaceRepository,
     MonitorFormulaWorkspaceService,
-    UsedIdentifierRepository,
   ],
   exports: [
     MonitorFormulaChecksService,

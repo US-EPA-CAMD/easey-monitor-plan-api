@@ -5,6 +5,6 @@ import { PlantWorkspaceRepository } from './plant.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([PlantWorkspaceRepository])],
   providers: [PlantWorkspaceRepository],
-  exports: [PlantWorkspaceRepository],
+  exports: [TypeOrmModule, PlantWorkspaceRepository],
 })
 export class PlantWorkspaceModule {}
