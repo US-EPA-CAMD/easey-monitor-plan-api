@@ -4,6 +4,7 @@ import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
+import { MonitorFormulaChecksService } from './monitor-formula-checks.service';
 import { MonitorFormulaWorkspaceService } from './monitor-formula.service';
 import { MonitorFormulaWorkspaceController } from './monitor-formula.controller';
 import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';
@@ -31,10 +32,14 @@ const currentUser: CurrentUser = {
 };
 
 const mockMonitorFormulaWorkspaceService = () => ({
-  getFormulas: jest.fn(() => []),
-  getFormula: jest.fn(() => ({})),
-  createFormula: jest.fn(() => ({})),
-  updateFormula: jest.fn(() => ({})),
+  getFormulas: jest.fn(() => Promise.resolve([])),
+  getFormula: jest.fn(() => Promise.resolve({})),
+  createFormula: jest.fn(() => Promise.resolve({})),
+  updateFormula: jest.fn(() => Promise.resolve({})),
+});
+
+const mockMonitorFormulaChecksService = () => ({
+  runChecks: jest.fn(() => Promise.resolve([])),
 });
 
 describe('MonitorFormulaWorkspaceController', () => {
@@ -55,6 +60,10 @@ describe('MonitorFormulaWorkspaceController', () => {
           provide: MonitorFormulaWorkspaceService,
           useFactory: mockMonitorFormulaWorkspaceService,
         },
+        {
+          provide: MonitorFormulaChecksService,
+          useFactory: mockMonitorFormulaChecksService,
+        },
       ],
     }).compile();
 
@@ -67,31 +76,34 @@ describe('MonitorFormulaWorkspaceController', () => {
   });
 
   describe('getFormulas', () => {
-    it('should call the MonitorFormulaWorkspaceService.getFormulas', () => {
-      expect(controller.getFormulas(locationId)).toEqual([]);
+    it('should call the MonitorFormulaWorkspaceService.getFormulas', async () => {
+      const formulas = await controller.getFormulas(locationId);
+      expect(formulas).toEqual([]);
       expect(service.getFormulas).toHaveBeenCalled();
     });
   });
 
   describe('createFormula', () => {
-    it('should call the MonitorFormulaWorkspaceService.createFormula', () => {
-      expect(
-        controller.createFormula(locationId, matsFormulaPayload, currentUser),
-      ).toEqual({});
+    it('should call the MonitorFormulaWorkspaceService.createFormula', async () => {
+      const formula = await controller.createFormula(
+        locationId,
+        matsFormulaPayload,
+        currentUser,
+      );
+      expect(formula).toEqual({});
       expect(service.createFormula).toHaveBeenCalled();
     });
   });
 
   describe('createFormulas', () => {
-    it('should call the MonitorFormulaWorkspaceService.updateFormula', () => {
-      expect(
-        controller.updateFormula(
-          locationId,
-          methodId,
-          matsFormulaPayload,
-          currentUser,
-        ),
-      ).toEqual({});
+    it('should call the MonitorFormulaWorkspaceService.updateFormula', async () => {
+      const formula = await controller.updateFormula(
+        locationId,
+        methodId,
+        matsFormulaPayload,
+        currentUser,
+      );
+      expect(formula).toEqual({});
       expect(service.updateFormula).toHaveBeenCalled();
     });
   });
