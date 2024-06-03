@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
 
 import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
@@ -77,9 +78,9 @@ export class ComponentCheckService {
 
     if (!component.sampleAcquisitionMethodCode) {
       const result = await this.sysCompMDRelRepository.findOneBy({
-        sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
+        sampleAcquisitionMethodCode: IsNull(),
         componentTypeCode: component.componentTypeCode,
-        basisCode: component.basisCode,
+        basisCode: component.basisCode ?? IsNull(),
       });
 
       if (!result) {

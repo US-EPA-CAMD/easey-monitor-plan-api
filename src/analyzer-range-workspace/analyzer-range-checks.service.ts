@@ -48,7 +48,7 @@ export class AnalyzerRangeChecksService {
 
     if (isImport) {
       component = componentData;
-    } else {
+    } else if (componentId) {
       component = await this.componentWorkspaceRespository.findOneBy({
         id: componentId,
       });
@@ -57,7 +57,7 @@ export class AnalyzerRangeChecksService {
     // COMPON-54
     if (!isUpdate) {
       error = await this.duplicateAnalyzerRangeChecks(
-        component.componentId,
+        component?.componentId,
         analyzerRange,
       );
     }
