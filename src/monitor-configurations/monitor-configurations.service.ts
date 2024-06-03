@@ -95,7 +95,7 @@ export class MonitorConfigurationsService {
 
     // Populate the monitor plans that have been changed
 
-    dto.changedConfigs = await MonitorPlan.find({
+    dto.changedConfigs = await this.monitorPlanRepository.find({
       where: { updateDate: MoreThanOrEqual(new Date(queryTime)) },
       relations: ['locations', 'comments', 'reportingFrequencies'],
     });
