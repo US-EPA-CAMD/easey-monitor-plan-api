@@ -86,4 +86,10 @@ export default registerAs('app', () => ({
   authApi: {
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),
   },
+  contentApi: {
+    uri: getConfigValue(
+      'EASEY_CONTENT_API',
+      'https://api.epa.gov/easey/dev/content-mgmt',
+    ),
+  },
 }));
