@@ -30,9 +30,11 @@ import { UnitStackConfigurationModule } from '../unit-stack-configuration/unit-s
 import { MonitorPlanController } from './monitor-plan.controller';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorPlanService } from './monitor-plan.service';
+import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.module';
 
 @Module({
   imports: [
+    EaseyContentModule,
     MonitorPlanCommentModule,
     UnitStackConfigurationModule,
     MonitorLocationModule,
