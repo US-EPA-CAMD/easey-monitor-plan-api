@@ -6,7 +6,6 @@ import { MonitorPlanSchema } from './monitor.plan.schema.response';
 export class EaseyContentService {
   monitorPlanSchema: MonitorPlanSchema;
   constructor(private readonly configService: ConfigService) {
-    console.log();
     this.getMonitorPlanSchema();
   }
 
@@ -19,7 +18,7 @@ export class EaseyContentService {
       );
       if (response.ok) this.monitorPlanSchema = await response.json();
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 }
