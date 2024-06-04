@@ -109,7 +109,7 @@ export class MonitorLocationWorkspaceService {
         facilityId,
       );
 
-      if (unit === undefined) {
+      if (!unit) {
         throw new BadRequestException(
           CheckCatalogService.formatMessage(
             'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
@@ -131,7 +131,7 @@ export class MonitorLocationWorkspaceService {
         facilityId,
       );
 
-      if (stackPipe === undefined) {
+      if (!stackPipe) {
         throw new BadRequestException(
           CheckCatalogService.formatMessage(
             'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',

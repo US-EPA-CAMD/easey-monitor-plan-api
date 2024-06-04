@@ -131,7 +131,7 @@ export class DuctWafWorkspaceService {
                   ductWaf.wafEndHour,
                 );
 
-                if (ductWafRecord !== undefined) {
+                if (ductWafRecord) {
                   await this.updateDuctWaf(
                     locationId,
                     ductWafRecord.id,

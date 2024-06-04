@@ -109,7 +109,7 @@ export class UnitStackConfigurationWorkspaceService {
                   stackPipe.id,
                 );
 
-                if (unitStackConfigRecord !== undefined) {
+                if (unitStackConfigRecord) {
                   await this.updateUnitStackConfig(
                     unitStackConfigRecord.id,
                     unitStackConfig,
