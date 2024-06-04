@@ -166,7 +166,7 @@ export class MonitorFormulaWorkspaceService {
                   formula.formulaId,
                 );
 
-                if (formulaRecord === undefined) {
+                if (!formulaRecord) {
                   // Check used_identifier table to see if the formulaId has already
                   // been used, and if so grab that monitor-formula record for update
                   let usedIdentifier = await this.usedIdRepo.getBySpecs(
@@ -181,7 +181,7 @@ export class MonitorFormulaWorkspaceService {
                     });
                 }
 
-                if (formulaRecord !== undefined) {
+                if (formulaRecord) {
                   await this.updateFormula(
                     locationId,
                     formulaRecord.id,

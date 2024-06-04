@@ -43,13 +43,12 @@ export class ImportChecksService {
     );
     this.checkIfThrows(errorList);
 
-    //TODO, needs to throw error here if non existing
-
+    // TODO: needs to throw error here if non existing
     const facilityId = await this.plantService.getFacIdFromOris(
       monPlan.orisCode,
     );
 
-    //Unit Stack Checks
+    // Unit Stack Checks
     errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
     this.checkIfThrows(errorList);
 
@@ -125,7 +124,6 @@ export class ImportChecksService {
 
       index++;
     }
-
     this.checkIfThrows(errorList);
   }
 }

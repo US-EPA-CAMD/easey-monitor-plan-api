@@ -96,27 +96,12 @@ export class MonitorPlanWorkspaceService {
 
     const locationIds = locations.map(l => l.id);
 
-    // Get Active Plan
-    let activePlanId: string;
-
-    // Get active plan
-    const activePlan = await this.repository.getActivePlanByLocationId(
-      locationIds[0],
-    );
-
-    activePlanId = activePlan.id;
-
-    // Monitor Plan Comment Merge Logic
-    promises.push(
-      this.monitorPlanCommentService.importComments(plan, userId, activePlanId),
-    );
-
-    //Unit Stack Merge Logic
+    // Unit Stack Merge Logic
     promises.push(
       this.unitStackService.importUnitStack(plan, facilityId, userId),
     );
 
-    //Monitor Location Merge Logic
+    // Monitor Location Merge Logic
     promises.push(
       this.monitorLocationService.importMonitorLocation(
         plan,
@@ -125,7 +110,26 @@ export class MonitorPlanWorkspaceService {
       ),
     );
 
+    // Let the promises settle so locations can be created if necessary.
     await Promise.all(promises);
+
+    // Get active plan
+    const activePlan = await this.repository.getActivePlanByLocationId(
+      locationIds[0],
+    );
+
+    // TODO: Compare the active plan against the imported plan.
+
+    // TODO: Create a new plan if necessary, and update the old.
+
+    // TODO: Update reporting frequencies for the new and old plans.
+
+    // Monitor Plan Comment Merge Logic
+    await this.monitorPlanCommentService.importComments(
+      plan,
+      userId,
+      activePlan.id,
+    );
 
     await this.resetToNeedsEvaluation(locationIds[0], userId);
 
