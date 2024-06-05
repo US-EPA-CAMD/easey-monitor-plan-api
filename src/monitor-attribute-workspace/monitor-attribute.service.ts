@@ -140,7 +140,7 @@ export class MonitorAttributeWorkspaceService {
                   attribute.beginDate,
                 );
 
-                if (attributeRecord !== undefined) {
+                if (attributeRecord) {
                   await this.updateAttribute(
                     locationId,
                     attributeRecord.id,
