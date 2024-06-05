@@ -501,7 +501,7 @@ export class MonitorPlanWorkspaceService {
       mpDTO.unitStackConfigurationData = uscDTO;
     }
 
-    mpDTO.version = this.easeyContentService.monitorPlanSchema.version;
+    mpDTO.version = this.easeyContentService.monitorPlanSchema?.version;
 
     if (rptValuesOnly) {
       await removeNonReportedValues(mpDTO);
