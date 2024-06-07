@@ -127,7 +127,7 @@ export class ComponentWorkspaceService {
                   component.componentId,
                 );
 
-                if (compRecord === undefined) {
+                if (!compRecord) {
                   // Check used_identifier table to see if the componentId has already
                   // been used, and if so grab that component record for update
                   let usedIdentifier = await this.usedIdRepo.getBySpecs(
@@ -158,7 +158,7 @@ export class ComponentWorkspaceService {
                 }
 
                 await this.analyzerRangeDataService.importAnalyzerRange(
-                  compRecord.componentId,
+                  compRecord.id,
                   locationId,
                   component.analyzerRangeData,
                   userId,

@@ -125,7 +125,7 @@ export class MonitorMethodWorkspaceService {
                   method.endHour,
                 );
 
-                if (methodRecord !== undefined) {
+                if (methodRecord) {
                   await this.updateMethod(
                     methodRecord.id,
                     method,

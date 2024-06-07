@@ -28,7 +28,7 @@ export const getMonLocId = async (
       facId: facility,
     });
 
-    if (stackPipe === undefined) {
+    if (!stackPipe) {
       throw new BadRequestException(
         CheckCatalogService.formatMessage(
           'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',
@@ -46,7 +46,7 @@ export const getMonLocId = async (
       facId: facility,
     });
 
-    if (unit === undefined) {
+    if (!unit) {
       throw new BadRequestException(
         CheckCatalogService.formatMessage(
           'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
@@ -70,7 +70,7 @@ export const getFacIdFromOris = async (orisCode: number): Promise<number> => {
     orisCode,
   });
 
-  if (facResult === undefined) {
+  if (!facResult) {
     return null;
   }
 

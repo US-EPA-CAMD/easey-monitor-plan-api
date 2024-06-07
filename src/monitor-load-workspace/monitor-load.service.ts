@@ -63,7 +63,7 @@ export class MonitorLoadWorkspaceService {
                   load.endHour,
                 );
 
-                if (loadRecord !== undefined) {
+                if (loadRecord) {
                   await this.updateLoad(
                     locationId,
                     loadRecord.id,
