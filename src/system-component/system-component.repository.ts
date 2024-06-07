@@ -1,9 +1,14 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { SystemComponent } from '../entities/system-component.entity';
 
-@EntityRepository(SystemComponent)
+@Injectable()
 export class SystemComponentRepository extends Repository<SystemComponent> {
+  constructor(entityManager: EntityManager) {
+    super(SystemComponent, entityManager);
+  }
+
   async getComponents(
     locationId: string,
     monSysId: string,

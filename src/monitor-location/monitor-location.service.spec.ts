@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { MonitorLocationService } from './monitor-location.service';
@@ -16,7 +17,7 @@ const locId = '6';
 const uscDto = new UnitStackConfigurationDTO();
 
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
+  findOneBy: jest.fn().mockResolvedValue(new MonitorLocation()),
 });
 
 const mockMap = () => ({
@@ -35,6 +36,7 @@ describe('MonitorLocationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [NotFoundException, LoggerModule],
       providers: [
+        EntityManager,
         MonitorLocationService,
         MonitorLocationRepository,
         MonitorLocationMap,

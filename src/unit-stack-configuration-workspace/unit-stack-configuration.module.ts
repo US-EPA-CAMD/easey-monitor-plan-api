@@ -1,13 +1,14 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
 
-import { UnitStackConfigurationWorkspaceController } from './unit-stack-configuration.controller';
-import { UnitStackConfigurationWorkspaceService } from './unit-stack-configuration.service';
-import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { UnitModule } from '../unit/unit.module';
 import { StackPipeModule } from '../stack-pipe/stack-pipe.module';
+import { UnitModule } from '../unit/unit.module';
+import { UnitStackConfigurationWorkspaceController } from './unit-stack-configuration.controller';
+import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
+import { UnitStackConfigurationWorkspaceService } from './unit-stack-configuration.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([UnitStackConfigurationWorkspaceRepository]),
@@ -17,11 +18,13 @@ import { StackPipeModule } from '../stack-pipe/stack-pipe.module';
   ],
   controllers: [UnitStackConfigurationWorkspaceController],
   providers: [
+    UnitStackConfigurationWorkspaceRepository,
     UnitStackConfigurationWorkspaceService,
     UnitStackConfigurationMap,
   ],
   exports: [
     TypeOrmModule,
+    UnitStackConfigurationWorkspaceRepository,
     UnitStackConfigurationWorkspaceService,
     UnitStackConfigurationMap,
   ],

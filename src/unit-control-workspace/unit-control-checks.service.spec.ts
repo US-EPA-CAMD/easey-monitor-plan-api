@@ -23,19 +23,19 @@ describe('Unit Control Check Service Test', () => {
         {
           provide: UnitControlWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn(),
+            findOneBy: jest.fn(),
           }),
         },
         {
           provide: MonitorLocationWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn(),
+            findOneBy: jest.fn(),
           }),
         },
         {
           provide: UnitRepository,
           useFactory: () => ({
-            findOne: jest.fn(),
+            findOneBy: jest.fn(),
           }),
         },
       ],
@@ -50,7 +50,7 @@ describe('Unit Control Check Service Test', () => {
   describe('Unit Control Checks', () => {
     const payload = new UnitControlBaseDTO();
     it('Should pass all checks', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       jest.spyOn(service, 'checkDatesForConsistency').mockReturnValue(null);
       const result = await service.runChecks(locId, unitId, payload);
 
@@ -66,7 +66,7 @@ describe('Unit Control Check Service Test', () => {
     returnValue.parameterCode = 'LOW';
 
     it('Should get already exists error', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(returnValue);
       jest.spyOn(service, 'checkDatesForConsistency').mockReturnValue(null);
       try {
         await service.runChecks(locId, unitId, payload);

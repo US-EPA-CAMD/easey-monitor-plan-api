@@ -1,22 +1,20 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
 
 import {
   MonitorMethodBaseDTO,
   MonitorMethodDTO,
 } from '../dtos/monitor-method.dto';
-import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
+import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorMethodWorkspaceService {
   constructor(
-    @InjectRepository(MonitorMethodWorkspaceRepository)
     private readonly repository: MonitorMethodWorkspaceRepository,
     private readonly map: MonitorMethodMap,
 
@@ -25,12 +23,12 @@ export class MonitorMethodWorkspaceService {
   ) {}
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
-    const results = await this.repository.find({ locationId: locId });
+    const results = await this.repository.findBy({ locationId: locId });
     return this.map.many(results);
   }
 
   async getMethod(methodId: string): Promise<MonitorMethod> {
-    const result = await this.repository.findOne(methodId);
+    const result = await this.repository.findOneBy({ id: methodId });
 
     if (!result) {
       throw new EaseyException(
@@ -127,7 +125,7 @@ export class MonitorMethodWorkspaceService {
                   method.endHour,
                 );
 
-                if (methodRecord !== undefined) {
+                if (methodRecord) {
                   await this.updateMethod(
                     methodRecord.id,
                     method,

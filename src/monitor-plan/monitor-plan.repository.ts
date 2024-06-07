@@ -1,4 +1,5 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 
@@ -7,8 +8,12 @@ interface IorisCodesAndLastUpdatedTimes {
   mostRecentUpdate: Date;
 }
 
-@EntityRepository(MonitorPlan)
+@Injectable()
 export class MonitorPlanRepository extends Repository<MonitorPlan> {
+  constructor(entityManager: EntityManager) {
+    super(MonitorPlan, entityManager);
+  }
+
   async getMonitorPlan(planId: string): Promise<MonitorPlan> {
     return this.createQueryBuilder('plan')
       .innerJoinAndSelect('plan.plant', 'plant')

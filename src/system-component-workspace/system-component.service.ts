@@ -1,30 +1,28 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
 
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import {
   SystemComponentBaseDTO,
   SystemComponentDTO,
 } from '../dtos/system-component.dto';
-import { UpdateComponentBaseDTO } from '../dtos/component.dto';
-import { SystemComponentMap } from '../maps/system-component.map';
 import { SystemComponent } from '../entities/workspace/system-component.entity';
-import { ComponentWorkspaceService } from '../component-workspace/component.service';
+import { SystemComponentMap } from '../maps/system-component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class SystemComponentWorkspaceService {
   constructor(
-    @InjectRepository(SystemComponentWorkspaceRepository)
     private readonly repository: SystemComponentWorkspaceRepository,
+    @Inject(forwardRef(() => ComponentWorkspaceService))
     private readonly componentService: ComponentWorkspaceService,
     private readonly map: SystemComponentMap,
     private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
-
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
@@ -72,33 +70,6 @@ export class SystemComponentWorkspaceService {
     isImport = false,
   ): Promise<SystemComponentDTO> {
     // Saving System Component fields
-
-    let component = await this.componentWorkspaceRepository.getComponentByLocIdAndCompId(
-      locationId,
-      payload.componentId,
-    );
-
-    if (component) {
-      const componentPayload: UpdateComponentBaseDTO = {
-        componentId: component.componentId,
-        componentTypeCode: component.componentTypeCode,
-        analyticalPrincipleCode: component.analyticalPrincipleCode,
-        sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
-        basisCode: component.basisCode,
-        manufacturer: payload.manufacturer,
-        modelVersion: payload.modelVersion,
-        serialNumber: payload.serialNumber,
-        hgConverterIndicator: component.hgConverterIndicator,
-        analyzerRangeData: component.analyzerRanges,
-      };
-
-      await this.componentService.updateComponent(
-        locationId,
-        component,
-        componentPayload,
-        userId,
-      );
-    }
 
     const systemComponent = await this.getSystemComponent(
       sysId,

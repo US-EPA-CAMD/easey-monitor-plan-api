@@ -1,7 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
-import { CPMSQualificationRepository } from './cpms-qualification.repository';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { CPMSQualification } from '../entities/cpms-qualification.entity';
+import { CPMSQualificationRepository } from './cpms-qualification.repository';
 
 const entity = new CPMSQualification();
 
@@ -23,6 +24,7 @@ describe('CPMSQualificationRepository', () => {
     const module = await Test.createTestingModule({
       providers: [
         CPMSQualificationRepository,
+        EntityManager,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();

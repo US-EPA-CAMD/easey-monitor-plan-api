@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
-import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
+import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 
 @Injectable()
 export class MonitorLocationChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(MonitorLocationWorkspaceRepository)
     private readonly repository: MonitorLocationWorkspaceRepository,
   ) {}
 

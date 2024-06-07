@@ -6,7 +6,7 @@ import { MonitorLoadService } from './monitor-load.service';
 import { MonitorLoadRepository } from './monitor-load.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

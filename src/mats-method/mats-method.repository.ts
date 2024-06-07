@@ -1,6 +1,11 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MatsMethod } from '../entities/mats-method.entity';
 
-@EntityRepository(MatsMethod)
-export class MatsMethodRepository extends Repository<MatsMethod> {}
+@Injectable()
+export class MatsMethodRepository extends Repository<MatsMethod> {
+  constructor(entityManager: EntityManager) {
+    super(MatsMethod, entityManager);
+  }
+}

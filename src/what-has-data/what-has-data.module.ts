@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { WhatHasDataService } from './what-has-data.service';
+import { MonitorPlanModule } from '../monitor-plan/monitor-plan.module';
 import { WhatHasDataController } from './what-has-data.controller';
-import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
+import { WhatHasDataService } from './what-has-data.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MonitorPlanRepository])],
+  imports: [MonitorPlanModule],
   controllers: [WhatHasDataController],
   providers: [WhatHasDataService],
 })

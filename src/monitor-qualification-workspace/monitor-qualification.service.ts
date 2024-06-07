@@ -1,27 +1,25 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
+import { CPMSQualificationWorkspaceService } from '../cpms-qualification-workspace/cpms-qualification-workspace.service';
 import {
   MonitorQualificationBaseDTO,
   MonitorQualificationDTO,
   UpdateMonitorQualificationDTO,
 } from '../dtos/monitor-qualification.dto';
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { CPMSQualificationWorkspaceService } from '../cpms-qualification-workspace/cpms-qualification-workspace.service';
+import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
   constructor(
-    @InjectRepository(MonitorQualificationWorkspaceRepository)
     private readonly repository: MonitorQualificationWorkspaceRepository,
     private readonly map: MonitorQualificationMap,
 
@@ -215,7 +213,7 @@ export class MonitorQualificationWorkspaceService {
   async getQualifications(
     locationId: string,
   ): Promise<MonitorQualificationDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 

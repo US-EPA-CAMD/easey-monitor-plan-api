@@ -1,9 +1,14 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { Component } from '../entities/workspace/component.entity';
 
-@EntityRepository(Component)
+@Injectable()
 export class ComponentWorkspaceRepository extends Repository<Component> {
+  constructor(entityManager: EntityManager) {
+    super(Component, entityManager);
+  }
+
   async getComponent(componentId: string): Promise<Component> {
     return this.createQueryBuilder('c')
       .where('c.id = :componentId', {

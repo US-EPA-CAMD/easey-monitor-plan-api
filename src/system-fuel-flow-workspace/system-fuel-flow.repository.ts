@@ -1,12 +1,17 @@
-import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
+import { SystemFuelFlowBaseDTO } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
 
-@EntityRepository(SystemFuelFlow)
+@Injectable()
 export class SystemFuelFlowWorkspaceRepository extends Repository<
   SystemFuelFlow
 > {
+  constructor(entityManager: EntityManager) {
+    super(SystemFuelFlow, entityManager);
+  }
+
   async getFuelFlow(id: string): Promise<SystemFuelFlow> {
     return this.createQueryBuilder('sff')
       .innerJoinAndSelect('sff.system', 'ms')

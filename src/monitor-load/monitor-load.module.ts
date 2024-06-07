@@ -1,15 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { MonitorLoadController } from './monitor-load.controller';
-import { MonitorLoadService } from './monitor-load.service';
-import { MonitorLoadRepository } from './monitor-load.repository';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
+import { MonitorLoadController } from './monitor-load.controller';
+import { MonitorLoadRepository } from './monitor-load.repository';
+import { MonitorLoadService } from './monitor-load.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MonitorLoadRepository])],
   controllers: [MonitorLoadController],
-  providers: [MonitorLoadService, MonitorLoadMap],
-  exports: [TypeOrmModule, MonitorLoadService, MonitorLoadMap],
+  providers: [MonitorLoadRepository, MonitorLoadService, MonitorLoadMap],
+  exports: [
+    TypeOrmModule,
+    MonitorLoadRepository,
+    MonitorLoadService,
+    MonitorLoadMap,
+  ],
 })
 export class MonitorLoadModule {}

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
 
 import { MonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
@@ -28,6 +29,10 @@ describe('MonitorSystemWorkspaceController', () => {
       providers: [
         MonitorSystemWorkspaceService,
         ConfigService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: MonitorSystemCheckService,
           useFactory: () => ({

@@ -1,6 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { PCTQualification } from '../entities/pct-qualification.entity';
 
-@EntityRepository(PCTQualification)
-export class PCTQualificationRepository extends Repository<PCTQualification> {}
+@Injectable()
+export class PCTQualificationRepository extends Repository<PCTQualification> {
+  constructor(entityManager: EntityManager) {
+    super(PCTQualification, entityManager);
+  }
+}

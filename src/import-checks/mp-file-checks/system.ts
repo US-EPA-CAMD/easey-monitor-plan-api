@@ -25,12 +25,12 @@ export const Check5 = new Check(
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const system of loc.monitoringSystemData) {
-        const Sys = await entityManager.findOne(MonitorSystem, {
+        const sys = await entityManager.findOneBy(MonitorSystem, {
           locationId: monLoc.id,
           monitoringSystemId: system.monitoringSystemId,
         });
 
-        if (Sys !== undefined && Sys.systemTypeCode !== system.systemTypeCode) {
+        if (sys && sys.systemTypeCode !== system.systemTypeCode) {
           result.addError(
             'CRIT1-A',
             `The system type ${system.systemTypeCode} for UnitStackPipeID ${loc.unitId}/${loc.stackPipeId} and MonitoringSystemID ${system.monitoringSystemId} does not match the system type in the Workspace database.`,
@@ -60,21 +60,21 @@ export const Check7 = new Check(
 
       for (const system of loc.monitoringSystemData) {
         for (const systemComponent of system.monitoringSystemComponentData) {
-          const Comp = await entityManager.findOne(Component, {
+          const comp = await entityManager.findOneBy(Component, {
             locationId: monLoc.id,
             componentId: systemComponent.componentId,
           });
 
           let checkComponentExists;
 
-          if (Comp === undefined) {
-            checkComponentExists = await checkComponentExistanceInFile(
+          if (!comp) {
+            checkComponentExists = checkComponentExistanceInFile(
               monPlan,
               systemComponent,
             );
           }
 
-          if (Comp === undefined && checkComponentExists === false) {
+          if (!comp && checkComponentExists === false) {
             result.addError(
               'CRIT1-A',
               `The workspace database and Monitor Plan Import File does not contain a Component record for ${systemComponent.componentId}`,
@@ -112,15 +112,12 @@ export const Check31 = new Check(
               'You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
             );
           } else {
-            const Sys = await entityManager.findOne(MonitorSystem, {
+            const sys = await entityManager.findOneBy(MonitorSystem, {
               locationId: monLoc.id,
               monitoringSystemId: system.monitoringSystemId,
             });
 
-            if (
-              Sys !== undefined &&
-              !validTypeCodes.includes(Sys.systemTypeCode)
-            ) {
+            if (sys && !validTypeCodes.includes(sys.systemTypeCode)) {
               result.addError(
                 'CRIT1-A',
                 'You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',

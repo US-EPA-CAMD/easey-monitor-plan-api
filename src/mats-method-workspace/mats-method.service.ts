@@ -1,17 +1,16 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { MatsMethodMap } from '../maps/mats-method.map';
-import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
+import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
+import { MatsMethodMap } from '../maps/mats-method.map';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 
 @Injectable()
 export class MatsMethodWorkspaceService {
   constructor(
-    @InjectRepository(MatsMethodWorkspaceRepository)
     private readonly repository: MatsMethodWorkspaceRepository,
     private readonly map: MatsMethodMap,
 
@@ -20,12 +19,12 @@ export class MatsMethodWorkspaceService {
   ) {}
 
   async getMethods(locationId: string): Promise<MatsMethodDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
   async getMethod(methodId: string): Promise<MatsMethodDTO> {
-    const result = await this.repository.findOne(methodId);
+    const result = await this.repository.findOneBy({ id: methodId });
 
     if (!result) {
       throw new EaseyException(
@@ -77,7 +76,7 @@ export class MatsMethodWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<MatsMethodDTO> {
-    const method = await this.repository.findOne(methodId);
+    const method = await this.repository.findOneBy({ id: methodId });
 
     if (!method) {
       throw new EaseyException(

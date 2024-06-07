@@ -1,9 +1,14 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 
-@EntityRepository(SystemFuelFlow)
+@Injectable()
 export class SystemFuelFlowRepository extends Repository<SystemFuelFlow> {
+  constructor(entityManager: EntityManager) {
+    super(SystemFuelFlow, entityManager);
+  }
+
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlow[]> {
     return this.createQueryBuilder('sff')
       .innerJoinAndSelect('sff.system', 'ms')

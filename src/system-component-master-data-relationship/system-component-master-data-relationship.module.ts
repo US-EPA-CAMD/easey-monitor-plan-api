@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { SystemComponentMasterDataRelationshipRepository } from './system-component-master-data-relationship.repository';
 
 @Module({
@@ -7,7 +8,7 @@ import { SystemComponentMasterDataRelationshipRepository } from './system-compon
     TypeOrmModule.forFeature([SystemComponentMasterDataRelationshipRepository]),
   ],
   controllers: [],
-  providers: [],
-  exports: [TypeOrmModule],
+  providers: [SystemComponentMasterDataRelationshipRepository],
+  exports: [TypeOrmModule, SystemComponentMasterDataRelationshipRepository],
 })
 export class SystemComponentMasterDataRelationshipModule {}

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { MonitorPlanReportingFrequencyMap } from '../maps/monitor-plan-reporting-freq.map';
 import { MonitorPlanReportingFrequencyRepository } from './monitor-plan-reporting-freq.repository';
 
@@ -8,7 +9,14 @@ import { MonitorPlanReportingFrequencyRepository } from './monitor-plan-reportin
     TypeOrmModule.forFeature([MonitorPlanReportingFrequencyRepository]),
   ],
   controllers: [],
-  providers: [MonitorPlanReportingFrequencyMap],
-  exports: [TypeOrmModule, MonitorPlanReportingFrequencyMap],
+  providers: [
+    MonitorPlanReportingFrequencyMap,
+    MonitorPlanReportingFrequencyRepository,
+  ],
+  exports: [
+    TypeOrmModule,
+    MonitorPlanReportingFrequencyMap,
+    MonitorPlanReportingFrequencyRepository,
+  ],
 })
 export class MonitorPlanReportingFreqModule {}

@@ -1,44 +1,33 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
+
 import {
   MonitorFormulaBaseDTO,
   MonitorFormulaDTO,
 } from '../dtos/monitor-formula.dto';
-import { MonitorFormulaMap } from '../maps/monitor-formula.map';
-import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
-import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
+import { MonitorFormulaMap } from '../maps/monitor-formula.map';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 
 @Injectable()
 export class MonitorFormulaWorkspaceService {
   constructor(
-    @InjectRepository(MonitorFormulaWorkspaceRepository)
     private readonly repository: MonitorFormulaWorkspaceRepository,
-
-    @InjectRepository(UsedIdentifierRepository)
     private readonly usedIdRepo: UsedIdentifierRepository,
-
     private readonly map: MonitorFormulaMap,
     private readonly logger: Logger,
-
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getFormulas(locationId: string): Promise<MonitorFormulaDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
@@ -133,7 +122,7 @@ export class MonitorFormulaWorkspaceService {
     const errorList: string[] = [];
 
     for (const formula of formulas) {
-      const formulaRecord = await this.repository.findOne({
+      const formulaRecord = await this.repository.findOneBy({
         locationId,
         formulaId: formula.formulaId,
       });
@@ -177,7 +166,7 @@ export class MonitorFormulaWorkspaceService {
                   formula.formulaId,
                 );
 
-                if (formulaRecord === undefined) {
+                if (!formulaRecord) {
                   // Check used_identifier table to see if the formulaId has already
                   // been used, and if so grab that monitor-formula record for update
                   let usedIdentifier = await this.usedIdRepo.getBySpecs(
@@ -187,12 +176,12 @@ export class MonitorFormulaWorkspaceService {
                   );
 
                   if (usedIdentifier)
-                    formulaRecord = await this.repository.findOne({
+                    formulaRecord = await this.repository.findOneBy({
                       id: usedIdentifier.id,
                     });
                 }
 
-                if (formulaRecord !== undefined) {
+                if (formulaRecord) {
                   await this.updateFormula(
                     locationId,
                     formulaRecord.id,

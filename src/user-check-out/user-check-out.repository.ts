@@ -1,10 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 
-@EntityRepository(UserCheckOut)
+@Injectable()
 export class UserCheckOutRepository extends Repository<UserCheckOut> {
+  constructor(entityManager: EntityManager) {
+    super(UserCheckOut, entityManager);
+  }
+
   async checkOutConfiguration(
     id: string,
     username: string,
@@ -14,7 +18,7 @@ export class UserCheckOutRepository extends Repository<UserCheckOut> {
         'SELECT * FROM camdecmpswks.check_out_monitor_plan($1, $2)',
         [id, username],
       );
-      return this.findOne({ monPlanId: id });
+      return this.findOneBy({ monPlanId: id });
     } catch (error) {
       throw new BadRequestException(error['message']);
     }

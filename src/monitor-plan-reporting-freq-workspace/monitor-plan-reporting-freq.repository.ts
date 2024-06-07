@@ -1,7 +1,13 @@
-import { MonitorPlanReportingFrequency } from '../entities/workspace/monitor-plan-reporting-freq.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(MonitorPlanReportingFrequency)
+import { MonitorPlanReportingFrequency } from '../entities/workspace/monitor-plan-reporting-freq.entity';
+
+@Injectable()
 export class MonitorPlanReportingFrequencyWorkspaceRepository extends Repository<
   MonitorPlanReportingFrequency
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(MonitorPlanReportingFrequency, entityManager);
+  }
+}

@@ -2,10 +2,12 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { SystemComponentMasterDataRelationshipRepository } from '../system-component-master-data-relationship/system-component-master-data-relationship.repository';
+import { IsNull } from 'typeorm';
+
 import { UpdateComponentBaseDTO } from '../dtos/component.dto';
-import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
+import { SystemComponentMasterDataRelationshipRepository } from '../system-component-master-data-relationship/system-component-master-data-relationship.repository';
+import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { ComponentWorkspaceRepository } from './component.repository';
 
 const KEY = 'Component';
@@ -75,10 +77,10 @@ export class ComponentCheckService {
     let error = null;
 
     if (!component.sampleAcquisitionMethodCode) {
-      const result = await this.sysCompMDRelRepository.findOne({
-        sampleAcquisitionMethodCode: component.sampleAcquisitionMethodCode,
+      const result = await this.sysCompMDRelRepository.findOneBy({
+        sampleAcquisitionMethodCode: IsNull(),
         componentTypeCode: component.componentTypeCode,
-        basisCode: component.basisCode,
+        basisCode: component.basisCode ?? IsNull(),
       });
 
       if (!result) {
@@ -122,7 +124,7 @@ export class ComponentCheckService {
         }
 
         if (component.basisCode !== 'B') {
-          const usedIdRecord = await this.usedIdRepository.findOne({
+          const usedIdRecord = await this.usedIdRepository.findOneBy({
             tableCode: 'C',
             identifier: component.componentId,
             locationId,

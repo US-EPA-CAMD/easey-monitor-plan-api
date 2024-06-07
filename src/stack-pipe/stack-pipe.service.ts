@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { StackPipeRepository } from './stack-pipe.repository';
 
@@ -10,8 +11,9 @@ export class StackPipeService {
     nameId: string,
     facilityId: number,
   ): Promise<StackPipe> {
-    return this.repository.findOne({
-      where: { name: nameId, facId: facilityId },
+    return this.repository.findOneBy({
+      name: nameId,
+      facId: facilityId,
     });
   }
 

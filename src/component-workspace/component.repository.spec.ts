@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { Component } from '../entities/workspace/component.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { ComponentWorkspaceRepository } from './component.repository';
 
 const monMethod = new Component();
@@ -18,6 +19,7 @@ describe('ComponentWorkspaceRepository', () => {
     const module = await Test.createTestingModule({
       providers: [
         ComponentWorkspaceRepository,
+        EntityManager,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();

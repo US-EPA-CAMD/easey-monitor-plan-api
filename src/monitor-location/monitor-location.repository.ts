@@ -1,9 +1,14 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorLocation } from '../entities/monitor-location.entity';
 
-@EntityRepository(MonitorLocation)
+@Injectable()
 export class MonitorLocationRepository extends Repository<MonitorLocation> {
+  constructor(entityManager: EntityManager) {
+    super(MonitorLocation, entityManager);
+  }
+
   async getMonitorLocationsByFacId(facId: number): Promise<MonitorLocation[]> {
     return this.createQueryBuilder('ml')
       .innerJoinAndSelect('ml.plans', 'p')

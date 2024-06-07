@@ -6,7 +6,7 @@ import { MonitorPlanCommentService } from './monitor-plan-comment.service';
 import { MonitorPlanCommentRepository } from './monitor-plan-comment.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

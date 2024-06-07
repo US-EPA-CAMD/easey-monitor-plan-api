@@ -1,27 +1,20 @@
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
+
 import {
   MonitorAttributeBaseDTO,
   MonitorAttributeDTO,
 } from '../dtos/monitor-attribute.dto';
+import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class MonitorAttributeWorkspaceService {
   constructor(
-    @InjectRepository(MonitorAttributeWorkspaceRepository)
     private readonly repository: MonitorAttributeWorkspaceRepository,
     private readonly map: MonitorAttributeMap,
     private readonly logger: Logger,
@@ -31,7 +24,7 @@ export class MonitorAttributeWorkspaceService {
   ) {}
 
   async getAttributes(locationId: string): Promise<MonitorAttributeDTO[]> {
-    const results = await this.repository.find({ locationId });
+    const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
@@ -147,7 +140,7 @@ export class MonitorAttributeWorkspaceService {
                   attribute.beginDate,
                 );
 
-                if (attributeRecord !== undefined) {
+                if (attributeRecord) {
                   await this.updateAttribute(
                     locationId,
                     attributeRecord.id,

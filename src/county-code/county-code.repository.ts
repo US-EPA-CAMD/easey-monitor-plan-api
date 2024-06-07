@@ -1,5 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { CountyCode } from '../entities/county-code.entity';
 
-@EntityRepository(CountyCode)
-export class CountyCodeRepository extends Repository<CountyCode> {}
+@Injectable()
+export class CountyCodeRepository extends Repository<CountyCode> {
+  constructor(entityManager: EntityManager) {
+    super(CountyCode, entityManager);
+  }
+}

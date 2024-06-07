@@ -1,11 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorQualification } from '../entities/workspace/monitor-qualification.entity';
 
-@EntityRepository(MonitorQualification)
+@Injectable()
 export class MonitorQualificationWorkspaceRepository extends Repository<
   MonitorQualification
 > {
+  constructor(entityManager: EntityManager) {
+    super(MonitorQualification, entityManager);
+  }
+
   async getQualificationByLocTypeDate(
     locationId: string,
     qualType: string,

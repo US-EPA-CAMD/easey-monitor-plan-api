@@ -10,7 +10,7 @@ import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
 });
 
 const mockMap = () => ({

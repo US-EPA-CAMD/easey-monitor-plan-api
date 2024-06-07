@@ -16,11 +16,11 @@ const component = new Component();
 const analyzerRange = new AnalyzerRange();
 
 const mockComponentWorkspaceRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(component),
+  findOneBy: jest.fn().mockResolvedValue(component),
 });
 
 const analyzerRangeWorkspaceRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(analyzerRange),
+  findOneBy: jest.fn().mockResolvedValue(analyzerRange),
   getAnalyzerRangeByComponentIdAndDate: jest
     .fn()
     .mockResolvedValue(analyzerRange),

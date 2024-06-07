@@ -3,15 +3,19 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
-import { In, MoreThanOrEqual, getManager } from 'typeorm';
+import { PlantRepository } from '../plant/plant.repository';
+import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
+import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-import { Plant } from '../entities/plant.entity';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 
 @Injectable()
 export class MonitorConfigurationsService {
   constructor(
+    private readonly entityManager: EntityManager,
     private readonly locationRepository: MonitorLocationRepository,
+    private readonly monitorPlanRepository: MonitorPlanRepository,
+    private readonly plantRepository: PlantRepository,
     private readonly uscRepository: UnitStackConfigurationRepository,
     private readonly map: MonitorPlanMap,
   ) {}
@@ -35,13 +39,15 @@ export class MonitorConfigurationsService {
   ): Promise<MonitorPlanDTO[]> {
     let plans: MonitorPlan[];
     if (monPlanIds.length > 0) {
-      plans = await MonitorPlan.find({
+      plans = await this.monitorPlanRepository.find({
         where: { id: In(monPlanIds) },
         relations: ['plant'],
       });
     } else {
-      const plants = await Plant.find({ where: { orisCode: In(orisCodes) } });
-      plans = await MonitorPlan.find({
+      const plants = await this.plantRepository.find({
+        where: { orisCode: In(orisCodes) },
+      });
+      plans = await this.monitorPlanRepository.find({
         where: { facId: In(plants.map(p => p.id)) },
         relations: ['plant'],
       });
@@ -83,12 +89,13 @@ export class MonitorConfigurationsService {
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
 
-    const clock: Date = (await getManager().query('SELECT now();'))[0].now;
+    const clock: Date = (await this.entityManager.query('SELECT now();'))[0]
+      .now;
     dto.mostRecentUpdate = clock;
 
     // Populate the monitor plans that have been changed
 
-    dto.changedConfigs = await MonitorPlan.find({
+    dto.changedConfigs = await this.monitorPlanRepository.find({
       where: { updateDate: MoreThanOrEqual(new Date(queryTime)) },
       relations: ['locations', 'comments', 'reportingFrequencies'],
     });

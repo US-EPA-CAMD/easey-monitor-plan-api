@@ -1,21 +1,20 @@
-import { Inject, Injectable, forwardRef, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
+
 import {
   CPMSQualificationBaseDTO,
   CPMSQualificationDTO,
 } from '../dtos/cpms-qualification.dto';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { CPMSQualificationMap } from '../maps/cpms-qualification.map';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
 
 @Injectable()
 export class CPMSQualificationWorkspaceService {
   constructor(
-    @InjectRepository(CPMSQualificationWorkspaceRepository)
     private readonly repository: CPMSQualificationWorkspaceRepository,
     private readonly map: CPMSQualificationMap,
 

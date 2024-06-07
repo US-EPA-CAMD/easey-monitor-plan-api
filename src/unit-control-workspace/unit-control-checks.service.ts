@@ -1,16 +1,15 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
+
+import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
-
-import { UnitControlWorkspaceRepository } from './unit-control.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { UpdateMonitorLocationDTO } from 'src/dtos/monitor-location-update.dto';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { UnitRepository } from '../unit/unit.repository';
+import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 const KEY = 'Unit Control';
 
@@ -18,11 +17,8 @@ const KEY = 'Unit Control';
 export class UnitControlChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(UnitControlWorkspaceRepository)
     private readonly repository: UnitControlWorkspaceRepository,
-    @InjectRepository(MonitorLocationWorkspaceRepository)
     private readonly monitorLocationWorkspaceRepository: MonitorLocationWorkspaceRepository,
-    @InjectRepository(UnitRepository)
     private readonly unitRepository: UnitRepository,
   ) {}
 
@@ -48,7 +44,7 @@ export class UnitControlChecksService {
     const errorList: string[] = [];
 
     if (isImport) {
-      const unitRecord = await this.unitRepository.findOne({
+      const unitRecord = await this.unitRepository.findOneBy({
         name: location.unitId,
       });
       unitId = unitRecord.id;
@@ -105,11 +101,11 @@ export class UnitControlChecksService {
     let FIELDNAME: string = 'unitControl';
     let RECORDTYPE: string = 'parameterCode,controlCode,';
 
-    let record: UnitControl = await this.repository.findOne({
+    let record: UnitControl = await this.repository.findOneBy({
       unitId: unitId,
       parameterCode: unitControl.parameterCode,
       controlCode: unitControl.controlCode,
-      installDate: unitControl.installDate,
+      installDate: unitControl.installDate ?? IsNull(),
     });
 
     if (record) {
@@ -122,11 +118,11 @@ export class UnitControlChecksService {
           fieldnames: FIELDNAME,
         });
     } else {
-      record = await this.repository.findOne({
+      record = await this.repository.findOneBy({
         unitId: unitId,
         parameterCode: unitControl.parameterCode,
         controlCode: unitControl.controlCode,
-        retireDate: unitControl.retireDate,
+        retireDate: unitControl.retireDate ?? IsNull(),
       });
       if (record) {
         // CONTROL-15 Duplicate Unit Control (Result A)

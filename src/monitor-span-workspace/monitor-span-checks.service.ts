@@ -1,11 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
-import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
+import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 
 const KEY = 'Monitor Span';
 
@@ -13,7 +13,6 @@ const KEY = 'Monitor Span';
 export class MonitorSpanChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(MonitorSpanWorkspaceRepository)
     private readonly repository: MonitorSpanWorkspaceRepository,
   ) {}
 

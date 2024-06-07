@@ -10,8 +10,8 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([]),
-  findOne: jest.fn().mockResolvedValue(new MatsMethod()),
+  findBy: jest.fn().mockResolvedValue([]),
+  findOneBy: jest.fn().mockResolvedValue(new MatsMethod()),
   create: jest.fn().mockResolvedValue(new MatsMethod()),
   save: jest.fn().mockResolvedValue(new MatsMethod()),
 });
@@ -63,7 +63,7 @@ describe('MonitorMethodWorkspaceService', () => {
   });
 
   describe('getMethods', () => {
-    it('calls the MatsMehtodWorkspaceRepository.find() gets all mats method codes for locationId', async () => {
+    it('calls the MatsMehtodWorkspaceRepository.findBy() gets all mats method codes for locationId', async () => {
       const result = await service.getMethods(locationId);
       expect(result).toEqual([]);
     });

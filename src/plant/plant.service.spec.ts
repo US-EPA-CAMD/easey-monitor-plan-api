@@ -5,8 +5,8 @@ import { PlantRepository } from './plant.repository';
 import { PlantService } from './plant.service';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(''),
-  findOne: jest.fn().mockResolvedValue(''),
+  findBy: jest.fn().mockResolvedValue(''),
+  findOneBy: jest.fn().mockResolvedValue(''),
 });
 
 describe('Plant Import Tests', () => {
@@ -31,7 +31,7 @@ describe('Plant Import Tests', () => {
 
   describe('Check1', () => {
     it('Should error with no corresponding facility id', async () => {
-      repository.findOne = jest.fn().mockResolvedValue(null);
+      repository.findOneBy = jest.fn().mockResolvedValue(null);
 
       const testResult = await service.runPlantCheck(1);
       expect(testResult).toEqual([
@@ -42,7 +42,7 @@ describe('Plant Import Tests', () => {
     it('Should pass with corresponding facility id', async () => {
       const plant = new Plant();
       plant.id = 3;
-      repository.findOne = jest.fn().mockResolvedValue(plant);
+      repository.findOneBy = jest.fn().mockResolvedValue(plant);
 
       const testResult = await service.runPlantCheck(1);
       expect(testResult.length).toBe(0);

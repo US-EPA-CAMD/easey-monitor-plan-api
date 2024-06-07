@@ -1,23 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { EvalStatusCodeRepository } from './eval-status.repository';
-import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
-import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { In } from 'typeorm';
-import { Plant } from '../entities/workspace/plant.entity';
+
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlanConfigurationDTO } from '../dtos/monitor-plan-configuration.dto';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
+import { PlantWorkspaceRepository } from '../plant-workspace/plant.repository';
+import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
+import { EvalStatusCodeRepository } from './eval-status.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 
 @Injectable()
 export class MonitorConfigurationsWorkspaceService {
   constructor(
     private readonly map: MonitorPlanConfigurationMap,
-    @InjectRepository(EvalStatusCodeRepository)
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
-    @InjectRepository(SubmissionsAvailabilityStatusCodeRepository)
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
+    private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
+    private readonly plantWorkspaceRepository: PlantWorkspaceRepository,
     private readonly locationRepository: MonitorLocationWorkspaceRepository,
     private readonly uscRepository: UnitStackConfigurationWorkspaceRepository,
   ) {}
@@ -35,15 +37,17 @@ export class MonitorConfigurationsWorkspaceService {
     plan.unitStackConfigurations = unitStackConfigs;
   }
 
-  async populateDescriptions(plan) {
+  async populateDescriptions(plan: MonitorPlanConfigurationDTO) {
     plan['evalStatusCodeDescription'] = (
-      await this.evalStatusCodeRepository.findOne(plan.evalStatusCode)
+      await this.evalStatusCodeRepository.findOneBy({
+        evalStatusCd: plan.evalStatusCode,
+      })
     ).evalStatusCodeDescription;
 
     plan['submissionAvailabilityCodeDescription'] = (
-      await this.submissionStatusCodeRepository.findOne(
-        plan.submissionAvailabilityCode,
-      )
+      await this.submissionStatusCodeRepository.findOneBy({
+        subAvailabilityCode: plan.submissionAvailabilityCode,
+      })
     ).subAvailabilityCodeDescription;
   }
 
@@ -53,13 +57,15 @@ export class MonitorConfigurationsWorkspaceService {
   ): Promise<MonitorPlanDTO[]> {
     let plans: MonitorPlan[];
     if (monPlanIds.length > 0) {
-      plans = await MonitorPlan.find({
+      plans = await this.monitorPlanWorkspaceRepository.find({
         where: { id: In(monPlanIds) },
         relations: ['plant'],
       });
     } else {
-      const plants = await Plant.find({ where: { orisCode: In(orisCodes) } });
-      plans = await MonitorPlan.find({
+      const plants = await this.plantWorkspaceRepository.find({
+        where: { orisCode: In(orisCodes) },
+      });
+      plans = await this.monitorPlanWorkspaceRepository.find({
         where: { facId: In(plants.map(p => p.id)) },
         relations: ['plant'],
       });

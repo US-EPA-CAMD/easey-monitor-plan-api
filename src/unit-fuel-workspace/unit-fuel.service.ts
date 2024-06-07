@@ -1,17 +1,16 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
+
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 @Injectable()
 export class UnitFuelWorkspaceService {
   constructor(
-    @InjectRepository(UnitFuelWorkspaceRepository)
     private readonly repository: UnitFuelWorkspaceRepository,
     private readonly map: UnitFuelMap,
 
@@ -85,7 +84,7 @@ export class UnitFuelWorkspaceService {
     userId: string,
     isImport = false,
   ): Promise<UnitFuelDTO> {
-    const unitFuel = await this.repository.findOne(unitFuelId);
+    const unitFuel = await this.repository.findOneBy({ id: unitFuelId });
 
     unitFuel.fuelCode = payload.fuelCode;
     unitFuel.indicatorCode = payload.indicatorCode;
@@ -127,7 +126,7 @@ export class UnitFuelWorkspaceService {
                   unitFuel.endDate,
                 );
 
-                if (unitFuelRecord !== undefined) {
+                if (unitFuelRecord) {
                   await this.updateUnitFuel(
                     locationId,
                     unitId,

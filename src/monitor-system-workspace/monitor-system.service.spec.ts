@@ -27,7 +27,7 @@ const mockRepository = () => ({
   find: () => {
     return {};
   },
-  findOne: () => {
+  findOneBy: () => {
     return {};
   },
 });
@@ -117,7 +117,7 @@ describe('MonitorSystemWorkspaceService', () => {
       testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'GAS';
-      repository.findOne = jest.fn().mockResolvedValue(monSys);
+      repository.findOneBy = jest.fn().mockResolvedValue(monSys);
 
       jest
         .spyOn(componentService, 'getComponentByIdentifier')
@@ -157,7 +157,7 @@ describe('MonitorSystemWorkspaceService', () => {
       testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'GAS';
-      repository.findOne = jest.fn().mockResolvedValue(monSys);
+      repository.findOneBy = jest.fn().mockResolvedValue(monSys);
 
       jest
         .spyOn(componentService, 'getComponentByIdentifier')
@@ -196,7 +196,7 @@ describe('MonitorSystemWorkspaceService', () => {
       testData.monitoringLocationData = [location];
 
       monSys.systemTypeCode = 'AIR';
-      repository.findOne = jest.fn().mockResolvedValue(monSys);
+      repository.findOneBy = jest.fn().mockResolvedValue(monSys);
 
       const checkResults = await service.runMonitorSystemImportCheck(
         testData,
@@ -229,7 +229,7 @@ describe('MonitorSystemWorkspaceService', () => {
       const testData = new UpdateMonitorPlanDTO();
       testData.monitoringLocationData = [location];
 
-      repository.findOne = jest.fn().mockResolvedValue(null);
+      repository.findOneBy = jest.fn().mockResolvedValue(null);
 
       const checkResults = await service.runMonitorSystemImportCheck(
         testData,

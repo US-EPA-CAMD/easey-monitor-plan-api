@@ -15,7 +15,12 @@ import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-pl
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],
   controllers: [DuctWafWorkspaceController],
-  providers: [DuctWafWorkspaceService, DuctWafMap],
-  exports: [TypeOrmModule, DuctWafWorkspaceService, DuctWafMap],
+  providers: [DuctWafWorkspaceRepository, DuctWafWorkspaceService, DuctWafMap],
+  exports: [
+    TypeOrmModule,
+    DuctWafWorkspaceRepository,
+    DuctWafWorkspaceService,
+    DuctWafMap,
+  ],
 })
 export class DuctWafWorkspaceModule {}

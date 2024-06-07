@@ -17,9 +17,14 @@ import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-wo
     forwardRef(() => MonitorQualificationWorkspaceModule),
   ],
   controllers: [LEEQualificationWorkspaceController],
-  providers: [LEEQualificationWorkspaceService, LEEQualificationMap],
+  providers: [
+    LEEQualificationWorkspaceRepository,
+    LEEQualificationWorkspaceService,
+    LEEQualificationMap,
+  ],
   exports: [
     TypeOrmModule,
+    LEEQualificationWorkspaceRepository,
     LEEQualificationWorkspaceService,
     LEEQualificationMap,
   ],
