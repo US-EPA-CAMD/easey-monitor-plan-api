@@ -40,18 +40,18 @@ export class MonitorLocationWorkspaceRepository extends Repository<
   }
 
   async getLocationsByUnitStackPipeIds(
-    facilityId: number,
+    orisCode: number,
     unitIds: string[],
     stackPipeIds: string[],
   ): Promise<MonitorLocation[]> {
     let unitsWhere =
       unitIds && unitIds.length > 0
-        ? 'up.orisCode = :facilityId AND u.name IN (:...unitIds)'
+        ? 'up.orisCode = :orisCode AND u.name IN (:...unitIds)'
         : '';
 
     let stacksWhere =
       stackPipeIds && stackPipeIds.length > 0
-        ? 'spp.orisCode = :facilityId AND sp.name IN (:...stackPipeIds)'
+        ? 'spp.orisCode = :orisCode AND sp.name IN (:...stackPipeIds)'
         : '';
 
     if (unitIds?.length > 0 && stackPipeIds?.length > 0) {
@@ -67,7 +67,7 @@ export class MonitorLocationWorkspaceRepository extends Repository<
       .leftJoinAndSelect('ml.stackPipe', 'sp')
       .leftJoin('sp.plant', 'spp')
       .where(`${unitsWhere}${stacksWhere}`, {
-        facilityId,
+        orisCode,
         unitIds,
         stackPipeIds,
       });

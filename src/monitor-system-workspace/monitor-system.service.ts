@@ -53,12 +53,14 @@ export class MonitorSystemWorkspaceService {
     }
 
     for (const system of systems) {
-      const Sys = await this.repository.findOneBy({
-        locationId: monitorLocationId,
-        monitoringSystemId: system.monitoringSystemId,
-      });
+      const sys =
+        monitorLocationId &&
+        (await this.repository.findOneBy({
+          locationId: monitorLocationId,
+          monitoringSystemId: system.monitoringSystemId,
+        }));
 
-      if (Sys && Sys.systemTypeCode !== system.systemTypeCode) {
+      if (sys && sys.systemTypeCode !== system.systemTypeCode) {
         errorList.push(
           `[IMPORT5-CRIT1-A] The system type ${system.systemTypeCode} for UnitStackPipeID ${monitorLocation.unitId}/${monitorLocation.stackPipeId} and MonitoringSystemID ${system.monitoringSystemId} does not match the system type in the Workspace database.`,
         );
@@ -81,7 +83,7 @@ export class MonitorSystemWorkspaceService {
         system.monitoringSystemFuelFlowData &&
         system.monitoringSystemFuelFlowData.length > 0
       ) {
-        if (Sys && !validTypeCodes.includes(Sys.systemTypeCode)) {
+        if (sys && !validTypeCodes.includes(sys.systemTypeCode)) {
           errorList.push(
             '[IMPORT31-CRIT1-A] You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',
           );

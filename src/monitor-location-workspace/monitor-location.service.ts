@@ -6,7 +6,9 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
@@ -60,6 +62,34 @@ export class MonitorLocationWorkspaceService {
     private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
   ) {}
 
+  async createMonitorLocation({
+    unitId,
+    stackPipeId,
+    userId,
+  }: {
+    unitId?: number;
+    stackPipeId?: string;
+    userId?: string;
+  }) {
+    if (!unitId && !stackPipeId) {
+      throw new EaseyException(
+        new Error('One of Unit ID or Stack Pipe ID is required'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const monitorLocation = this.repository.create({
+      id: uuid(),
+      addDate: currentDateTime(),
+      stackPipeId,
+      unitId,
+      updateDate: currentDateTime(),
+      userId,
+    });
+
+    return await this.repository.save(monitorLocation);
+  }
+
   async getMonitorLocationsByFacilityAndOris(
     plan: UpdateMonitorPlanDTO,
     facilitId: number,
@@ -100,6 +130,21 @@ export class MonitorLocationWorkspaceService {
     loc: UpdateMonitorLocationDTO,
     facilityId: number,
     orisCode: number,
+  ) {
+    return await this.getOrCreateLocationRecord(
+      loc,
+      facilityId,
+      orisCode,
+      false,
+    );
+  }
+
+  async getOrCreateLocationRecord(
+    loc: UpdateMonitorLocationDTO,
+    facilityId: number,
+    orisCode: number,
+    create: boolean,
+    userId?: string,
   ): Promise<MonitorLocation> {
     let location: MonitorLocation;
 
@@ -110,6 +155,7 @@ export class MonitorLocationWorkspaceService {
       );
 
       if (!unit) {
+        // All units should already exist in the database.
         throw new BadRequestException(
           CheckCatalogService.formatMessage(
             'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
@@ -126,26 +172,33 @@ export class MonitorLocationWorkspaceService {
     }
 
     if (loc.stackPipeId) {
-      const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+      let stackPipe = await this.stackPipeService.getStackByNameAndFacId(
         loc.stackPipeId,
         facilityId,
       );
 
-      if (!stackPipe) {
-        // TODO: Create a new stack/pipe instead.
-        throw new BadRequestException(
-          CheckCatalogService.formatMessage(
-            'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',
-            { stackPipe: loc.stackPipeId, orisCode: orisCode },
-          ),
+      if (!stackPipe && create) {
+        // A stack/pipe may not exist in the database.
+        stackPipe = await this.stackPipeService.createStackPipe(
+          loc,
+          facilityId,
+          userId,
         );
       }
 
-      location = await this.repository.findOne({
-        where: {
+      location =
+        stackPipe &&
+        (await this.repository.findOne({
+          where: {
+            stackPipeId: stackPipe.id,
+          },
+        }));
+
+      if (!location && create) {
+        location = await this.createMonitorLocation({
           stackPipeId: stackPipe.id,
-        },
-      });
+        });
+      }
     }
 
     return location;
@@ -168,7 +221,7 @@ export class MonitorLocationWorkspaceService {
     return this.uscServcie.getUnitStackRelationships(id, isUnit);
   }
 
-  async importMonitorLocation(
+  async importMonitorLocations(
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
@@ -184,7 +237,7 @@ export class MonitorLocationWorkspaceService {
                 const innerPromises = [];
 
                 // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
-                const monitorLocationRecord = await this.getLocationRecord(
+                let monitorLocationRecord = await this.getLocationRecord(
                   location,
                   facilityId,
                   plan.orisCode,

@@ -39,10 +39,12 @@ export class ComponentWorkspaceService {
       '[IMPORT32-CRIT1-A] You have reported an AnalyzerRange record for a component with an inappropriate ComponentTypeCode.';
 
     for (const fileComponent of components) {
-      const databaseComponent = await this.repository.findOneBy({
-        locationId: monitorLocationId,
-        componentId: fileComponent.componentId,
-      });
+      const databaseComponent =
+        monitorLocationId &&
+        (await this.repository.findOneBy({
+          locationId: monitorLocationId,
+          componentId: fileComponent.componentId,
+        }));
 
       if (
         databaseComponent &&

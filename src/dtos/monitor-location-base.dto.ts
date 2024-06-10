@@ -54,7 +54,6 @@ export class MonitorLocationBaseDTO {
     example: propertyMetadata.monitorLocationDTOActiveDate.example,
     name: propertyMetadata.monitorLocationDTOActiveDate.fieldLabels.value,
   })
-  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [YYYY-MM-DD] for [${KEY}].`;
@@ -67,7 +66,7 @@ export class MonitorLocationBaseDTO {
       );
     },
   })
-  activeDate?: Date;
+  activeDate: Date;
 
   @ApiProperty({
     description: propertyMetadata.monitorLocationDTORetireDate.description,

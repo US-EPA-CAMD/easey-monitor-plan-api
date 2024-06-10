@@ -122,10 +122,12 @@ export class MonitorFormulaWorkspaceService {
     const errorList: string[] = [];
 
     for (const formula of formulas) {
-      const formulaRecord = await this.repository.findOneBy({
-        locationId,
-        formulaId: formula.formulaId,
-      });
+      const formulaRecord =
+        locationId &&
+        (await this.repository.findOneBy({
+          locationId,
+          formulaId: formula.formulaId,
+        }));
 
       if (formulaRecord && !formulaRecord.endDate) {
         if (formulaRecord.parameterCode !== formula.parameterCode) {

@@ -84,7 +84,7 @@ const mockMonitorLocationService = () => ({
   getMonitorLocationsByFacilityAndOris: jest
     .fn()
     .mockResolvedValue([MONITOR_LOCATION]),
-  importMonitorLocation: jest.fn(),
+  importMonitorLocations: jest.fn(),
 });
 
 const mockMonitorPlanRepo = () => ({

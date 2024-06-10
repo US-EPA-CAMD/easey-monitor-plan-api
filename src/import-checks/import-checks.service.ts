@@ -43,7 +43,6 @@ export class ImportChecksService {
     );
     this.checkIfThrows(errorList);
 
-    // TODO: needs to throw error here if non existing
     const facilityId = await this.plantService.getFacIdFromOris(
       monPlan.orisCode,
     );
@@ -102,6 +101,7 @@ export class ImportChecksService {
           )),
         );
       }
+
       // Formula Checks
       if (location.monitoringFormulaData) {
         errorList.push(

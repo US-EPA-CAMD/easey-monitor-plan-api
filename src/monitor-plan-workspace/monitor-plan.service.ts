@@ -85,7 +85,6 @@ export class MonitorPlanWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
-    const promises = [];
     const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
 
     const locations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
@@ -94,24 +93,17 @@ export class MonitorPlanWorkspaceService {
       plan.orisCode,
     );
 
-    const locationIds = locations.map(l => l.id);
-
-    // Unit Stack Merge Logic
-    promises.push(
-      this.unitStackService.importUnitStack(plan, facilityId, userId),
-    );
+    const locationIds = locations.map(l => l.id).filter(id => id !== null);
 
     // Monitor Location Merge Logic
-    promises.push(
-      this.monitorLocationService.importMonitorLocation(
-        plan,
-        facilityId,
-        userId,
-      ),
+    await this.monitorLocationService.importMonitorLocations(
+      plan,
+      facilityId,
+      userId,
     );
 
-    // Let the promises settle so locations can be created if necessary.
-    await Promise.all(promises);
+    // Unit Stack Merge Logic
+    await this.unitStackService.importUnitStack(plan, facilityId, userId);
 
     // Get active plan
     const activePlan = await this.repository.getActivePlanByLocationId(
