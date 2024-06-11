@@ -142,7 +142,7 @@ export class MonitorDefaultWorkspaceService {
                   monDefault.endHour,
                 );
 
-                if (monDefaultRecord !== undefined) {
+                if (monDefaultRecord) {
                   await this.updateDefault(
                     locationId,
                     monDefaultRecord.id,

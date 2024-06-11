@@ -22,15 +22,12 @@ export const Check9 = new Check(
       const monLoc = await getMonLocId(loc, facility, monPlan.orisCode);
 
       for (const formula of loc.monitoringFormulaData) {
-        const Form = await entityManager.findOneBy(MonitorFormula, {
+        const form = await entityManager.findOneBy(MonitorFormula, {
           locationId: monLoc.id,
           formulaId: formula.formulaId,
         });
 
-        if (
-          Form !== undefined &&
-          Form.parameterCode !== formula.parameterCode
-        ) {
+        if (form && form.parameterCode !== formula.parameterCode) {
           result.addError(
             'CRIT1-A',
             `The ParameterCode ${formula.parameterCode} for UnitStackPipeID ${loc.unitId}/${loc.stackPipeId} and FormulaID ${formula.formulaId} does not match the parameter code in the Workspace database.`,
@@ -38,9 +35,9 @@ export const Check9 = new Check(
         }
 
         if (
-          Form !== undefined &&
+          form !== null &&
           formula.formulaCode !== null &&
-          Form.formulaCode !== formula.formulaCode
+          form.formulaCode !== formula.formulaCode
         ) {
           result.addError(
             'CRIT1-B',

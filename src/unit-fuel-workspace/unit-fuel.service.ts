@@ -126,7 +126,7 @@ export class UnitFuelWorkspaceService {
                   unitFuel.endDate,
                 );
 
-                if (unitFuelRecord !== undefined) {
+                if (unitFuelRecord) {
                   await this.updateUnitFuel(
                     locationId,
                     unitId,
