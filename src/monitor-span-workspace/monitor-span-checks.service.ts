@@ -27,8 +27,7 @@ export class MonitorSpanChecksService {
 
   async runChecks(
     monitorSpan: MonitorSpanBaseDTO | MonitorSpanDTO,
-    locationId: string,
-    isImport: boolean = false,
+    locationId: string | null,
     isUpdate: boolean = false,
     errorLocation: string = '',
   ): Promise<string[]> {
@@ -293,7 +292,7 @@ export class MonitorSpanChecksService {
   }
 
   private async duplicateSpanRecordCheck(
-    locationId: string,
+    locationId: string | null,
     monitorSpan: MonitorSpanBaseDTO,
   ): Promise<string> {
     let error: string = null;

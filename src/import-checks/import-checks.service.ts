@@ -76,7 +76,7 @@ export class ImportChecksService {
           ...(await this.componentService.runComponentChecks(
             location.componentData,
             location,
-            databaseLocations[index].id,
+            databaseLocations[index]?.id,
           )),
         );
       }
@@ -96,8 +96,8 @@ export class ImportChecksService {
           ...(await this.monitorSystemService.runMonitorSystemImportCheck(
             monPlan,
             location,
-            databaseLocations[index].id,
             location.monitoringSystemData,
+            databaseLocations[index]?.id,
           )),
         );
       }
@@ -107,8 +107,7 @@ export class ImportChecksService {
         errorList.push(
           ...(await this.formulaService.runFormulaChecks(
             location.monitoringFormulaData,
-            location,
-            databaseLocations[index].id,
+            databaseLocations[index]?.id,
           )),
         );
       }

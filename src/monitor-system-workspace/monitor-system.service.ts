@@ -38,8 +38,8 @@ export class MonitorSystemWorkspaceService {
   async runMonitorSystemImportCheck(
     monPlan: UpdateMonitorPlanDTO,
     monitorLocation: UpdateMonitorLocationDTO,
-    monitorLocationId: string,
     systems: UpdateMonitorSystemDTO[],
+    monitorLocationId?: string,
   ) {
     const errorList: string[] = [];
 

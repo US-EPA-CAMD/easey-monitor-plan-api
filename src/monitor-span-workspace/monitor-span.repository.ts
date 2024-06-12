@@ -71,7 +71,7 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
   }
 
   async getSpanByFilter(
-    locationId: string,
+    locationId: string | null,
     componentTypeCode: string,
     beginDate?: Date,
     beginHour?: number,

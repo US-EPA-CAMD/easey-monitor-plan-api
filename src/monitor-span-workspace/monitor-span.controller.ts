@@ -77,7 +77,7 @@ export class MonitorSpanWorkspaceController {
     @Body() payload: MonitorSpanBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSpanDTO> {
-    await this.checksService.runChecks(payload, locationId, false, true);
+    await this.checksService.runChecks(payload, locationId, true);
     return this.service.createSpan(locationId, payload, user.userId);
   }
 }

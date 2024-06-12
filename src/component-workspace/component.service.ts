@@ -29,7 +29,7 @@ export class ComponentWorkspaceService {
   async runComponentChecks(
     components: UpdateComponentBaseDTO[],
     monitorLocation: UpdateMonitorLocationDTO,
-    monitorLocationId: string,
+    monitorLocationId?: string,
   ): Promise<string[]> {
     const errorList: string[] = [];
 

@@ -86,7 +86,6 @@ export class MonitorPlanChecksService {
         promises.push(
           new Promise((resolve, _reject) => {
             const results = this.unitControlChecksService.runChecks(
-              locationId,
               null,
               unitControl,
               true,
@@ -107,7 +106,6 @@ export class MonitorPlanChecksService {
               const results = this.monSpanChecksService.runChecks(
                 span,
                 locationId,
-                true,
                 false,
                 `locations.${locIdx}.span.${spanIdx}.`,
               );

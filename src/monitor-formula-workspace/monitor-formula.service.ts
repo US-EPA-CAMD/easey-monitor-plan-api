@@ -116,8 +116,7 @@ export class MonitorFormulaWorkspaceService {
 
   async runFormulaChecks(
     formulas: MonitorFormulaBaseDTO[],
-    location: UpdateMonitorLocationDTO,
-    locationId: string,
+    locationId?: string,
   ) {
     const errorList: string[] = [];
 

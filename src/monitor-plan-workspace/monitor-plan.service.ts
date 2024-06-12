@@ -93,7 +93,7 @@ export class MonitorPlanWorkspaceService {
       plan.orisCode,
     );
 
-    const locationIds = locations.map(l => l.id).filter(id => id !== null);
+    const locationIds = locations.map(l => l.id);
 
     // Monitor Location Merge Logic
     await this.monitorLocationService.importMonitorLocations(
@@ -106,6 +106,7 @@ export class MonitorPlanWorkspaceService {
     await this.unitStackService.importUnitStack(plan, facilityId, userId);
 
     // Get active plan
+    // TODO: Iterate over IDs rather than using just the first. If no monitor location is found, no need to compare plans (all new locations).
     const activePlan = await this.repository.getActivePlanByLocationId(
       locationIds[0],
     );

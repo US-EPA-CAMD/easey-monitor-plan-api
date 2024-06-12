@@ -45,12 +45,12 @@ export class MonitorLocationWorkspaceRepository extends Repository<
     stackPipeIds: string[],
   ): Promise<MonitorLocation[]> {
     let unitsWhere =
-      unitIds && unitIds.length > 0
+      unitIds?.length > 0
         ? 'up.orisCode = :orisCode AND u.name IN (:...unitIds)'
         : '';
 
     let stacksWhere =
-      stackPipeIds && stackPipeIds.length > 0
+      stackPipeIds?.length > 0
         ? 'spp.orisCode = :orisCode AND sp.name IN (:...stackPipeIds)'
         : '';
 

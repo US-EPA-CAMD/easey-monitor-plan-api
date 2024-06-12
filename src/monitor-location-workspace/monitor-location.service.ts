@@ -237,10 +237,12 @@ export class MonitorLocationWorkspaceService {
                 const innerPromises = [];
 
                 // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
-                let monitorLocationRecord = await this.getLocationRecord(
+                let monitorLocationRecord = await this.getOrCreateLocationRecord(
                   location,
                   facilityId,
                   plan.orisCode,
+                  true,
+                  userId,
                 );
 
                 if (location.unitId) {
