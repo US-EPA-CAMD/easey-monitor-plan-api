@@ -61,6 +61,7 @@ The Monitor Plan API uses a number of environment variables to properly configur
 | currentUser | EASEY_MONITOR_PLAN_API_CURRENT_USER | {} | Configurable |
 | apiHost | EASEY_API_GATEWAY_HOST | api.epa.gov/easey/dev | Configurable |
 | authApi.uri | EASEY_AUTH_API | https://api.epa.gov/easey/dev/auth-mgmt | Configurable |
+| contentApi.uri | EASEY_CONTENT_API | https://api.epa.gov/easey/dev/content-mgmt | Configurable |
 
 ## Environment Variables File
 Database credentials are injected into the cloud.gov environments as part of the CI/CD deployment process therefore they do not need to be configured. However, when running locally for local development the following environment variables are required to be configured using a local .env file in the root of the project. **PLEASE DO NOT commit the .env file to source control.**

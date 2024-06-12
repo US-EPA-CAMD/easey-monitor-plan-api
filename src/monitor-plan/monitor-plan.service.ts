@@ -32,6 +32,7 @@ import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { MonitorPlanRepository } from './monitor-plan.repository';
+import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 @Injectable()
 export class MonitorPlanService {
@@ -64,6 +65,7 @@ export class MonitorPlanService {
     private readonly cpmsQualRepository: CPMSQualificationRepository,
     private readonly map: MonitorPlanMap,
     private readonly uscMap: UnitStackConfigurationMap,
+    private readonly easeyContentService: EaseyContentService,
   ) {}
 
   async getMonSystemFuelFlow(
@@ -414,6 +416,8 @@ export class MonitorPlanService {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurationData = uscDTO;
     }
+
+    mpDTO.version = this.easeyContentService.monitorPlanSchema?.version;
 
     if (rptValuesOnly) {
       await removeNonReportedValues(mpDTO);
