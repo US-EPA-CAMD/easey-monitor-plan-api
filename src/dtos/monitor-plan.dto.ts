@@ -18,6 +18,7 @@ import { Plant } from '../entities/plant.entity';
 import { FindOneOptions } from 'typeorm';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DbLookup } from '@us-epa-camd/easey-common/pipes';
+
 export class MonitorPlanDTO {
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOId.description,

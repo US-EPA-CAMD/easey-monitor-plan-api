@@ -299,7 +299,7 @@ describe('ComponentWorkspaceService', () => {
     });
   });
 
-  describe('importUnitStack', () => {
+  describe('importUnitStacks', () => {
     const location = new UpdateMonitorLocationDTO();
     location.componentData = [payload];
     it('should update while importing a component', async () => {

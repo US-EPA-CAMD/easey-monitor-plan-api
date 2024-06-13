@@ -4,7 +4,10 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
+import {
+  UnitStackConfigurationBaseDTO,
+  UnitStackConfigurationDTO,
+} from '../dtos/unit-stack-configuration.dto';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
@@ -82,12 +85,14 @@ export class UnitStackConfigurationWorkspaceService {
     return errorList;
   }
 
-  async importUnitStack(
+  async importUnitStacks(
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
   ) {
-    return new Promise(resolve => {
+    const unitStackConfigDTOs: UnitStackConfigurationDTO[] = [];
+
+    await new Promise(resolve => {
       (async () => {
         const promises = [];
         for (const unitStackConfig of plan.unitStackConfigurationData) {
@@ -109,20 +114,20 @@ export class UnitStackConfigurationWorkspaceService {
                   stackPipe.id,
                 );
 
-                if (unitStackConfigRecord) {
-                  await this.updateUnitStackConfig(
-                    unitStackConfigRecord.id,
-                    unitStackConfig,
-                    userId,
-                  );
-                } else {
-                  await this.createUnitStackConfig(
-                    unit.id,
-                    stackPipe.id,
-                    unitStackConfig,
-                    userId,
-                  );
-                }
+                const unitStackConfigDTO = unitStackConfigRecord
+                  ? await this.updateUnitStackConfig(
+                      unitStackConfigRecord.id,
+                      unitStackConfig,
+                      userId,
+                    )
+                  : await this.createUnitStackConfig(
+                      unit.id,
+                      stackPipe.id,
+                      unitStackConfig,
+                      userId,
+                    );
+
+                unitStackConfigDTOs.push(unitStackConfigDTO);
                 innerResolve(true);
               })();
             }),
@@ -132,6 +137,8 @@ export class UnitStackConfigurationWorkspaceService {
         resolve(true);
       })();
     });
+
+    return unitStackConfigDTOs;
   }
 
   async getUnitStackRelationships(id: string | number, isUnit: boolean) {

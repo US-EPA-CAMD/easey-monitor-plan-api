@@ -1,4 +1,5 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
@@ -6,6 +7,8 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
@@ -81,50 +84,157 @@ export class MonitorPlanWorkspaceService {
     private map: MonitorPlanMap,
   ) {}
 
+  private async calcluateReportPeriodRange(
+    monitorLocations: MonitorLocationDTO[],
+    unitStackConfigs: UnitStackConfigurationDTO[],
+  ) {
+    let beginDate: Date;
+    let endDate: Date;
+
+    if (unitStackConfigs.length === 0) {
+      if (monitorLocations.length === 0) {
+        throw new EaseyException(
+          new Error('A monitor plan must have at least one location'),
+          HttpStatus.BAD_REQUEST,
+        );
+      } else if (monitorLocations.length > 1) {
+        throw new EaseyException(
+          new Error(
+            'Cannot have multiple locations without unit stack configurations',
+          ),
+          HttpStatus.INTERNAL_SERVER_ERROR, // This is an internal error because the data should have been validated before this point.
+        );
+      } else {
+        // Single location without unit stack configurations.
+        const location = monitorLocations[0];
+
+        if (!location.unitId) {
+          throw new EaseyException(
+            new Error(
+              'The location for a monitor plan with a single location must have a unit',
+            ),
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+
+        // Get the begin date from the earliest monitoring method associated with the unit.
+        const beginDateEpoch = Math.min(
+          ...location.monitoringMethodData.map(m => m.beginDate.getTime()),
+        );
+        if (!beginDateEpoch) {
+          throw new EaseyException(
+            new Error(
+              `There is no method associated with the unit ${location.unitId}`,
+            ),
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+        beginDate = new Date(beginDateEpoch);
+
+        // Get the end date from the day before the earliest retire date of the unit.
+        const locationRecord = await this.locationRepository.findOneBy({
+          id: location.id,
+        });
+        const unitRetireDateEpoch = Math.min(
+          ...locationRecord.unit.opStatuses
+            .filter(s => s.opStatusCode === 'RET')
+            .map(s => s.beginDate.getTime()),
+        );
+        endDate = Number.isFinite(unitRetireDateEpoch)
+          ? new Date(unitRetireDateEpoch - 24 * 60 * 60 * 1000) // Retire date in epoch milliseconds minus 1 day.
+          : null;
+      }
+    } else {
+      // TODO: Get the begin and end dates from the unit stack configurations.
+    }
+
+    // TODO: Convert the begin and end dates to report periods IDs.
+  }
+
+  async createMonitorPlan() {
+    // TODO: Create the `monitor_plan` record.
+    // TODO: Create the `monitor_plan_location` record(s).
+    // TODO: Create the reporting frequency record(s).
+    // TODO: Set the plan to needs evaluation.
+  }
+
   async importMpPlan(
     plan: UpdateMonitorPlanDTO,
     userId: string,
   ): Promise<MonitorPlanDTO> {
     const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
 
-    const locations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
-      plan,
-      facilityId,
-      plan.orisCode,
-    );
+    const databaseLocId = (
+      await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
+        plan,
+        facilityId,
+        plan.orisCode,
+      )
+    )
+      .filter(l => l !== null)
+      .pop()?.id;
 
-    const locationIds = locations.map(l => l.id);
+    // TODO: Start transaction.
 
-    // Monitor Location Merge Logic
-    await this.monitorLocationService.importMonitorLocations(
+    /* MONITOR LOCATION MERGE LOGIC */
+    const planLocationDtos = await this.monitorLocationService.importMonitorLocations(
       plan,
       facilityId,
       userId,
     );
 
-    // Unit Stack Merge Logic
-    await this.unitStackService.importUnitStack(plan, facilityId, userId);
-
-    // Get active plan
-    // TODO: Iterate over IDs rather than using just the first. If no monitor location is found, no need to compare plans (all new locations).
-    const activePlan = await this.repository.getActivePlanByLocationId(
-      locationIds[0],
+    /* UNIT STACK CONFIGURATION MERGE LOGIC */
+    const planUnitStackConfigDtos = await this.unitStackService.importUnitStacks(
+      plan,
+      facilityId,
+      userId,
     );
 
-    // TODO: Compare the active plan against the imported plan.
+    /* MONITOR PLAN MERGE LOGIC */
 
-    // TODO: Create a new plan if necessary, and update the old.
+    const [
+      beginReportPeriodId,
+      endReportPeriodId,
+    ] = await this.calcluateReportPeriodRange(
+      planLocationDtos,
+      planUnitStackConfigDtos,
+    );
 
-    // TODO: Update reporting frequencies for the new and old plans.
+    // Get the active plan.
+    const activePlan = databaseLocId
+      ? await this.repository.getActivePlanByLocationId(databaseLocId)
+      : null;
 
-    // Monitor Plan Comment Merge Logic
+    // TODO: Build a representation of the new plan.
+    const workingPlanDto: Pick<
+      MonitorPlanDTO,
+      'monitoringLocationData' | 'unitStackConfigurationData'
+    > = {
+      monitoringLocationData: planLocationDtos,
+      unitStackConfigurationData: planUnitStackConfigDtos,
+    };
+
+    if (activePlan) {
+      // TODO: Build a representation of the active plan.
+      const activePlanDto = this.getMonitorPlan(activePlan.id);
+
+      // TODO: Compare the active plan against the imported plan. Create a new plan if necessary. Update the old if necessary (end date & reporting frequency).
+
+      if (activePlanChanged) {
+        await this.resetToNeedsEvaluation(databaseLocId, userId);
+      }
+    } else {
+      // TODO: Create a new plan.
+    }
+
+    /* MONITOR PLAN COMMENT MERGE LOGIC */
     await this.monitorPlanCommentService.importComments(
       plan,
       userId,
       activePlan.id,
     );
 
-    await this.resetToNeedsEvaluation(locationIds[0], userId);
+    // TODO: Commit transaction.
 
     return null;
   }

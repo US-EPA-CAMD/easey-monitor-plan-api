@@ -262,9 +262,9 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     });
   });
 
-  describe('importUnitStack', () => {
+  describe('importUnitStacks', () => {
     it('should update while importing unit stack config', async () => {
-      const response = await service.importUnitStack(
+      const response = await service.importUnitStacks(
         mpPayload,
         facilityId,
         userId,
@@ -277,7 +277,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         .spyOn(repo, 'getUnitStackConfigByUnitIdStackId')
         .mockResolvedValue(undefined);
 
-      const response = await service.importUnitStack(
+      const response = await service.importUnitStacks(
         mpPayload,
         facilityId,
         userId,

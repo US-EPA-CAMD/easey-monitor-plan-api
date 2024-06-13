@@ -100,7 +100,7 @@ const mockMonitorPlanCommentService = () => ({
 });
 
 const mockUnitStackConfigService = () => ({
-  importUnitStack: jest.fn(),
+  importUnitStacks: jest.fn(),
 });
 
 const mockEvalStatusCodeRepo = () => ({

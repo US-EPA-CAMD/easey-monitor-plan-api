@@ -11,7 +11,7 @@ import { StackPipeRepository } from './stack-pipe.repository';
 export class StackPipeService {
   constructor(private readonly repository: StackPipeRepository) {}
 
-  async createStackPipe(
+  async createStackPipeRecord(
     loc: MonitorLocationBaseDTO,
     facId: number,
     userId: string,

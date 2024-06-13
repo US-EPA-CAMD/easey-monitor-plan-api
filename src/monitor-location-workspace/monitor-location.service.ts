@@ -62,7 +62,7 @@ export class MonitorLocationWorkspaceService {
     private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
   ) {}
 
-  async createMonitorLocation({
+  async createMonitorLocationRecord({
     unitId,
     stackPipeId,
     userId,
@@ -179,7 +179,7 @@ export class MonitorLocationWorkspaceService {
 
       if (!stackPipe && create) {
         // A stack/pipe may not exist in the database.
-        stackPipe = await this.stackPipeService.createStackPipe(
+        stackPipe = await this.stackPipeService.createStackPipeRecord(
           loc,
           facilityId,
           userId,
@@ -195,7 +195,7 @@ export class MonitorLocationWorkspaceService {
         }));
 
       if (!location && create) {
-        location = await this.createMonitorLocation({
+        location = await this.createMonitorLocationRecord({
           stackPipeId: stackPipe.id,
         });
       }
@@ -226,7 +226,9 @@ export class MonitorLocationWorkspaceService {
     facilityId: number,
     userId: string,
   ) {
-    return new Promise(resolve => {
+    const locations: MonitorLocationDTO[] = [];
+
+    await new Promise(resolve => {
       (async () => {
         const promises = [];
 
@@ -237,7 +239,7 @@ export class MonitorLocationWorkspaceService {
                 const innerPromises = [];
 
                 // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
-                let monitorLocationRecord = await this.getOrCreateLocationRecord(
+                const monitorLocationRecord = await this.getOrCreateLocationRecord(
                   location,
                   facilityId,
                   plan.orisCode,
@@ -459,6 +461,7 @@ export class MonitorLocationWorkspaceService {
                 }
 
                 await Promise.all(innerPromises);
+                locations.push(await this.map.one(monitorLocationRecord));
                 innerResolve(true);
               })();
             }),
@@ -470,5 +473,7 @@ export class MonitorLocationWorkspaceService {
         resolve(true);
       })();
     });
+
+    return locations;
   }
 }
