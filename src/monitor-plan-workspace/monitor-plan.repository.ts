@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, Repository } from 'typeorm';
 
@@ -8,6 +9,30 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
   constructor(entityManager: EntityManager) {
     super(MonitorPlan, entityManager);
+  }
+
+  async createMonitorPlanRecord(
+    facId: number,
+    userId: string,
+    beginReportPeriodId: number,
+    endReportPeriodId: number,
+  ) {
+    const monitorPlan = this.create({
+      id: uuid(),
+      addDate: currentDateTime(),
+      beginReportPeriodId,
+      endReportPeriodId,
+      evalStatusCode: 'EVAL',
+      facId,
+      lastUpdated: currentDateTime(),
+      needsEvalFlag: 'Y',
+      submissionAvailabilityCode: 'GRANTED',
+      updateDate: currentDateTime(),
+      updatedStatusFlag: 'Y',
+      userId,
+    });
+
+    return await this.save(monitorPlan);
   }
 
   async getMonitorPlansByOrisCode(orisCode: number): Promise<MonitorPlan[]> {

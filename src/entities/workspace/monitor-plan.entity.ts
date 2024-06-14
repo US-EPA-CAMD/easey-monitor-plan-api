@@ -119,6 +119,16 @@ export class MonitorPlan extends BaseEntity {
   })
   pendingStatusCode: string;
 
+  @Column({ name: 'last_evaluated_date' })
+  lastEvaluatedDate: Date;
+
+  @Column({
+    type: 'varchar',
+    length: 7,
+    name: 'eval_status_cd',
+  })
+  evalStatusCode: string;
+
   @ManyToOne(
     () => Plant,
     plant => plant.plans,
@@ -152,14 +162,4 @@ export class MonitorPlan extends BaseEntity {
   reportingFrequencies: MonitorPlanReportingFrequency[];
 
   unitStackConfigurations: UnitStackConfiguration[];
-
-  @Column({ name: 'last_evaluated_date' })
-  lastEvaluatedDate: Date;
-
-  @Column({
-    type: 'varchar',
-    length: 7,
-    name: 'eval_status_cd',
-  })
-  evalStatusCode: string;
 }
