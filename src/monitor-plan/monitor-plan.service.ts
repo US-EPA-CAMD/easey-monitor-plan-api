@@ -410,14 +410,12 @@ export class MonitorPlanService {
       }
     });
 
-    const mpDTO = await this.map.one(mp);
-
+    const version = this.easeyContentService.monitorPlanSchema?.version;
+    const mpDTO = {version, ...await this.map.one(mp)};
     if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurationData = uscDTO;
     }
-
-    mpDTO.version = this.easeyContentService.monitorPlanSchema?.version;
 
     if (rptValuesOnly) {
       await removeNonReportedValues(mpDTO);
