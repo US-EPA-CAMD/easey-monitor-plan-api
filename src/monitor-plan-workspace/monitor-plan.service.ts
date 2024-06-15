@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
+import { MonitorPlanReportingFreqDTO } from '../dtos/monitor-plan-reporting-freq.dto';
 import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
@@ -288,9 +289,17 @@ export class MonitorPlanWorkspaceService {
         endReportPeriodId,
       );
 
-      // TODO: Update the end report period and reporting frequency of the active plan.
+      // Get the period ID of the period before the new plan's begin period.
+      const updatedEndPeriodId = await this.reportingPeriodRepository.getPreviousPeriodId(
+        newPlan.beginReportPeriodId,
+      );
 
-      this.repository.resetToNeedsEvaluation(activePlan.id, userId);
+      // Update the end report period of the previously active plan.
+      await this.updateEndReportingPeriod(
+        activePlan,
+        updatedEndPeriodId,
+        userId,
+      );
 
       // Set the new plan as the active plan.
       activePlan = newPlan;
@@ -315,9 +324,12 @@ export class MonitorPlanWorkspaceService {
           );
         }
 
-        // TODO: Update the end report period and reporting frequency of the active plan.
-
-        this.repository.resetToNeedsEvaluation(activePlan.id, userId);
+        // Update the end report period of the active plan.
+        await this.updateEndReportingPeriod(
+          activePlan,
+          endReportPeriodId,
+          userId,
+        );
       }
     }
 
@@ -358,6 +370,71 @@ export class MonitorPlanWorkspaceService {
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
     return this.repository.updateDateAndUserId(monPlanId, userId);
+  }
+
+  async updateEndReportingPeriod(
+    plan: MonitorPlanDTO,
+    newEndReportPeriodId: number,
+    userId: string,
+  ) {
+    const planRecord = await this.repository.findOneBy({ id: plan.id });
+    planRecord.endReportPeriodId = newEndReportPeriodId;
+    await this.repository.save(planRecord);
+
+    // Update the reporting frequency records of the previously active plan.
+    const {
+      year: updatedEndYear,
+      quarter: updatedEndQuarter,
+    } = await this.reportingPeriodRepository.getYearAndQuarterFromId(
+      newEndReportPeriodId,
+    );
+
+    let latestReportingFrequency: MonitorPlanReportingFreqDTO;
+    let latestReportingFrequencyYear: number;
+    let latestReportingFrequencyQuarter: number;
+
+    for (const rf of plan.reportingFrequencies) {
+      // Get the year and quarter of the begin period of the reporting frequency.
+      const {
+        year: rfBeginYear,
+        quarter: rfBeginQuarter,
+      } = await this.reportingPeriodRepository.getYearAndQuarterFromId(
+        rf.beginReportPeriodId,
+      );
+
+      // If the begin period of the reporting frequency is after the updated end period, delete the record.
+      if (
+        rfBeginYear > updatedEndYear ||
+        (rfBeginYear === updatedEndYear && rfBeginQuarter > updatedEndQuarter)
+      ) {
+        await this.reportingFreqRepository.delete(rf.id);
+      } else {
+        // Compare the reporting frequencies and store the latest one for a later update.
+        if (!latestReportingFrequency) {
+          latestReportingFrequency = rf;
+        } else {
+          if (
+            rfBeginYear > latestReportingFrequencyYear ||
+            (rfBeginYear === latestReportingFrequencyYear &&
+              rfBeginQuarter > latestReportingFrequencyQuarter)
+          ) {
+            latestReportingFrequency = rf;
+            latestReportingFrequencyYear = rfBeginYear;
+            latestReportingFrequencyQuarter = rfBeginQuarter;
+          }
+        }
+      }
+    }
+    if (latestReportingFrequency) {
+      // Update the end report period of the latest reporting frequency.
+      const latestReportingFrequencyRecord = await this.reportingFreqRepository.findOneBy(
+        { id: latestReportingFrequency.id },
+      );
+      latestReportingFrequencyRecord.endReportPeriodId = newEndReportPeriodId;
+      await this.reportingFreqRepository.save(latestReportingFrequencyRecord);
+    }
+
+    this.repository.resetToNeedsEvaluation(plan.id, userId);
   }
 
   async resetToNeedsEvaluation(locId: string, userId: string): Promise<void> {
