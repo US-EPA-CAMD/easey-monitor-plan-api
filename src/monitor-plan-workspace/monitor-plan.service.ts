@@ -227,6 +227,7 @@ export class MonitorPlanWorkspaceService {
     // TODO: Start transaction.
 
     /* MONITOR LOCATION MERGE LOGIC */
+
     const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
       plan,
       facilityId,
@@ -234,6 +235,7 @@ export class MonitorPlanWorkspaceService {
     );
 
     /* UNIT STACK CONFIGURATION MERGE LOGIC */
+
     const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
       plan,
       facilityId,
