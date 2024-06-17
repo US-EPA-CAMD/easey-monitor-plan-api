@@ -9,8 +9,9 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { Unit } from './unit.entity';
+import { Program } from './program.entity';
 
-@Entity({ name: 'camd.unit-program' })
+@Entity({ name: 'camd.unit_program' })
 export class UnitProgram extends BaseEntity {
   @PrimaryColumn({
     name: 'up_id',
@@ -139,4 +140,11 @@ export class UnitProgram extends BaseEntity {
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;
+
+  @ManyToOne(
+    () => Program,
+    program => program.unitPrograms,
+  )
+  @JoinColumn({ name: 'prg_id' })
+  program: Program;
 }

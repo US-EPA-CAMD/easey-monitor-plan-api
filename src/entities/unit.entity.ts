@@ -112,9 +112,7 @@ export class Unit extends BaseEntity {
   @OneToMany(
     () => UnitProgram,
     up => up.unit,
-    { eager: true },
   )
-  @JoinColumn({ name: 'unit_id' })
   unitPrograms: UnitProgram[];
 
   @OneToMany(
