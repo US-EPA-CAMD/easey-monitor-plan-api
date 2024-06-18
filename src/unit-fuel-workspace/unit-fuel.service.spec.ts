@@ -90,7 +90,12 @@ describe('UnitFuelService', () => {
 
   describe('createUnitFuel', () => {
     it('creates a unit fuel record for a specified unit ID', async () => {
-      const result = await service.createUnitFuel('1', 1, payload, 'testUser');
+      const result = await service.createUnitFuel({
+        locationId: '1',
+        unitId: 1,
+        payload,
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedUnitFuel);
     });
   });
@@ -98,13 +103,12 @@ describe('UnitFuelService', () => {
   describe('updateUnitFuel', () => {
     it('updates a unit fuel record for a specified unit fuel ID', async () => {
       jest.spyOn(repository, 'getUnitFuel').mockResolvedValue(unitFuel);
-      const result = await service.updateUnitFuel(
-        '1',
-        1,
-        '1',
+      const result = await service.updateUnitFuel({
+        locationId: '1',
+        unitFuelId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedUnitFuel);
     });
   });

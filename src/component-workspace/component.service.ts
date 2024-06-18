@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
@@ -116,15 +117,18 @@ export class ComponentWorkspaceService {
     location: UpdateMonitorLocationDTO,
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
+        const repository =
+          trx?.withRepository(this.repository) ?? this.repository;
         const innerPromises = [];
         for (const component of location.componentData) {
           innerPromises.push(
             new Promise(innerResolve => {
               (async () => {
-                let compRecord = await this.repository.getComponentByLocIdAndCompId(
+                let compRecord = await repository.getComponentByLocIdAndCompId(
                   locationId,
                   component.componentId,
                 );
@@ -132,28 +136,32 @@ export class ComponentWorkspaceService {
                 if (!compRecord) {
                   // Check used_identifier table to see if the componentId has already
                   // been used, and if so grab that component record for update
-                  let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                    locationId,
-                    component.componentId,
-                    'C',
-                  );
+                  let usedIdentifier = await (
+                    trx?.withRepository(this.usedIdRepo) ?? this.usedIdRepo
+                  ).getBySpecs(locationId, component.componentId, 'C');
 
                   if (usedIdentifier)
-                    compRecord = await this.repository.findOneBy({
+                    compRecord = await repository.findOneBy({
                       id: usedIdentifier.id,
                     });
                 }
 
                 if (compRecord) {
-                  await this.updateComponent(
+                  await this.updateComponent({
                     locationId,
-                    compRecord,
+                    componentRecord: compRecord,
+                    payload: component,
+                    userId,
+                    trx,
+                  });
+                } else {
+                  await this.createComponent(
+                    locationId,
                     component,
                     userId,
+                    trx,
                   );
-                } else {
-                  await this.createComponent(locationId, component, userId);
-                  compRecord = await this.repository.getComponentByLocIdAndCompId(
+                  compRecord = await repository.getComponentByLocIdAndCompId(
                     locationId,
                     component.componentId,
                   );
@@ -164,6 +172,7 @@ export class ComponentWorkspaceService {
                   locationId,
                   component.analyzerRangeData,
                   userId,
+                  trx,
                 );
 
                 innerResolve(true);
@@ -177,12 +186,19 @@ export class ComponentWorkspaceService {
     });
   }
 
-  async updateComponent(
-    locationId: string,
-    componentRecord: Component,
-    payload: UpdateComponentBaseDTO,
-    userId: string,
-  ): Promise<ComponentDTO> {
+  async updateComponent({
+    locationId,
+    componentRecord,
+    payload,
+    userId,
+    trx,
+  }: {
+    locationId: string;
+    componentRecord: Component;
+    payload: UpdateComponentBaseDTO;
+    userId: string;
+    trx?: EntityManager;
+  }): Promise<ComponentDTO> {
     componentRecord.modelVersion = payload.modelVersion;
     componentRecord.serialNumber = payload.serialNumber;
     componentRecord.hgConverterIndicator = payload.hgConverterIndicator;
@@ -195,8 +211,11 @@ export class ComponentWorkspaceService {
     componentRecord.userId = userId;
     componentRecord.updateDate = currentDateTime();
 
-    const result = await this.repository.save(componentRecord);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).save(componentRecord);
+
+    await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
 
     return this.map.one(result);
   }
@@ -205,8 +224,10 @@ export class ComponentWorkspaceService {
     locationId: string,
     payload: UpdateComponentBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<ComponentDTO> {
-    const component = this.repository.create({
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const component = repository.create({
       id: uuid(),
       locationId,
       componentId: payload.componentId,
@@ -223,8 +244,10 @@ export class ComponentWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(component);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    const result = await repository.save(component);
+
+    await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+
     return this.map.one(result);
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
@@ -29,12 +30,15 @@ export class UnitService {
     return errorList;
   }
 
-  async importUnit(unitRecord: Unit, nonLoadI: number) {
+  async importUnit(unitRecord: Unit, nonLoadI: number, trx?: EntityManager) {
     return new Promise(resolve => {
       (async () => {
-        await this.repository.update(unitRecord.id, {
-          nonLoadBasedIndicator: nonLoadI,
-        });
+        await (trx?.withRepository(this.repository) ?? this.repository).update(
+          unitRecord.id,
+          {
+            nonLoadBasedIndicator: nonLoadI,
+          },
+        );
         resolve(true);
       })();
     });
@@ -43,8 +47,9 @@ export class UnitService {
   async getUnitByNameAndFacId(
     nameId: string,
     facilityId: number,
+    trx?: EntityManager, // Use for transactions
   ): Promise<Unit> {
-    return this.repository.findOne({
+    return (trx?.withRepository(this.repository) ?? this.repository).findOne({
       where: { name: nameId, facId: facilityId },
     });
   }

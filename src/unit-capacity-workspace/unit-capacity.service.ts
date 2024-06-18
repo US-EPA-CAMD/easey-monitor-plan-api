@@ -1,17 +1,17 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { UnitCapacityMap } from '../maps/unit-capacity.map';
-import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
-
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   UnitCapacityBaseDTO,
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
+import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -29,6 +29,7 @@ export class UnitCapacityWorkspaceService {
     unitId: number,
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -38,29 +39,33 @@ export class UnitCapacityWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
+                const unitCapacityRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getUnitCapacityByUnitIdAndDate(
                   unitId,
                   unitCapacity.beginDate,
                   unitCapacity.endDate,
                 );
 
                 if (unitCapacityRecord) {
-                  await this.updateUnitCapacity(
+                  await this.updateUnitCapacity({
                     locationId,
-                    unitId,
-                    unitCapacityRecord.id,
-                    unitCapacity,
+                    unitRecordId: unitId,
+                    unitCapacityId: unitCapacityRecord.id,
+                    payload: unitCapacity,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createUnitCapacity(
+                  await this.createUnitCapacity({
                     locationId,
                     unitId,
-                    unitCapacity,
+                    payload: unitCapacity,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 }
                 innerResolve(true);
               })();
@@ -87,8 +92,11 @@ export class UnitCapacityWorkspaceService {
     locId: string,
     unitId: number,
     unitCapacityId: string,
+    trx?: EntityManager,
   ): Promise<UnitCapacityDTO> {
-    const result = await this.repository.getUnitCapacity(unitCapacityId);
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).getUnitCapacity(unitCapacityId);
     if (!result) {
       throw new EaseyException(
         new Error('Unit Capacity Not Found.'),
@@ -102,14 +110,23 @@ export class UnitCapacityWorkspaceService {
     return this.map.one(result);
   }
 
-  async createUnitCapacity(
-    locationId: string,
-    unitId: number,
-    payload: UnitCapacityBaseDTO,
-    userId: string,
+  async createUnitCapacity({
+    locationId,
+    unitId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitCapacityDTO> {
-    const unitCapacity = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    unitId: number;
+    payload: UnitCapacityBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitCapacityDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const unitCapacity = repository.create({
       id: uuid(),
       unitId,
       maximumHourlyHeatInputCapacity: payload.maximumHourlyHeatInputCapacity,
@@ -120,24 +137,34 @@ export class UnitCapacityWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(unitCapacity);
+    const result = await repository.save(unitCapacity);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
-    return this.getUnitCapacity(locationId, unitId, result.id);
+    return this.getUnitCapacity(locationId, unitId, result.id, trx);
   }
 
-  async updateUnitCapacity(
-    locationId: string,
-    unitRecordId: number,
-    unitCapacityId: string,
-    payload: UnitCapacityBaseDTO,
-    userId: string,
+  async updateUnitCapacity({
+    locationId,
+    unitRecordId,
+    unitCapacityId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitCapacityDTO> {
-    const unitCapacity = await this.repository.getUnitCapacity(unitCapacityId);
+    trx,
+  }: {
+    locationId: string;
+    unitRecordId: number;
+    unitCapacityId: string;
+    payload: UnitCapacityBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitCapacityDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const unitCapacity = await repository.getUnitCapacity(unitCapacityId);
 
     unitCapacity.maximumHourlyHeatInputCapacity =
       payload.maximumHourlyHeatInputCapacity;
@@ -146,10 +173,10 @@ export class UnitCapacityWorkspaceService {
     unitCapacity.userId = userId;
     unitCapacity.updateDate = currentDateTime();
 
-    await this.repository.save(unitCapacity);
+    await repository.save(unitCapacity);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(unitCapacity);

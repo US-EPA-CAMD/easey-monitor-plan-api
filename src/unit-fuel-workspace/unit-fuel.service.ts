@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
@@ -45,14 +46,24 @@ export class UnitFuelWorkspaceService {
     return this.map.one(result);
   }
 
-  async createUnitFuel(
-    locationId: string,
-    unitId: number,
-    payload: UnitFuelBaseDTO,
-    userId: string,
+  async createUnitFuel({
+    locationId,
+    unitId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitFuelDTO> {
-    const unitFuel = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    unitId: number;
+    payload: UnitFuelBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitFuelDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const unitFuel = repository.create({
       id: uuid(),
       unitId: unitId,
       fuelCode: payload.fuelCode,
@@ -67,24 +78,32 @@ export class UnitFuelWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(unitFuel);
+    const result = await repository.save(unitFuel);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
   }
 
-  async updateUnitFuel(
-    locationId: string,
-    unitId: number,
-    unitFuelId: string,
-    payload: UnitFuelBaseDTO,
-    userId: string,
+  async updateUnitFuel({
+    locationId,
+    unitFuelId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitFuelDTO> {
-    const unitFuel = await this.repository.findOneBy({ id: unitFuelId });
+    trx,
+  }: {
+    locationId: string;
+    unitFuelId: string;
+    payload: UnitFuelBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitFuelDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const unitFuel = await repository.findOneBy({ id: unitFuelId });
 
     unitFuel.fuelCode = payload.fuelCode;
     unitFuel.indicatorCode = payload.indicatorCode;
@@ -96,10 +115,10 @@ export class UnitFuelWorkspaceService {
     unitFuel.userId = userId;
     unitFuel.updateDate = currentDateTime();
 
-    await this.repository.save(unitFuel);
+    await repository.save(unitFuel);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(unitFuel);
@@ -110,6 +129,7 @@ export class UnitFuelWorkspaceService {
     unitId: number,
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -119,7 +139,9 @@ export class UnitFuelWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const unitFuelRecord = await this.repository.getUnitFuelBySpecs(
+                const unitFuelRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getUnitFuelBySpecs(
                   unitId,
                   unitFuel.fuelCode,
                   unitFuel.beginDate,
@@ -127,22 +149,22 @@ export class UnitFuelWorkspaceService {
                 );
 
                 if (unitFuelRecord) {
-                  await this.updateUnitFuel(
+                  await this.updateUnitFuel({
                     locationId,
-                    unitId,
-                    unitFuelRecord.id,
-                    unitFuel,
+                    unitFuelId: unitFuelRecord.id,
+                    payload: unitFuel,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createUnitFuel(
+                  await this.createUnitFuel({
                     locationId,
                     unitId,
-                    unitFuel,
+                    payload: unitFuel,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                  });
                 }
 
                 innerResolve(true);

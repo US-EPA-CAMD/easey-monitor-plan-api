@@ -73,7 +73,6 @@ describe('UnitFuelWorkspaceController', () => {
       expect(
         await controller.updateUnitFuel(
           locId,
-          unitRecordId,
           unitFuelId,
           payload,
           currentUser,

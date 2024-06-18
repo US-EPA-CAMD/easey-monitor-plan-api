@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -27,8 +28,13 @@ export class AnalyzerRangeWorkspaceService {
     return this.map.many(results);
   }
 
-  async getAnalyzerRange(analyzerRangeId: string): Promise<AnalyzerRange> {
-    const result = await this.repository.findOneBy({ id: analyzerRangeId });
+  async getAnalyzerRange(
+    analyzerRangeId: string,
+    trx?: EntityManager,
+  ): Promise<AnalyzerRange> {
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).findOneBy({ id: analyzerRangeId });
 
     if (!result) {
       throw new EaseyException(
@@ -41,14 +47,24 @@ export class AnalyzerRangeWorkspaceService {
     return result;
   }
 
-  async createAnalyzerRange(
-    componentRecordId: string,
-    payload: AnalyzerRangeBaseDTO,
-    locationId: string,
-    userId: string,
+  async createAnalyzerRange({
+    componentRecordId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<AnalyzerRangeDTO> {
-    const analyzerRange = this.repository.create({
+    trx,
+  }: {
+    componentRecordId: string;
+    payload: AnalyzerRangeBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<AnalyzerRangeDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const analyzerRange = repository.create({
       id: uuid(),
       componentRecordId,
       analyzerRangeCode: payload.analyzerRangeCode,
@@ -62,23 +78,31 @@ export class AnalyzerRangeWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(analyzerRange);
+    await repository.save(analyzerRange);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(analyzerRange);
   }
 
-  async updateAnalyzerRange(
-    analyzerRangeId: string,
-    payload: AnalyzerRangeBaseDTO,
-    locationId: string,
-    userId: string,
+  async updateAnalyzerRange({
+    analyzerRangeId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<AnalyzerRangeDTO> {
-    const analyzerRange = await this.getAnalyzerRange(analyzerRangeId);
+    trx,
+  }: {
+    analyzerRangeId: string;
+    payload: AnalyzerRangeBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<AnalyzerRangeDTO> {
+    const analyzerRange = await this.getAnalyzerRange(analyzerRangeId, trx);
 
     analyzerRange.analyzerRangeCode = payload.analyzerRangeCode;
     analyzerRange.dualRangeIndicator = payload.dualRangeIndicator;
@@ -89,10 +113,12 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.userId = userId;
     analyzerRange.updateDate = currentDateTime();
 
-    await this.repository.save(analyzerRange);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(
+      analyzerRange,
+    );
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(analyzerRange);
@@ -101,12 +127,10 @@ export class AnalyzerRangeWorkspaceService {
   async importAnalyzerRange(
     componentId: string,
     locationId: string,
-    analyzerRanges: AnalyzerRangeBaseDTO[],
+    analyzerRanges: AnalyzerRangeBaseDTO[] = [],
     userId: string,
+    trx?: EntityManager,
   ) {
-    if (!analyzerRanges) {
-      analyzerRanges = [];
-    }
     return new Promise(resolve => {
       (async () => {
         const promises = [];
@@ -114,27 +138,31 @@ export class AnalyzerRangeWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const analyzerRangeRecord = await this.repository.getAnalyzerRangeByComponentIdAndDate(
+                const analyzerRangeRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getAnalyzerRangeByComponentIdAndDate(
                   componentId,
                   analyzerRange,
                 );
 
                 if (analyzerRangeRecord) {
-                  await this.updateAnalyzerRange(
-                    analyzerRangeRecord.id,
-                    analyzerRange,
+                  await this.updateAnalyzerRange({
+                    analyzerRangeId: analyzerRangeRecord.id,
+                    payload: analyzerRange,
                     locationId,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createAnalyzerRange(
-                    componentId,
-                    analyzerRange,
+                  await this.createAnalyzerRange({
+                    componentRecordId: componentId,
+                    payload: analyzerRange,
                     locationId,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 }
 
                 innerResolve(true);

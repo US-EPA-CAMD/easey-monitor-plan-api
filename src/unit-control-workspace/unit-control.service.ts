@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
@@ -32,6 +33,7 @@ export class UnitControlWorkspaceService {
     unitRecordId: number,
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -41,7 +43,9 @@ export class UnitControlWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const unitControlRecord = await this.repository.getUnitControlBySpecs(
+                const unitControlRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getUnitControlBySpecs(
                   unitRecordId,
                   unitControl.parameterCode,
                   unitControl.controlCode,
@@ -50,22 +54,24 @@ export class UnitControlWorkspaceService {
                 );
 
                 if (unitControlRecord) {
-                  await this.updateUnitControl(
+                  await this.updateUnitControl({
                     locationId,
                     unitRecordId,
-                    unitControlRecord.id,
-                    unitControl,
+                    unitControlId: unitControlRecord.id,
+                    payload: unitControl,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createUnitControl(
+                  await this.createUnitControl({
                     locationId,
                     unitRecordId,
-                    unitControl,
+                    payload: unitControl,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 }
 
                 innerResolve(true);
@@ -81,14 +87,24 @@ export class UnitControlWorkspaceService {
     });
   }
 
-  async createUnitControl(
-    locationId: string,
-    unitRecordId: number,
-    payload: UnitControlBaseDTO,
-    userId: string,
+  async createUnitControl({
+    locationId,
+    unitRecordId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitControlDTO> {
-    const unitControl = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    unitRecordId: number;
+    payload: UnitControlBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitControlDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const unitControl = repository.create({
       id: uuid(),
       unitId: unitRecordId,
       controlCode: payload.controlCode,
@@ -103,24 +119,34 @@ export class UnitControlWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(unitControl);
+    const result = await repository.save(unitControl);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
   }
 
-  async updateUnitControl(
-    locationId: string,
-    unitRecordId: number,
-    unitControlId: string,
-    payload: UnitControlBaseDTO,
-    userId: string,
+  async updateUnitControl({
+    locationId,
+    unitRecordId,
+    unitControlId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitControlDTO> {
-    const unitControl = await this.repository.getUnitControl(unitControlId);
+    trx,
+  }: {
+    locationId: string;
+    unitRecordId: number;
+    unitControlId: string;
+    payload: UnitControlBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitControlDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const unitControl = await repository.getUnitControl(unitControlId);
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;
@@ -132,10 +158,10 @@ export class UnitControlWorkspaceService {
     unitControl.userId = userId;
     unitControl.updateDate = currentDateTime();
 
-    await this.repository.save(unitControl);
+    await repository.save(unitControl);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(unitControl);

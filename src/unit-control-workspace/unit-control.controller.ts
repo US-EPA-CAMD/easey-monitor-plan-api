@@ -61,13 +61,13 @@ export class UnitControlWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<UnitControlDTO> {
     await this.checksService.runChecks(unitId, payload, false, true);
-    return this.service.updateUnitControl(
-      locId,
-      unitId,
+    return this.service.updateUnitControl({
+      locationId: locId,
+      unitRecordId: unitId,
       unitControlId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -91,6 +91,11 @@ export class UnitControlWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<UnitControlDTO> {
     await this.checksService.runChecks(unitId, payload);
-    return this.service.createUnitControl(locId, unitId, payload, user.userId);
+    return this.service.createUnitControl({
+      locationId: locId,
+      unitRecordId: unitId,
+      payload,
+      userId: user.userId,
+    });
   }
 }

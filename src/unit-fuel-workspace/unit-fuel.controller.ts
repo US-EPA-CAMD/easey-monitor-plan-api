@@ -50,18 +50,16 @@ export class UnitFuelWorkspaceController {
   })
   async updateUnitFuel(
     @Param('locId') locId: string,
-    @Param('unitId') unitId: number,
     @Param('unitFuelId') unitFuelId: string,
     @Body() payload: UnitFuelBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
-    return this.service.updateUnitFuel(
-      locId,
-      unitId,
+    return this.service.updateUnitFuel({
+      locationId: locId,
       unitFuelId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -84,6 +82,11 @@ export class UnitFuelWorkspaceController {
     @Body() payload: UnitFuelBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
-    return this.service.createUnitFuel(locId, unitId, payload, user.userId);
+    return this.service.createUnitFuel({
+      locationId: locId,
+      unitId,
+      payload,
+      userId: user.userId,
+    });
   }
 }

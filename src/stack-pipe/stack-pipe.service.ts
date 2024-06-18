@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorLocationBaseDTO } from '../dtos/monitor-location-base.dto';
@@ -15,6 +16,7 @@ export class StackPipeService {
     loc: MonitorLocationBaseDTO,
     facId: number,
     userId: string,
+    trx?: EntityManager,
   ) {
     if (!loc.stackPipeId) {
       throw new EaseyException(
@@ -23,7 +25,9 @@ export class StackPipeService {
       );
     }
 
-    const stackPipe = this.repository.create({
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const stackPipe = repository.create({
       id: uuid(),
       activeDate: loc.activeDate,
       facId,
@@ -34,25 +38,33 @@ export class StackPipeService {
       updateDate: currentDateTime(),
     });
 
-    return await this.repository.save(stackPipe);
+    return await repository.save(stackPipe);
   }
 
   async getStackByNameAndFacId(
     nameId: string,
     facilityId: number,
+    trx?: EntityManager,
   ): Promise<StackPipe> {
-    return this.repository.findOneBy({
+    return (trx?.withRepository(this.repository) ?? this.repository).findOneBy({
       name: nameId,
       facId: facilityId,
     });
   }
 
-  async importStackPipe(stackPipeRecord: StackPipe, retireDate: Date) {
+  async importStackPipe(
+    stackPipeRecord: StackPipe,
+    retireDate: Date,
+    trx?: EntityManager,
+  ) {
     return new Promise(resolve => {
       (async () => {
-        await this.repository.update(stackPipeRecord.id, {
-          retireDate,
-        });
+        await (trx?.withRepository(this.repository) ?? this.repository).update(
+          stackPipeRecord.id,
+          {
+            retireDate,
+          },
+        );
         resolve(true);
       })();
     });

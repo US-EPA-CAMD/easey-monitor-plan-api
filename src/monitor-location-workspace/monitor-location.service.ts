@@ -6,8 +6,9 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
@@ -65,10 +66,12 @@ export class MonitorLocationWorkspaceService {
   async createMonitorLocationRecord({
     unitId,
     stackPipeId,
+    trx,
     userId,
   }: {
     unitId?: number;
     stackPipeId?: string;
+    trx?: EntityManager;
     userId?: string;
   }) {
     if (!unitId && !stackPipeId) {
@@ -78,7 +81,9 @@ export class MonitorLocationWorkspaceService {
       );
     }
 
-    const monitorLocation = this.repository.create({
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const monitorLocation = repository.create({
       id: uuid(),
       addDate: currentDateTime(),
       stackPipeId,
@@ -87,7 +92,7 @@ export class MonitorLocationWorkspaceService {
       userId,
     });
 
-    return await this.repository.save(monitorLocation);
+    return await repository.save(monitorLocation);
   }
 
   async getMonitorLocationsByFacilityAndOris(
@@ -131,27 +136,38 @@ export class MonitorLocationWorkspaceService {
     facilityId: number,
     orisCode: number,
   ) {
-    return await this.getOrCreateLocationRecord(
+    return await this.getOrCreateLocationRecord({
       loc,
       facilityId,
       orisCode,
-      false,
-    );
+      create: false,
+    });
   }
 
-  async getOrCreateLocationRecord(
-    loc: UpdateMonitorLocationDTO,
-    facilityId: number,
-    orisCode: number,
-    create: boolean,
-    userId?: string,
-  ): Promise<MonitorLocation> {
+  async getOrCreateLocationRecord({
+    create,
+    facilityId,
+    loc,
+    orisCode,
+    trx,
+    userId,
+  }: {
+    create: boolean;
+    facilityId: number;
+    loc: UpdateMonitorLocationDTO;
+    orisCode: number;
+    trx?: EntityManager;
+    userId?: string;
+  }): Promise<MonitorLocation> {
     let location: MonitorLocation;
+
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
 
     if (loc.unitId) {
       const unit = await this.unitService.getUnitByNameAndFacId(
         loc.unitId,
         facilityId,
+        trx,
       );
 
       if (!unit) {
@@ -164,7 +180,7 @@ export class MonitorLocationWorkspaceService {
         );
       }
 
-      location = await this.repository.findOne({
+      location = await repository.findOne({
         where: {
           unitId: unit.id,
         },
@@ -175,6 +191,7 @@ export class MonitorLocationWorkspaceService {
       let stackPipe = await this.stackPipeService.getStackByNameAndFacId(
         loc.stackPipeId,
         facilityId,
+        trx,
       );
 
       if (!stackPipe && create) {
@@ -183,12 +200,13 @@ export class MonitorLocationWorkspaceService {
           loc,
           facilityId,
           userId,
+          trx,
         );
       }
 
       location =
         stackPipe &&
-        (await this.repository.findOne({
+        (await repository.findOne({
           where: {
             stackPipeId: stackPipe.id,
           },
@@ -197,6 +215,8 @@ export class MonitorLocationWorkspaceService {
       if (!location && create) {
         location = await this.createMonitorLocationRecord({
           stackPipeId: stackPipe.id,
+          trx,
+          userId,
         });
       }
     }
@@ -225,6 +245,7 @@ export class MonitorLocationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
+    trx?: EntityManager, // Use if running inside a transaction
   ) {
     const locations: MonitorLocationDTO[] = [];
 
@@ -240,23 +261,28 @@ export class MonitorLocationWorkspaceService {
 
                 // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
                 const monitorLocationRecord = await this.getOrCreateLocationRecord(
-                  location,
-                  facilityId,
-                  plan.orisCode,
-                  true,
-                  userId,
+                  {
+                    loc: location,
+                    facilityId,
+                    orisCode: plan.orisCode,
+                    create: true,
+                    trx,
+                    userId,
+                  },
                 );
 
                 if (location.unitId) {
                   const unitRecord = await this.unitService.getUnitByNameAndFacId(
                     location.unitId,
                     facilityId,
+                    trx,
                   );
 
                   innerPromises.push(
                     this.unitService.importUnit(
                       unitRecord,
                       location.nonLoadBasedIndicator,
+                      trx,
                     ),
                   );
 
@@ -270,6 +296,7 @@ export class MonitorLocationWorkspaceService {
                         unitRecord.id,
                         monitorLocationRecord.id,
                         userId,
+                        trx,
                       ),
                     );
                   }
@@ -284,6 +311,7 @@ export class MonitorLocationWorkspaceService {
                         unitRecord.id,
                         monitorLocationRecord.id,
                         userId,
+                        trx,
                       ),
                     );
                   }
@@ -298,6 +326,7 @@ export class MonitorLocationWorkspaceService {
                         unitRecord.id,
                         monitorLocationRecord.id,
                         userId,
+                        trx,
                       ),
                     );
                   }
@@ -307,12 +336,14 @@ export class MonitorLocationWorkspaceService {
                   const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
                     location.stackPipeId,
                     facilityId,
+                    trx,
                   );
 
                   innerPromises.push(
                     this.stackPipeService.importStackPipe(
                       stackPipeRecord,
                       location.retireDate,
+                      trx,
                     ),
                   );
                 }
@@ -326,6 +357,7 @@ export class MonitorLocationWorkspaceService {
                       location,
                       monitorLocationRecord.id,
                       userId,
+                      trx,
                     ),
                   );
                 }
