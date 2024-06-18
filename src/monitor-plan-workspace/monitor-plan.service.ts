@@ -12,6 +12,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
+import { UnitProgramRepository } from '../unit-program/unit-program.repository';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
@@ -45,6 +46,14 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
+type ProgramPeriod = [number, number, string]; // [year, quarter, program type]
+
+type ProgramRange = {
+  type: 'annual' | 'ozone';
+  begin: { year: number; quarter: number } | null;
+  end: { year: number; quarter: number } | null;
+};
+
 @Injectable()
 export class MonitorPlanWorkspaceService {
   constructor(
@@ -77,6 +86,7 @@ export class MonitorPlanWorkspaceService {
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
     private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
+    private readonly unitProgramRepository: UnitProgramRepository,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -89,7 +99,7 @@ export class MonitorPlanWorkspaceService {
     private map: MonitorPlanMap,
   ) {}
 
-  private async calcluateReportPeriodRange(
+  private async calculateReportPeriodRange(
     monitorLocations: MonitorLocationDTO[],
     unitStackConfigs: UnitStackConfigurationDTO[],
   ) {
@@ -156,24 +166,23 @@ export class MonitorPlanWorkspaceService {
         .reduce((max, cur) => {
           if (!max) return cur;
           if (!cur) return max;
-          return cur.getTime() > max.getTime() ? max : cur;
+          return new Date(Math.max(cur.getTime(), max.getTime()));
         }, null);
       endDate = unitStackConfigs
         .map(u => u.endDate)
         .reduce((min, cur) => {
           if (!min) return cur;
           if (!cur) return min;
-          return cur.getTime() < min.getTime() ? min : cur;
+          return new Date(Math.min(cur.getTime(), min.getTime()));
         }, null);
     }
 
     // Convert the begin and end dates to report periods IDs.
-    const beginReportPeriodId = await this.reportingPeriodRepository.getIdFromDate(
-      beginDate,
-    );
-    const endReportPeriodId = await this.reportingPeriodRepository.getIdFromDate(
-      endDate,
-    );
+    const beginReportPeriodId =
+      beginDate &&
+      (await this.reportingPeriodRepository.getByDate(beginDate)).id;
+    const endReportPeriodId =
+      endDate && (await this.reportingPeriodRepository.getByDate(endDate)).id;
 
     return [beginReportPeriodId, endReportPeriodId];
   }
@@ -203,7 +212,153 @@ export class MonitorPlanWorkspaceService {
       ),
     );
 
-    // TODO: Create the reporting frequency record(s).
+    // Create the reporting frequency record(s).
+    const unitIds = locations
+      .map(l => l.unitRecordId)
+      .filter(id => id !== null);
+    const unitPrograms = await this.unitProgramRepository.getUnitProgramsByUnitIds(
+      unitIds,
+    );
+
+    // Get the program ranges and types from the unit programs.
+    const programRanges: ProgramRange[] = await Promise.all(
+      unitPrograms
+        .filter(up => up.unitMonitorCertBeginDate !== null)
+        .map(async up => {
+          const [begin, end] = await Promise.all([
+            this.reportingPeriodRepository.getByDate(
+              up.unitMonitorCertBeginDate,
+            ),
+            up.endDate && this.reportingPeriodRepository.getByDate(up.endDate),
+          ]);
+          return {
+            type:
+              up.program.code.ozoneSeasonIndicator === 1 ? 'ozone' : 'annual',
+            begin: { year: begin.year, quarter: begin.quarter },
+            end: end && { year: end.year, quarter: end.quarter },
+          };
+        }),
+    );
+
+    // Get the begin and end report periods for the reporting frequencies.
+    const {
+      year: beginYear,
+      quarter: beginQuarter,
+    } = await this.reportingPeriodRepository.getById(beginReportPeriodId);
+
+    const { year: endYear, quarter: endQuarter } = endReportPeriodId
+      ? await this.reportingPeriodRepository.getById(endReportPeriodId) // Use the monitor plan record's end report period ID if it exists
+      : // Otherwise, calculate the end report period from the program ranges (used for calculating the reporting frequency's type, not end date)
+        programRanges.reduce(
+          (acc, cur) => ({
+            year: Math.max(acc.year, cur.end?.year ?? 0, cur.begin?.year ?? 0),
+            quarter: Math.max(
+              acc.quarter,
+              cur.end?.quarter ?? 0,
+              cur.begin?.quarter ?? 0,
+            ),
+          }),
+          {
+            year: beginYear,
+            quarter: beginQuarter,
+          },
+        );
+
+    // Separate the program ranges by type.
+    const { annualRanges, ozoneRanges } = programRanges.reduce(
+      (acc, cur) => {
+        if (cur.type === 'annual') {
+          acc.annualRanges.push(cur);
+        } else {
+          acc.ozoneRanges.push(cur);
+        }
+        return acc;
+      },
+      { annualRanges: [] as ProgramRange[], ozoneRanges: [] as ProgramRange[] },
+    );
+
+    // Determine the monitoring plan reporting frequency type for each quarter.
+    const periodFreqAssoc: ProgramPeriod[] = [];
+    let curYear = beginYear;
+    let curQuarter = beginQuarter;
+    while (curYear <= endYear && curQuarter <= endQuarter) {
+      if (
+        annualRanges.some(
+          r => r.begin.year <= curYear && curYear <= (r.end?.year ?? Infinity),
+        )
+      ) {
+        // The period includes an annual program.
+        periodFreqAssoc.push([curYear, curQuarter, 'annual']);
+      } else if (
+        ozoneRanges.some(
+          r => r.begin.year <= curYear && curYear <= (r.end?.year ?? Infinity),
+        )
+      ) {
+        // The period includes an ozone program and no annual program.
+        periodFreqAssoc.push([curYear, curQuarter, 'ozone']);
+      } else {
+        // The period includes no program, default to annual.
+        periodFreqAssoc.push([curYear, curQuarter, 'annual']);
+      }
+
+      if (curQuarter === 4) {
+        curYear++;
+        curQuarter = 1;
+      } else {
+        curQuarter++;
+      }
+    }
+
+    // Calculate reporting frequency begin and end dates from the period types.
+    function getFrequencyRanges(
+      freqsByPeriod: ProgramPeriod[],
+    ): Array<[ProgramPeriod, ProgramPeriod]> {
+      if (freqsByPeriod.length === 0) return [];
+
+      const cur = freqsByPeriod[0];
+      const [_year, _quarter, freq] = cur;
+      let nextRangeStart = freqsByPeriod.findIndex(p => p[2] !== freq);
+      if (nextRangeStart === -1) nextRangeStart = freqsByPeriod.length;
+      return [
+        [freqsByPeriod[0], freqsByPeriod[nextRangeStart - 1]],
+        ...getFrequencyRanges(freqsByPeriod.slice(nextRangeStart)),
+      ];
+    }
+    const freqRanges = getFrequencyRanges(periodFreqAssoc);
+
+    // Create the reporting frequency records.
+    await Promise.all(
+      freqRanges.map(async ([begin, end], i) => {
+        const [beginYear, beginQuarter, beginFreq] = begin;
+        const [endYear, endQuarter, endFreq] = end;
+        if (beginFreq !== endFreq) {
+          // Sanity check: the frequency must be consistent within a period.
+          throw new EaseyException(
+            new Error(
+              'The reporting frequency must be consistent within a period',
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+        const [beginReportPeriod, endReportPeriod] = await Promise.all([
+          this.reportingPeriodRepository.getByYearQuarter(
+            beginYear,
+            beginQuarter,
+          ),
+          this.reportingPeriodRepository.getByYearQuarter(endYear, endQuarter),
+        ]);
+        await this.reportingFreqRepository.createReportingFrequencyRecord({
+          beginReportPeriodId: beginReportPeriod.id,
+          endReportPeriodId:
+            i === freqRanges.length - 1
+              ? endReportPeriodId // Use the monitor plan record's end report period ID for the last frequency
+              : endReportPeriod.id,
+          monitorPlanId: monitorPlanRecord.id,
+          reportFrequencyCode: beginFreq === 'annual' ? 'Q' : 'OS',
+          userId,
+        });
+      }),
+    );
 
     return this.map.one(monitorPlanRecord);
   }
@@ -247,7 +402,7 @@ export class MonitorPlanWorkspaceService {
     const [
       beginReportPeriodId,
       endReportPeriodId,
-    ] = await this.calcluateReportPeriodRange(
+    ] = await this.calculateReportPeriodRange(
       planMonitoringLocationData,
       planUnitStackConfigurationData,
     );
@@ -387,9 +542,7 @@ export class MonitorPlanWorkspaceService {
     const {
       year: updatedEndYear,
       quarter: updatedEndQuarter,
-    } = await this.reportingPeriodRepository.getYearAndQuarterFromId(
-      newEndReportPeriodId,
-    );
+    } = await this.reportingPeriodRepository.getById(newEndReportPeriodId);
 
     let latestReportingFrequency: MonitorPlanReportingFreqDTO;
     let latestReportingFrequencyYear: number;
@@ -400,9 +553,7 @@ export class MonitorPlanWorkspaceService {
       const {
         year: rfBeginYear,
         quarter: rfBeginQuarter,
-      } = await this.reportingPeriodRepository.getYearAndQuarterFromId(
-        rf.beginReportPeriodId,
-      );
+      } = await this.reportingPeriodRepository.getById(rf.beginReportPeriodId);
 
       // If the begin period of the reporting frequency is after the updated end period, delete the record.
       if (

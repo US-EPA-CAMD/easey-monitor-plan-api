@@ -1,15 +1,6 @@
-import {
-  BaseEntity,
-  Entity,
-  Column,
-  OneToMany,
-  PrimaryColumn,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { BaseEntity, Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
-import { UnitProgram } from './unit-program.entity';
 import { Program } from './program.entity';
 
 @Entity({ name: 'camdmd.program_code' })
