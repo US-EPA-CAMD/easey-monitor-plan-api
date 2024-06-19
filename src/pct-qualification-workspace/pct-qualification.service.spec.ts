@@ -1,17 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
-import { PCTQualificationMap } from '../maps/pct-qualification.map';
-import { PCTQualificationWorkspaceService } from './pct-qualification.service';
-import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
-import { PCTQualification } from '../entities/workspace/pct-qualification.entity';
+import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import {
   PCTQualificationBaseDTO,
   PCTQualificationDTO,
 } from '../dtos/pct-qualification.dto';
+import { PCTQualification } from '../entities/workspace/pct-qualification.entity';
+import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
-import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
+import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
+import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 jest.mock('../monitor-qualification-workspace/monitor-qualification.service');
@@ -206,11 +206,18 @@ describe('PCTQualificationService', () => {
       const createPCTQualification = jest
         .spyOn(service, 'createPCTQualification')
         .mockResolvedValue(returnedPCTQualification);
-      await service.importPCTQualification(locId, qualId, [payload], userId);
+      await service.importPCTQualification(
+        locId,
+        qualId,
+        [payload],
+        userId,
+        undefined,
+      );
       expect(getPCTQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.qualificationYear,
+        undefined,
       );
       expect(createPCTQualification).toHaveBeenCalled;
     });
@@ -222,11 +229,18 @@ describe('PCTQualificationService', () => {
       const updateLMEQualification = jest
         .spyOn(service, 'createPCTQualification')
         .mockResolvedValue(returnedPCTQualification);
-      await service.importPCTQualification(locId, qualId, [payload], userId);
+      await service.importPCTQualification(
+        locId,
+        qualId,
+        [payload],
+        userId,
+        undefined,
+      );
       expect(getPCTQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.qualificationYear,
+        undefined,
       );
       expect(updateLMEQualification).toHaveBeenCalled;
     });

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { CPMSQualificationWorkspaceService } from './cpms-qualification-workspace.service';
 import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
 import {
@@ -140,11 +141,18 @@ describe('CPMSQualificationWorkspaceService', () => {
       const createCPMSQualification = jest
         .spyOn(service, 'createCPMSQualification')
         .mockResolvedValue(cpmsQualificationDto);
-      await service.importCPMSQualifications(locId, qualId, [payload], userId);
+      await service.importCPMSQualifications(
+        locId,
+        qualId,
+        [payload],
+        userId,
+        undefined,
+      );
       expect(getCPMSQualificationByStackTestNumber).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.stackTestNumber,
+        undefined,
       );
       expect(createCPMSQualification).toHaveBeenCalled;
     });
@@ -156,11 +164,18 @@ describe('CPMSQualificationWorkspaceService', () => {
       const updateCPMSQualification = jest
         .spyOn(service, 'updateCPMSQualification')
         .mockResolvedValue(cpmsQualificationDto);
-      await service.importCPMSQualifications(locId, qualId, [payload], userId);
+      await service.importCPMSQualifications(
+        locId,
+        qualId,
+        [payload],
+        userId,
+        undefined,
+      );
       expect(getCPMSQualificationByStackTestNumber).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.stackTestNumber,
+        undefined,
       );
       expect(updateCPMSQualification).toHaveBeenCalled;
     });

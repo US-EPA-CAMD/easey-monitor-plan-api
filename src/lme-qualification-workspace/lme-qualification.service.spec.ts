@@ -167,11 +167,13 @@ describe('LMEQualificationWorkspaceService', () => {
         qualId,
         [payload],
         userId,
+        undefined,
       );
       expect(getLMEQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.qualificationDataYear,
+        undefined,
       );
       expect(createLMEQualification).toHaveBeenCalled;
     });
@@ -188,11 +190,13 @@ describe('LMEQualificationWorkspaceService', () => {
         qualId,
         [payload],
         userId,
+        undefined,
       );
       expect(getLMEQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.qualificationDataYear,
+        undefined,
       );
       expect(updateLMEQualification).toHaveBeenCalled;
     });

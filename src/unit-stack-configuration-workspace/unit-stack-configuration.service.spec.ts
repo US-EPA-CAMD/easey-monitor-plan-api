@@ -269,7 +269,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         facilityId,
         userId,
       );
-      expect(response).toEqual(true);
+      expect(response).toEqual([unitStackDto]);
     });
 
     it('should create while importing unit stack config if records does not exists', async () => {
@@ -282,7 +282,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         facilityId,
         userId,
       );
-      expect(response).toEqual(true);
+      expect(response).toEqual([unitStackDto]);
     });
   });
 });

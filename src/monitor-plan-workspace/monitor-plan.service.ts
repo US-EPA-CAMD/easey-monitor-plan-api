@@ -461,6 +461,8 @@ export class MonitorPlanWorkspaceService {
         // Set the new plan as the active plan.
         activePlan = newPlan;
       } else if (reportingPeriodsChanged) {
+        console.log(beginReportPeriodId);
+        console.log(activePlan.beginReportPeriodId);
         if (beginReportPeriodId !== activePlan.beginReportPeriodId) {
           throw new EaseyException(
             new Error(
