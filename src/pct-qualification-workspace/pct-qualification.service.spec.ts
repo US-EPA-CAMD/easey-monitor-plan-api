@@ -171,12 +171,12 @@ describe('PCTQualificationService', () => {
 
   describe('createPCTQualification', () => {
     it('creates a PCT qualification for a specific qualification ID', async () => {
-      const result = await service.createPCTQualification(
-        locId,
+      const result = await service.createPCTQualification({
+        locationId: locId,
         qualId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });
@@ -187,13 +187,13 @@ describe('PCTQualificationService', () => {
         .spyOn(service, 'getPCTQualification')
         .mockResolvedValue(returnedPCTQualification);
 
-      const result = await service.updatePCTQualification(
-        locId,
+      const result = await service.updatePCTQualification({
+        locationId: locId,
         qualId,
         pctQualId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });

@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -27,8 +28,13 @@ export class MonitorMethodWorkspaceService {
     return this.map.many(results);
   }
 
-  async getMethod(methodId: string): Promise<MonitorMethod> {
-    const result = await this.repository.findOneBy({ id: methodId });
+  async getMethod(
+    methodId: string,
+    trx?: EntityManager,
+  ): Promise<MonitorMethod> {
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).findOneBy({ id: methodId });
 
     if (!result) {
       throw new EaseyException(
@@ -43,13 +49,21 @@ export class MonitorMethodWorkspaceService {
     return result;
   }
 
-  async createMethod(
-    locationId: string,
-    payload: MonitorMethodBaseDTO,
-    userId: string,
+  async createMethod({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorMethodDTO> {
-    const monMethod = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorMethodBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorMethodDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const monMethod = repository.create({
       id: uuid(),
       locationId,
       parameterCode: payload.parameterCode,
@@ -65,23 +79,31 @@ export class MonitorMethodWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(monMethod);
+    await repository.save(monMethod);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(monMethod);
   }
 
-  async updateMethod(
-    methodId: string,
-    payload: MonitorMethodBaseDTO,
-    locationId: string,
-    userId: string,
+  async updateMethod({
+    methodId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<MonitorMethodDTO> {
-    const method = await this.getMethod(methodId);
+    trx,
+  }: {
+    methodId: string;
+    payload: MonitorMethodBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorMethodDTO> {
+    const method = await this.getMethod(methodId, trx);
 
     method.parameterCode = payload.parameterCode;
     method.substituteDataCode = payload.substituteDataCode;
@@ -94,10 +116,12 @@ export class MonitorMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = currentDateTime();
 
-    await this.repository.save(method);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(
+      method,
+    );
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(method);
@@ -107,6 +131,7 @@ export class MonitorMethodWorkspaceService {
     locationId: string,
     methods: MonitorMethodBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -116,7 +141,9 @@ export class MonitorMethodWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const methodRecord = await this.repository.getMethodByLocIdParamCDBDate(
+                const methodRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getMethodByLocIdParamCDBDate(
                   locationId,
                   method.parameterCode,
                   method.beginDate,
@@ -126,15 +153,22 @@ export class MonitorMethodWorkspaceService {
                 );
 
                 if (methodRecord) {
-                  await this.updateMethod(
-                    methodRecord.id,
-                    method,
+                  await this.updateMethod({
+                    methodId: methodRecord.id,
+                    payload: method,
                     locationId,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createMethod(locationId, method, userId, true);
+                  await this.createMethod({
+                    locationId,
+                    payload: method,
+                    userId,
+                    isImport: true,
+                    trx,
+                  });
                 }
 
                 innerResolve(true);

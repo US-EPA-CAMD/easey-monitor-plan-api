@@ -16,6 +16,7 @@ import { UnitFuel } from './unit-fuel.entity';
 import { UnitControl } from './unit-control.entity';
 import { UnitCapacity } from './unit-capacity.entity';
 import { UnitBoilerType } from './unit-boiler-type.entity';
+import { UnitProgram } from './unit-program.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 
 @Entity({ name: 'camd.unit' })
@@ -114,4 +115,10 @@ export class Unit extends BaseEntity {
     { eager: true },
   )
   unitStackConfigurations: UnitStackConfiguration[];
+
+  @OneToMany(
+    () => UnitProgram,
+    up => up.unit,
+  )
+  unitPrograms: UnitProgram[];
 }

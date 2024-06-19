@@ -58,12 +58,12 @@ export class CPMSQualificationWorkspaceController {
     @Body() payload: CPMSQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<CPMSQualificationDTO> {
-    return this.service.createCPMSQualification(
-      locId,
+    return this.service.createCPMSQualification({
+      locationId: locId,
       qualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Put(':cpmsQualId')
@@ -87,12 +87,12 @@ export class CPMSQualificationWorkspaceController {
     @Body() payload: CPMSQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<CPMSQualificationDTO> {
-    return this.service.updateCPMSQualification(
-      locId,
+    return this.service.updateCPMSQualification({
+      locationId: locId,
       qualId,
       cpmsQualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

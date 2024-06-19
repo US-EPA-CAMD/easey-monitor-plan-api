@@ -100,11 +100,11 @@ export class ComponentWorkspaceService {
   async getComponentByIdentifier(
     locationId: string,
     componentId: string,
+    trx?: EntityManager,
   ): Promise<ComponentDTO> {
-    const result = await this.repository.getComponentByLocIdAndCompId(
-      locationId,
-      componentId,
-    );
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).getComponentByLocIdAndCompId(locationId, componentId);
 
     if (result) {
       return this.map.one(result);

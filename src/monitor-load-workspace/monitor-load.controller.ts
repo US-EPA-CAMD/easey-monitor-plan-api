@@ -50,7 +50,12 @@ export class MonitorLoadWorkspaceController {
     @Body() payload: MonitorLoadBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorLoadDTO> {
-    return this.service.updateLoad(locationId, spanId, payload, user.userId);
+    return this.service.updateLoad({
+      locationId,
+      loadId: spanId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -72,6 +77,10 @@ export class MonitorLoadWorkspaceController {
     @Body() payload: MonitorLoadBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorLoadDTO> {
-    return this.service.createLoad(locationId, payload, user.userId);
+    return this.service.createLoad({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 }

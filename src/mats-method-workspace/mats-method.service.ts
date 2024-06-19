@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
@@ -39,13 +40,21 @@ export class MatsMethodWorkspaceService {
     return this.map.one(result);
   }
 
-  async createMethod(
-    locationId: string,
-    payload: MatsMethodBaseDTO,
-    userId: string,
+  async createMethod({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MatsMethodDTO> {
-    const method = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MatsMethodBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MatsMethodDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const method = repository.create({
       id: uuid(),
       locationId,
       supplementalMATSParameterCode: payload.supplementalMATSParameterCode,
@@ -60,23 +69,33 @@ export class MatsMethodWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(method);
+    await repository.save(method);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(method);
   }
 
-  async updateMethod(
-    methodId: string,
-    locationId: string,
-    payload: MatsMethodBaseDTO,
-    userId: string,
+  async updateMethod({
+    methodId,
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MatsMethodDTO> {
-    const method = await this.repository.findOneBy({ id: methodId });
+    trx,
+  }: {
+    methodId: string;
+    locationId: string;
+    payload: MatsMethodBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MatsMethodDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const method = await repository.findOneBy({ id: methodId });
 
     if (!method) {
       throw new EaseyException(
@@ -99,10 +118,10 @@ export class MatsMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = currentDateTime();
 
-    await this.repository.save(method);
+    await repository.save(method);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(method);
@@ -112,6 +131,7 @@ export class MatsMethodWorkspaceService {
     locationId: string,
     matsMethods: MatsMethodBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -120,21 +140,27 @@ export class MatsMethodWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                let method = await this.repository.getMatsMethodByLodIdParamCodeAndDate(
-                  locationId,
-                  matsMethod,
-                );
+                let method = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getMatsMethodByLodIdParamCodeAndDate(locationId, matsMethod);
 
                 if (method) {
-                  await this.updateMethod(
-                    method.id,
-                    method.locationId,
-                    matsMethod,
+                  await this.updateMethod({
+                    methodId: method.id,
+                    locationId: method.locationId,
+                    payload: matsMethod,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createMethod(locationId, matsMethod, userId, true);
+                  await this.createMethod({
+                    locationId,
+                    payload: matsMethod,
+                    userId,
+                    isImport: true,
+                    trx,
+                  });
                 }
 
                 innerResolve(true);

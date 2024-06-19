@@ -87,23 +87,23 @@ describe('MonitorFormulaWorkspaceService', () => {
 
   describe('createFormula', () => {
     it('creates a FormulaCode data for a specified locationId', async () => {
-      const result = await service.createFormula(
+      const result = await service.createFormula({
         locationId,
-        monitorFormulaDTO,
+        payload: monitorFormulaDTO,
         userId,
-      );
+      });
       expect(result).toEqual({});
     });
   });
 
   describe('updateMetod', () => {
     it('updates a FormulaCode data for a specified locationId', async () => {
-      const result = await service.updateFormula(
-        formulaId,
+      const result = await service.updateFormula({
+        formulaRecordId: formulaId,
         locationId,
-        monitorFormulaDTO,
+        payload: monitorFormulaDTO,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });

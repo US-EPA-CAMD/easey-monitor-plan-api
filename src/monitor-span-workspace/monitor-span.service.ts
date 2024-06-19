@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
@@ -24,8 +25,14 @@ export class MonitorSpanWorkspaceService {
     return this.map.many(results);
   }
 
-  async getSpan(locationId: string, spanId: string): Promise<MonitorSpan> {
-    const result = await this.repository.getSpan(locationId, spanId);
+  async getSpan(
+    locationId: string,
+    spanId: string,
+    trx?: EntityManager,
+  ): Promise<MonitorSpan> {
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).getSpan(locationId, spanId);
 
     if (!result) {
       throw new EaseyException(
@@ -41,13 +48,21 @@ export class MonitorSpanWorkspaceService {
     return result;
   }
 
-  async createSpan(
-    locationId: string,
-    payload: MonitorSpanBaseDTO,
-    userId: string,
+  async createSpan({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorSpanDTO> {
-    const span = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorSpanBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorSpanDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const span = repository.create({
       id: uuid(),
       locationId,
       componentTypeCode: payload.componentTypeCode,
@@ -72,23 +87,31 @@ export class MonitorSpanWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(span);
+    await repository.save(span);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(span);
   }
 
-  async updateSpan(
-    locationId: string,
-    spanId: string,
-    payload: MonitorSpanBaseDTO,
-    userId: string,
+  async updateSpan({
+    locationId,
+    spanId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorSpanDTO> {
-    const span = await this.getSpan(locationId, spanId);
+    trx,
+  }: {
+    locationId: string;
+    spanId: string;
+    payload: MonitorSpanBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorSpanDTO> {
+    const span = await this.getSpan(locationId, spanId, trx);
 
     span.componentTypeCode = payload.componentTypeCode;
     span.spanScaleCode = payload.spanScaleCode;
@@ -110,10 +133,10 @@ export class MonitorSpanWorkspaceService {
     span.userId = userId;
     span.updateDate = currentDateTime();
 
-    await this.repository.save(span);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(span);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(span);
@@ -152,6 +175,7 @@ export class MonitorSpanWorkspaceService {
     locationId: string,
     spans: MonitorSpanBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ): Promise<boolean> {
     const promises = [];
 
@@ -159,7 +183,9 @@ export class MonitorSpanWorkspaceService {
       promises.push(
         new Promise(innerResolve => {
           (async () => {
-            const spanRecord = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
+            const spanRecord = await (
+              trx?.withRepository(this.repository) ?? this.repository
+            ).getSpanByLocIdCompTypeCdBDateBHour(
               locationId,
               span.componentTypeCode,
               span.spanScaleCode,
@@ -170,15 +196,22 @@ export class MonitorSpanWorkspaceService {
             );
 
             if (spanRecord) {
-              await this.updateSpan(
+              await this.updateSpan({
                 locationId,
-                spanRecord.id,
-                span,
+                spanId: spanRecord.id,
+                payload: span,
                 userId,
-                true,
-              );
+                isImport: true,
+                trx,
+              });
             } else {
-              await this.createSpan(locationId, span, userId, true);
+              await this.createSpan({
+                locationId,
+                payload: span,
+                userId,
+                isImport: true,
+                trx,
+              });
             }
 
             innerResolve(true);

@@ -52,7 +52,11 @@ export class MonitorMethodWorkspaceController {
     @Body() payload: MonitorMethodBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorMethodDTO> {
-    return this.service.createMethod(locId, payload, user.userId);
+    return this.service.createMethod({
+      locationId: locId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':methodId')
@@ -74,6 +78,11 @@ export class MonitorMethodWorkspaceController {
     @Body() payload: MonitorMethodBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorMethodDTO> {
-    return this.service.updateMethod(methodId, payload, locId, user.userId);
+    return this.service.updateMethod({
+      methodId,
+      payload,
+      locationId: locId,
+      userId: user.userId,
+    });
   }
 }

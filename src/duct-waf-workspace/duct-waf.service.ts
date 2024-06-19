@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
@@ -24,8 +25,10 @@ export class DuctWafWorkspaceService {
     return this.map.many(results);
   }
 
-  async getDuctWaf(id: string): Promise<DuctWaf> {
-    const result = await this.repository.findOneBy({ id });
+  async getDuctWaf(id: string, trx?: EntityManager): Promise<DuctWaf> {
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -40,13 +43,21 @@ export class DuctWafWorkspaceService {
     return result;
   }
 
-  async createDuctWaf(
-    locationId: string,
-    payload: DuctWafBaseDTO,
-    userId: string,
+  async createDuctWaf({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<DuctWafDTO> {
-    const ductWaf = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: DuctWafBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<DuctWafDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const ductWaf = repository.create({
       id: uuid(),
       locationId,
       wafDeterminationDate: payload.wafDeterminationDate,
@@ -67,23 +78,31 @@ export class DuctWafWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(ductWaf);
+    await repository.save(ductWaf);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(ductWaf);
   }
 
-  async updateDuctWaf(
-    locationId: string,
-    ductWafId: string,
-    payload: DuctWafBaseDTO,
-    userId: string,
+  async updateDuctWaf({
+    locationId,
+    ductWafId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<DuctWafDTO> {
-    const ductWaf = await this.getDuctWaf(ductWafId);
+    trx,
+  }: {
+    locationId: string;
+    ductWafId: string;
+    payload: DuctWafBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<DuctWafDTO> {
+    const ductWaf = await this.getDuctWaf(ductWafId, trx);
 
     ductWaf.wafDeterminationDate = payload.wafDeterminationDate;
     ductWaf.wafBeginDate = payload.wafBeginDate;
@@ -101,10 +120,12 @@ export class DuctWafWorkspaceService {
     ductWaf.userId = userId;
     ductWaf.updateDate = currentDateTime();
 
-    await this.repository.save(ductWaf);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(
+      ductWaf,
+    );
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(ductWaf);
@@ -114,6 +135,7 @@ export class DuctWafWorkspaceService {
     locationId: string,
     ductWafs: DuctWafBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -123,7 +145,9 @@ export class DuctWafWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const ductWafRecord = await this.repository.getDuctWafByLocIdBDateBHourWafValue(
+                const ductWafRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getDuctWafByLocIdBDateBHourWafValue(
                   locationId,
                   ductWaf.wafBeginDate,
                   ductWaf.wafBeginHour,
@@ -132,15 +156,22 @@ export class DuctWafWorkspaceService {
                 );
 
                 if (ductWafRecord) {
-                  await this.updateDuctWaf(
+                  await this.updateDuctWaf({
                     locationId,
-                    ductWafRecord.id,
-                    ductWaf,
+                    ductWafId: ductWafRecord.id,
+                    payload: ductWaf,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createDuctWaf(locationId, ductWaf, userId, true);
+                  await this.createDuctWaf({
+                    locationId,
+                    payload: ductWaf,
+                    userId,
+                    isImport: true,
+                    trx,
+                  });
                 }
 
                 innerResolve(true);

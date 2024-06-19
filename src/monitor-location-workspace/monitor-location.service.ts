@@ -371,6 +371,7 @@ export class MonitorLocationWorkspaceService {
                       location.monitoringSystemData,
                       monitorLocationRecord.id,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -384,6 +385,7 @@ export class MonitorLocationWorkspaceService {
                       location.monitoringQualificationData,
                       monitorLocationRecord.id,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -397,6 +399,7 @@ export class MonitorLocationWorkspaceService {
                       monitorLocationRecord.id,
                       location.supplementalMATSMonitoringMethodData,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -410,6 +413,7 @@ export class MonitorLocationWorkspaceService {
                       monitorLocationRecord.id,
                       location.monitoringLoadData,
                       userId,
+                      trx,
                     ),
                   );
                 }

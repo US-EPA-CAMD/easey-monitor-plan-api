@@ -49,7 +49,11 @@ export class DuctWafWorkspaceController {
     @Body() payload: DuctWafBaseDTO,
     @User() user: CurrentUser,
   ): Promise<DuctWafDTO> {
-    return this.service.createDuctWaf(locationId, payload, user.userId);
+    return this.service.createDuctWaf({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':ductWafId')
@@ -71,11 +75,11 @@ export class DuctWafWorkspaceController {
     @Body() payload: DuctWafBaseDTO,
     @User() user: CurrentUser,
   ): Promise<DuctWafDTO> {
-    return this.service.updateDuctWaf(
+    return this.service.updateDuctWaf({
       locationId,
       ductWafId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

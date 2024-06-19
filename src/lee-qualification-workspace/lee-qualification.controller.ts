@@ -59,13 +59,13 @@ export class LEEQualificationWorkspaceController {
     @Body() payload: LEEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LEEQualificationDTO> {
-    return this.service.updateLEEQualification(
-      locId,
+    return this.service.updateLEEQualification({
+      locationId: locId,
       qualId,
-      leeQualId,
+      pctQualId: leeQualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -89,11 +89,11 @@ export class LEEQualificationWorkspaceController {
     @Body() payload: LEEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LEEQualificationDTO> {
-    return this.service.createLEEQualification(
-      locId,
+    return this.service.createLEEQualification({
+      locationId: locId,
       qualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

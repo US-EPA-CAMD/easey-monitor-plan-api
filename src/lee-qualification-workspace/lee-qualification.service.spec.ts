@@ -106,12 +106,12 @@ describe('LEEQualificationService', () => {
 
   describe('createLEEQualification', () => {
     it('creates a LEE qualification for a specific qualification ID', async () => {
-      const result = await service.createLEEQualification(
-        '1',
-        '1',
+      const result = await service.createLEEQualification({
+        locationId: '1',
+        qualId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedLEEQualification);
     });
   });
@@ -120,13 +120,13 @@ describe('LEEQualificationService', () => {
     it('updates a LEE qualification for a specific qualification ID and location ID', async () => {
       jest.spyOn(repository, 'getLEEQualification').mockResolvedValue(leeQual);
 
-      const result = await service.updateLEEQualification(
-        '1',
-        '1',
-        '1',
+      const result = await service.updateLEEQualification({
+        locationId: '1',
+        qualId: '1',
+        pctQualId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedLEEQualification);
     });
   });

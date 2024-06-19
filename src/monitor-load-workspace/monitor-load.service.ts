@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
@@ -26,8 +27,10 @@ export class MonitorLoadWorkspaceService {
     return this.map.many(results);
   }
 
-  async getLoad(loadId: string): Promise<MonitorLoad> {
-    const result = await this.repository.findOneBy({ id: loadId });
+  async getLoad(loadId: string, trx?: EntityManager): Promise<MonitorLoad> {
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).findOneBy({ id: loadId });
 
     if (!result) {
       throw new EaseyException(
@@ -46,6 +49,7 @@ export class MonitorLoadWorkspaceService {
     locationId: string,
     loads: MonitorLoadBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -55,7 +59,9 @@ export class MonitorLoadWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const loadRecord = await this.repository.getLoadByLocBDateBHour(
+                const loadRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getLoadByLocBDateBHour(
                   locationId,
                   load.beginDate,
                   load.beginHour,
@@ -64,15 +70,21 @@ export class MonitorLoadWorkspaceService {
                 );
 
                 if (loadRecord) {
-                  await this.updateLoad(
+                  await this.updateLoad({
                     locationId,
-                    loadRecord.id,
-                    load,
+                    loadId: loadRecord.id,
+                    payload: load,
                     userId,
-                    true,
-                  );
+                    trx,
+                  });
                 } else {
-                  await this.createLoad(locationId, load, userId, true);
+                  await this.createLoad({
+                    locationId,
+                    payload: load,
+                    userId,
+                    isImport: true,
+                    trx,
+                  });
                 }
 
                 innerResolve(true);
@@ -87,13 +99,22 @@ export class MonitorLoadWorkspaceService {
     });
   }
 
-  async createLoad(
-    locationId: string,
-    payload: MonitorLoadBaseDTO,
-    userId: string,
+  async createLoad({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorLoadDTO> {
-    const load = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorLoadBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorLoadDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const load = repository.create({
       id: uuid(),
       locationId,
       loadAnalysisDate: payload.loadAnalysisDate,
@@ -113,23 +134,29 @@ export class MonitorLoadWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(load);
+    await repository.save(load);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(load);
   }
 
-  async updateLoad(
-    locationId: string,
-    loadId: string,
-    payload: MonitorLoadBaseDTO,
-    userId: string,
-    isImport = false,
-  ): Promise<MonitorLoadDTO> {
-    const load = await this.getLoad(loadId);
+  async updateLoad({
+    locationId,
+    loadId,
+    payload,
+    userId,
+    trx,
+  }: {
+    locationId: string;
+    loadId: string;
+    payload: MonitorLoadBaseDTO;
+    userId: string;
+    trx?: EntityManager;
+  }): Promise<MonitorLoadDTO> {
+    const load = await this.getLoad(loadId, trx);
 
     load.loadAnalysisDate = payload.loadAnalysisDate;
     load.beginDate = payload.beginDate;
@@ -146,8 +173,8 @@ export class MonitorLoadWorkspaceService {
     load.userId = userId;
     load.updateDate = currentDateTime();
 
-    await this.repository.save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(load);
+    await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     return this.map.one(load);
   }
 }

@@ -1,8 +1,9 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
+import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
@@ -28,8 +29,13 @@ export class SystemFuelFlowWorkspaceService {
     return this.map.many(results);
   }
 
-  async getFuelFlow(fuelFlowId: string): Promise<SystemFuelFlow> {
-    const result = await this.repository.getFuelFlow(fuelFlowId);
+  async getFuelFlow(
+    fuelFlowId: string,
+    trx?: EntityManager,
+  ): Promise<SystemFuelFlow> {
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).getFuelFlow(fuelFlowId);
 
     if (!result) {
       throw new EaseyException(
@@ -44,14 +50,24 @@ export class SystemFuelFlowWorkspaceService {
     return result;
   }
 
-  async createFuelFlow(
-    monitoringSystemRecordId: string,
-    payload: SystemFuelFlowBaseDTO,
-    locationId: string,
-    userId: string,
+  async createFuelFlow({
+    monitoringSystemRecordId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<SystemFuelFlowDTO> {
-    const fuelFlow = this.repository.create({
+    trx,
+  }: {
+    monitoringSystemRecordId: string;
+    payload: SystemFuelFlowBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<SystemFuelFlowDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const fuelFlow = repository.create({
       id: uuid(),
       monitoringSystemRecordId: monitoringSystemRecordId,
       maximumFuelFlowRate: payload.maximumFuelFlowRate,
@@ -66,24 +82,32 @@ export class SystemFuelFlowWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(fuelFlow);
-    const getFuelFlow = await this.getFuelFlow(fuelFlow.id);
+    await repository.save(fuelFlow);
+    const getFuelFlow = await this.getFuelFlow(fuelFlow.id, trx);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(getFuelFlow);
   }
 
-  async updateFuelFlow(
-    fuelFlowId: string,
-    payload: SystemFuelFlowBaseDTO,
-    locationId: string,
-    userId: string,
+  async updateFuelFlow({
+    fuelFlowId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<SystemFuelFlowDTO> {
-    const fuelFlow = await this.getFuelFlow(fuelFlowId);
+    trx,
+  }: {
+    fuelFlowId: string;
+    payload: SystemFuelFlowBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<SystemFuelFlowDTO> {
+    const fuelFlow = await this.getFuelFlow(fuelFlowId, trx);
 
     fuelFlow.maximumFuelFlowRate = payload.maximumFuelFlowRate;
     fuelFlow.systemFuelFlowUOMCode = payload.systemFuelFlowUnitsOfMeasureCode;
@@ -96,10 +120,12 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.userId = userId;
     fuelFlow.updateDate = currentDateTime();
 
-    await this.repository.save(fuelFlow);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(
+      fuelFlow,
+    );
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(fuelFlow);
@@ -110,6 +136,7 @@ export class SystemFuelFlowWorkspaceService {
     sysId: string,
     systemFuelFlows: SystemFuelFlowBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -119,30 +146,31 @@ export class SystemFuelFlowWorkspaceService {
             new Promise(innerResolve => {
               (async () => {
                 const innerPromises = [];
-                const fuelFlowRecord = await this.repository.getFuelFlowByBeginOrEndDate(
-                  sysId,
-                  fuelFlow,
-                );
+                const fuelFlowRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getFuelFlowByBeginOrEndDate(sysId, fuelFlow);
 
                 if (fuelFlowRecord) {
                   innerPromises.push(
-                    await this.updateFuelFlow(
-                      fuelFlowRecord.id,
-                      fuelFlow,
+                    await this.updateFuelFlow({
+                      fuelFlowId: fuelFlowRecord.id,
+                      payload: fuelFlow,
                       locationId,
                       userId,
-                      true,
-                    ),
+                      isImport: true,
+                      trx,
+                    }),
                   );
                 } else {
                   innerPromises.push(
-                    await this.createFuelFlow(
-                      sysId,
-                      fuelFlow,
+                    await this.createFuelFlow({
+                      monitoringSystemRecordId: sysId,
+                      payload: fuelFlow,
                       locationId,
                       userId,
-                      true,
-                    ),
+                      isImport: true,
+                      trx,
+                    }),
                   );
                 }
 

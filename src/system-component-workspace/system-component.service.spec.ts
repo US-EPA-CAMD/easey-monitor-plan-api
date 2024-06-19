@@ -114,25 +114,25 @@ describe('SystemComponentWorkspaceService', () => {
         .spyOn(service, 'getSystemComponent')
         .mockResolvedValue(new SystemComponent());
 
-      const result = await service.updateSystemComponent(
-        '1',
-        '1',
-        '1',
+      const result = await service.updateSystemComponent({
+        locationId: '1',
+        sysId: '1',
+        sysComponentRecordId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(sysComp);
     });
   });
 
   describe('createSystemComponent', () => {
     it('should create and return system component when component found', async () => {
-      const result = await service.createSystemComponent(
-        '1',
-        '1',
+      const result = await service.createSystemComponent({
+        locationId: '1',
+        monitoringSystemRecordId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(sysComp);
     });
     it('should create a component and also create and return system component when component not found', async () => {
@@ -140,12 +140,12 @@ describe('SystemComponentWorkspaceService', () => {
         .spyOn(componentService, 'getComponentByIdentifier')
         .mockResolvedValue(new ComponentDTO());
 
-      const result = await service.createSystemComponent(
-        '1',
-        '1',
+      const result = await service.createSystemComponent({
+        locationId: '1',
+        monitoringSystemRecordId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(sysComp);
     });
   });

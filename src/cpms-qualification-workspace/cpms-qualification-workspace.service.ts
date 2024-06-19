@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -28,12 +29,11 @@ export class CPMSQualificationWorkspaceService {
     locId: string,
     qualId: string,
     stackTestNumber: string,
+    trx?: EntityManager,
   ): Promise<CPMSQualificationDTO> {
-    const result = await this.repository.getCPMSQualificationByStackTestNumber(
-      locId,
-      qualId,
-      stackTestNumber,
-    );
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).getCPMSQualificationByStackTestNumber(locId, qualId, stackTestNumber);
     if (result) {
       return this.map.one(result);
     }
@@ -47,14 +47,26 @@ export class CPMSQualificationWorkspaceService {
     return this.map.many(results);
   }
 
-  async createCPMSQualification(
-    locationId: string,
-    qualId: string,
-    payload: CPMSQualificationBaseDTO,
-    userId: string,
+  async createCPMSQualification({
+    locationId,
+    qualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<CPMSQualificationDTO> {
-    const qual = await this.mpQualService.getQualification(locationId, qualId);
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    payload: CPMSQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<CPMSQualificationDTO> {
+    const qual = await this.mpQualService.getQualification(
+      locationId,
+      qualId,
+      trx,
+    );
 
     if (qual.qualificationTypeCode !== 'CPMS') {
       throw new EaseyException(
@@ -69,7 +81,9 @@ export class CPMSQualificationWorkspaceService {
       );
     }
 
-    const cpmsQual = this.repository.create({
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const cpmsQual = repository.create({
       id: uuid(),
       qualificationId: qualId,
       qualificationDataYear: payload.qualificationDataYear,
@@ -80,24 +94,35 @@ export class CPMSQualificationWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(cpmsQual);
+    const result = await repository.save(cpmsQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
   }
 
-  async updateCPMSQualification(
-    locationId: string,
-    qualId: string,
-    cpmsQualId: string,
-    payload: CPMSQualificationBaseDTO,
-    userId: string,
+  async updateCPMSQualification({
+    locationId,
+    qualId,
+    cpmsQualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<CPMSQualificationDTO> {
-    const cpmsQual = await this.repository.getCPMSQualification(
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    cpmsQualId: string;
+    payload: CPMSQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<CPMSQualificationDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const cpmsQual = await repository.getCPMSQualification(
       locationId,
       qualId,
       cpmsQualId,
@@ -109,10 +134,10 @@ export class CPMSQualificationWorkspaceService {
     cpmsQual.userId = userId;
     cpmsQual.updateDate = currentDateTime();
 
-    const result = await this.repository.save(cpmsQual);
+    const result = await repository.save(cpmsQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
@@ -123,31 +148,35 @@ export class CPMSQualificationWorkspaceService {
     qualificationId: string,
     cpmsQualifications: CPMSQualificationBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ): Promise<void> {
     const promises = cpmsQualifications.map(async cpmsQualification => {
       const cpmsQualRecord = await this.getCPMSQualificationByStackTestNumber(
         locationId,
         qualificationId,
         cpmsQualification.stackTestNumber,
+        trx,
       );
 
       if (cpmsQualRecord) {
-        await this.updateCPMSQualification(
+        await this.updateCPMSQualification({
           locationId,
-          qualificationId,
-          cpmsQualRecord.id,
-          cpmsQualification,
+          qualId: qualificationId,
+          cpmsQualId: cpmsQualRecord.id,
+          payload: cpmsQualification,
           userId,
-          true,
-        );
+          isImport: true,
+          trx,
+        });
       } else {
-        await this.createCPMSQualification(
+        await this.createCPMSQualification({
           locationId,
-          qualificationId,
-          cpmsQualification,
+          qualId: qualificationId,
+          payload: cpmsQualification,
           userId,
-          true,
-        );
+          isImport: true,
+          trx,
+        });
       }
 
       return true;

@@ -85,7 +85,7 @@ describe('SystemFuelFlowWorkspaceService', () => {
       jest.spyOn(repository, 'getFuelFlow').mockResolvedValueOnce(null);
 
       try {
-        const result = await service.getFuelFlow(FUEL_FLOW_ID);
+        await service.getFuelFlow(FUEL_FLOW_ID);
       } catch (e) {
         error = true;
       }
@@ -96,24 +96,24 @@ describe('SystemFuelFlowWorkspaceService', () => {
 
   describe('createFuelFlow', () => {
     it('Should create a new Entity and return a DTO mapped from it', async () => {
-      const result = await service.createFuelFlow(
-        MON_SYS_RECORD_ID,
-        PAYLOAD,
-        LOC_ID,
-        USER_ID,
-      );
+      const result = await service.createFuelFlow({
+        monitoringSystemRecordId: MON_SYS_RECORD_ID,
+        payload: PAYLOAD,
+        locationId: LOC_ID,
+        userId: USER_ID,
+      });
       expect(result).toEqual(DTO);
     });
   });
 
   describe('updateFuelFlow', () => {
     it('Should update an existing Entity and return a DTO mapped from it', async () => {
-      const result = await service.updateFuelFlow(
-        FUEL_FLOW_ID,
-        PAYLOAD,
-        LOC_ID,
-        USER_ID,
-      );
+      const result = await service.updateFuelFlow({
+        fuelFlowId: FUEL_FLOW_ID,
+        payload: PAYLOAD,
+        locationId: LOC_ID,
+        userId: USER_ID,
+      });
       expect(result).toEqual(DTO);
     });
   });

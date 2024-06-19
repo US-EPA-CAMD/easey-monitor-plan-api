@@ -85,7 +85,11 @@ describe('MonitorLoadService', () => {
 
   describe('createLoad', () => {
     it('creates a monitor load record for a specified locationId', async () => {
-      const result = await service.createLoad('1', payload, 'testUser');
+      const result = await service.createLoad({
+        locationId: '1',
+        payload,
+        userId: 'testUser',
+      });
       expect(result).toEqual(monLoadDto);
     });
   });
@@ -94,7 +98,12 @@ describe('MonitorLoadService', () => {
     it('updates a monitor load record for a specified locationId', async () => {
       jest.spyOn(service, 'getLoad').mockResolvedValue(monLoad);
 
-      const result = await service.updateLoad('1', '1', payload, 'testUser');
+      const result = await service.updateLoad({
+        locationId: '1',
+        loadId: '1',
+        payload,
+        userId: 'testUser',
+      });
       expect(result).toEqual(monLoadDto);
     });
   });

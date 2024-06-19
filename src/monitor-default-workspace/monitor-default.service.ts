@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -32,8 +33,11 @@ export class MonitorDefaultWorkspaceService {
   async getDefault(
     locationId: string,
     defaultId: string,
+    trx?: EntityManager,
   ): Promise<MonitorDefault> {
-    const result = await this.repository.getDefault(locationId, defaultId);
+    const result = await (
+      trx?.withRepository(this.repository) ?? this.repository
+    ).getDefault(locationId, defaultId);
 
     if (!result) {
       throw new EaseyException(
@@ -49,13 +53,21 @@ export class MonitorDefaultWorkspaceService {
     return result;
   }
 
-  async createDefault(
-    locationId: string,
-    payload: MonitorDefaultBaseDTO,
-    userId: string,
+  async createDefault({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorDefaultDTO> {
-    const monDefault = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorDefaultBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorDefaultDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const monDefault = repository.create({
       id: uuid(),
       locationId,
       parameterCode: payload.parameterCode,
@@ -75,23 +87,31 @@ export class MonitorDefaultWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(monDefault);
+    await repository.save(monDefault);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(monDefault);
   }
 
-  async updateDefault(
-    locationId: string,
-    defaultId: string,
-    payload: MonitorDefaultBaseDTO,
-    userId: string,
+  async updateDefault({
+    locationId,
+    defaultId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorDefaultDTO> {
-    const monDefault = await this.getDefault(locationId, defaultId);
+    trx,
+  }: {
+    locationId: string;
+    defaultId: string;
+    payload: MonitorDefaultBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorDefaultDTO> {
+    const monDefault = await this.getDefault(locationId, defaultId, trx);
 
     monDefault.parameterCode = payload.parameterCode;
     monDefault.defaultValue = payload.defaultValue;
@@ -108,10 +128,12 @@ export class MonitorDefaultWorkspaceService {
     monDefault.userId = userId;
     monDefault.updateDate = currentDateTime();
 
-    await this.repository.save(monDefault);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(
+      monDefault,
+    );
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(monDefault);
@@ -121,6 +143,7 @@ export class MonitorDefaultWorkspaceService {
     locationId: string,
     monDefaults: MonitorDefaultBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -130,7 +153,9 @@ export class MonitorDefaultWorkspaceService {
           new Promise(innerResolve => {
             (async () => {
               for (const monDefault of monDefaults) {
-                const monDefaultRecord = await this.repository.getDefaultBySpecs(
+                const monDefaultRecord = await (
+                  trx?.withRepository(this.repository) ?? this.repository
+                ).getDefaultBySpecs(
                   locationId,
                   monDefault.parameterCode,
                   monDefault.defaultPurposeCode,
@@ -143,20 +168,22 @@ export class MonitorDefaultWorkspaceService {
                 );
 
                 if (monDefaultRecord) {
-                  await this.updateDefault(
+                  await this.updateDefault({
                     locationId,
-                    monDefaultRecord.id,
-                    monDefault,
+                    defaultId: monDefaultRecord.id,
+                    payload: monDefault,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 } else {
-                  await this.createDefault(
+                  await this.createDefault({
                     locationId,
-                    monDefault,
+                    payload: monDefault,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
                 }
 
                 innerResolve(true);

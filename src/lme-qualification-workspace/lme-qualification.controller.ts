@@ -59,13 +59,13 @@ export class LMEQualificationWorkspaceController {
     @Body() payload: LMEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LMEQualificationDTO> {
-    return this.service.updateLMEQualification(
-      locId,
+    return this.service.updateLMEQualification({
+      locationId: locId,
       qualId,
       lmeQualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -89,11 +89,11 @@ export class LMEQualificationWorkspaceController {
     @Body() payload: LMEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LMEQualificationDTO> {
-    return this.service.createLMEQualification(
-      locId,
+    return this.service.createLMEQualification({
+      locationId: locId,
       qualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

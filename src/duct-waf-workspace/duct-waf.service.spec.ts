@@ -91,23 +91,23 @@ describe('DuctWafWorkspaceService', () => {
 
   describe('createDuctWaf', () => {
     it('Should return a new DTO created from the saved Entity', async () => {
-      const result = await service.createDuctWaf(
-        LOC_ID,
-        new DuctWafBaseDTO(),
-        USER_ID,
-      );
+      const result = await service.createDuctWaf({
+        locationId: LOC_ID,
+        payload: new DuctWafBaseDTO(),
+        userId: USER_ID,
+      });
       expect(result).toEqual(DTO);
     });
   });
 
   describe('updateDuctWaf', () => {
     it('Should return an updated DTO created from the saved Entity', async () => {
-      const result = await service.updateDuctWaf(
-        LOC_ID,
-        DUCT_WAF_ID,
-        new DuctWafBaseDTO(),
-        USER_ID,
-      );
+      const result = await service.updateDuctWaf({
+        locationId: LOC_ID,
+        ductWafId: DUCT_WAF_ID,
+        payload: new DuctWafBaseDTO(),
+        userId: USER_ID,
+      });
       expect(result).toEqual(DTO);
     });
   });

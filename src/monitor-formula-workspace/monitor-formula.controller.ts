@@ -59,7 +59,11 @@ export class MonitorFormulaWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<MonitorFormulaDTO> {
     await this.checksService.runChecks(payload, locationId);
-    return this.service.createFormula(locationId, payload, user.userId);
+    return this.service.createFormula({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':formulaId')
@@ -82,11 +86,11 @@ export class MonitorFormulaWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<MonitorFormulaDTO> {
     await this.checksService.runChecks(payload, locationId, formulaRecordId);
-    return this.service.updateFormula(
+    return this.service.updateFormula({
       locationId,
       formulaRecordId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

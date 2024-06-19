@@ -109,25 +109,25 @@ describe('CPMSQualificationWorkspaceService', () => {
 
   describe('createCPMSQualification', () => {
     it('creates a CPMS qualification for a specific qualification ID', async () => {
-      const result = await service.createCPMSQualification(
-        locId,
+      const result = await service.createCPMSQualification({
+        locationId: locId,
         qualId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual(cpmsQualificationDto);
     });
   });
 
   describe('updateCPMSQualification', () => {
     it('updates a CPMS qualification for a specific qualification ID and location ID', async () => {
-      const result = await service.updateCPMSQualification(
-        locId,
+      const result = await service.updateCPMSQualification({
+        locationId: locId,
         qualId,
         cpmsQualId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual(cpmsQualificationDto);
     });
   });

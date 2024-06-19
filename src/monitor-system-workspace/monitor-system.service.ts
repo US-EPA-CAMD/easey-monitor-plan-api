@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
@@ -111,17 +112,31 @@ export class MonitorSystemWorkspaceService {
     return this.map.many(results);
   }
 
-  async getSystem(monitoringSystemRecordId: string): Promise<MonitorSystem> {
-    return this.repository.findOneBy({ id: monitoringSystemRecordId });
+  async getSystem(
+    monitoringSystemRecordId: string,
+    trx?: EntityManager,
+  ): Promise<MonitorSystem> {
+    return (trx?.withRepository(this.repository) ?? this.repository).findOneBy({
+      id: monitoringSystemRecordId,
+    });
   }
 
-  async createSystem(
-    locationId: string,
-    payload: UpdateMonitorSystemDTO,
-    userId: string,
+  async createSystem({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorSystemDTO> {
-    const system = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: UpdateMonitorSystemDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorSystemDTO> {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
+    const system = repository.create({
       id: uuid(),
       locationId,
       monitoringSystemId: payload.monitoringSystemId,
@@ -137,10 +152,10 @@ export class MonitorSystemWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(system);
+    await repository.save(system);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(system);
@@ -151,6 +166,7 @@ export class MonitorSystemWorkspaceService {
     system: UpdateMonitorSystemDTO,
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -166,6 +182,7 @@ export class MonitorSystemWorkspaceService {
               systemRecordId,
               system.monitoringSystemComponentData,
               userId,
+              trx,
             ),
           );
         }
@@ -180,6 +197,7 @@ export class MonitorSystemWorkspaceService {
               systemRecordId,
               system.monitoringSystemFuelFlowData,
               userId,
+              trx,
             ),
           );
         }
@@ -191,14 +209,22 @@ export class MonitorSystemWorkspaceService {
     });
   }
 
-  async updateSystem(
-    monitoringSystemRecordId: string,
-    payload: UpdateMonitorSystemDTO,
-    locationId: string,
-    userId: string,
+  async updateSystem({
+    monitoringSystemRecordId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<MonitorSystemDTO> {
-    const system = await this.getSystem(monitoringSystemRecordId);
+    trx,
+  }: {
+    monitoringSystemRecordId: string;
+    payload: UpdateMonitorSystemDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorSystemDTO> {
+    const system = await this.getSystem(monitoringSystemRecordId, trx);
     system.systemTypeCode = payload.systemTypeCode;
     system.systemDesignationCode = payload.systemDesignationCode;
     system.fuelCode = payload.fuelCode;
@@ -209,10 +235,12 @@ export class MonitorSystemWorkspaceService {
     system.userId = userId;
     system.updateDate = currentDateTime();
 
-    await this.repository.save(system);
+    await (trx?.withRepository(this.repository) ?? this.repository).save(
+      system,
+    );
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(system);
@@ -222,7 +250,10 @@ export class MonitorSystemWorkspaceService {
     systems: UpdateMonitorSystemDTO[],
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
+    const repository = trx?.withRepository(this.repository) ?? this.repository;
+
     return new Promise(resolve => {
       (async () => {
         const promises = [];
@@ -232,7 +263,7 @@ export class MonitorSystemWorkspaceService {
             new Promise(innerResolve => {
               (async () => {
                 const innerPromises = [];
-                let systemRecord = await this.repository.getSystemByLocIdSysIdentifier(
+                let systemRecord = await repository.getSystemByLocIdSysIdentifier(
                   locationId,
                   system.monitoringSystemId,
                 );
@@ -240,26 +271,25 @@ export class MonitorSystemWorkspaceService {
                 if (!systemRecord) {
                   // Check used_identifier table to see if the sysIdentifier has already
                   // been used, and if so grab that monitor-system record for update
-                  let usedIdentifier = await this.usedIdRepo.getBySpecs(
-                    locationId,
-                    system.monitoringSystemId,
-                    'S',
-                  );
+                  let usedIdentifier = await (
+                    trx?.withRepository(this.usedIdRepo) ?? this.usedIdRepo
+                  ).getBySpecs(locationId, system.monitoringSystemId, 'S');
 
                   if (usedIdentifier)
-                    systemRecord = await this.repository.findOneBy({
+                    systemRecord = await repository.findOneBy({
                       id: usedIdentifier.id,
                     });
                 }
 
                 if (systemRecord) {
-                  await this.updateSystem(
-                    systemRecord.id,
-                    system,
+                  await this.updateSystem({
+                    monitoringSystemRecordId: systemRecord.id,
+                    payload: system,
                     locationId,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
 
                   innerPromises.push(
                     this.importSysComponentAndFuelFlow(
@@ -267,15 +297,17 @@ export class MonitorSystemWorkspaceService {
                       system,
                       locationId,
                       userId,
+                      trx,
                     ),
                   );
                 } else {
-                  const createdSystemRecord = await this.createSystem(
+                  const createdSystemRecord = await this.createSystem({
                     locationId,
-                    system,
+                    payload: system,
                     userId,
-                    true,
-                  );
+                    isImport: true,
+                    trx,
+                  });
 
                   innerPromises.push(
                     this.importSysComponentAndFuelFlow(
@@ -283,6 +315,7 @@ export class MonitorSystemWorkspaceService {
                       system,
                       locationId,
                       userId,
+                      trx,
                     ),
                   );
                 }
