@@ -427,6 +427,7 @@ export class MonitorLocationWorkspaceService {
                       monitorLocationRecord.id,
                       location.monitoringLocationAttribData,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -440,6 +441,7 @@ export class MonitorLocationWorkspaceService {
                       location.monitoringFormulaData,
                       monitorLocationRecord.id,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -453,6 +455,7 @@ export class MonitorLocationWorkspaceService {
                       monitorLocationRecord.id,
                       location.monitoringMethodData,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -466,6 +469,7 @@ export class MonitorLocationWorkspaceService {
                       monitorLocationRecord.id,
                       location.rectangularDuctWAFData,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -479,6 +483,7 @@ export class MonitorLocationWorkspaceService {
                       monitorLocationRecord.id,
                       location.monitoringSpanData,
                       userId,
+                      trx,
                     ),
                   );
                 }
@@ -492,6 +497,7 @@ export class MonitorLocationWorkspaceService {
                       monitorLocationRecord.id,
                       location.monitoringDefaultData,
                       userId,
+                      trx,
                     ),
                   );
                 }
