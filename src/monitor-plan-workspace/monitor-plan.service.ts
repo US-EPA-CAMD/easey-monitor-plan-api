@@ -504,9 +504,6 @@ export class MonitorPlanWorkspaceService {
     if (rptValuesOnly) {
       await removeNonReportedValues(mpDTO);
     }
-
-    
-    console.log("MPDTO" , mpDTO)
     return mpDTO;
   }
 }
