@@ -45,7 +45,7 @@ export class UnitService {
   async getUnitByNameAndFacId(
     nameId: string,
     facilityId: number,
-    trx?: EntityManager, // Use for transactions
+    trx?: EntityManager,
   ): Promise<Unit> {
     return withTransaction(this.repository, trx).findOne({
       where: { name: nameId, facId: facilityId },
