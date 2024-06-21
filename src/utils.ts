@@ -105,9 +105,27 @@ export interface BeginEndDatesConsistentOptions extends ValidationOptions {
   endMinute?: string;
 }
 
+/**
+ * Pass a transaction manager, if it exists, to a custom repository. If not, return the original repository.
+ */
 export function withTransaction<E, T extends Repository<E>>(
   repository: T,
   trx?: EntityManager,
 ) {
-  return trx?.withRepository(repository) ?? repository;
+  if (!trx) return repository;
+
+  const repositoryConstructor = repository.constructor as {
+    new (manager: EntityManager): T;
+  };
+
+  const {
+    target,
+    manager,
+    queryRunner,
+    ...otherRepositoryProperties
+  } = repository;
+
+  return Object.assign(new repositoryConstructor(trx) as T, {
+    ...otherRepositoryProperties,
+  });
 }
