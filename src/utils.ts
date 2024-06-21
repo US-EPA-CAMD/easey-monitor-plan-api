@@ -3,6 +3,7 @@ import {
   ValidationOptions,
   ValidationArguments,
 } from 'class-validator';
+import { EntityManager, Repository } from 'typeorm';
 
 export const parseToken = (token: string) => {
   const obj = {
@@ -102,4 +103,11 @@ export interface BeginEndDatesConsistentOptions extends ValidationOptions {
   endDate?: string;
   endHour?: string;
   endMinute?: string;
+}
+
+export function withTransaction<E, T extends Repository<E>>(
+  repository: T,
+  trx?: EntityManager,
+) {
+  return trx?.withRepository(repository) ?? repository;
 }

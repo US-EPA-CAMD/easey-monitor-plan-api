@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
@@ -11,6 +12,7 @@ import {
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { StackPipeService } from '../stack-pipe/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
+import { withTransaction } from '../utils';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 
 @Injectable()
@@ -89,6 +91,7 @@ export class UnitStackConfigurationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
+    trx?: EntityManager,
   ) {
     const unitStackConfigDTOs: UnitStackConfigurationDTO[] = [];
 
@@ -102,29 +105,33 @@ export class UnitStackConfigurationWorkspaceService {
                 const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
                   unitStackConfig.stackPipeId,
                   facilityId,
+                  trx,
                 );
 
                 const unit = await this.unitServive.getUnitByNameAndFacId(
                   unitStackConfig.unitId,
                   facilityId,
+                  trx,
                 );
 
-                const unitStackConfigRecord = await this.repository.getUnitStackConfigByUnitIdStackId(
-                  unit.id,
-                  stackPipe.id,
-                );
+                const unitStackConfigRecord = await withTransaction(
+                  this.repository,
+                  trx,
+                ).getUnitStackConfigByUnitIdStackId(unit.id, stackPipe.id);
 
                 const unitStackConfigDTO = unitStackConfigRecord
                   ? await this.updateUnitStackConfig(
                       unitStackConfigRecord.id,
                       unitStackConfig,
                       userId,
+                      trx,
                     )
                   : await this.createUnitStackConfig(
                       unit.id,
                       stackPipe.id,
                       unitStackConfig,
                       userId,
+                      trx,
                     );
 
                 unitStackConfigDTOs.push(unitStackConfigDTO);
@@ -155,8 +162,11 @@ export class UnitStackConfigurationWorkspaceService {
     stackPipeRecordId: string,
     payload: UnitStackConfigurationBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
-    const unitStackConfig = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const unitStackConfig = repository.create({
       id: uuid(),
       unitId: unitRecordId,
       stackPipeId: stackPipeRecordId,
@@ -167,7 +177,7 @@ export class UnitStackConfigurationWorkspaceService {
       userId,
     });
 
-    await this.repository.save(unitStackConfig);
+    await repository.save(unitStackConfig);
     return this.map.one(unitStackConfig);
   }
 
@@ -175,14 +185,17 @@ export class UnitStackConfigurationWorkspaceService {
     id: string,
     payload: UnitStackConfigurationBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
-    const unitStackConfig = await this.repository.getUnitStackById(id);
+    const repository = withTransaction(this.repository, trx);
+
+    const unitStackConfig = await repository.getUnitStackById(id);
 
     unitStackConfig.endDate = payload.endDate;
     unitStackConfig.userId = userId;
     unitStackConfig.updateDate = currentDateTime();
 
-    await this.repository.save(unitStackConfig);
+    await repository.save(unitStackConfig);
     return this.map.one(unitStackConfig);
   }
 }

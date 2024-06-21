@@ -16,6 +16,7 @@ import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
+import { withTransaction } from '../utils';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 
 @Injectable()
@@ -169,8 +170,9 @@ export class MonitorQualificationWorkspaceService {
   ): Promise<void> {
     const promises = qualifications.map(async qualification => {
       const innerPromises = [];
-      const qualificationRecord = await (
-        trx?.withRepository(this.repository) ?? this.repository
+      const qualificationRecord = await withTransaction(
+        this.repository,
+        trx,
       ).getQualificationByLocTypeDate(
         locationId,
         qualification.qualificationTypeCode,
@@ -235,9 +237,10 @@ export class MonitorQualificationWorkspaceService {
     qualId: string,
     trx?: EntityManager,
   ): Promise<MonitorQualification> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).getQualification(locId, qualId);
+    const result = await withTransaction(this.repository, trx).getQualification(
+      locId,
+      qualId,
+    );
     if (!result) {
       throw new EaseyException(
         new Error('Qualification Not Found'),
@@ -265,7 +268,7 @@ export class MonitorQualificationWorkspaceService {
     trx?: EntityManager;
   }): Promise<MonitorQualificationDTO> {
     const timestamp = currentDateTime();
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
     const qual = repository.create({
       id: uuid(),
       locationId,
@@ -310,9 +313,7 @@ export class MonitorQualificationWorkspaceService {
     qual.userId = userId;
     qual.updateDate = currentDateTime();
 
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).save(qual);
+    const result = await withTransaction(this.repository, trx).save(qual);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);

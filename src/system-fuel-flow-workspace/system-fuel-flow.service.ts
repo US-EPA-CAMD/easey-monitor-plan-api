@@ -1,17 +1,17 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
-import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
-
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   SystemFuelFlowBaseDTO,
   SystemFuelFlowDTO,
 } from '../dtos/system-fuel-flow.dto';
+import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
+import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 
 @Injectable()
@@ -33,9 +33,9 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlowId: string,
     trx?: EntityManager,
   ): Promise<SystemFuelFlow> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).getFuelFlow(fuelFlowId);
+    const result = await withTransaction(this.repository, trx).getFuelFlow(
+      fuelFlowId,
+    );
 
     if (!result) {
       throw new EaseyException(
@@ -65,7 +65,7 @@ export class SystemFuelFlowWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<SystemFuelFlowDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const fuelFlow = repository.create({
       id: uuid(),
@@ -120,9 +120,7 @@ export class SystemFuelFlowWorkspaceService {
     fuelFlow.userId = userId;
     fuelFlow.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      fuelFlow,
-    );
+    await withTransaction(this.repository, trx).save(fuelFlow);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -146,8 +144,9 @@ export class SystemFuelFlowWorkspaceService {
             new Promise(innerResolve => {
               (async () => {
                 const innerPromises = [];
-                const fuelFlowRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const fuelFlowRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getFuelFlowByBeginOrEndDate(sysId, fuelFlow);
 
                 if (fuelFlowRecord) {

@@ -10,6 +10,7 @@ import { Component } from '../entities/workspace/component.entity';
 import { ComponentMap } from '../maps/component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { withTransaction } from '../utils';
 import { ComponentWorkspaceRepository } from './component.repository';
 
 @Injectable()
@@ -102,8 +103,9 @@ export class ComponentWorkspaceService {
     componentId: string,
     trx?: EntityManager,
   ): Promise<ComponentDTO> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
+    const result = await withTransaction(
+      this.repository,
+      trx,
     ).getComponentByLocIdAndCompId(locationId, componentId);
 
     if (result) {
@@ -121,8 +123,7 @@ export class ComponentWorkspaceService {
   ) {
     return new Promise(resolve => {
       (async () => {
-        const repository =
-          trx?.withRepository(this.repository) ?? this.repository;
+        const repository = withTransaction(this.repository, trx);
         const innerPromises = [];
         for (const component of location.componentData) {
           innerPromises.push(
@@ -136,8 +137,9 @@ export class ComponentWorkspaceService {
                 if (!compRecord) {
                   // Check used_identifier table to see if the componentId has already
                   // been used, and if so grab that component record for update
-                  let usedIdentifier = await (
-                    trx?.withRepository(this.usedIdRepo) ?? this.usedIdRepo
+                  let usedIdentifier = await withTransaction(
+                    this.usedIdRepo,
+                    trx,
                   ).getBySpecs(locationId, component.componentId, 'C');
 
                   if (usedIdentifier)
@@ -211,9 +213,9 @@ export class ComponentWorkspaceService {
     componentRecord.userId = userId;
     componentRecord.updateDate = currentDateTime();
 
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).save(componentRecord);
+    const result = await withTransaction(this.repository, trx).save(
+      componentRecord,
+    );
 
     await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
 
@@ -226,7 +228,7 @@ export class ComponentWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ): Promise<ComponentDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
     const component = repository.create({
       id: uuid(),
       locationId,

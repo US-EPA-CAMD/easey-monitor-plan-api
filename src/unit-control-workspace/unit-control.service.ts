@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 @Injectable()
@@ -43,8 +44,9 @@ export class UnitControlWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const unitControlRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const unitControlRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getUnitControlBySpecs(
                   unitRecordId,
                   unitControl.parameterCode,
@@ -102,7 +104,7 @@ export class UnitControlWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<UnitControlDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const unitControl = repository.create({
       id: uuid(),
@@ -145,7 +147,8 @@ export class UnitControlWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<UnitControlDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const unitControl = await repository.getUnitControl(unitControlId);
 
     unitControl.controlCode = payload.controlCode;

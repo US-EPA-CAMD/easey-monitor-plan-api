@@ -8,6 +8,7 @@ import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWaf } from '../entities/duct-waf.entity';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 
 @Injectable()
@@ -26,9 +27,9 @@ export class DuctWafWorkspaceService {
   }
 
   async getDuctWaf(id: string, trx?: EntityManager): Promise<DuctWaf> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).findOneBy({ id });
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id,
+    });
 
     if (!result) {
       throw new EaseyException(
@@ -56,7 +57,8 @@ export class DuctWafWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<DuctWafDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const ductWaf = repository.create({
       id: uuid(),
       locationId,
@@ -120,9 +122,7 @@ export class DuctWafWorkspaceService {
     ductWaf.userId = userId;
     ductWaf.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      ductWaf,
-    );
+    await withTransaction(this.repository, trx).save(ductWaf);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -145,8 +145,9 @@ export class DuctWafWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const ductWafRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const ductWafRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getDuctWafByLocIdBDateBHourWafValue(
                   locationId,
                   ductWaf.wafBeginDate,

@@ -9,6 +9,7 @@ import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 
 @Injectable()
@@ -28,9 +29,9 @@ export class MonitorLoadWorkspaceService {
   }
 
   async getLoad(loadId: string, trx?: EntityManager): Promise<MonitorLoad> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).findOneBy({ id: loadId });
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id: loadId,
+    });
 
     if (!result) {
       throw new EaseyException(
@@ -59,8 +60,9 @@ export class MonitorLoadWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const loadRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const loadRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getLoadByLocBDateBHour(
                   locationId,
                   load.beginDate,
@@ -112,7 +114,7 @@ export class MonitorLoadWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorLoadDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const load = repository.create({
       id: uuid(),
@@ -173,7 +175,7 @@ export class MonitorLoadWorkspaceService {
     load.userId = userId;
     load.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(load);
+    await withTransaction(this.repository, trx).save(load);
     await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     return this.map.one(load);
   }

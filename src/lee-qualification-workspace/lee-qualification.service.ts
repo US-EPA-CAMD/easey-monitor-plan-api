@@ -12,6 +12,7 @@ import {
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { withTransaction } from '../utils';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 
 @Injectable()
@@ -93,7 +94,7 @@ export class LEEQualificationWorkspaceService {
       );
     }
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const leeQual = repository.create({
       id: uuid(),
@@ -136,7 +137,7 @@ export class LEEQualificationWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<LEEQualificationDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const leeQual = await repository.getLEEQualification(
       locationId,
@@ -189,8 +190,9 @@ export class LEEQualificationWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const leeQualificationRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const leeQualificationRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getLEEQualificationByTestDate(
                   locationId,
                   qualificationId,

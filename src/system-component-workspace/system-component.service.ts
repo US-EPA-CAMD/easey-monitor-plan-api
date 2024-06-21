@@ -13,6 +13,7 @@ import {
 import { SystemComponent } from '../entities/workspace/system-component.entity';
 import { SystemComponentMap } from '../maps/system-component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 
 @Injectable()
@@ -43,8 +44,9 @@ export class SystemComponentWorkspaceService {
     sysComponentRecordId: string,
     trx?: EntityManager,
   ): Promise<SystemComponent> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
+    const result = await withTransaction(
+      this.repository,
+      trx,
     ).getSystemComponent(sysId, sysComponentRecordId);
 
     if (!result) {
@@ -93,9 +95,7 @@ export class SystemComponentWorkspaceService {
     systemComponent.userId = userId;
     systemComponent.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      systemComponent,
-    );
+    await withTransaction(this.repository, trx).save(systemComponent);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -135,7 +135,7 @@ export class SystemComponentWorkspaceService {
       );
     }
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const systemComponent = repository.create({
       id: uuid(),
@@ -179,8 +179,9 @@ export class SystemComponentWorkspaceService {
             new Promise(innerResolve => {
               (async () => {
                 const innerPromises = [];
-                const systemComponentRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const systemComponentRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getSystemComponentByBeginOrEndDate(
                   sysId,
                   component.componentId,

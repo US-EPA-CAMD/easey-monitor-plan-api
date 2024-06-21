@@ -8,6 +8,7 @@ import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 
 @Injectable()
@@ -30,9 +31,10 @@ export class MonitorSpanWorkspaceService {
     spanId: string,
     trx?: EntityManager,
   ): Promise<MonitorSpan> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).getSpan(locationId, spanId);
+    const result = await withTransaction(this.repository, trx).getSpan(
+      locationId,
+      spanId,
+    );
 
     if (!result) {
       throw new EaseyException(
@@ -61,7 +63,8 @@ export class MonitorSpanWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorSpanDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const span = repository.create({
       id: uuid(),
       locationId,
@@ -133,7 +136,7 @@ export class MonitorSpanWorkspaceService {
     span.userId = userId;
     span.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(span);
+    await withTransaction(this.repository, trx).save(span);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -183,8 +186,9 @@ export class MonitorSpanWorkspaceService {
       promises.push(
         new Promise(innerResolve => {
           (async () => {
-            const spanRecord = await (
-              trx?.withRepository(this.repository) ?? this.repository
+            const spanRecord = await withTransaction(
+              this.repository,
+              trx,
             ).getSpanByLocIdCompTypeCdBDateBHour(
               locationId,
               span.componentTypeCode,

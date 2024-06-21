@@ -3,6 +3,7 @@ import { EntityManager } from 'typeorm';
 
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
+import { withTransaction } from '../utils';
 import { UnitRepository } from './unit.repository';
 
 @Injectable()
@@ -33,12 +34,9 @@ export class UnitService {
   async importUnit(unitRecord: Unit, nonLoadI: number, trx?: EntityManager) {
     return new Promise(resolve => {
       (async () => {
-        await (trx?.withRepository(this.repository) ?? this.repository).update(
-          unitRecord.id,
-          {
-            nonLoadBasedIndicator: nonLoadI,
-          },
-        );
+        await withTransaction(this.repository, trx).update(unitRecord.id, {
+          nonLoadBasedIndicator: nonLoadI,
+        });
         resolve(true);
       })();
     });
@@ -49,7 +47,7 @@ export class UnitService {
     facilityId: number,
     trx?: EntityManager, // Use for transactions
   ): Promise<Unit> {
-    return (trx?.withRepository(this.repository) ?? this.repository).findOne({
+    return withTransaction(this.repository, trx).findOne({
       where: { name: nameId, facId: facilityId },
     });
   }

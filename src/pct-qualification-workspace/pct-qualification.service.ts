@@ -11,6 +11,7 @@ import {
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { withTransaction } from '../utils';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 
 @Injectable()
@@ -39,8 +40,9 @@ export class PCTQualificationWorkspaceService {
     pctQualId: string,
     trx?: EntityManager,
   ): Promise<PCTQualificationDTO> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
+    const result = await withTransaction(
+      this.repository,
+      trx,
     ).getPCTQualification(locId, qualId, pctQualId);
     if (!result) {
       throw new EaseyException(
@@ -62,8 +64,9 @@ export class PCTQualificationWorkspaceService {
     qualDataYear: number,
     trx?: EntityManager,
   ): Promise<PCTQualificationDTO> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
+    const result = await withTransaction(
+      this.repository,
+      trx,
     ).getPCTQualificationByDataYear(locId, qualId, qualDataYear);
     if (result) {
       return this.map.one(result);
@@ -106,7 +109,7 @@ export class PCTQualificationWorkspaceService {
       );
     }
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const pctQual = repository.create({
       id: uuid(),
@@ -175,9 +178,7 @@ export class PCTQualificationWorkspaceService {
     pctQual.userId = userId;
     pctQual.updateDate = currentDateTime().toISOString();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      pctQual,
-    );
+    await withTransaction(this.repository, trx).save(pctQual);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);

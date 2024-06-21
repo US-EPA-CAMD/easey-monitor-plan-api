@@ -11,6 +11,7 @@ import {
 } from '../dtos/unit-capacity.dto';
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 
 @Injectable()
@@ -39,8 +40,9 @@ export class UnitCapacityWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const unitCapacityRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const unitCapacityRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getUnitCapacityByUnitIdAndDate(
                   unitId,
                   unitCapacity.beginDate,
@@ -94,9 +96,9 @@ export class UnitCapacityWorkspaceService {
     unitCapacityId: string,
     trx?: EntityManager,
   ): Promise<UnitCapacityDTO> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).getUnitCapacity(unitCapacityId);
+    const result = await withTransaction(this.repository, trx).getUnitCapacity(
+      unitCapacityId,
+    );
     if (!result) {
       throw new EaseyException(
         new Error('Unit Capacity Not Found.'),
@@ -125,7 +127,8 @@ export class UnitCapacityWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<UnitCapacityDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const unitCapacity = repository.create({
       id: uuid(),
       unitId,
@@ -163,7 +166,8 @@ export class UnitCapacityWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<UnitCapacityDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const unitCapacity = await repository.getUnitCapacity(unitCapacityId);
 
     unitCapacity.maximumHourlyHeatInputCapacity =

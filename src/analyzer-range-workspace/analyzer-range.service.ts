@@ -11,6 +11,7 @@ import {
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 
 @Injectable()
@@ -32,9 +33,9 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRangeId: string,
     trx?: EntityManager,
   ): Promise<AnalyzerRange> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).findOneBy({ id: analyzerRangeId });
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id: analyzerRangeId,
+    });
 
     if (!result) {
       throw new EaseyException(
@@ -62,7 +63,7 @@ export class AnalyzerRangeWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<AnalyzerRangeDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const analyzerRange = repository.create({
       id: uuid(),
@@ -113,9 +114,7 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.userId = userId;
     analyzerRange.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      analyzerRange,
-    );
+    await withTransaction(this.repository, trx).save(analyzerRange);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -138,8 +137,9 @@ export class AnalyzerRangeWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const analyzerRangeRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const analyzerRangeRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getAnalyzerRangeByComponentIdAndDate(
                   componentId,
                   analyzerRange,

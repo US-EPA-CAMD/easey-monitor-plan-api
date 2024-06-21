@@ -12,6 +12,7 @@ import {
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { withTransaction } from '../utils';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 
 @Injectable()
@@ -65,8 +66,9 @@ export class LMEQualificationWorkspaceService {
     qualDataYear: number,
     trx?: EntityManager,
   ): Promise<LMEQualificationDTO> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
+    const result = await withTransaction(
+      this.repository,
+      trx,
     ).getLMEQualificationByDataYear(locId, qualId, qualDataYear);
     if (result) {
       return this.map.one(result);
@@ -107,7 +109,7 @@ export class LMEQualificationWorkspaceService {
       );
     }
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const lmeQual = repository.create({
       id: uuid(),
@@ -147,7 +149,7 @@ export class LMEQualificationWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<LMEQualificationDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const lmeQual = await repository.getLMEQualification(
       locationId,

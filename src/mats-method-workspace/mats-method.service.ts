@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 
 @Injectable()
@@ -53,7 +54,8 @@ export class MatsMethodWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MatsMethodDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const method = repository.create({
       id: uuid(),
       locationId,
@@ -93,7 +95,7 @@ export class MatsMethodWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MatsMethodDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const method = await repository.findOneBy({ id: methodId });
 
@@ -140,8 +142,9 @@ export class MatsMethodWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                let method = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                let method = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getMatsMethodByLodIdParamCodeAndDate(locationId, matsMethod);
 
                 if (method) {

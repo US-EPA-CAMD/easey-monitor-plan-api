@@ -12,6 +12,7 @@ import {
 import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
 
 @Injectable()
@@ -35,9 +36,10 @@ export class MonitorDefaultWorkspaceService {
     defaultId: string,
     trx?: EntityManager,
   ): Promise<MonitorDefault> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).getDefault(locationId, defaultId);
+    const result = await withTransaction(this.repository, trx).getDefault(
+      locationId,
+      defaultId,
+    );
 
     if (!result) {
       throw new EaseyException(
@@ -66,7 +68,8 @@ export class MonitorDefaultWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorDefaultDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const monDefault = repository.create({
       id: uuid(),
       locationId,
@@ -128,9 +131,7 @@ export class MonitorDefaultWorkspaceService {
     monDefault.userId = userId;
     monDefault.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      monDefault,
-    );
+    await withTransaction(this.repository, trx).save(monDefault);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -153,8 +154,9 @@ export class MonitorDefaultWorkspaceService {
           new Promise(innerResolve => {
             (async () => {
               for (const monDefault of monDefaults) {
-                const monDefaultRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const monDefaultRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getDefaultBySpecs(
                   locationId,
                   monDefault.parameterCode,

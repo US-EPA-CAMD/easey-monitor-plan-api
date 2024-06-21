@@ -11,6 +11,7 @@ import {
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 
 @Injectable()
@@ -32,9 +33,9 @@ export class MonitorMethodWorkspaceService {
     methodId: string,
     trx?: EntityManager,
   ): Promise<MonitorMethod> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).findOneBy({ id: methodId });
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id: methodId,
+    });
 
     if (!result) {
       throw new EaseyException(
@@ -62,7 +63,8 @@ export class MonitorMethodWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorMethodDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const monMethod = repository.create({
       id: uuid(),
       locationId,
@@ -116,9 +118,7 @@ export class MonitorMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      method,
-    );
+    await withTransaction(this.repository, trx).save(method);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -141,8 +141,9 @@ export class MonitorMethodWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const methodRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const methodRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getMethodByLocIdParamCDBDate(
                   locationId,
                   method.parameterCode,

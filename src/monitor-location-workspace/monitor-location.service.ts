@@ -33,6 +33,7 @@ import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-cont
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitService } from '../unit/unit.service';
+import { withTransaction } from '../utils';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 
 @Injectable()
@@ -81,7 +82,7 @@ export class MonitorLocationWorkspaceService {
       );
     }
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const monitorLocation = repository.create({
       id: uuid(),
@@ -97,13 +98,13 @@ export class MonitorLocationWorkspaceService {
 
   async getMonitorLocationsByFacilityAndOris(
     plan: UpdateMonitorPlanDTO,
-    facilitId: number,
+    facilityId: number,
     orisCode: number,
   ): Promise<MonitorLocation[]> {
     const locations = [];
 
     for (const loc of plan.monitoringLocationData) {
-      locations.push(await this.getLocationRecord(loc, facilitId, orisCode));
+      locations.push(await this.getLocationRecord(loc, facilityId, orisCode));
     }
 
     return locations;
@@ -161,7 +162,7 @@ export class MonitorLocationWorkspaceService {
   }): Promise<MonitorLocation> {
     let location: MonitorLocation;
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     if (loc.unitId) {
       const unit = await this.unitService.getUnitByNameAndFacId(

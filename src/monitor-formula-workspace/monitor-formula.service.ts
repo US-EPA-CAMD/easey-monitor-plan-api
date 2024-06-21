@@ -13,6 +13,7 @@ import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { withTransaction } from '../utils';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 
 @Injectable()
@@ -36,9 +37,10 @@ export class MonitorFormulaWorkspaceService {
     formulaRecordId: string,
     trx?: EntityManager,
   ): Promise<MonitorFormula> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
-    ).getFormula(locationId, formulaRecordId);
+    const result = await withTransaction(this.repository, trx).getFormula(
+      locationId,
+      formulaRecordId,
+    );
 
     if (!result) {
       throw new EaseyException(
@@ -67,7 +69,8 @@ export class MonitorFormulaWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorFormulaDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const formula = repository.create({
       id: uuid(),
       locationId,
@@ -121,9 +124,7 @@ export class MonitorFormulaWorkspaceService {
     formula.userId = userId;
     formula.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      formula,
-    );
+    await withTransaction(this.repository, trx).save(formula);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -173,7 +174,7 @@ export class MonitorFormulaWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     return new Promise(resolve => {
       (async () => {
@@ -191,8 +192,9 @@ export class MonitorFormulaWorkspaceService {
                 if (!formulaRecord) {
                   // Check used_identifier table to see if the formulaId has already
                   // been used, and if so grab that monitor-formula record for update
-                  let usedIdentifier = await (
-                    trx?.withRepository(this.usedIdRepo) ?? this.usedIdRepo
+                  let usedIdentifier = await withTransaction(
+                    this.usedIdRepo,
+                    trx,
                   ).getBySpecs(locationId, formula.formulaId, 'F');
 
                   if (usedIdentifier)

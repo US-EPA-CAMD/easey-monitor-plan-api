@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 
 import { MonitorLocationBaseDTO } from '../dtos/monitor-location-base.dto';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
+import { withTransaction } from '../utils';
 import { StackPipeRepository } from './stack-pipe.repository';
 
 @Injectable()
@@ -25,7 +26,7 @@ export class StackPipeService {
       );
     }
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const stackPipe = repository.create({
       id: uuid(),
@@ -46,7 +47,7 @@ export class StackPipeService {
     facilityId: number,
     trx?: EntityManager,
   ): Promise<StackPipe> {
-    return (trx?.withRepository(this.repository) ?? this.repository).findOneBy({
+    return withTransaction(this.repository, trx).findOneBy({
       name: nameId,
       facId: facilityId,
     });
@@ -59,12 +60,9 @@ export class StackPipeService {
   ) {
     return new Promise(resolve => {
       (async () => {
-        await (trx?.withRepository(this.repository) ?? this.repository).update(
-          stackPipeRecord.id,
-          {
-            retireDate,
-          },
-        );
+        await withTransaction(this.repository, trx).update(stackPipeRecord.id, {
+          retireDate,
+        });
         resolve(true);
       })();
     });

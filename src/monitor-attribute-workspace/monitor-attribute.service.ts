@@ -11,6 +11,7 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 
 @Injectable()
@@ -62,7 +63,8 @@ export class MonitorAttributeWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorAttributeDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const attribute = repository.create({
       id: uuid(),
       locationId,
@@ -105,7 +107,8 @@ export class MonitorAttributeWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorAttributeDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const attribute = await repository.getAttribute(locationId, id);
 
     if (!attribute) {
@@ -154,8 +157,9 @@ export class MonitorAttributeWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const attributeRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const attributeRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getAttributeByLocIdAndDate(locationId, attribute.beginDate);
 
                 if (attributeRecord) {

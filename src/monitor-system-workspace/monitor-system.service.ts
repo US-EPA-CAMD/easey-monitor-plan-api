@@ -16,6 +16,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
+import { withTransaction } from '../utils';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 
 @Injectable()
@@ -116,7 +117,7 @@ export class MonitorSystemWorkspaceService {
     monitoringSystemRecordId: string,
     trx?: EntityManager,
   ): Promise<MonitorSystem> {
-    return (trx?.withRepository(this.repository) ?? this.repository).findOneBy({
+    return withTransaction(this.repository, trx).findOneBy({
       id: monitoringSystemRecordId,
     });
   }
@@ -134,7 +135,7 @@ export class MonitorSystemWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorSystemDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const system = repository.create({
       id: uuid(),
@@ -235,9 +236,7 @@ export class MonitorSystemWorkspaceService {
     system.userId = userId;
     system.updateDate = currentDateTime();
 
-    await (trx?.withRepository(this.repository) ?? this.repository).save(
-      system,
-    );
+    await withTransaction(this.repository, trx).save(system);
 
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
@@ -252,7 +251,7 @@ export class MonitorSystemWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     return new Promise(resolve => {
       (async () => {
@@ -271,8 +270,9 @@ export class MonitorSystemWorkspaceService {
                 if (!systemRecord) {
                   // Check used_identifier table to see if the sysIdentifier has already
                   // been used, and if so grab that monitor-system record for update
-                  let usedIdentifier = await (
-                    trx?.withRepository(this.usedIdRepo) ?? this.usedIdRepo
+                  let usedIdentifier = await withTransaction(
+                    this.usedIdRepo,
+                    trx,
                   ).getBySpecs(locationId, system.monitoringSystemId, 'S');
 
                   if (usedIdentifier)

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { withTransaction } from '../utils';
 import {
   MonitorPlanCommentBaseDTO,
   MonitorPlanCommentDTO,
@@ -31,8 +33,9 @@ export class MonitorPlanCommentWorkspaceService {
     planId: string,
     planComment: string,
     beginDate: Date,
+    trx?: EntityManager,
   ): Promise<MonitorPlanCommentDTO> {
-    const result = await this.repository.findOne({
+    const result = await withTransaction(this.repository, trx).findOne({
       where: {
         monitorPlanId: planId,
         monitorPlanComment: planComment,
@@ -48,8 +51,11 @@ export class MonitorPlanCommentWorkspaceService {
     monPlanId: string,
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<MonitorPlanCommentDTO> {
-    const comment = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const comment = repository.create({
       id: v4(),
       monitorPlanId: monPlanId,
       monitorPlanComment: payload.monitoringPlanComment,
@@ -59,7 +65,7 @@ export class MonitorPlanCommentWorkspaceService {
       addDate: currentDateTime(),
       updateDate: currentDateTime(),
     });
-    const result = await this.repository.save(comment);
+    const result = await repository.save(comment);
     return this.map.one(result);
   }
 
@@ -67,8 +73,11 @@ export class MonitorPlanCommentWorkspaceService {
     monPlanId: string,
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<MonitorPlanCommentDTO> {
-    const comment = await this.repository.findOne({
+    const repository = withTransaction(this.repository, trx);
+
+    const comment = await repository.findOne({
       where: {
         monitorPlanId: monPlanId,
         monitorPlanComment: payload.monitoringPlanComment,
@@ -79,7 +88,7 @@ export class MonitorPlanCommentWorkspaceService {
     comment.endDate = payload.endDate;
     comment.userId = userId;
     comment.updateDate = currentDateTime();
-    const result = await this.repository.save(comment);
+    const result = await repository.save(comment);
     return this.map.one(result);
   }
 
@@ -87,6 +96,7 @@ export class MonitorPlanCommentWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     userId: string,
     monitorPlanId: string,
+    trx?: EntityManager,
   ) {
     return new Promise(resolve => {
       (async () => {
@@ -100,13 +110,19 @@ export class MonitorPlanCommentWorkspaceService {
                   monitorPlanId,
                   comment.monitoringPlanComment,
                   comment.beginDate,
+                  trx,
                 );
 
                 if (!monitorPlanComment) {
-                  await this.createComment(monitorPlanId, comment, userId);
+                  await this.createComment(monitorPlanId, comment, userId, trx);
                 } else {
                   if (monitorPlanComment.endDate !== comment.endDate) {
-                    await this.updateComment(monitorPlanId, comment, userId);
+                    await this.updateComment(
+                      monitorPlanId,
+                      comment,
+                      userId,
+                      trx,
+                    );
                   }
                 }
                 innerResolve(true);

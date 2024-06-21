@@ -2,19 +2,15 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { EntityManager, In } from 'typeorm';
 
-import { MonitorPlanReportingFreqDTO } from '../dtos/monitor-plan-reporting-freq.dto';
-import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
-import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { MonitorPlanReportingFreqDTO } from '../dtos/monitor-plan-reporting-freq.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
-import { UnitProgramRepository } from '../unit-program/unit-program.repository';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
@@ -22,6 +18,7 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
 import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
 import { EvalStatusCodeRepository } from '../monitor-configurations-workspace/eval-status.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
 import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
 import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
@@ -30,28 +27,25 @@ import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/m
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
 import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
+import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
 import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { PlantService } from '../plant/plant.service';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
 import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
 import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit-capacity.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
+import { UnitProgramRepository } from '../unit-program/unit-program.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
+import { withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
-
-type ProgramPeriod = [number, number, string]; // [year, quarter, program type]
-type ProgramRange = {
-  type: 'annual' | 'ozone';
-  begin: { year: number; quarter: number } | null;
-  end: { year: number; quarter: number } | null;
-};
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -102,6 +96,7 @@ export class MonitorPlanWorkspaceService {
   private async calculateReportPeriodRange(
     monitorLocations: MonitorLocationDTO[],
     unitStackConfigs: UnitStackConfigurationDTO[],
+    trx?: EntityManager,
   ) {
     let beginDate: Date;
     let endDate: Date;
@@ -147,7 +142,10 @@ export class MonitorPlanWorkspaceService {
         beginDate = new Date(beginDateEpoch);
 
         // Get the end date from the day before the earliest retire date of the unit.
-        const locationRecord = await this.locationRepository.findOneBy({
+        const locationRecord = await withTransaction(
+          this.locationRepository,
+          trx,
+        ).findOneBy({
           id: location.id,
         });
         const unitRetireDateEpoch = Math.min(
@@ -178,24 +176,39 @@ export class MonitorPlanWorkspaceService {
     }
 
     // Convert the begin and end dates to report periods IDs.
-    const beginReportPeriodId =
-      beginDate &&
-      (await this.reportingPeriodRepository.getByDate(beginDate)).id;
+    const reportingPeriodRepository = withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    );
+    const beginReportPeriodId = (
+      await reportingPeriodRepository.getByDate(beginDate)
+    ).id;
     const endReportPeriodId =
-      endDate && (await this.reportingPeriodRepository.getByDate(endDate)).id;
+      endDate && (await reportingPeriodRepository.getByDate(endDate)).id;
 
     return [beginReportPeriodId, endReportPeriodId];
   }
 
-  async createMonitorPlan(
-    locations: MonitorLocationDTO[],
-    facId: number,
-    userId: string,
-    beginReportPeriodId: number,
-    endReportPeriodId: number,
-  ) {
+  async createMonitorPlan({
+    locations,
+    facId,
+    userId,
+    beginReportPeriodId,
+    endReportPeriodId,
+    trx,
+  }: {
+    locations: MonitorLocationDTO[];
+    facId: number;
+    userId: string;
+    beginReportPeriodId: number;
+    endReportPeriodId: number;
+    trx?: EntityManager;
+  }) {
     // Create the `monitor_plan` record.
-    const monitorPlanRecord = await this.repository.createMonitorPlanRecord(
+    const monitorPlanRecord = await withTransaction(
+      this.repository,
+      trx,
+    ).createMonitorPlanRecord(
       facId,
       userId,
       beginReportPeriodId,
@@ -208,6 +221,7 @@ export class MonitorPlanWorkspaceService {
         this.monitorPlanLocationService.createMonPlanLocationRecord(
           monitorPlanRecord.id,
           l.id,
+          trx,
         ),
       ),
     );
@@ -216,20 +230,23 @@ export class MonitorPlanWorkspaceService {
     const unitIds = locations
       .map(l => l.unitRecordId)
       .filter(id => id !== null);
-    const unitPrograms = await this.unitProgramRepository.getUnitProgramsByUnitIds(
-      unitIds,
-    );
+    const unitPrograms = await withTransaction(
+      this.unitProgramRepository,
+      trx,
+    ).getUnitProgramsByUnitIds(unitIds);
 
     // Get the program ranges and types from the unit programs.
+    const reportingPeriodRepository = withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    );
     const programRanges: ProgramRange[] = await Promise.all(
       unitPrograms
         .filter(up => up.unitMonitorCertBeginDate !== null)
         .map(async up => {
           const [begin, end] = await Promise.all([
-            this.reportingPeriodRepository.getByDate(
-              up.unitMonitorCertBeginDate,
-            ),
-            up.endDate && this.reportingPeriodRepository.getByDate(up.endDate),
+            reportingPeriodRepository.getByDate(up.unitMonitorCertBeginDate),
+            up.endDate && reportingPeriodRepository.getByDate(up.endDate),
           ]);
           return {
             type:
@@ -244,10 +261,10 @@ export class MonitorPlanWorkspaceService {
     const {
       year: beginYear,
       quarter: beginQuarter,
-    } = await this.reportingPeriodRepository.getById(beginReportPeriodId);
+    } = await reportingPeriodRepository.getById(beginReportPeriodId);
 
     const { year: endYear, quarter: endQuarter } = endReportPeriodId
-      ? await this.reportingPeriodRepository.getById(endReportPeriodId) // Use the monitor plan record's end report period ID if it exists
+      ? await reportingPeriodRepository.getById(endReportPeriodId) // Use the monitor plan record's end report period ID if it exists
       : // Otherwise, calculate the end report period from the program ranges (used for calculating the reporting frequency's type, not end date)
         programRanges.reduce(
           (acc, cur) => ({
@@ -341,13 +358,13 @@ export class MonitorPlanWorkspaceService {
           );
         }
         const [beginReportPeriod, endReportPeriod] = await Promise.all([
-          this.reportingPeriodRepository.getByYearQuarter(
-            beginYear,
-            beginQuarter,
-          ),
-          this.reportingPeriodRepository.getByYearQuarter(endYear, endQuarter),
+          reportingPeriodRepository.getByYearQuarter(beginYear, beginQuarter),
+          reportingPeriodRepository.getByYearQuarter(endYear, endQuarter),
         ]);
-        await this.reportingFreqRepository.createReportingFrequencyRecord({
+        await withTransaction(
+          this.reportingFreqRepository,
+          trx,
+        ).createReportingFrequencyRecord({
           beginReportPeriodId: beginReportPeriod.id,
           endReportPeriodId:
             i === freqRanges.length - 1
@@ -369,15 +386,8 @@ export class MonitorPlanWorkspaceService {
   ): Promise<MonitorPlanDTO> {
     const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
 
-    const databaseLocId = (
-      await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
-        plan,
-        facilityId,
-        plan.orisCode,
-      )
-    )
-      .filter(l => l !== null)
-      .pop()?.id;
+    // Get a representation of the active plan.
+    let activePlan = await this.matchToActivePlan(plan, facilityId);
 
     // Start transaction.
     await this.entityManager.transaction(async trx => {
@@ -394,6 +404,7 @@ export class MonitorPlanWorkspaceService {
         plan,
         facilityId,
         userId,
+        trx,
       );
 
       /* MONITOR PLAN MERGE LOGIC */
@@ -403,22 +414,8 @@ export class MonitorPlanWorkspaceService {
       ] = await this.calculateReportPeriodRange(
         planMonitoringLocationData,
         planUnitStackConfigurationData,
+        trx,
       );
-
-      // Get the active plan.
-      const activePlanRecord = databaseLocId
-        ? await this.repository.getActivePlanByLocationId(databaseLocId)
-        : null;
-
-      if (!activePlanRecord) {
-        throw new EaseyException(
-          new Error('No active plan found for the location'),
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      // Get a representation of the active plan.
-      let activePlan = await this.getMonitorPlan(activePlanRecord.id);
 
       // Compare the active plan against the imported plan.
       const activePlanLocationIds = activePlan.monitoringLocationData.map(
@@ -438,31 +435,32 @@ export class MonitorPlanWorkspaceService {
 
       if (locationsChanged) {
         // Create a new plan.
-        const newPlan = await this.createMonitorPlan(
-          planMonitoringLocationData,
-          facilityId,
+        const newPlan = await this.createMonitorPlan({
+          locations: planMonitoringLocationData,
+          facId: facilityId,
           userId,
           beginReportPeriodId,
           endReportPeriodId,
-        );
+          trx,
+        });
 
         // Get the period ID of the period before the new plan's begin period.
-        const updatedEndPeriodId = await this.reportingPeriodRepository.getPreviousPeriodId(
-          newPlan.beginReportPeriodId,
-        );
+        const updatedEndPeriodId = await withTransaction(
+          this.reportingPeriodRepository,
+          trx,
+        ).getPreviousPeriodId(newPlan.beginReportPeriodId);
 
         // Update the end report period of the previously active plan.
         await this.updateEndReportingPeriod(
           activePlan,
           updatedEndPeriodId,
           userId,
+          trx,
         );
 
         // Set the new plan as the active plan.
         activePlan = newPlan;
       } else if (reportingPeriodsChanged) {
-        console.log(beginReportPeriodId);
-        console.log(activePlan.beginReportPeriodId);
         if (beginReportPeriodId !== activePlan.beginReportPeriodId) {
           throw new EaseyException(
             new Error(
@@ -488,6 +486,7 @@ export class MonitorPlanWorkspaceService {
             activePlan,
             endReportPeriodId,
             userId,
+            trx,
           );
         }
       }
@@ -497,6 +496,7 @@ export class MonitorPlanWorkspaceService {
         plan,
         userId,
         activePlan.id,
+        trx,
       );
     });
 
@@ -526,6 +526,35 @@ export class MonitorPlanWorkspaceService {
     return dto;
   }
 
+  private async matchToActivePlan(
+    plan: UpdateMonitorPlanDTO,
+    facilityId: number,
+  ) {
+    const databaseLocId = (
+      await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
+        plan,
+        facilityId,
+        plan.orisCode,
+      )
+    )
+      .filter(l => l !== null)
+      .pop()?.id;
+
+    // Get the active plan.
+    const activePlanRecord = databaseLocId
+      ? await this.repository.getActivePlanByLocationId(databaseLocId)
+      : null;
+
+    if (!activePlanRecord) {
+      throw new EaseyException(
+        new Error('No active plan found for the location'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return await this.getMonitorPlan(activePlanRecord.id);
+  }
+
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
     return this.repository.updateDateAndUserId(monPlanId, userId);
   }
@@ -534,16 +563,27 @@ export class MonitorPlanWorkspaceService {
     plan: MonitorPlanDTO,
     newEndReportPeriodId: number,
     userId: string,
+    trx?: EntityManager,
   ) {
-    const planRecord = await this.repository.findOneBy({ id: plan.id });
+    const repository = withTransaction(this.repository, trx);
+    const reportingPeriodRepository = withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    );
+    const reportingFreqRepository = withTransaction(
+      this.reportingFreqRepository,
+      trx,
+    );
+
+    const planRecord = await repository.findOneBy({ id: plan.id });
     planRecord.endReportPeriodId = newEndReportPeriodId;
-    await this.repository.save(planRecord);
+    await repository.save(planRecord);
 
     // Update the reporting frequency records of the previously active plan.
     const {
       year: updatedEndYear,
       quarter: updatedEndQuarter,
-    } = await this.reportingPeriodRepository.getById(newEndReportPeriodId);
+    } = await reportingPeriodRepository.getById(newEndReportPeriodId);
 
     let latestReportingFrequency: MonitorPlanReportingFreqDTO;
     let latestReportingFrequencyYear: number;
@@ -554,14 +594,14 @@ export class MonitorPlanWorkspaceService {
       const {
         year: rfBeginYear,
         quarter: rfBeginQuarter,
-      } = await this.reportingPeriodRepository.getById(rf.beginReportPeriodId);
+      } = await reportingPeriodRepository.getById(rf.beginReportPeriodId);
 
       // If the begin period of the reporting frequency is after the updated end period, delete the record.
       if (
         rfBeginYear > updatedEndYear ||
         (rfBeginYear === updatedEndYear && rfBeginQuarter > updatedEndQuarter)
       ) {
-        await this.reportingFreqRepository.delete(rf.id);
+        await reportingFreqRepository.delete(rf.id);
       } else {
         // Compare the reporting frequencies and store the latest one for a later update.
         if (!latestReportingFrequency) {
@@ -581,14 +621,14 @@ export class MonitorPlanWorkspaceService {
     }
     if (latestReportingFrequency) {
       // Update the end report period of the latest reporting frequency.
-      const latestReportingFrequencyRecord = await this.reportingFreqRepository.findOneBy(
+      const latestReportingFrequencyRecord = await reportingFreqRepository.findOneBy(
         { id: latestReportingFrequency.id },
       );
       latestReportingFrequencyRecord.endReportPeriodId = newEndReportPeriodId;
-      await this.reportingFreqRepository.save(latestReportingFrequencyRecord);
+      await reportingFreqRepository.save(latestReportingFrequencyRecord);
     }
 
-    this.repository.resetToNeedsEvaluation(plan.id, userId);
+    repository.resetToNeedsEvaluation(plan.id, userId);
   }
 
   async resetToNeedsEvaluation(
@@ -596,7 +636,8 @@ export class MonitorPlanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ): Promise<void> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const plan = await repository.getActivePlanByLocationId(locId);
 
     const planId = plan.id;
@@ -944,3 +985,10 @@ export class MonitorPlanWorkspaceService {
     return mpDTO;
   }
 }
+
+type ProgramPeriod = [number, number, string]; // [year, quarter, program type]
+type ProgramRange = {
+  type: 'annual' | 'ozone';
+  begin: { year: number; quarter: number } | null;
+  end: { year: number; quarter: number } | null;
+};

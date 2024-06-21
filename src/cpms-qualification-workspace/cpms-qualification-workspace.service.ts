@@ -11,6 +11,7 @@ import {
 import { CPMSQualificationMap } from '../maps/cpms-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { withTransaction } from '../utils';
 import { CPMSQualificationWorkspaceRepository } from './cpms-qualification-workspace.repository';
 
 @Injectable()
@@ -31,8 +32,9 @@ export class CPMSQualificationWorkspaceService {
     stackTestNumber: string,
     trx?: EntityManager,
   ): Promise<CPMSQualificationDTO> {
-    const result = await (
-      trx?.withRepository(this.repository) ?? this.repository
+    const result = await withTransaction(
+      this.repository,
+      trx,
     ).getCPMSQualificationByStackTestNumber(locId, qualId, stackTestNumber);
     if (result) {
       return this.map.one(result);
@@ -81,7 +83,7 @@ export class CPMSQualificationWorkspaceService {
       );
     }
 
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const cpmsQual = repository.create({
       id: uuid(),
@@ -120,7 +122,7 @@ export class CPMSQualificationWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<CPMSQualificationDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const cpmsQual = await repository.getCPMSQualification(
       locationId,

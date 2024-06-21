@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 
 @Injectable()
@@ -61,7 +62,7 @@ export class UnitFuelWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<UnitFuelDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
 
     const unitFuel = repository.create({
       id: uuid(),
@@ -102,7 +103,8 @@ export class UnitFuelWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<UnitFuelDTO> {
-    const repository = trx?.withRepository(this.repository) ?? this.repository;
+    const repository = withTransaction(this.repository, trx);
+
     const unitFuel = await repository.findOneBy({ id: unitFuelId });
 
     unitFuel.fuelCode = payload.fuelCode;
@@ -139,8 +141,9 @@ export class UnitFuelWorkspaceService {
           promises.push(
             new Promise(innerResolve => {
               (async () => {
-                const unitFuelRecord = await (
-                  trx?.withRepository(this.repository) ?? this.repository
+                const unitFuelRecord = await withTransaction(
+                  this.repository,
+                  trx,
                 ).getUnitFuelBySpecs(
                   unitId,
                   unitFuel.fuelCode,
