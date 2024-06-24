@@ -9,8 +9,11 @@ export class ReportingPeriodRepository extends Repository<ReportingPeriod> {
     super(ReportingPeriod, entityManager);
   }
 
-  async getByDate(date: Date): Promise<ReportingPeriod> {
-    const dateIso = date.toISOString();
+  async getByDate(date: Date | number | string): Promise<ReportingPeriod> {
+    const dateIso = (date instanceof Date
+      ? date
+      : new Date(date)
+    ).toISOString();
     return await this.createQueryBuilder('rp')
       .where('rp.beginDate <= :date', { date: dateIso })
       .andWhere('rp.endDate >= :date', { date: dateIso })

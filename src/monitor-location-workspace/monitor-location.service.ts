@@ -120,8 +120,13 @@ export class MonitorLocationWorkspaceService {
     return this.map.many(results);
   }
 
-  async getLocation(locationId: string): Promise<MonitorLocationDTO> {
-    const result = await this.repository.findOneBy({ id: locationId });
+  async getLocation(
+    locationId: string,
+    trx?: EntityManager,
+  ): Promise<MonitorLocationDTO> {
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id: locationId,
+    });
 
     if (!result) {
       throw new EaseyException(new Error(this.errorMsg), HttpStatus.NOT_FOUND, {
@@ -504,7 +509,9 @@ export class MonitorLocationWorkspaceService {
                 }
 
                 await Promise.all(innerPromises);
-                locations.push(await this.map.one(monitorLocationRecord));
+                locations.push(
+                  await this.getLocation(monitorLocationRecord.id, trx), // Re-query the location to populate newly added relationships
+                );
                 innerResolve(true);
               })();
             }),

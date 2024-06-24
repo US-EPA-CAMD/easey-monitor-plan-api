@@ -28,6 +28,8 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
   }
 
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
+    if (locationIds.length === 0) return [];
+
     return this.createQueryBuilder('usc')
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp')

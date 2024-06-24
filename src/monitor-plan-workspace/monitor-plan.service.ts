@@ -118,7 +118,7 @@ export class MonitorPlanWorkspaceService {
         // Single location without unit stack configurations.
         const location = monitorLocations[0];
 
-        if (!location.unitId) {
+        if (!location?.unitId) {
           throw new EaseyException(
             new Error(
               'The location for a monitor plan with a single location must have a unit',
@@ -128,10 +128,7 @@ export class MonitorPlanWorkspaceService {
         }
 
         // Get the begin date from the earliest monitoring method associated with the unit.
-        const beginDateEpoch = Math.min(
-          ...location.monitoringMethodData.map(m => m.beginDate.getTime()),
-        );
-        if (!beginDateEpoch) {
+        if (location.monitoringMethodData.length === 0) {
           throw new EaseyException(
             new Error(
               `There is no method associated with the unit ${location.unitId}`,
@@ -139,6 +136,11 @@ export class MonitorPlanWorkspaceService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
+        const beginDateEpoch = Math.min(
+          ...location.monitoringMethodData.map(m =>
+            new Date(m.beginDate).getTime(),
+          ),
+        );
         beginDate = new Date(beginDateEpoch);
 
         // Get the end date from the day before the earliest retire date of the unit.
@@ -151,7 +153,7 @@ export class MonitorPlanWorkspaceService {
         const unitRetireDateEpoch = Math.min(
           ...locationRecord.unit.opStatuses
             .filter(s => s.opStatusCode === 'RET')
-            .map(s => s.beginDate.getTime()),
+            .map(s => new Date(s.beginDate).getTime()),
         );
         endDate = Number.isFinite(unitRetireDateEpoch)
           ? new Date(unitRetireDateEpoch - 24 * 60 * 60 * 1000) // Retire date in epoch milliseconds minus 1 day.
@@ -164,14 +166,18 @@ export class MonitorPlanWorkspaceService {
         .reduce((max, cur) => {
           if (!max) return cur;
           if (!cur) return max;
-          return new Date(Math.max(cur.getTime(), max.getTime()));
+          const maxDate = new Date(max);
+          const curDate = new Date(cur);
+          return maxDate > curDate ? max : cur;
         }, null);
       endDate = unitStackConfigs
         .map(u => u.endDate)
         .reduce((min, cur) => {
           if (!min) return cur;
           if (!cur) return min;
-          return new Date(Math.min(cur.getTime(), min.getTime()));
+          const minDate = new Date(min);
+          const curDate = new Date(cur);
+          return minDate < curDate ? min : cur;
         }, null);
     }
 
@@ -377,7 +383,10 @@ export class MonitorPlanWorkspaceService {
       }),
     );
 
-    return this.map.one(monitorPlanRecord);
+    return await this.getMonitorPlan(monitorPlanRecord.id, {
+      includeLocations: true,
+      trx,
+    });
   }
 
   async importMpPlan(
@@ -434,6 +443,7 @@ export class MonitorPlanWorkspaceService {
         endReportPeriodId !== activePlan.endReportPeriodId;
 
       if (locationsChanged) {
+        console.log('LOCATIONS CHANGED');
         // Create a new plan.
         const newPlan = await this.createMonitorPlan({
           locations: planMonitoringLocationData,
@@ -461,6 +471,7 @@ export class MonitorPlanWorkspaceService {
         // Set the new plan as the active plan.
         activePlan = newPlan;
       } else if (reportingPeriodsChanged) {
+        console.log('REPORTING PERIODS CHANGED');
         if (beginReportPeriodId !== activePlan.beginReportPeriodId) {
           throw new EaseyException(
             new Error(
@@ -507,18 +518,33 @@ export class MonitorPlanWorkspaceService {
     return this.repository.revertToOfficialRecord(monPlanId);
   }
 
-  async getMonitorPlan(monPlanId: string): Promise<MonitorPlanDTO> {
-    const mp = await this.repository.getMonitorPlan(monPlanId);
+  async getMonitorPlan(
+    monPlanId: string,
+    {
+      includeLocations = false,
+      trx,
+    }: {
+      includeLocations?: boolean;
+      trx?: EntityManager;
+    } = {},
+  ): Promise<MonitorPlanDTO> {
+    const mp = await withTransaction(this.repository, trx).getMonitorPlan(
+      monPlanId,
+      includeLocations,
+    );
     const dto = await this.map.one(mp);
 
     dto.submissionAvailabilityCodeDescription = (
-      await this.submissionsAvailabilityStatusCodeRepository.findOneBy({
+      await withTransaction(
+        this.submissionsAvailabilityStatusCodeRepository,
+        trx,
+      ).findOneBy({
         subAvailabilityCode: mp.submissionAvailabilityCode,
       })
     ).subAvailabilityCodeDescription;
 
     dto.evalStatusCodeDescription = (
-      await this.evalStatusCodeRepository.findOneBy({
+      await withTransaction(this.evalStatusCodeRepository, trx).findOneBy({
         evalStatusCd: mp.evalStatusCode,
       })
     ).evalStatusCodeDescription;
@@ -552,7 +578,9 @@ export class MonitorPlanWorkspaceService {
       );
     }
 
-    return await this.getMonitorPlan(activePlanRecord.id);
+    return await this.getMonitorPlan(activePlanRecord.id, {
+      includeLocations: true,
+    });
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {

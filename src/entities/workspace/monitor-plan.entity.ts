@@ -132,6 +132,7 @@ export class MonitorPlan extends BaseEntity {
   @ManyToOne(
     () => Plant,
     plant => plant.plans,
+    { eager: true },
   )
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
@@ -141,7 +142,7 @@ export class MonitorPlan extends BaseEntity {
     location => location.plans,
   )
   @JoinTable({
-    name: 'camdecmps.monitor_plan_location',
+    name: 'camdecmpswks.monitor_plan_location',
     joinColumn: {
       name: 'mon_plan_id',
       referencedColumnName: 'id',

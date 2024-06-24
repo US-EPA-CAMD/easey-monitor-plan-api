@@ -90,6 +90,7 @@ export class MonitorLocation extends BaseEntity {
   @OneToMany(
     () => MonitorMethod,
     method => method.location,
+    { eager: true },
   )
   methods: MonitorMethod[];
 

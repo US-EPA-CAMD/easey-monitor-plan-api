@@ -86,11 +86,24 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     }
   }
 
-  async getMonitorPlan(planId: string): Promise<MonitorPlan> {
-    return this.createQueryBuilder('plan')
-      .innerJoinAndSelect('plan.plant', 'plant')
-      .where('plan.id = :planId', { planId })
-      .getOne();
+  async getMonitorPlan(
+    planId: string,
+    includeLocations = false,
+  ): Promise<MonitorPlan> {
+    return this.findOne({
+      where: { id: planId },
+      relations: {
+        plant: true,
+        ...(includeLocations
+          ? {
+              locations: {
+                stackPipe: true,
+                unit: true,
+              },
+            }
+          : {}),
+      },
+    });
   }
 
   async getActivePlanByLocationId(locId: string): Promise<MonitorPlan> {
