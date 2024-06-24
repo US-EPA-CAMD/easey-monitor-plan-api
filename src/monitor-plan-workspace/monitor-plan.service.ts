@@ -443,8 +443,10 @@ export class MonitorPlanWorkspaceService {
         endReportPeriodId !== activePlan.endReportPeriodId;
 
       if (locationsChanged) {
-        console.log('LOCATIONS CHANGED');
         // Create a new plan.
+        console.log(
+          'Imported locations differ from the active plan, creating new plan',
+        );
         const newPlan = await this.createMonitorPlan({
           locations: planMonitoringLocationData,
           facId: facilityId,
@@ -471,7 +473,6 @@ export class MonitorPlanWorkspaceService {
         // Set the new plan as the active plan.
         activePlan = newPlan;
       } else if (reportingPeriodsChanged) {
-        console.log('REPORTING PERIODS CHANGED');
         if (beginReportPeriodId !== activePlan.beginReportPeriodId) {
           throw new EaseyException(
             new Error(
@@ -493,6 +494,7 @@ export class MonitorPlanWorkspaceService {
           }
 
           // Update the end report period of the active plan.
+          console.log('Updating end report period of the active plan');
           await this.updateEndReportingPeriod(
             activePlan,
             endReportPeriodId,
