@@ -26,8 +26,6 @@ import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-w
 import { SystemComponentMasterDataRelationshipModule } from './system-component-master-data-relationship/system-component-master-data-relationship.module';
 import { UsedIdentifierModule } from './used-identifier/used-identifier.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
-import { CPMSQualificationWorkspaceModule } from './cpms-qualification-workspace/cpms-qualification-workspace.module';
-import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification.module';
 
 @Module({
   imports: [
@@ -58,8 +56,6 @@ import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification
     SystemComponentMasterDataRelationshipModule,
     UsedIdentifierModule,
     WhatHasDataModule,
-    CPMSQualificationWorkspaceModule,
-    CPMSQualificationModule,
   ],
   providers: [DbLookupValidator],
 })

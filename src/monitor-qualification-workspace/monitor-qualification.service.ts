@@ -4,7 +4,6 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 
-import { CPMSQualificationWorkspaceService } from '../cpms-qualification-workspace/cpms-qualification-workspace.service';
 import {
   MonitorQualificationBaseDTO,
   MonitorQualificationDTO,
@@ -29,7 +28,6 @@ export class MonitorQualificationWorkspaceService {
     private readonly leeQualificationService: LEEQualificationWorkspaceService,
     private readonly lmeQualificationService: LMEQualificationWorkspaceService,
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
-    private readonly cpmsQualificationService: CPMSQualificationWorkspaceService,
   ) {}
 
   runQualificationImportCheck(qualifications: UpdateMonitorQualificationDTO[]) {
@@ -63,15 +61,6 @@ export class MonitorQualificationWorkspaceService {
       ) {
         errorList.push(
           `[IMPORT12-FATAL-B] You have reported a MonitorQualLME record for a location with the Qualification Type Code not equal to LMEA or LMES. A MonitorQualLME record should not be reported for qualification type codes other than LMEA or LMES.`,
-        );
-      }
-
-      if (
-        qual.qualificationTypeCode !== 'CPMS' &&
-        qual.monitoringQualificationCPMSData.length > 0
-      ) {
-        errorList.push(
-          `[IMPORT12-FATAL-C] You have reported a MonitorQualCPMS record for a location with the Qualification Type Code not equal to CPMS. A MonitorQualCPMS record should not be reported for qualification type codes other than CPMS.`,
         );
       }
 
@@ -134,20 +123,6 @@ export class MonitorQualificationWorkspaceService {
           locationId,
           qualificationRecordId,
           qualification.monitoringQualificationPercentData,
-          userId,
-        ),
-      );
-    }
-
-    if (
-      qualification.monitoringQualificationCPMSData?.length > 0 &&
-      qualification.qualificationTypeCode === 'CPMS'
-    ) {
-      promises.push(
-        this.cpmsQualificationService.importCPMSQualifications(
-          locationId,
-          qualificationRecordId,
-          qualification.monitoringQualificationCPMSData,
           userId,
         ),
       );

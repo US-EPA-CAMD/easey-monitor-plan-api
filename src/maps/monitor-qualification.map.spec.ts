@@ -11,9 +11,6 @@ import { PCTQualification } from '../entities/pct-qualification.entity';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
-import { CPMSQualification } from '../entities/cpms-qualification.entity';
-import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
-import { CPMSQualificationMap } from './cpms-qualification.map';
 
 const id = '';
 const locationId = '';
@@ -26,7 +23,6 @@ const updateDate = new Date(Date.now());
 const monitoringQualificationLEEData = [new LEEQualification()];
 const monitoringQualificationLMEData = [new LMEQualification()];
 const monitoringQualificationPercentData = [new PCTQualification()];
-const monitoringQualificationCPMSData = [new CPMSQualification()];
 
 const leeQualDto: LEEQualificationDTO = {
   addDate: null,
@@ -55,16 +51,6 @@ const lmeQualDto: LMEQualificationDTO = {
   userId: undefined,
 };
 
-const cpmsQualDto: CPMSQualificationDTO = {
-  addDate: null,
-  id: undefined,
-  qualificationDataYear: undefined,
-  qualificationId: undefined,
-  stackTestNumber: undefined,
-  operatingLimit: undefined,
-  updateDate: null,
-  userId: undefined,
-};
 const pctQualDto: PCTQualificationDTO = {
   addDate: null,
   averagePercentValue: undefined,
@@ -97,7 +83,6 @@ entity.updateDate = updateDate;
 entity.leeQualifications = monitoringQualificationLEEData;
 entity.lmeQualifications = monitoringQualificationLMEData;
 entity.pctQualifications = monitoringQualificationPercentData;
-entity.cpmsQualifications = monitoringQualificationCPMSData;
 
 describe('MonitorQualification', () => {
   let map: MonitorQualificationMap;
@@ -111,7 +96,6 @@ describe('MonitorQualification', () => {
         LEEQualificationMap,
         LMEQualificationMap,
         PCTQualificationMap,
-        CPMSQualificationMap,
       ],
     }).compile();
 
@@ -132,20 +116,17 @@ describe('MonitorQualification', () => {
     expect(result.monitoringQualificationLEEData).toEqual([leeQualDto]);
     expect(result.monitoringQualificationLMEData).toEqual([lmeQualDto]);
     expect(result.monitoringQualificationPercentData).toEqual([pctQualDto]);
-    expect(result.monitoringQualificationCPMSData).toEqual([cpmsQualDto]);
   });
 
   it('Should return empty array when leeQual, lmeQual and pctQual does not exists', async () => {
     delete entity.leeQualifications;
     delete entity.lmeQualifications;
     delete entity.pctQualifications;
-    delete entity.cpmsQualifications;
 
     const result = await map.one(entity);
 
     expect(result.monitoringQualificationLEEData).toEqual([]);
     expect(result.monitoringQualificationLMEData).toEqual([]);
     expect(result.monitoringQualificationPercentData).toEqual([]);
-    expect(result.monitoringQualificationCPMSData).toEqual([]);
   });
 });
