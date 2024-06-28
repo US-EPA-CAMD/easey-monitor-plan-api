@@ -38,9 +38,11 @@ import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorConfigurationsWorkspaceModule } from '../monitor-configurations-workspace/monitor-configurations-workspace.module';
+import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.module';
 
 @Module({
   imports: [
+    EaseyContentModule,
     ImportChecksModule,
     MonitorPlanCommentWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,

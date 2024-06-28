@@ -38,6 +38,7 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
+import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -70,7 +71,7 @@ export class MonitorPlanWorkspaceService {
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
     private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
-
+    private readonly easeyContentService: EaseyContentService,
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
@@ -493,8 +494,8 @@ export class MonitorPlanWorkspaceService {
       }
     });
 
-    let mpDTO = await this.map.one(mp);
-
+    const version = this.easeyContentService.monitorPlanSchema?.version;
+    const mpDTO = {version, ...await this.map.one(mp)};
     if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurationData = uscDTO;
@@ -503,7 +504,6 @@ export class MonitorPlanWorkspaceService {
     if (rptValuesOnly) {
       await removeNonReportedValues(mpDTO);
     }
-
     return mpDTO;
   }
 }

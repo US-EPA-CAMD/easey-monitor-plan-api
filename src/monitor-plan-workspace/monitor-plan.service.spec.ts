@@ -65,6 +65,7 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
+import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
@@ -85,6 +86,12 @@ const mockMonitorLocationService = () => ({
     .fn()
     .mockResolvedValue([MONITOR_LOCATION]),
   importMonitorLocation: jest.fn(),
+});
+
+const mockEaseyContentService = () => ({
+  importMonitorPlan: jest.fn().mockResolvedValue({
+    monitorPlanSchema: { version : '1.0.0'}
+  }),
 });
 
 const mockMonitorPlanRepo = () => ({
@@ -206,6 +213,10 @@ describe('Monitor Plan Service', () => {
     const module = await Test.createTestingModule({
       providers: [
         MonitorPlanWorkspaceService,
+        {
+          provide: EaseyContentService,
+          useFactory: mockEaseyContentService,
+        },
         {
           provide: PlantService,
           useFactory: mockPlantService,
