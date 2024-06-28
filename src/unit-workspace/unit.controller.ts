@@ -1,9 +1,9 @@
-import { Controller, Get, Query, Req, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { UnitDTO } from '../dtos/unit.dto';
-import { UnitParamsDTO } from '../dtos/unit.params.dto';
 import { UnitWorkspaceService } from './unit.service';
 
 @Controller()
@@ -12,16 +12,21 @@ import { UnitWorkspaceService } from './unit.service';
 export class UnitWorkspaceController {
   constructor(private readonly service: UnitWorkspaceService) {}
 
-  @Get()
+  @Get(':facId')
   @ApiOkResponse({
     isArray: true,
     type: UnitDTO,
-    description: 'Retrieves a list of units',
+    description: 'Retrieves a list of units by facility ID',
   })
-  getComponents(
-    @Query(ValidationPipe) unitParamsDTO: UnitParamsDTO,
-    @Req() req: Request,
-  ) {
-    return this.service.getUnits(unitParamsDTO, req);
+  @RoleGuard(
+    {
+      enforceCheckout: false,
+      pathParam: 'facId',
+      enforceEvalSubmitCheck: false,
+    },
+    LookupType.Facility,
+  )
+  getUnitsByFacId(@Param('facId') facId: number) {
+    return this.service.getUnitsByFacId(facId);
   }
 }

@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { EntityManager, In } from 'typeorm';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -51,6 +52,7 @@ import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 export class MonitorPlanWorkspaceService {
   constructor(
     private readonly entityManager: EntityManager,
+    private readonly logger: Logger,
     private readonly repository: MonitorPlanWorkspaceRepository,
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
     private readonly submissionsAvailabilityStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
@@ -444,8 +446,9 @@ export class MonitorPlanWorkspaceService {
 
       if (locationsChanged) {
         // Create a new plan.
-        console.log(
+        this.logger.debug(
           'Imported locations differ from the active plan, creating new plan',
+          'MonitorPlanWorkspaceService',
         );
         const newPlan = await this.createMonitorPlan({
           locations: planMonitoringLocationData,
@@ -494,7 +497,10 @@ export class MonitorPlanWorkspaceService {
           }
 
           // Update the end report period of the active plan.
-          console.log('Updating end report period of the active plan');
+          this.logger.debug(
+            'Updating end report period of the active plan',
+            'MonitorPlanWorkspaceService',
+          );
           await this.updateEndReportingPeriod(
             activePlan,
             endReportPeriodId,
