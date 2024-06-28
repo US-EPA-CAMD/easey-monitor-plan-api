@@ -112,7 +112,7 @@ export class MonitorPlanWorkspaceService {
           new Error(
             'Cannot have multiple locations without unit stack configurations',
           ),
-          HttpStatus.INTERNAL_SERVER_ERROR, // This is an internal error because the data should have been validated before this point.
+          HttpStatus.BAD_REQUEST,
         );
       } else {
         // Single location without unit stack configurations.
@@ -133,7 +133,7 @@ export class MonitorPlanWorkspaceService {
             new Error(
               `There is no method associated with the unit ${location.unitId}`,
             ),
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            HttpStatus.BAD_REQUEST,
           );
         }
         const beginDateEpoch = Math.min(
@@ -360,7 +360,7 @@ export class MonitorPlanWorkspaceService {
             new Error(
               'The reporting frequency must be consistent within a period',
             ),
-            HttpStatus.INTERNAL_SERVER_ERROR,
+            HttpStatus.BAD_REQUEST,
           );
         }
         const [beginReportPeriod, endReportPeriod] = await Promise.all([
