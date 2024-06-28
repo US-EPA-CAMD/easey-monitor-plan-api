@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
+import { UnitMap } from '../maps/unit.map';
 import { UnitRepository } from './unit.repository';
 import { UnitService } from './unit.service';
 
@@ -19,11 +20,12 @@ describe('Unit Import Tests', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
-        UnitService,
+        UnitMap,
         {
           provide: UnitRepository,
           useFactory: mockRepository,
         },
+        UnitService,
       ],
     }).compile();
 

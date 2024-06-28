@@ -74,6 +74,8 @@ import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-w
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification.module';
 import { CPMSQualificationWorkspaceModule } from './cpms-qualification-workspace/cpms-qualification-workspace.module';
+import { UnitModule } from './unit/unit.module';
+import { UnitWorkspaceModule } from './unit-workspace/unit.module';
 
 const routes: Routes = [
   {
@@ -303,6 +305,14 @@ const routes: Routes = [
   {
     path: 'workspace/check-outs/plans',
     module: CheckOutModule,
+  },
+  {
+    path: 'units',
+    module: UnitModule,
+  },
+  {
+    path: 'workspace/units',
+    module: UnitWorkspaceModule,
   },
 ];
 
