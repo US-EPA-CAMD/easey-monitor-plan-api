@@ -3,21 +3,12 @@ import { EntityManager } from 'typeorm';
 
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
-import { UnitMap } from '../maps/unit.map';
 import { withTransaction } from '../utils';
 import { UnitRepository } from './unit.repository';
 
 @Injectable()
 export class UnitService {
-  constructor(
-    private readonly repository: UnitRepository,
-    private readonly map: UnitMap,
-  ) {}
-
-  async getUnitsByFacId(facId: number) {
-    const results = await this.repository.findBy({ facId });
-    return this.map.many(results);
-  }
+  constructor(private readonly repository: UnitRepository) {}
 
   async runUnitChecks(
     location: UpdateMonitorLocationDTO,

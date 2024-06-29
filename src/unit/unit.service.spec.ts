@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
-import { UnitMap } from '../maps/unit.map';
 import { UnitRepository } from './unit.repository';
 import { UnitService } from './unit.service';
 
@@ -12,16 +11,7 @@ const mockRepository = () => ({
   update: jest.fn().mockResolvedValue(true),
 });
 
-const mockUnit = (id: number, name: string, facId: number) => {
-  const unit = new Unit();
-  unit.id = id;
-  unit.name = name;
-  unit.facId = facId;
-  return unit;
-};
-
-describe('Unit Tests', () => {
-  const map = new UnitMap();
+describe('Unit Import Tests', () => {
   let service: UnitService;
   let repository: UnitRepository;
 
@@ -29,7 +19,6 @@ describe('Unit Tests', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
-        UnitMap,
         {
           provide: UnitRepository,
           useFactory: mockRepository,
@@ -80,19 +69,6 @@ describe('Unit Tests', () => {
 
       const result = await service.getUnitByNameAndFacId('1', 1);
       expect(result).toEqual(unit);
-    });
-  });
-
-  describe('getUnits', () => {
-    const unitList: Unit[] = new Array(16)
-      .fill(null)
-      .map((_, i) => mockUnit(i + 1, `Test Unit ${i + 1}`, (i + 1) % 4));
-    it('should return array with all units for a facility', async () => {
-      const units = unitList.filter(u => u.facId === 2);
-      const unitsDto = await map.many(units);
-      jest.spyOn(repository, 'findBy').mockResolvedValue(units);
-      const results = await service.getUnitsByFacId(2);
-      expect(results).toStrictEqual(unitsDto);
     });
   });
 });

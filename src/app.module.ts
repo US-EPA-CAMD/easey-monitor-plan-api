@@ -28,8 +28,6 @@ import { UsedIdentifierModule } from './used-identifier/used-identifier.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 import { CPMSQualificationWorkspaceModule } from './cpms-qualification-workspace/cpms-qualification-workspace.module';
 import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification.module';
-import { UnitModule } from './unit/unit.module';
-import { UnitWorkspaceModule } from './unit-workspace/unit.module';
 
 @Module({
   imports: [
@@ -62,8 +60,6 @@ import { UnitWorkspaceModule } from './unit-workspace/unit.module';
     WhatHasDataModule,
     CPMSQualificationWorkspaceModule,
     CPMSQualificationModule,
-    UnitModule,
-    UnitWorkspaceModule,
   ],
   providers: [DbLookupValidator],
 })

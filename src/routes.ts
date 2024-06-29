@@ -306,14 +306,6 @@ const routes: Routes = [
     path: 'workspace/check-outs/plans',
     module: CheckOutModule,
   },
-  {
-    path: 'units',
-    module: UnitModule,
-  },
-  {
-    path: 'workspace/units',
-    module: UnitWorkspaceModule,
-  },
 ];
 
 export default routes;
