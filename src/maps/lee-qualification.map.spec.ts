@@ -10,7 +10,7 @@ const updateDate = new Date(Date.now());
 const qualificationTestDate = new Date(Date.now());
 const parameterCode = 'HG';
 const qualificationTestType = 'INITIAL';
-const potentialAnnualMassEmissions = null;
+const potentialAnnualHgMassEmissions = null;
 const applicableEmissionStandard = 1.2;
 const unitsOfStandard = 'LBTBTU';
 const percentageOfEmissionStandard = 1.4;
@@ -21,7 +21,7 @@ entity.qualificationId = qualId;
 entity.parameterCode = parameterCode;
 entity.qualificationTestType = qualificationTestType;
 entity.qualificationTestDate = qualificationTestDate;
-entity.potentialAnnualMassEmissions = potentialAnnualMassEmissions;
+entity.potentialAnnualHgMassEmissions = potentialAnnualHgMassEmissions;
 entity.applicableEmissionStandard = applicableEmissionStandard;
 entity.unitsOfStandard = unitsOfStandard;
 entity.percentageOfEmissionStandard = percentageOfEmissionStandard;
@@ -38,8 +38,8 @@ describe('LEEQualificationMap', () => {
     expect(result.parameterCode).toEqual(parameterCode);
     expect(result.qualificationTestType).toEqual(qualificationTestType);
     expect(result.qualificationTestDate).toEqual(qualificationTestDate);
-    expect(result.potentialAnnualMassEmissions).toEqual(
-      potentialAnnualMassEmissions,
+    expect(result.potentialAnnualHgMassEmissions).toEqual(
+      potentialAnnualHgMassEmissions,
     );
     expect(result.unitsOfStandard).toEqual(unitsOfStandard);
     expect(result.percentageOfEmissionStandard).toEqual(
