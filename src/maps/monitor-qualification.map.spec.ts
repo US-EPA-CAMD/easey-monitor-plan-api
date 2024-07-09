@@ -34,7 +34,7 @@ const leeQualDto: LEEQualificationDTO = {
   id: undefined,
   parameterCode: undefined,
   percentageOfEmissionStandard: undefined,
-  potentialAnnualMassEmissions: undefined,
+  potentialAnnualHgMassEmissions: undefined,
   qualificationId: undefined,
   qualificationTestDate: undefined,
   qualificationTestType: undefined,
