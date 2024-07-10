@@ -102,7 +102,7 @@ export class LEEQualificationBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}]`;
     },
   })
-  potentialAnnualMassEmissions: number;
+  potentialAnnualHgMassEmissions: number;
 
   @ApiProperty({
     description:
