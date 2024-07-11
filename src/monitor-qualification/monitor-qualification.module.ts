@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualification.module';
 import { LEEQualificationModule } from '../lee-qualification/lee-qualification.module';
 import { LMEQualificationModule } from '../lme-qualification/lme-qualification.module';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
@@ -15,7 +14,6 @@ import { MonitorQualificationService } from './monitor-qualification.service';
     LEEQualificationModule,
     LMEQualificationModule,
     PCTQualificationModule,
-    CPMSQualificationModule,
     TypeOrmModule.forFeature([MonitorQualificationRepository]),
   ],
   controllers: [MonitorQualificationController],
