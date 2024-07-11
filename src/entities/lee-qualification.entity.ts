@@ -30,7 +30,7 @@ export class LEEQualification extends BaseEntity {
     name: 'potential_annual_emissions',
     transformer: new NumericColumnTransformer(),
   })
-  potentialAnnualMassEmissions: number;
+  potentialAnnualHgMassEmissions: number;
 
   @Column({
     name: 'applicable_emission_standard',
