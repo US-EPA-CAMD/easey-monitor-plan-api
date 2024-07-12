@@ -391,14 +391,16 @@ export class MonitorPlanWorkspaceService {
     });
   }
 
-  async importMpPlan(
-    plan: UpdateMonitorPlanDTO,
-    userId: string,
-  ): Promise<MonitorPlanDTO> {
+  async importMpPlan(plan: UpdateMonitorPlanDTO, userId: string) {
     const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
 
     // Get a representation of the active plan.
     let activePlan = await this.matchToActivePlan(plan, facilityId);
+
+    let result: { changedPlan: MonitorPlanDTO; newPlan: MonitorPlanDTO } = {
+      changedPlan: null,
+      newPlan: null,
+    };
 
     // Start transaction.
     await this.entityManager.transaction(async trx => {
@@ -466,12 +468,15 @@ export class MonitorPlanWorkspaceService {
         ).getPreviousPeriodId(newPlan.beginReportPeriodId);
 
         // Update the end report period of the previously active plan.
-        await this.updateEndReportingPeriod(
+        const changedPlan = await this.updateEndReportingPeriod(
           activePlan,
           updatedEndPeriodId,
           userId,
           trx,
         );
+
+        // Assign the updated plan records to the result.
+        result = { changedPlan, newPlan };
 
         // Set the new plan as the active plan.
         activePlan = newPlan;
@@ -501,13 +506,17 @@ export class MonitorPlanWorkspaceService {
             'Updating end report period of the active plan',
             'MonitorPlanWorkspaceService',
           );
-          await this.updateEndReportingPeriod(
+          const changedPlan = await this.updateEndReportingPeriod(
             activePlan,
             endReportPeriodId,
             userId,
             trx,
           );
+
+          result = { changedPlan, newPlan: null };
         }
+      } else {
+        result = { changedPlan: null, newPlan: null };
       }
 
       /* MONITOR PLAN COMMENT MERGE LOGIC */
@@ -519,7 +528,7 @@ export class MonitorPlanWorkspaceService {
       );
     });
 
-    return null;
+    return result;
   }
 
   async revertToOfficialRecord(monPlanId: string): Promise<void> {
@@ -664,7 +673,8 @@ export class MonitorPlanWorkspaceService {
       await reportingFreqRepository.save(latestReportingFrequencyRecord);
     }
 
-    repository.resetToNeedsEvaluation(plan.id, userId);
+    await repository.resetToNeedsEvaluation(plan.id, userId);
+    return await this.getMonitorPlan(plan.id, { includeLocations: true, trx });
   }
 
   async resetToNeedsEvaluation(

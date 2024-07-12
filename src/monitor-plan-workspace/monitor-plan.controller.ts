@@ -88,15 +88,7 @@ export class MonitorPlanWorkspaceController {
   ): Promise<any> {
     await this.mpChecksService.runChecks(plan);
     await this.importChecksService.runImportChecks(plan);
-    const mpPlan = await this.service.importMpPlan(plan, user.userId);
-
-    if (mpPlan === null) {
-      return {
-        message: `Monitoring plan imported successfully`,
-      };
-    }
-
-    return mpPlan;
+    return await this.service.importMpPlan(plan, user.userId);
   }
 
   @Delete(':planId/revert')
