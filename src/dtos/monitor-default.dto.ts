@@ -135,6 +135,7 @@ export class MonitorDefaultBaseDTO {
       },
     },
   )
+  @ValidateIf(o => o.defaultUnitsOfMeasureCode || o.endDate === null || o.endHour === null)
   defaultUnitsOfMeasureCode: string;
 
   @ApiProperty({
@@ -167,6 +168,7 @@ export class MonitorDefaultBaseDTO {
     },
   )
   @IsString()
+  @ValidateIf(o => o.defaultPurposeCode || o.endDate === null || o.endHour === null)
   defaultPurposeCode: string;
 
   @ApiProperty({
@@ -192,6 +194,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsString()
+  @ValidateIf(o => o.fuelCode || o.endDate === null || o.endHour === null)
   fuelCode: string;
 
   @ApiProperty({
@@ -225,6 +228,7 @@ export class MonitorDefaultBaseDTO {
     },
   )
   @IsString()
+  @ValidateIf(o => o.operatingConditionCode || o.endDate === null || o.endHour === null)
   operatingConditionCode: string;
 
   @ApiProperty({
@@ -256,6 +260,7 @@ export class MonitorDefaultBaseDTO {
     },
   )
   @IsString()
+  @ValidateIf(o => o.defaultSourceCode || o.endDate === null || o.endHour === null)
   defaultSourceCode: string;
 
   @ApiProperty({
