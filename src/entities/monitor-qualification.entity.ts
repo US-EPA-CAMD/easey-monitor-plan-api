@@ -12,7 +12,6 @@ import { MonitorLocation } from './monitor-location.entity';
 import { LEEQualification } from './lee-qualification.entity';
 import { LMEQualification } from './lme-qualification.entity';
 import { PCTQualification } from './pct-qualification.entity';
-import { CPMSQualification } from './cpms-qualification.entity';
 
 @Entity({ name: 'camdecmps.monitor_qualification' })
 export class MonitorQualification extends BaseEntity {
@@ -64,10 +63,4 @@ export class MonitorQualification extends BaseEntity {
     pct => pct.qualification,
   )
   pctQualifications: PCTQualification[];
-
-  @OneToMany(
-    () => CPMSQualification,
-    cpms => cpms.qualification,
-  )
-  cpmsQualifications: CPMSQualification[];
 }

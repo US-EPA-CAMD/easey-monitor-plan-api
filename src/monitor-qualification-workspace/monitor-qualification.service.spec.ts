@@ -17,7 +17,6 @@ import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 import { LEEQualificationBaseDTO } from '../dtos/lee-qualification.dto';
 import { PCTQualificationBaseDTO } from '../dtos/pct-qualification.dto';
-import { CPMSQualificationWorkspaceService } from '../cpms-qualification-workspace/cpms-qualification-workspace.service';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -35,7 +34,6 @@ const payload: UpdateMonitorQualificationDTO = {
   monitoringQualificationLEEData: [],
   monitoringQualificationLMEData: [],
   monitoringQualificationPercentData: [],
-  monitoringQualificationCPMSData: [],
 };
 
 const mockRepository = () => ({
@@ -78,10 +76,6 @@ describe('MonitorQualificationService', () => {
           useFactory: () => ({}),
         },
         {
-          provide: CPMSQualificationWorkspaceService,
-          useFactory: () => ({}),
-        },
-        {
           provide: MonitorQualificationWorkspaceRepository,
           useFactory: mockRepository,
         },
@@ -109,7 +103,6 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLMEData = [lmeQual];
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [];
-      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -129,7 +122,6 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLMEData = [];
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [pctQual];
-      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -147,7 +139,6 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLMEData = [lmeQual];
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [];
-      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,
@@ -171,7 +162,6 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLMEData = [];
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [pctQual];
-      quals.monitoringQualificationCPMSData = [];
 
       const checkResults = await loadService.runQualificationImportCheck([
         quals,

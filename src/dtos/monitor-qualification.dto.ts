@@ -33,10 +33,6 @@ import {
   MINIMUM_DATE,
 } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
-import {
-  CPMSQualificationBaseDTO,
-  CPMSQualificationDTO,
-} from './cpms-qualification.dto';
 import { IsValidDate } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Monitoring Qualification';
@@ -140,10 +136,6 @@ export class UpdateMonitorQualificationDTO extends MonitorQualificationBaseDTO {
   @ValidateNested()
   @Type(() => PCTQualificationBaseDTO)
   monitoringQualificationPercentData: PCTQualificationBaseDTO[];
-
-  @ValidateNested()
-  @Type(() => CPMSQualificationBaseDTO)
-  monitoringQualificationCPMSData: CPMSQualificationBaseDTO[];
 }
 
 export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
@@ -199,10 +191,6 @@ export class MonitorQualificationDTO extends MonitorQualificationBaseDTO {
   @ValidateNested()
   @Type(() => PCTQualificationDTO)
   monitoringQualificationPercentData: PCTQualificationDTO[];
-
-  @ValidateNested()
-  @Type(() => CPMSQualificationDTO)
-  monitoringQualificationCPMSData: CPMSQualificationDTO[];
 
   @ApiProperty({
     description: propertyMetadata.monitorQualificationDTOActive.description,

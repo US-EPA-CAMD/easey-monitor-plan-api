@@ -3,7 +3,6 @@ import { In } from 'typeorm';
 
 import { AnalyzerRangeRepository } from '../analyzer-range/analyzer-range.repository';
 import { ComponentRepository } from '../component/component.repository';
-import { CPMSQualificationRepository } from '../cpms-qualification/cpms-qualification.repository';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { DuctWafRepository } from '../duct-waf/duct-waf.repository';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
@@ -62,7 +61,6 @@ export class MonitorPlanService {
     private readonly unitStackConfigRepository: UnitStackConfigurationRepository,
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyRepository,
     private readonly analyzerRangeRepository: AnalyzerRangeRepository,
-    private readonly cpmsQualRepository: CPMSQualificationRepository,
     private readonly map: MonitorPlanMap,
     private readonly uscMap: UnitStackConfigurationMap,
     private readonly easeyContentService: EaseyContentService,
@@ -329,11 +327,8 @@ export class MonitorPlanService {
               const q3 = this.pctQualificationRepository.find({
                 where: { qualificationId: In(qualIds) },
               });
-              const q4 = this.cpmsQualRepository.find({
-                where: { qualificationId: In(qualIds) },
-              });
 
-              const qualResults = await Promise.all([q1, q2, q3, q4]);
+              const qualResults = await Promise.all([q1, q2, q3]);
 
               quals.forEach(q => {
                 q.leeQualifications = qualResults[0].filter(
@@ -343,9 +338,6 @@ export class MonitorPlanService {
                   i => i.qualificationId === q.id,
                 );
                 q.pctQualifications = qualResults[2].filter(
-                  i => i.qualificationId === q.id,
-                );
-                q.cpmsQualifications = qualResults[3].filter(
                   i => i.qualificationId === q.id,
                 );
               });

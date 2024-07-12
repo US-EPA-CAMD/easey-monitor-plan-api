@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AnalyzerRangeModule } from '../analyzer-range/analyzer-range.module';
 import { ComponentModule } from '../component/component.module';
-import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualification.module';
 import { DuctWafModule } from '../duct-waf/duct-waf.module';
 import { LEEQualificationModule } from '../lee-qualification/lee-qualification.module';
 import { LMEQualificationModule } from '../lme-qualification/lme-qualification.module';
@@ -54,7 +53,6 @@ import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.
     LEEQualificationModule,
     LMEQualificationModule,
     PCTQualificationModule,
-    CPMSQualificationModule,
     UnitCapacityModule,
     UnitControlModule,
     UnitFuelModule,
