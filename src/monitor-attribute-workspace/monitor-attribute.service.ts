@@ -150,46 +150,32 @@ export class MonitorAttributeWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const attribute of attributes) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const attributeRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getAttributeByLocIdAndDate(locationId, attribute.beginDate);
+    return Promise.all(
+      attributes.map(async attribute => {
+        const attributeRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getAttributeByLocIdAndDate(locationId, attribute.beginDate);
 
-                if (attributeRecord) {
-                  await this.updateAttribute({
-                    locationId,
-                    id: attributeRecord.id,
-                    payload: attribute,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createAttribute({
-                    locationId,
-                    payload: attribute,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (attributeRecord) {
+          await this.updateAttribute({
+            locationId,
+            id: attributeRecord.id,
+            payload: attribute,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createAttribute({
+            locationId,
+            payload: attribute,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

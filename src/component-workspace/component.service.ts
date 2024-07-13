@@ -121,71 +121,53 @@ export class ComponentWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const repository = withTransaction(this.repository, trx);
-        const innerPromises = [];
-        for (const component of location.componentData) {
-          innerPromises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                let compRecord = await repository.getComponentByLocIdAndCompId(
-                  locationId,
-                  component.componentId,
-                );
+    const repository = withTransaction(this.repository, trx);
+    return Promise.all(
+      location.componentData.map(async component => {
+        let compRecord = await repository.getComponentByLocIdAndCompId(
+          locationId,
+          component.componentId,
+        );
 
-                if (!compRecord) {
-                  // Check used_identifier table to see if the componentId has already
-                  // been used, and if so grab that component record for update
-                  let usedIdentifier = await withTransaction(
-                    this.usedIdRepo,
-                    trx,
-                  ).getBySpecs(locationId, component.componentId, 'C');
+        if (!compRecord) {
+          // Check used_identifier table to see if the componentId has already
+          // been used, and if so grab that component record for update
+          let usedIdentifier = await withTransaction(
+            this.usedIdRepo,
+            trx,
+          ).getBySpecs(locationId, component.componentId, 'C');
 
-                  if (usedIdentifier)
-                    compRecord = await repository.findOneBy({
-                      id: usedIdentifier.id,
-                    });
-                }
+          if (usedIdentifier)
+            compRecord = await repository.findOneBy({
+              id: usedIdentifier.id,
+            });
+        }
 
-                if (compRecord) {
-                  await this.updateComponent({
-                    locationId,
-                    componentRecord: compRecord,
-                    payload: component,
-                    userId,
-                    trx,
-                  });
-                } else {
-                  await this.createComponent(
-                    locationId,
-                    component,
-                    userId,
-                    trx,
-                  );
-                  compRecord = await repository.getComponentByLocIdAndCompId(
-                    locationId,
-                    component.componentId,
-                  );
-                }
-
-                await this.analyzerRangeDataService.importAnalyzerRange(
-                  compRecord.componentId,
-                  locationId,
-                  component.analyzerRangeData,
-                  userId,
-                  trx,
-                );
-
-                innerResolve(true);
-              })();
-            }),
+        if (compRecord) {
+          await this.updateComponent({
+            locationId,
+            componentRecord: compRecord,
+            payload: component,
+            userId,
+            trx,
+          });
+        } else {
+          await this.createComponent(locationId, component, userId, trx);
+          compRecord = await repository.getComponentByLocIdAndCompId(
+            locationId,
+            component.componentId,
           );
         }
-        await Promise.all(innerPromises);
-        resolve(true);
-      })();
-    });
+
+        await this.analyzerRangeDataService.importAnalyzerRange(
+          compRecord.componentId,
+          locationId,
+          component.analyzerRangeData,
+          userId,
+          trx,
+        );
+      }),
+    );
   }
 
   async updateComponent({

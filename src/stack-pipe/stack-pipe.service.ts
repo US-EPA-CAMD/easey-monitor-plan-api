@@ -58,13 +58,9 @@ export class StackPipeService {
     retireDate: Date,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        await withTransaction(this.repository, trx).update(stackPipeRecord.id, {
-          retireDate,
-        });
-        resolve(true);
-      })();
+    await withTransaction(this.repository, trx).update(stackPipeRecord.id, {
+      retireDate,
     });
+    return true;
   }
 }

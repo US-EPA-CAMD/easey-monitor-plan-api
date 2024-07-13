@@ -146,57 +146,42 @@ export class MonitorDefaultWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-
-        promises.push(
-          new Promise(innerResolve => {
-            (async () => {
-              for (const monDefault of monDefaults) {
-                const monDefaultRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getDefaultBySpecs(
-                  locationId,
-                  monDefault.parameterCode,
-                  monDefault.defaultPurposeCode,
-                  monDefault.fuelCode,
-                  monDefault.operatingConditionCode,
-                  monDefault.beginDate,
-                  monDefault.beginHour,
-                  monDefault.endDate,
-                  monDefault.endHour,
-                );
-
-                if (monDefaultRecord) {
-                  await this.updateDefault({
-                    locationId,
-                    defaultId: monDefaultRecord.id,
-                    payload: monDefault,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createDefault({
-                    locationId,
-                    payload: monDefault,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              }
-            })();
-          }),
+    return Promise.all(
+      monDefaults.map(async monDefault => {
+        const monDefaultRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getDefaultBySpecs(
+          locationId,
+          monDefault.parameterCode,
+          monDefault.defaultPurposeCode,
+          monDefault.fuelCode,
+          monDefault.operatingConditionCode,
+          monDefault.beginDate,
+          monDefault.beginHour,
+          monDefault.endDate,
+          monDefault.endHour,
         );
 
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        if (monDefaultRecord) {
+          await this.updateDefault({
+            locationId,
+            defaultId: monDefaultRecord.id,
+            payload: monDefault,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createDefault({
+            locationId,
+            payload: monDefault,
+            userId,
+            isImport: true,
+            trx,
+          });
+        }
+      }),
+    );
   }
 }

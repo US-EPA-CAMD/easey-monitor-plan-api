@@ -135,46 +135,32 @@ export class MatsMethodWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const matsMethod of matsMethods) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                let method = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getMatsMethodByLodIdParamCodeAndDate(locationId, matsMethod);
+    return Promise.all(
+      matsMethods.map(async matsMethod => {
+        let method = await withTransaction(
+          this.repository,
+          trx,
+        ).getMatsMethodByLodIdParamCodeAndDate(locationId, matsMethod);
 
-                if (method) {
-                  await this.updateMethod({
-                    methodId: method.id,
-                    locationId: method.locationId,
-                    payload: matsMethod,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createMethod({
-                    locationId,
-                    payload: matsMethod,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (method) {
+          await this.updateMethod({
+            methodId: method.id,
+            locationId: method.locationId,
+            payload: matsMethod,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createMethod({
+            locationId,
+            payload: matsMethod,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

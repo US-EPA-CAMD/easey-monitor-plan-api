@@ -252,85 +252,69 @@ export class MonitorSystemWorkspaceService {
     trx?: EntityManager,
   ) {
     const repository = withTransaction(this.repository, trx);
+    return Promise.all(
+      systems.map(async system => {
+        const innerPromises = [];
+        let systemRecord = await repository.getSystemByLocIdSysIdentifier(
+          locationId,
+          system.monitoringSystemId,
+        );
 
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+        if (!systemRecord) {
+          // Check used_identifier table to see if the sysIdentifier has already
+          // been used, and if so grab that monitor-system record for update
+          let usedIdentifier = await withTransaction(
+            this.usedIdRepo,
+            trx,
+          ).getBySpecs(locationId, system.monitoringSystemId, 'S');
 
-        for (const system of systems) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const innerPromises = [];
-                let systemRecord = await repository.getSystemByLocIdSysIdentifier(
-                  locationId,
-                  system.monitoringSystemId,
-                );
+          if (usedIdentifier)
+            systemRecord = await repository.findOneBy({
+              id: usedIdentifier.id,
+            });
+        }
 
-                if (!systemRecord) {
-                  // Check used_identifier table to see if the sysIdentifier has already
-                  // been used, and if so grab that monitor-system record for update
-                  let usedIdentifier = await withTransaction(
-                    this.usedIdRepo,
-                    trx,
-                  ).getBySpecs(locationId, system.monitoringSystemId, 'S');
+        if (systemRecord) {
+          await this.updateSystem({
+            monitoringSystemRecordId: systemRecord.id,
+            payload: system,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
 
-                  if (usedIdentifier)
-                    systemRecord = await repository.findOneBy({
-                      id: usedIdentifier.id,
-                    });
-                }
+          innerPromises.push(
+            this.importSysComponentAndFuelFlow(
+              systemRecord.id,
+              system,
+              locationId,
+              userId,
+              trx,
+            ),
+          );
+        } else {
+          const createdSystemRecord = await this.createSystem({
+            locationId,
+            payload: system,
+            userId,
+            isImport: true,
+            trx,
+          });
 
-                if (systemRecord) {
-                  await this.updateSystem({
-                    monitoringSystemRecordId: systemRecord.id,
-                    payload: system,
-                    locationId,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-
-                  innerPromises.push(
-                    this.importSysComponentAndFuelFlow(
-                      systemRecord.id,
-                      system,
-                      locationId,
-                      userId,
-                      trx,
-                    ),
-                  );
-                } else {
-                  const createdSystemRecord = await this.createSystem({
-                    locationId,
-                    payload: system,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-
-                  innerPromises.push(
-                    this.importSysComponentAndFuelFlow(
-                      createdSystemRecord.id,
-                      system,
-                      locationId,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                await Promise.all(innerPromises);
-
-                innerResolve(true);
-              })();
-            }),
+          innerPromises.push(
+            this.importSysComponentAndFuelFlow(
+              createdSystemRecord.id,
+              system,
+              locationId,
+              userId,
+              trx,
+            ),
           );
         }
 
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        await Promise.all(innerPromises);
+      }),
+    );
   }
 }

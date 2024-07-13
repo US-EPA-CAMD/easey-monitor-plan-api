@@ -176,61 +176,46 @@ export class MonitorFormulaWorkspaceService {
   ) {
     const repository = withTransaction(this.repository, trx);
 
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      formulas.map(async formula => {
+        let formulaRecord = await repository.getFormulaByLocIdAndFormulaIdentifier(
+          locationId,
+          formula.formulaId,
+        );
 
-        for (const formula of formulas) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                let formulaRecord = await repository.getFormulaByLocIdAndFormulaIdentifier(
-                  locationId,
-                  formula.formulaId,
-                );
+        if (!formulaRecord) {
+          // Check used_identifier table to see if the formulaId has already
+          // been used, and if so grab that monitor-formula record for update
+          let usedIdentifier = await withTransaction(
+            this.usedIdRepo,
+            trx,
+          ).getBySpecs(locationId, formula.formulaId, 'F');
 
-                if (!formulaRecord) {
-                  // Check used_identifier table to see if the formulaId has already
-                  // been used, and if so grab that monitor-formula record for update
-                  let usedIdentifier = await withTransaction(
-                    this.usedIdRepo,
-                    trx,
-                  ).getBySpecs(locationId, formula.formulaId, 'F');
-
-                  if (usedIdentifier)
-                    formulaRecord = await repository.findOneBy({
-                      id: usedIdentifier.id,
-                    });
-                }
-
-                if (formulaRecord) {
-                  await this.updateFormula({
-                    locationId,
-                    formulaRecordId: formulaRecord.id,
-                    payload: formula,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createFormula({
-                    locationId,
-                    payload: formula,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
-
-          await Promise.all(promises);
-          resolve(true);
+          if (usedIdentifier)
+            formulaRecord = await repository.findOneBy({
+              id: usedIdentifier.id,
+            });
         }
-      })();
-    });
+
+        if (formulaRecord) {
+          await this.updateFormula({
+            locationId,
+            formulaRecordId: formulaRecord.id,
+            payload: formula,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createFormula({
+            locationId,
+            payload: formula,
+            userId,
+            isImport: true,
+            trx,
+          });
+        }
+      }),
+    );
   }
 }

@@ -180,51 +180,42 @@ export class MonitorSpanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ): Promise<boolean> {
-    const promises = [];
+    await Promise.all(
+      spans.map(async span => {
+        const spanRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getSpanByLocIdCompTypeCdBDateBHour(
+          locationId,
+          span.componentTypeCode,
+          span.spanScaleCode,
+          span.beginDate,
+          span.beginHour,
+          span.endDate,
+          span.endHour,
+        );
 
-    for (const span of spans) {
-      promises.push(
-        new Promise(innerResolve => {
-          (async () => {
-            const spanRecord = await withTransaction(
-              this.repository,
-              trx,
-            ).getSpanByLocIdCompTypeCdBDateBHour(
-              locationId,
-              span.componentTypeCode,
-              span.spanScaleCode,
-              span.beginDate,
-              span.beginHour,
-              span.endDate,
-              span.endHour,
-            );
+        if (spanRecord) {
+          await this.updateSpan({
+            locationId,
+            spanId: spanRecord.id,
+            payload: span,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createSpan({
+            locationId,
+            payload: span,
+            userId,
+            isImport: true,
+            trx,
+          });
+        }
+      }),
+    );
 
-            if (spanRecord) {
-              await this.updateSpan({
-                locationId,
-                spanId: spanRecord.id,
-                payload: span,
-                userId,
-                isImport: true,
-                trx,
-              });
-            } else {
-              await this.createSpan({
-                locationId,
-                payload: span,
-                userId,
-                isImport: true,
-                trx,
-              });
-            }
-
-            innerResolve(true);
-          })();
-        }),
-      );
-    }
-
-    await Promise.all(promises);
     return true;
   }
 }

@@ -36,57 +36,41 @@ export class UnitControlWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      unitControls.map(async unitControl => {
+        const unitControlRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getUnitControlBySpecs(
+          unitRecordId,
+          unitControl.parameterCode,
+          unitControl.controlCode,
+          unitControl.installDate,
+          unitControl.retireDate,
+        );
 
-        for (const unitControl of unitControls) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const unitControlRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getUnitControlBySpecs(
-                  unitRecordId,
-                  unitControl.parameterCode,
-                  unitControl.controlCode,
-                  unitControl.installDate,
-                  unitControl.retireDate,
-                );
-
-                if (unitControlRecord) {
-                  await this.updateUnitControl({
-                    locationId,
-                    unitRecordId,
-                    unitControlId: unitControlRecord.id,
-                    payload: unitControl,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createUnitControl({
-                    locationId,
-                    unitRecordId,
-                    payload: unitControl,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (unitControlRecord) {
+          await this.updateUnitControl({
+            locationId,
+            unitRecordId,
+            unitControlId: unitControlRecord.id,
+            payload: unitControl,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createUnitControl({
+            locationId,
+            unitRecordId,
+            payload: unitControl,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 
   async createUnitControl({

@@ -137,53 +137,38 @@ export class DuctWafWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      ductWafs.map(async ductWaf => {
+        const ductWafRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getDuctWafByLocIdBDateBHourWafValue(
+          locationId,
+          ductWaf.wafBeginDate,
+          ductWaf.wafBeginHour,
+          ductWaf.wafEndDate,
+          ductWaf.wafEndHour,
+        );
 
-        for (const ductWaf of ductWafs) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const ductWafRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getDuctWafByLocIdBDateBHourWafValue(
-                  locationId,
-                  ductWaf.wafBeginDate,
-                  ductWaf.wafBeginHour,
-                  ductWaf.wafEndDate,
-                  ductWaf.wafEndHour,
-                );
-
-                if (ductWafRecord) {
-                  await this.updateDuctWaf({
-                    locationId,
-                    ductWafId: ductWafRecord.id,
-                    payload: ductWaf,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createDuctWaf({
-                    locationId,
-                    payload: ductWaf,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
-
-          await Promise.all(promises);
-          resolve(true);
+        if (ductWafRecord) {
+          await this.updateDuctWaf({
+            locationId,
+            ductWafId: ductWafRecord.id,
+            payload: ductWaf,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createDuctWaf({
+            locationId,
+            payload: ductWaf,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-      })();
-    });
+      }),
+    );
   }
 }

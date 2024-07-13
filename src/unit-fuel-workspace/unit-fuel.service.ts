@@ -133,52 +133,37 @@ export class UnitFuelWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      unitFuels.map(async unitFuel => {
+        const unitFuelRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getUnitFuelBySpecs(
+          unitId,
+          unitFuel.fuelCode,
+          unitFuel.beginDate,
+          unitFuel.endDate,
+        );
 
-        for (const unitFuel of unitFuels) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const unitFuelRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getUnitFuelBySpecs(
-                  unitId,
-                  unitFuel.fuelCode,
-                  unitFuel.beginDate,
-                  unitFuel.endDate,
-                );
-
-                if (unitFuelRecord) {
-                  await this.updateUnitFuel({
-                    locationId,
-                    unitFuelId: unitFuelRecord.id,
-                    payload: unitFuel,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createUnitFuel({
-                    locationId,
-                    unitId,
-                    payload: unitFuel,
-                    userId,
-                    isImport: true,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (unitFuelRecord) {
+          await this.updateUnitFuel({
+            locationId,
+            unitFuelId: unitFuelRecord.id,
+            payload: unitFuel,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createUnitFuel({
+            locationId,
+            unitId,
+            payload: unitFuel,
+            userId,
+            isImport: true,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

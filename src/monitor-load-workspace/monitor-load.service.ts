@@ -52,53 +52,38 @@ export class MonitorLoadWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      loads.map(async load => {
+        const loadRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getLoadByLocBDateBHour(
+          locationId,
+          load.beginDate,
+          load.beginHour,
+          load.endDate,
+          load.endHour,
+        );
 
-        for (const load of loads) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const loadRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getLoadByLocBDateBHour(
-                  locationId,
-                  load.beginDate,
-                  load.beginHour,
-                  load.endDate,
-                  load.endHour,
-                );
-
-                if (loadRecord) {
-                  await this.updateLoad({
-                    locationId,
-                    loadId: loadRecord.id,
-                    payload: load,
-                    userId,
-                    trx,
-                  });
-                } else {
-                  await this.createLoad({
-                    locationId,
-                    payload: load,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
-
-          await Promise.all(promises);
-          resolve(true);
+        if (loadRecord) {
+          await this.updateLoad({
+            locationId,
+            loadId: loadRecord.id,
+            payload: load,
+            userId,
+            trx,
+          });
+        } else {
+          await this.createLoad({
+            locationId,
+            payload: load,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-      })();
-    });
+      }),
+    );
   }
 
   async createLoad({

@@ -32,14 +32,10 @@ export class UnitService {
   }
 
   async importUnit(unitRecord: Unit, nonLoadI: number, trx?: EntityManager) {
-    return new Promise(resolve => {
-      (async () => {
-        await withTransaction(this.repository, trx).update(unitRecord.id, {
-          nonLoadBasedIndicator: nonLoadI,
-        });
-        resolve(true);
-      })();
+    await withTransaction(this.repository, trx).update(unitRecord.id, {
+      nonLoadBasedIndicator: nonLoadI,
     });
+    return true;
   }
 
   async getUnitByNameAndFacId(

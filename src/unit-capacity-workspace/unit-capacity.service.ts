@@ -32,53 +32,39 @@ export class UnitCapacityWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      unitCapacities.map(async unitCapacity => {
+        const unitCapacityRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getUnitCapacityByUnitIdAndDate(
+          unitId,
+          unitCapacity.beginDate,
+          unitCapacity.endDate,
+        );
 
-        for (const unitCapacity of unitCapacities) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const unitCapacityRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getUnitCapacityByUnitIdAndDate(
-                  unitId,
-                  unitCapacity.beginDate,
-                  unitCapacity.endDate,
-                );
-
-                if (unitCapacityRecord) {
-                  await this.updateUnitCapacity({
-                    locationId,
-                    unitRecordId: unitId,
-                    unitCapacityId: unitCapacityRecord.id,
-                    payload: unitCapacity,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createUnitCapacity({
-                    locationId,
-                    unitId,
-                    payload: unitCapacity,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (unitCapacityRecord) {
+          await this.updateUnitCapacity({
+            locationId,
+            unitRecordId: unitId,
+            unitCapacityId: unitCapacityRecord.id,
+            payload: unitCapacity,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createUnitCapacity({
+            locationId,
+            unitId,
+            payload: unitCapacity,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 
   async getUnitCapacities(

@@ -133,55 +133,39 @@ export class MonitorMethodWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      methods.map(async method => {
+        const methodRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getMethodByLocIdParamCDBDate(
+          locationId,
+          method.parameterCode,
+          method.beginDate,
+          method.beginHour,
+          method.endDate,
+          method.endHour,
+        );
 
-        for (const method of methods) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const methodRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getMethodByLocIdParamCDBDate(
-                  locationId,
-                  method.parameterCode,
-                  method.beginDate,
-                  method.beginHour,
-                  method.endDate,
-                  method.endHour,
-                );
-
-                if (methodRecord) {
-                  await this.updateMethod({
-                    methodId: methodRecord.id,
-                    payload: method,
-                    locationId,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createMethod({
-                    locationId,
-                    payload: method,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
-
-          await Promise.all(promises);
-
-          resolve(true);
+        if (methodRecord) {
+          await this.updateMethod({
+            methodId: methodRecord.id,
+            payload: method,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createMethod({
+            locationId,
+            payload: method,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-      })();
-    });
+      }),
+    );
   }
 }
