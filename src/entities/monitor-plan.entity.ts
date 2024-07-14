@@ -10,6 +10,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+
+import { EmissionEvaluation } from './emission-evaluation.entity';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
@@ -152,4 +154,10 @@ export class MonitorPlan extends BaseEntity {
 
   @Column({ name: 'last_evaluated_date' })
   lastEvaluatedDate: Date;
+
+  @OneToMany(
+    () => EmissionEvaluation,
+    emissionEvaluation => emissionEvaluation.monitorPlan,
+  )
+  emissionEvaluations: EmissionEvaluation[];
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EmissionEvaluation } from '@us-epa-camd/easey-common/entities';
 import { EntityManager, Repository } from 'typeorm';
+
+import { EmissionEvaluation } from '../entities/emission-evaluation.entity';
 
 @Injectable()
 export class EmissionEvaluationRepository extends Repository<

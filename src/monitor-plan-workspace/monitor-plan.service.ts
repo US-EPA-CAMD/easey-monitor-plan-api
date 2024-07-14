@@ -368,7 +368,7 @@ export class MonitorPlanWorkspaceService {
             new Error(
               'The reporting frequency must be consistent within a period',
             ),
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
         const [beginReportPeriod, endReportPeriod] = await Promise.all([
