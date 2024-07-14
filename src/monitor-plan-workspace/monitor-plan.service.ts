@@ -392,7 +392,7 @@ export class MonitorPlanWorkspaceService {
     );
 
     return await this.getMonitorPlan(monitorPlanRecord.id, {
-      includeLocations: true,
+      full: true,
       trx,
     });
   }
@@ -567,16 +567,16 @@ export class MonitorPlanWorkspaceService {
   async getMonitorPlan(
     monPlanId: string,
     {
-      includeLocations = false,
+      full = false,
       trx,
     }: {
-      includeLocations?: boolean;
+      full?: boolean;
       trx?: EntityManager;
     } = {},
   ): Promise<MonitorPlanDTO> {
     const mp = await withTransaction(this.repository, trx).getMonitorPlan(
       monPlanId,
-      includeLocations,
+      full,
     );
     const dto = await this.map.one(mp);
 
@@ -625,7 +625,7 @@ export class MonitorPlanWorkspaceService {
     }
 
     return await this.getMonitorPlan(activePlanRecord.id, {
-      includeLocations: true,
+      full: true,
     });
   }
 
@@ -703,7 +703,7 @@ export class MonitorPlanWorkspaceService {
     }
 
     await repository.resetToNeedsEvaluation(plan.id, userId);
-    return await this.getMonitorPlan(plan.id, { includeLocations: true, trx });
+    return await this.getMonitorPlan(plan.id, { full: true, trx });
   }
 
   async resetToNeedsEvaluation(

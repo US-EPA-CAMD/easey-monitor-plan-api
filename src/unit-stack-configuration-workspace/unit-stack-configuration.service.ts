@@ -10,7 +10,7 @@ import {
   UnitStackConfigurationDTO,
 } from '../dtos/unit-stack-configuration.dto';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { StackPipeService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
 import { withTransaction } from '../utils';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';

@@ -14,7 +14,7 @@ import { MonitorMethodWorkspaceModule } from '../monitor-method-workspace/monito
 import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-workspace/monitor-qualification.module';
 import { MonitorSpanWorkspaceModule } from '../monitor-span-workspace/monitor-span.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
-import { StackPipeModule } from '../stack-pipe/stack-pipe.module';
+import { StackPipeWorkspaceModule } from '../stack-pipe-workspace/stack-pipe.module';
 import { UnitCapacityWorkspaceModule } from '../unit-capacity-workspace/unit-capacity.module';
 import { UnitControlWorkspaceModule } from '../unit-control-workspace/unit-control.module';
 import { UnitFuelWorkspaceModule } from '../unit-fuel-workspace/unit-fuel.module';
@@ -43,7 +43,7 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     MonitorQualificationWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,
     UnitModule,
-    StackPipeModule,
+    StackPipeWorkspaceModule,
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
     HttpModule,
   ],

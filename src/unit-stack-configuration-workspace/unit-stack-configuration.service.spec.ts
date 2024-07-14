@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { UnitStackConfigurationWorkspaceService } from './unit-stack-configuration.service';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
-import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import {
@@ -72,7 +72,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
       providers: [
         UnitStackConfigurationWorkspaceService,
         {
-          provide: StackPipeService,
+          provide: StackPipeWorkspaceService,
           useFactory: mockStackPipe,
         },
         {

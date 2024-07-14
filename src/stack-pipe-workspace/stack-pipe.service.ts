@@ -7,11 +7,11 @@ import { v4 as uuid } from 'uuid';
 import { MonitorLocationBaseDTO } from '../dtos/monitor-location-base.dto';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { withTransaction } from '../utils';
-import { StackPipeRepository } from './stack-pipe.repository';
+import { StackPipeWorkspaceRepository } from './stack-pipe.repository';
 
 @Injectable()
-export class StackPipeService {
-  constructor(private readonly repository: StackPipeRepository) {}
+export class StackPipeWorkspaceService {
+  constructor(private readonly repository: StackPipeWorkspaceRepository) {}
 
   async createStackPipeRecord(
     loc: MonitorLocationBaseDTO,

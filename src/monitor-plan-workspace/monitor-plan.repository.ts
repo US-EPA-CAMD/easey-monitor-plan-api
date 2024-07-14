@@ -86,20 +86,18 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     }
   }
 
-  async getMonitorPlan(
-    planId: string,
-    includeLocations = false,
-  ): Promise<MonitorPlan> {
+  async getMonitorPlan(planId: string, full = false): Promise<MonitorPlan> {
     return this.findOne({
       where: { id: planId },
       relations: {
         plant: true,
-        ...(includeLocations
+        ...(full
           ? {
               locations: {
                 stackPipe: true,
                 unit: true,
               },
+              reportingFrequencies: true,
             }
           : {}),
       },

@@ -1,14 +1,15 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MatsMethodChecksService } from '../mats-method-workspace/mats-method-checks.service';
-import { UnitControlChecksService } from '../unit-control-workspace/unit-control-checks.service';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { MonitorSystemCheckService } from '../monitor-system-workspace/monitor-system-checks.service';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
+import { MatsMethodChecksService } from '../mats-method-workspace/mats-method-checks.service';
 import { MonitorLocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
 import { MonitorSpanChecksService } from '../monitor-span-workspace/monitor-span-checks.service';
+import { MonitorSystemCheckService } from '../monitor-system-workspace/monitor-system-checks.service';
+import { UnitControlChecksService } from '../unit-control-workspace/unit-control-checks.service';
+import { UnitStackConfigurationChecksService } from '../unit-stack-configuration-workspace/unit-stack-configuration-checks.service';
 
 @Injectable()
 export class MonitorPlanChecksService {
@@ -20,6 +21,7 @@ export class MonitorPlanChecksService {
     private readonly componentChecksService: ComponentCheckService,
     private readonly monSysCheckService: MonitorSystemCheckService,
     private readonly monSpanChecksService: MonitorSpanChecksService,
+    private readonly unitStackConfigurationChecksService: UnitStackConfigurationChecksService,
   ) {}
 
   private async extractErrors(
@@ -55,6 +57,10 @@ export class MonitorPlanChecksService {
     errorList.push(...errors);
     this.throwIfErrors(errorList);
 
+    payload.unitStackConfigurationData.forEach(usc => {
+      promises.push(this.unitStackConfigurationChecksService.runChecks(usc));
+    });
+
     payload.monitoringLocationData.forEach((monitorLocation, locIdx) => {
       const locationId = locationIdentifiers.find(i => {
         return (
@@ -67,16 +73,12 @@ export class MonitorPlanChecksService {
         (matsMethod, matsMetIdx) => {
           if (!matsMethod.endDate) {
             promises.push(
-              new Promise((resolve, _reject) => {
-                const results = this.matsMethodChecksService.runChecks(
-                  matsMethod,
-                  true,
-                  false,
-                  `locations.${locIdx}.matsMethods.${matsMetIdx}.`,
-                );
-
-                resolve(results);
-              }),
+              this.matsMethodChecksService.runChecks(
+                matsMethod,
+                true,
+                false,
+                `locations.${locIdx}.matsMethods.${matsMetIdx}.`,
+              ),
             );
           }
         },
@@ -84,67 +86,52 @@ export class MonitorPlanChecksService {
 
       monitorLocation.unitControlData?.forEach((unitControl, ucIdx) => {
         promises.push(
-          new Promise((resolve, _reject) => {
-            const results = this.unitControlChecksService.runChecks(
-              null,
-              unitControl,
-              true,
-              false,
-              `locations.${locIdx}.unitControls.${ucIdx}.`,
-              monitorLocation,
-            );
-
-            resolve(results);
-          }),
+          this.unitControlChecksService.runChecks(
+            null,
+            unitControl,
+            true,
+            false,
+            `locations.${locIdx}.unitControls.${ucIdx}.`,
+            monitorLocation,
+          ),
         );
       });
 
       monitorLocation.monitoringSpanData?.forEach((span, spanIdx) => {
         if (!span.endDate) {
           promises.push(
-            new Promise((resolve, _reject) => {
-              const results = this.monSpanChecksService.runChecks(
-                span,
-                locationId,
-                false,
-                `locations.${locIdx}.span.${spanIdx}.`,
-              );
-              resolve(results);
-            }),
+            this.monSpanChecksService.runChecks(
+              span,
+              locationId,
+              false,
+              `locations.${locIdx}.span.${spanIdx}.`,
+            ),
           );
         }
       });
 
       monitorLocation.componentData?.forEach((component, compIdx) => {
         promises.push(
-          new Promise((resolve, _reject) => {
-            const results = this.componentChecksService.runChecks(
-              locationId,
-              component,
-              true,
-              false,
-              `locations.${locIdx}.components.${compIdx}.`,
-            );
-
-            resolve(results);
-          }),
+          this.componentChecksService.runChecks(
+            locationId,
+            component,
+            true,
+            false,
+            `locations.${locIdx}.components.${compIdx}.`,
+          ),
         );
       });
 
       monitorLocation.monitoringSystemData?.forEach((system, sysIdx) => {
         if (!system.endDate) {
           promises.push(
-            new Promise((resolve, _reject) => {
-              const results = this.monSysCheckService.runChecks(
-                locationId,
-                system,
-                true,
-                false,
-                `locations.${locIdx}.systems.${sysIdx}.`,
-              );
-
-              resolve(results);
-            }),
+            this.monSysCheckService.runChecks(
+              locationId,
+              system,
+              true,
+              false,
+              `locations.${locIdx}.systems.${sysIdx}.`,
+            ),
           );
         }
       });
