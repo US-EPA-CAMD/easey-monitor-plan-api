@@ -40,6 +40,7 @@ export class UnitStackConfigurationChecksService {
 
       if (
         uscRecord &&
+        !uscRecord.endDate &&
         usc.endDate &&
         new Date(usc.endDate) < new Date(evaluation.reportingPeriod.endDate)
       ) {
