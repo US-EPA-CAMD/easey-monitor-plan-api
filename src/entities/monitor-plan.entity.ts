@@ -17,6 +17,7 @@ import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 import { MonitorPlanReportingFrequency } from './monitor-plan-reporting-freq.entity';
+import { ReportingPeriod } from './reporting-period.entity';
 
 @Entity({ name: 'camdecmps.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -160,4 +161,16 @@ export class MonitorPlan extends BaseEntity {
     emissionEvaluation => emissionEvaluation.monitorPlan,
   )
   emissionEvaluations: EmissionEvaluation[];
+
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'begin_rpt_period_id',
+  })
+  beginReportingPeriod: ReportingPeriod;
+
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'end_rpt_period_id',
+  })
+  endReportingPeriod: ReportingPeriod;
 }

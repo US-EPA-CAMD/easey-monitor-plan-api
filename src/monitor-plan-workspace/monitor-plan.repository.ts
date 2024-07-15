@@ -93,11 +93,16 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
         plant: true,
         ...(full
           ? {
+              beginReportingPeriod: true,
+              endReportingPeriod: true,
               locations: {
                 stackPipe: true,
                 unit: true,
               },
-              reportingFrequencies: true,
+              reportingFrequencies: {
+                beginReportingPeriod: true,
+                endReportingPeriod: true,
+              },
             }
           : {}),
       },

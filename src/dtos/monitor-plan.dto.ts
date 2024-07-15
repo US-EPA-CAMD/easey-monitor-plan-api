@@ -97,6 +97,10 @@ export class MonitorPlanDTO {
   @IsOptional()
   endReportPeriodId: number;
 
+  @IsString()
+  @IsOptional()
+  endReportPeriodDescription?: string;
+
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOBeginReportPeriodId.description,
     example: propertyMetadata.monitorPlanDTOBeginReportPeriodId.example,
@@ -104,6 +108,10 @@ export class MonitorPlanDTO {
   })
   @IsNumber()
   beginReportPeriodId: number;
+
+  @IsString()
+  @IsOptional()
+  beginReportPeriodDescription?: string;
 
   @IsBoolean()
   active: boolean;

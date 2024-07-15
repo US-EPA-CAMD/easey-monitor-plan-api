@@ -413,6 +413,7 @@ export class MonitorPlanWorkspaceService {
 
     // Get a representation of the active plan.
     let activePlan = await this.matchToActivePlan(plan, facilityId);
+    console.log('activePlan', activePlan);
 
     let result: { changedPlan: MonitorPlanDTO; newPlan: MonitorPlanDTO } = {
       changedPlan: null,

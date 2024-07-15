@@ -78,10 +78,7 @@ export class EmissionEvaluation extends BaseEntity {
   @JoinColumn({ name: 'mon_plan_id' })
   monitorPlan: MonitorPlan;
 
-  @ManyToOne(
-    () => ReportingPeriod,
-    period => period.emissionEvaluations,
-  )
+  @ManyToOne(() => ReportingPeriod)
   @JoinColumn({ name: 'rpt_period_id' })
   reportingPeriod: ReportingPeriod;
 }
