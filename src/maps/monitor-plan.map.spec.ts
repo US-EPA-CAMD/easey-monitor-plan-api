@@ -26,7 +26,6 @@ import { UnitControlMap } from './unit-control.map';
 import { UnitFuelMap } from './unit-fuel.map';
 import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyMap } from './monitor-plan-reporting-freq.map';
-import { CPMSQualificationMap } from './cpms-qualification.map';
 
 const id = '';
 const facId = 0;
@@ -85,7 +84,6 @@ describe('MonitorPlanMap', () => {
         LEEQualificationMap,
         LMEQualificationMap,
         PCTQualificationMap,
-        CPMSQualificationMap,
         UnitCapacityMap,
         UnitControlMap,
         UnitFuelMap,

@@ -2,7 +2,6 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CPMSQualificationWorkspaceModule } from '../cpms-qualification-workspace/cpms-qualification-workspace.module';
 import { LEEQualificationWorkspaceModule } from '../lee-qualification-workspace/lee-qualification.module';
 import { LMEQualificationWorkspaceModule } from '../lme-qualification-workspace/lme-qualification.module';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
@@ -18,7 +17,6 @@ import { MonitorQualificationWorkspaceService } from './monitor-qualification.se
     LMEQualificationWorkspaceModule,
     TypeOrmModule.forFeature([MonitorQualificationWorkspaceRepository]),
     HttpModule,
-    forwardRef(() => CPMSQualificationWorkspaceModule),
     forwardRef(() => PCTQualificationWorkspaceModule),
     forwardRef(() => MonitorPlanWorkspaceModule),
   ],

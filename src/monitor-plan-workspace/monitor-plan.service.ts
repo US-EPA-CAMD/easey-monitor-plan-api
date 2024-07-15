@@ -3,7 +3,6 @@ import { In } from 'typeorm';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
@@ -70,7 +69,6 @@ export class MonitorPlanWorkspaceService {
     private readonly pctQualificationRepository: PCTQualificationWorkspaceRepository,
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
-    private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
     private readonly easeyContentService: EaseyContentService,
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -414,11 +412,8 @@ export class MonitorPlanWorkspaceService {
               const q3 = this.pctQualificationRepository.find({
                 where: { qualificationId: In(qualIds) },
               });
-              const q4 = this.cpmsQualRepository.find({
-                where: { qualificationId: In(qualIds) },
-              });
 
-              const qualResults = await Promise.all([q1, q2, q3, q4]);
+              const qualResults = await Promise.all([q1, q2, q3]);
 
               quals.forEach(q => {
                 q.leeQualifications = qualResults[0].filter(
@@ -428,9 +423,6 @@ export class MonitorPlanWorkspaceService {
                   i => i.qualificationId === q.id,
                 );
                 q.pctQualifications = qualResults[2].filter(
-                  i => i.qualificationId === q.id,
-                );
-                q.cpmsQualifications = qualResults[3].filter(
                   i => i.qualificationId === q.id,
                 );
               });

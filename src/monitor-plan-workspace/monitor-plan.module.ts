@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnalyzerRangeWorkspaceModule } from '../analyzer-range-workspace/analyzer-range.module';
 import { ComponentWorkspaceModule } from '../component-workspace/component.module';
 import { CountyCodeModule } from '../county-code/county-code.module';
-import { CPMSQualificationWorkspaceModule } from '../cpms-qualification-workspace/cpms-qualification-workspace.module';
 import { DuctWafWorkspaceModule } from '../duct-waf-workspace/duct-waf.module';
 import { ImportChecksModule } from '../import-checks/import-checks.module';
 import { LEEQualificationWorkspaceModule } from '../lee-qualification-workspace/lee-qualification.module';
@@ -68,7 +67,6 @@ import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.
     LEEQualificationWorkspaceModule,
     LMEQualificationWorkspaceModule,
     PCTQualificationWorkspaceModule,
-    CPMSQualificationWorkspaceModule,
     UserCheckOutModule,
     CountyCodeModule,
     MonitorPlanLocationModule,

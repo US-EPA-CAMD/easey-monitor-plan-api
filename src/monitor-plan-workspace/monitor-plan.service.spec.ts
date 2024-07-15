@@ -3,9 +3,7 @@ import { Test } from '@nestjs/testing';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CountyCodeService } from '../county-code/county-code.service';
-import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 import { CountyCodeDTO } from '../dtos/county-code.dto';
-import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
@@ -193,9 +191,6 @@ const mockReportingFreqRepo = () => ({
   findBy: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
 });
 
-const mockCpmsQual = () => ({
-  find: jest.fn().mockResolvedValue([new CPMSQualificationDTO()]),
-});
 const mockUscMap = () => ({});
 const mockCountyCodeService = () => ({
   getCountyCode: jest.fn().mockResolvedValue(new CountyCodeDTO()),
@@ -324,10 +319,6 @@ describe('Monitor Plan Service', () => {
         {
           provide: PCTQualificationWorkspaceRepository,
           useFactory: mockPctQualificationRepo,
-        },
-        {
-          provide: CPMSQualificationWorkspaceRepository,
-          useFactory: mockCpmsQual,
         },
         {
           provide: UnitStackConfigurationWorkspaceRepository,
