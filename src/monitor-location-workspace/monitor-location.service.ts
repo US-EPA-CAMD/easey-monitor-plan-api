@@ -186,11 +186,16 @@ export class MonitorLocationWorkspaceService {
         );
       }
 
-      location = await repository.findOne({
-        where: {
-          unitId: unit.id,
-        },
+      location = await repository.findOneBy({
+        unitId: unit.id,
       });
+      if (!location && create) {
+        location = await this.createMonitorLocationRecord({
+          unitId: unit.id,
+          trx,
+          userId,
+        });
+      }
     }
 
     if (loc.stackPipeId) {

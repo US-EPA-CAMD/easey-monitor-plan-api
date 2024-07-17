@@ -44,6 +44,7 @@ import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.re
 import { UnitProgramRepository } from '../unit-program/unit-program.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { PlantWorkspaceService } from '../plant-workspace/plant.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
@@ -89,6 +90,7 @@ export class MonitorPlanWorkspaceService {
     private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     private readonly unitProgramRepository: UnitProgramRepository,
+    private readonly plantWorkspaceService: PlantWorkspaceService,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -99,7 +101,9 @@ export class MonitorPlanWorkspaceService {
     private readonly monitorPlanLocationService: MonitorPlanLocationService,
 
     private map: MonitorPlanMap,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorPlanWorkspaceService');
+  }
 
   private async calculateReportPeriodRange(
     monitorLocations: MonitorLocationDTO[],
@@ -397,174 +401,6 @@ export class MonitorPlanWorkspaceService {
     });
   }
 
-  async importMpPlan(
-    plan: UpdateMonitorPlanDTO,
-    userId: string,
-    draft = false,
-  ) {
-    if (draft) {
-      this.logger.debug(
-        'Formulating a draft monitor plan',
-        'MonitorPlanWorkspaceService',
-      );
-    }
-
-    const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
-
-    // Get a representation of the active plan.
-    let activePlan = await this.matchToActivePlan(plan, facilityId);
-    console.log('activePlan', activePlan);
-
-    let result: { changedPlan: MonitorPlanDTO; newPlan: MonitorPlanDTO } = {
-      changedPlan: null,
-      newPlan: null,
-    };
-
-    try {
-      // Start transaction.
-      await this.entityManager.transaction(async trx => {
-        /* MONITOR LOCATION MERGE LOGIC */
-        const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
-          plan,
-          facilityId,
-          userId,
-          trx,
-        );
-
-        /* UNIT STACK CONFIGURATION MERGE LOGIC */
-        const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
-          plan,
-          facilityId,
-          userId,
-          trx,
-        );
-
-        /* MONITOR PLAN MERGE LOGIC */
-        const [
-          beginReportPeriodId,
-          endReportPeriodId,
-        ] = await this.calculateReportPeriodRange(
-          planMonitoringLocationData,
-          planUnitStackConfigurationData,
-          trx,
-        );
-
-        // Compare the active plan against the imported plan.
-        const activePlanLocationIds = activePlan.monitoringLocationData.map(
-          l => l.unitId ?? l.stackPipeId,
-        );
-        const workingPlanLocationIds = planMonitoringLocationData.map(
-          l => l.unitId ?? l.stackPipeId,
-        );
-        const locationsChanged =
-          activePlanLocationIds.some(
-            id => !workingPlanLocationIds.includes(id),
-          ) ||
-          workingPlanLocationIds.some(
-            id => !activePlanLocationIds.includes(id),
-          );
-        const reportingPeriodsChanged =
-          beginReportPeriodId !== activePlan.beginReportPeriodId ||
-          endReportPeriodId !== activePlan.endReportPeriodId;
-
-        if (locationsChanged) {
-          // Create a new plan.
-          this.logger.debug(
-            'Imported locations differ from the active plan, creating new plan',
-            'MonitorPlanWorkspaceService',
-          );
-          const newPlan = await this.createMonitorPlan({
-            locations: planMonitoringLocationData,
-            facId: facilityId,
-            userId,
-            beginReportPeriodId,
-            endReportPeriodId,
-            trx,
-          });
-
-          // Get the period ID of the period before the new plan's begin period.
-          const updatedEndPeriodId = await withTransaction(
-            this.reportingPeriodRepository,
-            trx,
-          ).getPreviousPeriodId(newPlan.beginReportPeriodId);
-
-          // Update the end report period of the previously active plan.
-          const changedPlan = await this.updateEndReportingPeriod(
-            activePlan,
-            updatedEndPeriodId,
-            userId,
-            trx,
-          );
-
-          // Assign the updated plan records to the result.
-          result = { changedPlan, newPlan };
-
-          // Set the new plan as the active plan.
-          activePlan = newPlan;
-        } else if (reportingPeriodsChanged) {
-          if (beginReportPeriodId !== activePlan.beginReportPeriodId) {
-            throw new EaseyException(
-              new Error(
-                'The begin report period of the active plan does not match the begin report period of the imported plan',
-              ),
-              HttpStatus.BAD_REQUEST,
-            );
-          }
-
-          if (endReportPeriodId !== activePlan.endReportPeriodId) {
-            if (activePlan.endReportPeriodId) {
-              // If the active plan has an end report period, it must match the imported plan.
-              throw new EaseyException(
-                new Error(
-                  'The end report period of the active plan does not match the end report period of the imported plan',
-                ),
-                HttpStatus.BAD_REQUEST,
-              );
-            }
-
-            // Update the end report period of the active plan.
-            this.logger.debug(
-              'Updating end report period of the active plan',
-              'MonitorPlanWorkspaceService',
-            );
-            const changedPlan = await this.updateEndReportingPeriod(
-              activePlan,
-              endReportPeriodId,
-              userId,
-              trx,
-            );
-
-            result = { changedPlan, newPlan: null };
-          }
-        } else {
-          result = { changedPlan: null, newPlan: null };
-        }
-
-        /* MONITOR PLAN COMMENT MERGE LOGIC */
-        await this.monitorPlanCommentService.importComments(
-          plan,
-          userId,
-          activePlan.id,
-          trx,
-        );
-
-        if (draft) {
-          throw new CancelTransactionException();
-        }
-      });
-    } catch (err) {
-      if (err instanceof CancelTransactionException) {
-        return result;
-      } else throw err;
-    }
-
-    return result;
-  }
-
-  async revertToOfficialRecord(monPlanId: string): Promise<void> {
-    return this.repository.revertToOfficialRecord(monPlanId);
-  }
-
   async getMonitorPlan(
     monPlanId: string,
     {
@@ -599,11 +435,198 @@ export class MonitorPlanWorkspaceService {
     return dto;
   }
 
-  private async matchToActivePlan(
+  async getWorkingMonitorPlans(
+    plan: UpdateMonitorPlanDTO,
+    trx?: EntityManager,
+  ) {
+    const commonStackConfigs = await this.plantWorkspaceService.getFacilityCommonStackConfigs(
+      plan.orisCode,
+      trx,
+    );
+    console.log('commonStackConfigs', commonStackConfigs); // TODO: remove this line
+    const multipleStackConfigs = await this.plantWorkspaceService.getFacilityMultipleStackConfigs(
+      plan.orisCode,
+      trx,
+    );
+    console.log('multipleStackConfigs', multipleStackConfigs); // TODO: remove this line
+    const unitConfigs = await this.plantWorkspaceService.getFacilityUnitConfigs(
+      plan.orisCode,
+      trx,
+    );
+  }
+
+  async importMpPlan(
+    plan: UpdateMonitorPlanDTO,
+    userId: string,
+    draft = false,
+  ) {
+    if (draft) {
+      this.logger.debug('Formulating a draft monitor plan');
+    }
+
+    const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
+
+    // Get a representation of the active plan.
+    const activePlans = await this.matchToActivePlans(plan, facilityId);
+    console.log('activePlans', activePlans); // TODO: remove this line
+
+    let result: { changedPlan: MonitorPlanDTO; newPlan: MonitorPlanDTO } = {
+      changedPlan: null,
+      newPlan: null,
+    };
+
+    try {
+      // Start transaction.
+      await this.entityManager.transaction(async trx => {
+        /* MONITOR LOCATION MERGE LOGIC */
+        const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
+          plan,
+          facilityId,
+          userId,
+          trx,
+        );
+
+        /* UNIT STACK CONFIGURATION MERGE LOGIC */
+        const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
+          plan,
+          facilityId,
+          userId,
+          trx,
+        );
+
+        /* MONITOR PLAN MERGE LOGIC */
+        //const workingMonitorPlans = this.getWorkingMonitorPlans(plan);
+
+        // TODO: Refactor all below into above logic, then remove leftovers.
+        //const [
+        //  beginReportPeriodId,
+        //  endReportPeriodId,
+        //] = await this.calculateReportPeriodRange(
+        //  planMonitoringLocationData,
+        //  planUnitStackConfigurationData,
+        //  trx,
+        //);
+
+        //// Compare the active plan against the imported plan.
+        //const activePlanLocationIds = activePlan.monitoringLocationData.map(
+        //  l => l.unitId ?? l.stackPipeId,
+        //);
+        //const workingPlanLocationIds = planMonitoringLocationData.map(
+        //  l => l.unitId ?? l.stackPipeId,
+        //);
+        //const locationsChanged =
+        //  activePlanLocationIds.some(
+        //    id => !workingPlanLocationIds.includes(id),
+        //  ) ||
+        //  workingPlanLocationIds.some(
+        //    id => !activePlanLocationIds.includes(id),
+        //  );
+        //const reportingPeriodsChanged =
+        //  beginReportPeriodId !== activePlan.beginReportPeriodId ||
+        //  endReportPeriodId !== activePlan.endReportPeriodId;
+
+        //if (locationsChanged) {
+        //  // Create a new plan.
+        //  this.logger.debug(
+        //    'Imported locations differ from the active plan, creating new plan',
+        //  );
+        //  const newPlan = await this.createMonitorPlan({
+        //    locations: planMonitoringLocationData,
+        //    facId: facilityId,
+        //    userId,
+        //    beginReportPeriodId,
+        //    endReportPeriodId,
+        //    trx,
+        //  });
+
+        //  // Get the period ID of the period before the new plan's begin period.
+        //  const updatedEndPeriodId = await withTransaction(
+        //    this.reportingPeriodRepository,
+        //    trx,
+        //  ).getPreviousPeriodId(newPlan.beginReportPeriodId);
+
+        //  // Update the end report period of the previously active plan.
+        //  const changedPlan = await this.updateEndReportingPeriod(
+        //    activePlan,
+        //    updatedEndPeriodId,
+        //    userId,
+        //    trx,
+        //  );
+
+        //  // Assign the updated plan records to the result.
+        //  result = { changedPlan, newPlan };
+
+        //  // Set the new plan as the active plan.
+        //  activePlan = newPlan;
+        //} else if (reportingPeriodsChanged) {
+        //  if (beginReportPeriodId !== activePlan.beginReportPeriodId) {
+        //    throw new EaseyException(
+        //      new Error(
+        //        'The begin report period of the active plan does not match the begin report period of the imported plan',
+        //      ),
+        //      HttpStatus.BAD_REQUEST,
+        //    );
+        //  }
+
+        //  if (endReportPeriodId !== activePlan.endReportPeriodId) {
+        //    if (activePlan.endReportPeriodId) {
+        //      // If the active plan has an end report period, it must match the imported plan.
+        //      throw new EaseyException(
+        //        new Error(
+        //          'The end report period of the active plan does not match the end report period of the imported plan',
+        //        ),
+        //        HttpStatus.BAD_REQUEST,
+        //      );
+        //    }
+
+        //    // Update the end report period of the active plan.
+        //    this.logger.debug(
+        //      'Updating end report period of the active plan',
+        //    );
+        //    const changedPlan = await this.updateEndReportingPeriod(
+        //      activePlan,
+        //      endReportPeriodId,
+        //      userId,
+        //      trx,
+        //    );
+
+        //    result = { changedPlan, newPlan: null };
+        //  }
+        //} else {
+        //  result = { changedPlan: null, newPlan: null };
+        //}
+
+        /* MONITOR PLAN COMMENT MERGE LOGIC */
+        // TODO: Uncomment when active plan is set.
+        /*await this.monitorPlanCommentService.importComments(
+          plan,
+          userId,
+          activePlan.id,
+          trx,
+        );*/
+
+        if (draft) {
+          throw new CancelTransactionException();
+        }
+      });
+    } catch (err) {
+      if (err instanceof CancelTransactionException) {
+        return result;
+      } else throw err;
+    }
+
+    return result;
+  }
+
+  async revertToOfficialRecord(monPlanId: string): Promise<void> {
+    return this.repository.revertToOfficialRecord(monPlanId);
+  }
+
+  private async matchToActivePlans(
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
   ) {
-    const databaseLocId = (
+    const databaseLocIds = (
       await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
         plan,
         facilityId,
@@ -611,23 +634,34 @@ export class MonitorPlanWorkspaceService {
       )
     )
       .filter(l => l !== null)
-      .pop()?.id;
+      .map(l => l.id);
 
-    // Get the active plan.
-    const activePlanRecord = databaseLocId
-      ? await this.repository.getActivePlanByLocationId(databaseLocId)
-      : null;
-
-    if (!activePlanRecord) {
+    if (databaseLocIds.length === 0) {
       throw new EaseyException(
-        new Error('No active plan found for the location'),
+        new Error(
+          'No location records found for the supplied plan representation',
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
 
-    return await this.getMonitorPlan(activePlanRecord.id, {
-      full: true,
-    });
+    // Get all active plan records for the locations.
+    const activePlanRecordIds = (
+      await Promise.all(
+        databaseLocIds.map(id => this.repository.getActivePlanByLocationId(id)),
+      )
+    )
+      .filter(p => p !== null)
+      .map(p => p.id)
+      .filter((id, i, arr) => arr.indexOf(id) === i);
+
+    return Promise.all(
+      activePlanRecordIds.map(id =>
+        this.getMonitorPlan(id, {
+          full: true,
+        }),
+      ),
+    );
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
