@@ -456,7 +456,7 @@ export class MonitorPlanWorkspaceService {
     draft = false,
   ) {
     if (draft) {
-      this.logger.debug('Formulating a draft monitor plan');
+      this.logger.debug('Formulating a draft monitor plan', targetPlanPayload);
     } else {
       this.logger.debug('Importing monitor plan', targetPlanPayload);
     }
