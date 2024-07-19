@@ -3,6 +3,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { EntityManager, In } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
+import { areSetsEqual } from '../utils';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
@@ -44,7 +45,6 @@ import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.re
 import { UnitProgramRepository } from '../unit-program/unit-program.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
-import { PlantWorkspaceService } from '../plant-workspace/plant.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
@@ -90,7 +90,6 @@ export class MonitorPlanWorkspaceService {
     private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     private readonly unitProgramRepository: UnitProgramRepository,
-    private readonly plantWorkspaceService: PlantWorkspaceService,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -401,6 +400,22 @@ export class MonitorPlanWorkspaceService {
     });
   }
 
+  private extractUnitAndStackPipeIds(
+    plan: MonitorPlanDTO | UpdateMonitorPlanDTO,
+  ) {
+    return ([
+      ...plan.unitStackConfigurationData,
+      ...plan.monitoringLocationData,
+    ] as PlanItem[]).reduce(
+      (acc, cur) => {
+        if (cur.unitId) acc.unitIds.add(cur.unitId);
+        if (cur.stackPipeId) acc.stackPipeIds.add(cur.stackPipeId);
+        return acc;
+      },
+      { unitIds: new Set<string>(), stackPipeIds: new Set<string>() },
+    );
+  }
+
   async getMonitorPlan(
     monPlanId: string,
     {
@@ -435,175 +450,137 @@ export class MonitorPlanWorkspaceService {
     return dto;
   }
 
-  async getWorkingMonitorPlans(
-    plan: UpdateMonitorPlanDTO,
-    trx?: EntityManager,
-  ) {
-    const commonStackConfigs = await this.plantWorkspaceService.getFacilityCommonStackConfigs(
-      plan.orisCode,
-      trx,
-    );
-    console.log('commonStackConfigs', commonStackConfigs); // TODO: remove this line
-    const multipleStackConfigs = await this.plantWorkspaceService.getFacilityMultipleStackConfigs(
-      plan.orisCode,
-      trx,
-    );
-    console.log('multipleStackConfigs', multipleStackConfigs); // TODO: remove this line
-    const unitConfigs = await this.plantWorkspaceService.getFacilityUnitConfigs(
-      plan.orisCode,
-      trx,
-    );
-  }
-
   async importMpPlan(
-    plan: UpdateMonitorPlanDTO,
+    targetPlanPayload: UpdateMonitorPlanDTO,
     userId: string,
     draft = false,
   ) {
     if (draft) {
       this.logger.debug('Formulating a draft monitor plan');
+    } else {
+      this.logger.debug('Importing monitor plan', targetPlanPayload);
     }
 
-    const facilityId = await this.plantService.getFacIdFromOris(plan.orisCode);
+    const facilityId = await this.plantService.getFacIdFromOris(
+      targetPlanPayload.orisCode,
+    );
 
     // Get a representation of the active plan.
-    const activePlans = await this.matchToActivePlans(plan, facilityId);
-    console.log('activePlans', activePlans); // TODO: remove this line
+    const activePlans = await this.matchToActivePlans(
+      targetPlanPayload,
+      facilityId,
+    );
+    this.logger.debug(
+      'Associated active plans',
+      activePlans.map(p => p.id),
+    );
 
-    let result: { changedPlan: MonitorPlanDTO; newPlan: MonitorPlanDTO } = {
-      changedPlan: null,
-      newPlan: null,
-    };
+    let endedPlans: MonitorPlanDTO[] = [];
+    let targetPlan: MonitorPlanDTO = null;
+    let shouldCreateNewPlan = false;
 
     try {
       // Start transaction.
       await this.entityManager.transaction(async trx => {
         /* MONITOR LOCATION MERGE LOGIC */
+        this.logger.debug('Importing monitor locations');
         const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
-          plan,
+          targetPlanPayload,
           facilityId,
           userId,
           trx,
         );
 
         /* UNIT STACK CONFIGURATION MERGE LOGIC */
+        this.logger.debug('Importing unit stack configurations');
         const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
-          plan,
+          targetPlanPayload,
           facilityId,
           userId,
           trx,
         );
 
         /* MONITOR PLAN MERGE LOGIC */
-        //const workingMonitorPlans = this.getWorkingMonitorPlans(plan);
+        //const workingMonitorPlans = this.getWorkingMonitorPlans(plan); // TODO: Remove if not used
+        const reportingPeriodRepository = withTransaction(
+          this.reportingPeriodRepository,
+          trx,
+        );
 
-        // TODO: Refactor all below into above logic, then remove leftovers.
-        //const [
-        //  beginReportPeriodId,
-        //  endReportPeriodId,
-        //] = await this.calculateReportPeriodRange(
-        //  planMonitoringLocationData,
-        //  planUnitStackConfigurationData,
-        //  trx,
-        //);
+        // Calculate the report period range for the update monitor plan.
+        const [
+          beginReportPeriodId,
+          endReportPeriodId,
+        ] = await this.calculateReportPeriodRange(
+          planMonitoringLocationData,
+          planUnitStackConfigurationData,
+          trx,
+        );
 
-        //// Compare the active plan against the imported plan.
-        //const activePlanLocationIds = activePlan.monitoringLocationData.map(
-        //  l => l.unitId ?? l.stackPipeId,
-        //);
-        //const workingPlanLocationIds = planMonitoringLocationData.map(
-        //  l => l.unitId ?? l.stackPipeId,
-        //);
-        //const locationsChanged =
-        //  activePlanLocationIds.some(
-        //    id => !workingPlanLocationIds.includes(id),
-        //  ) ||
-        //  workingPlanLocationIds.some(
-        //    id => !activePlanLocationIds.includes(id),
-        //  );
-        //const reportingPeriodsChanged =
-        //  beginReportPeriodId !== activePlan.beginReportPeriodId ||
-        //  endReportPeriodId !== activePlan.endReportPeriodId;
+        // If there are no associated active plans, simply create a new plan.
+        if (activePlans.length === 0) {
+          shouldCreateNewPlan = true;
+        } else {
+          await Promise.all(
+            activePlans.map(async activePlan => {
+              // Compare the active plan locations against the imported plan locations.
+              const locationsMatch = this.checkLocationsMatch(
+                activePlan,
+                targetPlanPayload,
+              );
 
-        //if (locationsChanged) {
-        //  // Create a new plan.
-        //  this.logger.debug(
-        //    'Imported locations differ from the active plan, creating new plan',
-        //  );
-        //  const newPlan = await this.createMonitorPlan({
-        //    locations: planMonitoringLocationData,
-        //    facId: facilityId,
-        //    userId,
-        //    beginReportPeriodId,
-        //    endReportPeriodId,
-        //    trx,
-        //  });
+              // If the locations differ, create a new plan and update the end report period of the previously active plan.
+              if (!locationsMatch) {
+                shouldCreateNewPlan = true;
+                endedPlans.push(
+                  await this.updateEndReportingPeriod(
+                    activePlan,
+                    await reportingPeriodRepository.getPreviousPeriodId(
+                      beginReportPeriodId,
+                    ),
+                    userId,
+                    trx,
+                  ),
+                );
+              }
+            }),
+          );
 
-        //  // Get the period ID of the period before the new plan's begin period.
-        //  const updatedEndPeriodId = await withTransaction(
-        //    this.reportingPeriodRepository,
-        //    trx,
-        //  ).getPreviousPeriodId(newPlan.beginReportPeriodId);
+          // If there is only one active plan and the locations match, update the end report period of the active plan and set it as the target plan.
+          if (activePlans.length === 1 && endedPlans.length === 0) {
+            targetPlan = await this.updateEndReportingPeriod(
+              activePlans[0],
+              endReportPeriodId,
+              userId,
+              trx,
+            );
+          }
+        }
 
-        //  // Update the end report period of the previously active plan.
-        //  const changedPlan = await this.updateEndReportingPeriod(
-        //    activePlan,
-        //    updatedEndPeriodId,
-        //    userId,
-        //    trx,
-        //  );
-
-        //  // Assign the updated plan records to the result.
-        //  result = { changedPlan, newPlan };
-
-        //  // Set the new plan as the active plan.
-        //  activePlan = newPlan;
-        //} else if (reportingPeriodsChanged) {
-        //  if (beginReportPeriodId !== activePlan.beginReportPeriodId) {
-        //    throw new EaseyException(
-        //      new Error(
-        //        'The begin report period of the active plan does not match the begin report period of the imported plan',
-        //      ),
-        //      HttpStatus.BAD_REQUEST,
-        //    );
-        //  }
-
-        //  if (endReportPeriodId !== activePlan.endReportPeriodId) {
-        //    if (activePlan.endReportPeriodId) {
-        //      // If the active plan has an end report period, it must match the imported plan.
-        //      throw new EaseyException(
-        //        new Error(
-        //          'The end report period of the active plan does not match the end report period of the imported plan',
-        //        ),
-        //        HttpStatus.BAD_REQUEST,
-        //      );
-        //    }
-
-        //    // Update the end report period of the active plan.
-        //    this.logger.debug(
-        //      'Updating end report period of the active plan',
-        //    );
-        //    const changedPlan = await this.updateEndReportingPeriod(
-        //      activePlan,
-        //      endReportPeriodId,
-        //      userId,
-        //      trx,
-        //    );
-
-        //    result = { changedPlan, newPlan: null };
-        //  }
-        //} else {
-        //  result = { changedPlan: null, newPlan: null };
-        //}
+        if (shouldCreateNewPlan) {
+          targetPlan = await this.createMonitorPlan({
+            locations: planMonitoringLocationData,
+            facId: facilityId,
+            userId,
+            beginReportPeriodId,
+            endReportPeriodId,
+            trx,
+          });
+          this.logger.debug(
+            'Imported locations differ from the active plan, created new plan',
+            { mon_plan_id: targetPlan.id },
+          );
+        }
 
         /* MONITOR PLAN COMMENT MERGE LOGIC */
-        // TODO: Uncomment when active plan is set.
-        /*await this.monitorPlanCommentService.importComments(
-          plan,
-          userId,
-          activePlan.id,
-          trx,
-        );*/
+        if (targetPlan) {
+          await this.monitorPlanCommentService.importComments(
+            targetPlanPayload.monitoringPlanCommentData,
+            userId,
+            targetPlan.id,
+            trx,
+          );
+        }
 
         if (draft) {
           throw new CancelTransactionException();
@@ -611,11 +588,26 @@ export class MonitorPlanWorkspaceService {
       });
     } catch (err) {
       if (err instanceof CancelTransactionException) {
-        return result;
+        return { targetPlan, endedPlans };
       } else throw err;
     }
 
-    return result;
+    return { targetPlan, endedPlans };
+  }
+
+  private checkLocationsMatch(
+    planA: MonitorPlanDTO | UpdateMonitorPlanDTO,
+    planB: MonitorPlanDTO | UpdateMonitorPlanDTO,
+  ) {
+    return Object.values(
+      [planA, planB].map(this.extractUnitAndStackPipeIds).reduce(
+        (acc, cur) => ({
+          unitIds: [...acc.unitIds, cur.unitIds],
+          stackPipeIds: [...acc.stackPipeIds, cur.stackPipeIds],
+        }),
+        { unitIds: [], stackPipeIds: [] },
+      ),
+    ).every(pair => areSetsEqual(pair[0], pair[1]));
   }
 
   async revertToOfficialRecord(monPlanId: string): Promise<void> {
@@ -674,6 +666,10 @@ export class MonitorPlanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
+    this.logger.debug('Updating end report period of previously active plan', {
+      mon_plan_id: plan.id,
+      end_rpt_period_id: newEndReportPeriodId,
+    });
     const repository = withTransaction(this.repository, trx);
     const reportingPeriodRepository = withTransaction(
       this.reportingPeriodRepository,
@@ -1096,6 +1092,10 @@ export class MonitorPlanWorkspaceService {
   }
 }
 
+type PlanItem = {
+  unitId: string;
+  stackPipeId: string;
+};
 type ProgramPeriod = [number, number, string]; // [year, quarter, program type]
 type ProgramRange = {
   type: 'annual' | 'ozone';

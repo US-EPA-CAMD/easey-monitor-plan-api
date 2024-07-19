@@ -8,7 +8,6 @@ import {
   MonitorPlanCommentBaseDTO,
   MonitorPlanCommentDTO,
 } from '../dtos/monitor-plan-comment.dto';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 
@@ -93,7 +92,7 @@ export class MonitorPlanCommentWorkspaceService {
   }
 
   async importComments(
-    plan: UpdateMonitorPlanDTO,
+    commentData: MonitorPlanCommentBaseDTO[],
     userId: string,
     monitorPlanId: string,
     trx?: EntityManager,
@@ -102,7 +101,7 @@ export class MonitorPlanCommentWorkspaceService {
       (async () => {
         const promises = [];
 
-        for (const comment of plan.monitoringPlanCommentData) {
+        for (const comment of commentData) {
           promises.push(
             new Promise(innerResolve => {
               (async () => {

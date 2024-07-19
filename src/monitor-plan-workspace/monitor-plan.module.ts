@@ -27,7 +27,6 @@ import { MonitorSpanWorkspaceModule } from '../monitor-span-workspace/monitor-sp
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
 import { PCTQualificationWorkspaceModule } from '../pct-qualification-workspace/pct-qualification.module';
 import { PlantModule } from '../plant/plant.module';
-import { PlantWorkspaceModule } from 'src/plant-workspace/plant.module';
 import { ReportingPeriodModule } from '../reporting-period/reporting-period.module';
 import { SystemComponentWorkspaceModule } from '../system-component-workspace/system-component.module';
 import { SystemFuelFlowWorkspaceModule } from '../system-fuel-flow-workspace/system-fuel-flow.module';
@@ -76,7 +75,6 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
     MonitorPlanLocationModule,
     MonitorPlanReportingFreqWorkspaceModule,
     PlantModule,
-    PlantWorkspaceModule,
     TypeOrmModule.forFeature([MonitorPlanWorkspaceRepository]),
     HttpModule,
     ReportingPeriodModule,
