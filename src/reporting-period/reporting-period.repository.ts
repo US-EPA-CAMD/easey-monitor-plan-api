@@ -37,6 +37,17 @@ export class ReportingPeriodRepository extends Repository<ReportingPeriod> {
       .getOne();
   }
 
+  async getNextReportingPeriodId(id: number) {
+    const { year, quarter } = await this.getById(id);
+    const nextPeriodQuarter = quarter === 4 ? 1 : quarter + 1;
+    const nextPeriodYear = quarter === 4 ? year + 1 : year;
+    const res = await this.createQueryBuilder('rp')
+      .where('rp.year = :year', { year: nextPeriodYear })
+      .andWhere('rp.quarter = :quarter', { quarter: nextPeriodQuarter })
+      .getOne();
+    return res.id;
+  }
+
   async getPreviousPeriodId(id: number): Promise<number> {
     const { year, quarter } = await this.getById(id);
     const prevPeriodQuarter = quarter === 1 ? 4 : quarter - 1;

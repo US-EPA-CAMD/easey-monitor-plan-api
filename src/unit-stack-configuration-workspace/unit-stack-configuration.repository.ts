@@ -17,6 +17,12 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
       .getOne();
   }
 
+  async getUnitStacksByIds(ids: string[]) {
+    return this.createQueryBuilder('usc')
+      .where('usc.id IN (:...ids)', { ids })
+      .getMany();
+  }
+
   async getUnitStackConfigByUnitIdStackId(
     unitRecordId: number,
     stackPipeRecordId: string,

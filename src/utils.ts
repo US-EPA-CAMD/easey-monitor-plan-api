@@ -12,6 +12,12 @@ export function areSetsEqual<T>(set1: Set<T>, set2: Set<T>) {
   }
 }
 
+export const getEarliestDate = (date1: Date | string, date2: Date | string) => {
+  if (!date1) return date2;
+  if (!date2) return date1;
+  return new Date(date1) < new Date(date2) ? date1 : date2;
+};
+
 export const parseToken = (token: string) => {
   const obj = {
     userId: null,

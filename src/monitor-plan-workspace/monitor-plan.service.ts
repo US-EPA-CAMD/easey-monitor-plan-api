@@ -3,7 +3,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { EntityManager, In } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { areSetsEqual } from '../utils';
+import { areSetsEqual, getEarliestDate } from '../utils';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
@@ -43,6 +43,7 @@ import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
 import { UnitProgramRepository } from '../unit-program/unit-program.repository';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
@@ -90,6 +91,7 @@ export class MonitorPlanWorkspaceService {
     private readonly cpmsQualRepository: CPMSQualificationWorkspaceRepository,
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     private readonly unitProgramRepository: UnitProgramRepository,
+    private readonly unitWorkspaceService: UnitWorkspaceService,
 
     private readonly plantService: PlantService,
     private readonly uscMap: UnitStackConfigurationMap,
@@ -104,7 +106,7 @@ export class MonitorPlanWorkspaceService {
     this.logger.setContext('MonitorPlanWorkspaceService');
   }
 
-  private async calculateReportPeriodRange(
+  private async calculateReportPeriodRangeFromLocations(
     monitorLocations: MonitorLocationDTO[],
     unitStackConfigs: UnitStackConfigurationDTO[],
     trx?: EntityManager,
@@ -447,7 +449,22 @@ export class MonitorPlanWorkspaceService {
       })
     ).evalStatusCodeDescription;
 
+    dto.unitStackConfigurationData = await this.getMonitorPlanUnitStackConfigs(
+      monPlanId,
+      trx,
+    );
+
     return dto;
+  }
+
+  async getMonitorPlanUnitStackConfigs(monPlanId: string, trx?: EntityManager) {
+    const unitStackConfigsIds = await withTransaction(
+      this.repository,
+      trx,
+    ).getMonitorPlanUnitStackConfigsIds(monPlanId);
+    return await this.unitStackService.getUnitStackConfigsByIds(
+      unitStackConfigsIds,
+    );
   }
 
   async importMpPlan(
@@ -476,7 +493,12 @@ export class MonitorPlanWorkspaceService {
     );
 
     let endedPlans: MonitorPlanDTO[] = [];
+    let newPlan: MonitorPlanDTO = null;
+    let unchangedPlans: MonitorPlanDTO[] = [];
+
+    // Used for applying the payloads monitor plan comments.
     let targetPlan: MonitorPlanDTO = null;
+
     let shouldCreateNewPlan = false;
 
     try {
@@ -501,25 +523,38 @@ export class MonitorPlanWorkspaceService {
         );
 
         /* MONITOR PLAN MERGE LOGIC */
-        //const workingMonitorPlans = this.getWorkingMonitorPlans(plan); // TODO: Remove if not used
         const reportingPeriodRepository = withTransaction(
           this.reportingPeriodRepository,
           trx,
         );
 
-        // Calculate the report period range for the update monitor plan.
+        // Calculate the report period range from the update monitor plan.
         const [
-          beginReportPeriodId,
-          endReportPeriodId,
-        ] = await this.calculateReportPeriodRange(
+          payloadBeginReportPeriodId,
+          payloadEndReportPeriodId,
+        ] = await this.calculateReportPeriodRangeFromLocations(
           planMonitoringLocationData,
           planUnitStackConfigurationData,
           trx,
         );
 
+        let maxActivePlansEndReportPeriod = null;
+
         // If there are no associated active plans, simply create a new plan.
         if (activePlans.length === 0) {
-          shouldCreateNewPlan = true;
+          // Match to an existing inactive plan in the database. If found, add the supplied plan to the unchanged plans. Otherwise, create a new plan.
+          const matchedPlan = await this.matchToPlanByLocationsAndPeriod(
+            targetPlanPayload,
+            payloadBeginReportPeriodId,
+            payloadEndReportPeriodId,
+            trx,
+          );
+          if (matchedPlan) {
+            targetPlan = matchedPlan;
+            unchangedPlans.push(matchedPlan);
+          } else {
+            shouldCreateNewPlan = true;
+          }
         } else {
           await Promise.all(
             activePlans.map(async activePlan => {
@@ -529,15 +564,58 @@ export class MonitorPlanWorkspaceService {
                 targetPlanPayload,
               );
 
-              // If the locations differ, create a new plan and update the end report period of the previously active plan.
-              if (!locationsMatch) {
+              if (locationsMatch) {
+                if (activePlan.endReportPeriodId !== payloadEndReportPeriodId) {
+                  // If the locations match but the end report period differs, update the end report period of the active plan.
+                  endedPlans.push(
+                    await this.updateEndReportingPeriod(
+                      activePlan,
+                      payloadEndReportPeriodId,
+                      userId,
+                      trx,
+                    ),
+                  );
+                  targetPlan = endedPlans[endedPlans.length - 1];
+                } else {
+                  // The active plan is unchanged.
+                  unchangedPlans.push(activePlan);
+                  targetPlan = activePlan;
+                }
+              } else {
+                // If the locations differ, create a new plan and update the end report period of the previously active plan.
+
+                // Get the USC end periods associated with the active plan.
+                const earliestUscEndDate = activePlan.unitStackConfigurationData
+                  .map(usc => usc.endDate)
+                  .reduce(getEarliestDate, null);
+
+                // Get the unit end periods associated with the active plan.
+                const monPlanUnits = await this.unitWorkspaceService.getUnitsByMonPlanId(
+                  activePlan.id,
+                );
+                const earliestUnitEndDate = monPlanUnits
+                  .map(u => u.endDate)
+                  .reduce(getEarliestDate, null);
+
+                // Calculate the max period from the USCs, or from the units if no USCs are associated with the active plan.
+                const newActivePlanEndReportPeriod = await withTransaction(
+                  this.reportingPeriodRepository,
+                  trx,
+                ).getByDate(earliestUscEndDate || earliestUnitEndDate);
+
+                // Update the maxEndReportPeriodId to the max period if greater.
+                if (
+                  new Date(newActivePlanEndReportPeriod.endDate) >
+                  new Date(maxActivePlansEndReportPeriod?.endDate)
+                ) {
+                  maxActivePlansEndReportPeriod = newActivePlanEndReportPeriod;
+                }
+
                 shouldCreateNewPlan = true;
                 endedPlans.push(
                   await this.updateEndReportingPeriod(
                     activePlan,
-                    await reportingPeriodRepository.getPreviousPeriodId(
-                      beginReportPeriodId,
-                    ),
+                    newActivePlanEndReportPeriod.id,
                     userId,
                     trx,
                   ),
@@ -545,30 +623,23 @@ export class MonitorPlanWorkspaceService {
               }
             }),
           );
-
-          // If there is only one active plan and the locations match, update the end report period of the active plan and set it as the target plan.
-          if (activePlans.length === 1 && endedPlans.length === 0) {
-            targetPlan = await this.updateEndReportingPeriod(
-              activePlans[0],
-              endReportPeriodId,
-              userId,
-              trx,
-            );
-          }
         }
 
         if (shouldCreateNewPlan) {
-          targetPlan = await this.createMonitorPlan({
+          newPlan = await this.createMonitorPlan({
             locations: planMonitoringLocationData,
             facId: facilityId,
             userId,
-            beginReportPeriodId,
-            endReportPeriodId,
+            beginReportPeriodId: await this.reportingPeriodRepository.getNextReportingPeriodId(
+              maxActivePlansEndReportPeriod.id,
+            ),
+            endReportPeriodId: payloadEndReportPeriodId,
             trx,
           });
+          targetPlan = newPlan;
           this.logger.debug(
             'Imported locations differ from the active plan, created new plan',
-            { mon_plan_id: targetPlan.id },
+            { mon_plan_id: newPlan.id },
           );
         }
 
@@ -654,6 +725,31 @@ export class MonitorPlanWorkspaceService {
         }),
       ),
     );
+  }
+
+  private async matchToPlanByLocationsAndPeriod(
+    payload: MonitorPlanDTO | UpdateMonitorPlanDTO,
+    beginReportPeriodId: number,
+    endReportPeriodId: number,
+    trx?: EntityManager,
+  ) {
+    const matchedPlan = await withTransaction(this.repository, trx)
+      .createQueryBuilder('mp')
+      .innerJoinAndSelect('mp.locations', 'l')
+      .where('mp.beginReportPeriodId = :beginReportPeriodId', {
+        beginReportPeriodId,
+      })
+      .andWhere('mp.endReportPeriodId = :endReportPeriodId', {
+        endReportPeriodId,
+      })
+      .getOne();
+
+    if (!matchedPlan) return null;
+
+    const matchedPlanDto = await this.map.one(matchedPlan);
+    return this.checkLocationsMatch(payload, matchedPlanDto)
+      ? matchedPlanDto
+      : null;
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {

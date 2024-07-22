@@ -40,6 +40,7 @@ import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { MonitorPlanWorkspaceController } from './monitor-plan.controller';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
+import { UnitWorkspaceModule } from '../unit-workspace/unit.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { MonitorPlanWorkspaceService } from './monitor-plan.service';
     LMEQualificationWorkspaceModule,
     PCTQualificationWorkspaceModule,
     CPMSQualificationWorkspaceModule,
+    UnitWorkspaceModule,
     UserCheckOutModule,
     CountyCodeModule,
     MonitorPlanLocationModule,

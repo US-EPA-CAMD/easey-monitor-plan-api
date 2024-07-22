@@ -24,6 +24,14 @@ export class UnitStackConfigurationWorkspaceService {
     private readonly map: UnitStackConfigurationMap,
   ) {}
 
+  async getUnitStackConfigsByIds(ids: string[], trx?: EntityManager) {
+    const results = await withTransaction(
+      this.repository,
+      trx,
+    ).getUnitStacksByIds(ids);
+    return this.map.many(results);
+  }
+
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
     return await this.repository.getUnitStackConfigsByLocationIds(locationIds);
   }

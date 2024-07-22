@@ -109,6 +109,20 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     });
   }
 
+  async getMonitorPlanUnitStackConfigsIds(planId: string) {
+    return (
+      await this.query(
+        `
+      SELECT config_id FROM camdecmpswks.unit_stack_configuration usc
+      WHERE usc.config_id IN (
+        SELECT config_id FROM camdecmpswks.vw_mp_unit_stack_configuration
+        WHERE mon_plan_id = $1
+      )`,
+        [planId],
+      )
+    ).map(usc => usc.config_id);
+  }
+
   async getActivePlanByLocationId(locId: string): Promise<MonitorPlan> {
     const query = this.createQueryBuilder('plan')
       .innerJoinAndSelect('plan.locations', 'locations')
