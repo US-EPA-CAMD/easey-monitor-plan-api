@@ -523,10 +523,6 @@ export class MonitorPlanWorkspaceService {
         );
 
         /* MONITOR PLAN MERGE LOGIC */
-        const reportingPeriodRepository = withTransaction(
-          this.reportingPeriodRepository,
-          trx,
-        );
 
         // Calculate the report period range from the update monitor plan.
         const [
@@ -539,6 +535,11 @@ export class MonitorPlanWorkspaceService {
         );
 
         let maxActivePlansEndReportPeriod = null;
+
+        const reportingPeriodRepository = withTransaction(
+          this.reportingPeriodRepository,
+          trx,
+        );
 
         // If there are no associated active plans, simply create a new plan.
         if (activePlans.length === 0) {
@@ -592,16 +593,16 @@ export class MonitorPlanWorkspaceService {
                 // Get the unit end periods associated with the active plan.
                 const monPlanUnits = await this.unitWorkspaceService.getUnitsByMonPlanId(
                   activePlan.id,
+                  trx,
                 );
                 const earliestUnitEndDate = monPlanUnits
                   .map(u => u.endDate)
                   .reduce(getEarliestDate, null);
 
                 // Calculate the max period from the USCs, or from the units if no USCs are associated with the active plan.
-                const newActivePlanEndReportPeriod = await withTransaction(
-                  this.reportingPeriodRepository,
-                  trx,
-                ).getByDate(earliestUscEndDate || earliestUnitEndDate);
+                const newActivePlanEndReportPeriod = await reportingPeriodRepository.getByDate(
+                  earliestUscEndDate || earliestUnitEndDate,
+                );
 
                 // Update the maxEndReportPeriodId to the max period if greater.
                 if (
@@ -630,7 +631,7 @@ export class MonitorPlanWorkspaceService {
             locations: planMonitoringLocationData,
             facId: facilityId,
             userId,
-            beginReportPeriodId: await this.reportingPeriodRepository.getNextReportingPeriodId(
+            beginReportPeriodId: await reportingPeriodRepository.getNextReportingPeriodId(
               maxActivePlansEndReportPeriod.id,
             ),
             endReportPeriodId: payloadEndReportPeriodId,
