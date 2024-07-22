@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 
@@ -18,9 +18,9 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
   }
 
   async getUnitStacksByIds(ids: string[]) {
-    return this.createQueryBuilder('usc')
-      .where('usc.id IN (:...ids)', { ids })
-      .getMany();
+    return this.findBy({
+      id: In(ids),
+    });
   }
 
   async getUnitStackConfigByUnitIdStackId(

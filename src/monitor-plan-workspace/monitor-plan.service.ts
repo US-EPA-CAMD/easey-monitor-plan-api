@@ -142,19 +142,18 @@ export class MonitorPlanWorkspaceService {
 
         // Get the begin date from the earliest monitoring method associated with the unit.
         if (location.monitoringMethodData.length === 0) {
-          throw new EaseyException(
-            new Error(
-              `There is no method associated with the unit ${location.unitId}`,
-            ),
-            HttpStatus.BAD_REQUEST,
+          this.logger.debug(
+            `There is no method associated with the unit ${location.unitId}`,
           );
+          beginDate = new Date();
+        } else {
+          const beginDateEpoch = Math.min(
+            ...location.monitoringMethodData.map(m =>
+              new Date(m.beginDate).getTime(),
+            ),
+          );
+          beginDate = new Date(beginDateEpoch);
         }
-        const beginDateEpoch = Math.min(
-          ...location.monitoringMethodData.map(m =>
-            new Date(m.beginDate).getTime(),
-          ),
-        );
-        beginDate = new Date(beginDateEpoch);
 
         // Get the end date from the day before the earliest retire date of the unit.
         const locationRecord = await withTransaction(
@@ -631,9 +630,11 @@ export class MonitorPlanWorkspaceService {
             locations: planMonitoringLocationData,
             facId: facilityId,
             userId,
-            beginReportPeriodId: await reportingPeriodRepository.getNextReportingPeriodId(
-              maxActivePlansEndReportPeriod.id,
-            ),
+            beginReportPeriodId: maxActivePlansEndReportPeriod
+              ? await reportingPeriodRepository.getNextReportingPeriodId(
+                  maxActivePlansEndReportPeriod.id,
+                )
+              : payloadBeginReportPeriodId,
             endReportPeriodId: payloadEndReportPeriodId,
             trx,
           });
@@ -660,11 +661,11 @@ export class MonitorPlanWorkspaceService {
       });
     } catch (err) {
       if (err instanceof CancelTransactionException) {
-        return { targetPlan, endedPlans };
+        return { endedPlans, newPlan, unchangedPlans };
       } else throw err;
     }
 
-    return { targetPlan, endedPlans };
+    return { endedPlans, newPlan, unchangedPlans };
   }
 
   private checkLocationsMatch(
