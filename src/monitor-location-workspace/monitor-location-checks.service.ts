@@ -37,6 +37,17 @@ export class MonitorLocationChecksService {
     let errorList = [];
     const locations: LocationIdentifiers[] = this.processLocations(payload);
 
+    locations.forEach(location => {
+      if (location.stackPipeId) {
+        const match = location.stackPipeId.match(/^[MC][SP][a-zA-Z0-9-]+$/);
+        if (!match || (match[0].length < 4 && match[0].includes('-'))) {
+          errorList.push(
+            `[MONLOC-19-B] You reported a Stack/Pipe ID '${location.stackPipeId}' which has an invalid format.`,
+          );
+        }
+      }
+    });
+
     if (locations.length > 0) {
       const dbLocations = await this.repository.getLocationsByUnitStackPipeIds(
         payload.orisCode,

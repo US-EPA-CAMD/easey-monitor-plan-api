@@ -82,13 +82,13 @@ export class MonitorPlanMap extends BaseMap<
       lastEvaluatedDate: entity.lastEvaluatedDate,
       ...(entity.beginReportingPeriod
         ? {
-            beginReportingPeriodDescription:
+            beginReportPeriodDescription:
               entity.beginReportingPeriod.periodAbbreviation,
           }
         : {}),
       ...(entity.endReportingPeriod
         ? {
-            endReportingPeriodDescription:
+            endReportPeriodDescription:
               entity.endReportingPeriod.periodAbbreviation,
           }
         : {}),
