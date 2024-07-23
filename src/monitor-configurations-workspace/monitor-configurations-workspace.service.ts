@@ -7,8 +7,6 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 import { PlantWorkspaceRepository } from '../plant-workspace/plant.repository';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
-import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
-import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { EvalStatusCodeRepository } from './eval-status.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 
@@ -20,20 +18,13 @@ export class MonitorConfigurationsWorkspaceService {
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
     private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
     private readonly plantWorkspaceRepository: PlantWorkspaceRepository,
-    private readonly locationRepository: MonitorLocationWorkspaceRepository,
-    private readonly uscRepository: UnitStackConfigurationWorkspaceRepository,
   ) {}
 
-  async populateLocationsAndStackConfigs(plan: MonitorPlan) {
-    const locations = await this.locationRepository.getMonitorLocationsByPlanId(
+  async populateStackConfigs(plan: MonitorPlan) {
+    const unitStackConfigs = await this.monitorPlanWorkspaceRepository.getMonitorPlanUnitStackConfigs(
       plan.id,
     );
 
-    const unitStackConfigs = await this.uscRepository.getUnitStackConfigsByLocationIds(
-      locations.map(l => l.id),
-    );
-
-    plan.locations = locations;
     plan.unitStackConfigurations = unitStackConfigs;
   }
 
@@ -56,10 +47,21 @@ export class MonitorConfigurationsWorkspaceService {
     monPlanIds: string[] = [],
   ): Promise<MonitorPlanDTO[]> {
     let plans: MonitorPlan[];
+    const relations = {
+      beginReportingPeriod: true,
+      endReportingPeriod: true,
+      plant: true,
+      locations: {
+        unit: {
+          opStatuses: true,
+        },
+        stackPipe: true,
+      },
+    };
     if (monPlanIds.length > 0) {
       plans = await this.monitorPlanWorkspaceRepository.find({
         where: { id: In(monPlanIds) },
-        relations: ['plant'],
+        relations,
       });
     } else {
       const plants = await this.plantWorkspaceRepository.find({
@@ -67,14 +69,14 @@ export class MonitorConfigurationsWorkspaceService {
       });
       plans = await this.monitorPlanWorkspaceRepository.find({
         where: { facId: In(plants.map(p => p.id)) },
-        relations: ['plant'],
+        relations,
       });
     }
 
     let promises = [];
 
     for (const plan of plans) {
-      promises.push(this.populateLocationsAndStackConfigs(plan));
+      promises.push(this.populateStackConfigs(plan));
     }
 
     await Promise.all(promises);

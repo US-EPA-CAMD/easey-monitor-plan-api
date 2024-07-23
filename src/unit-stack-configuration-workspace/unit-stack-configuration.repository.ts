@@ -12,14 +12,24 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
   }
 
   async getUnitStackById(id: string) {
-    return this.createQueryBuilder('usc')
-      .where('usc.id = :id', { id })
-      .getOne();
+    return this.findOne({
+      where: { id },
+      relations: {
+        stackPipe: true,
+        unit: true,
+      },
+    });
   }
 
   async getUnitStacksByIds(ids: string[]) {
-    return this.findBy({
-      id: In(ids),
+    return this.find({
+      relations: {
+        stackPipe: true,
+        unit: true,
+      },
+      where: {
+        id: In(ids),
+      },
     });
   }
 

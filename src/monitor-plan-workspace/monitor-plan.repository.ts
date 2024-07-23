@@ -4,6 +4,7 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 
 @Injectable()
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
@@ -109,18 +110,27 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     });
   }
 
-  async getMonitorPlanUnitStackConfigsIds(planId: string) {
-    return (
-      await this.query(
-        `
-      SELECT config_id FROM camdecmpswks.unit_stack_configuration usc
+  async getMonitorPlanUnitStackConfigs(planId: string) {
+    const results = await this.query(
+      `
+      SELECT * FROM camdecmpswks.unit_stack_configuration usc
       WHERE usc.config_id IN (
         SELECT config_id FROM camdecmpswks.vw_mp_unit_stack_configuration
         WHERE mon_plan_id = $1
       )`,
-        [planId],
-      )
-    ).map(usc => usc.config_id);
+      [planId],
+    );
+
+    return results.map(usc => ({
+      id: usc.config_id,
+      unitId: usc.unit_id,
+      stackPipeId: usc.stack_pipe_id,
+      beginDate: usc.begin_date,
+      endDate: usc.end_date,
+      userId: usc.userid,
+      addDate: usc.add_date,
+      updateDate: usc.update_date,
+    })) as UnitStackConfiguration[];
   }
 
   async getActivePlanByLocationId(locId: string): Promise<MonitorPlan> {

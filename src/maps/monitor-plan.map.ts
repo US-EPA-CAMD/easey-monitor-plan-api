@@ -80,6 +80,18 @@ export class MonitorPlanMap extends BaseMap<
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
       submissionAvailabilityCodeDescription: '',
       lastEvaluatedDate: entity.lastEvaluatedDate,
+      ...(entity.beginReportingPeriod
+        ? {
+            beginReportingPeriodDescription:
+              entity.beginReportingPeriod.periodAbbreviation,
+          }
+        : {}),
+      ...(entity.endReportingPeriod
+        ? {
+            endReportingPeriodDescription:
+              entity.endReportingPeriod.periodAbbreviation,
+          }
+        : {}),
     };
   }
 }

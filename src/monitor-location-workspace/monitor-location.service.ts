@@ -8,6 +8,7 @@ import {
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -59,10 +60,13 @@ export class MonitorLocationWorkspaceService {
     private readonly ductWafService: DuctWafWorkspaceService,
     private readonly spanService: MonitorSpanWorkspaceService,
     private readonly defaultService: MonitorDefaultWorkspaceService,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorAttributeWorkspaceService))
     private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorLocationWorkspaceService');
+  }
 
   async createMonitorLocationRecord({
     unitId,
@@ -100,11 +104,14 @@ export class MonitorLocationWorkspaceService {
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     orisCode: number,
+    trx?: EntityManager,
   ): Promise<MonitorLocation[]> {
     const locations = [];
 
     for (const loc of plan.monitoringLocationData) {
-      locations.push(await this.getLocationRecord(loc, facilityId, orisCode));
+      locations.push(
+        await this.getLocationRecord(loc, facilityId, orisCode, trx),
+      );
     }
 
     return locations;
@@ -124,8 +131,16 @@ export class MonitorLocationWorkspaceService {
     locationId: string,
     trx?: EntityManager,
   ): Promise<MonitorLocationDTO> {
-    const result = await withTransaction(this.repository, trx).findOneBy({
-      id: locationId,
+    const result = await withTransaction(this.repository, trx).findOne({
+      relations: {
+        stackPipe: true,
+        unit: {
+          opStatuses: true,
+        },
+      },
+      where: {
+        id: locationId,
+      },
     });
 
     if (!result) {
@@ -141,12 +156,14 @@ export class MonitorLocationWorkspaceService {
     loc: UpdateMonitorLocationDTO,
     facilityId: number,
     orisCode: number,
+    trx?: EntityManager,
   ) {
     return await this.getOrCreateLocationRecord({
       loc,
       facilityId,
       orisCode,
       create: false,
+      trx,
     });
   }
 

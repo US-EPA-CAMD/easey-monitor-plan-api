@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
 
 interface IorisCodesAndLastUpdatedTimes {
   changedOrisCodes: number[];
@@ -49,6 +50,28 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
         },
       )
       .getMany();
+  }
+
+  async getMonitorPlanUnitStackConfigs(planId: string) {
+    const configIds = (
+      await this.query(
+        `
+      SELECT config_id FROM camdecmps.unit_stack_configuration usc
+      WHERE usc.config_id IN (
+        SELECT config_id FROM camdecmps.vw_mp_unit_stack_configuration
+        WHERE mon_plan_id = $1
+      )`,
+        [planId],
+      )
+    ).map(usc => usc.config_id);
+
+    return this.manager.find(UnitStackConfiguration, {
+      relations: {
+        stackPipe: true,
+        unit: true,
+      },
+      where: { id: In(configIds) },
+    });
   }
 
   async getOrisCodesByLastUpdatedTime(

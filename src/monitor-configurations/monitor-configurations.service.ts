@@ -7,29 +7,22 @@ import { PlantRepository } from '../plant/plant.repository';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
 import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 
 @Injectable()
 export class MonitorConfigurationsService {
   constructor(
     private readonly entityManager: EntityManager,
-    private readonly locationRepository: MonitorLocationRepository,
     private readonly monitorPlanRepository: MonitorPlanRepository,
     private readonly plantRepository: PlantRepository,
     private readonly uscRepository: UnitStackConfigurationRepository,
     private readonly map: MonitorPlanMap,
   ) {}
 
-  async populateLocationsAndStackConfigs(plan: MonitorPlan) {
-    const locations = await this.locationRepository.getMonitorLocationsByPlanId(
+  async populateStackConfigs(plan: MonitorPlan) {
+    const unitStackConfigs = await this.monitorPlanRepository.getMonitorPlanUnitStackConfigs(
       plan.id,
     );
 
-    const unitStackConfigs = await this.uscRepository.getUnitStackConfigsByLocationIds(
-      locations.map(l => l.id),
-    );
-
-    plan.locations = locations;
     plan.unitStackConfigurations = unitStackConfigs;
   }
 
@@ -38,10 +31,21 @@ export class MonitorConfigurationsService {
     monPlanIds: string[] = [],
   ): Promise<MonitorPlanDTO[]> {
     let plans: MonitorPlan[];
+    const relations = {
+      beginReportingPeriod: true,
+      endReportingPeriod: true,
+      plant: true,
+      locations: {
+        unit: {
+          opStatuses: true,
+        },
+        stackPipe: true,
+      },
+    };
     if (monPlanIds.length > 0) {
       plans = await this.monitorPlanRepository.find({
         where: { id: In(monPlanIds) },
-        relations: ['plant'],
+        relations,
       });
     } else {
       const plants = await this.plantRepository.find({
@@ -49,14 +53,14 @@ export class MonitorConfigurationsService {
       });
       plans = await this.monitorPlanRepository.find({
         where: { facId: In(plants.map(p => p.id)) },
-        relations: ['plant'],
+        relations,
       });
     }
 
     const promises = [];
 
     for (const plan of plans) {
-      promises.push(this.populateLocationsAndStackConfigs(plan));
+      promises.push(this.populateStackConfigs(plan));
     }
 
     await Promise.all(promises);
