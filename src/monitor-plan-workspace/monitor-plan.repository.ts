@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
@@ -111,26 +111,25 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
   }
 
   async getMonitorPlanUnitStackConfigs(planId: string) {
-    const results = await this.query(
-      `
-      SELECT * FROM camdecmpswks.unit_stack_configuration usc
+    const configIds = (
+      await this.query(
+        `
+      SELECT config_id FROM camdecmpswks.unit_stack_configuration usc
       WHERE usc.config_id IN (
         SELECT config_id FROM camdecmpswks.vw_mp_unit_stack_configuration
         WHERE mon_plan_id = $1
       )`,
-      [planId],
-    );
+        [planId],
+      )
+    ).map(usc => usc.config_id);
 
-    return results.map(usc => ({
-      id: usc.config_id,
-      unitId: usc.unit_id,
-      stackPipeId: usc.stack_pipe_id,
-      beginDate: usc.begin_date,
-      endDate: usc.end_date,
-      userId: usc.userid,
-      addDate: usc.add_date,
-      updateDate: usc.update_date,
-    })) as UnitStackConfiguration[];
+    return this.manager.find(UnitStackConfiguration, {
+      relations: {
+        stackPipe: true,
+        unit: true,
+      },
+      where: { id: In(configIds) },
+    });
   }
 
   async getActivePlanByLocationId(locId: string): Promise<MonitorPlan> {
