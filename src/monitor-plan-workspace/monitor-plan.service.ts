@@ -1,5 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import {
+  CancelTransactionException,
+  EaseyException,
+} from '@us-epa-camd/easey-common/exceptions';
 import { EntityManager, In } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -49,12 +52,6 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
-
-class CancelTransactionException extends Error {
-  constructor() {
-    super('Transaction cancelled');
-  }
-}
 
 @Injectable()
 export class MonitorPlanWorkspaceService {

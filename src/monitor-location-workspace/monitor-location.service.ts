@@ -368,7 +368,7 @@ export class MonitorLocationWorkspaceService {
                   );
 
                   innerPromises.push(
-                    this.stackPipeService.importStackPipe(
+                    this.stackPipeService.updateStackPipe(
                       stackPipeRecord,
                       location.retireDate,
                       trx,

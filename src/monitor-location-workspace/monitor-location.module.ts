@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ComponentWorkspaceModule } from '../component-workspace/component.module';
@@ -43,7 +43,7 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     MonitorQualificationWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,
     UnitModule,
-    StackPipeWorkspaceModule,
+    forwardRef(() => StackPipeWorkspaceModule),
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
     HttpModule,
   ],
