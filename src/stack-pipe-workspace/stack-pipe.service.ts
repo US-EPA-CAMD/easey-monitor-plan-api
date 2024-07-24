@@ -100,6 +100,7 @@ export class StackPipeWorkspaceService {
             userId,
             trx,
           ));
+        this.logger.debug('stackPipeRecord', stackPipeRecord);
 
         // Create the accompanying monitor location record if it doesn't exist.
         if (
@@ -110,16 +111,17 @@ export class StackPipeWorkspaceService {
             },
           ))
         ) {
-          await this.monitorLocationWorkspaceService.createMonitorLocationRecord(
+          const locationRecord = await this.monitorLocationWorkspaceService.createMonitorLocationRecord(
             {
               stackPipeId: stackPipeRecord.id,
               userId,
               trx,
             },
           );
+          this.logger.debug('locationRecord', locationRecord);
         }
 
-        result = this.map.one(stackPipeRecord);
+        result = await this.map.one(stackPipeRecord);
 
         if (draft) {
           throw new CancelTransactionException();
