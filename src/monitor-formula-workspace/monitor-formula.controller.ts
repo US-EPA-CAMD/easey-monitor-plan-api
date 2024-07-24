@@ -44,7 +44,7 @@ export class MonitorFormulaWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'locId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
@@ -66,7 +66,7 @@ export class MonitorFormulaWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'locId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,

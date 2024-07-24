@@ -73,7 +73,7 @@ export class MonitorPlanWorkspaceController {
   @RoleGuard(
     {
       importLocationSources: ['locations'],
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
@@ -103,7 +103,7 @@ export class MonitorPlanWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'planId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
     LookupType.MonitorPlan,
