@@ -24,6 +24,7 @@ import { MonitorDefault } from './monitor-default.entity';
 import { MonitorAttribute } from './monitor-attribute.entity';
 import { MonitorQualification } from './monitor-qualification.entity';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+import { MonitorPlanLocation } from './monitor-plan-location.entity';
 
 @Entity({
   name: 'camdecmpswks.monitor_location',
@@ -147,4 +148,10 @@ export class MonitorLocation extends BaseEntity {
     qualification => qualification.location,
   )
   qualifications: MonitorQualification[];
+
+  @OneToMany(
+    () => MonitorPlanLocation,
+    mpl => mpl.monitorLocation,
+  )
+  monitorPlanLocations: MonitorPlanLocation[];
 }

@@ -18,6 +18,7 @@ import { MonitorPlanComment } from './monitor-plan-comment.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 import { MonitorPlanReportingFrequency } from './monitor-plan-reporting-freq.entity';
 import { ReportingPeriod } from './reporting-period.entity';
+import { MonitorPlanLocation } from './monitor-plan-location.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -188,4 +189,10 @@ export class MonitorPlan extends BaseEntity {
     name: 'end_rpt_period_id',
   })
   endReportingPeriod: ReportingPeriod;
+
+  @OneToMany(
+    () => MonitorPlanLocation,
+    mpl => mpl.monitorPlan,
+  )
+  monitorPlanLocations: MonitorPlanLocation[];
 }

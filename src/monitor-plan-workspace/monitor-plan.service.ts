@@ -34,6 +34,7 @@ import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-w
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
 import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
+import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
 import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
@@ -52,6 +53,7 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
+import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -202,6 +204,63 @@ export class MonitorPlanWorkspaceService {
       endDate && (await reportingPeriodRepository.getByDate(endDate)).id;
 
     return [beginReportPeriodId, endReportPeriodId];
+  }
+
+  async updatePlanPeriodOnMethodUpdate(
+    method: MonitorMethodDTO,
+    userId: string,
+    trx?: EntityManager,
+  ) {
+    // Get the first single-unit moitor plan associated with the method.
+    const firstPlanRecord = await withTransaction(this.repository, trx)
+      .createQueryBuilder('mp')
+      .innerJoin('mp.monitorPlanLocations', 'mpl')
+      .innerJoin('mpl.monitorLocation', 'ml')
+      .innerJoin('mp.beginReportingPeriod', 'brp')
+      .where(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('COUNT(*)')
+          .from(MonitorLocationWorkspace, 'ml')
+          .innerJoin('ml.methods', 'm')
+          .where('m.id = :methodId', {
+            methodId: method.id,
+          })
+          .getQuery();
+        return `(${subQuery}) = 1`;
+      })
+      .andWhere('ml.unitId IS NOT NULL')
+      .orderBy('brp.beginDate', 'ASC')
+      .getOne();
+
+    if (!firstPlanRecord) return;
+
+    // Update the begin reporting period of the monitor plan if the method's begin date is earlier.
+    const reportingPeriodRepository = withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    );
+    const [
+      firstPlanReportingPeriod,
+      methodBeginReportingPeriod,
+    ] = await Promise.all([
+      reportingPeriodRepository.getById(firstPlanRecord.beginReportPeriodId),
+      reportingPeriodRepository.getByDate(method.beginDate),
+    ]);
+    if (
+      methodBeginReportingPeriod.year < firstPlanReportingPeriod.year ||
+      (methodBeginReportingPeriod.year === firstPlanReportingPeriod.year &&
+        methodBeginReportingPeriod.quarter < firstPlanReportingPeriod.quarter)
+    ) {
+      this.logger.debug('Updating the monitor plan begin reporting period', {
+        monPlanId: firstPlanRecord.id,
+        beginReportPeriod: methodBeginReportingPeriod.periodAbbreviation,
+      });
+      firstPlanRecord.beginReportPeriodId = methodBeginReportingPeriod.id;
+      const repository = withTransaction(this.repository, trx);
+      await repository.save(firstPlanRecord);
+      await repository.resetToNeedsEvaluation(firstPlanRecord.id, userId);
+    }
   }
 
   async createMonitorPlan({

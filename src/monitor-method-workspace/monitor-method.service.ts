@@ -87,7 +87,15 @@ export class MonitorMethodWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
-    return this.map.one(monMethod);
+    const monMethodDto = await this.map.one(monMethod);
+
+    await this.mpService.updatePlanPeriodOnMethodUpdate(
+      monMethodDto,
+      userId,
+      trx,
+    );
+
+    return monMethodDto;
   }
 
   async updateMethod({
@@ -124,7 +132,11 @@ export class MonitorMethodWorkspaceService {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
-    return this.map.one(method);
+    const methodDto = await this.map.one(method);
+
+    await this.mpService.updatePlanPeriodOnMethodUpdate(methodDto, userId, trx);
+
+    return methodDto;
   }
 
   async importMethod(
