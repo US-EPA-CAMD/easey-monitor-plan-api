@@ -526,10 +526,11 @@ export class MonitorPlanWorkspaceService {
     draft = false,
   ) {
     if (draft) {
-      this.logger.debug('Formulating a draft monitor plan', targetPlanPayload);
+      this.logger.log('Formulating a draft monitor plan');
     } else {
-      this.logger.debug('Importing monitor plan', targetPlanPayload);
+      this.logger.log('Importing monitor plan');
     }
+    this.logger.debug('Target plan payload', targetPlanPayload);
 
     const facilityId = await this.plantService.getFacIdFromOris(
       targetPlanPayload.orisCode,
@@ -555,7 +556,7 @@ export class MonitorPlanWorkspaceService {
       // Start transaction.
       await this.entityManager.transaction(async trx => {
         /* MONITOR LOCATION MERGE LOGIC */
-        this.logger.debug('Importing monitor locations');
+        this.logger.log('Importing monitor locations');
         const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
           targetPlanPayload,
           facilityId,
@@ -564,7 +565,7 @@ export class MonitorPlanWorkspaceService {
         );
 
         /* UNIT STACK CONFIGURATION MERGE LOGIC */
-        this.logger.debug('Importing unit stack configurations');
+        this.logger.log('Importing unit stack configurations');
         const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
           targetPlanPayload,
           facilityId,
@@ -614,7 +615,6 @@ export class MonitorPlanWorkspaceService {
                 activePlan.id,
                 { full: true, trx },
               );
-              this.logger.debug('pendingActivePlan', pendingActivePlan);
               // Compare the active plan locations against the imported plan locations.
               const locationsMatch = this.checkLocationsMatch(
                 pendingActivePlan,
@@ -665,8 +665,9 @@ export class MonitorPlanWorkspaceService {
 
                 // Update the maxEndReportPeriodId to the max period if greater.
                 if (
+                  !maxActivePlansEndReportPeriod ||
                   new Date(newActivePlanEndReportPeriod.endDate) >
-                  new Date(maxActivePlansEndReportPeriod?.endDate)
+                    new Date(maxActivePlansEndReportPeriod.endDate)
                 ) {
                   maxActivePlansEndReportPeriod = newActivePlanEndReportPeriod;
                 }
