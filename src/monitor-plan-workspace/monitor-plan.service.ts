@@ -487,6 +487,8 @@ export class MonitorPlanWorkspaceService {
       monPlanId,
       full,
     );
+    if (!mp) return null;
+
     const dto = await this.map.one(mp);
 
     dto.submissionAvailabilityCodeDescription = (
