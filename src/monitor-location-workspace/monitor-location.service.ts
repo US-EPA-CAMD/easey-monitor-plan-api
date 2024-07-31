@@ -222,8 +222,16 @@ export class MonitorLocationWorkspaceService {
         trx,
       );
 
-      if (!stackPipe && create) {
+      if (!stackPipe) {
         // A stack/pipe may not exist in the database.
+        if (!create) {
+          throw new BadRequestException(
+            CheckCatalogService.formatMessage(
+              'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',
+              { stackPipe: loc.stackPipeId, orisCode: orisCode },
+            ),
+          );
+        }
         stackPipe = await this.stackPipeService.createStackPipeRecord(
           loc,
           facilityId,

@@ -72,8 +72,6 @@ import { CheckOutModule } from './check-out/check-out.module';
 import { MonitorConfigurationsModule } from './monitor-configurations/monitor-configurations.module';
 import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
-import { CPMSQualificationModule } from './cpms-qualification/cpms-qualification.module';
-import { CPMSQualificationWorkspaceModule } from './cpms-qualification-workspace/cpms-qualification-workspace.module';
 import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.module';
 
 const routes: Routes = [
@@ -185,10 +183,6 @@ const routes: Routes = [
             path: ':qualId/pct-qualifications',
             module: PCTQualificationModule,
           },
-          {
-            path: ':qualId/cpms-qualifications',
-            module: CPMSQualificationModule,
-          },
         ],
       },
       {
@@ -280,10 +274,6 @@ const routes: Routes = [
           {
             path: ':qualId/pct-qualifications',
             module: PCTQualificationWorkspaceModule,
-          },
-          {
-            path: ':qualId/cpms-qualifications',
-            module: CPMSQualificationWorkspaceModule,
           },
         ],
       },

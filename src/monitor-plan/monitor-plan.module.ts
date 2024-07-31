@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AnalyzerRangeModule } from '../analyzer-range/analyzer-range.module';
 import { ComponentModule } from '../component/component.module';
-import { CPMSQualificationModule } from '../cpms-qualification/cpms-qualification.module';
 import { DuctWafModule } from '../duct-waf/duct-waf.module';
 import { LEEQualificationModule } from '../lee-qualification/lee-qualification.module';
 import { LMEQualificationModule } from '../lme-qualification/lme-qualification.module';
@@ -30,9 +29,11 @@ import { UnitStackConfigurationModule } from '../unit-stack-configuration/unit-s
 import { MonitorPlanController } from './monitor-plan.controller';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { MonitorPlanService } from './monitor-plan.service';
+import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.module';
 
 @Module({
   imports: [
+    EaseyContentModule,
     MonitorPlanCommentModule,
     UnitStackConfigurationModule,
     MonitorLocationModule,
@@ -52,7 +53,6 @@ import { MonitorPlanService } from './monitor-plan.service';
     LEEQualificationModule,
     LMEQualificationModule,
     PCTQualificationModule,
-    CPMSQualificationModule,
     UnitCapacityModule,
     UnitControlModule,
     UnitFuelModule,

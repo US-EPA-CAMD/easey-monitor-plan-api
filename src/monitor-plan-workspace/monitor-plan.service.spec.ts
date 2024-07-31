@@ -8,9 +8,7 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { UnitProgramRepository } from '../unit-program/unit-program.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CountyCodeService } from '../county-code/county-code.service';
-import { CPMSQualificationWorkspaceRepository } from '../cpms-qualification-workspace/cpms-qualification-workspace.repository';
 import { CountyCodeDTO } from '../dtos/county-code.dto';
-import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
@@ -72,6 +70,7 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
@@ -101,6 +100,12 @@ const mockMonitorLocationService = () => ({
     .fn()
     .mockResolvedValue([MONITOR_LOCATION]),
   importMonitorLocations: jest.fn().mockResolvedValue([]),
+});
+
+const mockEaseyContentService = () => ({
+  importMonitorPlan: jest.fn().mockResolvedValue({
+    monitorPlanSchema: { version: '1.0.0' },
+  }),
 });
 
 const mockMonitorPlanRepo = () => ({
@@ -208,9 +213,6 @@ const mockReportingFreqRepo = () => ({
   findBy: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
 });
 
-const mockCpmsQual = () => ({
-  find: jest.fn().mockResolvedValue([new CPMSQualificationDTO()]),
-});
 const mockUscMap = () => ({});
 const mockCountyCodeService = () => ({
   getCountyCode: jest.fn().mockResolvedValue(new CountyCodeDTO()),
@@ -258,6 +260,10 @@ describe('Monitor Plan Service', () => {
           useFactory: () => entityManagerMock,
         },
         MonitorPlanWorkspaceService,
+        {
+          provide: EaseyContentService,
+          useFactory: mockEaseyContentService,
+        },
         {
           provide: PlantService,
           useFactory: mockPlantService,
@@ -365,10 +371,6 @@ describe('Monitor Plan Service', () => {
         {
           provide: PCTQualificationWorkspaceRepository,
           useFactory: mockPctQualificationRepo,
-        },
-        {
-          provide: CPMSQualificationWorkspaceRepository,
-          useFactory: mockCpmsQual,
         },
         {
           provide: UnitStackConfigurationWorkspaceRepository,

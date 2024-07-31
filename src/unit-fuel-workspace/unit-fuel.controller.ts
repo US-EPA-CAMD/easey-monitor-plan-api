@@ -39,7 +39,7 @@ export class UnitFuelWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'locId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,
@@ -66,7 +66,7 @@ export class UnitFuelWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'locId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
     LookupType.Location,

@@ -30,7 +30,7 @@ export const Check5 = new Check(
           monitoringSystemId: system.monitoringSystemId,
         });
 
-        if (sys !== null && sys.systemTypeCode !== system.systemTypeCode) {
+        if (sys && sys.systemTypeCode !== system.systemTypeCode) {
           result.addError(
             'CRIT1-A',
             `The system type ${system.systemTypeCode} for UnitStackPipeID ${loc.unitId}/${loc.stackPipeId} and MonitoringSystemID ${system.monitoringSystemId} does not match the system type in the Workspace database.`,
@@ -117,7 +117,7 @@ export const Check31 = new Check(
               monitoringSystemId: system.monitoringSystemId,
             });
 
-            if (sys !== null && !validTypeCodes.includes(sys.systemTypeCode)) {
+            if (sys && !validTypeCodes.includes(sys.systemTypeCode)) {
               result.addError(
                 'CRIT1-A',
                 'You have reported a System Fuel Flow record for a system that is not a fuel flow system. It is not appropriate to report a System Fuel Flow record for any other SystemTypeCode than OILM, OILV, GAS, LTGS, or LTOL.',

@@ -189,7 +189,6 @@ export class ComponentWorkspaceService {
     componentRecord.hgConverterIndicator = payload.hgConverterIndicator;
     componentRecord.manufacturer = payload.manufacturer;
     componentRecord.componentTypeCode = payload.componentTypeCode;
-    componentRecord.analyticalPrincipleCode = payload.analyticalPrincipleCode;
     componentRecord.sampleAcquisitionMethodCode =
       payload.sampleAcquisitionMethodCode;
     componentRecord.basisCode = payload.basisCode;
@@ -220,7 +219,6 @@ export class ComponentWorkspaceService {
       serialNumber: payload.serialNumber,
       manufacturer: payload.manufacturer,
       componentTypeCode: payload.componentTypeCode,
-      analyticalPrincipleCode: payload.analyticalPrincipleCode,
       sampleAcquisitionMethodCode: payload.sampleAcquisitionMethodCode,
       basisCode: payload.basisCode,
       hgConverterIndicator: payload.hgConverterIndicator,

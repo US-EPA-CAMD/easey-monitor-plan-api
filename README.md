@@ -48,6 +48,7 @@ The Monitor Plan API uses a number of environment variables to properly configur
 | apiHost                     | EASEY_API_GATEWAY_HOST                               | api.epa.gov/easey/dev                                                        | Configurable                      |
 | apiKey                      | EASEY_MONITOR_PLAN_API_KEY                           | \*\*\*                                                                       | Dynamically set by CI/CD workflow |
 | authApi.uri                 | EASEY_AUTH_API                                       | https://api.epa.gov/easey/dev/auth-mgmt                                      | Configurable                      |
+| contentApi.uri              | EASEY_CONTENT_API                                    | https://api.epa.gov/easey/dev/content-mgmt                                   | Configurable                      |
 | currentUser                 | EASEY_MONITOR_PLAN_API_CURRENT_USER                  | {}                                                                           | Configurable                      |
 | description                 | EASEY_MONITOR_PLAN_API_DESCRIPTION                   | Monitor Plan management API endpoints for all monitor plan data & operations | Configurable                      |
 | enableApiKey                | EASEY_MONITOR_PLAN_API_ENABLE_API_KEY                | false                                                                        | Configurable                      |

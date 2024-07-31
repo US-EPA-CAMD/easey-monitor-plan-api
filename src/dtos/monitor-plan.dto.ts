@@ -169,4 +169,8 @@ export class MonitorPlanDTO {
   @IsDateString()
   @IsOptional()
   lastEvaluatedDate: Date;
+
+  @IsString()
+  @IsOptional()
+  version?: string;
 }
