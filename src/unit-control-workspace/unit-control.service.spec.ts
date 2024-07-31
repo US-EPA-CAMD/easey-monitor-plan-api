@@ -89,7 +89,7 @@ describe('UnitControlService', () => {
     });
   });
 
-  describe('importDefault', () => {
+  describe('importUnitControl', () => {
     it('should update while importing monitor default', async () => {
       const result = await service.importUnitControl(
         [payload],

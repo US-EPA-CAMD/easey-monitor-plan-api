@@ -150,7 +150,7 @@ export class MonitorAttributeWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       attributes.map(async attribute => {
         const attributeRecord = await withTransaction(
           this.repository,
@@ -177,5 +177,6 @@ export class MonitorAttributeWorkspaceService {
         }
       }),
     );
+    return true;
   }
 }

@@ -133,7 +133,7 @@ export class UnitFuelWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       unitFuels.map(async unitFuel => {
         const unitFuelRecord = await withTransaction(
           this.repository,
@@ -165,5 +165,6 @@ export class UnitFuelWorkspaceService {
         }
       }),
     );
+    return true;
   }
 }

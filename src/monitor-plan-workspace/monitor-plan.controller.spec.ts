@@ -80,15 +80,16 @@ describe('MonitorPlanWorkspaceController', () => {
   });
 
   describe('importPlan', () => {
+    const mockReturn = {
+      endedPlans: data,
+      newPlan: data[0],
+      unchangedPlans: data,
+    };
     it('should import a report plan given a planId', async () => {
-      jest.spyOn(service, 'importMpPlan').mockResolvedValue(data[0]);
-      expect(await controller.importPlan(planId, currentUser)).toBe(data[0]);
-    });
-    it('should return success import message while imporing anew record', async () => {
-      jest.spyOn(service, 'importMpPlan').mockResolvedValue(null);
-      expect(await controller.importPlan(planId, currentUser)).toEqual({
-        message: `Monitoring plan imported successfully`,
-      });
+      jest.spyOn(service, 'importMpPlan').mockResolvedValue(mockReturn);
+      expect(await controller.importPlan(planId, currentUser, false)).toBe(
+        mockReturn,
+      );
     });
   });
 

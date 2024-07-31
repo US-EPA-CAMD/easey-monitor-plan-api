@@ -146,7 +146,7 @@ export class MonitorDefaultWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       monDefaults.map(async monDefault => {
         const monDefaultRecord = await withTransaction(
           this.repository,
@@ -183,5 +183,6 @@ export class MonitorDefaultWorkspaceService {
         }
       }),
     );
+    return true;
   }
 }

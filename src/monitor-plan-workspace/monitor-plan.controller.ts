@@ -83,9 +83,9 @@ export class MonitorPlanWorkspaceController {
     description: 'imports an entire monitor plan from JSON payload',
   })
   async importPlan(
-    @Query('draft') draft: boolean,
     @Body() plan: UpdateMonitorPlanDTO,
     @User() user: CurrentUser,
+    @Query('draft') draft: boolean,
   ): Promise<any> {
     await this.mpChecksService.runChecks(plan);
     await this.importChecksService.runImportChecks(plan);

@@ -52,7 +52,7 @@ export class MonitorLoadWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       loads.map(async load => {
         const loadRecord = await withTransaction(
           this.repository,
@@ -84,6 +84,7 @@ export class MonitorLoadWorkspaceService {
         }
       }),
     );
+    return true;
   }
 
   async createLoad({

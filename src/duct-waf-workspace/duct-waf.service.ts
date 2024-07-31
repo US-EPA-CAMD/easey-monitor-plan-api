@@ -137,7 +137,7 @@ export class DuctWafWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       ductWafs.map(async ductWaf => {
         const ductWafRecord = await withTransaction(
           this.repository,
@@ -170,5 +170,6 @@ export class DuctWafWorkspaceService {
         }
       }),
     );
+    return true;
   }
 }

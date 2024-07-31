@@ -122,7 +122,7 @@ export class ComponentWorkspaceService {
     trx?: EntityManager,
   ) {
     const repository = withTransaction(this.repository, trx);
-    return Promise.all(
+    await Promise.all(
       location.componentData.map(async component => {
         let compRecord = await repository.getComponentByLocIdAndCompId(
           locationId,
@@ -168,6 +168,7 @@ export class ComponentWorkspaceService {
         );
       }),
     );
+    return true;
   }
 
   async updateComponent({

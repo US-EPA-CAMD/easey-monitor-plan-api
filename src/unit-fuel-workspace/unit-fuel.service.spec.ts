@@ -113,8 +113,8 @@ describe('UnitFuelService', () => {
     });
   });
 
-  describe('importDefault', () => {
-    it('should update while importing monitor default', async () => {
+  describe('importUnitFuel', () => {
+    it('should update while importing unit fuel', async () => {
       const result = await service.importUnitFuel(
         [payload],
         1,

@@ -32,7 +32,7 @@ export class UnitCapacityWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       unitCapacities.map(async unitCapacity => {
         const unitCapacityRecord = await withTransaction(
           this.repository,
@@ -65,6 +65,7 @@ export class UnitCapacityWorkspaceService {
         }
       }),
     );
+    return true;
   }
 
   async getUnitCapacities(

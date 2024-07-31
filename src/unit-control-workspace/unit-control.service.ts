@@ -36,7 +36,7 @@ export class UnitControlWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       unitControls.map(async unitControl => {
         const unitControlRecord = await withTransaction(
           this.repository,
@@ -71,6 +71,7 @@ export class UnitControlWorkspaceService {
         }
       }),
     );
+    return true;
   }
 
   async createUnitControl({

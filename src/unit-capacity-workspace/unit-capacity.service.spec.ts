@@ -113,8 +113,8 @@ describe('UnitCapacityWorkspaceService', () => {
     });
   });
 
-  describe('importDefault', () => {
-    it('should update while importing monitor default', async () => {
+  describe('importUnitCapacity', () => {
+    it('should update while importing unit capacity', async () => {
       const result = await service.importUnitCapacity(
         [payload],
         1,
