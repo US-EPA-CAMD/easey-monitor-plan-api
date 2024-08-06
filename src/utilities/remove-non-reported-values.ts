@@ -21,7 +21,6 @@ import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
-import { CPMSQualificationDTO } from '../dtos/cpms-qualification.dto';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 
 export async function removeNonReportedValues(dto: MonitorPlanDTO) {
@@ -232,9 +231,6 @@ async function monitorQualification(qualifications: MonitorQualificationDTO[]) {
     promises.push(
       qualificationLEE(qualification.monitoringQualificationLEEData),
     );
-    promises.push(
-      qualificationCPMS(qualification.monitoringQualificationCPMSData),
-    );
 
     delete qualification.id;
     delete qualification.locationId;
@@ -272,16 +268,6 @@ async function qualificationLEE(qualificationLEEs: LEEQualificationDTO[]) {
     delete qualificationLEE.userId;
     delete qualificationLEE.addDate;
     delete qualificationLEE.updateDate;
-  });
-}
-
-async function qualificationCPMS(qualificationCPMS: CPMSQualificationDTO[]) {
-  qualificationCPMS.forEach(cpms => {
-    delete cpms.id;
-    delete cpms.qualificationId;
-    delete cpms.userId;
-    delete cpms.addDate;
-    delete cpms.updateDate;
   });
 }
 

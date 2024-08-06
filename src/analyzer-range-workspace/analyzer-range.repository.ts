@@ -23,7 +23,7 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
 
     return this.createQueryBuilder('ar')
       .innerJoin('ar.component', 'c')
-      .where('c.componentId = :componentId', {
+      .where('c.id = :componentId', {
         componentId,
       })
       .andWhere(
