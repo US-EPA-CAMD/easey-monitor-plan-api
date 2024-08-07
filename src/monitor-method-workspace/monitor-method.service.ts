@@ -138,7 +138,7 @@ export class MonitorMethodWorkspaceService {
                 }
                 innerResolve(true);
               })().catch((e) => {
-                innerReject(e)
+                innerReject(new Error(e))
               });
             }),
           );
