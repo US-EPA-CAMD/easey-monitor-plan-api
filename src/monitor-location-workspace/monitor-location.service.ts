@@ -58,7 +58,7 @@ export class MonitorLocationWorkspaceService {
 
     @Inject(forwardRef(() => MonitorAttributeWorkspaceService))
     private readonly monitorAttributeService: MonitorAttributeWorkspaceService,
-  ) {}
+  ) { }
 
   async getMonitorLocationsByFacilityAndOris(
     plan: UpdateMonitorPlanDTO,
@@ -172,13 +172,13 @@ export class MonitorLocationWorkspaceService {
     facilityId: number,
     userId: string,
   ) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       (async () => {
         const promises = [];
 
         for (const location of plan.monitoringLocationData) {
           promises.push(
-            new Promise(innerResolve => {
+            new Promise((innerResolve, innerReject) => {
               (async () => {
                 const innerPromises = [];
 
@@ -403,16 +403,23 @@ export class MonitorLocationWorkspaceService {
                 }
 
                 await Promise.all(innerPromises);
+              })().then(() => {
                 innerResolve(true);
-              })();
+              }).catch((e) => {
+                innerReject(e)
+              });
             }),
           );
         }
 
         await Promise.all(promises);
 
+
+      })().then(() => {
         resolve(true);
-      })();
+      }).catch((e) => {
+        reject(e)
+      });
     });
   }
 }

@@ -20,7 +20,7 @@ export class MonitorMethodWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
     const results = await this.repository.findBy({ locationId: locId });
@@ -108,13 +108,13 @@ export class MonitorMethodWorkspaceService {
     methods: MonitorMethodBaseDTO[],
     userId: string,
   ) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       (async () => {
         const promises = [];
 
         for (const method of methods) {
           promises.push(
-            new Promise(innerResolve => {
+            new Promise((innerResolve, innerReject) => {
               (async () => {
                 const methodRecord = await this.repository.getMethodByLocIdParamCDBDate(
                   locationId,
@@ -136,17 +136,20 @@ export class MonitorMethodWorkspaceService {
                 } else {
                   await this.createMethod(locationId, method, userId, true);
                 }
-
                 innerResolve(true);
-              })();
+              })().catch((e) => {
+                innerReject(e)
+              });
             }),
           );
 
           await Promise.all(promises);
-
-          resolve(true);
         }
-      })();
+      })().then(() => {
+        resolve(true);
+      }).catch((e) => {
+        reject(e)
+      });
     });
   }
 }
