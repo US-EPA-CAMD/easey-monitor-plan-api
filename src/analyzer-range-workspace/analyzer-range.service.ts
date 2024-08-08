@@ -126,8 +126,8 @@ export class AnalyzerRangeWorkspaceService {
   async importAnalyzerRange(
     componentId: string,
     locationId: string,
-    analyzerRanges: AnalyzerRangeBaseDTO[] = [],
     userId: string,
+    analyzerRanges: AnalyzerRangeBaseDTO[] = [],
     trx?: EntityManager,
   ) {
     return new Promise(resolve => {

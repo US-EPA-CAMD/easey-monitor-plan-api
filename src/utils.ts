@@ -138,7 +138,7 @@ export function withTransaction<E, T extends Repository<E>>(
     ...otherRepositoryProperties
   } = repository;
 
-  return Object.assign(new repositoryConstructor(trx) as T, {
+  return Object.assign(new repositoryConstructor(trx), {
     ...otherRepositoryProperties,
   });
 }

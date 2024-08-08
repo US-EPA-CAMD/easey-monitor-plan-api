@@ -6,7 +6,7 @@ import {
 import { EntityManager, In } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { areSetsEqual, getEarliestDate } from '../utils';
+import { areSetsEqual, getEarliestDate, withTransaction } from '../utils';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
@@ -50,7 +50,6 @@ import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
-import { withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
 import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
@@ -542,7 +541,10 @@ export class MonitorPlanWorkspaceService {
       targetPlanPayload,
       facilityId,
     );
-    this.logger.debug('Associated active plans', ...activePlans.map(p => p.id));
+    this.logger.debug(
+      'Associated active plans',
+      activePlans.map(p => p.id),
+    );
 
     let endedPlans: MonitorPlanDTO[] = [];
     let newPlan: MonitorPlanDTO = null;
@@ -639,8 +641,8 @@ export class MonitorPlanWorkspaceService {
                   targetPlan = endedPlans[endedPlans.length - 1];
                 } else {
                   // The active plan is unchanged.
-                  unchangedPlans.push(pendingActivePlan),
-                    (targetPlan = pendingActivePlan);
+                  unchangedPlans.push(pendingActivePlan);
+                  targetPlan = pendingActivePlan;
                 }
               } else {
                 // If the locations differ, create a new plan and update the end report period of the previously active plan.
@@ -902,21 +904,17 @@ export class MonitorPlanWorkspaceService {
         (rfBeginYear === updatedEndYear && rfBeginQuarter > updatedEndQuarter)
       ) {
         await reportingFreqRepository.delete(rf.id);
-      } else {
+      } else if (!latestReportingFrequency) {
+        latestReportingFrequency = rf;
+      } else if (
+        rfBeginYear > latestReportingFrequencyYear ||
+        (rfBeginYear === latestReportingFrequencyYear &&
+          rfBeginQuarter > latestReportingFrequencyQuarter)
+      ) {
         // Compare the reporting frequencies and store the latest one for a later update.
-        if (!latestReportingFrequency) {
-          latestReportingFrequency = rf;
-        } else {
-          if (
-            rfBeginYear > latestReportingFrequencyYear ||
-            (rfBeginYear === latestReportingFrequencyYear &&
-              rfBeginQuarter > latestReportingFrequencyQuarter)
-          ) {
-            latestReportingFrequency = rf;
-            latestReportingFrequencyYear = rfBeginYear;
-            latestReportingFrequencyQuarter = rfBeginQuarter;
-          }
-        }
+        latestReportingFrequency = rf;
+        latestReportingFrequencyYear = rfBeginYear;
+        latestReportingFrequencyQuarter = rfBeginQuarter;
       }
     }
     if (latestReportingFrequency) {

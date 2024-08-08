@@ -162,8 +162,8 @@ export class ComponentWorkspaceService {
         await this.analyzerRangeDataService.importAnalyzerRange(
           compRecord.componentId,
           locationId,
-          component.analyzerRangeData,
           userId,
+          component.analyzerRangeData,
           trx,
         );
       }),
