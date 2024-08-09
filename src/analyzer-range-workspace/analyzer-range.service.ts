@@ -22,7 +22,7 @@ export class AnalyzerRangeWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   async getAnalyzerRanges(compId: string): Promise<AnalyzerRangeDTO[]> {
     const results = await this.repository.findBy({ componentRecordId: compId });
@@ -130,12 +130,12 @@ export class AnalyzerRangeWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       (async () => {
         const promises = [];
         for (const analyzerRange of analyzerRanges) {
           promises.push(
-            new Promise(innerResolve => {
+            new Promise((innerResolve, innerReject) => {
               (async () => {
                 const analyzerRangeRecord = await withTransaction(
                   this.repository,
@@ -165,15 +165,22 @@ export class AnalyzerRangeWorkspaceService {
                   });
                 }
 
+              })().then(() => {
                 innerResolve(true);
-              })();
+              }).catch((e) => {
+                innerReject(new Error(e))
+              });
             }),
           );
         }
 
         await Promise.all(promises);
+
+      })().then(function () {
         resolve(true);
-      })();
+      }).catch(function (e) {
+        reject(new Error(e))
+      });
     });
   }
 }

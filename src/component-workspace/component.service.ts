@@ -1,7 +1,8 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { EaseyException } from '@us-epa-camd/easey-common';
 
 import { AnalyzerRangeWorkspaceService } from '../analyzer-range-workspace/analyzer-range.service';
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
@@ -26,7 +27,7 @@ export class ComponentWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   async runComponentChecks(
     components: UpdateComponentBaseDTO[],
@@ -167,7 +168,11 @@ export class ComponentWorkspaceService {
           trx,
         );
       }),
-    );
+    ).catch(function (e) {
+      throw new EaseyException(new Error(e),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    });
     return true;
   }
 
