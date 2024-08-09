@@ -285,13 +285,13 @@ export class MonitorLocationWorkspaceService {
   ) {
     const locations: MonitorLocationDTO[] = [];
 
-    await new Promise(resolve => {
+    await new Promise((resolve, reject) => {
       (async () => {
         const promises = [];
 
         for (const location of plan.monitoringLocationData) {
           promises.push(
-            new Promise(innerResolve => {
+            new Promise((innerResolve, innerReject) => {
               (async () => {
                 const innerPromises = [];
 
@@ -542,16 +542,23 @@ export class MonitorLocationWorkspaceService {
                 locations.push(
                   await this.getLocation(monitorLocationRecord.id, trx), // Re-query the location to populate newly added relationships
                 );
+              })().then(() => {
                 innerResolve(true);
-              })();
+              }).catch((e) => {
+                innerReject(new Error(e))
+              });
             }),
           );
         }
 
         await Promise.all(promises);
 
+        // sonar not allow nest functions more than 4 levels deep
+      })().then(function () {
         resolve(true);
-      })();
+      }).catch(function (e) {
+        reject(new Error(e))
+      });
     });
 
     return locations;
