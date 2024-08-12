@@ -1,5 +1,5 @@
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-import { BaseEntity, Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmpsmd.reporting_period' })
 export class ReportingPeriod extends BaseEntity {

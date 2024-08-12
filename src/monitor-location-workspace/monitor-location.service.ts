@@ -97,7 +97,7 @@ export class MonitorLocationWorkspaceService {
       userId,
     });
 
-    return await repository.save(monitorLocation);
+    return repository.save(monitorLocation);
   }
 
   async getMonitorLocationsByFacilityAndOris(
@@ -158,7 +158,7 @@ export class MonitorLocationWorkspaceService {
     orisCode: number,
     trx?: EntityManager,
   ) {
-    return await this.getOrCreateLocationRecord({
+    return this.getOrCreateLocationRecord({
       loc,
       facilityId,
       orisCode,
@@ -167,7 +167,26 @@ export class MonitorLocationWorkspaceService {
     });
   }
 
-  async getOrCreateLocationRecord({
+  async getOrCreateLocationRecord(args: {
+    create: boolean;
+    facilityId: number;
+    loc: UpdateMonitorLocationDTO;
+    orisCode: number;
+    trx?: EntityManager;
+    userId?: string;
+  }): Promise<MonitorLocation> {
+    const { loc } = args;
+
+    if (loc.unitId) {
+      return this.getOrCreateUnitLocationRecord(args);
+    } else if (loc.stackPipeId) {
+      return this.getOrCreateStackPipeLocationRecord(args);
+    } else {
+      return null;
+    }
+  }
+
+  async getOrCreateStackPipeLocationRecord({
     create,
     facilityId,
     loc,
@@ -181,83 +200,94 @@ export class MonitorLocationWorkspaceService {
     orisCode: number;
     trx?: EntityManager;
     userId?: string;
-  }): Promise<MonitorLocation> {
-    let location: MonitorLocation;
+  }) {
+    let stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+      loc.stackPipeId,
+      facilityId,
+      trx,
+    );
 
-    const repository = withTransaction(this.repository, trx);
-
-    if (loc.unitId) {
-      const unit = await this.unitService.getUnitByNameAndFacId(
-        loc.unitId,
-        facilityId,
-        trx,
-      );
-
-      if (!unit) {
-        // All units should already exist in the database.
+    if (!stackPipe) {
+      // A stack/pipe may not exist in the database.
+      if (!create) {
         throw new BadRequestException(
           CheckCatalogService.formatMessage(
-            'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
-            { unit: loc.unitId, orisCode: orisCode },
+            'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',
+            { stackPipe: loc.stackPipeId, orisCode: orisCode },
           ),
         );
       }
-
-      location = await repository.findOneBy({
-        unitId: unit.id,
-      });
-      if (!location && create) {
-        location = await this.createMonitorLocationRecord({
-          unitId: unit.id,
-          trx,
-          userId,
-        });
-      }
-    }
-
-    if (loc.stackPipeId) {
-      let stackPipe = await this.stackPipeService.getStackByNameAndFacId(
-        loc.stackPipeId,
+      stackPipe = await this.stackPipeService.createStackPipeRecord(
+        loc,
         facilityId,
+        userId,
         trx,
       );
-
-      if (!stackPipe) {
-        // A stack/pipe may not exist in the database.
-        if (!create) {
-          throw new BadRequestException(
-            CheckCatalogService.formatMessage(
-              'The database does not contain a record for Stack Pipe [stackPipe] and Facility: [orisCode]',
-              { stackPipe: loc.stackPipeId, orisCode: orisCode },
-            ),
-          );
-        }
-        stackPipe = await this.stackPipeService.createStackPipeRecord(
-          loc,
-          facilityId,
-          userId,
-          trx,
-        );
-      }
-
-      location =
-        stackPipe &&
-        (await repository.findOne({
-          where: {
-            stackPipeId: stackPipe.id,
-          },
-        }));
-
-      if (!location && create) {
-        location = await this.createMonitorLocationRecord({
-          stackPipeId: stackPipe.id,
-          trx,
-          userId,
-        });
-      }
     }
 
-    return location;
+    const location =
+      stackPipe &&
+      (await withTransaction(this.repository, trx).findOne({
+        where: {
+          stackPipeId: stackPipe.id,
+        },
+      }));
+
+    if (!location && create) {
+      return this.createMonitorLocationRecord({
+        stackPipeId: stackPipe.id,
+        trx,
+        userId,
+      });
+    } else {
+      return location;
+    }
+  }
+
+  async getOrCreateUnitLocationRecord({
+    create,
+    facilityId,
+    loc,
+    orisCode,
+    trx,
+    userId,
+  }: {
+    create: boolean;
+    facilityId: number;
+    loc: UpdateMonitorLocationDTO;
+    orisCode: number;
+    trx?: EntityManager;
+    userId?: string;
+  }) {
+    const unit = await this.unitService.getUnitByNameAndFacId(
+      loc.unitId,
+      facilityId,
+      trx,
+    );
+
+    if (!unit) {
+      // All units should already exist in the database.
+      throw new BadRequestException(
+        CheckCatalogService.formatMessage(
+          'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
+          { unit: loc.unitId, orisCode: orisCode },
+        ),
+      );
+    }
+
+    const location = await withTransaction(this.repository, trx).findOneBy({
+      unitId: unit.id,
+    });
+
+    if (!location && create) {
+      return this.createMonitorLocationRecord({
+        unitId: unit.id,
+        trx,
+        userId,
+      });
+    } else {
+      return location;
+    }
   }
 
   async getLocationEntity(locationId: string): Promise<MonitorLocation> {
@@ -285,281 +315,248 @@ export class MonitorLocationWorkspaceService {
   ) {
     const locations: MonitorLocationDTO[] = [];
 
-    await new Promise((resolve, reject) => {
-      (async () => {
-        const promises = [];
+    await Promise.all(
+      plan.monitoringLocationData.map(async location => {
+        const innerPromises = [];
 
-        for (const location of plan.monitoringLocationData) {
-          promises.push(
-            new Promise((innerResolve, innerReject) => {
-              (async () => {
-                const innerPromises = [];
+        // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
+        const monitorLocationRecord = await this.getOrCreateLocationRecord({
+          loc: location,
+          facilityId,
+          orisCode: plan.orisCode,
+          create: true,
+          trx,
+          userId,
+        });
 
-                // Get LocIds by unitId (unitName) or stackPipeId(stackPipeName)
-                const monitorLocationRecord = await this.getOrCreateLocationRecord(
-                  {
-                    loc: location,
-                    facilityId,
-                    orisCode: plan.orisCode,
-                    create: true,
-                    trx,
-                    userId,
-                  },
-                );
+        if (location.unitId) {
+          const unitRecord = await this.unitService.getUnitByNameAndFacId(
+            location.unitId,
+            facilityId,
+            trx,
+          );
 
-                if (location.unitId) {
-                  const unitRecord = await this.unitService.getUnitByNameAndFacId(
-                    location.unitId,
-                    facilityId,
-                    trx,
-                  );
+          innerPromises.push(
+            this.unitService.importUnit(
+              unitRecord,
+              location.nonLoadBasedIndicator,
+              trx,
+            ),
+          );
 
-                  innerPromises.push(
-                    this.unitService.importUnit(
-                      unitRecord,
-                      location.nonLoadBasedIndicator,
-                      trx,
-                    ),
-                  );
+          if (
+            location.unitCapacityData &&
+            location.unitCapacityData.length > 0
+          ) {
+            innerPromises.push(
+              this.unitCapacityService.importUnitCapacity(
+                location.unitCapacityData,
+                unitRecord.id,
+                monitorLocationRecord.id,
+                userId,
+                trx,
+              ),
+            );
+          }
 
-                  if (
-                    location.unitCapacityData &&
-                    location.unitCapacityData.length > 0
-                  ) {
-                    innerPromises.push(
-                      this.unitCapacityService.importUnitCapacity(
-                        location.unitCapacityData,
-                        unitRecord.id,
-                        monitorLocationRecord.id,
-                        userId,
-                        trx,
-                      ),
-                    );
-                  }
+          if (location.unitControlData && location.unitControlData.length > 0) {
+            innerPromises.push(
+              this.unitControlService.importUnitControl(
+                location.unitControlData,
+                unitRecord.id,
+                monitorLocationRecord.id,
+                userId,
+                trx,
+              ),
+            );
+          }
 
-                  if (
-                    location.unitControlData &&
-                    location.unitControlData.length > 0
-                  ) {
-                    innerPromises.push(
-                      this.unitControlService.importUnitControl(
-                        location.unitControlData,
-                        unitRecord.id,
-                        monitorLocationRecord.id,
-                        userId,
-                        trx,
-                      ),
-                    );
-                  }
+          if (location.unitFuelData && location.unitFuelData.length > 0) {
+            innerPromises.push(
+              this.unitFuelService.importUnitFuel(
+                location.unitFuelData,
+                unitRecord.id,
+                monitorLocationRecord.id,
+                userId,
+                trx,
+              ),
+            );
+          }
+        }
 
-                  if (
-                    location.unitFuelData &&
-                    location.unitFuelData.length > 0
-                  ) {
-                    innerPromises.push(
-                      this.unitFuelService.importUnitFuel(
-                        location.unitFuelData,
-                        unitRecord.id,
-                        monitorLocationRecord.id,
-                        userId,
-                        trx,
-                      ),
-                    );
-                  }
-                }
+        if (location.stackPipeId) {
+          const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
+            location.stackPipeId,
+            facilityId,
+            trx,
+          );
 
-                if (location.stackPipeId) {
-                  const stackPipeRecord = await this.stackPipeService.getStackByNameAndFacId(
-                    location.stackPipeId,
-                    facilityId,
-                    trx,
-                  );
-
-                  innerPromises.push(
-                    this.stackPipeService.updateStackPipe(
-                      stackPipeRecord,
-                      location.retireDate,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.componentData &&
-                  location.componentData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.componentService.importComponent(
-                      location,
-                      monitorLocationRecord.id,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringSystemData &&
-                  location.monitoringSystemData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.systemService.importSystem(
-                      location.monitoringSystemData,
-                      monitorLocationRecord.id,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringQualificationData &&
-                  location.monitoringQualificationData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.qualificationService.importQualification(
-                      location.monitoringQualificationData,
-                      monitorLocationRecord.id,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.supplementalMATSMonitoringMethodData &&
-                  location.supplementalMATSMonitoringMethodData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.matsMethodService.importMatsMethod(
-                      monitorLocationRecord.id,
-                      location.supplementalMATSMonitoringMethodData,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringLoadData &&
-                  location.monitoringLoadData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.loadService.importLoad(
-                      monitorLocationRecord.id,
-                      location.monitoringLoadData,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringLocationAttribData &&
-                  location.monitoringLocationAttribData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.monitorAttributeService.importAttributes(
-                      monitorLocationRecord.id,
-                      location.monitoringLocationAttribData,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringFormulaData &&
-                  location.monitoringFormulaData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.formulaService.importFormula(
-                      location.monitoringFormulaData,
-                      monitorLocationRecord.id,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringMethodData &&
-                  location.monitoringMethodData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.methodService.importMethod(
-                      monitorLocationRecord.id,
-                      location.monitoringMethodData,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.rectangularDuctWAFData &&
-                  location.rectangularDuctWAFData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.ductWafService.importDuctWaf(
-                      monitorLocationRecord.id,
-                      location.rectangularDuctWAFData,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringSpanData &&
-                  location.monitoringSpanData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.spanService.importSpan(
-                      monitorLocationRecord.id,
-                      location.monitoringSpanData,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                if (
-                  location.monitoringDefaultData &&
-                  location.monitoringDefaultData.length > 0
-                ) {
-                  innerPromises.push(
-                    this.defaultService.importDefault(
-                      monitorLocationRecord.id,
-                      location.monitoringDefaultData,
-                      userId,
-                      trx,
-                    ),
-                  );
-                }
-
-                await Promise.all(innerPromises);
-                locations.push(
-                  await this.getLocation(monitorLocationRecord.id, trx), // Re-query the location to populate newly added relationships
-                );
-              })().then(() => {
-                innerResolve(true);
-              }).catch((e) => {
-                innerReject(new Error(e))
-              });
-            }),
+          innerPromises.push(
+            this.stackPipeService.updateStackPipe(
+              stackPipeRecord,
+              location.retireDate,
+              trx,
+            ),
           );
         }
 
-        await Promise.all(promises);
+        if (location.componentData && location.componentData.length > 0) {
+          innerPromises.push(
+            this.componentService.importComponent(
+              location,
+              monitorLocationRecord.id,
+              userId,
+              trx,
+            ),
+          );
+        }
 
-        // sonar not allow nest functions more than 4 levels deep
-      })().then(function () {
-        resolve(true);
-      }).catch(function (e) {
-        reject(new Error(e))
-      });
-    });
+        if (
+          location.monitoringSystemData &&
+          location.monitoringSystemData.length > 0
+        ) {
+          innerPromises.push(
+            this.systemService.importSystem(
+              location.monitoringSystemData,
+              monitorLocationRecord.id,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.monitoringQualificationData &&
+          location.monitoringQualificationData.length > 0
+        ) {
+          innerPromises.push(
+            this.qualificationService.importQualification(
+              location.monitoringQualificationData,
+              monitorLocationRecord.id,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.supplementalMATSMonitoringMethodData &&
+          location.supplementalMATSMonitoringMethodData.length > 0
+        ) {
+          innerPromises.push(
+            this.matsMethodService.importMatsMethod(
+              monitorLocationRecord.id,
+              location.supplementalMATSMonitoringMethodData,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.monitoringLoadData &&
+          location.monitoringLoadData.length > 0
+        ) {
+          innerPromises.push(
+            this.loadService.importLoad(
+              monitorLocationRecord.id,
+              location.monitoringLoadData,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.monitoringLocationAttribData &&
+          location.monitoringLocationAttribData.length > 0
+        ) {
+          innerPromises.push(
+            this.monitorAttributeService.importAttributes(
+              monitorLocationRecord.id,
+              location.monitoringLocationAttribData,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.monitoringFormulaData &&
+          location.monitoringFormulaData.length > 0
+        ) {
+          innerPromises.push(
+            this.formulaService.importFormula(
+              location.monitoringFormulaData,
+              monitorLocationRecord.id,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.monitoringMethodData &&
+          location.monitoringMethodData.length > 0
+        ) {
+          innerPromises.push(
+            this.methodService.importMethod(
+              monitorLocationRecord.id,
+              location.monitoringMethodData,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.rectangularDuctWAFData &&
+          location.rectangularDuctWAFData.length > 0
+        ) {
+          innerPromises.push(
+            this.ductWafService.importDuctWaf(
+              monitorLocationRecord.id,
+              location.rectangularDuctWAFData,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.monitoringSpanData &&
+          location.monitoringSpanData.length > 0
+        ) {
+          innerPromises.push(
+            this.spanService.importSpan(
+              monitorLocationRecord.id,
+              location.monitoringSpanData,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        if (
+          location.monitoringDefaultData &&
+          location.monitoringDefaultData.length > 0
+        ) {
+          innerPromises.push(
+            this.defaultService.importDefault(
+              monitorLocationRecord.id,
+              location.monitoringDefaultData,
+              userId,
+              trx,
+            ),
+          );
+        }
+
+        await Promise.all(innerPromises);
+        locations.push(
+          await this.getLocation(monitorLocationRecord.id, trx), // Re-query the location to populate newly added relationships
+        );
+      }),
+    );
 
     return locations;
   }
