@@ -225,7 +225,7 @@ export class DuctWafBaseDTO {
       );
     },
   })
-  numberOfTraversePointsWaf: number;
+  numberOfTraversePointsWAF: number;
 
   @ApiProperty({
     description: propertyMetadata.ductWafDTONumberOfTestPorts.description,
