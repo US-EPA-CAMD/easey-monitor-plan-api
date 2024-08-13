@@ -141,62 +141,55 @@ export class MonitorQualificationWorkspaceService {
     locationId: string,
     userId: string,
     trx?: EntityManager,
-  ): Promise<void> {
-    const promises = qualifications.map(async qualification => {
-      const innerPromises = [];
-      const qualificationRecord = await withTransaction(
-        this.repository,
-        trx,
-      ).getQualificationByLocTypeDate(
-        locationId,
-        qualification.qualificationTypeCode,
-        qualification.beginDate,
-        qualification.endDate,
-      );
-
-      if (qualificationRecord) {
-        await this.updateQualification({
-          locationId,
-          qualId: qualificationRecord.id,
-          payload: qualification,
-          userId,
-          isImport: true,
+  ) {
+    return Promise.all(
+      qualifications.map(async qualification => {
+        const qualificationRecord = await withTransaction(
+          this.repository,
           trx,
-        });
+        ).getQualificationByLocTypeDate(
+          locationId,
+          qualification.qualificationTypeCode,
+          qualification.beginDate,
+          qualification.endDate,
+        );
 
-        innerPromises.push(
-          this.importQualPctLeeLmeCpms(
+        if (qualificationRecord) {
+          await this.updateQualification({
+            locationId,
+            qualId: qualificationRecord.id,
+            payload: qualification,
+            userId,
+            isImport: true,
+            trx,
+          });
+
+          await this.importQualPctLeeLmeCpms(
             locationId,
             qualificationRecord.id,
             qualification,
             userId,
             trx,
-          ),
-        );
-      } else {
-        const createdQualification = await this.createQualification({
-          locationId,
-          payload: qualification,
-          userId,
-          isImport: true,
-          trx,
-        });
+          );
+        } else {
+          const createdQualification = await this.createQualification({
+            locationId,
+            payload: qualification,
+            userId,
+            isImport: true,
+            trx,
+          });
 
-        innerPromises.push(
-          this.importQualPctLeeLmeCpms(
+          await this.importQualPctLeeLmeCpms(
             locationId,
             createdQualification.id,
             qualification,
             userId,
             trx,
-          ),
-        );
-      }
-
-      await Promise.all(innerPromises);
-    });
-
-    await Promise.all(promises);
+          );
+        }
+      }),
+    );
   }
 
   async getQualifications(

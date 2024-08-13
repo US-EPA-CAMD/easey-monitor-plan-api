@@ -126,7 +126,7 @@ describe('SystemFuelFlowWorkspaceService', () => {
         [PAYLOAD],
         USER_ID,
       );
-      expect(result).toEqual(true);
+      expect(result).toEqual([true]);
     });
   });
 });

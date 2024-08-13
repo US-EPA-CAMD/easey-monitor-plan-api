@@ -546,9 +546,9 @@ export class MonitorPlanWorkspaceService {
       activePlans.map(p => p.id),
     );
 
-    let endedPlans: MonitorPlanDTO[] = [];
+    const endedPlans: MonitorPlanDTO[] = [];
     let newPlan: MonitorPlanDTO = null;
-    let unchangedPlans: MonitorPlanDTO[] = [];
+    const unchangedPlans: MonitorPlanDTO[] = [];
 
     // Used for applying the payloads monitor plan comments.
     let targetPlan: MonitorPlanDTO = null;

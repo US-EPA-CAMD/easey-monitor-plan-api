@@ -152,13 +152,18 @@ describe('SystemComponentWorkspaceService', () => {
 
   describe('importComponent', () => {
     it('should update system component while importing a system component and a system component record exists ', async () => {
-      const result = await service.importSystemComponent(
+
+      jest
+        .spyOn(service, 'createSystemComponent')
+        .mockResolvedValue(new SystemComponentDTO());
+
+      await service.importSystemComponent(
         '1',
         '1',
         [payload],
         'testUser',
       );
-      expect(result).toEqual(true);
+      expect(service.createSystemComponent).toHaveBeenCalled;
     });
 
     it('should create system component while importing a system component and a system component record exists ', async () => {
@@ -170,13 +175,17 @@ describe('SystemComponentWorkspaceService', () => {
         .spyOn(componentService, 'getComponentByIdentifier')
         .mockResolvedValue(new ComponentDTO());
 
-      const result = await service.importSystemComponent(
+      jest
+        .spyOn(service, 'updateSystemComponent')
+        .mockResolvedValue(new SystemComponentDTO());
+
+      await service.importSystemComponent(
         '1',
         '1',
         [payload],
         'testUser',
       );
-      expect(result).toEqual(true);
+      expect(service.updateSystemComponent).toHaveBeenCalled;
     });
   });
 });

@@ -171,59 +171,39 @@ export class SystemComponentWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const component of systemComponents) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const innerPromises = [];
-                const systemComponentRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getSystemComponentByBeginOrEndDate(
-                  sysId,
-                  component.componentId,
-                  component.beginDate,
-                  component.beginHour,
-                );
+    return Promise.all(
+      systemComponents.map(async component => {
+        const systemComponentRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getSystemComponentByBeginOrEndDate(
+          sysId,
+          component.componentId,
+          component.beginDate,
+          component.beginHour,
+        );
 
-                if (systemComponentRecord) {
-                  innerPromises.push(
-                    await this.updateSystemComponent({
-                      locationId,
-                      sysId,
-                      sysComponentRecordId: systemComponentRecord.id,
-                      payload: component,
-                      userId,
-                      isImport: true,
-                      trx,
-                    }),
-                  );
-                } else {
-                  innerPromises.push(
-                    await this.createSystemComponent({
-                      locationId,
-                      monitoringSystemRecordId: sysId,
-                      payload: component,
-                      userId,
-                      isImport: true,
-                      trx,
-                    }),
-                  );
-                }
-
-                await Promise.all(innerPromises);
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (systemComponentRecord) {
+          await this.updateSystemComponent({
+            locationId,
+            sysId,
+            sysComponentRecordId: systemComponentRecord.id,
+            payload: component,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createSystemComponent({
+            locationId,
+            monitoringSystemRecordId: sysId,
+            payload: component,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }
