@@ -22,7 +22,7 @@ export class SystemFuelFlowWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlowDTO[]> {
     const results = await this.repository.getFuelFlows(monSysId);
@@ -138,37 +138,30 @@ export class SystemFuelFlowWorkspaceService {
   ) {
     return Promise.all(
       systemFuelFlows.map(async fuelFlow => {
-        const innerPromises = [];
         const fuelFlowRecord = await withTransaction(
           this.repository,
           trx,
         ).getFuelFlowByBeginOrEndDate(sysId, fuelFlow);
 
         if (fuelFlowRecord) {
-          innerPromises.push(
-            await this.updateFuelFlow({
-              fuelFlowId: fuelFlowRecord.id,
-              payload: fuelFlow,
-              locationId,
-              userId,
-              isImport: true,
-              trx,
-            }),
-          );
+          await this.updateFuelFlow({
+            fuelFlowId: fuelFlowRecord.id,
+            payload: fuelFlow,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
         } else {
-          innerPromises.push(
-            await this.createFuelFlow({
-              monitoringSystemRecordId: sysId,
-              payload: fuelFlow,
-              locationId,
-              userId,
-              isImport: true,
-              trx,
-            }),
-          );
+          await this.createFuelFlow({
+            monitoringSystemRecordId: sysId,
+            payload: fuelFlow,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(innerPromises);
 
         return true;
       }),
