@@ -103,55 +103,43 @@ export class UnitStackConfigurationWorkspaceService {
   ) {
     const unitStackConfigDTOs: UnitStackConfigurationDTO[] = [];
 
-    await new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const unitStackConfig of plan.unitStackConfigurationData) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
-                  unitStackConfig.stackPipeId,
-                  facilityId,
-                  trx,
-                );
+    await Promise.all(
+      plan.unitStackConfigurationData.map(async unitStackConfig => {
+        const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+          unitStackConfig.stackPipeId,
+          facilityId,
+          trx,
+        );
 
-                const unit = await this.unitServive.getUnitByNameAndFacId(
-                  unitStackConfig.unitId,
-                  facilityId,
-                  trx,
-                );
+        const unit = await this.unitServive.getUnitByNameAndFacId(
+          unitStackConfig.unitId,
+          facilityId,
+          trx,
+        );
 
-                const unitStackConfigRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getUnitStackConfigByUnitIdStackId(unit.id, stackPipe.id);
+        const unitStackConfigRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getUnitStackConfigByUnitIdStackId(unit.id, stackPipe.id);
 
-                const unitStackConfigDTO = unitStackConfigRecord
-                  ? await this.updateUnitStackConfig(
-                      unitStackConfigRecord.id,
-                      unitStackConfig,
-                      userId,
-                      trx,
-                    )
-                  : await this.createUnitStackConfig(
-                      unit.id,
-                      stackPipe.id,
-                      unitStackConfig,
-                      userId,
-                      trx,
-                    );
+        const unitStackConfigDTO = unitStackConfigRecord
+          ? await this.updateUnitStackConfig(
+              unitStackConfigRecord.id,
+              unitStackConfig,
+              userId,
+              trx,
+            )
+          : await this.createUnitStackConfig(
+              unit.id,
+              stackPipe.id,
+              unitStackConfig,
+              userId,
+              trx,
+            );
 
-                unitStackConfigDTOs.push(unitStackConfigDTO);
-                innerResolve(true);
-              })();
-            }),
-          );
-        }
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        unitStackConfigDTOs.push(unitStackConfigDTO);
+      }),
+    );
 
     return unitStackConfigDTOs;
   }

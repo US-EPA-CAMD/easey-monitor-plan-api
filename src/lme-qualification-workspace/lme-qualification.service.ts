@@ -181,50 +181,36 @@ export class LMEQualificationWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const lmeQualification of lmeQualifications) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const lmeQualRecord = await this.getLMEQualificationByDataYear(
-                  locationId,
-                  qualificationId,
-                  lmeQualification.qualificationDataYear,
-                  trx,
-                );
+    return Promise.all(
+      lmeQualifications.map(async lmeQualification => {
+        const lmeQualRecord = await this.getLMEQualificationByDataYear(
+          locationId,
+          qualificationId,
+          lmeQualification.qualificationDataYear,
+          trx,
+        );
 
-                if (lmeQualRecord) {
-                  await this.updateLMEQualification({
-                    locationId,
-                    qualId: qualificationId,
-                    lmeQualId: lmeQualRecord.id,
-                    payload: lmeQualification,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createLMEQualification({
-                    locationId,
-                    qualId: qualificationId,
-                    payload: lmeQualification,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (lmeQualRecord) {
+          await this.updateLMEQualification({
+            locationId,
+            qualId: qualificationId,
+            lmeQualId: lmeQualRecord.id,
+            payload: lmeQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createLMEQualification({
+            locationId,
+            qualId: qualificationId,
+            payload: lmeQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

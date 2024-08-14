@@ -22,7 +22,7 @@ export class SystemFuelFlowWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlowDTO[]> {
     const results = await this.repository.getFuelFlows(monSysId);
@@ -136,53 +136,35 @@ export class SystemFuelFlowWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const fuelFlow of systemFuelFlows) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const innerPromises = [];
-                const fuelFlowRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getFuelFlowByBeginOrEndDate(sysId, fuelFlow);
+    return Promise.all(
+      systemFuelFlows.map(async fuelFlow => {
+        const fuelFlowRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getFuelFlowByBeginOrEndDate(sysId, fuelFlow);
 
-                if (fuelFlowRecord) {
-                  innerPromises.push(
-                    await this.updateFuelFlow({
-                      fuelFlowId: fuelFlowRecord.id,
-                      payload: fuelFlow,
-                      locationId,
-                      userId,
-                      isImport: true,
-                      trx,
-                    }),
-                  );
-                } else {
-                  innerPromises.push(
-                    await this.createFuelFlow({
-                      monitoringSystemRecordId: sysId,
-                      payload: fuelFlow,
-                      locationId,
-                      userId,
-                      isImport: true,
-                      trx,
-                    }),
-                  );
-                }
-
-                await Promise.all(innerPromises);
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (fuelFlowRecord) {
+          await this.updateFuelFlow({
+            fuelFlowId: fuelFlowRecord.id,
+            payload: fuelFlow,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createFuelFlow({
+            monitoringSystemRecordId: sysId,
+            payload: fuelFlow,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
 
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        return true;
+      }),
+    );
   }
 }

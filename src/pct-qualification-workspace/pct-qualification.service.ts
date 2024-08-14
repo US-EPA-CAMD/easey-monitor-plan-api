@@ -194,50 +194,38 @@ export class PCTQualificationWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const pctQualification of pctQualifications) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const pctQualificationRecord = await this.getPCTQualificationByDataYear(
-                  locationId,
-                  qualificationId,
-                  pctQualification.qualificationYear,
-                  trx,
-                );
+    return Promise.all(
+      pctQualifications.map(async pctQualification => {
+        const pctQualificationRecord = await this.getPCTQualificationByDataYear(
+          locationId,
+          qualificationId,
+          pctQualification.qualificationYear,
+          trx,
+        );
 
-                if (pctQualificationRecord) {
-                  await this.updatePCTQualification({
-                    locationId,
-                    qualId: qualificationId,
-                    pctQualId: pctQualificationRecord.id,
-                    payload: pctQualification,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createPCTQualification({
-                    locationId,
-                    qualId: qualificationId,
-                    payload: pctQualification,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (pctQualificationRecord) {
+          await this.updatePCTQualification({
+            locationId,
+            qualId: qualificationId,
+            pctQualId: pctQualificationRecord.id,
+            payload: pctQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createPCTQualification({
+            locationId,
+            qualId: qualificationId,
+            payload: pctQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
 
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        return true;
+      }),
+    );
   }
 }

@@ -169,45 +169,41 @@ export class MonitorSystemWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    const promises = [];
 
-        if (
-          system.monitoringSystemComponentData &&
-          system.monitoringSystemComponentData.length > 0
-        ) {
-          promises.push(
-            this.systemComponentService.importSystemComponent(
-              locationId,
-              systemRecordId,
-              system.monitoringSystemComponentData,
-              userId,
-              trx,
-            ),
-          );
-        }
+    if (
+      system.monitoringSystemComponentData &&
+      system.monitoringSystemComponentData.length > 0
+    ) {
+      promises.push(
+        this.systemComponentService.importSystemComponent(
+          locationId,
+          systemRecordId,
+          system.monitoringSystemComponentData,
+          userId,
+          trx,
+        ),
+      );
+    }
 
-        if (
-          system.monitoringSystemFuelFlowData &&
-          system.monitoringSystemFuelFlowData.length > 0
-        ) {
-          promises.push(
-            this.systemFuelFlowService.importFuelFlow(
-              locationId,
-              systemRecordId,
-              system.monitoringSystemFuelFlowData,
-              userId,
-              trx,
-            ),
-          );
-        }
+    if (
+      system.monitoringSystemFuelFlowData &&
+      system.monitoringSystemFuelFlowData.length > 0
+    ) {
+      promises.push(
+        this.systemFuelFlowService.importFuelFlow(
+          locationId,
+          systemRecordId,
+          system.monitoringSystemFuelFlowData,
+          userId,
+          trx,
+        ),
+      );
+    }
 
-        await Promise.all(promises);
+    await Promise.all(promises);
 
-        resolve(true);
-      })();
-    });
+    return true;
   }
 
   async updateSystem({

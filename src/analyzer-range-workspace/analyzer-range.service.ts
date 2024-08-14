@@ -130,50 +130,33 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRanges: AnalyzerRangeBaseDTO[] = [],
     trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const analyzerRange of analyzerRanges) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const analyzerRangeRecord = await withTransaction(
-                  this.repository,
-                  trx,
-                ).getAnalyzerRangeByComponentIdAndDate(
-                  componentId,
-                  analyzerRange,
-                );
+    return Promise.all(
+      analyzerRanges.map(async analyzerRange => {
+        const analyzerRangeRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getAnalyzerRangeByComponentIdAndDate(componentId, analyzerRange);
 
-                if (analyzerRangeRecord) {
-                  await this.updateAnalyzerRange({
-                    analyzerRangeId: analyzerRangeRecord.id,
-                    payload: analyzerRange,
-                    locationId,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                } else {
-                  await this.createAnalyzerRange({
-                    componentRecordId: componentId,
-                    payload: analyzerRange,
-                    locationId,
-                    userId,
-                    isImport: true,
-                    trx,
-                  });
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (analyzerRangeRecord) {
+          await this.updateAnalyzerRange({
+            analyzerRangeId: analyzerRangeRecord.id,
+            payload: analyzerRange,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createAnalyzerRange({
+            componentRecordId: componentId,
+            payload: analyzerRange,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }
