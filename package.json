@@ -47,7 +47,7 @@
     "@nestjs/typeorm": "^8.0.3",
     "@nestjs/websockets": "^8.4.7",
     "@types/pg": "^8.6.4",
-    "@us-epa-camd/easey-common": "18.0.0",
+    "@us-epa-camd/easey-common": "17.5.1",
     "class-transformer": "0.4.0",
     "class-validator": "0.14.0",
     "dotenv": "^10.0.0",
