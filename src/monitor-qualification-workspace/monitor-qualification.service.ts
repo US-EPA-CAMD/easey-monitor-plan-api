@@ -1,5 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -23,6 +24,7 @@ export class MonitorQualificationWorkspaceService {
   constructor(
     private readonly repository: MonitorQualificationWorkspaceRepository,
     private readonly map: MonitorQualificationMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -30,7 +32,9 @@ export class MonitorQualificationWorkspaceService {
     private readonly leeQualificationService: LEEQualificationWorkspaceService,
     private readonly lmeQualificationService: LMEQualificationWorkspaceService,
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorQualificationWorkspaceService');
+  }
 
   runQualificationImportCheck(qualifications: UpdateMonitorQualificationDTO[]) {
     const errorList: string[] = [];
@@ -142,7 +146,7 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       qualifications.map(async qualification => {
         const qualificationRecord = await withTransaction(
           this.repository,
@@ -190,6 +194,8 @@ export class MonitorQualificationWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${qualifications.length} qualifications`);
+    return true;
   }
 
   async getQualifications(

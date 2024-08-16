@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -24,6 +25,7 @@ export class MonitorSystemWorkspaceService {
   constructor(
     private readonly repository: MonitorSystemWorkspaceRepository,
     private readonly usedIdRepo: UsedIdentifierRepository,
+    private readonly logger: Logger,
 
     private readonly map: MonitorSystemMap,
 
@@ -35,7 +37,9 @@ export class MonitorSystemWorkspaceService {
 
     private readonly systemComponentService: SystemComponentWorkspaceService,
     private readonly systemFuelFlowService: SystemFuelFlowWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorSystemWorkspaceService');
+  }
 
   async runMonitorSystemImportCheck(
     monPlan: UpdateMonitorPlanDTO,
@@ -248,7 +252,7 @@ export class MonitorSystemWorkspaceService {
     trx?: EntityManager,
   ) {
     const repository = withTransaction(this.repository, trx);
-    return Promise.all(
+    await Promise.all(
       systems.map(async system => {
         const innerPromises = [];
         let systemRecord = await repository.getSystemByLocIdSysIdentifier(
@@ -312,5 +316,7 @@ export class MonitorSystemWorkspaceService {
         await Promise.all(innerPromises);
       }),
     );
+    this.logger.debug(`Imported ${systems.length} systems`);
+    return true;
   }
 }

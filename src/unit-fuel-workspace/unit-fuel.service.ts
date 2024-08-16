@@ -1,5 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -15,10 +16,13 @@ export class UnitFuelWorkspaceService {
   constructor(
     private readonly repository: UnitFuelWorkspaceRepository,
     private readonly map: UnitFuelMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('UnitFuelWorkspaceService');
+  }
 
   async getUnitFuels(locId: string, unitId: number): Promise<UnitFuelDTO[]> {
     const results = await this.repository.getUnitFuels(locId, unitId);
@@ -165,6 +169,7 @@ export class UnitFuelWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${unitFuels.length} unit fuels`);
     return true;
   }
 }

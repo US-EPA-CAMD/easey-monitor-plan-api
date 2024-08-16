@@ -558,6 +558,10 @@ export class MonitorLocationWorkspaceService {
       }),
     );
 
+    this.logger.debug(
+      `Imported ${plan.monitoringLocationData.length} monitor locations`,
+    );
+
     return locations;
   }
 }

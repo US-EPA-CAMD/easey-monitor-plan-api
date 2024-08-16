@@ -19,7 +19,7 @@ import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configur
 export class UnitStackConfigurationWorkspaceService {
   constructor(
     private readonly repository: UnitStackConfigurationWorkspaceRepository,
-    private readonly unitServive: UnitService,
+    private readonly unitService: UnitService,
     private readonly stackPipeService: StackPipeWorkspaceService,
     private readonly map: UnitStackConfigurationMap,
   ) {}
@@ -111,7 +111,7 @@ export class UnitStackConfigurationWorkspaceService {
           trx,
         );
 
-        const unit = await this.unitServive.getUnitByNameAndFacId(
+        const unit = await this.unitService.getUnitByNameAndFacId(
           unitStackConfig.unitId,
           facilityId,
           trx,

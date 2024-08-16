@@ -23,7 +23,9 @@ export class MonitorAttributeWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorAttributeWorkspaceService');
+  }
 
   async getAttributes(locationId: string): Promise<MonitorAttributeDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -177,6 +179,7 @@ export class MonitorAttributeWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${attributes.length} monitor attributes`);
     return true;
   }
 }

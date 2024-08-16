@@ -1,8 +1,5 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import {
-  CancelTransactionException,
-  EaseyException,
-} from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -81,57 +78,65 @@ export class StackPipeWorkspaceService {
 
     let result = null;
 
+    // Start a transaction.
+    const queryRunner = this.entityManager.connection.createQueryRunner();
+    await queryRunner.startTransaction();
+
     try {
-      await this.entityManager.transaction(async trx => {
-        // Create the stack pipe record if it doesn't exist, update it if it does.
-        const stackPipeRecord =
-          (await this.updateStackPipe(
-            await this.getStackByNameAndFacId(
-              stackPipe.stackPipeId,
-              stackPipe.facilityId,
-              trx,
-            ),
-            stackPipe.retireDate,
-            trx,
-          )) ??
-          (await this.createStackPipeRecord(
-            stackPipe,
+      const trx = queryRunner.manager;
+      // Create the stack pipe record if it doesn't exist, update it if it does.
+      const stackPipeRecord =
+        (await this.updateStackPipe(
+          await this.getStackByNameAndFacId(
+            stackPipe.stackPipeId,
             stackPipe.facilityId,
+            trx,
+          ),
+          stackPipe.retireDate,
+          trx,
+        )) ??
+        (await this.createStackPipeRecord(
+          stackPipe,
+          stackPipe.facilityId,
+          userId,
+          trx,
+        ));
+      this.logger.debug('stackPipeRecord', stackPipeRecord);
+
+      // Create the accompanying monitor location record if it doesn't exist.
+      if (
+        !(await (trx ?? this.entityManager).findOneBy(
+          MonitorLocationWorkspace,
+          {
+            stackPipeId: stackPipeRecord.id,
+          },
+        ))
+      ) {
+        const locationRecord = await this.monitorLocationWorkspaceService.createMonitorLocationRecord(
+          {
+            stackPipeId: stackPipeRecord.id,
             userId,
             trx,
-          ));
-        this.logger.debug('stackPipeRecord', stackPipeRecord);
-
-        // Create the accompanying monitor location record if it doesn't exist.
-        if (
-          !(await (trx ?? this.entityManager).findOneBy(
-            MonitorLocationWorkspace,
-            {
-              stackPipeId: stackPipeRecord.id,
-            },
-          ))
-        ) {
-          const locationRecord = await this.monitorLocationWorkspaceService.createMonitorLocationRecord(
-            {
-              stackPipeId: stackPipeRecord.id,
-              userId,
-              trx,
-            },
-          );
-          this.logger.debug('locationRecord', locationRecord);
-        }
-
-        result = await this.map.one(stackPipeRecord);
-
-        if (draft) {
-          throw new CancelTransactionException();
-        }
-      });
-    } catch (err) {
-      if (!(err instanceof CancelTransactionException)) {
-        throw err;
+          },
+        );
+        this.logger.debug('locationRecord', locationRecord);
       }
+
+      result = await this.map.one(stackPipeRecord);
+
+      if (draft) {
+        // Rollback the transaction if the operation is a draft.
+        await queryRunner.rollbackTransaction();
+      } else {
+        await queryRunner.commitTransaction();
+      }
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
+
     this.logger.debug('Import stack pipe result', result);
     return result;
   }
@@ -147,6 +152,7 @@ export class StackPipeWorkspaceService {
     await repository.update(stackPipeRecord.id, {
       retireDate,
     });
+    this.logger.debug(`Updated stack pipe ${stackPipeRecord.id}`);
     return repository.findOneBy({ id: stackPipeRecord.id });
   }
 }

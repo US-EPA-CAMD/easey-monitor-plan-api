@@ -1,8 +1,5 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import {
-  CancelTransactionException,
-  EaseyException,
-} from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { EntityManager, In } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -530,7 +527,6 @@ export class MonitorPlanWorkspaceService {
     } else {
       this.logger.log('Importing monitor plan');
     }
-    this.logger.debug('Target plan payload', targetPlanPayload);
 
     const facilityId = await this.plantService.getFacIdFromOris(
       targetPlanPayload.orisCode,
@@ -555,211 +551,220 @@ export class MonitorPlanWorkspaceService {
 
     let shouldCreateNewPlan = false;
 
+    // Start a transaction.
+    const queryRunner = this.entityManager.connection.createQueryRunner();
+    await queryRunner.startTransaction();
+
     try {
-      // Start transaction.
-      await this.entityManager.transaction(async trx => {
-        /* MONITOR LOCATION MERGE LOGIC */
-        this.logger.log('Importing monitor locations');
-        const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
+      const trx = queryRunner.manager;
+      /* MONITOR LOCATION MERGE LOGIC */
+      this.logger.log('Importing monitor locations');
+      const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
+        targetPlanPayload,
+        facilityId,
+        userId,
+        trx,
+      );
+
+      /* UNIT STACK CONFIGURATION MERGE LOGIC */
+      this.logger.log('Importing unit stack configurations');
+      const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
+        targetPlanPayload,
+        facilityId,
+        userId,
+        trx,
+      );
+
+      /* MONITOR PLAN MERGE LOGIC */
+
+      // Calculate the report period range from the update monitor plan.
+      const [
+        payloadBeginReportPeriodId,
+        payloadEndReportPeriodId,
+      ] = await this.calculateReportPeriodRangeFromLocations(
+        planMonitoringLocationData,
+        planUnitStackConfigurationData,
+        trx,
+      );
+
+      let maxActivePlansEndReportPeriod = null;
+
+      const reportingPeriodRepository = withTransaction(
+        this.reportingPeriodRepository,
+        trx,
+      );
+
+      // If there are no associated active plans, simply create a new plan.
+      if (activePlans.length === 0) {
+        // Match to an existing inactive plan in the database. If found, add the supplied plan to the unchanged plans. Otherwise, create a new plan.
+        const matchedPlan = await this.matchToPlanByLocationsAndPeriod(
           targetPlanPayload,
-          facilityId,
-          userId,
-          trx,
-        );
-
-        /* UNIT STACK CONFIGURATION MERGE LOGIC */
-        this.logger.log('Importing unit stack configurations');
-        const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
-          targetPlanPayload,
-          facilityId,
-          userId,
-          trx,
-        );
-
-        /* MONITOR PLAN MERGE LOGIC */
-
-        // Calculate the report period range from the update monitor plan.
-        const [
           payloadBeginReportPeriodId,
           payloadEndReportPeriodId,
-        ] = await this.calculateReportPeriodRangeFromLocations(
-          planMonitoringLocationData,
-          planUnitStackConfigurationData,
           trx,
         );
-
-        let maxActivePlansEndReportPeriod = null;
-
-        const reportingPeriodRepository = withTransaction(
-          this.reportingPeriodRepository,
-          trx,
-        );
-
-        // If there are no associated active plans, simply create a new plan.
-        if (activePlans.length === 0) {
-          // Match to an existing inactive plan in the database. If found, add the supplied plan to the unchanged plans. Otherwise, create a new plan.
-          const matchedPlan = await this.matchToPlanByLocationsAndPeriod(
-            targetPlanPayload,
-            payloadBeginReportPeriodId,
-            payloadEndReportPeriodId,
-            trx,
-          );
-          if (matchedPlan) {
-            targetPlan = matchedPlan;
-            unchangedPlans.push(matchedPlan);
-          } else {
-            shouldCreateNewPlan = true;
-          }
+        if (matchedPlan) {
+          targetPlan = matchedPlan;
+          unchangedPlans.push(matchedPlan);
         } else {
-          await Promise.all(
-            activePlans.map(async activePlan => {
-              // The active plan with the updates that have been applied so far in the transaction.
-              const pendingActivePlan = await this.getMonitorPlan(
-                activePlan.id,
-                { full: true, trx },
-              );
-              // Compare the active plan locations against the imported plan locations.
-              const locationsMatch = this.checkLocationsMatch(
-                pendingActivePlan,
-                targetPlanPayload,
-              );
+          shouldCreateNewPlan = true;
+        }
+      } else {
+        await Promise.all(
+          activePlans.map(async activePlan => {
+            // The active plan with the updates that have been applied so far in the transaction.
+            const pendingActivePlan = await this.getMonitorPlan(activePlan.id, {
+              full: true,
+              trx,
+            });
+            // Compare the active plan locations against the imported plan locations.
+            const locationsMatch = this.checkLocationsMatch(
+              pendingActivePlan,
+              targetPlanPayload,
+            );
 
-              if (locationsMatch) {
-                if (
-                  pendingActivePlan.endReportPeriodId !==
-                  payloadEndReportPeriodId
-                ) {
-                  // If the locations match but the end report period differs, update the end report period of the active plan.
-                  endedPlans.push(
-                    await this.updateEndReportingPeriod(
-                      pendingActivePlan,
-                      payloadEndReportPeriodId,
-                      userId,
-                      trx,
-                    ),
-                  );
-                  targetPlan = endedPlans[endedPlans.length - 1];
-                } else {
-                  // The active plan is unchanged.
-                  unchangedPlans.push(pendingActivePlan);
-                  targetPlan = pendingActivePlan;
-                }
-              } else {
-                // If the locations differ, create a new plan and update the end report period of the previously active plan.
-
-                // Get the USC end periods associated with the active plan.
-                const earliestUscEndDate = pendingActivePlan.unitStackConfigurationData
-                  .map(usc => usc.endDate)
-                  .reduce(getEarliestDate, null);
-
-                // Get the unit end periods associated with the active plan.
-                const monPlanUnits = await this.unitWorkspaceService.getUnitsByMonPlanId(
-                  pendingActivePlan.id,
-                  trx,
-                );
-                const earliestUnitEndDate = monPlanUnits
-                  .map(u => u.endDate)
-                  .reduce(getEarliestDate, null);
-
-                // Calculate the max period from the USCs, or from the units if no USCs are associated with the active plan.
-                const newActivePlanEndReportPeriod = await reportingPeriodRepository.getByDate(
-                  earliestUscEndDate || earliestUnitEndDate,
-                );
-
-                // Update the maxEndReportPeriodId to the max period if greater.
-                if (
-                  !maxActivePlansEndReportPeriod ||
-                  new Date(newActivePlanEndReportPeriod.endDate) >
-                    new Date(maxActivePlansEndReportPeriod.endDate)
-                ) {
-                  maxActivePlansEndReportPeriod = newActivePlanEndReportPeriod;
-                }
-
-                shouldCreateNewPlan = true;
+            if (locationsMatch) {
+              if (
+                pendingActivePlan.endReportPeriodId !== payloadEndReportPeriodId
+              ) {
+                // If the locations match but the end report period differs, update the end report period of the active plan.
                 endedPlans.push(
                   await this.updateEndReportingPeriod(
                     pendingActivePlan,
-                    newActivePlanEndReportPeriod.id,
+                    payloadEndReportPeriodId,
                     userId,
                     trx,
                   ),
                 );
-              }
-            }),
-          );
-        }
-
-        // Create a new monitor plan.
-        if (shouldCreateNewPlan) {
-          const newUnitStackConfigurationData = planUnitStackConfigurationData.filter(
-            usc => usc.active,
-          );
-          const newMonitoringLocationData = planMonitoringLocationData.filter(
-            l => {
-              if (newUnitStackConfigurationData.length === 0) {
-                return l.unitId && l.active;
+                targetPlan = endedPlans[endedPlans.length - 1];
               } else {
-                return (
-                  (newUnitStackConfigurationData.some(
-                    ({ unitId }) => l.unitId === unitId,
-                  ) ||
-                    newUnitStackConfigurationData.some(
-                      ({ stackPipeId }) => l.stackPipeId === stackPipeId,
-                    )) &&
-                  l.active
-                );
+                // The active plan is unchanged.
+                unchangedPlans.push(pendingActivePlan);
+                targetPlan = pendingActivePlan;
               }
-            },
-          );
-          const [
-            newBeginReportPeriodId,
-            newEndReportPeriodId,
-          ] = await this.calculateReportPeriodRangeFromLocations(
-            newMonitoringLocationData,
-            newUnitStackConfigurationData,
-            trx,
-          );
-          newPlan = await this.createMonitorPlan({
-            locations: newMonitoringLocationData,
-            facId: facilityId,
-            userId,
-            beginReportPeriodId: maxActivePlansEndReportPeriod
-              ? await reportingPeriodRepository.getNextReportingPeriodId(
-                  maxActivePlansEndReportPeriod.id,
-                )
-              : newBeginReportPeriodId,
-            endReportPeriodId: newEndReportPeriodId,
-            trx,
-          });
-          targetPlan = newPlan;
-          this.logger.debug(
-            'Imported locations differ from the active plan, created new plan',
-            { mon_plan_id: newPlan.id },
-          );
-        }
+            } else {
+              // If the locations differ, create a new plan and update the end report period of the previously active plan.
 
-        /* MONITOR PLAN COMMENT MERGE LOGIC */
-        if (targetPlan) {
-          await this.monitorPlanCommentService.importComments(
-            targetPlanPayload.monitoringPlanCommentData,
-            userId,
-            targetPlan.id,
-            trx,
-          );
-        }
+              // Get the USC end periods associated with the active plan.
+              const earliestUscEndDate = pendingActivePlan.unitStackConfigurationData
+                .map(usc => usc.endDate)
+                .reduce(getEarliestDate, null);
 
-        if (draft) {
-          throw new CancelTransactionException();
-        }
-      });
-    } catch (err) {
-      if (!(err instanceof CancelTransactionException)) {
-        throw err;
+              // Get the unit end periods associated with the active plan.
+              const monPlanUnits = await this.unitWorkspaceService.getUnitsByMonPlanId(
+                pendingActivePlan.id,
+                trx,
+              );
+              const earliestUnitEndDate = monPlanUnits
+                .map(u => u.endDate)
+                .reduce(getEarliestDate, null);
+
+              // Calculate the max period from the USCs, or from the units if no USCs are associated with the active plan.
+              const newActivePlanEndReportPeriod = await reportingPeriodRepository.getByDate(
+                earliestUscEndDate || earliestUnitEndDate,
+              );
+
+              // Update the maxEndReportPeriodId to the max period if greater.
+              if (
+                !maxActivePlansEndReportPeriod ||
+                new Date(newActivePlanEndReportPeriod.endDate) >
+                  new Date(maxActivePlansEndReportPeriod.endDate)
+              ) {
+                maxActivePlansEndReportPeriod = newActivePlanEndReportPeriod;
+              }
+
+              shouldCreateNewPlan = true;
+              endedPlans.push(
+                await this.updateEndReportingPeriod(
+                  pendingActivePlan,
+                  newActivePlanEndReportPeriod.id,
+                  userId,
+                  trx,
+                ),
+              );
+            }
+          }),
+        );
       }
+
+      // Create a new monitor plan.
+      if (shouldCreateNewPlan) {
+        const newUnitStackConfigurationData = planUnitStackConfigurationData.filter(
+          usc => usc.active,
+        );
+        const newMonitoringLocationData = planMonitoringLocationData.filter(
+          l => {
+            if (newUnitStackConfigurationData.length === 0) {
+              return l.unitId && l.active;
+            } else {
+              return (
+                (newUnitStackConfigurationData.some(
+                  ({ unitId }) => l.unitId === unitId,
+                ) ||
+                  newUnitStackConfigurationData.some(
+                    ({ stackPipeId }) => l.stackPipeId === stackPipeId,
+                  )) &&
+                l.active
+              );
+            }
+          },
+        );
+        const [
+          newBeginReportPeriodId,
+          newEndReportPeriodId,
+        ] = await this.calculateReportPeriodRangeFromLocations(
+          newMonitoringLocationData,
+          newUnitStackConfigurationData,
+          trx,
+        );
+        newPlan = await this.createMonitorPlan({
+          locations: newMonitoringLocationData,
+          facId: facilityId,
+          userId,
+          beginReportPeriodId: maxActivePlansEndReportPeriod
+            ? await reportingPeriodRepository.getNextReportingPeriodId(
+                maxActivePlansEndReportPeriod.id,
+              )
+            : newBeginReportPeriodId,
+          endReportPeriodId: newEndReportPeriodId,
+          trx,
+        });
+        targetPlan = newPlan;
+        this.logger.debug(
+          'Imported locations differ from the active plan, created new plan',
+          { mon_plan_id: newPlan.id },
+        );
+      }
+
+      /* MONITOR PLAN COMMENT MERGE LOGIC */
+      if (targetPlan) {
+        await this.monitorPlanCommentService.importComments(
+          targetPlanPayload.monitoringPlanCommentData,
+          userId,
+          targetPlan.id,
+          trx,
+        );
+      }
+
+      if (draft) {
+        // Rollback the transaction if the operation is a draft.
+        await queryRunner.rollbackTransaction();
+      } else {
+        await queryRunner.commitTransaction();
+      }
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      await queryRunner.release();
     }
 
     const result = { endedPlans, newPlan, unchangedPlans };
-    this.logger.debug('Monitor plan import result', result);
+    this.logger.debug('Monitor plan import result', {
+      endedPlans: endedPlans.map(p => p.id),
+      newPlan: newPlan?.id,
+      unchangedPlans: unchangedPlans.map(p => p.id),
+    });
     return result;
   }
 

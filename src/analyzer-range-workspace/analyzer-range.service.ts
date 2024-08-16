@@ -124,7 +124,7 @@ export class AnalyzerRangeWorkspaceService {
   }
 
   async importAnalyzerRange(
-    componentId: string,
+    componentRecordId: string,
     locationId: string,
     userId: string,
     analyzerRanges: AnalyzerRangeBaseDTO[] = [],
@@ -135,7 +135,10 @@ export class AnalyzerRangeWorkspaceService {
         const analyzerRangeRecord = await withTransaction(
           this.repository,
           trx,
-        ).getAnalyzerRangeByComponentIdAndDate(componentId, analyzerRange);
+        ).getAnalyzerRangeByComponentIdAndDate(
+          componentRecordId,
+          analyzerRange,
+        );
 
         if (analyzerRangeRecord) {
           await this.updateAnalyzerRange({
@@ -148,7 +151,7 @@ export class AnalyzerRangeWorkspaceService {
           });
         } else {
           await this.createAnalyzerRange({
-            componentRecordId: componentId,
+            componentRecordId,
             payload: analyzerRange,
             locationId,
             userId,

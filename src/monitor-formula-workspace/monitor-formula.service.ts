@@ -25,7 +25,9 @@ export class MonitorFormulaWorkspaceService {
     private readonly logger: Logger,
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorFormulaWorkspaceService');
+  }
 
   async getFormulas(locationId: string): Promise<MonitorFormulaDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -176,7 +178,7 @@ export class MonitorFormulaWorkspaceService {
   ) {
     const repository = withTransaction(this.repository, trx);
 
-    return Promise.all(
+    await Promise.all(
       formulas.map(async formula => {
         let formulaRecord = await repository.getFormulaByLocIdAndFormulaIdentifier(
           locationId,
@@ -217,5 +219,7 @@ export class MonitorFormulaWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${formulas.length} monitor formulas`);
+    return true;
   }
 }

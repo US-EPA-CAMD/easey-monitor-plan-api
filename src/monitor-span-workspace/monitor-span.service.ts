@@ -1,5 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -16,10 +17,13 @@ export class MonitorSpanWorkspaceService {
   constructor(
     private readonly repository: MonitorSpanWorkspaceRepository,
     private readonly map: MonitorSpanMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorSpanWorkspaceService');
+  }
 
   async getSpans(locationId: string): Promise<MonitorSpanDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -216,6 +220,7 @@ export class MonitorSpanWorkspaceService {
       }),
     );
 
+    this.logger.debug(`Imported ${spans.length} monitor spans`);
     return true;
   }
 }

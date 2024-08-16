@@ -1,5 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -16,10 +17,13 @@ export class DuctWafWorkspaceService {
   constructor(
     private readonly repository: DuctWafWorkspaceRepository,
     private readonly map: DuctWafMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('DuctWafWorkspaceService');
+  }
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -170,6 +174,7 @@ export class DuctWafWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${ductWafs.length} duct wafs`);
     return true;
   }
 }

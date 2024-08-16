@@ -19,7 +19,9 @@ export class UnitControlWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('UnitControlWorkspaceService');
+  }
 
   async getUnitControls(
     locId: string,
@@ -71,6 +73,7 @@ export class UnitControlWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${unitControls.length} unit controls`);
     return true;
   }
 

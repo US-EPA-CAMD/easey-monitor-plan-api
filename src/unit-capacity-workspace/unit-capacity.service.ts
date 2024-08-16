@@ -23,7 +23,9 @@ export class UnitCapacityWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('UnitCapacityWorkspaceService');
+  }
 
   async importUnitCapacity(
     unitCapacities: UnitCapacityBaseDTO[],
@@ -65,6 +67,7 @@ export class UnitCapacityWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${unitCapacities.length} unit capacities`);
     return true;
   }
 

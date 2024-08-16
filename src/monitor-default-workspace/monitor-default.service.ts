@@ -24,7 +24,9 @@ export class MonitorDefaultWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorDefaultWorkspaceService');
+  }
 
   async getDefaults(locationId: string): Promise<MonitorDefaultDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -183,6 +185,7 @@ export class MonitorDefaultWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${monDefaults.length} monitor defaults`);
     return true;
   }
 }

@@ -1,5 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -19,10 +20,13 @@ export class MonitorMethodWorkspaceService {
   constructor(
     private readonly repository: MonitorMethodWorkspaceRepository,
     private readonly map: MonitorMethodMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorMethodWorkspaceService');
+  }
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
     const results = await this.repository.findBy({ locationId: locId });
@@ -145,7 +149,7 @@ export class MonitorMethodWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       methods.map(async method => {
         const methodRecord = await withTransaction(
           this.repository,
@@ -179,5 +183,7 @@ export class MonitorMethodWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${methods.length} monitor methods`);
+    return true;
   }
 }

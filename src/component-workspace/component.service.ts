@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -18,6 +19,7 @@ export class ComponentWorkspaceService {
   constructor(
     private readonly repository: ComponentWorkspaceRepository,
     private readonly usedIdRepo: UsedIdentifierRepository,
+    private readonly logger: Logger,
 
     private readonly map: ComponentMap,
 
@@ -26,7 +28,9 @@ export class ComponentWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('ComponentWorkspaceService');
+  }
 
   async runComponentChecks(
     components: UpdateComponentBaseDTO[],
@@ -160,7 +164,7 @@ export class ComponentWorkspaceService {
         }
 
         await this.analyzerRangeDataService.importAnalyzerRange(
-          compRecord.componentId,
+          compRecord.id,
           locationId,
           userId,
           component.analyzerRangeData,
@@ -168,6 +172,7 @@ export class ComponentWorkspaceService {
         );
       }),
     );
+    this.logger.debug(`Imported ${location.componentData.length} components`);
     return true;
   }
 

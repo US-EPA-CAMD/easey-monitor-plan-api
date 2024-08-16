@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
 
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
@@ -8,7 +9,12 @@ import { UnitRepository } from './unit.repository';
 
 @Injectable()
 export class UnitService {
-  constructor(private readonly repository: UnitRepository) {}
+  constructor(
+    private readonly repository: UnitRepository,
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext('UnitService');
+  }
 
   async runUnitChecks(
     location: UpdateMonitorLocationDTO,
@@ -35,6 +41,7 @@ export class UnitService {
     await withTransaction(this.repository, trx).update(unitRecord.id, {
       nonLoadBasedIndicator: nonLoadI,
     });
+    this.logger.debug(`Imported unit ${unitRecord.name}`);
     return true;
   }
 

@@ -21,7 +21,9 @@ export class MonitorLoadWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorLoadWorkspaceService');
+  }
 
   async getLoads(locationId: string): Promise<MonitorLoadDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -84,6 +86,7 @@ export class MonitorLoadWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${loads.length} monitor loads`);
     return true;
   }
 
