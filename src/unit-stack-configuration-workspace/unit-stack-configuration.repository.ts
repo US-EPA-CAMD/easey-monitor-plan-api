@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, In, Repository } from 'typeorm';
 
-import { MonitorPlan as MonitorPlanWorkspace } from '../entities/workspace/monitor-plan.entity';
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 
 @Injectable()

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, In, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
-import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
 
 interface IorisCodesAndLastUpdatedTimes {
   changedOrisCodes: number[];
