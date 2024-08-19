@@ -4,7 +4,6 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, In, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 
 @Injectable()
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
@@ -107,28 +106,6 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
             }
           : {}),
       },
-    });
-  }
-
-  async getMonitorPlanUnitStackConfigs(planId: string) {
-    const configIds = (
-      await this.query(
-        `
-      SELECT config_id FROM camdecmpswks.unit_stack_configuration usc
-      WHERE usc.config_id IN (
-        SELECT config_id FROM camdecmpswks.vw_mp_unit_stack_configuration
-        WHERE mon_plan_id = $1
-      )`,
-        [planId],
-      )
-    ).map(usc => usc.config_id);
-
-    return this.manager.find(UnitStackConfiguration, {
-      relations: {
-        stackPipe: true,
-        unit: true,
-      },
-      where: { id: In(configIds) },
     });
   }
 

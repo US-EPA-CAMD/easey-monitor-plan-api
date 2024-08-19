@@ -9,6 +9,7 @@ import { PlantWorkspaceRepository } from '../plant-workspace/plant.repository';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { EvalStatusCodeRepository } from './eval-status.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
+import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 
 @Injectable()
 export class MonitorConfigurationsWorkspaceService {
@@ -18,15 +19,8 @@ export class MonitorConfigurationsWorkspaceService {
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
     private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
     private readonly plantWorkspaceRepository: PlantWorkspaceRepository,
+    private readonly uscWorkspaceRepository: UnitStackConfigurationWorkspaceRepository,
   ) {}
-
-  async populateStackConfigs(plan: MonitorPlan) {
-    const unitStackConfigs = await this.monitorPlanWorkspaceRepository.getMonitorPlanUnitStackConfigs(
-      plan.id,
-    );
-
-    plan.unitStackConfigurations = unitStackConfigs;
-  }
 
   async populateDescriptions(plan: MonitorPlanConfigurationDTO) {
     plan['evalStatusCodeDescription'] = (
@@ -73,21 +67,19 @@ export class MonitorConfigurationsWorkspaceService {
       });
     }
 
-    let promises = [];
+    await Promise.all(
+      plans.map(async plan => {
+        plan.unitStackConfigurations = await this.uscWorkspaceRepository.getUnitStackConfigsByMonitorPlanId(
+          plan.id,
+        );
+      }),
+    );
 
-    for (const plan of plans) {
-      promises.push(this.populateStackConfigs(plan));
-    }
-
-    await Promise.all(promises);
-
-    promises = [];
     const monPlanDto = await this.map.many(plans);
-    for (const plan of monPlanDto) {
-      promises.push(this.populateDescriptions(plan));
-    }
 
-    await Promise.all(promises);
+    await Promise.all(
+      monPlanDto.map(async plan => await this.populateDescriptions(plan)),
+    );
 
     monPlanDto.sort((a, b) => {
       if (a.name < b.name) {

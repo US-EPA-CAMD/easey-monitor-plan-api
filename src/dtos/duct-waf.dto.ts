@@ -207,10 +207,10 @@ export class DuctWafBaseDTO {
 
   @ApiProperty({
     description:
-      propertyMetadata.ductWafDTONumberOfTraversePointsWaf.description,
-    example: propertyMetadata.ductWafDTONumberOfTraversePointsWaf.example,
+      propertyMetadata.ductWafDTONumberOfTraversePointsWAF.description,
+    example: propertyMetadata.ductWafDTONumberOfTraversePointsWAF.example,
     name:
-      propertyMetadata.ductWafDTONumberOfTraversePointsWaf.fieldLabels.value,
+      propertyMetadata.ductWafDTONumberOfTraversePointsWAF.fieldLabels.value,
   })
   @IsOptional()
   @IsInt()

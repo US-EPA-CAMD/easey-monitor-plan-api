@@ -79,6 +79,13 @@ export class MonitorLocationWorkspaceService {
     trx?: EntityManager;
     userId?: string;
   }) {
+    if (unitId && stackPipeId) {
+      throw new EaseyException(
+        new Error('Unit ID and Stack Pipe ID cannot both be provided'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     if (!unitId && !stackPipeId) {
       throw new EaseyException(
         new Error('One of Unit ID or Stack Pipe ID is required'),

@@ -124,6 +124,7 @@ const mockMonitorPlanCommentService = () => ({
 });
 
 const mockUnitStackConfigService = () => ({
+  getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
   importUnitStacks: jest.fn().mockResolvedValue([]),
 });
 
@@ -204,6 +205,7 @@ const mockPctQualificationRepo = () => ({
   find: jest.fn().mockResolvedValue([new PCTQualification()]),
 });
 const mockUnitStackConfigRepo = () => ({
+  getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
   getUnitStackConfigsByLocationIds: jest.fn(),
 });
 const mockReportingFreqRepo = () => ({
@@ -213,7 +215,9 @@ const mockReportingFreqRepo = () => ({
   findBy: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
 });
 
-const mockUscMap = () => ({});
+const mockUscMap = () => ({
+  many: jest.fn().mockResolvedValue([]),
+});
 const mockCountyCodeService = () => ({
   getCountyCode: jest.fn().mockResolvedValue(new CountyCodeDTO()),
 });
@@ -242,14 +246,19 @@ const queryBuilderMock = {
 };
 const entityManagerMock = {
   connection: {
-    createQueryRunner: jest
-      .fn()
-      .mockImplementation(() => ({ manager: entityManagerMock })),
+    createQueryRunner: jest.fn().mockImplementation(() => queryRunnerMock),
   },
   createQueryBuilder: () => queryBuilderMock,
   transaction: jest.fn(
     async passedFunction => await passedFunction(entityManagerMock),
   ),
+};
+const queryRunnerMock = {
+  manager: entityManagerMock,
+  commitTransaction: jest.fn(),
+  release: jest.fn(),
+  rollbackTransaction: jest.fn(),
+  startTransaction: jest.fn(),
 };
 
 describe('Monitor Plan Service', () => {
@@ -434,14 +443,11 @@ describe('Monitor Plan Service', () => {
       jest
         .spyOn(service as any, 'calculateReportPeriodRangeFromLocations')
         .mockResolvedValue([1, 1]);
-      jest
-        .spyOn(service as any, 'getMonitorPlanUnitStackConfigs')
-        .mockResolvedValue([]);
       jest.spyOn(service, 'updateEndReportingPeriod').mockResolvedValue(DTO);
       const result = await service.importMpPlan(UPDATE_DTO, USER_ID);
       expect(result).toEqual({
         endedPlans: [DTO],
-        newPlan: DTO,
+        newPlan: null,
         unchangedPlans: [],
       });
     });
@@ -455,9 +461,6 @@ describe('Monitor Plan Service', () => {
 
   describe('getMonitorPlan', () => {
     it('Return a MonitorPlanDTO mapped from an Entity retrieved by ID', async () => {
-      jest
-        .spyOn(service as any, 'getMonitorPlanUnitStackConfigs')
-        .mockResolvedValue([]);
       const result = await service.getMonitorPlan(MON_PLAN_ID);
       expect(result).toEqual(DTO);
     });

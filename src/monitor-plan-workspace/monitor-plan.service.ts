@@ -367,7 +367,10 @@ export class MonitorPlanWorkspaceService {
     const periodFreqAssoc: ProgramPeriod[] = [];
     let curYear = beginYear;
     let curQuarter = beginQuarter;
-    while (curYear <= endYear && curQuarter <= endQuarter) {
+    while (
+      curYear < endYear ||
+      (curYear === endYear && curQuarter <= endQuarter)
+    ) {
       if (
         annualRanges.some(
           r => r.begin.year <= curYear && curYear <= (r.end?.year ?? Infinity),
@@ -501,20 +504,12 @@ export class MonitorPlanWorkspaceService {
       })
     ).evalStatusCodeDescription;
 
-    dto.unitStackConfigurationData = await this.getMonitorPlanUnitStackConfigs(
+    dto.unitStackConfigurationData = await this.unitStackService.getUnitStackConfigsByMonitorPlanId(
       monPlanId,
       trx,
     );
 
     return dto;
-  }
-
-  async getMonitorPlanUnitStackConfigs(monPlanId: string, trx?: EntityManager) {
-    const unitStackConfigs = await withTransaction(
-      this.repository,
-      trx,
-    ).getMonitorPlanUnitStackConfigs(monPlanId);
-    return await this.uscMap.many(unitStackConfigs);
   }
 
   async importMpPlan(
@@ -1016,8 +1011,8 @@ export class MonitorPlanWorkspaceService {
       }
 
       promises.push(
-        this.unitStackConfigRepository.getUnitStackConfigsByLocationIds(
-          locationIds,
+        this.unitStackConfigRepository.getUnitStackConfigsByMonitorPlanId(
+          planId,
         ),
       );
     }

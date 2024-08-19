@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, In, Repository } from 'typeorm';
 
+import { MonitorPlan as MonitorPlanWorkspace } from '../entities/workspace/monitor-plan.entity';
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 
 @Injectable()
@@ -41,6 +42,27 @@ export class UnitStackConfigurationWorkspaceRepository extends Repository<
       .where('usc.unitId = :unitRecordId', { unitRecordId })
       .andWhere('usc.stackPipeId = :stackPipeRecordId', { stackPipeRecordId })
       .getOne();
+  }
+
+  async getUnitStackConfigsByMonitorPlanId(planId: string) {
+    return this.createQueryBuilder('usc')
+      .innerJoinAndSelect('usc.unit', 'u')
+      .innerJoinAndSelect('usc.stackPipe', 'sp')
+      .innerJoin('u.location', 'u_ml')
+      .innerJoin('sp.location', 'sp_ml')
+      .innerJoin('u_ml.plans', 'u_mp')
+      .innerJoin('sp_ml.plans', 'sp_mp')
+      .innerJoin('u_mp.beginReportingPeriod', 'u_brp')
+      .innerJoin('sp_mp.beginReportingPeriod', 'sp_brp')
+      .leftJoin('u_mp.endReportingPeriod', 'u_erp')
+      .leftJoin('sp_mp.endReportingPeriod', 'sp_erp')
+      .where('u_mp.id = :planId', { planId })
+      .andWhere('sp_mp.id = :planId', { planId })
+      .andWhere('usc.beginDate <= u_brp.endDate')
+      .andWhere('usc.beginDate <= sp_brp.endDate')
+      .andWhere('(usc.endDate IS NULL OR usc.endDate >= u_erp.beginDate)')
+      .andWhere('(usc.endDate IS NULL OR usc.endDate >= sp_erp.beginDate)')
+      .getMany();
   }
 
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {

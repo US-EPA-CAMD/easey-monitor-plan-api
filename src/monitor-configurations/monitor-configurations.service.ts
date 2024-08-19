@@ -18,14 +18,6 @@ export class MonitorConfigurationsService {
     private readonly map: MonitorPlanMap,
   ) {}
 
-  async populateStackConfigs(plan: MonitorPlan) {
-    const unitStackConfigs = await this.monitorPlanRepository.getMonitorPlanUnitStackConfigs(
-      plan.id,
-    );
-
-    plan.unitStackConfigurations = unitStackConfigs;
-  }
-
   async getConfigurations(
     orisCodes: number[],
     monPlanIds: string[] = [],
@@ -57,13 +49,13 @@ export class MonitorConfigurationsService {
       });
     }
 
-    const promises = [];
-
-    for (const plan of plans) {
-      promises.push(this.populateStackConfigs(plan));
-    }
-
-    await Promise.all(promises);
+    await Promise.all(
+      plans.map(async plan => {
+        plan.unitStackConfigurations = await this.uscRepository.getUnitStackConfigsByMonitorPlanId(
+          plan.id,
+        );
+      }),
+    );
 
     const dto = await this.map.many(plans);
 

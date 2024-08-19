@@ -32,6 +32,17 @@ export class UnitStackConfigurationWorkspaceService {
     return this.map.many(results);
   }
 
+  async getUnitStackConfigsByMonitorPlanId(
+    monitorPlanId: string,
+    trx?: EntityManager,
+  ) {
+    const results = await withTransaction(
+      this.repository,
+      trx,
+    ).getUnitStackConfigsByMonitorPlanId(monitorPlanId);
+    return await this.map.many(results);
+  }
+
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
     return await this.repository.getUnitStackConfigsByLocationIds(locationIds);
   }
