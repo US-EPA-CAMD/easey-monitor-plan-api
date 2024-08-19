@@ -89,7 +89,7 @@ export class MonitorPlanWorkspaceController {
   ): Promise<any> {
     await this.mpChecksService.runChecks(plan);
     await this.importChecksService.runImportChecks(plan);
-    return await this.service.importMpPlan(plan, user.userId, true); // XXX: Use draft parameter when done testing
+    return await this.service.importMpPlan(plan, user.userId, draft);
   }
 
   @Delete(':planId/revert')
