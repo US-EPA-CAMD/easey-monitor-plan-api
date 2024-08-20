@@ -19,7 +19,7 @@ export class DuctWafMap extends BaseMap<
       wafMethodCode: entity.wafMethodCode,
       wafValue: entity.wafValue,
       numberOfTestRuns: entity.numberOfTestRuns,
-      numberOfTraversePointsWaf: entity.numberOfTraversePointsWaf,
+      numberOfTraversePointsWAF: entity.numberOfTraversePointsWaf,
       numberOfTestPorts: entity.numberOfTestPorts,
       numberOfTraversePointsRef: entity.numberOfTraversePointsRef,
       ductWidth: entity.ductWidth,

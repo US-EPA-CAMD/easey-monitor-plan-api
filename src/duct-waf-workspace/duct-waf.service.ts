@@ -55,7 +55,7 @@ export class DuctWafWorkspaceService {
       wafMethodCode: payload.wafMethodCode,
       wafValue: payload.wafValue,
       numberOfTestRuns: payload.numberOfTestRuns,
-      numberOfTraversePointsWaf: payload.numberOfTraversePointsWaf,
+      numberOfTraversePointsWaf: payload.numberOfTraversePointsWAF,
       numberOfTestPorts: payload.numberOfTestPorts,
       numberOfTraversePointsRef: payload.numberOfTraversePointsRef,
       ductWidth: payload.ductWidth,
@@ -91,7 +91,7 @@ export class DuctWafWorkspaceService {
     ductWaf.wafMethodCode = payload.wafMethodCode;
     ductWaf.wafValue = payload.wafValue;
     ductWaf.numberOfTestRuns = payload.numberOfTestRuns;
-    ductWaf.numberOfTraversePointsWaf = payload.numberOfTraversePointsWaf;
+    ductWaf.numberOfTraversePointsWaf = payload.numberOfTraversePointsWAF;
     ductWaf.numberOfTestPorts = payload.numberOfTestPorts;
     ductWaf.numberOfTraversePointsRef = payload.numberOfTraversePointsRef;
     ductWaf.ductWidth = payload.ductWidth;
