@@ -76,8 +76,6 @@ export class CheckOutController {
     @User() user: CurrentUser,
   ) {
     const result = await this.ucoService.getCheckedOutConfiguration(planId);
-    if (result && (await this.ucoService.checkInConfiguration(planId))) {
-      return
-    }
+    if (result) await this.ucoService.checkInConfiguration(planId)
   }
 }
