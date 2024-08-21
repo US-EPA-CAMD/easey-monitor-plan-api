@@ -4,6 +4,7 @@ import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { PlantRepository } from '../plant/plant.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
 import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
@@ -15,8 +16,18 @@ export class MonitorConfigurationsService {
     private readonly monitorPlanRepository: MonitorPlanRepository,
     private readonly plantRepository: PlantRepository,
     private readonly uscRepository: UnitStackConfigurationRepository,
+    private readonly monitorLocationRepository: MonitorLocationRepository,
     private readonly map: MonitorPlanMap,
   ) {}
+
+  async populateLocationsAndStackConfigs(plan: MonitorPlan) {
+    const [locations, unitStackConfigurations] = await Promise.all([
+      this.monitorLocationRepository.getMonitorLocationsByPlanId(plan.id),
+      this.uscRepository.getUnitStackConfigsByMonitorPlanId(plan.id),
+    ]);
+    plan.locations = locations;
+    plan.unitStackConfigurations = unitStackConfigurations;
+  }
 
   async getConfigurations(
     orisCodes: number[],
@@ -27,12 +38,6 @@ export class MonitorConfigurationsService {
       beginReportingPeriod: true,
       endReportingPeriod: true,
       plant: true,
-      locations: {
-        unit: {
-          opStatuses: true,
-        },
-        stackPipe: true,
-      },
     };
     if (monPlanIds.length > 0) {
       plans = await this.monitorPlanRepository.find({
@@ -50,11 +55,7 @@ export class MonitorConfigurationsService {
     }
 
     await Promise.all(
-      plans.map(async plan => {
-        plan.unitStackConfigurations = await this.uscRepository.getUnitStackConfigsByMonitorPlanId(
-          plan.id,
-        );
-      }),
+      plans.map(async plan => this.populateLocationsAndStackConfigs(plan)),
     );
 
     const dto = await this.map.many(plans);

@@ -4,6 +4,7 @@ import { In } from 'typeorm';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanConfigurationDTO } from '../dtos/monitor-plan-configuration.dto';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 import { PlantWorkspaceRepository } from '../plant-workspace/plant.repository';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
@@ -17,6 +18,7 @@ export class MonitorConfigurationsWorkspaceService {
     private readonly map: MonitorPlanConfigurationMap,
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
+    private readonly monitorLocationWorkspaceRepository: MonitorLocationWorkspaceRepository,
     private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
     private readonly plantWorkspaceRepository: PlantWorkspaceRepository,
     private readonly uscWorkspaceRepository: UnitStackConfigurationWorkspaceRepository,
@@ -35,6 +37,16 @@ export class MonitorConfigurationsWorkspaceService {
       })
     ).subAvailabilityCodeDescription;
   }
+  async populateLocationsAndStackConfigs(plan: MonitorPlan) {
+    const [locations, unitStackConfigurations] = await Promise.all([
+      this.monitorLocationWorkspaceRepository.getMonitorLocationsByPlanId(
+        plan.id,
+      ),
+      this.uscWorkspaceRepository.getUnitStackConfigsByMonitorPlanId(plan.id),
+    ]);
+    plan.locations = locations;
+    plan.unitStackConfigurations = unitStackConfigurations;
+  }
 
   async getConfigurations(
     orisCodes: number[],
@@ -45,12 +57,6 @@ export class MonitorConfigurationsWorkspaceService {
       beginReportingPeriod: true,
       endReportingPeriod: true,
       plant: true,
-      locations: {
-        unit: {
-          opStatuses: true,
-        },
-        stackPipe: true,
-      },
     };
     if (monPlanIds.length > 0) {
       plans = await this.monitorPlanWorkspaceRepository.find({
@@ -68,11 +74,7 @@ export class MonitorConfigurationsWorkspaceService {
     }
 
     await Promise.all(
-      plans.map(async plan => {
-        plan.unitStackConfigurations = await this.uscWorkspaceRepository.getUnitStackConfigsByMonitorPlanId(
-          plan.id,
-        );
-      }),
+      plans.map(async plan => this.populateLocationsAndStackConfigs(plan)),
     );
 
     const monPlanDto = await this.map.many(plans);
