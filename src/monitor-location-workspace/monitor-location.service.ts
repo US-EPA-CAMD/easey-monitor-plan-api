@@ -140,6 +140,7 @@ export class MonitorLocationWorkspaceService {
   ): Promise<MonitorLocationDTO> {
     const result = await withTransaction(this.repository, trx).findOne({
       relations: {
+        methods: true,
         stackPipe: true,
         unit: {
           opStatuses: true,
@@ -172,6 +173,19 @@ export class MonitorLocationWorkspaceService {
       create: false,
       trx,
     });
+  }
+
+  async getLocationsByUnitStackPipeIds(
+    orisCode: number,
+    unitIds: string[],
+    stackPipeIds: string[],
+    trx?: EntityManager,
+  ) {
+    const locations = await withTransaction(
+      this.repository,
+      trx,
+    ).getLocationsByUnitStackPipeIds(orisCode, unitIds, stackPipeIds);
+    return this.map.many(locations);
   }
 
   async getOrCreateLocationRecord(args: {

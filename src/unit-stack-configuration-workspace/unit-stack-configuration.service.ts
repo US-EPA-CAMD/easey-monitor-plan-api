@@ -32,6 +32,17 @@ export class UnitStackConfigurationWorkspaceService {
     return this.map.many(results);
   }
 
+  async getUnitStackConfigurationsByFacId(facId: number) {
+    const results = await this.repository.find({
+      relations: {
+        stackPipe: true,
+        unit: true,
+      },
+      where: [{ unit: { facId } }, { stackPipe: { facId } }],
+    });
+    return this.map.many(results);
+  }
+
   async getUnitStackConfigsByMonitorPlanId(
     monitorPlanId: string,
     trx?: EntityManager,

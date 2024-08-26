@@ -1,17 +1,20 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { EntityManager, In } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager, In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
-import { areSetsEqual, getEarliestDate, withTransaction } from '../utils';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorPlanReportingFreqDTO } from '../dtos/monitor-plan-reporting-freq.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { UnitDTO } from '../dtos/unit.dto';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
+import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
@@ -28,9 +31,9 @@ import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/m
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
 import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
+import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
-import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
 import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
@@ -43,13 +46,12 @@ import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
 import { UnitProgramRepository } from '../unit-program/unit-program.repository';
-import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
+import { areSetsEqual, getEarliestDate, withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
-import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
-import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 @Injectable()
 export class MonitorPlanWorkspaceService {
@@ -100,8 +102,29 @@ export class MonitorPlanWorkspaceService {
     this.logger.setContext('MonitorPlanWorkspaceService');
   }
 
+  private workingPlanLocationsMatch(
+    a: Array<UnitDTO | UnitStackConfigurationDTO>,
+    b: Array<UnitDTO | UnitStackConfigurationDTO>,
+  ) {
+    const {
+      unitIds: unitIdsA,
+      stackPipeIds: stackPipeIdsA,
+    } = this.getItemLocationIds(a);
+    const {
+      unitIds: unitIdsB,
+      stackPipeIds: stackPipeIdsB,
+    } = this.getItemLocationIds(b);
+
+    return (
+      unitIdsA.size === unitIdsB.size &&
+      [...unitIdsA].every(id => unitIdsB.has(id)) &&
+      stackPipeIdsA.size === stackPipeIdsB.size &&
+      [...stackPipeIdsA].every(id => stackPipeIdsB.has(id))
+    );
+  }
+
   private async calculateReportPeriodRangeFromLocations(
-    monitorLocations: MonitorLocationDTO[],
+    units: UnitDTO[],
     unitStackConfigs: UnitStackConfigurationDTO[],
     trx?: EntityManager,
   ) {
@@ -109,12 +132,12 @@ export class MonitorPlanWorkspaceService {
     let endDate: Date;
 
     if (unitStackConfigs.length === 0) {
-      if (monitorLocations.length === 0) {
+      if (units.length === 0) {
         throw new EaseyException(
           new Error('A monitor plan must have at least one location'),
           HttpStatus.BAD_REQUEST,
         );
-      } else if (monitorLocations.length > 1) {
+      } else if (units.length > 1) {
         throw new EaseyException(
           new Error(
             'Cannot have multiple locations without unit stack configurations',
@@ -123,9 +146,9 @@ export class MonitorPlanWorkspaceService {
         );
       } else {
         // Single location without unit stack configurations.
-        const location = monitorLocations[0];
+        const unit = units[0];
 
-        if (!location?.unitId) {
+        if (!unit) {
           throw new EaseyException(
             new Error(
               'The location for a monitor plan with a single location must have a unit',
@@ -134,36 +157,8 @@ export class MonitorPlanWorkspaceService {
           );
         }
 
-        // Get the begin date from the earliest monitoring method associated with the unit.
-        if (location.monitoringMethodData.length === 0) {
-          this.logger.debug(
-            `There is no method associated with the unit ${location.unitId}`,
-          );
-          beginDate = new Date();
-        } else {
-          const beginDateEpoch = Math.min(
-            ...location.monitoringMethodData.map(m =>
-              new Date(m.beginDate).getTime(),
-            ),
-          );
-          beginDate = new Date(beginDateEpoch);
-        }
-
-        // Get the end date from the day before the earliest retire date of the unit.
-        const locationRecord = await withTransaction(
-          this.locationRepository,
-          trx,
-        ).findOneBy({
-          id: location.id,
-        });
-        const unitRetireDateEpoch = Math.min(
-          ...locationRecord.unit.opStatuses
-            .filter(s => s.opStatusCode === 'RET')
-            .map(s => new Date(s.beginDate).getTime()),
-        );
-        endDate = Number.isFinite(unitRetireDateEpoch)
-          ? new Date(unitRetireDateEpoch - 24 * 60 * 60 * 1000) // Retire date in epoch milliseconds minus 1 day.
-          : null;
+        beginDate = unit.beginDate;
+        endDate = unit.endDate;
       }
     } else {
       // Get the begin and end dates from the unit stack configurations.
@@ -199,6 +194,52 @@ export class MonitorPlanWorkspaceService {
       endDate && (await reportingPeriodRepository.getByDate(endDate)).id;
 
     return [beginReportPeriodId, endReportPeriodId];
+  }
+
+  private checkLocationsIntersect(
+    a: WorkingConfiguration,
+    b: WorkingConfiguration,
+  ) {
+    const {
+      unitIds: unitIdsA,
+      stackPipeIds: stackPipeIdsA,
+    } = this.getItemLocationIds(a.items);
+    const {
+      unitIds: unitIdsB,
+      stackPipeIds: stackPipeIdsB,
+    } = this.getItemLocationIds(b.items);
+
+    for (const unitId of unitIdsA) {
+      if (unitIdsB.has(unitId)) return true;
+    }
+
+    for (const stackPipeId of stackPipeIdsA) {
+      if (stackPipeIdsB.has(stackPipeId)) return true;
+    }
+
+    return false;
+  }
+
+  private checkLocationsMatch(
+    locationIdsA: { unitIds: Set<string>; stackPipeIds: Set<string> },
+    locationIdsB: { unitIds: Set<string>; stackPipeIds: Set<string> },
+  ) {
+    return (
+      areSetsEqual(locationIdsA.unitIds, locationIdsB.unitIds) &&
+      areSetsEqual(locationIdsA.stackPipeIds, locationIdsB.stackPipeIds)
+    );
+  }
+
+  private checkPeriodsIntersect(
+    a: WorkingConfiguration,
+    b: WorkingConfiguration,
+  ) {
+    if (a.beginYear > b.endYear || a.endYear < b.beginYear) return false;
+    if (a.beginYear === b.endYear && a.beginQuarter > b.endQuarter)
+      return false;
+    if (a.endYear === b.beginYear && a.endQuarter < b.beginQuarter)
+      return false;
+    return true;
   }
 
   async updatePlanPeriodOnMethodUpdate(
@@ -455,7 +496,7 @@ export class MonitorPlanWorkspaceService {
     });
   }
 
-  private extractUnitAndStackPipeIds(
+  private extractUnitAndStackPipeIdsFromPlan(
     plan: MonitorPlanDTO | UpdateMonitorPlanDTO,
   ) {
     return ([
@@ -469,6 +510,441 @@ export class MonitorPlanWorkspaceService {
       },
       { unitIds: new Set<string>(), stackPipeIds: new Set<string>() },
     );
+  }
+
+  private getItemLocationIds(
+    items: Array<UnitDTO | UnitStackConfigurationDTO>,
+  ) {
+    const unitIds = new Set(
+      items
+        .map(item => item.unitId)
+        .filter(item => item !== null && item !== undefined),
+    );
+    const stackPipeIds = new Set(
+      items
+        .map(item => {
+          if (item instanceof UnitDTO) {
+            return null;
+          } else {
+            return item.stackPipeId;
+          }
+        })
+        .filter(item => item !== null && item !== undefined),
+    );
+
+    return { unitIds, stackPipeIds };
+  }
+
+  private getMergedConfiguration(
+    a: WorkingConfiguration,
+    b: WorkingConfiguration,
+  ) {
+    const combinedItems = [...a.items, ...b.items];
+
+    if (a.beginYear === b.beginYear && a.beginQuarter === b.beginQuarter) {
+      if (a.endYear === b.endYear && a.endQuarter === b.endQuarter) {
+        return {
+          id: uuid(),
+          items: combinedItems,
+          beginYear: a.beginYear,
+          beginQuarter: a.beginQuarter,
+          endYear: a.endYear,
+          endQuarter: a.endQuarter,
+        };
+      }
+
+      if (
+        a.endYear < b.endYear ||
+        (a.endYear === b.endYear && a.endQuarter < b.endQuarter)
+      ) {
+        if (this.workingPlanLocationsMatch(a.items, b.items)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: a.beginYear,
+            beginQuarter: a.beginQuarter,
+            endYear: b.endYear,
+            endQuarter: b.endQuarter,
+          };
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: a.endQuarter === 4 ? a.endYear + 1 : a.endYear,
+              beginQuarter: a.endQuarter === 4 ? 1 : a.endQuarter + 1,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+          ];
+        }
+      }
+
+      if (
+        a.endYear > b.endYear ||
+        (a.endYear === b.endYear && a.endQuarter > b.endQuarter)
+      ) {
+        if (this.workingPlanLocationsMatch(a.items, b.items)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: a.beginYear,
+            beginQuarter: a.beginQuarter,
+            endYear: a.endYear,
+            endQuarter: a.endQuarter,
+          };
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: b.endQuarter === 4 ? b.endYear + 1 : b.endYear,
+              beginQuarter: b.endQuarter === 4 ? 1 : b.endQuarter + 1,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+          ];
+        }
+      }
+    }
+
+    if (
+      a.beginYear < b.beginYear ||
+      (a.beginYear === b.beginYear && a.beginQuarter < b.beginQuarter)
+    ) {
+      if (a.endYear === b.endYear && a.endQuarter === b.endQuarter) {
+        if (this.workingPlanLocationsMatch(a.items, b.items)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: a.beginYear,
+            beginQuarter: a.beginQuarter,
+            endYear: a.endYear,
+            endQuarter: a.endQuarter,
+          };
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: b.beginQuarter === 1 ? b.beginYear - 1 : b.beginYear,
+              endQuarter: b.beginQuarter === 1 ? 4 : b.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+          ];
+        }
+      }
+
+      if (
+        a.endYear < b.endYear ||
+        (a.endYear === b.endYear && a.endQuarter < b.endQuarter)
+      ) {
+        if (this.workingPlanLocationsMatch(a.items, b.items)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: a.beginYear,
+            beginQuarter: a.beginQuarter,
+            endYear: b.endYear,
+            endQuarter: b.endQuarter,
+          };
+        } else if (this.workingPlanLocationsMatch(a.items, combinedItems)) {
+          return [
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: a.endQuarter === 4 ? a.endYear + 1 : a.endYear,
+              beginQuarter: a.endQuarter === 4 ? 1 : a.endQuarter + 1,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+          ];
+        } else if (this.workingPlanLocationsMatch(b.items, combinedItems)) {
+          return [
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: b.beginQuarter === 1 ? b.beginYear - 1 : b.beginYear,
+              endQuarter: b.beginQuarter === 1 ? 4 : b.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+          ];
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: b.beginQuarter === 1 ? b.beginYear - 1 : b.beginYear,
+              endQuarter: b.beginQuarter === 1 ? 4 : b.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: a.endQuarter === 4 ? a.endYear + 1 : a.endYear,
+              beginQuarter: a.endQuarter === 4 ? 1 : a.endQuarter + 1,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+          ];
+        }
+      }
+
+      if (
+        a.endYear > b.endYear ||
+        (a.endYear === b.endYear && a.endQuarter > b.endQuarter)
+      ) {
+        if (this.workingPlanLocationsMatch(a.items, combinedItems)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: a.beginYear,
+            beginQuarter: a.beginQuarter,
+            endYear: b.endYear,
+            endQuarter: b.endQuarter,
+          };
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: b.beginQuarter === 1 ? b.beginYear - 1 : b.beginYear,
+              endQuarter: b.beginQuarter === 1 ? 4 : b.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: b.endQuarter === 4 ? b.endYear + 1 : b.endYear,
+              beginQuarter: b.endQuarter === 4 ? 1 : b.endQuarter + 1,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+          ];
+        }
+      }
+    }
+
+    if (
+      a.beginYear > b.beginYear ||
+      (a.beginYear === b.beginYear && a.beginQuarter > b.beginQuarter)
+    ) {
+      if (a.endYear === b.endYear && a.endQuarter === b.endQuarter) {
+        if (this.workingPlanLocationsMatch(a.items, b.items)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: b.beginYear,
+            beginQuarter: b.beginQuarter,
+            endYear: b.endYear,
+            endQuarter: b.endQuarter,
+          };
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: a.beginQuarter === 1 ? a.beginYear - 1 : a.beginYear,
+              endQuarter: a.beginQuarter === 1 ? 4 : a.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+          ];
+        }
+      }
+
+      if (
+        a.endYear < b.endYear ||
+        (a.endYear === b.endYear && a.endQuarter < b.endQuarter)
+      ) {
+        if (this.workingPlanLocationsMatch(b.items, combinedItems)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: b.beginYear,
+            beginQuarter: b.beginQuarter,
+            endYear: b.endYear,
+            endQuarter: b.endQuarter,
+          };
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: a.beginQuarter === 1 ? a.beginYear - 1 : a.beginYear,
+              endQuarter: a.beginQuarter === 1 ? 4 : a.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: a.endQuarter === 4 ? a.endYear + 1 : a.endYear,
+              beginQuarter: a.endQuarter === 4 ? 1 : a.endQuarter + 1,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+          ];
+        }
+      }
+
+      if (
+        a.endYear > b.endYear ||
+        (a.endYear === b.endYear && a.endQuarter > b.endQuarter)
+      ) {
+        if (this.workingPlanLocationsMatch(a.items, b.items)) {
+          return {
+            id: uuid(),
+            items: combinedItems,
+            beginYear: b.beginYear,
+            beginQuarter: b.beginQuarter,
+            endYear: a.endYear,
+            endQuarter: a.endQuarter,
+          };
+        } else if (this.workingPlanLocationsMatch(b.items, combinedItems)) {
+          return [
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: b.endQuarter === 4 ? b.endYear + 1 : b.endYear,
+              beginQuarter: b.endQuarter === 4 ? 1 : b.endQuarter + 1,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+          ];
+        } else if (this.workingPlanLocationsMatch(a.items, combinedItems)) {
+          return [
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: a.beginQuarter === 1 ? a.beginYear - 1 : a.beginYear,
+              endQuarter: a.beginQuarter === 1 ? 4 : a.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+          ];
+        } else {
+          return [
+            {
+              id: uuid(),
+              items: b.items,
+              beginYear: b.beginYear,
+              beginQuarter: b.beginQuarter,
+              endYear: a.beginQuarter === 1 ? a.beginYear - 1 : a.beginYear,
+              endQuarter: a.beginQuarter === 1 ? 4 : a.beginQuarter - 1,
+            },
+            {
+              id: uuid(),
+              items: combinedItems,
+              beginYear: a.beginYear,
+              beginQuarter: a.beginQuarter,
+              endYear: b.endYear,
+              endQuarter: b.endQuarter,
+            },
+            {
+              id: uuid(),
+              items: a.items,
+              beginYear: b.endQuarter === 4 ? b.endYear + 1 : b.endYear,
+              beginQuarter: b.endQuarter === 4 ? 1 : b.endQuarter + 1,
+              endYear: a.endYear,
+              endQuarter: a.endQuarter,
+            },
+          ];
+        }
+      }
+    }
   }
 
   async getMonitorPlan(
@@ -512,8 +988,51 @@ export class MonitorPlanWorkspaceService {
     return dto;
   }
 
+  private getYearAndQuarterFromDate(date: Date) {
+    if (!date) return [Infinity, Infinity];
+
+    return [date.getUTCFullYear(), Math.floor(date.getUTCMonth() / 3) + 1];
+  }
+
+  private groupUnitsAndUnitStackConfigsByPeriodAndUnit(
+    units: UnitDTO[],
+    unitStackConfigs: UnitStackConfigurationDTO[],
+  ): WorkingConfiguration[] {
+    return [...units, ...unitStackConfigs].reduce((acc, item) => {
+      const [beginYear, beginQuarter] = this.getYearAndQuarterFromDate(
+        item.beginDate,
+      );
+      const [endYear, endQuarter] = this.getYearAndQuarterFromDate(
+        item.endDate,
+      );
+      for (const grouping of acc) {
+        if (
+          grouping.items.find(
+            (i: UnitDTO | UnitStackConfigurationDTO) =>
+              i.unitId === item.unitId,
+          ) &&
+          grouping.beginYear === beginYear &&
+          grouping.beginQuarter === beginQuarter &&
+          grouping.endYear === endYear &&
+          grouping.endQuarter === endQuarter
+        ) {
+          grouping.items.push(item);
+          return acc;
+        }
+      }
+      return acc.concat({
+        id: uuid(),
+        beginYear,
+        beginQuarter,
+        endYear,
+        endQuarter,
+        items: [item],
+      });
+    }, []);
+  }
+
   async importMpPlan(
-    targetPlanPayload: UpdateMonitorPlanDTO,
+    payload: UpdateMonitorPlanDTO,
     userId: string,
     draft = false,
   ) {
@@ -524,27 +1043,14 @@ export class MonitorPlanWorkspaceService {
     }
 
     const facilityId = await this.plantService.getFacIdFromOris(
-      targetPlanPayload.orisCode,
+      payload.orisCode,
     );
 
-    // Get a representation of the active plans.
-    const activePlans = await this.matchToActivePlans(
-      targetPlanPayload,
-      facilityId,
-    );
-    this.logger.debug(
-      'Associated active plans',
-      activePlans.map(p => p.id),
-    );
-
-    const endedPlans: MonitorPlanDTO[] = [];
-    let newPlan: MonitorPlanDTO = null;
-    const unchangedPlans: MonitorPlanDTO[] = [];
-
-    // Used for applying the payloads monitor plan comments.
-    let targetPlan: MonitorPlanDTO = null;
-
-    let shouldCreateNewPlan = false;
+    let result: {
+      endedPlans: MonitorPlanDTO[];
+      newPlans: MonitorPlanDTO[];
+      unchangedPlans: MonitorPlanDTO[];
+    } = { endedPlans: [], newPlans: [], unchangedPlans: [] };
 
     // Start a transaction.
     const queryRunner = this.entityManager.connection.createQueryRunner();
@@ -552,19 +1058,22 @@ export class MonitorPlanWorkspaceService {
 
     try {
       const trx = queryRunner.manager;
+
       /* MONITOR LOCATION MERGE LOGIC */
+
       this.logger.log('Importing monitor locations');
-      const planMonitoringLocationData = await this.monitorLocationService.importMonitorLocations(
-        targetPlanPayload,
+      await this.monitorLocationService.importMonitorLocations(
+        payload,
         facilityId,
         userId,
         trx,
       );
 
       /* UNIT STACK CONFIGURATION MERGE LOGIC */
+
       this.logger.log('Importing unit stack configurations');
-      const planUnitStackConfigurationData = await this.unitStackService.importUnitStacks(
-        targetPlanPayload,
+      await this.unitStackService.importUnitStacks(
+        payload,
         facilityId,
         userId,
         trx,
@@ -572,174 +1081,47 @@ export class MonitorPlanWorkspaceService {
 
       /* MONITOR PLAN MERGE LOGIC */
 
-      // Calculate the report period range from the update monitor plan.
-      const [
-        payloadBeginReportPeriodId,
-        payloadEndReportPeriodId,
-      ] = await this.calculateReportPeriodRangeFromLocations(
-        planMonitoringLocationData,
-        planUnitStackConfigurationData,
-        trx,
+      // Calculate a list of working plans from the database via transaction state.
+      const workingPlans = this.mergePartialConfigurations(
+        this.groupUnitsAndUnitStackConfigsByPeriodAndUnit(
+          await this.unitWorkspaceService.getUnitsByFacId(facilityId),
+          await this.unitStackService.getUnitStackConfigurationsByFacId(
+            facilityId,
+          ),
+        ),
       );
 
-      let maxActivePlansEndReportPeriod = null;
-
-      const reportingPeriodRepository = withTransaction(
-        this.reportingPeriodRepository,
-        trx,
-      );
-
-      // If there are no associated active plans, simply create a new plan.
-      if (activePlans.length === 0) {
-        // Match to an existing inactive plan in the database. If found, add the supplied plan to the unchanged plans. Otherwise, create a new plan.
-        const matchedPlan = await this.matchToPlanByLocationsAndPeriod(
-          targetPlanPayload,
-          payloadBeginReportPeriodId,
-          payloadEndReportPeriodId,
-          trx,
-        );
-        if (matchedPlan) {
-          targetPlan = matchedPlan;
-          unchangedPlans.push(matchedPlan);
-        } else {
-          shouldCreateNewPlan = true;
-        }
-      } else {
+      // Compare each working plan to the previous database state and update accordingly.
+      result = (
         await Promise.all(
-          activePlans.map(async activePlan => {
-            // The active plan with the updates that have been applied so far in the transaction.
-            const pendingActivePlan = await this.getMonitorPlan(activePlan.id, {
-              full: true,
+          workingPlans.map(async workingPlan =>
+            this.syncMonitorPlan(
+              workingPlan,
+              payload.orisCode,
+              facilityId,
+              userId,
               trx,
-            });
-            // Compare the active plan locations against the imported plan locations.
-            const locationsMatch = this.checkLocationsMatch(
-              pendingActivePlan,
-              targetPlanPayload,
-            );
-
-            if (locationsMatch) {
-              if (
-                pendingActivePlan.endReportPeriodId !== payloadEndReportPeriodId
-              ) {
-                // If the locations match but the end report period differs, update the end report period of the active plan.
-                endedPlans.push(
-                  await this.updateEndReportingPeriod(
-                    pendingActivePlan,
-                    payloadEndReportPeriodId,
-                    userId,
-                    trx,
-                  ),
-                );
-                targetPlan = endedPlans[endedPlans.length - 1];
-              } else {
-                // The active plan is unchanged.
-                unchangedPlans.push(pendingActivePlan);
-                targetPlan = pendingActivePlan;
-              }
-            } else {
-              // If the locations differ, create a new plan and update the end report period of the previously active plan.
-
-              // Get the USC end periods associated with the active plan.
-              const earliestUscEndDate = pendingActivePlan.unitStackConfigurationData
-                .map(usc => usc.endDate)
-                .reduce(getEarliestDate, null);
-
-              // Get the unit end periods associated with the active plan.
-              const monPlanUnits = await this.unitWorkspaceService.getUnitsByMonPlanId(
-                pendingActivePlan.id,
-                trx,
-              );
-              const earliestUnitEndDate = monPlanUnits
-                .map(u => u.endDate)
-                .reduce(getEarliestDate, null);
-
-              // Calculate the max period from the USCs, or from the units if no USCs are associated with the active plan.
-              const newActivePlanEndReportPeriod = await reportingPeriodRepository.getByDate(
-                earliestUscEndDate || earliestUnitEndDate,
-              );
-
-              // Update the maxEndReportPeriodId to the max period if greater.
-              if (
-                !maxActivePlansEndReportPeriod ||
-                new Date(newActivePlanEndReportPeriod.endDate) >
-                  new Date(maxActivePlansEndReportPeriod.endDate)
-              ) {
-                maxActivePlansEndReportPeriod = newActivePlanEndReportPeriod;
-              }
-
-              shouldCreateNewPlan = true;
-              endedPlans.push(
-                await this.updateEndReportingPeriod(
-                  pendingActivePlan,
-                  newActivePlanEndReportPeriod.id,
-                  userId,
-                  trx,
-                ),
-              );
-            }
-          }),
-        );
-      }
-
-      // Create a new monitor plan.
-      if (shouldCreateNewPlan) {
-        const newUnitStackConfigurationData = planUnitStackConfigurationData.filter(
-          usc => usc.active,
-        );
-        const newMonitoringLocationData = planMonitoringLocationData.filter(
-          l => {
-            if (newUnitStackConfigurationData.length === 0) {
-              return l.unitId && l.active;
-            } else {
-              return (
-                (newUnitStackConfigurationData.some(
-                  ({ unitId }) => l.unitId === unitId,
-                ) ||
-                  newUnitStackConfigurationData.some(
-                    ({ stackPipeId }) => l.stackPipeId === stackPipeId,
-                  )) &&
-                l.active
-              );
-            }
-          },
-        );
-        const [
-          newBeginReportPeriodId,
-          newEndReportPeriodId,
-        ] = await this.calculateReportPeriodRangeFromLocations(
-          newMonitoringLocationData,
-          newUnitStackConfigurationData,
-          trx,
-        );
-        newPlan = await this.createMonitorPlan({
-          locations: newMonitoringLocationData,
-          facId: facilityId,
-          userId,
-          beginReportPeriodId: maxActivePlansEndReportPeriod
-            ? await reportingPeriodRepository.getNextReportingPeriodId(
-                maxActivePlansEndReportPeriod.id,
-              )
-            : newBeginReportPeriodId,
-          endReportPeriodId: newEndReportPeriodId,
-          trx,
-        });
-        targetPlan = newPlan;
-        this.logger.debug(
-          'Imported locations differ from the active plan, created new plan',
-          { mon_plan_id: newPlan.id },
-        );
-      }
+            ),
+          ),
+        )
+      ).reduce(
+        (acc, cur) => ({
+          endedPlans: acc.endedPlans.concat(cur.endedPlans),
+          newPlans: acc.newPlans.concat(cur.newPlan),
+          unchangedPlans: acc.unchangedPlans.concat(cur.unchangedPlans),
+        }),
+        result,
+      );
 
       /* MONITOR PLAN COMMENT MERGE LOGIC */
-      if (targetPlan) {
-        await this.monitorPlanCommentService.importComments(
+
+      // TODO: Figure out which plan to apply the comments to.
+      /*await this.monitorPlanCommentService.importComments(
           targetPlanPayload.monitoringPlanCommentData,
           userId,
           targetPlan.id,
           trx,
-        );
-      }
+        );*/
 
       if (draft) {
         // Rollback the transaction if the operation is a draft.
@@ -754,51 +1136,20 @@ export class MonitorPlanWorkspaceService {
       await queryRunner.release();
     }
 
-    const result = { endedPlans, newPlan, unchangedPlans };
     this.logger.debug('Monitor plan import result', {
-      endedPlans: endedPlans.map(p => p.id),
-      newPlan: newPlan?.id,
-      unchangedPlans: unchangedPlans.map(p => p.id),
+      endedPlans: result.endedPlans.map(p => p.id),
+      newPlan: result.newPlans.map(p => p.id),
+      unchangedPlans: result.unchangedPlans.map(p => p.id),
     });
     return result;
-  }
-
-  private checkLocationsMatch(
-    planA: MonitorPlanDTO | UpdateMonitorPlanDTO,
-    planB: MonitorPlanDTO | UpdateMonitorPlanDTO,
-  ) {
-    return Object.values(
-      [planA, planB].map(this.extractUnitAndStackPipeIds).reduce(
-        (acc, cur) => ({
-          unitIds: [...acc.unitIds, cur.unitIds],
-          stackPipeIds: [...acc.stackPipeIds, cur.stackPipeIds],
-        }),
-        { unitIds: [], stackPipeIds: [] },
-      ),
-    ).every(pair => areSetsEqual(pair[0], pair[1]));
   }
 
   async revertToOfficialRecord(monPlanId: string): Promise<void> {
     return this.repository.revertToOfficialRecord(monPlanId);
   }
 
-  private async matchToActivePlans(
-    plan: UpdateMonitorPlanDTO,
-    facilityId: number,
-    { trx, full = false }: { trx?: EntityManager; full?: boolean } = {},
-  ) {
-    const databaseLocIds = (
-      await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
-        plan,
-        facilityId,
-        plan.orisCode,
-        trx,
-      )
-    )
-      .filter(l => l !== null)
-      .map(l => l.id);
-
-    if (databaseLocIds.length === 0) {
+  private async matchToActivePlansByLocationIds(locationIds: string[]) {
+    if (locationIds.length === 0) {
       throw new EaseyException(
         new Error(
           'No location records found for the supplied plan representation',
@@ -808,10 +1159,9 @@ export class MonitorPlanWorkspaceService {
     }
 
     // Get all active plan records for the locations.
-    const repository = withTransaction(this.repository, trx);
     const activePlanRecordIds = (
       await Promise.all(
-        databaseLocIds.map(id => repository.getActivePlanByLocationId(id)),
+        locationIds.map(id => this.repository.getActivePlanByLocationId(id)),
       )
     )
       .filter(p => p !== null)
@@ -819,17 +1169,12 @@ export class MonitorPlanWorkspaceService {
       .filter((id, i, arr) => arr.indexOf(id) === i);
 
     return Promise.all(
-      activePlanRecordIds.map(id =>
-        this.getMonitorPlan(id, {
-          full,
-          trx,
-        }),
-      ),
+      activePlanRecordIds.map(id => this.getMonitorPlan(id, { full: true })),
     );
   }
 
   private async matchToPlanByLocationsAndPeriod(
-    payload: MonitorPlanDTO | UpdateMonitorPlanDTO,
+    locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> },
     beginReportPeriodId: number,
     endReportPeriodId: number,
     trx?: EntityManager,
@@ -848,9 +1193,258 @@ export class MonitorPlanWorkspaceService {
     if (!matchedPlan) return null;
 
     const matchedPlanDto = await this.map.one(matchedPlan);
-    return this.checkLocationsMatch(payload, matchedPlanDto)
+    return this.checkLocationsMatch(
+      locationIds,
+      this.extractUnitAndStackPipeIdsFromPlan(matchedPlanDto),
+    )
       ? matchedPlanDto
       : null;
+  }
+
+  private mergePartialConfigurations(
+    partialConfigurations: WorkingConfiguration[],
+  ): WorkingConfiguration[] {
+    if (partialConfigurations.length < 2) return partialConfigurations;
+
+    const currentConfig = partialConfigurations[0];
+    for (const compareConfig of partialConfigurations.slice(1)) {
+      if (
+        !this.checkLocationsIntersect(currentConfig, compareConfig) ||
+        !this.checkPeriodsIntersect(currentConfig, compareConfig)
+      ) {
+        continue;
+      }
+
+      const mergedConfig = this.getMergedConfiguration(
+        currentConfig,
+        compareConfig,
+      );
+      if (mergedConfig) {
+        return this.mergePartialConfigurations(
+          partialConfigurations
+            .filter(
+              pc => pc.id !== compareConfig.id && pc.id !== currentConfig.id,
+            )
+            .concat(mergedConfig),
+        );
+      }
+    }
+    return [
+      this.normalizeConfigurationPeriods(currentConfig),
+      ...this.mergePartialConfigurations(partialConfigurations.slice(1)),
+    ];
+  }
+
+  private normalizeConfigurationPeriods(
+    configuration: WorkingConfiguration,
+  ): WorkingConfiguration {
+    const numberOrNull = (num: number | null) =>
+      Number.isFinite(num) ? num : null;
+    return {
+      ...configuration,
+      beginQuarter: numberOrNull(configuration.beginQuarter),
+      beginYear: numberOrNull(configuration.beginYear),
+      endQuarter: numberOrNull(configuration.endQuarter),
+      endYear: numberOrNull(configuration.endYear),
+    };
+  }
+
+  private async syncMonitorPlan(
+    workingPlan: WorkingConfiguration,
+    facilityId: number,
+    orisCode: number,
+    userId: string,
+    trx: EntityManager,
+  ) {
+    const endedPlans: MonitorPlanDTO[] = [];
+    let newPlan: MonitorPlanDTO = null;
+    const unchangedPlans: MonitorPlanDTO[] = [];
+
+    let shouldCreateNewPlan = false;
+
+    const workingPlanUnits = workingPlan.items.filter(
+      item => item instanceof UnitDTO,
+    ) as UnitDTO[];
+    const workingPlanUnitStackConfigurations = workingPlan.items.filter(
+      item => item instanceof UnitStackConfigurationDTO,
+    ) as UnitStackConfigurationDTO[];
+
+    // Calculate the report period range from the update monitor plan.
+    const [
+      planBeginReportPeriodId,
+      planEndReportPeriodId,
+    ] = await this.calculateReportPeriodRangeFromLocations(
+      workingPlanUnits,
+      workingPlanUnitStackConfigurations,
+      trx,
+    );
+
+    let maxActivePlansEndReportPeriod = null;
+
+    const reportingPeriodRepository = withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    );
+
+    // Get the monitoring locations associated with the working plan.
+    const locationIds = this.getItemLocationIds(workingPlan.items);
+    const workingPlanLocations = await this.monitorLocationService.getLocationsByUnitStackPipeIds(
+      orisCode,
+      Array.from(locationIds.unitIds),
+      Array.from(locationIds.stackPipeIds),
+      trx,
+    );
+
+    // Get a representation of the active plans (outside of the transaction) associated with the working plan.
+    const activePlans = await this.matchToActivePlansByLocationIds(
+      workingPlanLocations.map(l => l.id),
+    );
+    this.logger.debug(
+      `Active plans associated with configuration ${Object.values(
+        this.getItemLocationIds(workingPlan.items),
+      ).join(', ')}`,
+      activePlans.map(p => p.id),
+    );
+
+    // If there are no associated active plans, simply create a new plan.
+    if (activePlans.length === 0) {
+      // Match to an existing inactive plan in the database. If found, add the supplied plan to the unchanged plans. Otherwise, create a new plan.
+      const matchedPlan = await this.matchToPlanByLocationsAndPeriod(
+        locationIds,
+        planBeginReportPeriodId,
+        planEndReportPeriodId,
+        trx,
+      );
+      if (matchedPlan) {
+        unchangedPlans.push(matchedPlan);
+      } else {
+        shouldCreateNewPlan = true;
+      }
+    } else {
+      await Promise.all(
+        activePlans.map(async activePlan => {
+          // Compare the active plan locations against the imported plan locations.
+          const locationsMatch = this.checkLocationsMatch(
+            locationIds,
+            this.extractUnitAndStackPipeIdsFromPlan(activePlan),
+          );
+
+          if (locationsMatch) {
+            if (activePlan.endReportPeriodId !== planEndReportPeriodId) {
+              // If the locations match but the end report period differs, update the end report period of the active plan.
+              endedPlans.push(
+                await this.updateEndReportingPeriod(
+                  activePlan,
+                  planEndReportPeriodId,
+                  userId,
+                  trx,
+                ),
+              );
+            } else {
+              // The active plan is unchanged.
+              unchangedPlans.push(activePlan);
+            }
+          } else {
+            // If the locations differ, create a new plan and update the end report period of the previously active plan.
+
+            // The active plan with the updates that have been applied so far in the transaction.
+            const pendingActivePlan = await this.getMonitorPlan(activePlan.id, {
+              full: true,
+              trx,
+            });
+
+            // Get the USC end periods associated with the active plan.
+            const earliestUscEndDate = pendingActivePlan.unitStackConfigurationData
+              .map(usc => usc.endDate)
+              .reduce(getEarliestDate, null);
+
+            // Get the unit end periods associated with the active plan.
+            const monPlanUnits = await this.unitWorkspaceService.getUnitsByMonPlanId(
+              pendingActivePlan.id,
+              trx,
+            );
+            const earliestUnitEndDate = monPlanUnits
+              .map(u => u.endDate)
+              .reduce(getEarliestDate, null);
+
+            // Calculate the max period from the USCs, or from the units if no USCs are associated with the active plan.
+            const newActivePlanEndReportPeriod = await reportingPeriodRepository.getByDate(
+              earliestUscEndDate || earliestUnitEndDate,
+            );
+
+            // Update the maxEndReportPeriodId to the max period if greater.
+            if (
+              !maxActivePlansEndReportPeriod ||
+              new Date(newActivePlanEndReportPeriod.endDate) >
+                new Date(maxActivePlansEndReportPeriod.endDate)
+            ) {
+              maxActivePlansEndReportPeriod = newActivePlanEndReportPeriod;
+            }
+
+            shouldCreateNewPlan = true;
+            endedPlans.push(
+              await this.updateEndReportingPeriod(
+                pendingActivePlan,
+                newActivePlanEndReportPeriod.id,
+                userId,
+                trx,
+              ),
+            );
+          }
+        }),
+      );
+    }
+
+    // Create a new monitor plan.
+    if (shouldCreateNewPlan) {
+      // TODO: Is this necessary?
+      /*const newPlanUnitStackConfigurationData = workingPlanUnitStackConfigurations.filter(
+        usc => usc.active,
+      );
+      const newPlanMonitoringLocationData = workingPlanUnits.filter(
+        l => {
+          if (newPlanUnitStackConfigurationData.length === 0) {
+            return l.unitId && l.active;
+          } else {
+            return (
+              (newUnitStackConfigurationData.some(
+                ({ unitId }) => l.unitId === unitId,
+              ) ||
+                newUnitStackConfigurationData.some(
+                  ({ stackPipeId }) => l.stackPipeId === stackPipeId,
+                )) &&
+              l.active
+            );
+          }
+        },
+      );*/
+      /*const [
+        newBeginReportPeriodId,
+        newEndReportPeriodId,
+      ] = await this.calculateReportPeriodRangeFromLocations(
+        newMonitoringLocationData,
+        newUnitStackConfigurationData,
+        trx,
+      );*/
+      newPlan = await this.createMonitorPlan({
+        locations: workingPlanLocations,
+        facId: facilityId,
+        userId,
+        beginReportPeriodId: maxActivePlansEndReportPeriod
+          ? await reportingPeriodRepository.getNextReportingPeriodId(
+              maxActivePlansEndReportPeriod.id,
+            )
+          : planBeginReportPeriodId,
+        endReportPeriodId: planEndReportPeriodId,
+        trx,
+      });
+      this.logger.debug(
+        'Imported locations differ from the active plan, created new plan',
+        { mon_plan_id: newPlan.id },
+      );
+    }
+
+    return { endedPlans, newPlan, unchangedPlans };
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
@@ -954,23 +1548,23 @@ export class MonitorPlanWorkspaceService {
   ): Promise<MonitorPlanDTO> {
     const promises = [];
 
-    let REPORTING_FREQ,
-      COMMENTS,
-      UNIT_STACK_CONFIGS,
-      UNIT_CAPACITIES,
-      UNIT_CONTROLS,
-      UNIT_FUEL,
-      ATTRIBUTES,
-      METHODS,
-      MATS_METHODS,
-      FORMULAS,
-      DEFAULTS,
-      SPANS,
-      DUCT_WAFS,
-      LOADS,
-      COMPONENTS,
-      SYSTEMS,
-      QUALIFICATIONS;
+    let REPORTING_FREQ: number,
+      COMMENTS: number,
+      UNIT_STACK_CONFIGS: number,
+      UNIT_CAPACITIES: number,
+      UNIT_CONTROLS: number,
+      UNIT_FUEL: number,
+      ATTRIBUTES: number,
+      METHODS: number,
+      MATS_METHODS: number,
+      FORMULAS: number,
+      DEFAULTS: number,
+      SPANS: number,
+      DUCT_WAFS: number,
+      LOADS: number,
+      COMPONENTS: number,
+      SYSTEMS: number,
+      QUALIFICATIONS: number;
 
     const mp = await this.repository.getMonitorPlan(planId);
     mp.locations = await this.locationRepository.getMonitorLocationsByPlanId(
@@ -1287,4 +1881,12 @@ type ProgramRange = {
   type: 'annual' | 'ozone';
   begin: { year: number; quarter: number } | null;
   end: { year: number; quarter: number } | null;
+};
+type WorkingConfiguration = {
+  id: string;
+  beginYear: number;
+  beginQuarter: number;
+  endYear: number | null;
+  endQuarter: number | null;
+  items: Array<UnitDTO | UnitStackConfigurationDTO>;
 };
