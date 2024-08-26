@@ -5,14 +5,6 @@ import {
 } from 'class-validator';
 import { EntityManager, Repository } from 'typeorm';
 
-export function areSetsEqual<T>(set1: Set<T>, set2: Set<T>) {
-  if (set1.size !== set2.size) return false;
-  for (const item of set1) {
-    if (!set2.has(item)) return false;
-  }
-  return true;
-}
-
 export const getEarliestDate = (date1: Date | string, date2: Date | string) => {
   if (!date1) return date2;
   if (!date2) return date1;

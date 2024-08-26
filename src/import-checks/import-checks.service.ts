@@ -6,6 +6,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
 import { UnitService } from '../unit/unit.service';
+import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
@@ -23,6 +24,7 @@ export class ImportChecksService {
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly formulaService: MonitorFormulaWorkspaceService,
     private readonly spanService: MonitorSpanWorkspaceService,
+    private readonly stackPipeService: StackPipeWorkspaceService,
   ) {}
 
   private checkIfThrows(errorList: string[]) {
@@ -65,6 +67,16 @@ export class ImportChecksService {
           ...(await this.unitService.runUnitChecks(
             location,
             monPlan.orisCode,
+            facilityId,
+          )),
+        );
+      }
+
+      // Stack Pipe Checks
+      if (location.stackPipeId) {
+        errorList.push(
+          ...(await this.stackPipeService.runStackPipeChecks(
+            location,
             facilityId,
           )),
         );

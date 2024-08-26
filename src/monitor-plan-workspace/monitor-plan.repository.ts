@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
@@ -86,9 +86,13 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     }
   }
 
-  async getMonitorPlan(planId: string, full = false): Promise<MonitorPlan> {
+  async getMonitorPlan(
+    planId: string,
+    full = false,
+    where: FindOptionsWhere<MonitorPlan> = {},
+  ): Promise<MonitorPlan> {
     return this.findOne({
-      where: { id: planId },
+      where: { ...where, id: planId },
       relations: {
         plant: true,
         ...(full
@@ -122,6 +126,12 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     return this.createQueryBuilder('plan')
       .where('plan.facId =:facId', { facId })
       .andWhere('plan.endReportPeriodId IS NULL')
+      .getMany();
+  }
+
+  async getPlansByFacId(facId: number): Promise<MonitorPlan[]> {
+    return this.createQueryBuilder('plan')
+      .where('plan.facId =:facId', { facId })
       .getMany();
   }
 

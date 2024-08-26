@@ -26,6 +26,12 @@ export class UnitStackConfigurationChecksService {
       },
     });
 
+    if (uscRecord?.endDate && usc.endDate !== uscRecord.endDate) {
+      errorList.push(
+        'Cannot update an existing End Date of a Unit Stack Configuration',
+      );
+    }
+
     const evaluations = await Promise.all([
       this.emissionEvaluationService.getLastEmissionEvaluationByUnitId(
         usc.unitId,

@@ -8,7 +8,8 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorPlanReportingFreqDTO } from '../dtos/monitor-plan-reporting-freq.dto';
+import { MonitorPlanReportingFrequency } from '../entities/workspace/monitor-plan-reporting-freq.entity';
+import { MonitorPlan as MonitorPlanWorkspace } from '../entities/workspace/monitor-plan.entity';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UnitDTO } from '../dtos/unit.dto';
@@ -50,7 +51,7 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
-import { areSetsEqual, getEarliestDate, withTransaction } from '../utils';
+import { withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 @Injectable()
@@ -218,16 +219,6 @@ export class MonitorPlanWorkspaceService {
     }
 
     return false;
-  }
-
-  private checkLocationsMatch(
-    locationIdsA: { unitIds: Set<string>; stackPipeIds: Set<string> },
-    locationIdsB: { unitIds: Set<string>; stackPipeIds: Set<string> },
-  ) {
-    return (
-      areSetsEqual(locationIdsA.unitIds, locationIdsB.unitIds) &&
-      areSetsEqual(locationIdsA.stackPipeIds, locationIdsB.stackPipeIds)
-    );
   }
 
   private checkPeriodsIntersect(
@@ -494,22 +485,6 @@ export class MonitorPlanWorkspaceService {
       full: true,
       trx,
     });
-  }
-
-  private extractUnitAndStackPipeIdsFromPlan(
-    plan: MonitorPlanDTO | UpdateMonitorPlanDTO,
-  ) {
-    return ([
-      ...plan.unitStackConfigurationData,
-      ...plan.monitoringLocationData,
-    ] as PlanItem[]).reduce(
-      (acc, cur) => {
-        if (cur.unitId) acc.unitIds.add(cur.unitId);
-        if (cur.stackPipeId) acc.stackPipeIds.add(cur.stackPipeId);
-        return acc;
-      },
-      { unitIds: new Set<string>(), stackPipeIds: new Set<string>() },
-    );
   }
 
   private getItemLocationIds(
@@ -1091,12 +1066,23 @@ export class MonitorPlanWorkspaceService {
         ),
       );
 
+      const existingPlans = await this.repository.find({
+        where: { facId: facilityId },
+        relations: {
+          locations: {
+            unit: true,
+            stackPipe: true,
+          },
+        },
+      });
+
       // Compare each working plan to the previous database state and update accordingly.
       result = (
         await Promise.all(
           workingPlans.map(async workingPlan =>
             this.syncMonitorPlan(
               workingPlan,
+              existingPlans,
               payload.orisCode,
               facilityId,
               userId,
@@ -1104,14 +1090,17 @@ export class MonitorPlanWorkspaceService {
             ),
           ),
         )
-      ).reduce(
-        (acc, cur) => ({
-          endedPlans: acc.endedPlans.concat(cur.endedPlans),
-          newPlans: acc.newPlans.concat(cur.newPlan),
-          unchangedPlans: acc.unchangedPlans.concat(cur.unchangedPlans),
-        }),
-        result,
-      );
+      ).reduce((acc, cur) => {
+        const { plan, status } = cur;
+        if (status === 'new') {
+          acc.newPlans.push(plan);
+        } else if (status === 'ended') {
+          acc.endedPlans.push(plan);
+        } else {
+          acc.unchangedPlans.push(plan);
+        }
+        return acc;
+      }, result);
 
       /* MONITOR PLAN COMMENT MERGE LOGIC */
 
@@ -1148,57 +1137,30 @@ export class MonitorPlanWorkspaceService {
     return this.repository.revertToOfficialRecord(monPlanId);
   }
 
-  private async matchToActivePlansByLocationIds(locationIds: string[]) {
-    if (locationIds.length === 0) {
-      throw new EaseyException(
-        new Error(
-          'No location records found for the supplied plan representation',
-        ),
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    // Get all active plan records for the locations.
-    const activePlanRecordIds = (
-      await Promise.all(
-        locationIds.map(id => this.repository.getActivePlanByLocationId(id)),
-      )
-    )
-      .filter(p => p !== null)
-      .map(p => p.id)
-      .filter((id, i, arr) => arr.indexOf(id) === i);
-
-    return Promise.all(
-      activePlanRecordIds.map(id => this.getMonitorPlan(id, { full: true })),
-    );
-  }
-
-  private async matchToPlanByLocationsAndPeriod(
+  private async matchToPlanByLocationsAndBeginPeriod(
     locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> },
+    existingPlans: MonitorPlanWorkspace[],
     beginReportPeriodId: number,
-    endReportPeriodId: number,
-    trx?: EntityManager,
   ) {
-    const matchedPlan = await withTransaction(this.repository, trx)
-      .createQueryBuilder('mp')
-      .innerJoinAndSelect('mp.locations', 'l')
-      .where('mp.beginReportPeriodId = :beginReportPeriodId', {
-        beginReportPeriodId,
-      })
-      .andWhere('mp.endReportPeriodId = :endReportPeriodId', {
-        endReportPeriodId,
-      })
-      .getOne();
+    const locationIdsString = Array.from(locationIds.unitIds)
+      .concat(Array.from(locationIds.stackPipeIds))
+      .sort()
+      .join(',');
+    const matchedPlan = existingPlans.find(plan => {
+      if (plan.beginReportPeriodId !== beginReportPeriodId) return false;
+
+      const planLocationIdsString = plan.locations
+        .map(l => l.unit?.name ?? l.stackPipe?.name)
+        .sort()
+        .join(',');
+      if (locationIdsString !== planLocationIdsString) return false;
+
+      return true;
+    });
 
     if (!matchedPlan) return null;
 
-    const matchedPlanDto = await this.map.one(matchedPlan);
-    return this.checkLocationsMatch(
-      locationIds,
-      this.extractUnitAndStackPipeIdsFromPlan(matchedPlanDto),
-    )
-      ? matchedPlanDto
-      : null;
+    return this.getMonitorPlan(matchedPlan.id, { full: true });
   }
 
   private mergePartialConfigurations(
@@ -1251,200 +1213,71 @@ export class MonitorPlanWorkspaceService {
 
   private async syncMonitorPlan(
     workingPlan: WorkingConfiguration,
+    existingPlans: MonitorPlanWorkspace[],
     facilityId: number,
     orisCode: number,
     userId: string,
     trx: EntityManager,
   ) {
-    const endedPlans: MonitorPlanDTO[] = [];
-    let newPlan: MonitorPlanDTO = null;
-    const unchangedPlans: MonitorPlanDTO[] = [];
+    let finalPlan: MonitorPlanDTO = null;
+    let status: 'new' | 'unchanged' | 'ended' = 'unchanged';
 
-    let shouldCreateNewPlan = false;
-
-    const workingPlanUnits = workingPlan.items.filter(
-      item => item instanceof UnitDTO,
-    ) as UnitDTO[];
-    const workingPlanUnitStackConfigurations = workingPlan.items.filter(
-      item => item instanceof UnitStackConfigurationDTO,
-    ) as UnitStackConfigurationDTO[];
-
-    // Calculate the report period range from the update monitor plan.
+    // Calculate the report period range from the working monitor plan.
     const [
       planBeginReportPeriodId,
       planEndReportPeriodId,
     ] = await this.calculateReportPeriodRangeFromLocations(
-      workingPlanUnits,
-      workingPlanUnitStackConfigurations,
-      trx,
-    );
-
-    let maxActivePlansEndReportPeriod = null;
-
-    const reportingPeriodRepository = withTransaction(
-      this.reportingPeriodRepository,
+      workingPlan.items.filter(item => item instanceof UnitDTO) as UnitDTO[],
+      workingPlan.items.filter(
+        item => item instanceof UnitStackConfigurationDTO,
+      ) as UnitStackConfigurationDTO[],
       trx,
     );
 
     // Get the monitoring locations associated with the working plan.
     const locationIds = this.getItemLocationIds(workingPlan.items);
-    const workingPlanLocations = await this.monitorLocationService.getLocationsByUnitStackPipeIds(
-      orisCode,
-      Array.from(locationIds.unitIds),
-      Array.from(locationIds.stackPipeIds),
-      trx,
+
+    // Match the working plan to an existing monitor plan by locations and begin period.
+    const matchedPlan = await this.matchToPlanByLocationsAndBeginPeriod(
+      locationIds,
+      existingPlans,
+      planBeginReportPeriodId,
     );
 
-    // Get a representation of the active plans (outside of the transaction) associated with the working plan.
-    const activePlans = await this.matchToActivePlansByLocationIds(
-      workingPlanLocations.map(l => l.id),
-    );
-    this.logger.debug(
-      `Active plans associated with configuration ${Object.values(
-        this.getItemLocationIds(workingPlan.items),
-      ).join(', ')}`,
-      activePlans.map(p => p.id),
-    );
-
-    // If there are no associated active plans, simply create a new plan.
-    if (activePlans.length === 0) {
-      // Match to an existing inactive plan in the database. If found, add the supplied plan to the unchanged plans. Otherwise, create a new plan.
-      const matchedPlan = await this.matchToPlanByLocationsAndPeriod(
-        locationIds,
-        planBeginReportPeriodId,
-        planEndReportPeriodId,
-        trx,
-      );
-      if (matchedPlan) {
-        unchangedPlans.push(matchedPlan);
+    if (matchedPlan) {
+      if (!matchedPlan.endReportPeriodId && planEndReportPeriodId) {
+        status = 'ended';
+        finalPlan = await this.updateEndReportingPeriod(
+          matchedPlan,
+          planEndReportPeriodId,
+          userId,
+          trx,
+        );
       } else {
-        shouldCreateNewPlan = true;
+        status = 'unchanged';
+        finalPlan = matchedPlan;
       }
     } else {
-      await Promise.all(
-        activePlans.map(async activePlan => {
-          // Compare the active plan locations against the imported plan locations.
-          const locationsMatch = this.checkLocationsMatch(
-            locationIds,
-            this.extractUnitAndStackPipeIdsFromPlan(activePlan),
-          );
-
-          if (locationsMatch) {
-            if (activePlan.endReportPeriodId !== planEndReportPeriodId) {
-              // If the locations match but the end report period differs, update the end report period of the active plan.
-              endedPlans.push(
-                await this.updateEndReportingPeriod(
-                  activePlan,
-                  planEndReportPeriodId,
-                  userId,
-                  trx,
-                ),
-              );
-            } else {
-              // The active plan is unchanged.
-              unchangedPlans.push(activePlan);
-            }
-          } else {
-            // If the locations differ, create a new plan and update the end report period of the previously active plan.
-
-            // The active plan with the updates that have been applied so far in the transaction.
-            const pendingActivePlan = await this.getMonitorPlan(activePlan.id, {
-              full: true,
-              trx,
-            });
-
-            // Get the USC end periods associated with the active plan.
-            const earliestUscEndDate = pendingActivePlan.unitStackConfigurationData
-              .map(usc => usc.endDate)
-              .reduce(getEarliestDate, null);
-
-            // Get the unit end periods associated with the active plan.
-            const monPlanUnits = await this.unitWorkspaceService.getUnitsByMonPlanId(
-              pendingActivePlan.id,
-              trx,
-            );
-            const earliestUnitEndDate = monPlanUnits
-              .map(u => u.endDate)
-              .reduce(getEarliestDate, null);
-
-            // Calculate the max period from the USCs, or from the units if no USCs are associated with the active plan.
-            const newActivePlanEndReportPeriod = await reportingPeriodRepository.getByDate(
-              earliestUscEndDate || earliestUnitEndDate,
-            );
-
-            // Update the maxEndReportPeriodId to the max period if greater.
-            if (
-              !maxActivePlansEndReportPeriod ||
-              new Date(newActivePlanEndReportPeriod.endDate) >
-                new Date(maxActivePlansEndReportPeriod.endDate)
-            ) {
-              maxActivePlansEndReportPeriod = newActivePlanEndReportPeriod;
-            }
-
-            shouldCreateNewPlan = true;
-            endedPlans.push(
-              await this.updateEndReportingPeriod(
-                pendingActivePlan,
-                newActivePlanEndReportPeriod.id,
-                userId,
-                trx,
-              ),
-            );
-          }
-        }),
-      );
-    }
-
-    // Create a new monitor plan.
-    if (shouldCreateNewPlan) {
-      // TODO: Is this necessary?
-      /*const newPlanUnitStackConfigurationData = workingPlanUnitStackConfigurations.filter(
-        usc => usc.active,
-      );
-      const newPlanMonitoringLocationData = workingPlanUnits.filter(
-        l => {
-          if (newPlanUnitStackConfigurationData.length === 0) {
-            return l.unitId && l.active;
-          } else {
-            return (
-              (newUnitStackConfigurationData.some(
-                ({ unitId }) => l.unitId === unitId,
-              ) ||
-                newUnitStackConfigurationData.some(
-                  ({ stackPipeId }) => l.stackPipeId === stackPipeId,
-                )) &&
-              l.active
-            );
-          }
-        },
-      );*/
-      /*const [
-        newBeginReportPeriodId,
-        newEndReportPeriodId,
-      ] = await this.calculateReportPeriodRangeFromLocations(
-        newMonitoringLocationData,
-        newUnitStackConfigurationData,
-        trx,
-      );*/
-      newPlan = await this.createMonitorPlan({
-        locations: workingPlanLocations,
+      status = 'new';
+      finalPlan = await this.createMonitorPlan({
+        locations: await this.monitorLocationService.getLocationsByUnitStackPipeIds(
+          orisCode,
+          Array.from(locationIds.unitIds),
+          Array.from(locationIds.stackPipeIds),
+          trx,
+        ),
         facId: facilityId,
         userId,
-        beginReportPeriodId: maxActivePlansEndReportPeriod
-          ? await reportingPeriodRepository.getNextReportingPeriodId(
-              maxActivePlansEndReportPeriod.id,
-            )
-          : planBeginReportPeriodId,
+        beginReportPeriodId: planBeginReportPeriodId,
         endReportPeriodId: planEndReportPeriodId,
         trx,
       });
-      this.logger.debug(
-        'Imported locations differ from the active plan, created new plan',
-        { mon_plan_id: newPlan.id },
-      );
+      this.logger.debug('New monitor plan created', {
+        mon_plan_id: finalPlan.id,
+      });
     }
 
-    return { endedPlans, newPlan, unchangedPlans };
+    return { plan: finalPlan, status };
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
@@ -1471,7 +1304,10 @@ export class MonitorPlanWorkspaceService {
       trx,
     );
 
-    const planRecord = await repository.findOneBy({ id: plan.id });
+    const planRecord = await repository.findOne({
+      where: { id: plan.id },
+      relations: { reportingFrequencies: true },
+    });
     planRecord.endReportPeriodId = newEndReportPeriodId;
     await repository.save(planRecord);
 
@@ -1481,11 +1317,11 @@ export class MonitorPlanWorkspaceService {
       quarter: updatedEndQuarter,
     } = await reportingPeriodRepository.getById(newEndReportPeriodId);
 
-    let latestReportingFrequency: MonitorPlanReportingFreqDTO;
+    let latestReportingFrequency: MonitorPlanReportingFrequency;
     let latestReportingFrequencyYear: number;
     let latestReportingFrequencyQuarter: number;
 
-    for (const rf of plan.reportingFrequencies) {
+    for (const rf of planRecord.reportingFrequencies) {
       // Get the year and quarter of the begin period of the reporting frequency.
       const {
         year: rfBeginYear,

@@ -1,18 +1,19 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorLocationBaseDTO } from '../dtos/monitor-location-base.dto';
+import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { StackPipeBaseDTO } from '../dtos/stack-pipe.dto';
+import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { StackPipeMap } from '../maps/stack-pipe.map';
+import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { withTransaction } from '../utils';
 import { StackPipeWorkspaceRepository } from './stack-pipe.repository';
-import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
-import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 
 @Injectable()
 export class StackPipeWorkspaceService {
@@ -139,6 +140,23 @@ export class StackPipeWorkspaceService {
 
     this.logger.debug('Import stack pipe result', result);
     return result;
+  }
+
+  async runStackPipeChecks(location: UpdateMonitorLocationDTO, facId: number) {
+    const errorList: string[] = [];
+
+    const stackPipeRecord = await this.getStackByNameAndFacId(
+      location.stackPipeId,
+      facId,
+    );
+    if (
+      stackPipeRecord?.retireDate &&
+      stackPipeRecord.retireDate !== location.retireDate
+    ) {
+      errorList.push('Cannot update a retired stack pipe');
+    }
+
+    return errorList;
   }
 
   async updateStackPipe(
