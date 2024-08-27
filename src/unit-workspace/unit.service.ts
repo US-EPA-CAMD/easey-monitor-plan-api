@@ -12,8 +12,8 @@ export class UnitWorkspaceService {
     private readonly map: UnitMap,
   ) {}
 
-  async getUnitsByFacId(facId: number) {
-    const results = await this.repository.find({
+  async getUnitsByFacId(facId: number, trx?: EntityManager) {
+    const results = await withTransaction(this.repository, trx).find({
       where: { facId },
       relations: {
         location: {

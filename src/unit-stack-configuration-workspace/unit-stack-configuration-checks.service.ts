@@ -3,17 +3,20 @@ import { Injectable } from '@nestjs/common';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { EmissionEvaluationService } from '../emission-evaluation/emission-evaluation.service';
 import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
+import { PlantService } from '../plant/plant.service';
 
 @Injectable()
 export class UnitStackConfigurationChecksService {
   constructor(
     private readonly repository: UnitStackConfigurationWorkspaceRepository,
     private readonly emissionEvaluationService: EmissionEvaluationService,
+    private readonly plantService: PlantService,
   ) {}
 
-  async runChecks(usc: UnitStackConfigurationBaseDTO) {
+  async runChecks(usc: UnitStackConfigurationBaseDTO, orisCode: number) {
     const errorList: string[] = [];
 
+    const facilityId = await this.plantService.getFacIdFromOris(orisCode);
     const uscRecord = await this.repository.findOne({
       relations: {
         stackPipe: true,
@@ -21,12 +24,15 @@ export class UnitStackConfigurationChecksService {
       },
       where: {
         beginDate: usc.beginDate,
-        stackPipe: { name: usc.stackPipeId },
-        unit: { name: usc.unitId },
+        stackPipe: { facId: facilityId, name: usc.stackPipeId },
+        unit: { facId: facilityId, name: usc.unitId },
       },
     });
 
     if (uscRecord?.endDate && usc.endDate !== uscRecord.endDate) {
+      console.log(
+        `record end date: ${uscRecord.endDate}, usc end date: ${usc.endDate}`,
+      );
       errorList.push(
         'Cannot update an existing End Date of a Unit Stack Configuration',
       );
@@ -35,9 +41,11 @@ export class UnitStackConfigurationChecksService {
     const evaluations = await Promise.all([
       this.emissionEvaluationService.getLastEmissionEvaluationByUnitId(
         usc.unitId,
+        facilityId,
       ),
       this.emissionEvaluationService.getLastEmissionEvaluationByStackPipeId(
         usc.stackPipeId,
+        facilityId,
       ),
     ]);
 

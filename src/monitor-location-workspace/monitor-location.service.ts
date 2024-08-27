@@ -265,23 +265,43 @@ export class MonitorLocationWorkspaceService {
     }
   }
 
+  async getOrCreateUnitLocation(args: {
+    create: boolean;
+    facilityId: number;
+    loc?: UpdateMonitorLocationDTO;
+    orisCode: number;
+    trx?: EntityManager;
+    unitId?: string;
+    userId?: string;
+  }) {
+    const locationRecord = await this.getOrCreateUnitLocationRecord(args);
+    return this.map.one(locationRecord);
+  }
+
   async getOrCreateUnitLocationRecord({
     create,
     facilityId,
     loc,
     orisCode,
     trx,
+    unitId,
     userId,
   }: {
     create: boolean;
     facilityId: number;
-    loc: UpdateMonitorLocationDTO;
+    loc?: UpdateMonitorLocationDTO;
     orisCode: number;
     trx?: EntityManager;
+    unitId?: string;
     userId?: string;
   }) {
+    const name = loc?.unitId ?? unitId;
+    if (!name) {
+      throw new BadRequestException('A Unit ID is required');
+    }
+
     const unit = await this.unitService.getUnitByNameAndFacId(
-      loc.unitId,
+      name,
       facilityId,
       trx,
     );
@@ -291,7 +311,7 @@ export class MonitorLocationWorkspaceService {
       throw new BadRequestException(
         CheckCatalogService.formatMessage(
           'The database does not contain a record for Unit [unit] and Facility: [orisCode]',
-          { unit: loc.unitId, orisCode: orisCode },
+          { unit: name, orisCode: orisCode },
         ),
       );
     }

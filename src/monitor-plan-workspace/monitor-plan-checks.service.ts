@@ -58,7 +58,12 @@ export class MonitorPlanChecksService {
     this.throwIfErrors(errorList);
 
     payload.unitStackConfigurationData.forEach(usc => {
-      promises.push(this.unitStackConfigurationChecksService.runChecks(usc));
+      promises.push(
+        this.unitStackConfigurationChecksService.runChecks(
+          usc,
+          payload.orisCode,
+        ),
+      );
     });
 
     payload.monitoringLocationData.forEach((monitorLocation, locIdx) => {

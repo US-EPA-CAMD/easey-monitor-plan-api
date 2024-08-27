@@ -59,10 +59,11 @@ export class MonitorLocationWorkspaceRepository extends Repository<
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    const query = this.createQueryBuilder('ml')
+    return this.createQueryBuilder('ml')
       .innerJoinAndSelect('ml.systems', 'ms')
       .innerJoinAndSelect('ml.components', 'c')
       .leftJoinAndSelect('ml.unit', 'u')
+      .innerJoinAndSelect('u.opStatuses', 'uos')
       .leftJoin('u.plant', 'up')
       .leftJoinAndSelect('ml.stackPipe', 'sp')
       .leftJoin('sp.plant', 'spp')
@@ -70,8 +71,7 @@ export class MonitorLocationWorkspaceRepository extends Repository<
         orisCode,
         unitIds,
         stackPipeIds,
-      });
-
-    return query.getMany();
+      })
+      .getMany();
   }
 }

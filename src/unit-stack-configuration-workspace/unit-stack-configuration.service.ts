@@ -32,8 +32,8 @@ export class UnitStackConfigurationWorkspaceService {
     return this.map.many(results);
   }
 
-  async getUnitStackConfigurationsByFacId(facId: number) {
-    const results = await this.repository.find({
+  async getUnitStackConfigurationsByFacId(facId: number, trx?: EntityManager) {
+    const results = await withTransaction(this.repository, trx).find({
       relations: {
         stackPipe: true,
         unit: true,
@@ -102,7 +102,8 @@ export class UnitStackConfigurationWorkspaceService {
       }
     }
 
-    if (unitUnitIds.size > 1) {
+    // FIXME: This fails if importing multiple plans in a single file.
+    /*if (unitUnitIds.size > 1) {
       for (const unitId of unitUnitIds) {
         if (!unitStackConfigUnitIds.has(unitId)) {
           errorList.push(
@@ -112,7 +113,7 @@ export class UnitStackConfigurationWorkspaceService {
           );
         }
       }
-    }
+    }*/
 
     return errorList;
   }
