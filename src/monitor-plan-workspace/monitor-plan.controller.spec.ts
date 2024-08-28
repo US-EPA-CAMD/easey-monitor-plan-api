@@ -82,7 +82,7 @@ describe('MonitorPlanWorkspaceController', () => {
   describe('importPlan', () => {
     const mockReturn = {
       endedPlans: data,
-      newPlan: data[0],
+      newPlans: data,
       unchangedPlans: data,
     };
     it('should import a report plan given a planId', async () => {

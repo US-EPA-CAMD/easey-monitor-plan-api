@@ -86,6 +86,14 @@ const MONITOR_LOCATION = new MonitorLocation();
 MONITOR_LOCATION.id = LOC_ID;
 const MONITOR_PLAN = new MonitorPlan();
 MONITOR_PLAN.plant = new Plant();
+const WORKING_PLAN = {
+  id: 1,
+  beginYear: 2024,
+  beginQuarter: 1,
+  endYear: 2024,
+  endQuarter: 2,
+  items: [],
+};
 
 const mockPlantService = () => ({
   getFacIdFromOris: jest.fn().mockResolvedValue(FAC_ID),
@@ -93,6 +101,7 @@ const mockPlantService = () => ({
 
 const mockUnitService = () => ({
   getUnitsByMonPlanId: jest.fn().mockResolvedValue([]),
+  getUnitsByFacId: jest.fn().mockResolvedValue([]),
 });
 
 const mockMonitorLocationService = () => ({
@@ -115,6 +124,7 @@ const mockMonitorPlanRepo = () => ({
   revertToOfficialRecord: jest.fn(),
   getMonitorPlan: jest.fn().mockResolvedValue(MONITOR_PLAN),
   updateDateAndUserId: jest.fn(),
+  find: jest.fn().mockResolvedValue([MONITOR_PLAN]),
   findOneBy: jest.fn().mockResolvedValue(MONITOR_PLAN),
   save: jest.fn().mockResolvedValue(MONITOR_PLAN),
 });
@@ -125,6 +135,7 @@ const mockMonitorPlanCommentService = () => ({
 
 const mockUnitStackConfigService = () => ({
   getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
+  getUnitStackConfigurationsByFacId: jest.fn().mockResolvedValue([]),
   importUnitStacks: jest.fn().mockResolvedValue([]),
 });
 
@@ -440,15 +451,18 @@ describe('Monitor Plan Service', () => {
 
   describe('importMpPlan', () => {
     it('Should import a MonitoringPlan', async () => {
-      jest
-        .spyOn(service as any, 'calculateReportPeriodRangeFromLocations')
-        .mockResolvedValue([1, 1]);
       jest.spyOn(service, 'updateEndReportingPeriod').mockResolvedValue(DTO);
+      jest
+        .spyOn(service as any, 'mergePartialConfigurations')
+        .mockReturnValue([WORKING_PLAN]);
+      jest
+        .spyOn(service as any, 'syncMonitorPlan')
+        .mockResolvedValue({ plan: DTO, status: 'unchanged' });
       const result = await service.importMpPlan(UPDATE_DTO, USER_ID);
       expect(result).toEqual({
-        endedPlans: [DTO],
-        newPlan: null,
-        unchangedPlans: [],
+        endedPlans: [],
+        newPlans: [],
+        unchangedPlans: [DTO],
       });
     });
   });

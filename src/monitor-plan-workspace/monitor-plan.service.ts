@@ -1112,7 +1112,7 @@ export class MonitorPlanWorkspaceService {
       // Compare each working plan to the previous database state and update accordingly.
       result = (
         await Promise.all(
-          workingPlans.map(async workingPlan =>
+          workingPlans.map(workingPlan =>
             this.syncMonitorPlan({
               workingPlan,
               existingPlans,
