@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -101,19 +100,6 @@ export class UnitStackConfigurationWorkspaceService {
         );
       }
     }
-
-    // FIXME: This fails if importing multiple plans in a single file.
-    /*if (unitUnitIds.size > 1) {
-      for (const unitId of unitUnitIds) {
-        if (!unitStackConfigUnitIds.has(unitId)) {
-          errorList.push(
-            CheckCatalogService.formatResultMessage('IMPORT-4-A', {
-              unitId: unitId,
-            }),
-          );
-        }
-      }
-    }*/
 
     return errorList;
   }

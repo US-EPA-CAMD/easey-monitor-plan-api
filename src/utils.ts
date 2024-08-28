@@ -1,7 +1,9 @@
+import { HttpStatus } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   registerDecorator,
-  ValidationOptions,
   ValidationArguments,
+  ValidationOptions,
 } from 'class-validator';
 import { EntityManager, Repository } from 'typeorm';
 
@@ -110,6 +112,15 @@ export interface BeginEndDatesConsistentOptions extends ValidationOptions {
   endHour?: string;
   endMinute?: string;
 }
+
+export const throwIfErrors = (errorList: string[]) => {
+  if (errorList.length > 0) {
+    throw new EaseyException(
+      new Error(JSON.stringify(errorList)),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+};
 
 /**
  * Pass a transaction manager, if it exists, to a custom repository. If not, return the original repository.

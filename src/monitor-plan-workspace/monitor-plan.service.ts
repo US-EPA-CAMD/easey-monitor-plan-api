@@ -1,5 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -51,7 +52,7 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
-import { withTransaction } from '../utils';
+import { throwIfErrors, withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 @Injectable()
@@ -1098,6 +1099,9 @@ export class MonitorPlanWorkspaceService {
         ),
       );
 
+      // Check the configurations for validity.
+      this.runConfigurationChecks(workingPlans);
+
       // Get a list of existing monitor plans from the database (outside of the transaction).
       const existingPlans = await this.repository.find({
         where: { facId: facilityId },
@@ -1267,6 +1271,38 @@ export class MonitorPlanWorkspaceService {
       endQuarter: numberOrNull(configuration.endQuarter),
       endYear: numberOrNull(configuration.endYear),
     };
+  }
+
+  private runConfigurationChecks(configurations: WorkingConfiguration[]) {
+    const errorList: string[] = [];
+    configurations.forEach(plan => {
+      const { unitUnitIds, unitStackConfigUnitIds } = plan.items.reduce(
+        (acc, item) => {
+          if (this.isUnitDTO(item)) {
+            acc.unitUnitIds.add(item.unitId);
+          } else {
+            acc.unitStackConfigUnitIds.add(item.unitId);
+          }
+          return acc;
+        },
+        {
+          unitUnitIds: new Set<string>(),
+          unitStackConfigUnitIds: new Set<string>(),
+        },
+      );
+      if (unitUnitIds.size > 1) {
+        for (const unitId of unitUnitIds) {
+          if (!unitStackConfigUnitIds.has(unitId)) {
+            errorList.push(
+              CheckCatalogService.formatResultMessage('IMPORT-4-A', {
+                unitId: unitId,
+              }),
+            );
+          }
+        }
+      }
+    });
+    throwIfErrors(errorList);
   }
 
   private async syncMonitorPlan({
@@ -1774,10 +1810,6 @@ export class MonitorPlanWorkspaceService {
   }
 }
 
-type PlanItem = {
-  unitId: string;
-  stackPipeId: string;
-};
 type ProgramPeriod = [number, number, string]; // [year, quarter, program type]
 type ProgramRange = {
   type: 'annual' | 'ozone';
