@@ -1131,6 +1131,9 @@ export class MonitorPlanWorkspaceService {
         const { plan, status } = cur;
         if (status === 'new') {
           acc.newPlans.push(plan);
+          this.logger.debug('New monitor plan created', {
+            mon_plan_id: plan.id,
+          });
         } else if (status === 'ended') {
           acc.endedPlans.push(plan);
         } else {
@@ -1201,14 +1204,14 @@ export class MonitorPlanWorkspaceService {
   ) {
     const locationIdsString = Array.from(locationIds.unitIds)
       .concat(Array.from(locationIds.stackPipeIds))
-      .sort()
+      .sort((a, b) => a.localeCompare(b))
       .join(',');
     const matchedPlan = existingPlans.find(plan => {
       if (plan.beginReportPeriodId !== beginReportPeriodId) return false;
 
       const planLocationIdsString = plan.locations
         .map(l => l.unit?.name ?? l.stackPipe?.name)
-        .sort()
+        .sort((a, b) => a.localeCompare(b))
         .join(',');
 
       if (locationIdsString !== planLocationIdsString) return false;
@@ -1320,9 +1323,6 @@ export class MonitorPlanWorkspaceService {
     userId: string;
     workingPlan: WorkingConfiguration;
   }) {
-    let finalPlan: MonitorPlanDTO = null;
-    let status: 'new' | 'unchanged' | 'ended' = 'unchanged';
-
     // Calculate the report period range from the working monitor plan.
     const planBeginReportPeriodId = (
       await this.reportingPeriodRepository.getByYearQuarter(
@@ -1352,38 +1352,39 @@ export class MonitorPlanWorkspaceService {
 
     if (matchedPlan) {
       if (!matchedPlan.endReportPeriodId && planEndReportPeriodId) {
-        status = 'ended';
-        finalPlan = await this.updateEndReportingPeriod(
-          matchedPlan,
-          planEndReportPeriodId,
-          userId,
-          trx,
-        );
+        return {
+          status: 'ended',
+          plan: await this.updateEndReportingPeriod(
+            matchedPlan,
+            planEndReportPeriodId,
+            userId,
+            trx,
+          ),
+        };
       } else {
-        status = 'unchanged';
-        finalPlan = matchedPlan;
+        return {
+          status: 'unchanged',
+          plan: matchedPlan,
+        };
       }
     } else {
-      status = 'new';
-      finalPlan = await this.createMonitorPlan({
-        locations: await this.monitorLocationService.getLocationsByUnitStackPipeIds(
-          orisCode,
-          Array.from(locationIds.unitIds),
-          Array.from(locationIds.stackPipeIds),
+      return {
+        status: 'new',
+        plan: await this.createMonitorPlan({
+          locations: await this.monitorLocationService.getLocationsByUnitStackPipeIds(
+            orisCode,
+            Array.from(locationIds.unitIds),
+            Array.from(locationIds.stackPipeIds),
+            trx,
+          ),
+          facId: facilityId,
+          userId,
+          beginReportPeriodId: planBeginReportPeriodId,
+          endReportPeriodId: planEndReportPeriodId,
           trx,
-        ),
-        facId: facilityId,
-        userId,
-        beginReportPeriodId: planBeginReportPeriodId,
-        endReportPeriodId: planEndReportPeriodId,
-        trx,
-      });
-      this.logger.debug('New monitor plan created', {
-        mon_plan_id: finalPlan.id,
-      });
+        }),
+      };
     }
-
-    return { plan: finalPlan, status };
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {

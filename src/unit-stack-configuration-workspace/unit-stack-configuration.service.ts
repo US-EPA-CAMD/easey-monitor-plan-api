@@ -64,7 +64,6 @@ export class UnitStackConfigurationWorkspaceService {
     const unitUnitIds: Set<string> = new Set<string>();
 
     const unitStackConfigStackIds: Set<string> = new Set<string>();
-    const unitStackConfigUnitIds: Set<string> = new Set<string>();
 
     for (const location of monitorPlan.monitoringLocationData) {
       if (location.stackPipeId) {
@@ -89,7 +88,6 @@ export class UnitStackConfigurationWorkspaceService {
       }
 
       unitStackConfigStackIds.add(unitStackConfig.stackPipeId);
-      unitStackConfigUnitIds.add(unitStackConfig.unitId);
     }
 
     for (const stackPipe of unitStackIds) {
