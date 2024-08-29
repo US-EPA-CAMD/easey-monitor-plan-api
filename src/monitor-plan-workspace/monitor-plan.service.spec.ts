@@ -457,12 +457,11 @@ describe('Monitor Plan Service', () => {
         .mockReturnValue([WORKING_PLAN]);
       jest
         .spyOn(service as any, 'syncMonitorPlan')
-        .mockResolvedValue({ plan: DTO, status: 'unchanged' });
+        .mockResolvedValue({ plan: DTO, status: 'new' });
       const result = await service.importMpPlan(UPDATE_DTO, USER_ID);
       expect(result).toEqual({
         endedPlans: [],
-        newPlans: [],
-        unchangedPlans: [DTO],
+        newPlans: [DTO],
       });
     });
   });
