@@ -117,7 +117,9 @@ export class MonitorLocationWorkspaceService {
 
     for (const loc of plan.monitoringLocationData) {
       locations.push(
-        await this.getLocationRecord(loc, facilityId, orisCode, trx),
+        await this.getLocationRecord(loc, facilityId, orisCode, trx).catch(
+          () => null,
+        ),
       );
     }
 
@@ -248,10 +250,8 @@ export class MonitorLocationWorkspaceService {
 
     const location =
       stackPipe &&
-      (await withTransaction(this.repository, trx).findOne({
-        where: {
-          stackPipeId: stackPipe.id,
-        },
+      (await withTransaction(this.repository, trx).findOneBy({
+        stackPipeId: stackPipe.id,
       }));
 
     if (!location && create) {

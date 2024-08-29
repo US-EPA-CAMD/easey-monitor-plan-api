@@ -1056,8 +1056,7 @@ export class MonitorPlanWorkspaceService {
     let result: {
       endedPlans: MonitorPlanDTO[];
       newPlans: MonitorPlanDTO[];
-      unchangedPlans: MonitorPlanDTO[];
-    } = { endedPlans: [], newPlans: [], unchangedPlans: [] };
+    } = { endedPlans: [], newPlans: [] };
 
     // Start a transaction.
     const queryRunner = this.entityManager.connection.createQueryRunner();
@@ -1136,8 +1135,6 @@ export class MonitorPlanWorkspaceService {
           });
         } else if (status === 'ended') {
           acc.endedPlans.push(plan);
-        } else {
-          acc.unchangedPlans.push(plan);
         }
         return acc;
       }, result);
@@ -1182,7 +1179,6 @@ export class MonitorPlanWorkspaceService {
     this.logger.debug('Monitor plan import result', {
       endedPlans: result.endedPlans.map(p => p.id),
       newPlans: result.newPlans.map(p => p.id),
-      unchangedPlans: result.unchangedPlans.map(p => p.id),
     });
     return result;
   }

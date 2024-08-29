@@ -127,9 +127,7 @@ export class ImportChecksService {
       // Span Checks
       if (location.monitoringSpanData) {
         errorList.push(
-          ...(await this.spanService.runSpanChecks(
-            location.monitoringSpanData,
-          )),
+          ...this.spanService.runSpanChecks(location.monitoringSpanData),
         );
       }
 

@@ -149,7 +149,7 @@ export class MonitorSpanWorkspaceService {
     return this.map.one(span);
   }
 
-  async runSpanChecks(spans: MonitorSpanBaseDTO[]) {
+  runSpanChecks(spans: MonitorSpanBaseDTO[]) {
     const errorList: string[] = [];
 
     let mustBeNull: string[] = [];

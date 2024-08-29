@@ -170,7 +170,7 @@ export class StackPipeWorkspaceService {
     await repository.update(stackPipeRecord.id, {
       retireDate,
     });
-    this.logger.debug(`Updated stack pipe ${stackPipeRecord.id}`);
+    this.logger.debug(`Updated stack pipe ${stackPipeRecord.name}`);
     return repository.findOneBy({ id: stackPipeRecord.id });
   }
 }

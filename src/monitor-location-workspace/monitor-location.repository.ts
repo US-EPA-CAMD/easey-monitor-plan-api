@@ -63,7 +63,7 @@ export class MonitorLocationWorkspaceRepository extends Repository<
       .innerJoinAndSelect('ml.systems', 'ms')
       .innerJoinAndSelect('ml.components', 'c')
       .leftJoinAndSelect('ml.unit', 'u')
-      .innerJoinAndSelect('u.opStatuses', 'uos')
+      .leftJoinAndSelect('u.opStatuses', 'uos')
       .leftJoin('u.plant', 'up')
       .leftJoinAndSelect('ml.stackPipe', 'sp')
       .leftJoin('sp.plant', 'spp')
