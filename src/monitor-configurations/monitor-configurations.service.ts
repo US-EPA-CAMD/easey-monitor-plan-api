@@ -8,6 +8,9 @@ import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
 import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
+import { UnitControlRepository } from '../unit-control/unit-control.repository';
+import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 
 @Injectable()
 export class MonitorConfigurationsService {
@@ -17,6 +20,9 @@ export class MonitorConfigurationsService {
     private readonly monitorPlanRepository: MonitorPlanRepository,
     private readonly plantRepository: PlantRepository,
     private readonly uscRepository: UnitStackConfigurationRepository,
+    private readonly unitCapacityRepository: UnitCapacityRepository,
+    private readonly unitControlRepository: UnitControlRepository,
+    private readonly unitFuelRepository: UnitFuelRepository,
     private readonly map: MonitorPlanMap,
   ) {}
 
@@ -84,6 +90,18 @@ export class MonitorConfigurationsService {
     );
   }
 
+  async lookupUnitCapacitys(locations: string[], config:MonitorPlan){
+    config.unitCapacities =  await this.unitCapacityRepository.getUnitCapacitiesByLocationIds(locations);
+  }
+
+  async lookupUnitControls(locations: string[], config:MonitorPlan){
+    config.unitControls =  await this.unitControlRepository.getUnitControlsByLocationIds(locations);
+  }
+
+  async lookupUnitFuel(locations: string[], config:MonitorPlan){
+    config.unitFuels =  await this.unitFuelRepository.getUnitFuelByLocationIds(locations);
+  }
+
   async getConfigurationsByLastUpdated(
     queryTime: string,
   ): Promise<LastUpdatedConfigDTO> {
@@ -119,6 +137,9 @@ export class MonitorConfigurationsService {
         locationList.push(loc.id);
       }
       promises.push(this.lookupUnitStacks(locationList, config));
+      promises.push(this.lookupUnitCapacitys(locationList, config));
+      promises.push(this.lookupUnitControls(locationList, config));
+      promises.push(this.lookupUnitFuel(locationList, config));
     }
 
     await Promise.all(promises);

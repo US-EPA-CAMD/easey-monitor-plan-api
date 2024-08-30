@@ -15,6 +15,9 @@ import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 import { MonitorPlanReportingFrequency } from './monitor-plan-reporting-freq.entity';
+import { UnitCapacity } from './unit-capacity.entity';
+import { UnitControl } from './unit-control.entity';
+import { UnitFuel } from './unit-fuel.entity';
 
 @Entity({ name: 'camdecmps.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -149,6 +152,12 @@ export class MonitorPlan extends BaseEntity {
   reportingFrequencies: MonitorPlanReportingFrequency[];
 
   unitStackConfigurations: UnitStackConfiguration[];
+
+  unitCapacities?: UnitCapacity[];
+
+  unitControls?: UnitControl[];
+
+  unitFuels?:UnitFuel[];
 
   @Column({ name: 'last_evaluated_date' })
   lastEvaluatedDate: Date;

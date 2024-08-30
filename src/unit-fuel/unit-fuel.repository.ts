@@ -16,4 +16,12 @@ export class UnitFuelRepository extends Repository<UnitFuel> {
       .andWhere('u.id = :unitId', { unitId })
       .getMany();
   }
+
+  async getUnitFuelByLocationIds(locationIds: string[]): Promise<UnitFuel[]> {
+    return this.createQueryBuilder('uf')
+      .innerJoin('uf.unit', 'u')
+      .innerJoin('u.location', 'l')
+      .where('l.id IN (:...locationIds)', { locationIds })
+      .getMany();
+  }
 }
