@@ -24,6 +24,16 @@ export class UserCheckOutService {
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOutDTO> {
+    if (!(await this.ensureNoEvaluationOrSubmissionInProgress(monPlanId))) {
+      throw new EaseyException(
+        new Error(
+          'Record can not be checked out. It is currently being evaluated or submitted.',
+        ),
+        HttpStatus.NOT_FOUND,
+        { monPlanId: monPlanId },
+      );
+    }
+
     const entity = await this.repository.checkOutConfiguration(
       monPlanId,
       username,
@@ -47,6 +57,31 @@ export class UserCheckOutService {
     }
 
     return this.map.one(record);
+  }
+
+  private async ensureNoEvaluationOrSubmissionInProgress(monPlanId: string) {
+    const evalRecordsInProgress = await this.returnManager().query(
+      `SELECT * FROM CAMDECMPSAUX.evaluation_set es
+      JOIN CAMDECMPSAUX.evaluation_queue eq USING(evaluation_set_id)
+      WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
+      `,
+      [monPlanId],
+    );
+
+    const submissionRecordsInProgress = await this.returnManager().query(
+      `SELECT * FROM CAMDECMPSAUX.submission_set
+       WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
+      `,
+      [monPlanId],
+    );
+
+    if (
+      (evalRecordsInProgress && evalRecordsInProgress.length > 0) ||
+      (submissionRecordsInProgress && submissionRecordsInProgress.length > 0)
+    ) {
+      return false;
+    }
+    return true;
   }
 
   async updateLastActivity(monPlanId: string): Promise<UserCheckOutDTO> {
@@ -73,25 +108,7 @@ export class UserCheckOutService {
   };
 
   async checkInConfiguration(monPlanId: string): Promise<Boolean> {
-    const evalRecordsInProgress = await this.returnManager().query(
-      `SELECT * FROM CAMDECMPSAUX.evaluation_set es
-      JOIN CAMDECMPSAUX.evaluation_queue eq USING(evaluation_set_id)
-      WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
-      `,
-      [monPlanId],
-    );
-
-    const submissionRecordsInProgress = await this.returnManager().query(
-      `SELECT * FROM CAMDECMPSAUX.submission_set
-       WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
-      `,
-      [monPlanId],
-    );
-
-    if (
-      (evalRecordsInProgress && evalRecordsInProgress.length > 0) ||
-      (submissionRecordsInProgress && submissionRecordsInProgress.length > 0)
-    ) {
+    if (!(await this.ensureNoEvaluationOrSubmissionInProgress(monPlanId))) {
       throw new EaseyException(
         new Error(
           'Record can not be checked in. It is currently being evaluated or submitted.',
