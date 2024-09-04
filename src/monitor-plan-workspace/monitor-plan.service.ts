@@ -755,8 +755,8 @@ export class MonitorPlanWorkspaceService {
             items: combinedItems,
             beginYear: a.beginYear,
             beginQuarter: a.beginQuarter,
-            endYear: b.endYear,
-            endQuarter: b.endQuarter,
+            endYear: a.endYear,
+            endQuarter: a.endQuarter,
           };
         } else {
           return [
@@ -999,43 +999,29 @@ export class MonitorPlanWorkspaceService {
     return [date.getUTCFullYear(), Math.floor(date.getUTCMonth() / 3) + 1];
   }
 
-  private groupUnitsAndUnitStackConfigsByPeriodAndUnit(
-    units: UnitDTO[],
-    unitStackConfigs: UnitStackConfigurationDTO[],
+  private mapItemsToWorkingPlans(
+    items: Array<UnitDTO | UnitStackConfigurationDTO>,
   ): WorkingConfiguration[] {
-    return [...units, ...unitStackConfigs].reduce((acc, item) => {
-      if (!item.beginDate) return acc; // Skip items without a begin date (e.g. units that have not been associated with a plan)
+    return items
+      .map(item => {
+        if (!item.beginDate) return null; // Skip items without a begin date (e.g. units that have not been associated with a plan)
 
-      const [beginYear, beginQuarter] = this.getYearAndQuarterFromDate(
-        item.beginDate,
-      );
-      const [endYear, endQuarter] = this.getYearAndQuarterFromDate(
-        item.endDate,
-      );
-      for (const grouping of acc) {
-        if (
-          grouping.items.find(
-            (i: UnitDTO | UnitStackConfigurationDTO) =>
-              i.unitId === item.unitId,
-          ) &&
-          grouping.beginYear === beginYear &&
-          grouping.beginQuarter === beginQuarter &&
-          grouping.endYear === endYear &&
-          grouping.endQuarter === endQuarter
-        ) {
-          grouping.items.push(item);
-          return acc;
-        }
-      }
-      return acc.concat({
-        id: uuid(),
-        beginYear,
-        beginQuarter,
-        endYear,
-        endQuarter,
-        items: [item],
-      });
-    }, []);
+        const [beginYear, beginQuarter] = this.getYearAndQuarterFromDate(
+          item.beginDate,
+        );
+        const [endYear, endQuarter] = this.getYearAndQuarterFromDate(
+          item.endDate,
+        );
+        return {
+          id: uuid(),
+          beginYear,
+          beginQuarter,
+          endYear,
+          endQuarter,
+          items: [item],
+        };
+      })
+      .filter(item => item !== null);
   }
 
   async importMpPlan(
@@ -1089,13 +1075,13 @@ export class MonitorPlanWorkspaceService {
 
       // Calculate a list of working plans from the database via transaction state.
       const workingPlans = this.mergePartialConfigurations(
-        this.groupUnitsAndUnitStackConfigsByPeriodAndUnit(
-          await this.unitWorkspaceService.getUnitsByFacId(facilityId, trx),
-          await this.unitStackService.getUnitStackConfigurationsByFacId(
+        this.mapItemsToWorkingPlans([
+          ...(await this.unitWorkspaceService.getUnitsByFacId(facilityId, trx)),
+          ...(await this.unitStackService.getUnitStackConfigurationsByFacId(
             facilityId,
             trx,
-          ),
-        ),
+          )),
+        ]),
       );
 
       // Check the configurations for validity.
