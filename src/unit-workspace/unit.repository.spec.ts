@@ -1,0 +1,63 @@
+import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { UnitWorkspaceRepository } from './unit.repository';
+import { Unit } from './unit.entity';
+
+const unitEntity = new Unit(); // Mocked Unit entity
+
+// Mocking the SelectQueryBuilder and its methods
+const mockQueryBuilder = (): Partial<SelectQueryBuilder<Unit>> => ({
+  where: jest.fn().mockReturnThis(),
+  getMany: jest.fn().mockResolvedValue([unitEntity]),
+  getOne: jest.fn().mockResolvedValue(unitEntity),
+});
+
+describe('UnitWorkspaceRepository', () => {
+  let repository: UnitWorkspaceRepository;
+  let queryBuilder: SelectQueryBuilder<Unit>;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        EntityManager,
+        UnitWorkspaceRepository,
+        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+      ],
+    }).compile();
+
+    // Get the repository and query builder from the module
+    repository = module.get(UnitWorkspaceRepository);
+    queryBuilder = module.get<SelectQueryBuilder<Unit>>(SelectQueryBuilder);
+
+    // Mocking the createQueryBuilder to return the queryBuilder mock
+    repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
+  });
+
+  it('should be defined', () => {
+    expect(repository).toBeDefined();
+  });
+
+  describe('getUnit', () => {
+    it('calls createQueryBuilder and returns one unit', async () => {
+      // Cast to jest.Mock to avoid TypeScript errors
+      (queryBuilder.where as jest.Mock).mockReturnValue(queryBuilder);
+      (queryBuilder.getOne as jest.Mock).mockReturnValue(unitEntity);
+
+      const result = await repository.getUnit(1);
+      expect(result).toEqual(unitEntity);
+      expect(queryBuilder.where).toHaveBeenCalledWith('u.id = :unitId', { unitId: 1 });
+    });
+  });
+
+  describe('getUnits', () => {
+    it('calls createQueryBuilder and returns an array of units', async () => {
+      // Cast to jest.Mock to avoid TypeScript errors
+      (queryBuilder.where as jest.Mock).mockReturnValue(queryBuilder);
+      (queryBuilder.getMany as jest.Mock).mockReturnValue([unitEntity]);
+
+      const result = await repository.getUnits(1);
+      expect(result).toEqual([unitEntity]);
+      expect(queryBuilder.where).toHaveBeenCalledWith('u.id = :unitId', { unitId: 1 });
+    });
+  });
+});

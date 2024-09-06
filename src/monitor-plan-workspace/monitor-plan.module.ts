@@ -38,6 +38,9 @@ import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 import { MonitorConfigurationsWorkspaceModule } from '../monitor-configurations-workspace/monitor-configurations-workspace.module';
 import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.module';
+import { UnitWorkspaceModule } from '../unit-workspace/unit.module';
+import { ReportingFreqWorkspaceModule } from '../reporting-freq-workspace/reporting-freq.module';
+import { UnitProgramWorkspaceModule } from '../unit-program-workspace/unit-program.module';
 
 @Module({
   imports: [
@@ -61,6 +64,9 @@ import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.
     UnitCapacityWorkspaceModule,
     UnitControlWorkspaceModule,
     UnitFuelWorkspaceModule,
+    UnitWorkspaceModule,
+    UnitProgramWorkspaceModule,
+    ReportingFreqWorkspaceModule,
     ComponentWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     AnalyzerRangeWorkspaceModule,
