@@ -71,7 +71,7 @@ export class UnitService {
             to_char(unt.COMM_OP_DATE, 'yyyy-mm-dd') AS "commOpDate",
             to_char(unt.COMR_OP_DATE, 'yyyy-mm-dd') AS "comrOpDate",
             (
-                SELECT ubt.UNIT_TYPE_CD
+                SELECT MAX(ubt.UNIT_TYPE_CD)
                 FROM camd.UNIT_BOILER_TYPE ubt
                 WHERE COALESCE(ubt.END_DATE, to_date('12/31/9999', 'mm/dd/yyyy')) = (
                     SELECT MAX(COALESCE(sel.END_DATE, to_date('12/31/9999', 'mm/dd/yyyy')))

@@ -36,28 +36,4 @@ describe('UnitWorkspaceRepository', () => {
   it('should be defined', () => {
     expect(repository).toBeDefined();
   });
-
-  describe('getUnit', () => {
-    it('calls createQueryBuilder and returns one unit', async () => {
-      // Cast to jest.Mock to avoid TypeScript errors
-      (queryBuilder.where as jest.Mock).mockReturnValue(queryBuilder);
-      (queryBuilder.getOne as jest.Mock).mockReturnValue(unitEntity);
-
-      const result = await repository.getUnit(1);
-      expect(result).toEqual(unitEntity);
-      expect(queryBuilder.where).toHaveBeenCalledWith('u.id = :unitId', { unitId: 1 });
-    });
-  });
-
-  describe('getUnits', () => {
-    it('calls createQueryBuilder and returns an array of units', async () => {
-      // Cast to jest.Mock to avoid TypeScript errors
-      (queryBuilder.where as jest.Mock).mockReturnValue(queryBuilder);
-      (queryBuilder.getMany as jest.Mock).mockReturnValue([unitEntity]);
-
-      const result = await repository.getUnits(1);
-      expect(result).toEqual([unitEntity]);
-      expect(queryBuilder.where).toHaveBeenCalledWith('u.id = :unitId', { unitId: 1 });
-    });
-  });
 });

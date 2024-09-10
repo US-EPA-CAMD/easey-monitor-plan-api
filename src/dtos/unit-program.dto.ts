@@ -10,15 +10,6 @@ const KEY = 'Unit Program';
 export class UnitProgramBaseDTO {
 
   @ApiProperty({
-    description: propertyMetadata.unitProgramDTOUnitId.description,
-    example: propertyMetadata.unitProgramDTOUnitId.example,
-    name: propertyMetadata.unitProgramDTOUnitId.fieldLabels.value,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  unitId: number;
-
-  @ApiProperty({
     description: propertyMetadata.unitProgramDTOProgramId.description,
     example: propertyMetadata.unitProgramDTOProgramId.example,
     name: propertyMetadata.unitProgramDTOProgramId.fieldLabels.value,
@@ -122,6 +113,15 @@ export class UnitProgramDTO extends UnitProgramBaseDTO {
   })
   @IsString()
   id: string;
+
+  @ApiProperty({
+    description: propertyMetadata.unitProgramDTOUnitRecordId .description,
+    example: propertyMetadata.unitProgramDTOUnitRecordId .example,
+    name: propertyMetadata.unitProgramDTOUnitRecordId .fieldLabels.value,
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  unitRecordId: number;
 
   @ApiProperty({
     description: propertyMetadata.unitProgramDTOUserId.description,

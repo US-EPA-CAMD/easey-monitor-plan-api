@@ -8,15 +8,4 @@ export class UnitWorkspaceRepository extends Repository<Unit> {
     super(Unit, entityManager);
   }
 
-  async getUnit(unitId: number): Promise<Unit> {
-    const query = this.createQueryBuilder('u')
-      .where('u.id = :unitId', { unitId });
-    return query.getOne();
-  }
-
-  async getUnits(unitId: number): Promise<Unit[]> {
-    return this.createQueryBuilder('u')
-      .where('u.id = :unitId', { unitId })
-      .getMany();
-  }
 }

@@ -32,8 +32,8 @@ export class ReportingFreqWorkspaceService {
                       ON mprf.mon_plan_id = mpl.mon_plan_id
                  JOIN camdecmpswks.monitor_location ml
                       ON mpl.mon_loc_id = ml.mon_loc_id
-                 LEFT JOIN camdecmpswks.unit u
-                           ON ml.unit_id = u.unit_id
+                 JOIN camdecmpswks.unit u
+                      ON ml.unit_id = u.unit_id  
                  LEFT JOIN camdecmpswks.stack_pipe sp
                            ON ml.stack_pipe_id = sp.stack_pipe_id
                  JOIN camdecmpsmd.reporting_period rp_begin

@@ -8,7 +8,7 @@ export class UnitProgramMap extends BaseMap<UnitProgram, UnitProgramDTO> {
   public async one(entity: UnitProgram): Promise<UnitProgramDTO> {
     return {
       id: entity.id.toString(),
-      unitId: entity.unitId,
+      unitRecordId: entity.unitId,
       programId: entity.programId,
       programCode: entity.programCode,
       classCode: entity.classCode,
