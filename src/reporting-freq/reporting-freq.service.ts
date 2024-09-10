@@ -20,7 +20,7 @@ export class ReportingFreqService {
         SELECT
             mprf.mon_plan_rf_id AS "id",
             mprf.report_freq_cd AS "reportFrequencyCode",
-            string_agg(COALESCE(u.unit_id::text, sp.stack_name), ', ') AS "monitoringPlanLocations",
+            string_agg(u.unit_id::text, ', ') AS "monitoringPlanLocations",  
             rp_begin.period_abbreviation AS "beginQuarter",
             rp_end.period_abbreviation AS "endQuarter",
             CASE
@@ -32,10 +32,8 @@ export class ReportingFreqService {
                       ON mprf.mon_plan_id = mpl.mon_plan_id
                  JOIN camdecmps.monitor_location ml
                       ON mpl.mon_loc_id = ml.mon_loc_id
-                 LEFT JOIN camd.unit u
+                 JOIN camd.unit u
                            ON ml.unit_id = u.unit_id
-                 LEFT JOIN camdecmps.stack_pipe sp
-                           ON ml.stack_pipe_id = sp.stack_pipe_id
                  JOIN camdecmpsmd.reporting_period rp_begin
                       ON mprf.begin_rpt_period_id = rp_begin.rpt_period_id
                  LEFT JOIN camdecmpsmd.reporting_period rp_end
