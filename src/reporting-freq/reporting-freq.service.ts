@@ -20,20 +20,20 @@ export class ReportingFreqService {
         SELECT
             mprf.mon_plan_rf_id AS "id",
             mprf.report_freq_cd AS "reportFrequencyCode",
-            string_agg(u.unit_id::text, ', ') AS "monitoringPlanLocations",  
+            string_agg(u.unit_id::text, ', ') AS "monitoringPlanLocations",
             rp_begin.period_abbreviation AS "beginQuarter",
             rp_end.period_abbreviation AS "endQuarter",
             CASE
                 WHEN rp_end.end_date IS NULL OR rp_end.end_date > CURRENT_DATE THEN true
                 ELSE false
                 END AS "active"
-        FROM camdecmps.monitor_plan_reporting_freq mprf
+        FROM camdecmps.monitor_location ml
                  JOIN camdecmps.monitor_plan_location mpl
-                      ON mprf.mon_plan_id = mpl.mon_plan_id
-                 JOIN camdecmps.monitor_location ml
-                      ON mpl.mon_loc_id = ml.mon_loc_id
+                      ON ml.mon_loc_id = mpl.mon_loc_id
+                 JOIN camdecmps.monitor_plan_reporting_freq mprf
+                      ON mpl.mon_plan_id = mprf.mon_plan_id
                  JOIN camd.unit u
-                           ON ml.unit_id = u.unit_id
+                      ON ml.unit_id = u.unit_id
                  JOIN camdecmpsmd.reporting_period rp_begin
                       ON mprf.begin_rpt_period_id = rp_begin.rpt_period_id
                  LEFT JOIN camdecmpsmd.reporting_period rp_end

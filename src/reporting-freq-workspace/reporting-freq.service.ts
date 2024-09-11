@@ -27,11 +27,11 @@ export class ReportingFreqWorkspaceService {
                 WHEN rp_end.end_date IS NULL OR rp_end.end_date > CURRENT_DATE THEN true
                 ELSE false
                 END AS "active"
-        FROM camdecmpswks.monitor_plan_reporting_freq mprf
+        FROM camdecmpswks.monitor_location ml
                  JOIN camdecmpswks.monitor_plan_location mpl
-                      ON mprf.mon_plan_id = mpl.mon_plan_id
-                 JOIN camdecmpswks.monitor_location ml
-                      ON mpl.mon_loc_id = ml.mon_loc_id
+                      ON ml.mon_loc_id = mpl.mon_loc_id
+                 JOIN camdecmpswks.monitor_plan_reporting_freq mprf
+                      ON mpl.mon_plan_id = mprf.mon_plan_id
                  JOIN camdecmpswks.unit u
                       ON ml.unit_id = u.unit_id
                  JOIN camdecmpsmd.reporting_period rp_begin

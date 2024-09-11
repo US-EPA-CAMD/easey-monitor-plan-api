@@ -9,12 +9,6 @@ export class ReportingFreqRepository extends Repository<MonitorPlanReportingFreq
     super(MonitorPlanReportingFrequency, entityManager);
   }
 
-  async getReportingFreqs(locId: string, unitId: number): Promise<MonitorPlanReportingFrequency[]> {
-    return this.createQueryBuilder('rf')
-      .where('rf.id = :unitId', { unitId })
-      .getMany();
-  }
-
   async getReportingFreq(unitReportingFreqId: string): Promise<MonitorPlanReportingFrequency> {
     const query = this.createQueryBuilder('rf')
       .where('rf.id = :unitReportingFreqId', { unitReportingFreqId });
