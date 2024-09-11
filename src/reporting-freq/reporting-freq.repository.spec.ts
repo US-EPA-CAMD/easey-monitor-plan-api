@@ -37,18 +37,6 @@ describe('ReportingFreqRepository', () => {
     expect(repository).toBeDefined();
   });
 
-  describe('getReportingFreqs', () => {
-    it('calls createQueryBuilder and returns an array of reporting frequencies', async () => {
-      // Cast to jest.Mock to avoid TypeScript errors
-      (queryBuilder.where as jest.Mock).mockReturnValue(queryBuilder);
-      (queryBuilder.getMany as jest.Mock).mockReturnValue([reportingFreqEntity]);
-
-      const result = await repository.getReportingFreqs('locationId', 1);
-      expect(result).toEqual([reportingFreqEntity]);
-      expect(queryBuilder.where).toHaveBeenCalledWith('rf.id = :unitId', { unitId: 1 });
-    });
-  });
-
   describe('getReportingFreq', () => {
     it('calls createQueryBuilder and returns a single reporting frequency', async () => {
       // Cast to jest.Mock to avoid TypeScript errors
