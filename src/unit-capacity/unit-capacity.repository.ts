@@ -23,6 +23,17 @@ export class UnitCapacityRepository extends Repository<UnitCapacity> {
     return query.getMany();
   }
 
+  async getUnitCapacitiesByLocationIds(
+    locationIds: string[]
+  ): Promise<UnitCapacity[]> {
+    const query = this.createQueryBuilder('uc')
+      .innerJoin('uc.unit', 'u')
+      .innerJoin('u.location', 'l')
+      .where('l.id IN (:...locationIds)', { locationIds })
+
+    return query.getMany();
+  }
+
   async getUnitCapacitiesByUnitIds(ids: number[]): Promise<UnitCapacity[]> {
     const query = this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')

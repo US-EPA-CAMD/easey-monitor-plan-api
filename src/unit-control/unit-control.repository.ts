@@ -16,4 +16,12 @@ export class UnitControlRepository extends Repository<UnitControl> {
       .andWhere('u.id = :unitId', { unitId })
       .getMany();
   }
+
+  async getUnitControlsByLocationIds(locationIds: string[]): Promise<UnitControl[]> {
+    return this.createQueryBuilder('uc').addSelect('uc.indicatorCode')
+      .innerJoin('uc.unit', 'u')
+      .innerJoin('u.location', 'l')
+      .where('l.id IN (:...locationIds)', { locationIds })
+      .getMany();
+  }
 }
