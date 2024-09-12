@@ -72,6 +72,12 @@ import { CheckOutModule } from './check-out/check-out.module';
 import { MonitorConfigurationsModule } from './monitor-configurations/monitor-configurations.module';
 import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
+import { UnitWorkspaceModule } from './unit-workspace/unit.module';
+import { UnitProgramModule } from './unit-program/unit-program.module';
+import { ReportingFreqWorkspaceModule } from './reporting-freq-workspace/reporting-freq.module';
+import { UnitModule } from './unit/unit.module';
+import { ReportingFreqModule } from './reporting-freq/reporting-freq.module';
+import { UnitProgramWorkspaceModule } from './unit-program-workspace/unit-program.module';
 
 const routes: Routes = [
   {
@@ -196,6 +202,18 @@ const routes: Routes = [
         path: ':locId/units/:unitId/unit-capacities',
         module: UnitCapacityModule,
       },
+      {
+        path: ':locId/units/:unitId/units',
+        module: UnitModule,
+      },
+      {
+        path: ':locId/units/:unitId/unit-programs',
+        module: UnitProgramModule,
+      },
+      {
+        path: ':locId/units/:unitId/reporting-frequencies',
+        module: ReportingFreqModule,
+      },
     ],
   },
   {
@@ -287,6 +305,18 @@ const routes: Routes = [
       {
         path: ':locId/units/:unitId/unit-capacities',
         module: UnitCapacityWorkspaceModule,
+      },
+      {
+        path: ':locId/units/:unitId/units',
+        module: UnitWorkspaceModule,
+      },
+      {
+        path: ':locId/units/:unitId/unit-programs',
+        module: UnitProgramWorkspaceModule,
+      },
+      {
+        path: ':locId/units/:unitId/reporting-frequencies',
+        module: ReportingFreqWorkspaceModule,
       },
     ],
   },

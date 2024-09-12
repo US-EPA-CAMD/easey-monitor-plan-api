@@ -24,6 +24,11 @@ import { MonitorLocationChecksService } from './monitor-location-checks.service'
 import { MonitorLocationWorkspaceController } from './monitor-location.controller';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
+import { UnitWorkspaceModule } from '../unit-workspace/unit.module';
+import { ReportingFreqWorkspaceModule } from '../reporting-freq-workspace/reporting-freq.module';
+import { UnitProgramModule } from '../unit-program/unit-program.module';
+import { UnitProgramWorkspaceModule } from '../unit-program-workspace/unit-program.module';
+import { ReportingFreqModule } from '../reporting-freq/reporting-freq.module';
 
 @Module({
   imports: [
@@ -31,6 +36,12 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     UnitCapacityWorkspaceModule,
     UnitControlWorkspaceModule,
     UnitFuelWorkspaceModule,
+    UnitWorkspaceModule,
+    UnitModule,
+    UnitProgramWorkspaceModule,
+    UnitProgramModule,
+    ReportingFreqWorkspaceModule,
+    ReportingFreqModule,
     MonitorMethodWorkspaceModule,
     MatsMethodWorkspaceModule,
     MonitorFormulaWorkspaceModule,
@@ -42,7 +53,6 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     MonitorSystemWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,
-    UnitModule,
     StackPipeModule,
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
     HttpModule,
