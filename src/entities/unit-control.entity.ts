@@ -47,6 +47,9 @@ export class UnitControl extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
+  @Column({ select: false, name: 'indicator_cd', update: false, insert: false })
+  indicatorCode?: string
+
   @ManyToOne(
     () => Unit,
     u => u.unitControls,
