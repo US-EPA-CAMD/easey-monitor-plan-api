@@ -17,7 +17,7 @@ export class MonitorPlanReportingFrequencyController {
     description:
       'Retrieves reporting frequency records from a specific unit ID',
   })
-  getReportingFreqsByUnitRecordId(
+  getReportingFreqs(
     @Param('unitId') unitRecordId: number,
   ): Promise<ReportingFreqDTO[]> {
     return this.service.getReportingFreqs(unitRecordId);

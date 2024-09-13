@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { UnitWorkspaceRepository } from './unit.repository';
-import { Unit } from './unit.entity';
+import { Unit } from '../entities/workspace/unit.entity';
 
 const unitEntity = new Unit(); // Mocked Unit entity
 

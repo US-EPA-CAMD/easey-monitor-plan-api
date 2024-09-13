@@ -4,6 +4,8 @@ import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { UnitDTO } from '../dtos/unit.dto';
 import { Unit } from '../entities/unit.entity';
 import { Unit as UnitWorkspace } from '../entities/workspace/unit.entity';
+import { UnitOpStatus } from '../entities/unit-op-status.entity';
+import { UnitOpStatus as UnitOpStatusWorkspace } from '../entities/workspace/unit-op-status.entity';
 
 @Injectable()
 export class UnitMap extends BaseMap<Unit | UnitWorkspace, UnitDTO> {
@@ -19,7 +21,7 @@ export class UnitMap extends BaseMap<Unit | UnitWorkspace, UnitDTO> {
 
   private getEndDate(entity: Unit | UnitWorkspace): Date {
     const unitRetireDateEpoch = Math.min(
-      ...entity.opStatuses
+      ...(entity.opStatuses as Array<UnitOpStatus | UnitOpStatusWorkspace>)
         .filter(s => s.opStatusCode === 'RET')
         .map(s => new Date(s.beginDate).getTime()),
     );

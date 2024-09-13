@@ -5,7 +5,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
-import { UnitProgramRepository } from '../unit-program/unit-program.repository';
+import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-program.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CountyCodeService } from '../county-code/county-code.service';
 import { CountyCodeDTO } from '../dtos/county-code.dto';
@@ -430,7 +430,7 @@ describe('Monitor Plan Service', () => {
           useFactory: mockReportingPeriodRepo,
         },
         {
-          provide: UnitProgramRepository,
+          provide: UnitProgramWorkspaceRepository,
           useFactory: mockUnitProgramRepo,
         },
         {
