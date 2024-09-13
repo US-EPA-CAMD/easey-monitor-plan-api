@@ -61,6 +61,28 @@ export class Unit extends BaseEntity {
   })
   facId: number;
 
+  @Column({
+    name: 'userid',
+    type: 'varchar',
+    length: 160,
+    nullable: false,
+  })
+  userId: string;
+
+  @Column({
+    name: 'add_date',
+    type: 'timestamp',
+    nullable: false,
+  })
+  addDate: Date;
+
+  @Column({
+    name: 'update_date',
+    type: 'timestamp',
+    nullable: true,
+  })
+  updateDate: Date;
+
   @ManyToOne(
     () => Plant,
     plant => plant.units,

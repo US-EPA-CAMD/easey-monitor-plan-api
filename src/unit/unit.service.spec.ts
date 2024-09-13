@@ -4,6 +4,7 @@ import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
 import { UnitRepository } from './unit.repository';
 import { UnitService } from './unit.service';
+import { EntityManager } from 'typeorm';
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -24,6 +25,7 @@ describe('Unit Import Tests', () => {
           useFactory: mockRepository,
         },
         UnitService,
+        EntityManager,
       ],
     }).compile();
 

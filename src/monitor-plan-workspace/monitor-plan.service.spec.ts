@@ -244,7 +244,7 @@ const mockReportingPeriodRepo = () => ({
   getPreviousPeriodId: jest.fn(),
 });
 const mockUnitProgramRepo = () => ({
-  getUnitProgramsByUnitIds: jest.fn().mockResolvedValue([]),
+  getUnitProgramsByUnitRecordIds: jest.fn().mockResolvedValue([]),
 });
 const mockMonitorPlanLocationService = () => ({
   createMonPlanLocationRecord: jest.fn(),

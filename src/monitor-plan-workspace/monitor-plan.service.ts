@@ -47,7 +47,7 @@ import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace
 import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit-capacity.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
-import { UnitProgramRepository } from '../unit-program/unit-program.repository';
+import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-program.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
@@ -88,7 +88,7 @@ export class MonitorPlanWorkspaceService {
     private readonly unitStackConfigRepository: UnitStackConfigurationWorkspaceRepository,
     private readonly reportingFreqRepository: MonitorPlanReportingFrequencyWorkspaceRepository,
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
-    private readonly unitProgramRepository: UnitProgramRepository,
+    private readonly unitProgramRepository: UnitProgramWorkspaceRepository,
     private readonly unitWorkspaceService: UnitWorkspaceService,
     private readonly easeyContentService: EaseyContentService,
     private readonly plantService: PlantService,
@@ -281,7 +281,7 @@ export class MonitorPlanWorkspaceService {
     const unitPrograms = await withTransaction(
       this.unitProgramRepository,
       trx,
-    ).getUnitProgramsByUnitIds(unitRecordIds);
+    ).getUnitProgramsByUnitRecordIds(unitRecordIds);
 
     // Get the program ranges and types from the unit programs.
     const programRanges: ProgramRange[] = await Promise.all(

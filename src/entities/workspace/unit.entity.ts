@@ -19,7 +19,7 @@ import { UnitBoilerType } from './unit-boiler-type.entity';
 import { UnitProgram } from './unit-program.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 
-@Entity({ name: 'camd.unit' })
+@Entity({ name: 'camdecmpswks.unit' })
 export class Unit extends BaseEntity {
   @PrimaryColumn({
     name: 'unit_id',
@@ -60,6 +60,28 @@ export class Unit extends BaseEntity {
     transformer: new NumericColumnTransformer(),
   })
   facId: number;
+
+  @Column({
+    name: 'userid',
+    type: 'varchar',
+    length: 160,
+    nullable: false,
+  })
+  userId: string;
+
+  @Column({
+    name: 'add_date',
+    type: 'timestamp',
+    nullable: false,
+  })
+  addDate: Date;
+
+  @Column({
+    name: 'update_date',
+    type: 'timestamp',
+    nullable: true,
+  })
+  updateDate: Date;
 
   @ManyToOne(
     () => Plant,

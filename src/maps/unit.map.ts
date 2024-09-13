@@ -35,6 +35,9 @@ export class UnitMap extends BaseMap<Unit | UnitWorkspace, UnitDTO> {
       facilityId: entity.facId,
       beginDate: this.getBeginDate(entity),
       endDate: this.getEndDate(entity),
+      userId: entity.userId,
+      addDate: entity.addDate.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
       nonLoadBasedIndicator: entity.nonLoadBasedIndicator,
     };
   }

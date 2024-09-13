@@ -39,4 +39,14 @@ export class MonitorPlanReportingFrequencyWorkspaceRepository extends Repository
 
     return await this.save(record);
   }
+
+  async getReportingFreq(
+    unitReportingFreqId: string,
+  ): Promise<MonitorPlanReportingFrequency> {
+    const query = this.createQueryBuilder(
+      'rf',
+    ).where('rf.id = :unitReportingFreqId', { unitReportingFreqId });
+
+    return query.getOne();
+  }
 }

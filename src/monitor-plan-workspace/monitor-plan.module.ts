@@ -32,7 +32,7 @@ import { SystemFuelFlowWorkspaceModule } from '../system-fuel-flow-workspace/sys
 import { UnitCapacityWorkspaceModule } from '../unit-capacity-workspace/unit-capacity.module';
 import { UnitControlWorkspaceModule } from '../unit-control-workspace/unit-control.module';
 import { UnitFuelWorkspaceModule } from '../unit-fuel-workspace/unit-fuel.module';
-import { UnitProgramModule } from '../unit-program/unit-program.module';
+import { UnitProgramWorkspaceModule } from '../unit-program-workspace/unit-program.module';
 import { UnitStackConfigurationWorkspaceModule } from '../unit-stack-configuration-workspace/unit-stack-configuration.module';
 import { UserCheckOutModule } from '../user-check-out/user-check-out.module';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
@@ -64,7 +64,7 @@ import { EaseyContentModule } from '../monitor-plan-easey-content/easey-content.
     UnitCapacityWorkspaceModule,
     UnitControlWorkspaceModule,
     UnitFuelWorkspaceModule,
-    UnitProgramModule,
+    UnitProgramWorkspaceModule,
     ComponentWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     AnalyzerRangeWorkspaceModule,

@@ -19,7 +19,11 @@ export class UnitProgram extends BaseEntity {
   })
   id: number;
 
-  @Column({ name: 'add_date', type: 'timestamp' })
+  @Column({
+    name: 'add_date',
+    type: 'timestamp',
+    nullable: false,
+  })
   addDate: Date;
 
   @Column({ name: 'app_status_cd', type: 'varchar', length: 7, nullable: true })
