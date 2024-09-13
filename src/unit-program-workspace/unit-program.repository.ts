@@ -32,7 +32,7 @@ export class UnitProgramWorkspaceRepository extends Repository<UnitProgram> {
     return this.createQueryBuilder('up')
       .innerJoinAndSelect('up.program', 'p')
       .innerJoinAndSelect('p.code', 'pc')
-      .where('up.unitId IN (:...unitIds)', { unitRecordIds })
+      .where('up.unitId IN (:...unitRecordIds)', { unitRecordIds })
       .getMany();
   }
 }
