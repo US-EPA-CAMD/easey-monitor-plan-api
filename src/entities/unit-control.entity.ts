@@ -48,7 +48,7 @@ export class UnitControl extends BaseEntity {
   updateDate: Date;
 
   @Column({ select: false, name: 'indicator_cd', update: false, insert: false })
-  indicatorCode?: string
+  fuelIndicatorCode?: string
 
   @ManyToOne(
     () => Unit,
