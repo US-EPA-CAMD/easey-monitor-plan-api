@@ -4,6 +4,7 @@ import { UnitWorkspaceService } from './unit.service';
 import { UnitDTO, UnitBaseDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
 import { Unit } from './unit.entity';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(new UnitDTO()),
@@ -22,6 +23,12 @@ describe('UnitWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UnitWorkspaceService,
+        {
+          provide: MonitorPlanWorkspaceService,
+          useFactory: () => ({
+            resetToNeedsEvaluation: jest.fn(),
+          }),
+        },
         {
           provide: UnitWorkspaceRepository,
           useFactory: mockRepository,

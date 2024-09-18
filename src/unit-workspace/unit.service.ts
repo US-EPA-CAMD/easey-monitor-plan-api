@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 import { UnitWorkspaceRepository } from './unit.repository';
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class UnitWorkspaceService {
   constructor(
     private readonly repository: UnitWorkspaceRepository,
     private readonly entityManager: EntityManager,
+    @Inject(forwardRef(() => MonitorPlanWorkspaceService))
+    private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
   async getUnit(locId: string, unitId: number,): Promise<UnitDTO> {
@@ -36,6 +39,8 @@ export class UnitWorkspaceService {
 
     await this.repository.save(unit);
 
+    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+
     const unitDetails = await this.getUnitDetails(unitId);
     return unitDetails && unitDetails.length > 0 ? unitDetails[0] : null;
   }
@@ -44,13 +49,13 @@ export class UnitWorkspaceService {
     const sql = `
         SELECT
             unt.UNIT_ID as "id",
-            camdUnt.UNITID as "unitid",  -- From camd.UNIT
-            unt.NON_LOAD_BASED_IND as "nonLoadBasedIndicator",  -- From camdecmpswks.UNIT
-            camdUnt.SOURCE_CATEGORY_CD as "sourceCategoryCd",  -- From camd.UNIT
-            to_char(camdUnt.COMM_OP_DATE, 'yyyy-mm-dd') AS "commOpDate",  -- From camd.UNIT
-            to_char(camdUnt.COMR_OP_DATE, 'yyyy-mm-dd') AS "comrOpDate",  -- From camd.UNIT
+            unt.UNITID as "unitid",
+            unt.NON_LOAD_BASED_IND as "nonLoadBasedIndicator",
+            unt.SOURCE_CATEGORY_CD as "sourceCategoryCd",
+            to_char(unt.COMM_OP_DATE, 'yyyy-mm-dd') AS "commOpDate",
+            to_char(unt.COMR_OP_DATE, 'yyyy-mm-dd') AS "comrOpDate",
             (
-                SELECT MAX(ubt.UNIT_TYPE_CD) 
+                SELECT MAX(ubt.UNIT_TYPE_CD)
                 FROM camd.UNIT_BOILER_TYPE ubt
                 WHERE COALESCE(ubt.END_DATE, to_date('12/31/9999', 'mm/dd/yyyy')) = (
                     SELECT MAX(COALESCE(sel.END_DATE, to_date('12/31/9999', 'mm/dd/yyyy')))
@@ -58,16 +63,14 @@ export class UnitWorkspaceService {
                     WHERE sel.UNIT_ID = unt.UNIT_ID
                 )
                   AND ubt.UNIT_ID = unt.UNIT_ID
-            ) AS "unitTypeCd",  
-            uos.OP_STATUS_CD as "opStatusCd",  -- Operational status
-            to_char(uos.BEGIN_DATE, 'yyyy-mm-dd') AS "statusBeginDate",  
-            unt.USERID as "auditUser",  -- From camdecmpswks.UNIT
-            COALESCE(unt.UPDATE_DATE, unt.ADD_DATE) AS "auditDate",  -- From camdecmpswks.UNIT
-            true as "active"  
+            ) AS "unitTypeCd",
+            uos.OP_STATUS_CD as "opStatusCd",
+            to_char(uos.BEGIN_DATE, 'yyyy-mm-dd') AS "statusBeginDate",
+            unt.USERID as "auditUser",
+            COALESCE(unt.UPDATE_DATE, unt.ADD_DATE) AS "auditDate",
+            true as "active"
         FROM
-            camdecmpswks.UNIT unt  
-                JOIN
-            camd.UNIT camdUnt ON camdUnt.UNIT_ID = unt.UNIT_ID  
+            camdecmpswks.UNIT unt
                 JOIN
             (
                 SELECT
@@ -82,7 +85,7 @@ export class UnitWorkspaceService {
                         FROM camd.UNIT_OP_STATUS s2
                         WHERE s2.UNIT_ID = s1.UNIT_ID
                     )
-            ) AS uos ON uos.UNIT_ID = unt.UNIT_ID  
+            ) AS uos ON uos.UNIT_ID = unt.UNIT_ID
         WHERE
             unt.UNIT_ID = $1
     `;
