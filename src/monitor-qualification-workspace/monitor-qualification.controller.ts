@@ -56,7 +56,11 @@ export class MonitorQualificationWorkspaceController {
     @Body() payload: MonitorQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorQualificationDTO> {
-    return this.service.createQualification(locationId, payload, user.userId);
+    return this.service.createQualification({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':qualId')
@@ -79,11 +83,11 @@ export class MonitorQualificationWorkspaceController {
     @Body() payload: MonitorQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorQualificationDTO> {
-    return this.service.updateQualification(
-      locId,
+    return this.service.updateQualification({
+      locationId: locId,
       qualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

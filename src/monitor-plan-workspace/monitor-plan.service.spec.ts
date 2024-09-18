@@ -1,6 +1,11 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-program.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CountyCodeService } from '../county-code/county-code.service';
 import { CountyCodeDTO } from '../dtos/county-code.dto';
@@ -15,6 +20,7 @@ import { DuctWaf } from '../entities/workspace/duct-waf.entity';
 import { LEEQualification } from '../entities/workspace/lee-qualification.entity';
 import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { MonitorAttribute } from '../entities/workspace/monitor-attribute.entity';
 import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
@@ -63,41 +69,64 @@ import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configu
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
 const LOC_ID = 'LOC_ID';
 const MON_PLAN_ID = 'MON_PLAN_ID';
-const DTO = new UpdateMonitorPlanDTO();
+const DTO = new MonitorPlanDTO();
+DTO.monitoringLocationData = [];
+DTO.beginReportPeriodId = 1;
+const UPDATE_DTO = new UpdateMonitorPlanDTO();
+UPDATE_DTO.monitoringLocationData = [];
+UPDATE_DTO.unitStackConfigurationData = [];
 const MONITOR_LOCATION = new MonitorLocation();
 MONITOR_LOCATION.id = LOC_ID;
 const MONITOR_PLAN = new MonitorPlan();
 MONITOR_PLAN.plant = new Plant();
+const WORKING_PLAN = {
+  id: 1,
+  beginYear: 2024,
+  beginQuarter: 1,
+  endYear: 2024,
+  endQuarter: 2,
+  items: [],
+};
 
 const mockPlantService = () => ({
   getFacIdFromOris: jest.fn().mockResolvedValue(FAC_ID),
+});
+
+const mockUnitService = () => ({
+  getUnitsByMonPlanId: jest.fn().mockResolvedValue([]),
+  getUnitsByFacId: jest.fn().mockResolvedValue([]),
 });
 
 const mockMonitorLocationService = () => ({
   getMonitorLocationsByFacilityAndOris: jest
     .fn()
     .mockResolvedValue([MONITOR_LOCATION]),
-  importMonitorLocation: jest.fn(),
+  importMonitorLocations: jest.fn().mockResolvedValue([]),
 });
 
 const mockEaseyContentService = () => ({
   importMonitorPlan: jest.fn().mockResolvedValue({
-    monitorPlanSchema: { version : '1.0.0'}
+    monitorPlanSchema: { version: '1.0.0' },
   }),
 });
 
 const mockMonitorPlanRepo = () => ({
+  createMonitorPlanRecord: jest.fn().mockResolvedValue(MONITOR_PLAN),
   getActivePlanByLocationId: jest.fn().mockResolvedValue(MONITOR_PLAN),
   resetToNeedsEvaluation: jest.fn(),
   revertToOfficialRecord: jest.fn(),
   getMonitorPlan: jest.fn().mockResolvedValue(MONITOR_PLAN),
   updateDateAndUserId: jest.fn(),
+  find: jest.fn().mockResolvedValue([MONITOR_PLAN]),
+  findOneBy: jest.fn().mockResolvedValue(MONITOR_PLAN),
+  save: jest.fn().mockResolvedValue(MONITOR_PLAN),
 });
 
 const mockMonitorPlanCommentService = () => ({
@@ -105,7 +134,9 @@ const mockMonitorPlanCommentService = () => ({
 });
 
 const mockUnitStackConfigService = () => ({
-  importUnitStack: jest.fn(),
+  getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
+  getUnitStackConfigurationsByFacId: jest.fn().mockResolvedValue([]),
+  importUnitStacks: jest.fn().mockResolvedValue([]),
 });
 
 const mockEvalStatusCodeRepo = () => ({
@@ -185,13 +216,19 @@ const mockPctQualificationRepo = () => ({
   find: jest.fn().mockResolvedValue([new PCTQualification()]),
 });
 const mockUnitStackConfigRepo = () => ({
+  getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
   getUnitStackConfigsByLocationIds: jest.fn(),
 });
 const mockReportingFreqRepo = () => ({
+  createReportingFrequencyRecord: jest
+    .fn()
+    .mockResolvedValue(new MonitorPlanReportingFrequency()),
   findBy: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
 });
 
-const mockUscMap = () => ({});
+const mockUscMap = () => ({
+  many: jest.fn().mockResolvedValue([]),
+});
 const mockCountyCodeService = () => ({
   getCountyCode: jest.fn().mockResolvedValue(new CountyCodeDTO()),
 });
@@ -199,6 +236,41 @@ const mockMap = () => ({
   one: jest.fn().mockResolvedValue(DTO),
   many: jest.fn().mockResolvedValue([DTO]),
 });
+const mockReportingPeriodRepo = () => ({
+  getByDate: jest.fn().mockResolvedValue({ year: 1, quarter: 1 }),
+  getByYearQuarter: jest.fn().mockResolvedValue({ year: 1, quarter: 1 }),
+  getById: jest.fn().mockResolvedValue({ year: 1, quarter: 1 }),
+  getNextReportingPeriodId: jest.fn().mockResolvedValue(1),
+  getPreviousPeriodId: jest.fn(),
+});
+const mockUnitProgramRepo = () => ({
+  getUnitProgramsByUnitRecordIds: jest.fn().mockResolvedValue([]),
+});
+const mockMonitorPlanLocationService = () => ({
+  createMonPlanLocationRecord: jest.fn(),
+});
+const queryBuilderMock = {
+  leftJoin: jest.fn().mockReturnThis(),
+  select: jest.fn().mockReturnThis(),
+  addSelect: jest.fn().mockReturnThis(),
+  getMany: jest.fn().mockResolvedValue(['your_mocked_object_here']),
+};
+const entityManagerMock = {
+  connection: {
+    createQueryRunner: jest.fn().mockImplementation(() => queryRunnerMock),
+  },
+  createQueryBuilder: () => queryBuilderMock,
+  transaction: jest.fn(
+    async passedFunction => await passedFunction(entityManagerMock),
+  ),
+};
+const queryRunnerMock = {
+  manager: entityManagerMock,
+  commitTransaction: jest.fn(),
+  release: jest.fn(),
+  rollbackTransaction: jest.fn(),
+  startTransaction: jest.fn(),
+};
 
 describe('Monitor Plan Service', () => {
   let service: MonitorPlanWorkspaceService;
@@ -206,7 +278,12 @@ describe('Monitor Plan Service', () => {
   beforeEach(async () => {
     // initialize a NestJS module with service and relevant repositories.
     const module = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
+        {
+          provide: EntityManager,
+          useFactory: () => entityManagerMock,
+        },
         MonitorPlanWorkspaceService,
         {
           provide: EaseyContentService,
@@ -348,6 +425,22 @@ describe('Monitor Plan Service', () => {
           provide: SubmissionsAvailabilityStatusCodeRepository,
           useFactory: mockSubmissionAvailabilityCodeRepo,
         },
+        {
+          provide: ReportingPeriodRepository,
+          useFactory: mockReportingPeriodRepo,
+        },
+        {
+          provide: UnitProgramWorkspaceRepository,
+          useFactory: mockUnitProgramRepo,
+        },
+        {
+          provide: MonitorPlanLocationService,
+          useFactory: mockMonitorPlanLocationService,
+        },
+        {
+          provide: UnitWorkspaceService,
+          useFactory: mockUnitService,
+        },
       ],
     }).compile();
 
@@ -358,8 +451,18 @@ describe('Monitor Plan Service', () => {
 
   describe('importMpPlan', () => {
     it('Should import a MonitoringPlan', async () => {
-      const result = await service.importMpPlan(DTO, USER_ID);
-      expect(result).toEqual(null);
+      jest.spyOn(service, 'updateEndReportingPeriod').mockResolvedValue(DTO);
+      jest
+        .spyOn(service as any, 'mergePartialConfigurations')
+        .mockReturnValue([WORKING_PLAN]);
+      jest
+        .spyOn(service as any, 'syncMonitorPlan')
+        .mockResolvedValue({ plan: DTO, status: 'new' });
+      const result = await service.importMpPlan(UPDATE_DTO, USER_ID);
+      expect(result).toEqual({
+        endedPlans: [],
+        newPlans: [DTO],
+      });
     });
   });
 

@@ -4,7 +4,7 @@ import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
 import { UnitRepository } from './unit.repository';
 import { UnitService } from './unit.service';
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -20,16 +20,12 @@ describe('Unit Import Tests', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
-        UnitService,
         {
           provide: UnitRepository,
           useFactory: mockRepository,
         },
+        UnitService,
         EntityManager,
-        {
-          provide: DataSource,
-          useValue: {},
-        },
       ],
     }).compile();
 
@@ -39,7 +35,6 @@ describe('Unit Import Tests', () => {
 
   describe('Check2', () => {
     it('Should pass given a returned entry for facilityId and unitId present in location', async () => {
-
       repository.findOneBy = jest.fn().mockResolvedValue(new Unit());
 
       const location = new UpdateMonitorLocationDTO();

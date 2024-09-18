@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -11,6 +12,7 @@ import {
 import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
 
 @Injectable()
@@ -22,7 +24,9 @@ export class MonitorDefaultWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorDefaultWorkspaceService');
+  }
 
   async getDefaults(locationId: string): Promise<MonitorDefaultDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -32,8 +36,12 @@ export class MonitorDefaultWorkspaceService {
   async getDefault(
     locationId: string,
     defaultId: string,
+    trx?: EntityManager,
   ): Promise<MonitorDefault> {
-    const result = await this.repository.getDefault(locationId, defaultId);
+    const result = await withTransaction(this.repository, trx).getDefault(
+      locationId,
+      defaultId,
+    );
 
     if (!result) {
       throw new EaseyException(
@@ -49,13 +57,22 @@ export class MonitorDefaultWorkspaceService {
     return result;
   }
 
-  async createDefault(
-    locationId: string,
-    payload: MonitorDefaultBaseDTO,
-    userId: string,
+  async createDefault({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorDefaultDTO> {
-    const monDefault = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorDefaultBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorDefaultDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const monDefault = repository.create({
       id: uuid(),
       locationId,
       parameterCode: payload.parameterCode,
@@ -75,23 +92,31 @@ export class MonitorDefaultWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(monDefault);
+    await repository.save(monDefault);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(monDefault);
   }
 
-  async updateDefault(
-    locationId: string,
-    defaultId: string,
-    payload: MonitorDefaultBaseDTO,
-    userId: string,
+  async updateDefault({
+    locationId,
+    defaultId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorDefaultDTO> {
-    const monDefault = await this.getDefault(locationId, defaultId);
+    trx,
+  }: {
+    locationId: string;
+    defaultId: string;
+    payload: MonitorDefaultBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorDefaultDTO> {
+    const monDefault = await this.getDefault(locationId, defaultId, trx);
 
     monDefault.parameterCode = payload.parameterCode;
     monDefault.defaultValue = payload.defaultValue;
@@ -108,10 +133,10 @@ export class MonitorDefaultWorkspaceService {
     monDefault.userId = userId;
     monDefault.updateDate = currentDateTime();
 
-    await this.repository.save(monDefault);
+    await withTransaction(this.repository, trx).save(monDefault);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(monDefault);
@@ -121,53 +146,46 @@ export class MonitorDefaultWorkspaceService {
     locationId: string,
     monDefaults: MonitorDefaultBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-
-        promises.push(
-          new Promise(innerResolve => {
-            (async () => {
-              for (const monDefault of monDefaults) {
-                const monDefaultRecord = await this.repository.getDefaultBySpecs(
-                  locationId,
-                  monDefault.parameterCode,
-                  monDefault.defaultPurposeCode,
-                  monDefault.fuelCode,
-                  monDefault.operatingConditionCode,
-                  monDefault.beginDate,
-                  monDefault.beginHour,
-                  monDefault.endDate,
-                  monDefault.endHour,
-                );
-
-                if (monDefaultRecord) {
-                  await this.updateDefault(
-                    locationId,
-                    monDefaultRecord.id,
-                    monDefault,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createDefault(
-                    locationId,
-                    monDefault,
-                    userId,
-                    true,
-                  );
-                }
-
-                innerResolve(true);
-              }
-            })();
-          }),
+    await Promise.all(
+      monDefaults.map(async monDefault => {
+        const monDefaultRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getDefaultBySpecs(
+          locationId,
+          monDefault.parameterCode,
+          monDefault.defaultPurposeCode,
+          monDefault.fuelCode,
+          monDefault.operatingConditionCode,
+          monDefault.beginDate,
+          monDefault.beginHour,
+          monDefault.endDate,
+          monDefault.endHour,
         );
 
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        if (monDefaultRecord) {
+          await this.updateDefault({
+            locationId,
+            defaultId: monDefaultRecord.id,
+            payload: monDefault,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createDefault({
+            locationId,
+            payload: monDefault,
+            userId,
+            isImport: true,
+            trx,
+          });
+        }
+      }),
+    );
+    this.logger.debug(`Imported ${monDefaults.length} monitor defaults`);
+    return true;
   }
 }

@@ -1,8 +1,9 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
-import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 
 import {
   MonitorQualificationBaseDTO,
@@ -12,8 +13,10 @@ import {
 import { MonitorQualification } from '../entities/monitor-qualification.entity';
 import { LEEQualificationWorkspaceService } from '../lee-qualification-workspace/lee-qualification.service';
 import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace/lme-qualification.service';
+import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
+import { withTransaction } from '../utils';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 
 @Injectable()
@@ -21,6 +24,7 @@ export class MonitorQualificationWorkspaceService {
   constructor(
     private readonly repository: MonitorQualificationWorkspaceRepository,
     private readonly map: MonitorQualificationMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -28,7 +32,9 @@ export class MonitorQualificationWorkspaceService {
     private readonly leeQualificationService: LEEQualificationWorkspaceService,
     private readonly lmeQualificationService: LMEQualificationWorkspaceService,
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorQualificationWorkspaceService');
+  }
 
   runQualificationImportCheck(qualifications: UpdateMonitorQualificationDTO[]) {
     const errorList: string[] = [];
@@ -84,6 +90,7 @@ export class MonitorQualificationWorkspaceService {
     qualificationRecordId: string,
     qualification: UpdateMonitorQualificationDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<void> {
     const promises = [];
     if (
@@ -96,6 +103,7 @@ export class MonitorQualificationWorkspaceService {
           qualificationRecordId,
           qualification.monitoringQualificationLEEData,
           userId,
+          trx,
         ),
       );
     }
@@ -110,6 +118,7 @@ export class MonitorQualificationWorkspaceService {
           qualificationRecordId,
           qualification.monitoringQualificationLMEData,
           userId,
+          trx,
         ),
       );
     }
@@ -124,6 +133,7 @@ export class MonitorQualificationWorkspaceService {
           qualificationRecordId,
           qualification.monitoringQualificationPercentData,
           userId,
+          trx,
         ),
       );
     }
@@ -134,55 +144,58 @@ export class MonitorQualificationWorkspaceService {
     qualifications: UpdateMonitorQualificationDTO[],
     locationId: string,
     userId: string,
-  ): Promise<void> {
-    const promises = qualifications.map(async qualification => {
-      const innerPromises = [];
-      const qualificationRecord = await this.repository.getQualificationByLocTypeDate(
-        locationId,
-        qualification.qualificationTypeCode,
-        qualification.beginDate,
-        qualification.endDate,
-      );
-
-      if (qualificationRecord) {
-        await this.updateQualification(
+    trx?: EntityManager,
+  ) {
+    await Promise.all(
+      qualifications.map(async qualification => {
+        const qualificationRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getQualificationByLocTypeDate(
           locationId,
-          qualificationRecord.id,
-          qualification,
-          userId,
-          true,
+          qualification.qualificationTypeCode,
+          qualification.beginDate,
+          qualification.endDate,
         );
 
-        innerPromises.push(
-          this.importQualPctLeeLmeCpms(
+        if (qualificationRecord) {
+          await this.updateQualification({
+            locationId,
+            qualId: qualificationRecord.id,
+            payload: qualification,
+            userId,
+            isImport: true,
+            trx,
+          });
+
+          await this.importQualPctLeeLmeCpms(
             locationId,
             qualificationRecord.id,
             qualification,
             userId,
-          ),
-        );
-      } else {
-        const createdQualification = await this.createQualification(
-          locationId,
-          qualification,
-          userId,
-          true,
-        );
+            trx,
+          );
+        } else {
+          const createdQualification = await this.createQualification({
+            locationId,
+            payload: qualification,
+            userId,
+            isImport: true,
+            trx,
+          });
 
-        innerPromises.push(
-          this.importQualPctLeeLmeCpms(
+          await this.importQualPctLeeLmeCpms(
             locationId,
             createdQualification.id,
             qualification,
             userId,
-          ),
-        );
-      }
-
-      await Promise.all(innerPromises);
-    });
-
-    await Promise.all(promises);
+            trx,
+          );
+        }
+      }),
+    );
+    this.logger.debug(`Imported ${qualifications.length} qualifications`);
+    return true;
   }
 
   async getQualifications(
@@ -195,8 +208,12 @@ export class MonitorQualificationWorkspaceService {
   async getQualification(
     locId: string,
     qualId: string,
+    trx?: EntityManager,
   ): Promise<MonitorQualification> {
-    const result = await this.repository.getQualification(locId, qualId);
+    const result = await withTransaction(this.repository, trx).getQualification(
+      locId,
+      qualId,
+    );
     if (!result) {
       throw new EaseyException(
         new Error('Qualification Not Found'),
@@ -210,14 +227,22 @@ export class MonitorQualificationWorkspaceService {
     return result;
   }
 
-  async createQualification(
-    locationId: string,
-    payload: MonitorQualificationBaseDTO,
-    userId: string,
+  async createQualification({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorQualificationDTO> {
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorQualificationDTO> {
     const timestamp = currentDateTime();
-    const qual = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+    const qual = repository.create({
       id: uuid(),
       locationId,
       qualificationTypeCode: payload.qualificationTypeCode,
@@ -228,23 +253,31 @@ export class MonitorQualificationWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(qual);
+    await repository.save(qual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(qual);
   }
 
-  async updateQualification(
-    locationId: string,
-    qualId: string,
-    payload: MonitorQualificationBaseDTO,
-    userId: string,
+  async updateQualification({
+    locationId,
+    qualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorQualificationDTO> {
-    const qual = await this.getQualification(locationId, qualId);
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    payload: MonitorQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorQualificationDTO> {
+    const qual = await this.getQualification(locationId, qualId, trx);
 
     qual.userId = userId;
     qual.qualificationTypeCode = payload.qualificationTypeCode;
@@ -253,10 +286,10 @@ export class MonitorQualificationWorkspaceService {
     qual.userId = userId;
     qual.updateDate = currentDateTime();
 
-    const result = await this.repository.save(qual);
+    const result = await withTransaction(this.repository, trx).save(qual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);

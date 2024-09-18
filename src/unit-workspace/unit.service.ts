@@ -1,34 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-
-import { UnitWorkspaceRepository } from './unit.repository';
-import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
+
+import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
+import { UnitMap } from '../maps/unit.map';
+import { withTransaction } from '../utils';
+import { UnitWorkspaceRepository } from './unit.repository';
 
 @Injectable()
 export class UnitWorkspaceService {
   constructor(
     private readonly repository: UnitWorkspaceRepository,
+    private readonly map: UnitMap,
     private readonly entityManager: EntityManager,
   ) {}
 
-  async getUnit(locId: string, unitId: number,): Promise<UnitDTO> {
-    const unitDetails = await this.getUnitDetails(unitId);
-    return unitDetails && unitDetails.length > 0 ? unitDetails[0] : null;
-  }
-
-  async getUnits(locId: string, unitId: number,): Promise<UnitDTO[]> {
-    return await this.getUnitDetails(unitId);
+  async getUnits(id: number): Promise<UnitDTO[]> {
+    return this.getUnitDetails(id);
   }
 
   async updateUnit(
-    locationId: string,
-    unitId: number,
+    id: number,
     payload: UnitBaseDTO,
     userId: string,
-    isImport = false,
   ): Promise<UnitDTO> {
-    const unit = await this.repository.findOneBy({ id: unitId });
+    const unit = await this.repository.findOneBy({ id });
 
     unit.nonLoadBasedIndicator = payload.nonLoadBasedIndicator;
     unit.userId = userId;
@@ -36,15 +32,15 @@ export class UnitWorkspaceService {
 
     await this.repository.save(unit);
 
-    const unitDetails = await this.getUnitDetails(unitId);
+    const unitDetails = await this.getUnitDetails(id);
     return unitDetails && unitDetails.length > 0 ? unitDetails[0] : null;
   }
 
-  private async getUnitDetails(unitId: number): Promise<UnitDTO[]> {
+  private async getUnitDetails(id: number): Promise<UnitDTO[]> {
     const sql = `
         SELECT
             unt.UNIT_ID as "id",
-            camdUnt.UNITID as "unitid",  -- From camd.UNIT
+            camdUnt.UNITID as "unitId",  -- From camd.UNIT
             unt.NON_LOAD_BASED_IND as "nonLoadBasedIndicator",  -- From camdecmpswks.UNIT
             camdUnt.SOURCE_CATEGORY_CD as "sourceCategoryCd",  -- From camd.UNIT
             to_char(camdUnt.COMM_OP_DATE, 'yyyy-mm-dd') AS "commOpDate",  -- From camd.UNIT
@@ -87,7 +83,29 @@ export class UnitWorkspaceService {
             unt.UNIT_ID = $1
     `;
 
-    const result = await this.entityManager.query(sql, [unitId]);
+    const result = await this.entityManager.query(sql, [id]);
     return result;
+  }
+
+  async getUnitsByFacId(facId: number, trx?: EntityManager) {
+    const results = await withTransaction(this.repository, trx).find({
+      where: { facId },
+      relations: {
+        location: {
+          methods: true,
+          plans: true,
+        },
+        opStatuses: true,
+      },
+    });
+    return this.map.many(results);
+  }
+
+  async getUnitsByMonPlanId(monPlanId: string, trx?: EntityManager) {
+    const results = await withTransaction(
+      this.repository,
+      trx,
+    ).getUnitsByMonPlanId(monPlanId);
+    return this.map.many(results);
   }
 }

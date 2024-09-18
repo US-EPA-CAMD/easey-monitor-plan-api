@@ -13,12 +13,11 @@ import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 export class UnitWorkspaceController {
   constructor(private readonly service: UnitWorkspaceService) {}
 
-  @Get()
+  @Get(':id')
   @ApiOkResponse({
     isArray: true,
     type: UnitDTO,
-    description:
-      'Retrieves workspace unit for a specific unit ID',
+    description: 'Retrieves workspace unit for a specific unit ID',
   })
   @RoleGuard(
     {
@@ -28,11 +27,8 @@ export class UnitWorkspaceController {
     },
     LookupType.Location,
   )
-  getUnits(
-    @Param('locId') locId: string,
-    @Param('unitId') unitId: number,
-  ): Promise<UnitDTO[]> {
-    return this.service.getUnits(locId, unitId);
+  getUnits(@Param('id') id: number): Promise<UnitDTO[]> {
+    return this.service.getUnits(id);
   }
 
   @Put(':id')
@@ -49,17 +45,10 @@ export class UnitWorkspaceController {
     description: 'Updates a workspace unit record by unit ID',
   })
   async updateUnit(
-    @Param('locId') locationId: string,
-    @Param('unitId') unitId: number,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() payload: UnitBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitDTO> {
-    return this.service.updateUnit(
-      locationId,
-      unitId,
-      payload,
-      user.userId,
-    );
+    return this.service.updateUnit(id, payload, user.userId);
   }
 }

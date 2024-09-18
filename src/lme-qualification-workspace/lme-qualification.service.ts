@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -11,6 +12,7 @@ import {
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { withTransaction } from '../utils';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 
 @Injectable()
@@ -62,25 +64,37 @@ export class LMEQualificationWorkspaceService {
     locId: string,
     qualId: string,
     qualDataYear: number,
+    trx?: EntityManager,
   ): Promise<LMEQualificationDTO> {
-    const result = await this.repository.getLMEQualificationByDataYear(
-      locId,
-      qualId,
-      qualDataYear,
-    );
+    const result = await withTransaction(
+      this.repository,
+      trx,
+    ).getLMEQualificationByDataYear(locId, qualId, qualDataYear);
     if (result) {
       return this.map.one(result);
     }
   }
 
-  async createLMEQualification(
-    locationId: string,
-    qualId: string,
-    payload: LMEQualificationBaseDTO,
-    userId: string,
+  async createLMEQualification({
+    locationId,
+    qualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<LMEQualificationDTO> {
-    const qual = await this.mpQualService.getQualification(locationId, qualId);
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    payload: LMEQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<LMEQualificationDTO> {
+    const qual = await this.mpQualService.getQualification(
+      locationId,
+      qualId,
+      trx,
+    );
 
     if (!['LMEA', 'LMES'].includes(qual.qualificationTypeCode)) {
       throw new EaseyException(
@@ -95,7 +109,9 @@ export class LMEQualificationWorkspaceService {
       );
     }
 
-    const lmeQual = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const lmeQual = repository.create({
       id: uuid(),
       qualificationId: qual.id,
       qualificationDataYear: payload.qualificationDataYear,
@@ -107,24 +123,35 @@ export class LMEQualificationWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(lmeQual);
+    const result = await repository.save(lmeQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
   }
 
-  async updateLMEQualification(
-    locationId: string,
-    qualId: string,
-    lmeQualId: string,
-    payload: LMEQualificationBaseDTO,
-    userId: string,
+  async updateLMEQualification({
+    locationId,
+    qualId,
+    lmeQualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<LMEQualificationDTO> {
-    const lmeQual = await this.repository.getLMEQualification(
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    lmeQualId: string;
+    payload: LMEQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<LMEQualificationDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const lmeQual = await repository.getLMEQualification(
       locationId,
       qualId,
       lmeQualId,
@@ -138,10 +165,10 @@ export class LMEQualificationWorkspaceService {
     lmeQual.userId = userId;
     lmeQual.updateDate = currentDateTime();
 
-    const result = await this.repository.save(lmeQual);
+    const result = await repository.save(lmeQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
@@ -152,48 +179,38 @@ export class LMEQualificationWorkspaceService {
     qualificationId: string,
     lmeQualifications: LMEQualificationBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const lmeQualification of lmeQualifications) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const lmeQualRecord = await this.getLMEQualificationByDataYear(
-                  locationId,
-                  qualificationId,
-                  lmeQualification.qualificationDataYear,
-                );
+    return Promise.all(
+      lmeQualifications.map(async lmeQualification => {
+        const lmeQualRecord = await this.getLMEQualificationByDataYear(
+          locationId,
+          qualificationId,
+          lmeQualification.qualificationDataYear,
+          trx,
+        );
 
-                if (lmeQualRecord) {
-                  await this.updateLMEQualification(
-                    locationId,
-                    qualificationId,
-                    lmeQualRecord.id,
-                    lmeQualification,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createLMEQualification(
-                    locationId,
-                    qualificationId,
-                    lmeQualification,
-                    userId,
-                    true,
-                  );
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (lmeQualRecord) {
+          await this.updateLMEQualification({
+            locationId,
+            qualId: qualificationId,
+            lmeQualId: lmeQualRecord.id,
+            payload: lmeQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createLMEQualification({
+            locationId,
+            qualId: qualificationId,
+            payload: lmeQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

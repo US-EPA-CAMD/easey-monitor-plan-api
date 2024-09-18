@@ -21,6 +21,10 @@ export class ComponentWorkspaceRepository extends Repository<Component> {
     locationId: string,
     componentIdentifier: string,
   ): Promise<Component> {
+    if (!locationId || !componentIdentifier) {
+      return null;
+    }
+
     return this.createQueryBuilder('c')
       .where(
         'c.componentId = :componentIdentifier AND c.locationId = :locationId',

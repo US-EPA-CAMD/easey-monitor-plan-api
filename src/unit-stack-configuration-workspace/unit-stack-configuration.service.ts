@@ -1,23 +1,57 @@
 import { Injectable } from '@nestjs/common';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
-import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
+import {
+  UnitStackConfigurationBaseDTO,
+  UnitStackConfigurationDTO,
+} from '../dtos/unit-stack-configuration.dto';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
-import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
+import { withTransaction } from '../utils';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
   constructor(
     private readonly repository: UnitStackConfigurationWorkspaceRepository,
-    private readonly unitServive: UnitService,
-    private readonly stackPipeService: StackPipeService,
+    private readonly unitService: UnitService,
+    private readonly stackPipeService: StackPipeWorkspaceService,
     private readonly map: UnitStackConfigurationMap,
   ) {}
+
+  async getUnitStackConfigsByIds(ids: string[], trx?: EntityManager) {
+    const results = await withTransaction(
+      this.repository,
+      trx,
+    ).getUnitStacksByIds(ids);
+    return this.map.many(results);
+  }
+
+  async getUnitStackConfigurationsByFacId(facId: number, trx?: EntityManager) {
+    const results = await withTransaction(this.repository, trx).find({
+      relations: {
+        stackPipe: true,
+        unit: true,
+      },
+      where: [{ unit: { facId } }, { stackPipe: { facId } }],
+    });
+    return this.map.many(results);
+  }
+
+  async getUnitStackConfigsByMonitorPlanId(
+    monitorPlanId: string,
+    trx?: EntityManager,
+  ) {
+    const results = await withTransaction(
+      this.repository,
+      trx,
+    ).getUnitStackConfigsByMonitorPlanId(monitorPlanId);
+    return await this.map.many(results);
+  }
 
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
     return await this.repository.getUnitStackConfigsByLocationIds(locationIds);
@@ -30,7 +64,6 @@ export class UnitStackConfigurationWorkspaceService {
     const unitUnitIds: Set<string> = new Set<string>();
 
     const unitStackConfigStackIds: Set<string> = new Set<string>();
-    const unitStackConfigUnitIds: Set<string> = new Set<string>();
 
     for (const location of monitorPlan.monitoringLocationData) {
       if (location.stackPipeId) {
@@ -55,7 +88,6 @@ export class UnitStackConfigurationWorkspaceService {
       }
 
       unitStackConfigStackIds.add(unitStackConfig.stackPipeId);
-      unitStackConfigUnitIds.add(unitStackConfig.unitId);
     }
 
     for (const stackPipe of unitStackIds) {
@@ -67,71 +99,56 @@ export class UnitStackConfigurationWorkspaceService {
       }
     }
 
-    if (unitUnitIds.size > 1) {
-      for (const unitId of unitUnitIds) {
-        if (!unitStackConfigUnitIds.has(unitId)) {
-          errorList.push(
-            CheckCatalogService.formatResultMessage('IMPORT-4-A', {
-              unitId: unitId,
-            }),
-          );
-        }
-      }
-    }
-
     return errorList;
   }
 
-  async importUnitStack(
+  async importUnitStacks(
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const unitStackConfig of plan.unitStackConfigurationData) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
-                  unitStackConfig.stackPipeId,
-                  facilityId,
-                );
+    const unitStackConfigDTOs: UnitStackConfigurationDTO[] = [];
 
-                const unit = await this.unitServive.getUnitByNameAndFacId(
-                  unitStackConfig.unitId,
-                  facilityId,
-                );
+    await Promise.all(
+      plan.unitStackConfigurationData.map(async unitStackConfig => {
+        const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+          unitStackConfig.stackPipeId,
+          facilityId,
+          trx,
+        );
 
-                const unitStackConfigRecord = await this.repository.getUnitStackConfigByUnitIdStackId(
-                  unit.id,
-                  stackPipe.id,
-                );
+        const unit = await this.unitService.getUnitByNameAndFacId(
+          unitStackConfig.unitId,
+          facilityId,
+          trx,
+        );
 
-                if (unitStackConfigRecord) {
-                  await this.updateUnitStackConfig(
-                    unitStackConfigRecord.id,
-                    unitStackConfig,
-                    userId,
-                  );
-                } else {
-                  await this.createUnitStackConfig(
-                    unit.id,
-                    stackPipe.id,
-                    unitStackConfig,
-                    userId,
-                  );
-                }
-                innerResolve(true);
-              })();
-            }),
-          );
-        }
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        const unitStackConfigRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getUnitStackConfigByUnitIdStackId(unit.id, stackPipe.id);
+
+        const unitStackConfigDTO = unitStackConfigRecord
+          ? await this.updateUnitStackConfig(
+              unitStackConfigRecord.id,
+              unitStackConfig,
+              userId,
+              trx,
+            )
+          : await this.createUnitStackConfig(
+              unit.id,
+              stackPipe.id,
+              unitStackConfig,
+              userId,
+              trx,
+            );
+
+        unitStackConfigDTOs.push(unitStackConfigDTO);
+      }),
+    );
+
+    return unitStackConfigDTOs;
   }
 
   async getUnitStackRelationships(id: string | number, isUnit: boolean) {
@@ -148,8 +165,11 @@ export class UnitStackConfigurationWorkspaceService {
     stackPipeRecordId: string,
     payload: UnitStackConfigurationBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
-    const unitStackConfig = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const unitStackConfig = repository.create({
       id: uuid(),
       unitId: unitRecordId,
       stackPipeId: stackPipeRecordId,
@@ -160,7 +180,7 @@ export class UnitStackConfigurationWorkspaceService {
       userId,
     });
 
-    await this.repository.save(unitStackConfig);
+    await repository.save(unitStackConfig);
     return this.map.one(unitStackConfig);
   }
 
@@ -168,14 +188,17 @@ export class UnitStackConfigurationWorkspaceService {
     id: string,
     payload: UnitStackConfigurationBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
-    const unitStackConfig = await this.repository.getUnitStackById(id);
+    const repository = withTransaction(this.repository, trx);
+
+    const unitStackConfig = await repository.getUnitStackById(id);
 
     unitStackConfig.endDate = payload.endDate;
     unitStackConfig.userId = userId;
     unitStackConfig.updateDate = currentDateTime();
 
-    await this.repository.save(unitStackConfig);
+    await repository.save(unitStackConfig);
     return this.map.one(unitStackConfig);
   }
 }

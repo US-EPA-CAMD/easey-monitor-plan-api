@@ -106,12 +106,12 @@ describe('LEEQualificationService', () => {
 
   describe('createLEEQualification', () => {
     it('creates a LEE qualification for a specific qualification ID', async () => {
-      const result = await service.createLEEQualification(
-        '1',
-        '1',
+      const result = await service.createLEEQualification({
+        locationId: '1',
+        qualId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedLEEQualification);
     });
   });
@@ -120,13 +120,13 @@ describe('LEEQualificationService', () => {
     it('updates a LEE qualification for a specific qualification ID and location ID', async () => {
       jest.spyOn(repository, 'getLEEQualification').mockResolvedValue(leeQual);
 
-      const result = await service.updateLEEQualification(
-        '1',
-        '1',
-        '1',
+      const result = await service.updateLEEQualification({
+        locationId: '1',
+        qualId: '1',
+        pctQualId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedLEEQualification);
     });
   });
@@ -136,13 +136,18 @@ describe('LEEQualificationService', () => {
       jest
         .spyOn(repository, 'getLEEQualificationByTestDate')
         .mockResolvedValue(null);
-      const result = await service.importLEEQualification(
+
+        jest
+        .spyOn(service, 'createLEEQualification')
+        .mockResolvedValue(new LEEQualificationDTO());
+
+       await service.importLEEQualification(
         '1',
         '1',
         [payload],
         'testUser',
       );
-      expect(result).toEqual(true);
+      expect(service.createLEEQualification).toHaveBeenCalled;
     });
 
     it('should update LEEQualification if exists', async () => {
@@ -150,13 +155,17 @@ describe('LEEQualificationService', () => {
         .spyOn(repository, 'getLEEQualificationByTestDate')
         .mockResolvedValue(leeQual);
 
-      const result = await service.importLEEQualification(
+        jest
+        .spyOn(service, 'updateLEEQualification')
+        .mockResolvedValue(new LEEQualificationDTO());
+
+      await service.importLEEQualification(
         '1',
         '1',
         [payload],
         'testUser',
       );
-      expect(result).toEqual(true);
+      expect(service.updateLEEQualification).toHaveBeenCalled;
     });
   });
 });

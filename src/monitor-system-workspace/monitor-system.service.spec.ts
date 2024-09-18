@@ -126,8 +126,8 @@ describe('MonitorSystemWorkspaceService', () => {
       const checkResults = await service.runMonitorSystemImportCheck(
         testData,
         location,
-        'id',
         [system],
+        'id',
       );
 
       expect(checkResults).toEqual([]);
@@ -166,8 +166,8 @@ describe('MonitorSystemWorkspaceService', () => {
       const checkResults = await service.runMonitorSystemImportCheck(
         testData,
         location,
-        'id',
         [system],
+        'id',
       );
 
       const errorList = [
@@ -201,8 +201,8 @@ describe('MonitorSystemWorkspaceService', () => {
       const checkResults = await service.runMonitorSystemImportCheck(
         testData,
         location,
-        'id',
         [system],
+        'id',
       );
 
       const errorList = [
@@ -234,8 +234,8 @@ describe('MonitorSystemWorkspaceService', () => {
       const checkResults = await service.runMonitorSystemImportCheck(
         testData,
         location,
-        'id',
         [system],
+        'id',
       );
 
       const errorList = [

@@ -42,6 +42,17 @@ export class StackPipe extends BaseEntity {
   })
   facId: number;
 
+  @Column({
+    name: 'userid',
+  })
+  userId: string;
+
+  @Column({ type: 'timestamp', name: 'add_date' })
+  addDate: Date;
+
+  @Column({ type: 'timestamp', name: 'update_date' })
+  updateDate: Date;
+
   @ManyToOne(
     () => Plant,
     plant => plant.stackPipes,

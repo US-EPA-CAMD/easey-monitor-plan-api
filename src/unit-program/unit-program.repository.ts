@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 
-import { UnitProgram } from '../entities/workspace/unit-program.entity';
+import { UnitProgram } from '../entities/unit-program.entity';
 
 @Injectable()
 export class UnitProgramRepository extends Repository<UnitProgram> {
@@ -9,16 +9,20 @@ export class UnitProgramRepository extends Repository<UnitProgram> {
     super(UnitProgram, entityManager);
   }
 
-  async getUnitPrograms(locId: string, unitId: number): Promise<UnitProgram[]> {
-    return this.createQueryBuilder('up')
-      .where('up.unitId = :unitId', { unitId })
-      .getMany();
-  }
-
-  async getUnitProgram(unitProgId: string): Promise<UnitProgram> {
-    const query = this.createQueryBuilder('up')
-      .where('up.programId = :unitProgId', { unitProgId });
+  async getUnitProgramByProgramId(progId: string): Promise<UnitProgram> {
+    const query = this.createQueryBuilder('up').where(
+      'up.programId = :progId',
+      { progId },
+    );
 
     return query.getOne();
+  }
+
+  async getUnitProgramsByUnitRecordId(
+    unitRecordId: number,
+  ): Promise<UnitProgram[]> {
+    return this.createQueryBuilder('up')
+      .where('up.unitId = :unitRecordId', { unitRecordId })
+      .getMany();
   }
 }

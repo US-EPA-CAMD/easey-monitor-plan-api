@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import {
+  DATE_FORMAT,
+  propertyMetadata,
+} from '@us-epa-camd/easey-common/constants';
 import {
   IsBoolean,
   IsDateString,
@@ -9,11 +12,19 @@ import {
   IsOptional,
   IsString,
   ValidationArguments,
+  ValidateIf,
 } from 'class-validator';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsValidDate,
+  MatchesRegEx,
+} from '@us-epa-camd/easey-common/pipes';
+
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+
+const KEY = 'Unit';
 
 export class UnitBaseDTO {
-
   @ApiProperty({
     description: propertyMetadata.unitDTONonLoadBasedIndicator.description,
     example: propertyMetadata.unitDTONonLoadBasedIndicator.example,
@@ -42,9 +53,51 @@ export class UnitDTO extends UnitBaseDTO {
     example: propertyMetadata.unitDTOUnitid.example,
     name: propertyMetadata.unitDTOUnitid.fieldLabels.value,
   })
-  @IsOptional()
+  @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
+    message: (args: ValidationArguments) => {
+      return `The value [${args.value}] for [${args.property}] must be match the RegEx: [A-Za-z0-9-*#]{1,6} for [${KEY}].`;
+    },
+  })
   @IsString()
-  unitid: string;
+  unitId: string;
+
+  @IsNumber()
+  @ApiProperty({
+    description: propertyMetadata.facilityId.description,
+    example: propertyMetadata.facilityId.example,
+    name: propertyMetadata.facilityId.fieldLabels.value,
+  })
+  facilityId: number;
+
+  @ApiProperty({
+    description: propertyMetadata.monitorQualificationDTOBeginDate.description,
+    example: propertyMetadata.monitorQualificationDTOBeginDate.example,
+    name: propertyMetadata.monitorQualificationDTOBeginDate.fieldLabels.value,
+  })
+  @ValidateIf(o => o.beginDate !== null)
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  beginDate: Date;
+
+  @ApiProperty({
+    description: propertyMetadata.monitorQualificationDTOEndDate.description,
+    example: propertyMetadata.monitorQualificationDTOEndDate.example,
+    name: propertyMetadata.monitorQualificationDTOEndDate.fieldLabels.value,
+  })
+  @ValidateIf(o => o.endDate !== null)
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  endDate: Date;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOSourceCategoryCd.description,
@@ -53,7 +106,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsString()
-  sourceCategoryCd: string;
+  sourceCategoryCd?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOCommOpDate.description,
@@ -62,7 +115,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  commOpDate: string;
+  commOpDate?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOComrOpDate.description,
@@ -71,7 +124,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  comrOpDate: string;
+  comrOpDate?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOUserId.description,
@@ -98,7 +151,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  updateDate: string;
+  updateDate?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOOpStatusCd.description,
@@ -107,7 +160,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsString()
-  opStatusCd: string;
+  opStatusCd?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOStatusBeginDate.description,
@@ -116,7 +169,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  statusBeginDate: string;
+  statusBeginDate?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOUnitTypeCd.description,
@@ -125,7 +178,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsString()
-  unitTypeCd: string;
+  unitTypeCd?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOAuditUser.description,
@@ -134,7 +187,7 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsString()
-  auditUser: string;
+  auditUser?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOAuditDate.description,
@@ -143,14 +196,14 @@ export class UnitDTO extends UnitBaseDTO {
   })
   @IsOptional()
   @IsDateString()
-  auditDate: string;
+  auditDate?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitDTOActive.description,
     example: propertyMetadata.unitDTOActive.example,
     name: propertyMetadata.unitDTOActive.fieldLabels.value,
   })
+  @IsOptional()
   @IsBoolean()
-  active: boolean;
+  active?: boolean;
 }
-

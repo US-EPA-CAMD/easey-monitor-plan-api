@@ -58,13 +58,13 @@ export class SystemComponentWorkspaceController {
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
-    return this.service.updateSystemComponent(
+    return this.service.updateSystemComponent({
       locationId,
-      monSysId,
-      monSysCompId,
+      sysId: monSysId,
+      sysComponentRecordId: monSysCompId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -86,11 +86,11 @@ export class SystemComponentWorkspaceController {
     @Body() payload: SystemComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemComponentDTO> {
-    return this.service.createSystemComponent(
+    return this.service.createSystemComponent({
       locationId,
-      monSysId,
+      monitoringSystemRecordId: monSysId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

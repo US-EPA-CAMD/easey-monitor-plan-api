@@ -60,16 +60,10 @@ describe('Monitor Plan Repository', () => {
   });
 
   it('calls createQueryBuilder and gets data for a specific MonitorPlan from the repository', async () => {
-    monitorPlanRepository.createQueryBuilder = jest
-      .fn()
-      .mockReturnValue(queryBuilder);
-    queryBuilder.innerJoin.mockReturnValue(queryBuilder);
-    queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
-    queryBuilder.where.mockReturnValue(queryBuilder);
-    queryBuilder.getOne.mockReturnValue(mp);
+    jest.spyOn(monitorPlanRepository, 'findOne').mockReturnValue(mp);
 
     const result = await monitorPlanRepository.getMonitorPlan(1);
-    expect(queryBuilder.getOne).toHaveBeenCalled();
+    expect(monitorPlanRepository.findOne).toHaveBeenCalled();
     expect(result).toEqual({});
   });
 

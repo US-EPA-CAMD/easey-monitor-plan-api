@@ -38,14 +38,14 @@ export class MonitorLocation extends BaseEntity {
     type: 'varchar',
     name: 'stack_pipe_id',
   })
-  stackPipeId: string;
+  stackPipeId?: string;
 
   @Column({
     type: 'numeric',
     transformer: new NumericColumnTransformer(),
     name: 'unit_id',
   })
-  unitId: number;
+  unitId?: number;
 
   @OneToOne(
     () => StackPipe,

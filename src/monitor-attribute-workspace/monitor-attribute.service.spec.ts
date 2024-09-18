@@ -100,7 +100,11 @@ describe('MonitorAttributeWorkspaceService', () => {
 
   describe('createAttribute', () => {
     it('creates a monitor attribute for a specific qualification ID', async () => {
-      const result = await service.createAttribute(locId, payload, userId);
+      const result = await service.createAttribute({
+        locationId: locId,
+        payload,
+        userId,
+      });
       expect(result).toEqual({ ...result });
     });
   });
@@ -110,12 +114,12 @@ describe('MonitorAttributeWorkspaceService', () => {
       jest
         .spyOn(service, 'getAttribute')
         .mockResolvedValue(returnedMonitorAttribute);
-      const result = await service.updateAttribute(
-        locId,
-        attrId,
+      const result = await service.updateAttribute({
+        locationId: locId,
+        id: attrId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });

@@ -4,10 +4,10 @@ import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { PlantRepository } from '../plant/plant.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
 import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
@@ -16,10 +16,10 @@ import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 export class MonitorConfigurationsService {
   constructor(
     private readonly entityManager: EntityManager,
-    private readonly locationRepository: MonitorLocationRepository,
     private readonly monitorPlanRepository: MonitorPlanRepository,
     private readonly plantRepository: PlantRepository,
     private readonly uscRepository: UnitStackConfigurationRepository,
+    private readonly monitorLocationRepository: MonitorLocationRepository,
     private readonly unitCapacityRepository: UnitCapacityRepository,
     private readonly unitControlRepository: UnitControlRepository,
     private readonly unitFuelRepository: UnitFuelRepository,
@@ -27,16 +27,12 @@ export class MonitorConfigurationsService {
   ) {}
 
   async populateLocationsAndStackConfigs(plan: MonitorPlan) {
-    const locations = await this.locationRepository.getMonitorLocationsByPlanId(
-      plan.id,
-    );
-
-    const unitStackConfigs = await this.uscRepository.getUnitStackConfigsByLocationIds(
-      locations.map(l => l.id),
-    );
-
+    const [locations, unitStackConfigurations] = await Promise.all([
+      this.monitorLocationRepository.getMonitorLocationsByPlanId(plan.id),
+      this.uscRepository.getUnitStackConfigsByMonitorPlanId(plan.id),
+    ]);
     plan.locations = locations;
-    plan.unitStackConfigurations = unitStackConfigs;
+    plan.unitStackConfigurations = unitStackConfigurations;
   }
 
   async getConfigurations(
@@ -44,10 +40,15 @@ export class MonitorConfigurationsService {
     monPlanIds: string[] = [],
   ): Promise<MonitorPlanDTO[]> {
     let plans: MonitorPlan[];
+    const relations = {
+      beginReportingPeriod: true,
+      endReportingPeriod: true,
+      plant: true,
+    };
     if (monPlanIds.length > 0) {
       plans = await this.monitorPlanRepository.find({
         where: { id: In(monPlanIds) },
-        relations: ['plant'],
+        relations,
       });
     } else {
       const plants = await this.plantRepository.find({
@@ -55,17 +56,13 @@ export class MonitorConfigurationsService {
       });
       plans = await this.monitorPlanRepository.find({
         where: { facId: In(plants.map(p => p.id)) },
-        relations: ['plant'],
+        relations,
       });
     }
 
-    const promises = [];
-
-    for (const plan of plans) {
-      promises.push(this.populateLocationsAndStackConfigs(plan));
-    }
-
-    await Promise.all(promises);
+    await Promise.all(
+      plans.map(async plan => this.populateLocationsAndStackConfigs(plan)),
+    );
 
     const dto = await this.map.many(plans);
 
@@ -90,16 +87,22 @@ export class MonitorConfigurationsService {
     );
   }
 
-  async lookupUnitCapacitys(locations: string[], config:MonitorPlan){
-    config.unitCapacities =  await this.unitCapacityRepository.getUnitCapacitiesByLocationIds(locations);
+  async lookupUnitCapacitys(locations: string[], config: MonitorPlan) {
+    config.unitCapacities = await this.unitCapacityRepository.getUnitCapacitiesByLocationIds(
+      locations,
+    );
   }
 
-  async lookupUnitControls(locations: string[], config:MonitorPlan){
-    config.unitControls =  await this.unitControlRepository.getUnitControlsByLocationIds(locations);
+  async lookupUnitControls(locations: string[], config: MonitorPlan) {
+    config.unitControls = await this.unitControlRepository.getUnitControlsByLocationIds(
+      locations,
+    );
   }
 
-  async lookupUnitFuel(locations: string[], config:MonitorPlan){
-    config.unitFuels =  await this.unitFuelRepository.getUnitFuelByLocationIds(locations);
+  async lookupUnitFuel(locations: string[], config: MonitorPlan) {
+    config.unitFuels = await this.unitFuelRepository.getUnitFuelByLocationIds(
+      locations,
+    );
   }
 
   async getConfigurationsByLastUpdated(

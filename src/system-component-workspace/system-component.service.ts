@@ -1,11 +1,11 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
-import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import {
   SystemComponentBaseDTO,
   SystemComponentDTO,
@@ -13,6 +13,7 @@ import {
 import { SystemComponent } from '../entities/workspace/system-component.entity';
 import { SystemComponentMap } from '../maps/system-component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 
 @Injectable()
@@ -41,11 +42,12 @@ export class SystemComponentWorkspaceService {
   async getSystemComponent(
     sysId: string,
     sysComponentRecordId: string,
+    trx?: EntityManager,
   ): Promise<SystemComponent> {
-    const result = await this.repository.getSystemComponent(
-      sysId,
-      sysComponentRecordId,
-    );
+    const result = await withTransaction(
+      this.repository,
+      trx,
+    ).getSystemComponent(sysId, sysComponentRecordId);
 
     if (!result) {
       throw new EaseyException(
@@ -61,19 +63,29 @@ export class SystemComponentWorkspaceService {
     return result;
   }
 
-  async updateSystemComponent(
-    locationId: string,
-    sysId: string,
-    sysComponentRecordId: string,
-    payload: SystemComponentBaseDTO,
-    userId: string,
+  async updateSystemComponent({
+    locationId,
+    sysId,
+    sysComponentRecordId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<SystemComponentDTO> {
+    trx,
+  }: {
+    locationId: string;
+    sysId: string;
+    sysComponentRecordId: string;
+    payload: SystemComponentBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<SystemComponentDTO> {
     // Saving System Component fields
 
     const systemComponent = await this.getSystemComponent(
       sysId,
       sysComponentRecordId,
+      trx,
     );
 
     systemComponent.beginDate = payload.beginDate;
@@ -83,25 +95,34 @@ export class SystemComponentWorkspaceService {
     systemComponent.userId = userId;
     systemComponent.updateDate = currentDateTime();
 
-    await this.repository.save(systemComponent);
+    await withTransaction(this.repository, trx).save(systemComponent);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(systemComponent);
   }
 
-  async createSystemComponent(
-    locationId: string,
-    monitoringSystemRecordId: string,
-    payload: SystemComponentBaseDTO,
-    userId: string,
+  async createSystemComponent({
+    locationId,
+    monitoringSystemRecordId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<SystemComponentDTO> {
+    trx,
+  }: {
+    locationId: string;
+    monitoringSystemRecordId: string;
+    payload: SystemComponentBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<SystemComponentDTO> {
     let component = await this.componentService.getComponentByIdentifier(
       locationId,
       payload.componentId,
+      trx,
     );
 
     if (!component) {
@@ -114,7 +135,9 @@ export class SystemComponentWorkspaceService {
       );
     }
 
-    const systemComponent = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const systemComponent = repository.create({
       id: uuid(),
       monitoringSystemRecordId: monitoringSystemRecordId,
       componentRecordId: component.id,
@@ -127,15 +150,16 @@ export class SystemComponentWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(systemComponent);
+    await repository.save(systemComponent);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     const createdSysComp = await this.getSystemComponent(
       monitoringSystemRecordId,
       systemComponent.id,
+      trx,
     );
     return this.map.one(createdSysComp);
   }
@@ -145,55 +169,41 @@ export class SystemComponentWorkspaceService {
     sysId: string,
     systemComponents: SystemComponentBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const component of systemComponents) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const innerPromises = [];
-                const systemComponentRecord = await this.repository.getSystemComponentByBeginOrEndDate(
-                  sysId,
-                  component.componentId,
-                  component.beginDate,
-                  component.beginHour,
-                );
+    return Promise.all(
+      systemComponents.map(async component => {
+        const systemComponentRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getSystemComponentByBeginOrEndDate(
+          sysId,
+          component.componentId,
+          component.beginDate,
+          component.beginHour,
+        );
 
-                if (systemComponentRecord) {
-                  innerPromises.push(
-                    await this.updateSystemComponent(
-                      locationId,
-                      sysId,
-                      systemComponentRecord.id,
-                      component,
-                      userId,
-                      true,
-                    ),
-                  );
-                } else {
-                  innerPromises.push(
-                    await this.createSystemComponent(
-                      locationId,
-                      sysId,
-                      component,
-                      userId,
-                      true,
-                    ),
-                  );
-                }
-
-                await Promise.all(innerPromises);
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (systemComponentRecord) {
+          await this.updateSystemComponent({
+            locationId,
+            sysId,
+            sysComponentRecordId: systemComponentRecord.id,
+            payload: component,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createSystemComponent({
+            locationId,
+            monitoringSystemRecordId: sysId,
+            payload: component,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

@@ -63,8 +63,8 @@ describe('AnalyzerRangeWorkspaceService', () => {
       await service.importAnalyzerRange(
         'componentId',
         'locationId',
-        analyzerRangeImport,
         'userId',
+        analyzerRangeImport,
       );
       expect(
         repositoryMock.getAnalyzerRangeByComponentIdAndDate,
@@ -82,8 +82,8 @@ describe('AnalyzerRangeWorkspaceService', () => {
       await service.importAnalyzerRange(
         'componentId',
         'locationId',
-        analyzerRangeImport,
         'userId',
+        analyzerRangeImport,
       );
       expect(
         repositoryMock.getAnalyzerRangeByComponentIdAndDate,

@@ -2,11 +2,11 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UnitProgramRepository } from './unit-program.repository';
-import { UnitProgramController } from './unit-program.controller';
-import { UnitProgramService } from './unit-program.service';
 import { UnitProgramMap } from '../maps/unit-program.map';
 import { MonitorPlanModule } from '../monitor-plan/monitor-plan.module';
+import { UnitProgramController } from './unit-program.controller';
+import { UnitProgramRepository } from './unit-program.repository';
+import { UnitProgramService } from './unit-program.service';
 
 @Module({
   imports: [
@@ -15,11 +15,7 @@ import { MonitorPlanModule } from '../monitor-plan/monitor-plan.module';
     forwardRef(() => MonitorPlanModule),
   ],
   controllers: [UnitProgramController],
-  providers: [
-    UnitProgramRepository,
-    UnitProgramService,
-    UnitProgramMap,
-  ],
+  providers: [UnitProgramRepository, UnitProgramService, UnitProgramMap],
   exports: [
     TypeOrmModule,
     UnitProgramRepository,

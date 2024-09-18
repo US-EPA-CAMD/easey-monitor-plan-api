@@ -289,17 +289,17 @@ describe('ComponentWorkspaceService', () => {
 
   describe('updateComponent', () => {
     it('should update and return updated component dto', async () => {
-      const response = await service.updateComponent(
+      const response = await service.updateComponent({
         locationId,
-        component,
+        componentRecord: component,
         payload,
         userId,
-      );
+      });
       expect(response).toEqual(componentDto);
     });
   });
 
-  describe('importUnitStack', () => {
+  describe('importComponent', () => {
     const location = new UpdateMonitorLocationDTO();
     location.componentData = [payload];
     it('should update while importing a component', async () => {

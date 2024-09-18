@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { ReportingFreqRepository } from './reporting-freq.repository';
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { EntityManager } from 'typeorm';
 
 @Injectable()
-export class ReportingFreqService {
-  constructor(
-    private readonly repository: ReportingFreqRepository,
-    private readonly entityManager: EntityManager,
-  ) {}
+export class MonitorPlanReportingFrequencyWorkspaceService {
+  constructor(private readonly entityManager: EntityManager) {}
 
-  async getReportingFreqs(locId: string, unitId: number): Promise<ReportingFreqDTO[]> {
-    return await this.retrieveReportingFreq(locId, unitId);
+  async getReportingFreqs(unitId: number): Promise<ReportingFreqDTO[]> {
+    return await this.retrieveReportingFreq(unitId);
   }
 
-  private async retrieveReportingFreq(locId: string, unitId: number): Promise<ReportingFreqDTO[]> {
+  private async retrieveReportingFreq(
+    unitId: number,
+  ): Promise<ReportingFreqDTO[]> {
     const sql = `
         SELECT
             mprf.mon_plan_rf_id AS "id",
@@ -27,12 +25,12 @@ export class ReportingFreqService {
                 WHEN rp_end.end_date IS NULL OR rp_end.end_date > CURRENT_DATE THEN true
                 ELSE false
                 END AS "active"
-        FROM camdecmps.monitor_location ml
-                 JOIN camdecmps.monitor_plan_location mpl
+        FROM camdecmpswks.monitor_location ml
+                 JOIN camdecmpswks.monitor_plan_location mpl
                       ON ml.mon_loc_id = mpl.mon_loc_id
-                 JOIN camdecmps.monitor_plan_reporting_freq mprf
+                 JOIN camdecmpswks.monitor_plan_reporting_freq mprf
                       ON mpl.mon_plan_id = mprf.mon_plan_id
-                 JOIN camd.unit u
+                 JOIN camdecmpswks.unit u
                       ON ml.unit_id = u.unit_id
                  JOIN camdecmpsmd.reporting_period rp_begin
                       ON mprf.begin_rpt_period_id = rp_begin.rpt_period_id

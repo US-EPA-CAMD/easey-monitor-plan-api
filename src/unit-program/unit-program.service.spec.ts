@@ -6,8 +6,8 @@ import { UnitProgramDTO } from '../dtos/unit-program.dto';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const mockRepository = () => ({
-  getUnitPrograms: jest.fn().mockResolvedValue([]),
-  getUnitProgram: jest.fn().mockResolvedValue(null),
+  getUnitProgramsByUnitRecordId: jest.fn().mockResolvedValue([]),
+  getUnitProgramByProgramId: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -43,15 +43,19 @@ describe('UnitProgramService', () => {
 
   describe('getUnitPrograms', () => {
     it('should return an array of unit programs', async () => {
-      const result = await service.getUnitPrograms('locId', 1);
+      const result = await service.getUnitProgramsByUnitRecordId(1);
       expect(result).toEqual([]);
     });
   });
 
   describe('getUnitProgram', () => {
     it('should return a single unit program or throw an error if not found', async () => {
-      jest.spyOn(service, 'getUnitProgram').mockResolvedValue(new UnitProgramDTO());
-      expect(await service.getUnitProgram('locId', 1, 'programId')).toBeInstanceOf(UnitProgramDTO);
+      jest
+        .spyOn(service, 'getUnitProgramByProgramId')
+        .mockResolvedValue(new UnitProgramDTO());
+      expect(
+        await service.getUnitProgramByProgramId('locId', 1, 'programId'),
+      ).toBeInstanceOf(UnitProgramDTO);
     });
   });
 });

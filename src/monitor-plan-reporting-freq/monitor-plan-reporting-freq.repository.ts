@@ -10,4 +10,12 @@ export class MonitorPlanReportingFrequencyRepository extends Repository<
   constructor(entityManager: EntityManager) {
     super(MonitorPlanReportingFrequency, entityManager);
   }
+
+  async getReportingFreq(unitReportingFreqId: string) {
+    const query = this.createQueryBuilder(
+      'rf',
+    ).where('rf.id = :unitReportingFreqId', { unitReportingFreqId });
+
+    return query.getOne();
+  }
 }

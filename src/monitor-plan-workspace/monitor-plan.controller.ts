@@ -10,6 +10,8 @@ import {
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+import { MonitorPlanImportResponseDTO } from '../dtos/monitor-plan-import-response.dto';
+import { SingleUnitMonitorPlanRequestDTO } from '../dtos/single-unit-monitor-plan-request.dto';
 
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
@@ -79,24 +81,42 @@ export class MonitorPlanWorkspaceController {
     LookupType.Location,
   )
   @ApiOkResponse({
-    type: MonitorPlanDTO,
+    type: MonitorPlanImportResponseDTO,
     description: 'imports an entire monitor plan from JSON payload',
   })
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
     @User() user: CurrentUser,
+    @Query('draft') draft: boolean,
   ): Promise<any> {
     await this.mpChecksService.runChecks(plan);
     await this.importChecksService.runImportChecks(plan);
-    const mpPlan = await this.service.importMpPlan(plan, user.userId);
+    return await this.service.importMpPlan(plan, user.userId, draft);
+  }
 
-    if (mpPlan === null) {
-      return {
-        message: `Monitoring plan imported successfully`,
-      };
-    }
-
-    return mpPlan;
+  @Post('single-unit')
+  @RoleGuard(
+    {
+      bodyParam: 'facilityId',
+    },
+    LookupType.Facility,
+  )
+  @ApiOkResponse({
+    type: MonitorPlanDTO,
+    description:
+      'creates a new monitor plan for a single unit that has not been associated with any other plan',
+  })
+  async createNewSingleUnitMonitorPlan(
+    @Body() payload: SingleUnitMonitorPlanRequestDTO,
+    @User() user: CurrentUser,
+    @Query('draft') draft: boolean,
+  ) {
+    return this.service.createNewSingleUnitMonitorPlan(
+      payload.unitId,
+      payload.facilityId,
+      user.userId,
+      draft,
+    );
   }
 
   @Delete(':planId/revert')

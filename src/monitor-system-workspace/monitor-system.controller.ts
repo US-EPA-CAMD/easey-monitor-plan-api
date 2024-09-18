@@ -58,7 +58,11 @@ export class MonitorSystemWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
     await this.checkService.runChecks(locationId, payload);
-    return this.service.createSystem(locationId, payload, user.userId);
+    return this.service.createSystem({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':sysId')
@@ -82,11 +86,11 @@ export class MonitorSystemWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
     await this.checkService.runChecks(locationId, payload, false, true);
-    return this.service.updateSystem(
-      monitoringSystemId,
+    return this.service.updateSystem({
+      monitoringSystemRecordId: monitoringSystemId,
       payload,
       locationId,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

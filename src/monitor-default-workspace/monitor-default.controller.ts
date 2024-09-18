@@ -55,12 +55,12 @@ export class MonitorDefaultWorkspaceController {
     @Body() payload: MonitorDefaultBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorDefaultDTO> {
-    return this.service.updateDefault(
+    return this.service.updateDefault({
       locationId,
       defaultId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -81,6 +81,10 @@ export class MonitorDefaultWorkspaceController {
     @Body() payload: MonitorDefaultBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorDefaultDTO> {
-    return this.service.createDefault(locationId, payload, user.userId);
+    return this.service.createDefault({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 }

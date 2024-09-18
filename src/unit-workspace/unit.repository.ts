@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { Unit } from './unit.entity';
+
+import { Unit } from '../entities/workspace/unit.entity';
 
 @Injectable()
 export class UnitWorkspaceRepository extends Repository<Unit> {
@@ -8,4 +9,20 @@ export class UnitWorkspaceRepository extends Repository<Unit> {
     super(Unit, entityManager);
   }
 
+  async getUnitsByMonPlanId(monPlanId: string) {
+    return this.find({
+      relations: {
+        location: {
+          plans: true,
+        },
+      },
+      where: {
+        location: {
+          plans: {
+            id: monPlanId,
+          },
+        },
+      },
+    });
+  }
 }

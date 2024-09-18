@@ -52,7 +52,7 @@ describe('Monitor-Import Utilities Tests', () => {
   describe('getFacIdFromOris', () => {
     it('Should return null given invalid oris code', async () => {
       const mockManager = {
-        findOneBy: jest.fn().mockResolvedValue(undefined),
+        findOneBy: jest.fn().mockResolvedValue(null),
       };
       jest
         .spyOn(utils, 'getEntityManager')

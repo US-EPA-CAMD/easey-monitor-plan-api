@@ -12,17 +12,23 @@ export class UnitProgramService {
     private readonly map: UnitProgramMap,
   ) {}
 
-  async getUnitPrograms(locId: string, unitId: number): Promise<UnitProgramDTO[]> {
-    const results = await this.repository.getUnitPrograms(locId, unitId);
+  async getUnitProgramsByUnitRecordId(
+    unitRecordId: number,
+  ): Promise<UnitProgramDTO[]> {
+    const results = await this.repository.getUnitProgramsByUnitRecordId(
+      unitRecordId,
+    );
     return this.map.many(results);
   }
 
-  async getUnitProgram(
+  async getUnitProgramByProgramId(
     locId: string,
     unitId: number,
     unitProgramId: string,
   ): Promise<UnitProgramDTO> {
-    const result = await this.repository.getUnitProgram(unitProgramId);
+    const result = await this.repository.getUnitProgramByProgramId(
+      unitProgramId,
+    );
 
     if (!result) {
       throw new EaseyException(

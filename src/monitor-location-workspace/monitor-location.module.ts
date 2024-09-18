@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ComponentWorkspaceModule } from '../component-workspace/component.module';
@@ -14,7 +14,7 @@ import { MonitorMethodWorkspaceModule } from '../monitor-method-workspace/monito
 import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-workspace/monitor-qualification.module';
 import { MonitorSpanWorkspaceModule } from '../monitor-span-workspace/monitor-span.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
-import { StackPipeModule } from '../stack-pipe/stack-pipe.module';
+import { StackPipeWorkspaceModule } from '../stack-pipe-workspace/stack-pipe.module';
 import { UnitCapacityWorkspaceModule } from '../unit-capacity-workspace/unit-capacity.module';
 import { UnitControlWorkspaceModule } from '../unit-control-workspace/unit-control.module';
 import { UnitFuelWorkspaceModule } from '../unit-fuel-workspace/unit-fuel.module';
@@ -25,10 +25,8 @@ import { MonitorLocationWorkspaceController } from './monitor-location.controlle
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
 import { UnitWorkspaceModule } from '../unit-workspace/unit.module';
-import { ReportingFreqWorkspaceModule } from '../reporting-freq-workspace/reporting-freq.module';
 import { UnitProgramModule } from '../unit-program/unit-program.module';
 import { UnitProgramWorkspaceModule } from '../unit-program-workspace/unit-program.module';
-import { ReportingFreqModule } from '../reporting-freq/reporting-freq.module';
 
 @Module({
   imports: [
@@ -40,8 +38,6 @@ import { ReportingFreqModule } from '../reporting-freq/reporting-freq.module';
     UnitModule,
     UnitProgramWorkspaceModule,
     UnitProgramModule,
-    ReportingFreqWorkspaceModule,
-    ReportingFreqModule,
     MonitorMethodWorkspaceModule,
     MatsMethodWorkspaceModule,
     MonitorFormulaWorkspaceModule,
@@ -53,7 +49,7 @@ import { ReportingFreqModule } from '../reporting-freq/reporting-freq.module';
     MonitorSystemWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,
-    StackPipeModule,
+    forwardRef(() => StackPipeWorkspaceModule),
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
     HttpModule,
   ],

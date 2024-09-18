@@ -1,14 +1,14 @@
-import { Controller, Get, Param} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
-import { ReportingFreqService } from './reporting-freq.service';
+import { MonitorPlanReportingFrequencyService } from './monitor-plan-reporting-freq.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Reporting Frequencies')
-export class ReportingFreqController {
-  constructor(private readonly service: ReportingFreqService) {}
+export class MonitorPlanReportingFrequencyController {
+  constructor(private readonly service: MonitorPlanReportingFrequencyService) {}
 
   @Get()
   @ApiOkResponse({
@@ -18,9 +18,8 @@ export class ReportingFreqController {
       'Retrieves reporting frequency records from a specific unit ID',
   })
   getReportingFreqs(
-    @Param('locId') locId: string,
-    @Param('unitId') unitId: number,
+    @Param('unitId') unitRecordId: number,
   ): Promise<ReportingFreqDTO[]> {
-    return this.service.getReportingFreqs(locId, unitId);
+    return this.service.getReportingFreqs(unitRecordId);
   }
 }

@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -11,6 +12,7 @@ import {
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { withTransaction } from '../utils';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 
 @Injectable()
@@ -58,14 +60,26 @@ export class LEEQualificationWorkspaceService {
     return this.map.one(result);
   }
 
-  async createLEEQualification(
-    locationId: string,
-    qualId: string,
-    payload: LEEQualificationBaseDTO,
-    userId: string,
+  async createLEEQualification({
+    locationId,
+    qualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<LEEQualificationDTO> {
-    const qual = await this.mpQualService.getQualification(locationId, qualId);
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    payload: LEEQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<LEEQualificationDTO> {
+    const qual = await this.mpQualService.getQualification(
+      locationId,
+      qualId,
+      trx,
+    );
 
     if (qual.qualificationTypeCode !== 'LEE') {
       throw new EaseyException(
@@ -80,7 +94,9 @@ export class LEEQualificationWorkspaceService {
       );
     }
 
-    const leeQual = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const leeQual = repository.create({
       id: uuid(),
       qualificationId: qual.id,
       qualificationTestDate: payload.qualificationTestDate,
@@ -95,24 +111,35 @@ export class LEEQualificationWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(leeQual);
+    const result = await repository.save(leeQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
   }
 
-  async updateLEEQualification(
-    locationId: string,
-    qualId: string,
-    pctQualId: string,
-    payload: LEEQualificationBaseDTO,
-    userId: string,
+  async updateLEEQualification({
+    locationId,
+    qualId,
+    pctQualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<LEEQualificationDTO> {
-    const leeQual = await this.repository.getLEEQualification(
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    pctQualId: string;
+    payload: LEEQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<LEEQualificationDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const leeQual = await repository.getLEEQualification(
       locationId,
       qualId,
       pctQualId,
@@ -133,17 +160,18 @@ export class LEEQualificationWorkspaceService {
     leeQual.qualificationTestDate = payload.qualificationTestDate;
     leeQual.parameterCode = payload.parameterCode;
     leeQual.qualificationTestType = payload.qualificationTestType;
-    leeQual.potentialAnnualHgMassEmissions = payload.potentialAnnualHgMassEmissions;
+    leeQual.potentialAnnualHgMassEmissions =
+      payload.potentialAnnualHgMassEmissions;
     leeQual.applicableEmissionStandard = payload.applicableEmissionStandard;
     leeQual.unitsOfStandard = payload.unitsOfStandard;
     leeQual.percentageOfEmissionStandard = payload.percentageOfEmissionStandard;
     leeQual.userId = userId;
     leeQual.updateDate = currentDateTime();
 
-    await this.repository.save(leeQual);
+    await repository.save(leeQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(leeQual);
@@ -154,48 +182,40 @@ export class LEEQualificationWorkspaceService {
     qualificationId: string,
     leeQualifications: LEEQualificationBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const leeQualification of leeQualifications) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const leeQualificationRecord = await this.repository.getLEEQualificationByTestDate(
-                  locationId,
-                  qualificationId,
-                  leeQualification.qualificationTestDate,
-                );
+    return Promise.all(
+      leeQualifications.map(async leeQualification => {
+        const leeQualificationRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getLEEQualificationByTestDate(
+          locationId,
+          qualificationId,
+          leeQualification.qualificationTestDate,
+        );
 
-                if (leeQualificationRecord) {
-                  await this.updateLEEQualification(
-                    locationId,
-                    qualificationId,
-                    leeQualificationRecord.id,
-                    leeQualification,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createLEEQualification(
-                    locationId,
-                    qualificationId,
-                    leeQualification,
-                    userId,
-                    true,
-                  );
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (leeQualificationRecord) {
+          await this.updateLEEQualification({
+            locationId,
+            qualId: qualificationId,
+            pctQualId: leeQualificationRecord.id,
+            payload: leeQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createLEEQualification({
+            locationId,
+            qualId: qualificationId,
+            payload: leeQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

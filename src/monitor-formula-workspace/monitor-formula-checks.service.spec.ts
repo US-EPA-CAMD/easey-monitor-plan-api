@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { CheckCatalogService } from '@us-epa-camd/easey-common';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';

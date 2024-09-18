@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
+import { UnitStackConfigurationChecksService } from '../unit-stack-configuration-workspace/unit-stack-configuration-checks.service';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from '../mats-method-workspace/mats-method-checks.service';
@@ -16,6 +17,7 @@ import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 import { MonitorLocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
 import { MonitorSpanBaseDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanChecksService } from '../monitor-span-workspace/monitor-span-checks.service';
+import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -31,6 +33,7 @@ const component = new UpdateComponentBaseDTO();
 const monitorSystem = new UpdateMonitorSystemDTO();
 const systemComponent = new SystemComponentBaseDTO();
 const monitorSpan = new MonitorSpanBaseDTO();
+const unitStackConfiguration = new UnitStackConfigurationBaseDTO();
 
 monitorSystem.monitoringSystemComponentData = [systemComponent];
 location.monitoringSystemData = [monitorSystem];
@@ -39,6 +42,7 @@ location.componentData = [component];
 location.supplementalMATSMonitoringMethodData = [matsMethod];
 payload.monitoringLocationData = [location];
 location.monitoringSpanData = [monitorSpan];
+payload.unitStackConfigurationData = [unitStackConfiguration];
 
 const returnLocationRunChecks = [
   {
@@ -55,6 +59,7 @@ describe('Monitor Plan Checks Service Test', () => {
   let componentCheckService: ComponentCheckService;
   let monitorSystemCheckService: MonitorSystemCheckService;
   let monitorSpanCheckService: MonitorSpanChecksService;
+  let unitStackConfigurationChecksService: UnitStackConfigurationChecksService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -99,6 +104,12 @@ describe('Monitor Plan Checks Service Test', () => {
             runChecks: jest.fn().mockResolvedValue([]),
           }),
         },
+        {
+          provide: UnitStackConfigurationChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
       ],
     }).compile();
 
@@ -108,6 +119,9 @@ describe('Monitor Plan Checks Service Test', () => {
     componentCheckService = module.get(ComponentCheckService);
     monitorSystemCheckService = module.get(MonitorSystemCheckService);
     monitorSpanCheckService = module.get(MonitorSpanChecksService);
+    unitStackConfigurationChecksService = module.get(
+      UnitStackConfigurationChecksService,
+    );
   });
 
   describe('RunChecks', () => {
@@ -118,6 +132,7 @@ describe('Monitor Plan Checks Service Test', () => {
       expect(componentCheckService.runChecks).toHaveBeenCalled();
       expect(monitorSystemCheckService.runChecks).toHaveBeenCalled();
       expect(monitorSpanCheckService.runChecks).toHaveBeenCalled();
+      expect(unitStackConfigurationChecksService.runChecks).toHaveBeenCalled();
     });
   });
 });

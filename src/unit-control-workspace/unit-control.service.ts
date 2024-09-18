@@ -1,11 +1,13 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 @Injectable()
@@ -17,7 +19,9 @@ export class UnitControlWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('UnitControlWorkspaceService');
+  }
 
   async getUnitControls(
     locId: string,
@@ -32,63 +36,65 @@ export class UnitControlWorkspaceService {
     unitRecordId: number,
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    await Promise.all(
+      unitControls.map(async unitControl => {
+        const unitControlRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getUnitControlBySpecs(
+          unitRecordId,
+          unitControl.parameterCode,
+          unitControl.controlCode,
+          unitControl.installDate,
+          unitControl.retireDate,
+        );
 
-        for (const unitControl of unitControls) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const unitControlRecord = await this.repository.getUnitControlBySpecs(
-                  unitRecordId,
-                  unitControl.parameterCode,
-                  unitControl.controlCode,
-                  unitControl.installDate,
-                  unitControl.retireDate,
-                );
-
-                if (unitControlRecord) {
-                  await this.updateUnitControl(
-                    locationId,
-                    unitRecordId,
-                    unitControlRecord.id,
-                    unitControl,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createUnitControl(
-                    locationId,
-                    unitRecordId,
-                    unitControl,
-                    userId,
-                    true,
-                  );
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (unitControlRecord) {
+          await this.updateUnitControl({
+            locationId,
+            unitRecordId,
+            unitControlId: unitControlRecord.id,
+            payload: unitControl,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createUnitControl({
+            locationId,
+            unitRecordId,
+            payload: unitControl,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-
-        resolve(true);
-      })();
-    });
+      }),
+    );
+    this.logger.debug(`Imported ${unitControls.length} unit controls`);
+    return true;
   }
 
-  async createUnitControl(
-    locationId: string,
-    unitRecordId: number,
-    payload: UnitControlBaseDTO,
-    userId: string,
+  async createUnitControl({
+    locationId,
+    unitRecordId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitControlDTO> {
-    const unitControl = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    unitRecordId: number;
+    payload: UnitControlBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitControlDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const unitControl = repository.create({
       id: uuid(),
       unitId: unitRecordId,
       controlCode: payload.controlCode,
@@ -103,24 +109,35 @@ export class UnitControlWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(unitControl);
+    const result = await repository.save(unitControl);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
   }
 
-  async updateUnitControl(
-    locationId: string,
-    unitRecordId: number,
-    unitControlId: string,
-    payload: UnitControlBaseDTO,
-    userId: string,
+  async updateUnitControl({
+    locationId,
+    unitRecordId,
+    unitControlId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitControlDTO> {
-    const unitControl = await this.repository.getUnitControl(unitControlId);
+    trx,
+  }: {
+    locationId: string;
+    unitRecordId: number;
+    unitControlId: string;
+    payload: UnitControlBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitControlDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const unitControl = await repository.getUnitControl(unitControlId);
 
     unitControl.controlCode = payload.controlCode;
     unitControl.parameterCode = payload.parameterCode;
@@ -132,10 +149,10 @@ export class UnitControlWorkspaceService {
     unitControl.userId = userId;
     unitControl.updateDate = currentDateTime();
 
-    await this.repository.save(unitControl);
+    await repository.save(unitControl);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(unitControl);

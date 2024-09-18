@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -10,6 +11,7 @@ import {
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 
 @Injectable()
@@ -27,8 +29,13 @@ export class AnalyzerRangeWorkspaceService {
     return this.map.many(results);
   }
 
-  async getAnalyzerRange(analyzerRangeId: string): Promise<AnalyzerRange> {
-    const result = await this.repository.findOneBy({ id: analyzerRangeId });
+  async getAnalyzerRange(
+    analyzerRangeId: string,
+    trx?: EntityManager,
+  ): Promise<AnalyzerRange> {
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id: analyzerRangeId,
+    });
 
     if (!result) {
       throw new EaseyException(
@@ -41,14 +48,24 @@ export class AnalyzerRangeWorkspaceService {
     return result;
   }
 
-  async createAnalyzerRange(
-    componentRecordId: string,
-    payload: AnalyzerRangeBaseDTO,
-    locationId: string,
-    userId: string,
+  async createAnalyzerRange({
+    componentRecordId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<AnalyzerRangeDTO> {
-    const analyzerRange = this.repository.create({
+    trx,
+  }: {
+    componentRecordId: string;
+    payload: AnalyzerRangeBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<AnalyzerRangeDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const analyzerRange = repository.create({
       id: uuid(),
       componentRecordId,
       analyzerRangeCode: payload.analyzerRangeCode,
@@ -62,23 +79,31 @@ export class AnalyzerRangeWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(analyzerRange);
+    await repository.save(analyzerRange);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(analyzerRange);
   }
 
-  async updateAnalyzerRange(
-    analyzerRangeId: string,
-    payload: AnalyzerRangeBaseDTO,
-    locationId: string,
-    userId: string,
+  async updateAnalyzerRange({
+    analyzerRangeId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<AnalyzerRangeDTO> {
-    const analyzerRange = await this.getAnalyzerRange(analyzerRangeId);
+    trx,
+  }: {
+    analyzerRangeId: string;
+    payload: AnalyzerRangeBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<AnalyzerRangeDTO> {
+    const analyzerRange = await this.getAnalyzerRange(analyzerRangeId, trx);
 
     analyzerRange.analyzerRangeCode = payload.analyzerRangeCode;
     analyzerRange.dualRangeIndicator = payload.dualRangeIndicator;
@@ -89,63 +114,52 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRange.userId = userId;
     analyzerRange.updateDate = currentDateTime();
 
-    await this.repository.save(analyzerRange);
+    await withTransaction(this.repository, trx).save(analyzerRange);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(analyzerRange);
   }
 
   async importAnalyzerRange(
-    componentId: string,
+    componentRecordId: string,
     locationId: string,
-    analyzerRanges: AnalyzerRangeBaseDTO[],
     userId: string,
+    analyzerRanges: AnalyzerRangeBaseDTO[] = [],
+    trx?: EntityManager,
   ) {
-    if (!analyzerRanges) {
-      analyzerRanges = [];
-    }
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const analyzerRange of analyzerRanges) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const analyzerRangeRecord = await this.repository.getAnalyzerRangeByComponentIdAndDate(
-                  componentId,
-                  analyzerRange,
-                );
+    return Promise.all(
+      analyzerRanges.map(async analyzerRange => {
+        const analyzerRangeRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getAnalyzerRangeByComponentIdAndDate(
+          componentRecordId,
+          analyzerRange,
+        );
 
-                if (analyzerRangeRecord) {
-                  await this.updateAnalyzerRange(
-                    analyzerRangeRecord.id,
-                    analyzerRange,
-                    locationId,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createAnalyzerRange(
-                    componentId,
-                    analyzerRange,
-                    locationId,
-                    userId,
-                    true,
-                  );
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (analyzerRangeRecord) {
+          await this.updateAnalyzerRange({
+            analyzerRangeId: analyzerRangeRecord.id,
+            payload: analyzerRange,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createAnalyzerRange({
+            componentRecordId,
+            payload: analyzerRange,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }
