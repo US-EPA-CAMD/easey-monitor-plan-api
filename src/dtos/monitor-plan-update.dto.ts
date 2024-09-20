@@ -26,6 +26,8 @@ export class UpdateMonitorPlanDTO {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 999999.`;
     },
   })
+  version: string;
+
   orisCode: number;
 
   @ValidateNested()
