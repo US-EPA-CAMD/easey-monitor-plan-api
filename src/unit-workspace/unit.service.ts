@@ -1,26 +1,24 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-
-import { UnitWorkspaceRepository } from './unit.repository';
-import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
+
+import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
+import { UnitMap } from '../maps/unit.map';
+import { withTransaction } from '../utils';
+import { UnitWorkspaceRepository } from './unit.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 
 @Injectable()
 export class UnitWorkspaceService {
   constructor(
     private readonly repository: UnitWorkspaceRepository,
+    private readonly map: UnitMap,
     private readonly entityManager: EntityManager,
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
-  async getUnit(locId: string, unitId: number,): Promise<UnitDTO> {
-    const unitDetails = await this.getUnitDetails(unitId);
-    return unitDetails && unitDetails.length > 0 ? unitDetails[0] : null;
-  }
-
-  async getUnits(locId: string, unitId: number,): Promise<UnitDTO[]> {
+  async getUnits(locId: string, unitId: number): Promise<UnitDTO[]> {
     return await this.getUnitDetails(unitId);
   }
 
@@ -28,8 +26,7 @@ export class UnitWorkspaceService {
     locationId: string,
     unitId: number,
     payload: UnitBaseDTO,
-    userId: string,
-    isImport = false,
+    userId: string
   ): Promise<UnitDTO> {
     const unit = await this.repository.findOneBy({ id: unitId });
 
@@ -92,5 +89,27 @@ export class UnitWorkspaceService {
 
     const result = await this.entityManager.query(sql, [unitId]);
     return result;
+  }
+
+  async getUnitsByFacId(facId: number, trx?: EntityManager) {
+    const results = await withTransaction(this.repository, trx).find({
+      where: { facId },
+      relations: {
+        location: {
+          methods: true,
+          plans: true,
+        },
+        opStatuses: true,
+      },
+    });
+    return this.map.many(results);
+  }
+
+  async getUnitsByMonPlanId(monPlanId: string, trx?: EntityManager) {
+    const results = await withTransaction(
+      this.repository,
+      trx,
+    ).getUnitsByMonPlanId(monPlanId);
+    return this.map.many(results);
   }
 }

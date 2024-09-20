@@ -1,16 +1,16 @@
-import { Controller, Get, Param} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { RoleGuard} from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
-import { UnitProgramService } from '../unit-program/unit-program.service';
+import { UnitProgramWorkspaceService } from './unit-program.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Programs')
 export class UnitProgramWorkspaceController {
-  constructor(private readonly service: UnitProgramService) {}
+  constructor(private readonly service: UnitProgramWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -27,10 +27,9 @@ export class UnitProgramWorkspaceController {
     },
     LookupType.Location,
   )
-  getUnitPrograms(
-    @Param('locId') locId: string,
+  getUnitProgramsByUnitRecordId(
     @Param('unitId') unitId: number,
   ): Promise<UnitProgramDTO[]> {
-    return this.service.getUnitPrograms(locId, unitId);
+    return this.service.getUnitProgramsByUnitRecordId(unitId);
   }
 }

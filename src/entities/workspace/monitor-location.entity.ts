@@ -24,6 +24,7 @@ import { MonitorDefault } from './monitor-default.entity';
 import { MonitorAttribute } from './monitor-attribute.entity';
 import { MonitorQualification } from './monitor-qualification.entity';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+import { MonitorPlanLocation } from './monitor-plan-location.entity';
 
 @Entity({
   name: 'camdecmpswks.monitor_location',
@@ -38,14 +39,25 @@ export class MonitorLocation extends BaseEntity {
     type: 'varchar',
     name: 'stack_pipe_id',
   })
-  stackPipeId: string;
+  stackPipeId?: string;
 
   @Column({
     type: 'numeric',
     transformer: new NumericColumnTransformer(),
     name: 'unit_id',
   })
-  unitId: number;
+  unitId?: number;
+
+  @Column({
+    name: 'userid',
+  })
+  userId?: string;
+
+  @Column({ type: 'timestamp', name: 'add_date' })
+  addDate?: Date;
+
+  @Column({ type: 'timestamp', name: 'update_date' })
+  updateDate?: Date;
 
   @OneToOne(
     () => StackPipe,
@@ -79,6 +91,7 @@ export class MonitorLocation extends BaseEntity {
   @OneToMany(
     () => MonitorMethod,
     method => method.location,
+    { eager: true },
   )
   methods: MonitorMethod[];
 
@@ -135,4 +148,10 @@ export class MonitorLocation extends BaseEntity {
     qualification => qualification.location,
   )
   qualifications: MonitorQualification[];
+
+  @OneToMany(
+    () => MonitorPlanLocation,
+    mpl => mpl.monitorLocation,
+  )
+  monitorPlanLocations: MonitorPlanLocation[];
 }

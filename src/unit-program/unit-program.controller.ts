@@ -1,4 +1,4 @@
-import { Controller, Get, Param} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { UnitProgramService } from './unit-program.service';
@@ -14,13 +14,11 @@ export class UnitProgramController {
   @ApiOkResponse({
     isArray: true,
     type: UnitProgramDTO,
-    description:
-      'Retrieves unit control records from a specific unit ID',
+    description: 'Retrieves unit control records from a specific unit ID',
   })
-  getUnitPrograms(
-    @Param('locId') locId: string,
-    @Param('unitId') unitId: number,
+  getUnitProgramsByUnitRecordId(
+    @Param('unitId') unitRecordId: number,
   ): Promise<UnitProgramDTO[]> {
-    return this.service.getUnitPrograms(locId, unitId);
+    return this.service.getUnitProgramsByUnitRecordId(unitRecordId);
   }
 }

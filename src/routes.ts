@@ -72,12 +72,13 @@ import { CheckOutModule } from './check-out/check-out.module';
 import { MonitorConfigurationsModule } from './monitor-configurations/monitor-configurations.module';
 import { MonitorConfigurationsWorkspaceModule } from './monitor-configurations-workspace/monitor-configurations-workspace.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
+import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.module';
 import { UnitWorkspaceModule } from './unit-workspace/unit.module';
 import { UnitProgramModule } from './unit-program/unit-program.module';
-import { ReportingFreqWorkspaceModule } from './reporting-freq-workspace/reporting-freq.module';
-import { UnitModule } from './unit/unit.module';
-import { ReportingFreqModule } from './reporting-freq/reporting-freq.module';
 import { UnitProgramWorkspaceModule } from './unit-program-workspace/unit-program.module';
+import { UnitModule } from './unit/unit.module';
+import { MonitorPlanReportingFreqModule } from './monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
+import { MonitorPlanReportingFreqWorkspaceModule } from './monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.module';
 
 const routes: Routes = [
   {
@@ -191,28 +192,30 @@ const routes: Routes = [
         ],
       },
       {
-        path: ':locId/units/:unitId/unit-fuels',
-        module: UnitFuelModule,
-      },
-      {
-        path: ':locId/units/:unitId/unit-controls',
-        module: UnitControlModule,
-      },
-      {
-        path: ':locId/units/:unitId/unit-capacities',
-        module: UnitCapacityModule,
-      },
-      {
-        path: ':locId/units/:unitId/units',
+        path: ':locId/units',
         module: UnitModule,
-      },
-      {
-        path: ':locId/units/:unitId/unit-programs',
-        module: UnitProgramModule,
-      },
-      {
-        path: ':locId/units/:unitId/reporting-frequencies',
-        module: ReportingFreqModule,
+        children: [
+          {
+            path: ':unitId/unit-fuels',
+            module: UnitFuelModule,
+          },
+          {
+            path: ':unitId/unit-controls',
+            module: UnitControlModule,
+          },
+          {
+            path: ':unitId/unit-capacities',
+            module: UnitCapacityModule,
+          },
+          {
+            path: ':unitId/unit-programs',
+            module: UnitProgramModule,
+          },
+          {
+            path: ':unitId/reporting-frequencies',
+            module: MonitorPlanReportingFreqModule,
+          },
+        ],
       },
     ],
   },
@@ -295,34 +298,40 @@ const routes: Routes = [
         ],
       },
       {
-        path: ':locId/units/:unitId/unit-fuels',
-        module: UnitFuelWorkspaceModule,
-      },
-      {
-        path: ':locId/units/:unitId/unit-controls',
-        module: UnitControlWorkspaceModule,
-      },
-      {
-        path: ':locId/units/:unitId/unit-capacities',
-        module: UnitCapacityWorkspaceModule,
-      },
-      {
-        path: ':locId/units/:unitId/units',
+        path: ':locId/units',
         module: UnitWorkspaceModule,
-      },
-      {
-        path: ':locId/units/:unitId/unit-programs',
-        module: UnitProgramWorkspaceModule,
-      },
-      {
-        path: ':locId/units/:unitId/reporting-frequencies',
-        module: ReportingFreqWorkspaceModule,
+        children: [
+          {
+            path: ':unitId/unit-fuels',
+            module: UnitFuelWorkspaceModule,
+          },
+          {
+            path: ':unitId/unit-controls',
+            module: UnitControlWorkspaceModule,
+          },
+          {
+            path: ':unitId/unit-capacities',
+            module: UnitCapacityWorkspaceModule,
+          },
+          {
+            path: ':unitId/unit-programs',
+            module: UnitProgramWorkspaceModule,
+          },
+          {
+            path: ':unitId/reporting-frequencies',
+            module: MonitorPlanReportingFreqWorkspaceModule,
+          },
+        ],
       },
     ],
   },
   {
     path: 'workspace/check-outs/plans',
     module: CheckOutModule,
+  },
+  {
+    path: 'workspace/stack-pipes',
+    module: StackPipeWorkspaceModule,
   },
 ];
 

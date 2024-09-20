@@ -10,11 +10,15 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+
+import { EmissionEvaluation } from './emission-evaluation.entity';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 import { MonitorPlanReportingFrequency } from './monitor-plan-reporting-freq.entity';
+import { ReportingPeriod } from './reporting-period.entity';
+import { MonitorPlanLocation } from './monitor-plan-location.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
@@ -119,9 +123,20 @@ export class MonitorPlan extends BaseEntity {
   })
   pendingStatusCode: string;
 
+  @Column({ name: 'last_evaluated_date' })
+  lastEvaluatedDate: Date;
+
+  @Column({
+    type: 'varchar',
+    length: 7,
+    name: 'eval_status_cd',
+  })
+  evalStatusCode: string;
+
   @ManyToOne(
     () => Plant,
     plant => plant.plans,
+    { eager: true },
   )
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
@@ -131,7 +146,7 @@ export class MonitorPlan extends BaseEntity {
     location => location.plans,
   )
   @JoinTable({
-    name: 'camdecmps.monitor_plan_location',
+    name: 'camdecmpswks.monitor_plan_location',
     joinColumn: {
       name: 'mon_plan_id',
       referencedColumnName: 'id',
@@ -149,17 +164,35 @@ export class MonitorPlan extends BaseEntity {
   )
   comments: MonitorPlanComment[];
 
+  @OneToMany(
+    () => MonitorPlanReportingFrequency,
+    monitorPlanReportingFrequency => monitorPlanReportingFrequency.plan,
+  )
   reportingFrequencies: MonitorPlanReportingFrequency[];
 
   unitStackConfigurations: UnitStackConfiguration[];
 
-  @Column({ name: 'last_evaluated_date' })
-  lastEvaluatedDate: Date;
+  @OneToMany(
+    () => EmissionEvaluation,
+    emissionEvaluation => emissionEvaluation.monitorPlan,
+  )
+  emissionEvaluations: EmissionEvaluation[];
 
-  @Column({
-    type: 'varchar',
-    length: 7,
-    name: 'eval_status_cd',
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'begin_rpt_period_id',
   })
-  evalStatusCode: string;
+  beginReportingPeriod: ReportingPeriod;
+
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'end_rpt_period_id',
+  })
+  endReportingPeriod: ReportingPeriod;
+
+  @OneToMany(
+    () => MonitorPlanLocation,
+    mpl => mpl.monitorPlan,
+  )
+  monitorPlanLocations: MonitorPlanLocation[];
 }

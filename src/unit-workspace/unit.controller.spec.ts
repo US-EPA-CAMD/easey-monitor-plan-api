@@ -13,7 +13,6 @@ jest.mock('./unit.service');
 
 const locId = 'some location id';
 const unitId = 1;
-const id = 'unit-id';
 
 const data: UnitDTO[] = [];
 data.push(new UnitDTO());
@@ -49,7 +48,7 @@ describe('UnitWorkspaceController', () => {
   describe('getUnits', () => {
     it('should return array of workspace units', async () => {
       jest.spyOn(service, 'getUnits').mockResolvedValue(data);
-      expect(await controller.getUnits(locId, unitId)).toBe(data);
+      expect(await controller.getUnits('locId', unitId)).toBe(data);
     });
   });
 
@@ -68,7 +67,9 @@ describe('UnitWorkspaceController', () => {
       };
 
       jest.spyOn(service, 'updateUnit').mockResolvedValue(updatedUnit);
-      expect(await controller.updateUnit(locId, unitId, id, payload, user)).toBe(updatedUnit);
+      expect(await controller.updateUnit('locId', unitId, payload, user)).toBe(
+        updatedUnit,
+      );
     });
   });
 });

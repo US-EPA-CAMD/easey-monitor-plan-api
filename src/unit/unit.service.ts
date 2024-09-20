@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
+import { withTransaction } from '../utils';
 import { UnitRepository } from './unit.repository';
 import { UnitDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
@@ -10,14 +12,14 @@ import { EntityManager } from 'typeorm';
 export class UnitService {
   constructor(
     private readonly repository: UnitRepository,
+    private readonly logger: Logger,
     private readonly entityManager: EntityManager,
-  ) {}
+  ) {
+    this.logger.setContext('UnitService');
+  }
 
-  async getUnits(
-    locId: string,
-    unitId: number,
-  ): Promise<UnitDTO[]> {
-    return await this.getUnitDetails(unitId);
+  async getUnits(unitId: number): Promise<UnitDTO[]> {
+    return this.getUnitDetails(unitId);
   }
 
   async runUnitChecks(
@@ -41,31 +43,29 @@ export class UnitService {
     return errorList;
   }
 
-  async importUnit(unitRecord: Unit, nonLoadI: number) {
-    return new Promise(resolve => {
-      (async () => {
-        await this.repository.update(unitRecord.id, {
-          nonLoadBasedIndicator: nonLoadI,
-        });
-        resolve(true);
-      })();
+  async importUnit(unitRecord: Unit, nonLoadI: number, trx?: EntityManager) {
+    await withTransaction(this.repository, trx).update(unitRecord.id, {
+      nonLoadBasedIndicator: nonLoadI,
     });
+    this.logger.debug(`Imported unit ${unitRecord.name}`);
+    return true;
   }
 
   async getUnitByNameAndFacId(
     nameId: string,
     facilityId: number,
+    trx?: EntityManager,
   ): Promise<Unit> {
-    return this.repository.findOne({
+    return withTransaction(this.repository, trx).findOne({
       where: { name: nameId, facId: facilityId },
     });
   }
 
-  private async getUnitDetails(unitId: number): Promise<UnitDTO[]> {
+  private async getUnitDetails(id: number): Promise<UnitDTO[]> {
     const sql = `
         SELECT
             unt.UNIT_ID as "id",
-            unt.UNITID as "unitid",
+            unt.UNITID as "unitId",
             unt.NON_LOAD_BASED_IND as "nonLoadBasedIndicator",
             unt.SOURCE_CATEGORY_CD as "sourceCategoryCd",
             to_char(unt.COMM_OP_DATE, 'yyyy-mm-dd') AS "commOpDate",
@@ -106,7 +106,7 @@ export class UnitService {
             unt.UNIT_ID = $1
     `;
 
-    const result = await this.entityManager.query(sql, [unitId]);
+    const result = await this.entityManager.query(sql, [id]);
     return result;
   }
 }

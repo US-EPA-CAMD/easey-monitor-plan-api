@@ -1,12 +1,15 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWaf } from '../entities/duct-waf.entity';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 
 @Injectable()
@@ -14,18 +17,23 @@ export class DuctWafWorkspaceService {
   constructor(
     private readonly repository: DuctWafWorkspaceRepository,
     private readonly map: DuctWafMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('DuctWafWorkspaceService');
+  }
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
     const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
-  async getDuctWaf(id: string): Promise<DuctWaf> {
-    const result = await this.repository.findOneBy({ id });
+  async getDuctWaf(id: string, trx?: EntityManager): Promise<DuctWaf> {
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id,
+    });
 
     if (!result) {
       throw new EaseyException(
@@ -40,13 +48,22 @@ export class DuctWafWorkspaceService {
     return result;
   }
 
-  async createDuctWaf(
-    locationId: string,
-    payload: DuctWafBaseDTO,
-    userId: string,
+  async createDuctWaf({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<DuctWafDTO> {
-    const ductWaf = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: DuctWafBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<DuctWafDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const ductWaf = repository.create({
       id: uuid(),
       locationId,
       wafDeterminationDate: payload.wafDeterminationDate,
@@ -67,23 +84,31 @@ export class DuctWafWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(ductWaf);
+    await repository.save(ductWaf);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(ductWaf);
   }
 
-  async updateDuctWaf(
-    locationId: string,
-    ductWafId: string,
-    payload: DuctWafBaseDTO,
-    userId: string,
+  async updateDuctWaf({
+    locationId,
+    ductWafId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<DuctWafDTO> {
-    const ductWaf = await this.getDuctWaf(ductWafId);
+    trx,
+  }: {
+    locationId: string;
+    ductWafId: string;
+    payload: DuctWafBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<DuctWafDTO> {
+    const ductWaf = await this.getDuctWaf(ductWafId, trx);
 
     ductWaf.wafDeterminationDate = payload.wafDeterminationDate;
     ductWaf.wafBeginDate = payload.wafBeginDate;
@@ -101,10 +126,10 @@ export class DuctWafWorkspaceService {
     ductWaf.userId = userId;
     ductWaf.updateDate = currentDateTime();
 
-    await this.repository.save(ductWaf);
+    await withTransaction(this.repository, trx).save(ductWaf);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(ductWaf);
@@ -114,44 +139,42 @@ export class DuctWafWorkspaceService {
     locationId: string,
     ductWafs: DuctWafBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    await Promise.all(
+      ductWafs.map(async ductWaf => {
+        const ductWafRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getDuctWafByLocIdBDateBHourWafValue(
+          locationId,
+          ductWaf.wafBeginDate,
+          ductWaf.wafBeginHour,
+          ductWaf.wafEndDate,
+          ductWaf.wafEndHour,
+        );
 
-        for (const ductWaf of ductWafs) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const ductWafRecord = await this.repository.getDuctWafByLocIdBDateBHourWafValue(
-                  locationId,
-                  ductWaf.wafBeginDate,
-                  ductWaf.wafBeginHour,
-                  ductWaf.wafEndDate,
-                  ductWaf.wafEndHour,
-                );
-
-                if (ductWafRecord) {
-                  await this.updateDuctWaf(
-                    locationId,
-                    ductWafRecord.id,
-                    ductWaf,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createDuctWaf(locationId, ductWaf, userId, true);
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
-
-          await Promise.all(promises);
-          resolve(true);
+        if (ductWafRecord) {
+          await this.updateDuctWaf({
+            locationId,
+            ductWafId: ductWafRecord.id,
+            payload: ductWaf,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createDuctWaf({
+            locationId,
+            payload: ductWaf,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-      })();
-    });
+      }),
+    );
+    this.logger.debug(`Imported ${ductWafs.length} duct wafs`);
+    return true;
   }
 }

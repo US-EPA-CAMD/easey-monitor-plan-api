@@ -1,17 +1,18 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { UnitCapacityMap } from '../maps/unit-capacity.map';
-import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
-
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   UnitCapacityBaseDTO,
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
+import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
+import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 
 @Injectable()
 export class UnitCapacityWorkspaceService {
@@ -22,56 +23,52 @@ export class UnitCapacityWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('UnitCapacityWorkspaceService');
+  }
 
   async importUnitCapacity(
     unitCapacities: UnitCapacityBaseDTO[],
     unitId: number,
     locationId: string,
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    await Promise.all(
+      unitCapacities.map(async unitCapacity => {
+        const unitCapacityRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getUnitCapacityByUnitIdAndDate(
+          unitId,
+          unitCapacity.beginDate,
+          unitCapacity.endDate,
+        );
 
-        for (const unitCapacity of unitCapacities) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const unitCapacityRecord = await this.repository.getUnitCapacityByUnitIdAndDate(
-                  unitId,
-                  unitCapacity.beginDate,
-                  unitCapacity.endDate,
-                );
-
-                if (unitCapacityRecord) {
-                  await this.updateUnitCapacity(
-                    locationId,
-                    unitId,
-                    unitCapacityRecord.id,
-                    unitCapacity,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createUnitCapacity(
-                    locationId,
-                    unitId,
-                    unitCapacity,
-                    userId,
-                    true,
-                  );
-                }
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (unitCapacityRecord) {
+          await this.updateUnitCapacity({
+            locationId,
+            unitRecordId: unitId,
+            unitCapacityId: unitCapacityRecord.id,
+            payload: unitCapacity,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createUnitCapacity({
+            locationId,
+            unitId,
+            payload: unitCapacity,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
+    this.logger.debug(`Imported ${unitCapacities.length} unit capacities`);
+    return true;
   }
 
   async getUnitCapacities(
@@ -87,8 +84,11 @@ export class UnitCapacityWorkspaceService {
     locId: string,
     unitId: number,
     unitCapacityId: string,
+    trx?: EntityManager,
   ): Promise<UnitCapacityDTO> {
-    const result = await this.repository.getUnitCapacity(unitCapacityId);
+    const result = await withTransaction(this.repository, trx).getUnitCapacity(
+      unitCapacityId,
+    );
     if (!result) {
       throw new EaseyException(
         new Error('Unit Capacity Not Found.'),
@@ -102,14 +102,24 @@ export class UnitCapacityWorkspaceService {
     return this.map.one(result);
   }
 
-  async createUnitCapacity(
-    locationId: string,
-    unitId: number,
-    payload: UnitCapacityBaseDTO,
-    userId: string,
+  async createUnitCapacity({
+    locationId,
+    unitId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitCapacityDTO> {
-    const unitCapacity = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    unitId: number;
+    payload: UnitCapacityBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitCapacityDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const unitCapacity = repository.create({
       id: uuid(),
       unitId,
       maximumHourlyHeatInputCapacity: payload.maximumHourlyHeatInputCapacity,
@@ -120,24 +130,35 @@ export class UnitCapacityWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(unitCapacity);
+    const result = await repository.save(unitCapacity);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
-    return this.getUnitCapacity(locationId, unitId, result.id);
+    return this.getUnitCapacity(locationId, unitId, result.id, trx);
   }
 
-  async updateUnitCapacity(
-    locationId: string,
-    unitRecordId: number,
-    unitCapacityId: string,
-    payload: UnitCapacityBaseDTO,
-    userId: string,
+  async updateUnitCapacity({
+    locationId,
+    unitRecordId,
+    unitCapacityId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<UnitCapacityDTO> {
-    const unitCapacity = await this.repository.getUnitCapacity(unitCapacityId);
+    trx,
+  }: {
+    locationId: string;
+    unitRecordId: number;
+    unitCapacityId: string;
+    payload: UnitCapacityBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<UnitCapacityDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const unitCapacity = await repository.getUnitCapacity(unitCapacityId);
 
     unitCapacity.maximumHourlyHeatInputCapacity =
       payload.maximumHourlyHeatInputCapacity;
@@ -146,10 +167,10 @@ export class UnitCapacityWorkspaceService {
     unitCapacity.userId = userId;
     unitCapacity.updateDate = currentDateTime();
 
-    await this.repository.save(unitCapacity);
+    await repository.save(unitCapacity);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(unitCapacity);

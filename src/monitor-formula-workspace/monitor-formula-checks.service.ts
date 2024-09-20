@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { CheckCatalogService, EaseyException } from '@us-epa-camd/easey-common';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 import { MonitorFormulaBaseDTO } from '../dtos/monitor-formula.dto';

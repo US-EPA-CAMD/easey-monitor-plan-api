@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -10,6 +11,7 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 
 @Injectable()
@@ -21,7 +23,9 @@ export class MonitorAttributeWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorAttributeWorkspaceService');
+  }
 
   async getAttributes(locationId: string): Promise<MonitorAttributeDTO[]> {
     const results = await this.repository.findBy({ locationId });
@@ -48,13 +52,22 @@ export class MonitorAttributeWorkspaceService {
     return this.map.one(result);
   }
 
-  async createAttribute(
-    locationId: string,
-    payload: MonitorAttributeBaseDTO,
-    userId: string,
+  async createAttribute({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorAttributeDTO> {
-    const attribute = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorAttributeBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorAttributeDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const attribute = repository.create({
       id: uuid(),
       locationId,
       ductIndicator: payload.ductIndicator,
@@ -72,23 +85,33 @@ export class MonitorAttributeWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(attribute);
+    const result = await repository.save(attribute);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.getAttribute(locationId, result.id);
   }
 
-  async updateAttribute(
-    locationId: string,
-    id: string,
-    payload: MonitorAttributeBaseDTO,
-    userId: string,
+  async updateAttribute({
+    locationId,
+    id,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorAttributeDTO> {
-    const attribute = await this.repository.getAttribute(locationId, id);
+    trx,
+  }: {
+    locationId: string;
+    id: string;
+    payload: MonitorAttributeBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorAttributeDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const attribute = await repository.getAttribute(locationId, id);
 
     if (!attribute) {
       throw new EaseyException(
@@ -114,10 +137,10 @@ export class MonitorAttributeWorkspaceService {
     attribute.userId = userId;
     attribute.updateDate = currentDateTime();
 
-    await this.repository.save(attribute);
+    await repository.save(attribute);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(attribute);
@@ -127,45 +150,36 @@ export class MonitorAttributeWorkspaceService {
     locationId: string,
     attributes: MonitorAttributeBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const attribute of attributes) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const attributeRecord = await this.repository.getAttributeByLocIdAndDate(
-                  locationId,
-                  attribute.beginDate,
-                );
+    await Promise.all(
+      attributes.map(async attribute => {
+        const attributeRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getAttributeByLocIdAndDate(locationId, attribute.beginDate);
 
-                if (attributeRecord) {
-                  await this.updateAttribute(
-                    locationId,
-                    attributeRecord.id,
-                    attribute,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createAttribute(
-                    locationId,
-                    attribute,
-                    userId,
-                    true,
-                  );
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (attributeRecord) {
+          await this.updateAttribute({
+            locationId,
+            id: attributeRecord.id,
+            payload: attribute,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createAttribute({
+            locationId,
+            payload: attribute,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
+    this.logger.debug(`Imported ${attributes.length} monitor attributes`);
+    return true;
   }
 }

@@ -1,16 +1,18 @@
-import { Controller, Get, Param} from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
-import { ReportingFreqWorkspaceService } from './reporting-freq.service';
+import { MonitorPlanReportingFrequencyWorkspaceService } from './monitor-plan-reporting-freq.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Reporting Frequencies')
-export class ReportingFreqWorkspaceController {
-  constructor(private readonly service: ReportingFreqWorkspaceService) {}
+export class MonitorPlanReportingFrequencyWorkspaceController {
+  constructor(
+    private readonly service: MonitorPlanReportingFrequencyWorkspaceService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -28,9 +30,8 @@ export class ReportingFreqWorkspaceController {
     LookupType.Location,
   )
   getReportingFreqs(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
   ): Promise<ReportingFreqDTO[]> {
-    return this.service.getReportingFreqs(locId, unitId);
+    return this.service.getReportingFreqs(unitId);
   }
 }

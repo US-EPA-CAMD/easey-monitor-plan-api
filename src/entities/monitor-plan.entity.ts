@@ -10,11 +10,14 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+
+import { EmissionEvaluation } from './emission-evaluation.entity';
 import { Plant } from './plant.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlanComment } from './monitor-plan-comment.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 import { MonitorPlanReportingFrequency } from './monitor-plan-reporting-freq.entity';
+import { ReportingPeriod } from './reporting-period.entity';
 import { UnitCapacity } from './unit-capacity.entity';
 import { UnitControl } from './unit-control.entity';
 import { UnitFuel } from './unit-fuel.entity';
@@ -157,8 +160,26 @@ export class MonitorPlan extends BaseEntity {
 
   unitControls?: UnitControl[];
 
-  unitFuels?:UnitFuel[];
+  unitFuels?: UnitFuel[];
 
   @Column({ name: 'last_evaluated_date' })
   lastEvaluatedDate: Date;
+
+  @OneToMany(
+    () => EmissionEvaluation,
+    emissionEvaluation => emissionEvaluation.monitorPlan,
+  )
+  emissionEvaluations: EmissionEvaluation[];
+
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'begin_rpt_period_id',
+  })
+  beginReportingPeriod: ReportingPeriod;
+
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'end_rpt_period_id',
+  })
+  endReportingPeriod: ReportingPeriod;
 }

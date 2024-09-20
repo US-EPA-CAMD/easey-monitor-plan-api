@@ -41,8 +41,7 @@ describe('UnitStackConfigurationWorkspaceRepository', () => {
 
   describe('getUnitStackById', () => {
     it('calls createQueryBuilder and get one unit stack configuration', async () => {
-      queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(unitStackConfigs);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(unitStackConfigs);
 
       const result = await repository.getUnitStackById('uuid');
       expect(result).toEqual(unitStackConfigs);

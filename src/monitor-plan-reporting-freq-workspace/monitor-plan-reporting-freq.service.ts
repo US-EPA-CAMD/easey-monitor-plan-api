@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { ReportingFreqWorkspaceRepository } from './reporting-freq.repository';
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { EntityManager } from 'typeorm';
 
 @Injectable()
-export class ReportingFreqWorkspaceService {
-  constructor(
-    private readonly repository: ReportingFreqWorkspaceRepository,
-    private readonly entityManager: EntityManager,
-  ) {}
+export class MonitorPlanReportingFrequencyWorkspaceService {
+  constructor(private readonly entityManager: EntityManager) {}
 
-  async getReportingFreqs(locId: string, unitId: number): Promise<ReportingFreqDTO[]> {
-    return await this.retrieveReportingFreq(locId, unitId);
+  async getReportingFreqs(unitId: number): Promise<ReportingFreqDTO[]> {
+    return await this.retrieveReportingFreq(unitId);
   }
 
-  private async retrieveReportingFreq(locId: string, unitId: number): Promise<ReportingFreqDTO[]> {
+  private async retrieveReportingFreq(
+    unitId: number,
+  ): Promise<ReportingFreqDTO[]> {
     const sql = `
         SELECT
             mprf.mon_plan_rf_id AS "id",

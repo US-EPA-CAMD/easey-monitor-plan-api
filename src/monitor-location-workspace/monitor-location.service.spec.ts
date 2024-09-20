@@ -17,7 +17,7 @@ import { MonitorMethodWorkspaceService } from '../monitor-method-workspace/monit
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
 import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
-import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitCapacityWorkspaceService } from '../unit-capacity-workspace/unit-capacity.service';
 import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-control.service';
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
@@ -61,7 +61,7 @@ describe('MonitorLocationWorkspaceService', () => {
           useFactory: () => ({}),
         },
         {
-          provide: StackPipeService,
+          provide: StackPipeWorkspaceService,
           useFactory: () => ({}),
         },
         {

@@ -91,7 +91,11 @@ describe('MonitorDefaultWorkspaceService', () => {
 
   describe('createDefault', () => {
     it('should create and return monitor default', async () => {
-      const result = await service.createDefault('1', payload, 'testUser');
+      const result = await service.createDefault({
+        locationId: '1',
+        payload,
+        userId: 'testUser',
+      });
       expect(result).toEqual(monDefaultDto);
     });
   });
@@ -100,7 +104,12 @@ describe('MonitorDefaultWorkspaceService', () => {
     it('should update and return monitor default when monitor default found', async () => {
       jest.spyOn(service, 'getDefault').mockResolvedValue(monDefault);
 
-      const result = await service.updateDefault('1', '1', payload, 'testUser');
+      const result = await service.updateDefault({
+        locationId: '1',
+        defaultId: '1',
+        payload,
+        userId: 'testUser',
+      });
       expect(result).toEqual(monDefaultDto);
     });
   });

@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-import { UnitProgram } from '../entities/workspace/unit-program.entity';
+import { UnitProgram } from '../entities/unit-program.entity';
+import { UnitProgram as UnitProgramWorkspace } from '../entities/workspace/unit-program.entity';
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
 
 @Injectable()
-export class UnitProgramMap extends BaseMap<UnitProgram, UnitProgramDTO> {
-  public async one(entity: UnitProgram): Promise<UnitProgramDTO> {
+export class UnitProgramMap extends BaseMap<
+  UnitProgram | UnitProgramWorkspace,
+  UnitProgramDTO
+> {
+  public async one(
+    entity: UnitProgram | UnitProgramWorkspace,
+  ): Promise<UnitProgramDTO> {
     return {
       id: entity.id.toString(),
       unitRecordId: entity.unitId,

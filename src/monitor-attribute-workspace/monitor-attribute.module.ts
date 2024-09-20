@@ -2,7 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { MonitorAttributeMap } from 'src/maps/monitor-attribute.map';
+import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorPlanWorkspaceModule } from '../monitor-plan-workspace/monitor-plan.module';
 import { MonitorAttributeWorkspaceController } from './monitor-attribute.controller';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';

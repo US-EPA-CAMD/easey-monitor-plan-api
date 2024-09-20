@@ -148,8 +148,8 @@ export class MonitorPlanService {
       }
 
       promises.push(
-        this.unitStackConfigRepository.getUnitStackConfigsByLocationIds(
-          locationIds,
+        this.unitStackConfigRepository.getUnitStackConfigsByMonitorPlanId(
+          planId,
         ),
       );
     }
@@ -403,7 +403,7 @@ export class MonitorPlanService {
     });
 
     const version = this.easeyContentService.monitorPlanSchema?.version;
-    const mpDTO = {version, ...await this.map.one(mp)};
+    const mpDTO = { version, ...(await this.map.one(mp)) };
     if (getUnitStacks && results[UNIT_STACK_CONFIGS]) {
       const uscDTO = await this.uscMap.many(results[UNIT_STACK_CONFIGS]);
       mpDTO.unitStackConfigurationData = uscDTO;

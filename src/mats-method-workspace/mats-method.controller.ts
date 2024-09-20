@@ -55,7 +55,11 @@ export class MatsMethodWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
     await this.checkService.runChecks(payload);
-    return this.service.createMethod(locationId, payload, user.userId);
+    return this.service.createMethod({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':methodId')
@@ -78,11 +82,11 @@ export class MatsMethodWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<MatsMethodDTO> {
     await this.checkService.runChecks(payload, false, true);
-    return this.service.updateMethod(
+    return this.service.updateMethod({
       methodId,
       locationId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

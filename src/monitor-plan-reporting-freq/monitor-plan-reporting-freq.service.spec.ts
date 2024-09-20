@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ReportingFreqWorkspaceRepository } from './reporting-freq.repository';
+import { MonitorPlanReportingFrequencyRepository } from './monitor-plan-reporting-freq.repository';
 import { EntityManager } from 'typeorm';
-import { ReportingFreqWorkspaceService } from './reporting-freq.service';
+import { MonitorPlanReportingFrequencyService } from './monitor-plan-reporting-freq.service';
 
 const mockRepository = () => ({
   getReportingFreqs: jest.fn().mockResolvedValue([]),
@@ -11,16 +11,16 @@ const mockEntityManager = () => ({
   query: jest.fn().mockResolvedValue([]),
 });
 
-describe('ReportingFreqWorkspaceService', () => {
-  let service: ReportingFreqWorkspaceService;
+describe('MonitorPlanReportingFrequencyService', () => {
+  let service: MonitorPlanReportingFrequencyService;
   let entityManager: EntityManager;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ReportingFreqWorkspaceService,
+        MonitorPlanReportingFrequencyService,
         {
-          provide: ReportingFreqWorkspaceRepository,
+          provide: MonitorPlanReportingFrequencyRepository,
           useFactory: mockRepository,
         },
         {
@@ -30,7 +30,7 @@ describe('ReportingFreqWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get(ReportingFreqWorkspaceService);
+    service = module.get(MonitorPlanReportingFrequencyService);
     entityManager = module.get(EntityManager);
   });
 
@@ -40,7 +40,7 @@ describe('ReportingFreqWorkspaceService', () => {
 
   describe('getReportingFreqs', () => {
     it('should return an array of reporting frequencies', async () => {
-      const result = await service.getReportingFreqs('locId', 1);
+      const result = await service.getReportingFreqs(1);
       expect(result).toEqual([]);
     });
   });

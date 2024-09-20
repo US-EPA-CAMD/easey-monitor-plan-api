@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -10,6 +11,7 @@ import {
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
+import { withTransaction } from '../utils';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 
 @Injectable()
@@ -36,12 +38,12 @@ export class PCTQualificationWorkspaceService {
     locId: string,
     qualId: string,
     pctQualId: string,
+    trx?: EntityManager,
   ): Promise<PCTQualificationDTO> {
-    const result = await this.repository.getPCTQualification(
-      locId,
-      qualId,
-      pctQualId,
-    );
+    const result = await withTransaction(
+      this.repository,
+      trx,
+    ).getPCTQualification(locId, qualId, pctQualId);
     if (!result) {
       throw new EaseyException(
         new Error('PCT Qualification Not Found'),
@@ -60,12 +62,12 @@ export class PCTQualificationWorkspaceService {
     locId: string,
     qualId: string,
     qualDataYear: number,
+    trx?: EntityManager,
   ): Promise<PCTQualificationDTO> {
-    const result = await this.repository.getPCTQualificationByDataYear(
-      locId,
-      qualId,
-      qualDataYear,
-    );
+    const result = await withTransaction(
+      this.repository,
+      trx,
+    ).getPCTQualificationByDataYear(locId, qualId, qualDataYear);
     if (result) {
       return this.map.one(result);
     } else {
@@ -73,14 +75,26 @@ export class PCTQualificationWorkspaceService {
     }
   }
 
-  async createPCTQualification(
-    locationId: string,
-    qualId: string,
-    payload: PCTQualificationBaseDTO,
-    userId: string,
+  async createPCTQualification({
+    locationId,
+    qualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<PCTQualificationDTO> {
-    const qual = await this.mpQualService.getQualification(locationId, qualId);
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    payload: PCTQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<PCTQualificationDTO> {
+    const qual = await this.mpQualService.getQualification(
+      locationId,
+      qualId,
+      trx,
+    );
 
     if (!['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode)) {
       throw new EaseyException(
@@ -95,7 +109,9 @@ export class PCTQualificationWorkspaceService {
       );
     }
 
-    const pctQual = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const pctQual = repository.create({
       id: uuid(),
       qualificationId: qual.id,
       qualificationYear: payload.qualificationYear,
@@ -114,27 +130,37 @@ export class PCTQualificationWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    const result = await this.repository.save(pctQual);
+    const result = await repository.save(pctQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(result);
   }
 
-  async updatePCTQualification(
-    locationId: string,
-    qualId: string,
-    pctQualId: string,
-    payload: PCTQualificationBaseDTO,
-    userId: string,
+  async updatePCTQualification({
+    locationId,
+    qualId,
+    pctQualId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<PCTQualificationDTO> {
+    trx,
+  }: {
+    locationId: string;
+    qualId: string;
+    pctQualId: string;
+    payload: PCTQualificationBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<PCTQualificationDTO> {
     const pctQual = await this.getPCTQualification(
       locationId,
       qualId,
       pctQualId,
+      trx,
     );
 
     pctQual.qualificationId = qualId;
@@ -152,13 +178,13 @@ export class PCTQualificationWorkspaceService {
     pctQual.userId = userId;
     pctQual.updateDate = currentDateTime().toISOString();
 
-    await this.repository.save(pctQual);
+    await withTransaction(this.repository, trx).save(pctQual);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
-    return this.getPCTQualification(locationId, qualId, pctQualId);
+    return this.getPCTQualification(locationId, qualId, pctQualId, trx);
   }
 
   async importPCTQualification(
@@ -166,48 +192,40 @@ export class PCTQualificationWorkspaceService {
     qualificationId: string,
     pctQualifications: PCTQualificationBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
-        for (const pctQualification of pctQualifications) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const pctQualificationRecord = await this.getPCTQualificationByDataYear(
-                  locationId,
-                  qualificationId,
-                  pctQualification.qualificationYear,
-                );
+    return Promise.all(
+      pctQualifications.map(async pctQualification => {
+        const pctQualificationRecord = await this.getPCTQualificationByDataYear(
+          locationId,
+          qualificationId,
+          pctQualification.qualificationYear,
+          trx,
+        );
 
-                if (pctQualificationRecord) {
-                  await this.updatePCTQualification(
-                    locationId,
-                    qualificationId,
-                    pctQualificationRecord.id,
-                    pctQualification,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createPCTQualification(
-                    locationId,
-                    qualificationId,
-                    pctQualification,
-                    userId,
-                    true,
-                  );
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (pctQualificationRecord) {
+          await this.updatePCTQualification({
+            locationId,
+            qualId: qualificationId,
+            pctQualId: pctQualificationRecord.id,
+            payload: pctQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createPCTQualification({
+            locationId,
+            qualId: qualificationId,
+            payload: pctQualification,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
 
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+        return true;
+      }),
+    );
   }
 }

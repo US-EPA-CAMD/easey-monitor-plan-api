@@ -1,6 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -10,6 +12,7 @@ import {
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 
 @Injectable()
@@ -17,18 +20,26 @@ export class MonitorMethodWorkspaceService {
   constructor(
     private readonly repository: MonitorMethodWorkspaceRepository,
     private readonly map: MonitorMethodMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorMethodWorkspaceService');
+  }
 
   async getMethods(locId: string): Promise<MonitorMethodDTO[]> {
     const results = await this.repository.findBy({ locationId: locId });
     return this.map.many(results);
   }
 
-  async getMethod(methodId: string): Promise<MonitorMethod> {
-    const result = await this.repository.findOneBy({ id: methodId });
+  async getMethod(
+    methodId: string,
+    trx?: EntityManager,
+  ): Promise<MonitorMethod> {
+    const result = await withTransaction(this.repository, trx).findOneBy({
+      id: methodId,
+    });
 
     if (!result) {
       throw new EaseyException(
@@ -43,13 +54,22 @@ export class MonitorMethodWorkspaceService {
     return result;
   }
 
-  async createMethod(
-    locationId: string,
-    payload: MonitorMethodBaseDTO,
-    userId: string,
+  async createMethod({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorMethodDTO> {
-    const monMethod = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorMethodBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorMethodDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const monMethod = repository.create({
       id: uuid(),
       locationId,
       parameterCode: payload.parameterCode,
@@ -65,23 +85,39 @@ export class MonitorMethodWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(monMethod);
+    await repository.save(monMethod);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
-    return this.map.one(monMethod);
+    const monMethodDto = await this.map.one(monMethod);
+
+    await this.mpService.updatePlanPeriodOnMethodUpdate(
+      monMethodDto,
+      userId,
+      trx,
+    );
+
+    return monMethodDto;
   }
 
-  async updateMethod(
-    methodId: string,
-    payload: MonitorMethodBaseDTO,
-    locationId: string,
-    userId: string,
+  async updateMethod({
+    methodId,
+    payload,
+    locationId,
+    userId,
     isImport = false,
-  ): Promise<MonitorMethodDTO> {
-    const method = await this.getMethod(methodId);
+    trx,
+  }: {
+    methodId: string;
+    payload: MonitorMethodBaseDTO;
+    locationId: string;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorMethodDTO> {
+    const method = await this.getMethod(methodId, trx);
 
     method.parameterCode = payload.parameterCode;
     method.substituteDataCode = payload.substituteDataCode;
@@ -94,59 +130,60 @@ export class MonitorMethodWorkspaceService {
     method.userId = userId;
     method.updateDate = currentDateTime();
 
-    await this.repository.save(method);
+    await withTransaction(this.repository, trx).save(method);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
-    return this.map.one(method);
+    const methodDto = await this.map.one(method);
+
+    await this.mpService.updatePlanPeriodOnMethodUpdate(methodDto, userId, trx);
+
+    return methodDto;
   }
 
   async importMethod(
     locationId: string,
     methods: MonitorMethodBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    await Promise.all(
+      methods.map(async method => {
+        const methodRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getMethodByLocIdParamCDBDate(
+          locationId,
+          method.parameterCode,
+          method.beginDate,
+          method.beginHour,
+          method.endDate,
+          method.endHour,
+        );
 
-        for (const method of methods) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const methodRecord = await this.repository.getMethodByLocIdParamCDBDate(
-                  locationId,
-                  method.parameterCode,
-                  method.beginDate,
-                  method.beginHour,
-                  method.endDate,
-                  method.endHour,
-                );
-
-                if (methodRecord) {
-                  await this.updateMethod(
-                    methodRecord.id,
-                    method,
-                    locationId,
-                    userId,
-                    true,
-                  );
-                } else {
-                  await this.createMethod(locationId, method, userId, true);
-                }
-
-                innerResolve(true);
-              })();
-            }),
-          );
-
-          await Promise.all(promises);
-
-          resolve(true);
+        if (methodRecord) {
+          await this.updateMethod({
+            methodId: methodRecord.id,
+            payload: method,
+            locationId,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createMethod({
+            locationId,
+            payload: method,
+            userId,
+            isImport: true,
+            trx,
+          });
         }
-      })();
-    });
+      }),
+    );
+    this.logger.debug(`Imported ${methods.length} monitor methods`);
+    return true;
   }
 }

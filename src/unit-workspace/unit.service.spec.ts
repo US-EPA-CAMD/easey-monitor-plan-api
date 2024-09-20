@@ -1,10 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnitWorkspaceRepository } from './unit.repository';
 import { UnitWorkspaceService } from './unit.service';
+import { UnitMap } from '../maps/unit.map';
 import { UnitDTO, UnitBaseDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
-import { Unit } from './unit.entity';
+import { Unit } from '../entities/workspace/unit.entity';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+
+const mockMap = () => ({
+  many: jest.fn().mockResolvedValue([]),
+});
 
 const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(new UnitDTO()),
@@ -23,6 +28,10 @@ describe('UnitWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UnitWorkspaceService,
+        {
+          provide: UnitMap,
+          useFactory: mockMap,
+        },
         {
           provide: MonitorPlanWorkspaceService,
           useFactory: () => ({
@@ -63,7 +72,9 @@ describe('UnitWorkspaceService', () => {
 
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(unit);
       jest.spyOn(repository, 'save').mockResolvedValue(unit);
-      jest.spyOn(service as any, 'getUnitDetails').mockResolvedValue(unitDetails);
+      jest
+        .spyOn(service as any, 'getUnitDetails')
+        .mockResolvedValue(unitDetails);
 
       const result = await service.updateUnit('locId', 1, payload, 'userId');
 

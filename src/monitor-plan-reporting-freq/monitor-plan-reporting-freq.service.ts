@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { ReportingFreqRepository } from './reporting-freq.repository';
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { EntityManager } from 'typeorm';
 
 @Injectable()
-export class ReportingFreqService {
-  constructor(
-    private readonly repository: ReportingFreqRepository,
-    private readonly entityManager: EntityManager,
-  ) {}
+export class MonitorPlanReportingFrequencyService {
+  constructor(private readonly entityManager: EntityManager) {}
 
-  async getReportingFreqs(locId: string, unitId: number): Promise<ReportingFreqDTO[]> {
-    return await this.retrieveReportingFreq(locId, unitId);
+  async getReportingFreqs(unitRecordId: number): Promise<ReportingFreqDTO[]> {
+    return await this.retrieveReportingFreq(unitRecordId);
   }
 
-  private async retrieveReportingFreq(locId: string, unitId: number): Promise<ReportingFreqDTO[]> {
+  private async retrieveReportingFreq(
+    unitRecordId: number,
+  ): Promise<ReportingFreqDTO[]> {
     const sql = `
         SELECT
             mprf.mon_plan_rf_id AS "id",
@@ -50,7 +48,7 @@ export class ReportingFreqService {
         GROUP BY mprf.mon_plan_rf_id, mprf.report_freq_cd, rp_begin.period_abbreviation, rp_end.period_abbreviation, rp_end.end_date;;
     `;
 
-    const result = await this.entityManager.query(sql, [unitId]);
+    const result = await this.entityManager.query(sql, [unitRecordId]);
     return result;
   }
 }

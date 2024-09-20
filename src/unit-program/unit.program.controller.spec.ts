@@ -6,7 +6,6 @@ import { UnitProgramDTO } from '../dtos/unit-program.dto';
 
 jest.mock('./unit-program.service');
 
-const locId = 'some location id';
 const unitId = 1;
 
 const data: UnitProgramDTO[] = [];
@@ -32,10 +31,12 @@ describe('UnitProgramController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getUnitPrograms', () => {
+  describe('getUnitProgramsByUnitRecordId', () => {
     it('should return array of unit programs', async () => {
-      jest.spyOn(service, 'getUnitPrograms').mockResolvedValue(data);
-      expect(await controller.getUnitPrograms(locId, unitId)).toBe(data);
+      jest
+        .spyOn(service, 'getUnitProgramsByUnitRecordId')
+        .mockResolvedValue(data);
+      expect(await controller.getUnitProgramsByUnitRecordId(unitId)).toBe(data);
     });
   });
 });

@@ -27,7 +27,9 @@ describe('UnitProgramRepository', () => {
 
     // Get the repository and query builder from the module
     repository = module.get(UnitProgramRepository);
-    queryBuilder = module.get<SelectQueryBuilder<UnitProgram>>(SelectQueryBuilder);
+    queryBuilder = module.get<SelectQueryBuilder<UnitProgram>>(
+      SelectQueryBuilder,
+    );
 
     // Mocking the createQueryBuilder to return the queryBuilder mock
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
@@ -43,9 +45,14 @@ describe('UnitProgramRepository', () => {
       (queryBuilder.where as jest.Mock).mockReturnValue(queryBuilder);
       (queryBuilder.getMany as jest.Mock).mockReturnValue([unitProgramEntity]);
 
-      const result = await repository.getUnitPrograms('locationId', 1);
+      const result = await repository.getUnitProgramsByUnitRecordId(1);
       expect(result).toEqual([unitProgramEntity]);
-      expect(queryBuilder.where).toHaveBeenCalledWith('up.unitId = :unitId', { unitId: 1 });
+      expect(queryBuilder.where).toHaveBeenCalledWith(
+        'up.unitId = :unitRecordId',
+        {
+          unitRecordId: 1,
+        },
+      );
     });
   });
 
@@ -55,9 +62,14 @@ describe('UnitProgramRepository', () => {
       (queryBuilder.where as jest.Mock).mockReturnValue(queryBuilder);
       (queryBuilder.getOne as jest.Mock).mockReturnValue(unitProgramEntity);
 
-      const result = await repository.getUnitProgram('unitProgId');
+      const result = await repository.getUnitProgramByProgramId('unitProgId');
       expect(result).toEqual(unitProgramEntity);
-      expect(queryBuilder.where).toHaveBeenCalledWith('up.programId = :unitProgId', { unitProgId: 'unitProgId' });
+      expect(queryBuilder.where).toHaveBeenCalledWith(
+        'up.programId = :progId',
+        {
+          progId: 'unitProgId',
+        },
+      );
     });
   });
 });

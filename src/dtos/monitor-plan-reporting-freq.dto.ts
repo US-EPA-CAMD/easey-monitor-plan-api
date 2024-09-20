@@ -80,4 +80,12 @@ export class MonitorPlanReportingFreqDTO extends MonitorPlanReportingFreqBaseDTO
   @IsDateString()
   @IsOptional()
   updateDate?: string;
+
+  @IsString()
+  @IsOptional()
+  endReportPeriodDescription?: string;
+
+  @IsString()
+  @IsOptional()
+  beginReportPeriodDescription?: string;
 }

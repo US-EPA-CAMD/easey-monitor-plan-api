@@ -131,25 +131,25 @@ describe('LMEQualificationWorkspaceService', () => {
 
   describe('createLMEQualification', () => {
     it('creates a LME qualification for a specific qualification ID', async () => {
-      const result = await lmeQualService.createLMEQualification(
-        locId,
+      const result = await lmeQualService.createLMEQualification({
+        locationId: locId,
         qualId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });
 
   describe('updateLMEQualification', () => {
     it('updates a LME qualification for a specific qualification ID and location ID', async () => {
-      const result = await lmeQualService.updateLMEQualification(
-        locId,
+      const result = await lmeQualService.updateLMEQualification({
+        locationId: locId,
         qualId,
         lmeQualId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });
@@ -167,11 +167,13 @@ describe('LMEQualificationWorkspaceService', () => {
         qualId,
         [payload],
         userId,
+        undefined,
       );
       expect(getLMEQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.qualificationDataYear,
+        undefined,
       );
       expect(createLMEQualification).toHaveBeenCalled;
     });
@@ -188,11 +190,13 @@ describe('LMEQualificationWorkspaceService', () => {
         qualId,
         [payload],
         userId,
+        undefined,
       );
       expect(getLMEQualificationByDataYear).toHaveBeenCalledWith(
         locId,
         qualId,
         payload.qualificationDataYear,
+        undefined,
       );
       expect(updateLMEQualification).toHaveBeenCalled;
     });

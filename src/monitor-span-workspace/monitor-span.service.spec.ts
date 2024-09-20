@@ -86,7 +86,11 @@ describe('MonitorSpanWorkspaceService', () => {
 
   describe('createSpan', () => {
     it('should create and return monitor span when monitor span found', async () => {
-      const result = await service.createSpan('1', payload, 'testUser');
+      const result = await service.createSpan({
+        locationId: '1',
+        payload,
+        userId: 'testUser',
+      });
       expect(result).toEqual(span);
     });
   });
@@ -95,7 +99,12 @@ describe('MonitorSpanWorkspaceService', () => {
     it('should update and return monitor span when monitor span found', async () => {
       jest.spyOn(service, 'getSpan').mockResolvedValue(span);
 
-      const result = await service.updateSpan('1', '1', payload, 'testUser');
+      const result = await service.updateSpan({
+        locationId: '1',
+        spanId: '1',
+        payload,
+        userId: 'testUser',
+      });
       expect(result).toEqual(spanDTO);
     });
   });

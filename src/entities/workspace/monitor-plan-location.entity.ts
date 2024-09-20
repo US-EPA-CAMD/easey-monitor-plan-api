@@ -1,4 +1,14 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
+
+import { MonitorLocation } from './monitor-location.entity';
+import { MonitorPlan } from '../monitor-plan.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_plan_location' })
 export class MonitorPlanLocation extends BaseEntity {
@@ -24,4 +34,18 @@ export class MonitorPlanLocation extends BaseEntity {
     name: 'mon_loc_id',
   })
   locationId: string;
+
+  @JoinColumn({ name: 'mon_plan_id' })
+  @ManyToOne(
+    () => MonitorPlan,
+    mp => mp.id,
+  )
+  monitorPlan: MonitorPlan;
+
+  @JoinColumn({ name: 'mon_loc_id' })
+  @ManyToOne(
+    () => MonitorLocation,
+    ml => ml.id,
+  )
+  monitorLocation: MonitorLocation;
 }
