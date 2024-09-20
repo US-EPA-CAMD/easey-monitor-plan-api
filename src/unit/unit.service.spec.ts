@@ -1,76 +1,87 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
-import { Unit } from '../entities/unit.entity';
-import { UnitRepository } from './unit.repository';
-import { UnitService } from './unit.service';
+import { UnitMap } from '../maps/unit.map';
+import { UnitDTO, UnitBaseDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
+import { Unit } from '../entities/workspace/unit.entity';
+import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { UnitWorkspaceRepository } from '../unit-workspace/unit.repository';
 
-const mockRepository = () => ({
-  findBy: jest.fn().mockResolvedValue(''),
-  findOneBy: jest.fn().mockResolvedValue(''),
-  update: jest.fn().mockResolvedValue(true),
+
+const mockMap = () => ({
+  many: jest.fn().mockResolvedValue([]),
 });
 
-describe('Unit Import Tests', () => {
-  let service: UnitService;
-  let repository: UnitRepository;
+const mockRepository = () => ({
+  findOneBy: jest.fn().mockResolvedValue(new UnitDTO()),
+  save: jest.fn().mockResolvedValue({}),
+});
+
+const mockEntityManager = () => ({
+  query: jest.fn().mockResolvedValue([]),
+});
+
+describe('UnitWorkspaceService', () => {
+  let service: UnitWorkspaceService;
+  let repository: UnitWorkspaceRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
       providers: [
+        UnitWorkspaceService,
         {
-          provide: UnitRepository,
+          provide: UnitMap,
+          useFactory: mockMap,
+        },
+        {
+          provide: MonitorPlanWorkspaceService,
+          useFactory: () => ({
+            resetToNeedsEvaluation: jest.fn(),
+          }),
+        },
+        {
+          provide: UnitWorkspaceRepository,
           useFactory: mockRepository,
         },
-        UnitService,
-        EntityManager,
+        {
+          provide: EntityManager,
+          useFactory: mockEntityManager,
+        },
       ],
     }).compile();
 
-    repository = module.get(UnitRepository);
-    service = module.get(UnitService);
+    service = module.get(UnitWorkspaceService);
+    repository = module.get(UnitWorkspaceRepository);
   });
 
-  describe('Check2', () => {
-    it('Should pass given a returned entry for facilityId and unitId present in location', async () => {
-      repository.findOneBy = jest.fn().mockResolvedValue(new Unit());
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 
-      const location = new UpdateMonitorLocationDTO();
-
-      const result = await service.runUnitChecks(location, 1, 1);
-
+  describe('getUnits', () => {
+    it('should return an array of units', async () => {
+      const result = await service.getUnits('locId', 1);
       expect(result).toEqual([]);
     });
+  });
 
-    it('Should error given a undefined entry for facilityId and unitId in unitStackConfigurations', async () => {
-      repository.findOneBy = jest.fn().mockResolvedValue(undefined);
+  describe('updateUnit', () => {
+    it('should return the updated unit', async () => {
+      const payload = new UnitBaseDTO();
+      const unit: Unit = new Unit();
+      const unitDetails: UnitDTO[] = [new UnitDTO(), new UnitDTO()]; // Mocked UnitDTO array
 
-      const location = new UpdateMonitorLocationDTO();
-      location.unitId = '1';
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(unit);
+      jest.spyOn(repository, 'save').mockResolvedValue(unit);
+      jest.spyOn(service as any, 'getUnitDetails').mockResolvedValue(unitDetails);
 
-      const result = await service.runUnitChecks(location, 1, 1);
+      const result = await service.updateUnit('locId', 1, payload, 'userId');
 
-      expect(result).toEqual([
-        "[IMPORT2-FATAL-A] The database doesn't contain unit 1 for Oris Code 1",
-      ]);
-    });
+      // Check if the getUnitDetails method was called
+      expect(service['getUnitDetails']).toHaveBeenCalledWith(1);
 
-    it('Should pass return true when record is updated', async () => {
-      repository.update = jest.fn().mockResolvedValue(new Unit());
-      const unit = new Unit();
-
-      const result = await service.importUnit(unit, 1);
-      expect(result).toEqual(true);
-    });
-
-    it('Should pass return true when record is updated', async () => {
-      repository.findOne = jest.fn().mockResolvedValue(new Unit());
-      const unit = new Unit();
-
-      const result = await service.getUnitByNameAndFacId('1', 1);
-      expect(result).toEqual(unit);
+      // Check if the result is the first element of the mocked UnitDTO array
+      expect(result).toBe(unitDetails[0]);
     });
   });
 });
