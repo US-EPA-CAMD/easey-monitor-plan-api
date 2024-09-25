@@ -39,14 +39,6 @@ export class ImportChecksService {
   public async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
     let errorList = [];
 
-    // Version Check
-    if (!monPlan.version) {
-      errorList.push(
-        "JSON Schema is missing the required version attribute.",
-      )
-    };
-    this.checkIfThrows(errorList);
-
     // Plant Check
     errorList.push(
       ...(await this.plantService.runPlantCheck(monPlan.orisCode)),
