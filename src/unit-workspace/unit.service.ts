@@ -46,7 +46,7 @@ export class UnitWorkspaceService {
     const sql = `
         SELECT
             unt.UNIT_ID as "id",
-            unt.UNITID as "unitid",
+            unt.UNITID as "unitId",
             unt.NON_LOAD_BASED_IND as "nonLoadBasedIndicator",
             unt.SOURCE_CATEGORY_CD as "sourceCategoryCd",
             to_char(unt.COMM_OP_DATE, 'yyyy-mm-dd') AS "commOpDate",
