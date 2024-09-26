@@ -97,7 +97,7 @@ export class MonitorPlanWorkspaceController {
   @Post('single-unit')
   @RoleGuard(
     {
-      bodyParam: 'facilityId',
+      bodyParam: 'orisCode',
     },
     LookupType.Facility,
   )
@@ -113,7 +113,7 @@ export class MonitorPlanWorkspaceController {
   ) {
     return this.service.createNewSingleUnitMonitorPlan(
       payload.unitId,
-      payload.facilityId,
+      payload.orisCode,
       user.userId,
       draft,
     );

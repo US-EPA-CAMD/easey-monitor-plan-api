@@ -437,7 +437,7 @@ export class MonitorPlanWorkspaceService {
 
   async createNewSingleUnitMonitorPlan(
     unitId: string,
-    facilityId: number,
+    orisCode: number,
     userId: string,
     draft = false,
   ) {
@@ -453,8 +453,9 @@ export class MonitorPlanWorkspaceService {
       .select('mp.id', 'id')
       .innerJoin('mp.locations', 'l')
       .innerJoin('l.unit', 'u')
+      .innerJoin('u.plant', 'p')
       .where('u.name = :unitId', { unitId })
-      .andWhere('u.facId = :facId', { facId: facilityId })
+      .andWhere('p.orisCode = :orisCode', { orisCode })
       .getRawMany();
     if (associatedPlans.length > 0) {
       this.logger.debug(
@@ -469,7 +470,7 @@ export class MonitorPlanWorkspaceService {
       );
     }
 
-    const orisCode = await this.plantService.getOrisCodeFromFacId(facilityId);
+    const facilityId = await this.plantService.getFacIdFromOris(orisCode);
     const location = await this.monitorLocationService.getOrCreateUnitLocation({
       create: true,
       facilityId,
