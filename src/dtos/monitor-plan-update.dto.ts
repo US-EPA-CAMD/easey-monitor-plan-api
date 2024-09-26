@@ -28,6 +28,14 @@ export class UpdateMonitorPlanDTO {
   })
   orisCode: number;
 
+  @ApiProperty({
+    description: propertyMetadata.monitorPlanDTOVersion.description,
+    example: propertyMetadata.monitorPlanDTOVersion.example,
+    name: propertyMetadata.monitorPlanDTOVersion.fieldLabels.value,
+  })
+  @IsNotEmpty()
+  version: string;
+
   @ValidateNested()
   @Type(() => MonitorPlanCommentBaseDTO)
   monitoringPlanCommentData: MonitorPlanCommentBaseDTO[];
