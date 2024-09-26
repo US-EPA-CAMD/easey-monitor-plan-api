@@ -26,16 +26,7 @@ export class UpdateMonitorPlanDTO {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 999999.`;
     },
   })
-
   orisCode: number;
-
-  @ApiProperty({
-    description: propertyMetadata.monitorPlanDTOVersion.description,
-    example: propertyMetadata.monitorPlanDTOVersion.example,
-    name: propertyMetadata.monitorPlanDTOVersion.fieldLabels.value,
-  })
-  @IsNotEmpty()
-  version: string;
 
   @ValidateNested()
   @Type(() => MonitorPlanCommentBaseDTO)
