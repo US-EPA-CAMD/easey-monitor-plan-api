@@ -51,6 +51,7 @@ import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-p
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { throwIfErrors, withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
@@ -98,6 +99,7 @@ export class MonitorPlanWorkspaceService {
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
     private readonly monitorPlanLocationService: MonitorPlanLocationService,
+    private readonly userCheckOutService: UserCheckOutService,
 
     private map: MonitorPlanMap,
   ) {
@@ -1176,8 +1178,19 @@ export class MonitorPlanWorkspaceService {
     return !(item as UnitDTO).hasOwnProperty('stackPipeId');
   }
 
-  async revertToOfficialRecord(monPlanId: string): Promise<void> {
-    return this.repository.revertToOfficialRecord(monPlanId);
+  async revertToOfficialRecord(monPlanId: string) {
+    await this.entityManager.transaction(async trx => {
+      const repository = withTransaction(this.repository, trx);
+      await repository.revertToOfficialRecord(monPlanId);
+      const count = await repository
+        .createQueryBuilder('mp')
+        .where('mp.id = :id', { id: monPlanId })
+        .getCount();
+      if (count === 0) {
+        // The monitor plan only existed in the workspace, clear other references to it.
+        await this.userCheckOutService.checkInConfiguration(monPlanId, trx);
+      }
+    });
   }
 
   private async matchToPlanByLocationsAndBeginPeriod(
