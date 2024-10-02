@@ -96,6 +96,7 @@ export class StackPipeWorkspaceService {
             trx,
           ),
           stackPipe.retireDate,
+          userId,
           trx,
         )) ??
         (await this.createStackPipeRecord(
@@ -204,15 +205,25 @@ export class StackPipeWorkspaceService {
   async updateStackPipe(
     stackPipeRecord: StackPipe,
     retireDate: Date,
+    userId: string,
     trx?: EntityManager,
   ) {
     if (!stackPipeRecord) return null;
 
     const repository = withTransaction(this.repository, trx);
-    await repository.update(stackPipeRecord.id, {
-      retireDate,
-    });
-    this.logger.debug(`Updated stack pipe ${stackPipeRecord.name}`);
+    if (
+      new Date(retireDate).getTime() !==
+      new Date(stackPipeRecord.retireDate).getTime()
+    ) {
+      await repository.update(stackPipeRecord.id, {
+        retireDate,
+        updateDate: currentDateTime(),
+        userId,
+      });
+      this.logger.debug(`Stack pipe ${stackPipeRecord.name} updated`);
+    } else {
+      this.logger.debug(`Stack pipe ${stackPipeRecord.name} unchanged`);
+    }
     return repository.findOneBy({ id: stackPipeRecord.id });
   }
 }

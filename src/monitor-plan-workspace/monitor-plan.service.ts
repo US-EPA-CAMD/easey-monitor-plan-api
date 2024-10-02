@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -1446,13 +1447,16 @@ export class MonitorPlanWorkspaceService {
         latestReportingFrequencyQuarter = rfBeginQuarter;
       }
     }
-    if (latestReportingFrequency) {
+    if (
+      latestReportingFrequency &&
+      latestReportingFrequency.endReportPeriodId !== newEndReportPeriodId
+    ) {
       // Update the end report period of the latest reporting frequency.
-      const latestReportingFrequencyRecord = await reportingFreqRepository.findOneBy(
-        { id: latestReportingFrequency.id },
-      );
-      latestReportingFrequencyRecord.endReportPeriodId = newEndReportPeriodId;
-      await reportingFreqRepository.save(latestReportingFrequencyRecord);
+      reportingFreqRepository.update(latestReportingFrequency.id, {
+        endReportPeriodId: newEndReportPeriodId,
+        updateDate: currentDateTime(),
+        userId,
+      });
     }
 
     await repository.resetToNeedsEvaluation(plan.id, userId);
