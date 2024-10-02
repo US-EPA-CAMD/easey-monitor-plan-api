@@ -154,7 +154,7 @@ export class StackPipeWorkspaceService {
       new Date(location.retireDate) < new Date(location.activeDate)
     ) {
       errorList.push(
-        'The Retire Date of the Stack Pipe cannot be before the Active Date',
+        'The Retire Date of the Stack/Pipe cannot be before the Active Date',
       );
     }
 
@@ -168,8 +168,19 @@ export class StackPipeWorkspaceService {
     );
 
     if (
+      stackPipeRecord &&
+      new Date(stackPipeRecord.activeDate).getTime() !==
+        new Date(location.activeDate).getTime()
+    ) {
+      errorList.push(
+        'The Active Date for one or more Stack/Pipe records does not match the official record for this Stack/Pipe. Please contact ECMPS Support if you need to correct the Active Date for any Stack/Pipe records.',
+      );
+    }
+
+    if (
       stackPipeRecord?.retireDate &&
-      stackPipeRecord.retireDate !== location.retireDate
+      new Date(stackPipeRecord.retireDate).getTime() !==
+        new Date(location.retireDate).getTime()
     ) {
       errorList.push('Cannot update a retired stack pipe');
     }
@@ -181,20 +192,15 @@ export class StackPipeWorkspaceService {
 
     if (evaluation) {
       if (
+        stackPipeRecord &&
+        !stackPipeRecord.retireDate &&
         location.retireDate &&
         new Date(location.retireDate) <
           new Date(evaluation.reportingPeriod.endDate)
       ) {
+        // Check the retire date if the record exists.
         errorList.push(
           'The Retire Date of the Stack/Pipe cannot be before the end date of the last Emission Evaluation for the Stack/Pipe.',
-        );
-      } else if (
-        location.activeDate &&
-        new Date(location.activeDate) <=
-          new Date(evaluation.reportingPeriod.endDate)
-      ) {
-        errorList.push(
-          'The Active Date for one or more Stack/Pipe records does not match the last official submission record for this monitoring plan. Please contact ECMPS Support if you need to correct the Active Date for any Stack/Pipe records.',
         );
       }
     }

@@ -35,7 +35,10 @@ export class UnitStackConfigurationChecksService {
       );
     }
 
-    if (uscRecord?.endDate && usc.endDate !== uscRecord.endDate) {
+    if (
+      uscRecord?.endDate &&
+      new Date(usc.endDate).getTime() !== new Date(uscRecord.endDate).getTime()
+    ) {
       console.log(
         `record end date: ${uscRecord.endDate}, usc end date: ${usc.endDate}`,
       );
@@ -59,15 +62,20 @@ export class UnitStackConfigurationChecksService {
       if (!evaluation) return;
 
       if (
+        uscRecord &&
+        !uscRecord.endDate &&
         usc.endDate &&
         new Date(usc.endDate) < new Date(evaluation.reportingPeriod.endDate)
       ) {
+        // Check the end date if the record exists.
         errorList.push(
           'The End Date of the Unit Stack Configuration cannot be before the end date of the last Emission Evaluation for the Unit or Stack/Pipe.',
         );
       } else if (
+        !uscRecord &&
         new Date(usc.beginDate) <= new Date(evaluation.reportingPeriod.endDate)
       ) {
+        // Check the begin date if the record does not yet exist.
         errorList.push(
           'The Begin Date for one or more Unit Stack Configuration records does not match the last official submission record for this monitoring plan. Please contact ECMPS Support if you need to correct the Begin Date for any Unit Stack Configuration records.',
         );
