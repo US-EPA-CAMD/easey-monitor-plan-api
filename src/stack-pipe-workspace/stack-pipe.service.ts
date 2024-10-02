@@ -145,65 +145,83 @@ export class StackPipeWorkspaceService {
     return result;
   }
 
-  async runStackPipeChecks(location: UpdateMonitorLocationDTO, facId: number) {
+  async runStackPipeChecks(
+    locations: UpdateMonitorLocationDTO[],
+    facId: number,
+  ) {
     const errorList: string[] = [];
-    // Check if retire date is before active date for any stack/pipes.
-    if (
-      location.activeDate &&
-      location.retireDate &&
-      new Date(location.retireDate) < new Date(location.activeDate)
-    ) {
-      errorList.push(
-        'The Retire Date of the Stack/Pipe cannot be before the Active Date',
-      );
-    }
 
-    if (!location.activeDate) {
-      errorList.push('The Stack/Pipe must have an Active Date.');
-    }
-
-    const stackPipeRecord = await this.getStackByNameAndFacId(
-      location.stackPipeId,
-      facId,
-    );
-
-    if (
-      stackPipeRecord &&
-      new Date(stackPipeRecord.activeDate).getTime() !==
-        new Date(location.activeDate).getTime()
-    ) {
-      errorList.push(
-        'The Active Date for one or more Stack/Pipe records does not match the official record for this Stack/Pipe. Please contact ECMPS Support if you need to correct the Active Date for any Stack/Pipe records.',
-      );
-    }
-
-    if (
-      stackPipeRecord?.retireDate &&
-      new Date(stackPipeRecord.retireDate).getTime() !==
-        new Date(location.retireDate).getTime()
-    ) {
-      errorList.push('Cannot update a retired stack pipe');
-    }
-
-    const evaluation = await this.emissionEvaluationService.getLastEmissionEvaluationByStackPipeId(
-      location.stackPipeId,
-      facId,
-    );
-
-    if (evaluation) {
-      if (
-        stackPipeRecord &&
-        !stackPipeRecord.retireDate &&
-        location.retireDate &&
-        new Date(location.retireDate) <
-          new Date(evaluation.reportingPeriod.endDate)
-      ) {
-        // Check the retire date if the record exists.
+    // Check if there are any duplicate stack/pipe IDs.
+    const stackPipeIds = locations.map(sp => sp.stackPipeId).filter(Boolean);
+    stackPipeIds.forEach((stackPipeId, i) => {
+      if (stackPipeIds.findIndex(sp => sp === stackPipeId) !== i) {
         errorList.push(
-          'The Retire Date of the Stack/Pipe cannot be before the end date of the last Emission Evaluation for the Stack/Pipe.',
+          `[MONLOC-106-A] Duplicate Stack/Pipe found with ID: ${stackPipeId}`,
         );
       }
-    }
+    });
+
+    await Promise.all(
+      locations.map(async location => {
+        // Check if retire date is before active date for any stack/pipes.
+        if (
+          location.activeDate &&
+          location.retireDate &&
+          new Date(location.retireDate) < new Date(location.activeDate)
+        ) {
+          errorList.push(
+            'The Retire Date of the Stack/Pipe cannot be before the Active Date',
+          );
+        }
+
+        if (!location.activeDate) {
+          errorList.push('The Stack/Pipe must have an Active Date.');
+        }
+
+        const stackPipeRecord = await this.getStackByNameAndFacId(
+          location.stackPipeId,
+          facId,
+        );
+
+        if (
+          stackPipeRecord &&
+          new Date(stackPipeRecord.activeDate).getTime() !==
+            new Date(location.activeDate).getTime()
+        ) {
+          errorList.push(
+            'The Active Date for one or more Stack/Pipe records does not match the official record for this Stack/Pipe. Please contact ECMPS Support if you need to correct the Active Date for any Stack/Pipe records.',
+          );
+        }
+
+        if (
+          stackPipeRecord?.retireDate &&
+          new Date(stackPipeRecord.retireDate).getTime() !==
+            new Date(location.retireDate).getTime()
+        ) {
+          errorList.push('Cannot update a retired stack pipe');
+        }
+
+        const evaluation = await this.emissionEvaluationService.getLastEmissionEvaluationByStackPipeId(
+          location.stackPipeId,
+          facId,
+        );
+
+        if (evaluation) {
+          if (
+            stackPipeRecord &&
+            !stackPipeRecord.retireDate &&
+            location.retireDate &&
+            new Date(location.retireDate) <
+              new Date(evaluation.reportingPeriod.endDate)
+          ) {
+            // Check the retire date if the record exists.
+            errorList.push(
+              'The Retire Date of the Stack/Pipe cannot be before the end date of the last Emission Evaluation for the Stack/Pipe.',
+            );
+          }
+        }
+      }),
+    );
 
     return errorList;
   }

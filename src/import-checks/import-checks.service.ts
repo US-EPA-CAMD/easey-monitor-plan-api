@@ -53,6 +53,14 @@ export class ImportChecksService {
     errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
     this.checkIfThrows(errorList);
 
+    // Stack Pipe Checks
+    errorList.push(
+      ...(await this.stackPipeService.runStackPipeChecks(
+        monPlan.monitoringLocationData.filter(location => location.stackPipeId),
+        facilityId,
+      )),
+    );
+
     const databaseLocations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
       monPlan,
       facilityId,
@@ -67,16 +75,6 @@ export class ImportChecksService {
           ...(await this.unitService.runUnitChecks(
             location,
             monPlan.orisCode,
-            facilityId,
-          )),
-        );
-      }
-
-      // Stack Pipe Checks
-      if (location.stackPipeId) {
-        errorList.push(
-          ...(await this.stackPipeService.runStackPipeChecks(
-            location,
             facilityId,
           )),
         );
