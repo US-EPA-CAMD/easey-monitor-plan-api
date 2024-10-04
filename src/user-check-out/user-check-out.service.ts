@@ -116,7 +116,7 @@ export class UserCheckOutService {
   async checkInConfiguration(
     monPlanId: string,
     trx?: EntityManager,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     if (
       !(await this.ensureNoEvaluationOrSubmissionInProgress(monPlanId, trx))
     ) {
