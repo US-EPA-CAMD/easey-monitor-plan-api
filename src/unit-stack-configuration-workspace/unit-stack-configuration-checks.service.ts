@@ -37,7 +37,9 @@ export class UnitStackConfigurationChecksService {
 
     if (
       uscRecord?.endDate &&
-      new Date(usc.endDate).getTime() !== new Date(uscRecord.endDate).getTime()
+      (!usc.endDate ||
+        new Date(usc.endDate).getTime() !==
+          new Date(uscRecord.endDate).getTime())
     ) {
       console.log(
         `record end date: ${uscRecord.endDate}, usc end date: ${usc.endDate}`,

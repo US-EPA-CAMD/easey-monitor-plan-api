@@ -195,8 +195,9 @@ export class StackPipeWorkspaceService {
 
         if (
           stackPipeRecord?.retireDate &&
-          new Date(stackPipeRecord.retireDate).getTime() !==
-            new Date(location.retireDate).getTime()
+          (!location.retireDate ||
+            new Date(stackPipeRecord.retireDate).getTime() !==
+              new Date(location.retireDate).getTime())
         ) {
           errorList.push('Cannot update a retired stack pipe');
         }
