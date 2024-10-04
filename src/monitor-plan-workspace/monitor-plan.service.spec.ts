@@ -1,17 +1,14 @@
 import { Test } from '@nestjs/testing';
-import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
-import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
-import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
-import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-program.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CountyCodeService } from '../county-code/county-code.service';
 import { CountyCodeDTO } from '../dtos/county-code.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { EvalStatusCode } from '../entities/eval-status-code.entity';
 import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
@@ -20,7 +17,6 @@ import { DuctWaf } from '../entities/workspace/duct-waf.entity';
 import { LEEQualification } from '../entities/workspace/lee-qualification.entity';
 import { LMEQualification } from '../entities/workspace/lme-qualification.entity';
 import { MatsMethod } from '../entities/workspace/mats-method.entity';
-import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { MonitorAttribute } from '../entities/workspace/monitor-attribute.entity';
 import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
@@ -46,6 +42,7 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
 import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
 import { EvalStatusCodeRepository } from '../monitor-configurations-workspace/eval-status.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
 import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
 import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
@@ -54,23 +51,27 @@ import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/m
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
 import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
+import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
+import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
 import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { PlantService } from '../plant/plant.service';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
 import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
 import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit-capacity.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
+import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-program.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
-import { UnitWorkspaceService } from '../unit-workspace/unit.service';
-import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
@@ -117,8 +118,13 @@ const mockEaseyContentService = () => ({
   }),
 });
 
+const mockMonitorPlanQueryBuilder = ({
+  where: jest.fn().mockReturnThis(),
+  getCount: jest.fn().mockReturnValue(0),
+} as any) as SelectQueryBuilder<MonitorPlan>;
 const mockMonitorPlanRepo = () => ({
   createMonitorPlanRecord: jest.fn().mockResolvedValue(MONITOR_PLAN),
+  createQueryBuilder: jest.fn().mockReturnValue(mockMonitorPlanQueryBuilder),
   getActivePlanByLocationId: jest.fn().mockResolvedValue(MONITOR_PLAN),
   resetToNeedsEvaluation: jest.fn(),
   revertToOfficialRecord: jest.fn(),
@@ -271,6 +277,9 @@ const queryRunnerMock = {
   rollbackTransaction: jest.fn(),
   startTransaction: jest.fn(),
 };
+const mockUserCheckOutService = () => ({
+  checkInConfiguration: jest.fn(),
+});
 
 describe('Monitor Plan Service', () => {
   let service: MonitorPlanWorkspaceService;
@@ -440,6 +449,10 @@ describe('Monitor Plan Service', () => {
         {
           provide: UnitWorkspaceService,
           useFactory: mockUnitService,
+        },
+        {
+          provide: UserCheckOutService,
+          useFactory: mockUserCheckOutService,
         },
       ],
     }).compile();

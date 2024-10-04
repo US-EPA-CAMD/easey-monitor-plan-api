@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { Unit } from '../entities/unit.entity';
@@ -43,11 +44,22 @@ export class UnitService {
     return errorList;
   }
 
-  async importUnit(unitRecord: Unit, nonLoadI: number, trx?: EntityManager) {
-    await withTransaction(this.repository, trx).update(unitRecord.id, {
-      nonLoadBasedIndicator: nonLoadI,
-    });
-    this.logger.debug(`Imported unit ${unitRecord.name}`);
+  async importUnit(
+    unitRecord: Unit,
+    nonLoadI: number,
+    userId: string,
+    trx?: EntityManager,
+  ) {
+    if (nonLoadI !== unitRecord.nonLoadBasedIndicator) {
+      await withTransaction(this.repository, trx).update(unitRecord.id, {
+        nonLoadBasedIndicator: nonLoadI,
+        updateDate: currentDateTime(),
+        userId,
+      });
+      this.logger.debug(`Unit ${unitRecord.name} updated`);
+    } else {
+      this.logger.debug(`Unit ${unitRecord.name} unchanged`);
+    }
     return true;
   }
 

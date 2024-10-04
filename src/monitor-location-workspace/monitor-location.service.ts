@@ -381,6 +381,7 @@ export class MonitorLocationWorkspaceService {
             this.unitService.importUnit(
               unitRecord,
               location.nonLoadBasedIndicator,
+              userId,
               trx,
             ),
           );
@@ -436,6 +437,7 @@ export class MonitorLocationWorkspaceService {
             this.stackPipeService.updateStackPipe(
               stackPipeRecord,
               location.retireDate,
+              userId,
               trx,
             ),
           );

@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -51,6 +52,7 @@ import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-p
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { throwIfErrors, withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
@@ -98,6 +100,7 @@ export class MonitorPlanWorkspaceService {
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly monitorPlanCommentService: MonitorPlanCommentWorkspaceService,
     private readonly monitorPlanLocationService: MonitorPlanLocationService,
+    private readonly userCheckOutService: UserCheckOutService,
 
     private map: MonitorPlanMap,
   ) {
@@ -437,7 +440,7 @@ export class MonitorPlanWorkspaceService {
 
   async createNewSingleUnitMonitorPlan(
     unitId: string,
-    facilityId: number,
+    orisCode: number,
     userId: string,
     draft = false,
   ) {
@@ -453,8 +456,9 @@ export class MonitorPlanWorkspaceService {
       .select('mp.id', 'id')
       .innerJoin('mp.locations', 'l')
       .innerJoin('l.unit', 'u')
+      .innerJoin('u.plant', 'p')
       .where('u.name = :unitId', { unitId })
-      .andWhere('u.facId = :facId', { facId: facilityId })
+      .andWhere('p.orisCode = :orisCode', { orisCode })
       .getRawMany();
     if (associatedPlans.length > 0) {
       this.logger.debug(
@@ -469,7 +473,7 @@ export class MonitorPlanWorkspaceService {
       );
     }
 
-    const orisCode = await this.plantService.getOrisCodeFromFacId(facilityId);
+    const facilityId = await this.plantService.getFacIdFromOris(orisCode);
     const location = await this.monitorLocationService.getOrCreateUnitLocation({
       create: true,
       facilityId,
@@ -1175,8 +1179,19 @@ export class MonitorPlanWorkspaceService {
     return !(item as UnitDTO).hasOwnProperty('stackPipeId');
   }
 
-  async revertToOfficialRecord(monPlanId: string): Promise<void> {
-    return this.repository.revertToOfficialRecord(monPlanId);
+  async revertToOfficialRecord(monPlanId: string) {
+    await this.entityManager.transaction(async trx => {
+      const repository = withTransaction(this.repository, trx);
+      await repository.revertToOfficialRecord(monPlanId);
+      const count = await repository
+        .createQueryBuilder('mp')
+        .where('mp.id = :id', { id: monPlanId })
+        .getCount();
+      if (count === 0) {
+        // The monitor plan only existed in the workspace, clear other references to it.
+        await this.userCheckOutService.checkInConfiguration(monPlanId, trx);
+      }
+    });
   }
 
   private async matchToPlanByLocationsAndBeginPeriod(
@@ -1432,13 +1447,16 @@ export class MonitorPlanWorkspaceService {
         latestReportingFrequencyQuarter = rfBeginQuarter;
       }
     }
-    if (latestReportingFrequency) {
+    if (
+      latestReportingFrequency &&
+      latestReportingFrequency.endReportPeriodId !== newEndReportPeriodId
+    ) {
       // Update the end report period of the latest reporting frequency.
-      const latestReportingFrequencyRecord = await reportingFreqRepository.findOneBy(
-        { id: latestReportingFrequency.id },
-      );
-      latestReportingFrequencyRecord.endReportPeriodId = newEndReportPeriodId;
-      await reportingFreqRepository.save(latestReportingFrequencyRecord);
+      reportingFreqRepository.update(latestReportingFrequency.id, {
+        endReportPeriodId: newEndReportPeriodId,
+        updateDate: currentDateTime(),
+        userId,
+      });
     }
 
     await repository.resetToNeedsEvaluation(plan.id, userId);
