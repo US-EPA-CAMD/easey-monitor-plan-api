@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { EmissionEvaluationModule } from '../emission-evaluation/emission-evaluation.module';
 import { StackPipeMap } from '../maps/stack-pipe.map';
 import { MonitorLocationWorkspaceModule } from '../monitor-location-workspace/monitor-location.module';
 import { StackPipeWorkspaceController } from './stack-pipe.controller';
@@ -11,6 +12,7 @@ import { StackPipeWorkspaceService } from './stack-pipe.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([StackPipeWorkspaceRepository]),
+    EmissionEvaluationModule,
     HttpModule,
     forwardRef(() => MonitorLocationWorkspaceModule),
   ],

@@ -97,7 +97,7 @@ export class MonitorPlanWorkspaceController {
   @Post('single-unit')
   @RoleGuard(
     {
-      bodyParam: 'facilityId',
+      bodyParam: 'orisCode',
     },
     LookupType.Facility,
   )
@@ -113,7 +113,7 @@ export class MonitorPlanWorkspaceController {
   ) {
     return this.service.createNewSingleUnitMonitorPlan(
       payload.unitId,
-      payload.facilityId,
+      payload.orisCode,
       user.userId,
       draft,
     );
@@ -132,7 +132,7 @@ export class MonitorPlanWorkspaceController {
     description:
       'Revert workspace monitor plan back to official submitted record',
   })
-  revertToOfficialRecord(@Param('planId') planId: string): Promise<void> {
+  revertToOfficialRecord(@Param('planId') planId: string) {
     return this.service.revertToOfficialRecord(planId);
   }
 }

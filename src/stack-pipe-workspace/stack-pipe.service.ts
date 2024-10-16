@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { MonitorLocationBaseDTO } from '../dtos/monitor-location-base.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
 import { StackPipeBaseDTO } from '../dtos/stack-pipe.dto';
+import { EmissionEvaluationService } from '../emission-evaluation/emission-evaluation.service';
 import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { StackPipeMap } from '../maps/stack-pipe.map';
@@ -18,6 +19,7 @@ import { StackPipeWorkspaceRepository } from './stack-pipe.repository';
 @Injectable()
 export class StackPipeWorkspaceService {
   constructor(
+    private readonly emissionEvaluationService: EmissionEvaluationService,
     private readonly entityManager: EntityManager,
     private readonly logger: Logger,
     private readonly map: StackPipeMap,
@@ -94,6 +96,7 @@ export class StackPipeWorkspaceService {
             trx,
           ),
           stackPipe.retireDate,
+          userId,
           trx,
         )) ??
         (await this.createStackPipeRecord(
@@ -142,19 +145,84 @@ export class StackPipeWorkspaceService {
     return result;
   }
 
-  async runStackPipeChecks(location: UpdateMonitorLocationDTO, facId: number) {
+  async runStackPipeChecks(
+    locations: UpdateMonitorLocationDTO[],
+    facId: number,
+  ) {
     const errorList: string[] = [];
 
-    const stackPipeRecord = await this.getStackByNameAndFacId(
-      location.stackPipeId,
-      facId,
+    // Check if there are any duplicate stack/pipe IDs.
+    const stackPipeIds = locations.map(sp => sp.stackPipeId).filter(Boolean);
+    stackPipeIds.forEach((stackPipeId, i) => {
+      if (stackPipeIds.findIndex(sp => sp === stackPipeId) !== i) {
+        errorList.push(
+          `[MONLOC-106-A] Duplicate Stack/Pipe found with ID: ${stackPipeId}`,
+        );
+      }
+    });
+
+    await Promise.all(
+      locations.map(async location => {
+        // Check if retire date is before active date for any stack/pipes.
+        if (
+          location.activeDate &&
+          location.retireDate &&
+          new Date(location.retireDate) < new Date(location.activeDate)
+        ) {
+          errorList.push(
+            'The Retire Date of the Stack/Pipe cannot be before the Active Date',
+          );
+        }
+
+        if (!location.activeDate) {
+          errorList.push('The Stack/Pipe must have an Active Date.');
+        }
+
+        const stackPipeRecord = await this.getStackByNameAndFacId(
+          location.stackPipeId,
+          facId,
+        );
+
+        if (
+          stackPipeRecord &&
+          new Date(stackPipeRecord.activeDate).getTime() !==
+            new Date(location.activeDate).getTime()
+        ) {
+          errorList.push(
+            'The Active Date for one or more Stack/Pipe records does not match the official record for this Stack/Pipe. Please contact ECMPS Support if you need to correct the Active Date for any Stack/Pipe records.',
+          );
+        }
+
+        if (
+          stackPipeRecord?.retireDate &&
+          (!location.retireDate ||
+            new Date(stackPipeRecord.retireDate).getTime() !==
+              new Date(location.retireDate).getTime())
+        ) {
+          errorList.push('Cannot update a retired stack pipe');
+        }
+
+        const evaluation = await this.emissionEvaluationService.getLastEmissionEvaluationByStackPipeId(
+          location.stackPipeId,
+          facId,
+        );
+
+        if (evaluation) {
+          if (
+            stackPipeRecord &&
+            !stackPipeRecord.retireDate &&
+            location.retireDate &&
+            new Date(location.retireDate) <
+              new Date(evaluation.reportingPeriod.endDate)
+          ) {
+            // Check the retire date if the record exists.
+            errorList.push(
+              'The Retire Date of the Stack/Pipe cannot be before the end date of the last Emission Evaluation for the Stack/Pipe.',
+            );
+          }
+        }
+      }),
     );
-    if (
-      stackPipeRecord?.retireDate &&
-      stackPipeRecord.retireDate !== location.retireDate
-    ) {
-      errorList.push('Cannot update a retired stack pipe');
-    }
 
     return errorList;
   }
@@ -162,15 +230,25 @@ export class StackPipeWorkspaceService {
   async updateStackPipe(
     stackPipeRecord: StackPipe,
     retireDate: Date,
+    userId: string,
     trx?: EntityManager,
   ) {
     if (!stackPipeRecord) return null;
 
     const repository = withTransaction(this.repository, trx);
-    await repository.update(stackPipeRecord.id, {
-      retireDate,
-    });
-    this.logger.debug(`Updated stack pipe ${stackPipeRecord.name}`);
+    if (
+      new Date(retireDate).getTime() !==
+      new Date(stackPipeRecord.retireDate).getTime()
+    ) {
+      await repository.update(stackPipeRecord.id, {
+        retireDate,
+        updateDate: currentDateTime(),
+        userId,
+      });
+      this.logger.debug(`Stack pipe ${stackPipeRecord.name} updated`);
+    } else {
+      this.logger.debug(`Stack pipe ${stackPipeRecord.name} unchanged`);
+    }
     return repository.findOneBy({ id: stackPipeRecord.id });
   }
 }

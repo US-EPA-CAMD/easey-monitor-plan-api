@@ -4,13 +4,13 @@ import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class SingleUnitMonitorPlanRequestDTO {
   @ApiProperty({
-    description: propertyMetadata.facilityId.description,
-    example: propertyMetadata.facilityId.example,
-    name: propertyMetadata.facilityId.fieldLabels.value,
+    description: propertyMetadata.monitorPlanDTOOrisCode.description,
+    example: propertyMetadata.monitorPlanDTOOrisCode.example,
+    name: propertyMetadata.monitorPlanDTOOrisCode.fieldLabels.value,
   })
   @IsNotEmpty()
   @IsInt()
-  facilityId: number;
+  orisCode: number;
 
   @ApiProperty({
     description: propertyMetadata.unitId.description,

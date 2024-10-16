@@ -60,6 +60,22 @@ export class UnitStackConfigurationWorkspaceService {
   runUnitStackChecks(monitorPlan: UpdateMonitorPlanDTO): string[] {
     const errorList: string[] = [];
 
+    // Check for duplicate unit stack configurations.
+    monitorPlan.unitStackConfigurationData.forEach((usc1, i) => {
+      if (
+        monitorPlan.unitStackConfigurationData.findIndex(
+          usc2 =>
+            usc1.unitId === usc2.unitId &&
+            usc1.stackPipeId === usc2.stackPipeId &&
+            usc1.beginDate === usc2.beginDate,
+        ) !== i
+      ) {
+        errorList.push(
+          `[MONLOC-107-B] Duplicate Unit Stack Configuration record found at index #${i}.`,
+        );
+      }
+    });
+
     const unitStackIds: Set<string> = new Set<string>(); // Set for faster look up times
     const unitUnitIds: Set<string> = new Set<string>();
 
