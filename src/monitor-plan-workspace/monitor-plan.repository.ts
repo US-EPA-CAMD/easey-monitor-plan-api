@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
@@ -8,6 +9,30 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
   constructor(entityManager: EntityManager) {
     super(MonitorPlan, entityManager);
+  }
+
+  async createMonitorPlanRecord(
+    facId: number,
+    userId: string,
+    beginReportPeriodId: number,
+    endReportPeriodId: number,
+  ) {
+    const monitorPlan = this.create({
+      id: uuid(),
+      addDate: currentDateTime(),
+      beginReportPeriodId,
+      endReportPeriodId,
+      evalStatusCode: 'EVAL',
+      facId,
+      lastUpdated: currentDateTime(),
+      needsEvalFlag: 'Y',
+      submissionAvailabilityCode: 'GRANTED',
+      updateDate: currentDateTime(),
+      updatedStatusFlag: 'Y',
+      userId,
+    });
+
+    return await this.save(monitorPlan);
   }
 
   async getMonitorPlansByOrisCode(orisCode: number): Promise<MonitorPlan[]> {
@@ -61,11 +86,31 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     }
   }
 
-  async getMonitorPlan(planId: string): Promise<MonitorPlan> {
-    return this.createQueryBuilder('plan')
-      .innerJoinAndSelect('plan.plant', 'plant')
-      .where('plan.id = :planId', { planId })
-      .getOne();
+  async getMonitorPlan(
+    planId: string,
+    full = false,
+    where: FindOptionsWhere<MonitorPlan> = {},
+  ): Promise<MonitorPlan> {
+    return this.findOne({
+      where: { ...where, id: planId },
+      relations: {
+        plant: true,
+        ...(full
+          ? {
+              beginReportingPeriod: true,
+              endReportingPeriod: true,
+              locations: {
+                stackPipe: true,
+                unit: true,
+              },
+              reportingFrequencies: {
+                beginReportingPeriod: true,
+                endReportingPeriod: true,
+              },
+            }
+          : {}),
+      },
+    });
   }
 
   async getActivePlanByLocationId(locId: string): Promise<MonitorPlan> {
@@ -81,6 +126,12 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     return this.createQueryBuilder('plan')
       .where('plan.facId =:facId', { facId })
       .andWhere('plan.endReportPeriodId IS NULL')
+      .getMany();
+  }
+
+  async getPlansByFacId(facId: number): Promise<MonitorPlan[]> {
+    return this.createQueryBuilder('plan')
+      .where('plan.facId =:facId', { facId })
       .getMany();
   }
 

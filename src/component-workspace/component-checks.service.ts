@@ -97,7 +97,7 @@ export class ComponentCheckService {
   }
 
   private async component14Check(
-    locationId: string,
+    locationId: string | null,
     component: UpdateComponentBaseDTO,
     errorLocation: string = '',
   ): Promise<string> {
@@ -124,11 +124,13 @@ export class ComponentCheckService {
         }
 
         if (component.basisCode !== 'B') {
-          const usedIdRecord = await this.usedIdRepository.findOneBy({
-            tableCode: 'C',
-            identifier: component.componentId,
-            locationId,
-          });
+          const usedIdRecord =
+            locationId &&
+            (await this.usedIdRepository.findOneBy({
+              tableCode: 'C',
+              identifier: component.componentId,
+              locationId,
+            }));
 
           if (
             usedIdRecord?.formulaOrBasisCode &&
@@ -159,7 +161,7 @@ export class ComponentCheckService {
   }
 
   private async component53Check(
-    locationId: string,
+    locationId: string | null,
     component: UpdateComponentBaseDTO | SystemComponentBaseDTO,
     errorLocation: string = '',
   ): Promise<string> {

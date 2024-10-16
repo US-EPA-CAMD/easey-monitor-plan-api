@@ -59,13 +59,13 @@ export class PCTQualificationWorkspaceController {
     @Body() payload: PCTQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<PCTQualificationDTO> {
-    return this.service.updatePCTQualification(
-      locId,
+    return this.service.updatePCTQualification({
+      locationId: locId,
       qualId,
       pctQualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Post()
@@ -89,11 +89,11 @@ export class PCTQualificationWorkspaceController {
     @Body() payload: PCTQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<PCTQualificationDTO> {
-    return this.service.createPCTQualification(
-      locId,
+    return this.service.createPCTQualification({
+      locationId: locId,
       qualId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

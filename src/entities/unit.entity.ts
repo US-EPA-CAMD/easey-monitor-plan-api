@@ -1,21 +1,22 @@
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import {
   BaseEntity,
-  Entity,
   Column,
-  PrimaryColumn,
-  OneToMany,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  ManyToOne,
+  OneToMany,
   OneToOne,
+  PrimaryColumn,
 } from 'typeorm';
-import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-import { Plant } from './plant.entity';
-import { UnitOpStatus } from './unit-op-status.entity';
 import { MonitorLocation } from './monitor-location.entity';
-import { UnitFuel } from './unit-fuel.entity';
-import { UnitControl } from './unit-control.entity';
-import { UnitCapacity } from './unit-capacity.entity';
+import { Plant } from './plant.entity';
 import { UnitBoilerType } from './unit-boiler-type.entity';
+import { UnitCapacity } from './unit-capacity.entity';
+import { UnitControl } from './unit-control.entity';
+import { UnitFuel } from './unit-fuel.entity';
+import { UnitOpStatus } from './unit-op-status.entity';
+import { UnitProgram } from './unit-program.entity';
 import { UnitStackConfiguration } from './unit-stack-configuration.entity';
 
 @Entity({ name: 'camd.unit' })
@@ -59,6 +60,28 @@ export class Unit extends BaseEntity {
     transformer: new NumericColumnTransformer(),
   })
   facId: number;
+
+  @Column({
+    name: 'userid',
+    type: 'varchar',
+    length: 160,
+    nullable: false,
+  })
+  userId: string;
+
+  @Column({
+    name: 'add_date',
+    type: 'timestamp',
+    nullable: false,
+  })
+  addDate: Date;
+
+  @Column({
+    name: 'update_date',
+    type: 'timestamp',
+    nullable: true,
+  })
+  updateDate: Date;
 
   @ManyToOne(
     () => Plant,
@@ -107,6 +130,12 @@ export class Unit extends BaseEntity {
     { eager: true },
   )
   unitCapacities: UnitCapacity[];
+
+  @OneToMany(
+    () => UnitProgram,
+    up => up.unit,
+  )
+  unitPrograms: UnitProgram[];
 
   @OneToMany(
     () => UnitStackConfiguration,

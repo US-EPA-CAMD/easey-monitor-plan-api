@@ -6,6 +6,7 @@ import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { MonitorSystemWorkspaceService } from '../monitor-system-workspace/monitor-system.service';
 import { UnitService } from '../unit/unit.service';
+import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
@@ -23,6 +24,7 @@ export class ImportChecksService {
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly formulaService: MonitorFormulaWorkspaceService,
     private readonly spanService: MonitorSpanWorkspaceService,
+    private readonly stackPipeService: StackPipeWorkspaceService,
   ) {}
 
   private checkIfThrows(errorList: string[]) {
@@ -43,15 +45,21 @@ export class ImportChecksService {
     );
     this.checkIfThrows(errorList);
 
-    //TODO, needs to throw error here if non existing
-
     const facilityId = await this.plantService.getFacIdFromOris(
       monPlan.orisCode,
     );
 
-    //Unit Stack Checks
+    // Unit Stack Checks
     errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
     this.checkIfThrows(errorList);
+
+    // Stack Pipe Checks
+    errorList.push(
+      ...(await this.stackPipeService.runStackPipeChecks(
+        monPlan.monitoringLocationData.filter(location => location.stackPipeId),
+        facilityId,
+      )),
+    );
 
     const databaseLocations = await this.monitorLocationService.getMonitorLocationsByFacilityAndOris(
       monPlan,
@@ -78,7 +86,7 @@ export class ImportChecksService {
           ...(await this.componentService.runComponentChecks(
             location.componentData,
             location,
-            databaseLocations[index].id,
+            databaseLocations[index]?.id,
           )),
         );
       }
@@ -98,18 +106,18 @@ export class ImportChecksService {
           ...(await this.monitorSystemService.runMonitorSystemImportCheck(
             monPlan,
             location,
-            databaseLocations[index].id,
             location.monitoringSystemData,
+            databaseLocations[index]?.id,
           )),
         );
       }
+
       // Formula Checks
       if (location.monitoringFormulaData) {
         errorList.push(
           ...(await this.formulaService.runFormulaChecks(
             location.monitoringFormulaData,
-            location,
-            databaseLocations[index].id,
+            databaseLocations[index]?.id,
           )),
         );
       }
@@ -117,15 +125,12 @@ export class ImportChecksService {
       // Span Checks
       if (location.monitoringSpanData) {
         errorList.push(
-          ...(await this.spanService.runSpanChecks(
-            location.monitoringSpanData,
-          )),
+          ...this.spanService.runSpanChecks(location.monitoringSpanData),
         );
       }
 
       index++;
     }
-
     this.checkIfThrows(errorList);
   }
 }

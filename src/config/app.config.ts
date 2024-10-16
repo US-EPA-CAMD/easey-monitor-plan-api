@@ -67,6 +67,9 @@ export default registerAs('app', () => ({
   reqSizeLimit: getConfigValue('EASEY_MONITOR_PLAN_API_REQ_SIZE_LIMIT', '1mb'),
   // ENABLES DEBUG CONSOLE LOGS
   enableDebug: getConfigValueBoolean('EASEY_MONITOR_PLAN_API_ENABLE_DEBUG'),
+  logFile: getConfigValue('EASEY_MONITOR_PLAN_API_LOG_FILE'),
+  logFileLevel: getConfigValue('EASEY_MONITOR_PLAN_API_LOG_FILE_LEVEL'),
+  sqlLogging: getConfigValueBoolean('EASEY_DB_SQL_LOGGING', false),
   /**
    * Needs to be set in .env file for local development if `EASEY_EMISSIONS_API_ENABLE_AUTH_TOKEN` is false.
    * Format:
@@ -87,9 +90,6 @@ export default registerAs('app', () => ({
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),
   },
   contentApi: {
-    uri: getConfigValue(
-      'EASEY_CONTENT_API',
-      `https://${apiHost}/content-mgmt`,
-    ),
+    uri: getConfigValue('EASEY_CONTENT_API', `https://${apiHost}/content-mgmt`),
   },
 }));

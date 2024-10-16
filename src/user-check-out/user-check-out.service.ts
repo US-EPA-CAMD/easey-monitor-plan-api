@@ -4,6 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutMap } from '../maps/user-check-out.map';
+import { withTransaction } from '../utils';
 import { UserCheckOutRepository } from './user-check-out.repository';
 
 @Injectable()
@@ -24,6 +25,16 @@ export class UserCheckOutService {
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOutDTO> {
+    if (!(await this.ensureNoEvaluationOrSubmissionInProgress(monPlanId))) {
+      throw new EaseyException(
+        new Error(
+          'Record can not be checked out. It is currently being evaluated or submitted.',
+        ),
+        HttpStatus.NOT_FOUND,
+        { monPlanId: monPlanId },
+      );
+    }
+
     const entity = await this.repository.checkOutConfiguration(
       monPlanId,
       username,
@@ -49,6 +60,36 @@ export class UserCheckOutService {
     return this.map.one(record);
   }
 
+  private async ensureNoEvaluationOrSubmissionInProgress(
+    monPlanId: string,
+    trx?: EntityManager,
+  ) {
+    const evalRecordsInProgress = await (trx ?? this.returnManager()).query(
+      `SELECT * FROM CAMDECMPSAUX.evaluation_set es
+      JOIN CAMDECMPSAUX.evaluation_queue eq USING(evaluation_set_id)
+      WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
+      `,
+      [monPlanId],
+    );
+
+    const submissionRecordsInProgress = await (
+      trx ?? this.returnManager()
+    ).query(
+      `SELECT * FROM CAMDECMPSAUX.submission_set
+       WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
+      `,
+      [monPlanId],
+    );
+
+    if (
+      (evalRecordsInProgress && evalRecordsInProgress.length > 0) ||
+      (submissionRecordsInProgress && submissionRecordsInProgress.length > 0)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   async updateLastActivity(monPlanId: string): Promise<UserCheckOutDTO> {
     const record = await this.repository.findOneBy({
       monPlanId,
@@ -72,25 +113,12 @@ export class UserCheckOutService {
     return this.entityManager;
   };
 
-  async checkInConfiguration(monPlanId: string): Promise<Boolean> {
-    const evalRecordsInProgress = await this.returnManager().query(
-      `SELECT * FROM CAMDECMPSAUX.evaluation_set es
-      JOIN CAMDECMPSAUX.evaluation_queue eq USING(evaluation_set_id)
-      WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
-      `,
-      [monPlanId],
-    );
-
-    const submissionRecordsInProgress = await this.returnManager().query(
-      `SELECT * FROM CAMDECMPSAUX.submission_set
-       WHERE mon_plan_id = $1 AND status_cd NOT IN ('COMPLETE', 'ERROR');
-      `,
-      [monPlanId],
-    );
-
+  async checkInConfiguration(
+    monPlanId: string,
+    trx?: EntityManager,
+  ): Promise<boolean> {
     if (
-      (evalRecordsInProgress && evalRecordsInProgress.length > 0) ||
-      (submissionRecordsInProgress && submissionRecordsInProgress.length > 0)
+      !(await this.ensureNoEvaluationOrSubmissionInProgress(monPlanId, trx))
     ) {
       throw new EaseyException(
         new Error(
@@ -101,7 +129,9 @@ export class UserCheckOutService {
       );
     }
 
-    const result = await this.repository.delete({ monPlanId });
+    const result = await withTransaction(this.repository, trx).delete({
+      monPlanId,
+    });
     return result.affected !== 0;
   }
 }

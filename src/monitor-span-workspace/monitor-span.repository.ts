@@ -71,7 +71,7 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
   }
 
   async getSpanByFilter(
-    locationId: string,
+    locationId: string | null,
     componentTypeCode: string,
     beginDate?: Date,
     beginHour?: number,
@@ -79,6 +79,8 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
     endHour?: number,
     spanScaleCode?: string,
   ) {
+    if (!locationId) return null;
+
     const query = this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
       .andWhere('ms.componentTypeCode = :componentTypeCode', {

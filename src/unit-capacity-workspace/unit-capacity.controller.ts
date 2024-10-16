@@ -58,7 +58,12 @@ export class UnitCapacityWorkspaceController {
     @Body() payload: UnitCapacityBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitCapacityDTO> {
-    return this.service.createUnitCapacity(locId, unitId, payload, user.userId);
+    return this.service.createUnitCapacity({
+      locationId: locId,
+      unitId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':unitCapacityId')
@@ -81,12 +86,12 @@ export class UnitCapacityWorkspaceController {
     @Body() payload: UnitCapacityBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitCapacityDTO> {
-    return this.service.updateUnitCapacity(
+    return this.service.updateUnitCapacity({
       locationId,
-      unitId,
-      unitCapacityId,
+      unitRecordId: unitId,
+      unitCapacityId: unitCapacityId,
       payload,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

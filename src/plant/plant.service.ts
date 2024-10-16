@@ -27,4 +27,14 @@ export class PlantService {
 
     return null;
   }
+
+  public async getOrisCodeFromFacId(facId: number): Promise<number> {
+    const plant = await this.repository.findOneBy({ id: facId });
+
+    if (plant) {
+      return plant.orisCode;
+    }
+
+    return null;
+  }
 }

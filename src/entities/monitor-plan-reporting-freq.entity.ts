@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { MonitorPlan } from './monitor-plan.entity';
+import { ReportingPeriod } from './reporting-period.entity';
 
 @Entity({ name: 'camdecmps.monitor_plan_reporting_freq' })
 export class MonitorPlanReportingFrequency extends BaseEntity {
@@ -73,4 +74,16 @@ export class MonitorPlanReportingFrequency extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_plan_id' })
   plan: MonitorPlan;
+
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'begin_rpt_period_id',
+  })
+  beginReportingPeriod: ReportingPeriod;
+
+  @ManyToOne(() => ReportingPeriod)
+  @JoinColumn({
+    name: 'end_rpt_period_id',
+  })
+  endReportingPeriod: ReportingPeriod;
 }

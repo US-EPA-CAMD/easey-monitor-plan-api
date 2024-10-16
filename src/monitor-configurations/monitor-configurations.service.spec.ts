@@ -12,6 +12,9 @@ import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
 import { MonitorPlanService } from '../monitor-plan/monitor-plan.service';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { MonitorConfigurationsService } from './monitor-configurations.service';
+import { UnitControlRepository } from '../unit-control/unit-control.repository';
+import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
+import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
@@ -71,6 +74,9 @@ describe('MonitorConfigurationsService', () => {
         },
         UnitStackConfigurationRepository,
         MonitorLocationRepository,
+        UnitControlRepository,
+        UnitCapacityRepository,
+        UnitFuelRepository
       ],
     }).compile();
 

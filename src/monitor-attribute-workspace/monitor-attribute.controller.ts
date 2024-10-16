@@ -1,20 +1,6 @@
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-} from '@nestjs/swagger';
-import {
-  Get,
-  Param,
-  Controller,
-  Post,
-  UseGuards,
-  Body,
-  Put,
-} from '@nestjs/common';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -68,7 +54,11 @@ export class MonitorAttributeWorkspaceController {
     @Body() payload: MonitorAttributeBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorAttributeDTO> {
-    return this.service.createAttribute(locationId, payload, user.userId);
+    return this.service.createAttribute({
+      locationId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':attributeId')
@@ -90,6 +80,11 @@ export class MonitorAttributeWorkspaceController {
     @Body() payload: MonitorAttributeBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorAttributeDTO> {
-    return this.service.updateAttribute(locationId, id, payload, user.userId);
+    return this.service.updateAttribute({
+      locationId,
+      id,
+      payload,
+      userId: user.userId,
+    });
   }
 }

@@ -1,12 +1,15 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { withTransaction } from '../utils';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 
 @Injectable()
@@ -14,18 +17,28 @@ export class MonitorSpanWorkspaceService {
   constructor(
     private readonly repository: MonitorSpanWorkspaceRepository,
     private readonly map: MonitorSpanMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('MonitorSpanWorkspaceService');
+  }
 
   async getSpans(locationId: string): Promise<MonitorSpanDTO[]> {
     const results = await this.repository.findBy({ locationId });
     return this.map.many(results);
   }
 
-  async getSpan(locationId: string, spanId: string): Promise<MonitorSpan> {
-    const result = await this.repository.getSpan(locationId, spanId);
+  async getSpan(
+    locationId: string,
+    spanId: string,
+    trx?: EntityManager,
+  ): Promise<MonitorSpan> {
+    const result = await withTransaction(this.repository, trx).getSpan(
+      locationId,
+      spanId,
+    );
 
     if (!result) {
       throw new EaseyException(
@@ -41,13 +54,22 @@ export class MonitorSpanWorkspaceService {
     return result;
   }
 
-  async createSpan(
-    locationId: string,
-    payload: MonitorSpanBaseDTO,
-    userId: string,
+  async createSpan({
+    locationId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorSpanDTO> {
-    const span = this.repository.create({
+    trx,
+  }: {
+    locationId: string;
+    payload: MonitorSpanBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorSpanDTO> {
+    const repository = withTransaction(this.repository, trx);
+
+    const span = repository.create({
       id: uuid(),
       locationId,
       componentTypeCode: payload.componentTypeCode,
@@ -72,23 +94,31 @@ export class MonitorSpanWorkspaceService {
       updateDate: currentDateTime(),
     });
 
-    await this.repository.save(span);
+    await repository.save(span);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(span);
   }
 
-  async updateSpan(
-    locationId: string,
-    spanId: string,
-    payload: MonitorSpanBaseDTO,
-    userId: string,
+  async updateSpan({
+    locationId,
+    spanId,
+    payload,
+    userId,
     isImport = false,
-  ): Promise<MonitorSpanDTO> {
-    const span = await this.getSpan(locationId, spanId);
+    trx,
+  }: {
+    locationId: string;
+    spanId: string;
+    payload: MonitorSpanBaseDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }): Promise<MonitorSpanDTO> {
+    const span = await this.getSpan(locationId, spanId, trx);
 
     span.componentTypeCode = payload.componentTypeCode;
     span.spanScaleCode = payload.spanScaleCode;
@@ -110,16 +140,16 @@ export class MonitorSpanWorkspaceService {
     span.userId = userId;
     span.updateDate = currentDateTime();
 
-    await this.repository.save(span);
+    await withTransaction(this.repository, trx).save(span);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId);
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
 
     return this.map.one(span);
   }
 
-  async runSpanChecks(spans: MonitorSpanBaseDTO[]) {
+  runSpanChecks(spans: MonitorSpanBaseDTO[]) {
     const errorList: string[] = [];
 
     let mustBeNull: string[] = [];
@@ -152,42 +182,45 @@ export class MonitorSpanWorkspaceService {
     locationId: string,
     spans: MonitorSpanBaseDTO[],
     userId: string,
+    trx?: EntityManager,
   ): Promise<boolean> {
-    const promises = [];
+    await Promise.all(
+      spans.map(async span => {
+        const spanRecord = await withTransaction(
+          this.repository,
+          trx,
+        ).getSpanByLocIdCompTypeCdBDateBHour(
+          locationId,
+          span.componentTypeCode,
+          span.spanScaleCode,
+          span.beginDate,
+          span.beginHour,
+          span.endDate,
+          span.endHour,
+        );
 
-    for (const span of spans) {
-      promises.push(
-        new Promise(innerResolve => {
-          (async () => {
-            const spanRecord = await this.repository.getSpanByLocIdCompTypeCdBDateBHour(
-              locationId,
-              span.componentTypeCode,
-              span.spanScaleCode,
-              span.beginDate,
-              span.beginHour,
-              span.endDate,
-              span.endHour,
-            );
+        if (spanRecord) {
+          await this.updateSpan({
+            locationId,
+            spanId: spanRecord.id,
+            payload: span,
+            userId,
+            isImport: true,
+            trx,
+          });
+        } else {
+          await this.createSpan({
+            locationId,
+            payload: span,
+            userId,
+            isImport: true,
+            trx,
+          });
+        }
+      }),
+    );
 
-            if (spanRecord) {
-              await this.updateSpan(
-                locationId,
-                spanRecord.id,
-                span,
-                userId,
-                true,
-              );
-            } else {
-              await this.createSpan(locationId, span, userId, true);
-            }
-
-            innerResolve(true);
-          })();
-        }),
-      );
-    }
-
-    await Promise.all(promises);
+    this.logger.debug(`Imported ${spans.length} monitor spans`);
     return true;
   }
 }

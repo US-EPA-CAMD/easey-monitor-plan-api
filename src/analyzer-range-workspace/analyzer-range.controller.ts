@@ -62,12 +62,12 @@ export class AnalyzerRangeWorkspaceController {
     @User() user: CurrentUser,
   ) {
     await this.checksService.runChecks(locationId, payload, componentRecordId);
-    return this.service.createAnalyzerRange(
+    return this.service.createAnalyzerRange({
       componentRecordId,
       payload,
       locationId,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Put(':analyzerRangeId')
@@ -98,11 +98,11 @@ export class AnalyzerRangeWorkspaceController {
       false,
       true,
     );
-    return this.service.updateAnalyzerRange(
+    return this.service.updateAnalyzerRange({
       analyzerRangeId,
       payload,
       locationId,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 }

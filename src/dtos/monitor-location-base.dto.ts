@@ -41,9 +41,9 @@ export class MonitorLocationBaseDTO {
     name: propertyMetadata.monitorLocationDTOStackPipeId.fieldLabels.value,
   })
   @IsString()
-  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
+  @MatchesRegEx('^[MC][SP][a-zA-Z0-9\\-]{1,4}$', {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be 1 to 4 characters and only consist of upper and lower case letters, numbers starting with CS, MS, XS, CP, MP, XP for [${KEY}].`;
+      return `[MONLOC-19-B] - The value of [${args.value}] for [${args.property}] must start with CS, CP, MS, or MP and be followed by 1 to 4 alphanumeric characters or dash (-) characters for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.unitId === null)

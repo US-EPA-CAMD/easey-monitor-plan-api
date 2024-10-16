@@ -56,12 +56,12 @@ export class SystemFuelFlowWorkspaceController {
     @Body() payload: SystemFuelFlowBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemFuelFlowDTO> {
-    return this.service.createFuelFlow(
+    return this.service.createFuelFlow({
       monitoringSystemRecordId,
       payload,
       locationId,
-      user.userId,
-    );
+      userId: user.userId,
+    });
   }
 
   @Put(':fuelFlowId')
@@ -85,6 +85,11 @@ export class SystemFuelFlowWorkspaceController {
     @Body() payload: SystemFuelFlowBaseDTO,
     @User() user: CurrentUser,
   ): Promise<SystemFuelFlowDTO> {
-    return this.service.updateFuelFlow(id, payload, locationId, user.userId);
+    return this.service.updateFuelFlow({
+      fuelFlowId: id,
+      payload,
+      locationId,
+      userId: user.userId,
+    });
   }
 }

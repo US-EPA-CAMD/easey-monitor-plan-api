@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ComponentWorkspaceModule } from '../component-workspace/component.module';
@@ -14,7 +14,7 @@ import { MonitorMethodWorkspaceModule } from '../monitor-method-workspace/monito
 import { MonitorQualificationWorkspaceModule } from '../monitor-qualification-workspace/monitor-qualification.module';
 import { MonitorSpanWorkspaceModule } from '../monitor-span-workspace/monitor-span.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
-import { StackPipeModule } from '../stack-pipe/stack-pipe.module';
+import { StackPipeWorkspaceModule } from '../stack-pipe-workspace/stack-pipe.module';
 import { UnitCapacityWorkspaceModule } from '../unit-capacity-workspace/unit-capacity.module';
 import { UnitControlWorkspaceModule } from '../unit-control-workspace/unit-control.module';
 import { UnitFuelWorkspaceModule } from '../unit-fuel-workspace/unit-fuel.module';
@@ -24,6 +24,9 @@ import { MonitorLocationChecksService } from './monitor-location-checks.service'
 import { MonitorLocationWorkspaceController } from './monitor-location.controller';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
+import { UnitWorkspaceModule } from '../unit-workspace/unit.module';
+import { UnitProgramModule } from '../unit-program/unit-program.module';
+import { UnitProgramWorkspaceModule } from '../unit-program-workspace/unit-program.module';
 
 @Module({
   imports: [
@@ -31,6 +34,10 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     UnitCapacityWorkspaceModule,
     UnitControlWorkspaceModule,
     UnitFuelWorkspaceModule,
+    UnitWorkspaceModule,
+    UnitModule,
+    UnitProgramWorkspaceModule,
+    UnitProgramModule,
     MonitorMethodWorkspaceModule,
     MatsMethodWorkspaceModule,
     MonitorFormulaWorkspaceModule,
@@ -42,8 +49,7 @@ import { MonitorLocationWorkspaceService } from './monitor-location.service';
     MonitorSystemWorkspaceModule,
     MonitorQualificationWorkspaceModule,
     UnitStackConfigurationWorkspaceModule,
-    UnitModule,
-    StackPipeModule,
+    forwardRef(() => StackPipeWorkspaceModule),
     TypeOrmModule.forFeature([MonitorLocationWorkspaceRepository]),
     HttpModule,
   ],

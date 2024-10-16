@@ -1,12 +1,14 @@
 import { Test } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { CountyCodeService } from '../county-code/county-code.service';
 import { CountyCodeDTO } from '../dtos/county-code.dto';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { EvalStatusCode } from '../entities/eval-status-code.entity';
 import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
@@ -40,6 +42,7 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
 import { MonitorAttributeWorkspaceRepository } from '../monitor-attribute-workspace/monitor-attribute.repository';
 import { EvalStatusCodeRepository } from '../monitor-configurations-workspace/eval-status.repository';
+import { SubmissionsAvailabilityStatusCodeRepository } from '../monitor-configurations-workspace/submission-availability-status.repository';
 import { MonitorDefaultWorkspaceRepository } from '../monitor-default-workspace/monitor-default.repository';
 import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/monitor-formula.repository';
 import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
@@ -48,56 +51,88 @@ import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/m
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
 import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
+import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
+import { MonitorPlanLocationService } from '../monitor-plan-location-workspace/monitor-plan-location.service';
 import { MonitorPlanReportingFrequencyWorkspaceRepository } from '../monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.repository';
 import { MonitorQualificationWorkspaceRepository } from '../monitor-qualification-workspace/monitor-qualification.repository';
 import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monitor-span.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { PlantService } from '../plant/plant.service';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
 import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
 import { UnitCapacityWorkspaceRepository } from '../unit-capacity-workspace/unit-capacity.repository';
 import { UnitControlWorkspaceRepository } from '../unit-control-workspace/unit-control.repository';
 import { UnitFuelWorkspaceRepository } from '../unit-fuel-workspace/unit-fuel.repository';
+import { UnitProgramWorkspaceRepository } from '../unit-program-workspace/unit-program.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
-import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
 
 const USER_ID = 'USER_ID';
 const FAC_ID = 'FAC_ID';
 const LOC_ID = 'LOC_ID';
 const MON_PLAN_ID = 'MON_PLAN_ID';
-const DTO = new UpdateMonitorPlanDTO();
+const DTO = new MonitorPlanDTO();
+DTO.monitoringLocationData = [];
+DTO.beginReportPeriodId = 1;
+const UPDATE_DTO = new UpdateMonitorPlanDTO();
+UPDATE_DTO.monitoringLocationData = [];
+UPDATE_DTO.unitStackConfigurationData = [];
 const MONITOR_LOCATION = new MonitorLocation();
 MONITOR_LOCATION.id = LOC_ID;
 const MONITOR_PLAN = new MonitorPlan();
 MONITOR_PLAN.plant = new Plant();
+const WORKING_PLAN = {
+  id: 1,
+  beginYear: 2024,
+  beginQuarter: 1,
+  endYear: 2024,
+  endQuarter: 2,
+  items: [],
+};
 
 const mockPlantService = () => ({
   getFacIdFromOris: jest.fn().mockResolvedValue(FAC_ID),
+});
+
+const mockUnitService = () => ({
+  getUnitsByMonPlanId: jest.fn().mockResolvedValue([]),
+  getUnitsByFacId: jest.fn().mockResolvedValue([]),
 });
 
 const mockMonitorLocationService = () => ({
   getMonitorLocationsByFacilityAndOris: jest
     .fn()
     .mockResolvedValue([MONITOR_LOCATION]),
-  importMonitorLocation: jest.fn(),
+  importMonitorLocations: jest.fn().mockResolvedValue([]),
 });
 
 const mockEaseyContentService = () => ({
   importMonitorPlan: jest.fn().mockResolvedValue({
-    monitorPlanSchema: { version : '1.0.0'}
+    monitorPlanSchema: { version: '1.0.0' },
   }),
 });
 
+const mockMonitorPlanQueryBuilder = ({
+  where: jest.fn().mockReturnThis(),
+  getCount: jest.fn().mockReturnValue(0),
+} as any) as SelectQueryBuilder<MonitorPlan>;
 const mockMonitorPlanRepo = () => ({
+  createMonitorPlanRecord: jest.fn().mockResolvedValue(MONITOR_PLAN),
+  createQueryBuilder: jest.fn().mockReturnValue(mockMonitorPlanQueryBuilder),
   getActivePlanByLocationId: jest.fn().mockResolvedValue(MONITOR_PLAN),
   resetToNeedsEvaluation: jest.fn(),
   revertToOfficialRecord: jest.fn(),
   getMonitorPlan: jest.fn().mockResolvedValue(MONITOR_PLAN),
   updateDateAndUserId: jest.fn(),
+  find: jest.fn().mockResolvedValue([MONITOR_PLAN]),
+  findOneBy: jest.fn().mockResolvedValue(MONITOR_PLAN),
+  save: jest.fn().mockResolvedValue(MONITOR_PLAN),
 });
 
 const mockMonitorPlanCommentService = () => ({
@@ -105,7 +140,9 @@ const mockMonitorPlanCommentService = () => ({
 });
 
 const mockUnitStackConfigService = () => ({
-  importUnitStack: jest.fn(),
+  getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
+  getUnitStackConfigurationsByFacId: jest.fn().mockResolvedValue([]),
+  importUnitStacks: jest.fn().mockResolvedValue([]),
 });
 
 const mockEvalStatusCodeRepo = () => ({
@@ -185,19 +222,63 @@ const mockPctQualificationRepo = () => ({
   find: jest.fn().mockResolvedValue([new PCTQualification()]),
 });
 const mockUnitStackConfigRepo = () => ({
+  getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
   getUnitStackConfigsByLocationIds: jest.fn(),
 });
 const mockReportingFreqRepo = () => ({
+  createReportingFrequencyRecord: jest
+    .fn()
+    .mockResolvedValue(new MonitorPlanReportingFrequency()),
   findBy: jest.fn().mockResolvedValue([new MonitorPlanReportingFrequency()]),
 });
 
-const mockUscMap = () => ({});
+const mockUscMap = () => ({
+  many: jest.fn().mockResolvedValue([]),
+});
 const mockCountyCodeService = () => ({
   getCountyCode: jest.fn().mockResolvedValue(new CountyCodeDTO()),
 });
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(DTO),
   many: jest.fn().mockResolvedValue([DTO]),
+});
+const mockReportingPeriodRepo = () => ({
+  getByDate: jest.fn().mockResolvedValue({ year: 1, quarter: 1 }),
+  getByYearQuarter: jest.fn().mockResolvedValue({ year: 1, quarter: 1 }),
+  getById: jest.fn().mockResolvedValue({ year: 1, quarter: 1 }),
+  getNextReportingPeriodId: jest.fn().mockResolvedValue(1),
+  getPreviousPeriodId: jest.fn(),
+});
+const mockUnitProgramRepo = () => ({
+  getUnitProgramsByUnitRecordIds: jest.fn().mockResolvedValue([]),
+});
+const mockMonitorPlanLocationService = () => ({
+  createMonPlanLocationRecord: jest.fn(),
+});
+const queryBuilderMock = {
+  leftJoin: jest.fn().mockReturnThis(),
+  select: jest.fn().mockReturnThis(),
+  addSelect: jest.fn().mockReturnThis(),
+  getMany: jest.fn().mockResolvedValue(['your_mocked_object_here']),
+};
+const entityManagerMock = {
+  connection: {
+    createQueryRunner: jest.fn().mockImplementation(() => queryRunnerMock),
+  },
+  createQueryBuilder: () => queryBuilderMock,
+  transaction: jest.fn(
+    async passedFunction => await passedFunction(entityManagerMock),
+  ),
+};
+const queryRunnerMock = {
+  manager: entityManagerMock,
+  commitTransaction: jest.fn(),
+  release: jest.fn(),
+  rollbackTransaction: jest.fn(),
+  startTransaction: jest.fn(),
+};
+const mockUserCheckOutService = () => ({
+  checkInConfiguration: jest.fn(),
 });
 
 describe('Monitor Plan Service', () => {
@@ -206,7 +287,12 @@ describe('Monitor Plan Service', () => {
   beforeEach(async () => {
     // initialize a NestJS module with service and relevant repositories.
     const module = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
+        {
+          provide: EntityManager,
+          useFactory: () => entityManagerMock,
+        },
         MonitorPlanWorkspaceService,
         {
           provide: EaseyContentService,
@@ -348,6 +434,26 @@ describe('Monitor Plan Service', () => {
           provide: SubmissionsAvailabilityStatusCodeRepository,
           useFactory: mockSubmissionAvailabilityCodeRepo,
         },
+        {
+          provide: ReportingPeriodRepository,
+          useFactory: mockReportingPeriodRepo,
+        },
+        {
+          provide: UnitProgramWorkspaceRepository,
+          useFactory: mockUnitProgramRepo,
+        },
+        {
+          provide: MonitorPlanLocationService,
+          useFactory: mockMonitorPlanLocationService,
+        },
+        {
+          provide: UnitWorkspaceService,
+          useFactory: mockUnitService,
+        },
+        {
+          provide: UserCheckOutService,
+          useFactory: mockUserCheckOutService,
+        },
       ],
     }).compile();
 
@@ -358,8 +464,18 @@ describe('Monitor Plan Service', () => {
 
   describe('importMpPlan', () => {
     it('Should import a MonitoringPlan', async () => {
-      const result = await service.importMpPlan(DTO, USER_ID);
-      expect(result).toEqual(null);
+      jest.spyOn(service, 'updateEndReportingPeriod').mockResolvedValue(DTO);
+      jest
+        .spyOn(service as any, 'mergePartialConfigurations')
+        .mockReturnValue([WORKING_PLAN]);
+      jest
+        .spyOn(service as any, 'syncMonitorPlan')
+        .mockResolvedValue({ plan: DTO, status: 'new' });
+      const result = await service.importMpPlan(UPDATE_DTO, USER_ID);
+      expect(result).toEqual({
+        endedPlans: [],
+        newPlans: [DTO],
+      });
     });
   });
 

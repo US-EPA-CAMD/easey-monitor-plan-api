@@ -52,7 +52,7 @@ describe('Unit Control Check Service Test', () => {
     it('Should pass all checks', async () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       jest.spyOn(service, 'checkDatesForConsistency').mockReturnValue(null);
-      const result = await service.runChecks(locId, unitId, payload);
+      const result = await service.runChecks(unitId, payload);
 
       expect(result).toEqual([]);
     });
@@ -69,7 +69,7 @@ describe('Unit Control Check Service Test', () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(returnValue);
       jest.spyOn(service, 'checkDatesForConsistency').mockReturnValue(null);
       try {
-        await service.runChecks(locId, unitId, payload);
+        await service.runChecks(unitId, payload);
       } catch (err) {
         expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));
       }

@@ -32,8 +32,7 @@ export class UnitControlChecksService {
   }
 
   async runChecks(
-    locId: string,
-    unitId: number,
+    unitId: number | null,
     unitControl: UnitControlBaseDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,

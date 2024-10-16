@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { withTransaction } from '../utils';
 import {
   MonitorPlanCommentBaseDTO,
   MonitorPlanCommentDTO,
 } from '../dtos/monitor-plan-comment.dto';
-import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 
@@ -31,8 +32,9 @@ export class MonitorPlanCommentWorkspaceService {
     planId: string,
     planComment: string,
     beginDate: Date,
+    trx?: EntityManager,
   ): Promise<MonitorPlanCommentDTO> {
-    const result = await this.repository.findOne({
+    const result = await withTransaction(this.repository, trx).findOne({
       where: {
         monitorPlanId: planId,
         monitorPlanComment: planComment,
@@ -48,8 +50,11 @@ export class MonitorPlanCommentWorkspaceService {
     monPlanId: string,
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<MonitorPlanCommentDTO> {
-    const comment = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const comment = repository.create({
       id: v4(),
       monitorPlanId: monPlanId,
       monitorPlanComment: payload.monitoringPlanComment,
@@ -59,7 +64,7 @@ export class MonitorPlanCommentWorkspaceService {
       addDate: currentDateTime(),
       updateDate: currentDateTime(),
     });
-    const result = await this.repository.save(comment);
+    const result = await repository.save(comment);
     return this.map.one(result);
   }
 
@@ -67,8 +72,11 @@ export class MonitorPlanCommentWorkspaceService {
     monPlanId: string,
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<MonitorPlanCommentDTO> {
-    const comment = await this.repository.findOne({
+    const repository = withTransaction(this.repository, trx);
+
+    const comment = await repository.findOne({
       where: {
         monitorPlanId: monPlanId,
         monitorPlanComment: payload.monitoringPlanComment,
@@ -79,45 +87,33 @@ export class MonitorPlanCommentWorkspaceService {
     comment.endDate = payload.endDate;
     comment.userId = userId;
     comment.updateDate = currentDateTime();
-    const result = await this.repository.save(comment);
+    const result = await repository.save(comment);
     return this.map.one(result);
   }
 
   async importComments(
-    plan: UpdateMonitorPlanDTO,
+    commentData: MonitorPlanCommentBaseDTO[],
     userId: string,
     monitorPlanId: string,
+    trx?: EntityManager,
   ) {
-    return new Promise(resolve => {
-      (async () => {
-        const promises = [];
+    return Promise.all(
+      commentData.map(async comment => {
+        const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
+          monitorPlanId,
+          comment.monitoringPlanComment,
+          comment.beginDate,
+          trx,
+        );
 
-        for (const comment of plan.monitoringPlanCommentData) {
-          promises.push(
-            new Promise(innerResolve => {
-              (async () => {
-                const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
-                  monitorPlanId,
-                  comment.monitoringPlanComment,
-                  comment.beginDate,
-                );
-
-                if (!monitorPlanComment) {
-                  await this.createComment(monitorPlanId, comment, userId);
-                } else {
-                  if (monitorPlanComment.endDate !== comment.endDate) {
-                    await this.updateComment(monitorPlanId, comment, userId);
-                  }
-                }
-                innerResolve(true);
-              })();
-            }),
-          );
+        if (!monitorPlanComment) {
+          await this.createComment(monitorPlanId, comment, userId, trx);
+        } else {
+          if (monitorPlanComment.endDate !== comment.endDate) {
+            await this.updateComment(monitorPlanId, comment, userId, trx);
+          }
         }
-
-        await Promise.all(promises);
-        resolve(true);
-      })();
-    });
+      }),
+    );
   }
 }

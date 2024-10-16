@@ -40,18 +40,18 @@ export class MonitorLocationWorkspaceRepository extends Repository<
   }
 
   async getLocationsByUnitStackPipeIds(
-    facilityId: number,
+    orisCode: number,
     unitIds: string[],
     stackPipeIds: string[],
   ): Promise<MonitorLocation[]> {
     let unitsWhere =
-      unitIds && unitIds.length > 0
-        ? 'up.orisCode = :facilityId AND u.name IN (:...unitIds)'
+      unitIds?.length > 0
+        ? 'up.orisCode = :orisCode AND u.name IN (:...unitIds)'
         : '';
 
     let stacksWhere =
-      stackPipeIds && stackPipeIds.length > 0
-        ? 'spp.orisCode = :facilityId AND sp.name IN (:...stackPipeIds)'
+      stackPipeIds?.length > 0
+        ? 'spp.orisCode = :orisCode AND sp.name IN (:...stackPipeIds)'
         : '';
 
     if (unitIds?.length > 0 && stackPipeIds?.length > 0) {
@@ -59,19 +59,19 @@ export class MonitorLocationWorkspaceRepository extends Repository<
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    const query = this.createQueryBuilder('ml')
-      .innerJoinAndSelect('ml.systems', 'ms')
-      .innerJoinAndSelect('ml.components', 'c')
+    return this.createQueryBuilder('ml')
+      .leftJoinAndSelect('ml.systems', 'ms')
+      .leftJoinAndSelect('ml.components', 'c')
       .leftJoinAndSelect('ml.unit', 'u')
+      .leftJoinAndSelect('u.opStatuses', 'uos')
       .leftJoin('u.plant', 'up')
       .leftJoinAndSelect('ml.stackPipe', 'sp')
       .leftJoin('sp.plant', 'spp')
       .where(`${unitsWhere}${stacksWhere}`, {
-        facilityId,
+        orisCode,
         unitIds,
         stackPipeIds,
-      });
-
-    return query.getMany();
+      })
+      .getMany();
   }
 }

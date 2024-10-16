@@ -4,7 +4,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { UnitStackConfigurationWorkspaceService } from './unit-stack-configuration.service';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
-import { StackPipeService } from '../stack-pipe/stack-pipe.service';
+import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import {
@@ -72,7 +72,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
       providers: [
         UnitStackConfigurationWorkspaceService,
         {
-          provide: StackPipeService,
+          provide: StackPipeWorkspaceService,
           useFactory: mockStackPipe,
         },
         {
@@ -262,14 +262,14 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     });
   });
 
-  describe('importUnitStack', () => {
+  describe('importUnitStacks', () => {
     it('should update while importing unit stack config', async () => {
-      const response = await service.importUnitStack(
+      const response = await service.importUnitStacks(
         mpPayload,
         facilityId,
         userId,
       );
-      expect(response).toEqual(true);
+      expect(response).toEqual([unitStackDto]);
     });
 
     it('should create while importing unit stack config if records does not exists', async () => {
@@ -277,12 +277,12 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         .spyOn(repo, 'getUnitStackConfigByUnitIdStackId')
         .mockResolvedValue(undefined);
 
-      const response = await service.importUnitStack(
+      const response = await service.importUnitStacks(
         mpPayload,
         facilityId,
         userId,
       );
-      expect(response).toEqual(true);
+      expect(response).toEqual([unitStackDto]);
     });
   });
 });

@@ -18,6 +18,7 @@ import { Plant } from '../entities/plant.entity';
 import { FindOneOptions } from 'typeorm';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { DbLookup } from '@us-epa-camd/easey-common/pipes';
+
 export class MonitorPlanDTO {
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOId.description,
@@ -96,6 +97,10 @@ export class MonitorPlanDTO {
   @IsOptional()
   endReportPeriodId: number;
 
+  @IsString()
+  @IsOptional()
+  endReportPeriodDescription?: string;
+
   @ApiProperty({
     description: propertyMetadata.monitorPlanDTOBeginReportPeriodId.description,
     example: propertyMetadata.monitorPlanDTOBeginReportPeriodId.example,
@@ -103,6 +108,10 @@ export class MonitorPlanDTO {
   })
   @IsNumber()
   beginReportPeriodId: number;
+
+  @IsString()
+  @IsOptional()
+  beginReportPeriodDescription?: string;
 
   @IsBoolean()
   active: boolean;

@@ -104,9 +104,7 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [];
 
-      const checkResults = await loadService.runQualificationImportCheck([
-        quals,
-      ]);
+      const checkResults = loadService.runQualificationImportCheck([quals]);
 
       expect(checkResults).toEqual([]);
     });
@@ -114,7 +112,6 @@ describe('MonitorQualificationService', () => {
     it('Should pass when values for qualTypeCode "PK" of qualfication is valid with so2 value not set', async () => {
       const quals = new UpdateMonitorQualificationDTO();
       const lmeQual = new LMEQualificationBaseDTO();
-      const leeQual = new LEEQualificationBaseDTO();
       const pctQual = new PCTQualificationBaseDTO();
 
       lmeQual.so2Tons = null;
@@ -123,9 +120,7 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [pctQual];
 
-      const checkResults = await loadService.runQualificationImportCheck([
-        quals,
-      ]);
+      const checkResults = loadService.runQualificationImportCheck([quals]);
 
       expect(checkResults).toEqual([]);
     });
@@ -140,9 +135,7 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [];
 
-      const checkResults = await loadService.runQualificationImportCheck([
-        quals,
-      ]);
+      const checkResults = loadService.runQualificationImportCheck([quals]);
 
       const errorList = [
         '[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #0. This field should be blank',
@@ -163,9 +156,7 @@ describe('MonitorQualificationService', () => {
       quals.monitoringQualificationLEEData = [];
       quals.monitoringQualificationPercentData = [pctQual];
 
-      const checkResults = await loadService.runQualificationImportCheck([
-        quals,
-      ]);
+      const checkResults = loadService.runQualificationImportCheck([quals]);
 
       const errorList = [
         '[IMPORT12-FATAL-A] You have reported a MonitorQualPercent record for a location with the Qualification Type Code not equal to PK, SK or GF. A MonitorQualPercent record should not be reported for qualification type codes other than PK, SK or GF.',
@@ -191,23 +182,23 @@ describe('MonitorQualificationService', () => {
 
   describe('createQualification', () => {
     it('creates a PCT qualification for a specific qualification ID', async () => {
-      const result = await loadService.createQualification(
-        locId,
+      const result = await loadService.createQualification({
+        locationId: locId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });
 
   describe('updateQualification', () => {
     it('updates a PCT qualification for a specific qualification ID and location ID', async () => {
-      const result = await loadService.updateQualification(
-        locId,
+      const result = await loadService.updateQualification({
+        locationId: locId,
         qualId,
         payload,
         userId,
-      );
+      });
       expect(result).toEqual({ ...result });
     });
   });

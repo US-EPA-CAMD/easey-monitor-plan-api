@@ -64,12 +64,12 @@ describe('UnitControlService', () => {
 
   describe('createUnitControl', () => {
     it('creates a unit control record for a specified unit ID', async () => {
-      const result = await service.createUnitControl(
-        '1',
-        1,
+      const result = await service.createUnitControl({
+        locationId: '1',
+        unitRecordId: 1,
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedUnitControl);
     });
   });
@@ -78,18 +78,18 @@ describe('UnitControlService', () => {
     it('updates a unit control record for a specified unit control ID', async () => {
       jest.spyOn(repository, 'getUnitControl').mockResolvedValue(unitControl);
 
-      const result = await service.updateUnitControl(
-        '1',
-        1,
-        '1',
+      const result = await service.updateUnitControl({
+        locationId: '1',
+        unitRecordId: 1,
+        unitControlId: '1',
         payload,
-        'testUser',
-      );
+        userId: 'testUser',
+      });
       expect(result).toEqual(returnedUnitControl);
     });
   });
 
-  describe('importDefault', () => {
+  describe('importUnitControl', () => {
     it('should update while importing monitor default', async () => {
       const result = await service.importUnitControl(
         [payload],
