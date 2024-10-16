@@ -1204,10 +1204,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@us-epa-camd/easey-common@^17.7.0":
-  version "17.7.1"
-  resolved "https://npm.pkg.github.com/download/@US-EPA-CAMD/easey-common/17.7.1/af5a1dce13fbd6acc490a79aff5ffba54078cfe5#af5a1dce13fbd6acc490a79aff5ffba54078cfe5"
-  integrity sha512-KA7MY/OIYFyxkFuUCOeLgjsgHn1pVyU21fq0eLb+b7erGlLDzpKexHcxwFBDYS+gwQNPjZ/wN6226m4rn/UAgQ==
+"@us-epa-camd/easey-common@^17.7.2":
+  version "17.7.2"
+  resolved "https://npm.pkg.github.com/download/@US-EPA-CAMD/easey-common/17.7.2/40f9f765a640374bc2fa0c8f1610d3a7ce6da3ad#40f9f765a640374bc2fa0c8f1610d3a7ce6da3ad"
+  integrity sha512-q6CqFe8BDTaPR86e3RXHtreM9Z82Fp0TWrvxfFYO7jbm3l8w7KR9sr2bqwZnYfvyA9d4ZZIYZVNxQzvl+dDrXg==
   dependencies:
     "@golevelup/ts-jest" "^0.3.4"
     "@nestjs/axios" "0.0.3"
@@ -1217,7 +1217,7 @@
     "@nestjs/swagger" "^5.1.2"
     class-validator "^0.14.0"
     dotenv "^10.0.0"
-    express "^4.19.2"
+    express "^4.20.0"
     helmet "^4.6.0"
     json2csv "^5.0.6"
     pg "^8.11.5"
@@ -2878,7 +2878,7 @@ express@4.18.1:
     utils-merge "1.0.1"
     vary "~1.1.2"
 
-express@^4.19.2, express@^4.20.0:
+express@^4.20.0:
   version "4.20.0"
   resolved "https://registry.yarnpkg.com/express/-/express-4.20.0.tgz#f1d08e591fcec770c07be4767af8eb9bcfd67c48"
   integrity sha512-pLdae7I6QqShF5PnNTCVn4hI91Dx0Grkn2+IAsMTgMIKuQVte2dN9PeGSSAME2FR8anOhVA62QDIUaWVfEXVLw==
