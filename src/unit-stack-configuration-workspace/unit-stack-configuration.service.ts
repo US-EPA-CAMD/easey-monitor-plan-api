@@ -192,7 +192,6 @@ export class UnitStackConfigurationWorkspaceService {
       beginDate: payload.beginDate,
       endDate: payload.endDate,
       addDate: currentDateTime(),
-      updateDate: currentDateTime(),
       userId,
     });
 

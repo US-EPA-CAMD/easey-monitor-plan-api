@@ -213,6 +213,7 @@ export class MonitorPlanWorkspaceService {
         beginReportPeriod: methodBeginReportingPeriod.periodAbbreviation,
       });
       firstPlanRecord.beginReportPeriodId = methodBeginReportingPeriod.id;
+      firstPlanRecord.updateDate = currentDateTime();
       const repository = withTransaction(this.repository, trx);
       await repository.save(firstPlanRecord);
       await repository.resetToNeedsEvaluation(firstPlanRecord.id, userId);

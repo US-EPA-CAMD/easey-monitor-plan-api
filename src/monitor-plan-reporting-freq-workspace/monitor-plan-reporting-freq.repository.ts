@@ -34,7 +34,6 @@ export class MonitorPlanReportingFrequencyWorkspaceRepository extends Repository
       reportFrequencyCode,
       userId,
       addDate: currentDateTime(),
-      updateDate: currentDateTime(),
     });
 
     return await this.save(record);

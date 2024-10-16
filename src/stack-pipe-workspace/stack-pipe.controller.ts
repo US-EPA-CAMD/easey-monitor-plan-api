@@ -20,9 +20,9 @@ export class StackPipeWorkspaceController {
   })
   @RoleGuard(
     {
-      enforceCheckout: false,
       bodyParam: 'facilityId',
-      enforceEvalSubmitCheck: false,
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Facility,
   )
