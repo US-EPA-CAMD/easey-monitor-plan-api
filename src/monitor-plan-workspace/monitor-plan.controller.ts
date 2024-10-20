@@ -6,6 +6,7 @@ import {
   Param,
   Controller,
   Query,
+  UseInterceptors
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
@@ -22,6 +23,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+import { LoggingInterceptor } from '@us-epa-camd/easey-common/interceptors';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -132,6 +134,7 @@ export class MonitorPlanWorkspaceController {
     description:
       'Revert workspace monitor plan back to official submitted record',
   })
+  @UseInterceptors(LoggingInterceptor)
   revertToOfficialRecord(@Param('planId') planId: string) {
     return this.service.revertToOfficialRecord(planId);
   }
