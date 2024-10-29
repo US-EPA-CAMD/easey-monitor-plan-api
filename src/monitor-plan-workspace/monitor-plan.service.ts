@@ -1389,7 +1389,7 @@ export class MonitorPlanWorkspaceService {
         planEndReportPeriodId,
       )) ??
       (planEndReportPeriodId !== null
-        ? await this.matchToPlanByLocationsAndBeginPeriod(
+        ? await this.matchToPlanByLocationsAndEndPeriod(
             locationIds,
             existingPlans,
             null,
