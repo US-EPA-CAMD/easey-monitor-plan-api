@@ -1166,6 +1166,9 @@ export class MonitorPlanWorkspaceService {
       await queryRunner.release();
     }
 
+    //i'm thinking that is it possible that we put the record into the ended plans, 
+    //later we use the begin time for this record to find all of the records and assign all of them with the end time
+    //
     this.logger.debug('Monitor plan import result', {
       endedPlans: result.endedPlans.map(p => p.id),
       newPlans: result.newPlans.map(p => p.id),
