@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Put, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -10,6 +10,7 @@ import {
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { LoggingInterceptor } from '@us-epa-camd/easey-common/interceptors';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -40,6 +41,7 @@ export class CheckOutController {
     type: UserCheckOutBaseDTO,
     description: 'Checks Out a Monitor Plan configuration',
   })
+  @UseInterceptors(LoggingInterceptor)
   checkOutConfiguration(
     @Param('planId') planId: string,
     @User() user: CurrentUser,
@@ -57,6 +59,7 @@ export class CheckOutController {
     type: UserCheckOutBaseDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
   })
+  @UseInterceptors(LoggingInterceptor)
   updateLastActivity(
     @Param('planId') planId: string,
   ): Promise<UserCheckOutDTO> {
@@ -71,6 +74,7 @@ export class CheckOutController {
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
+  @UseInterceptors(LoggingInterceptor)
   async checkInConfiguration(
     @Param('planId') planId: string,
     @User() user: CurrentUser,
