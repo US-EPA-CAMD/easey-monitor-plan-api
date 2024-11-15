@@ -48,7 +48,7 @@ export class MonitorPlanWorkspaceController {
   )
   @AuditLog({
     label: 'Export Monitor Plan',
-    queryOutFields: ['planId']
+    requestQueryOutFields: ['planId']
   })
   exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
     return this.service.exportMonitorPlan(
@@ -90,7 +90,7 @@ export class MonitorPlanWorkspaceController {
   })
   @AuditLog({
     label: 'Import a Monitor Plan',
-    bodyOutFields: ['orisCode'],
+    requestBodyOutFields: ['orisCode'],
   })
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
@@ -142,7 +142,7 @@ export class MonitorPlanWorkspaceController {
   })
   @AuditLog({
     label: 'Revert workspace monitor plan back to official submitted record',
-    paramsOutFields: ['planId'],
+    requestParamsOutFields: ['planId'],
   })
   revertToOfficialRecord(@Param('planId') planId: string) {
     return this.service.revertToOfficialRecord(planId);

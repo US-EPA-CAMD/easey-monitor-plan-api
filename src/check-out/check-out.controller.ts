@@ -18,7 +18,7 @@ export class CheckOutController {
   constructor(
     private readonly ucoService: UserCheckOutService,
     private readonly mpWksService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -42,7 +42,7 @@ export class CheckOutController {
   })
   @AuditLog({
     label: 'Checks Out a Monitor Plan configuration',
-    outFields: '*'
+    responseBodyOutFields: '*'
   })
   checkOutConfiguration(
     @Param('planId') planId: string,
@@ -63,7 +63,7 @@ export class CheckOutController {
   })
   @AuditLog({
     label: 'Updates last activity for a checked out Monitor Plan',
-    outFields: '*',
+    responseBodyOutFields: '*',
   })
   updateLastActivity(
     @Param('planId') planId: string,
@@ -81,7 +81,7 @@ export class CheckOutController {
   })
   @AuditLog({
     label: 'Check In a Monitor Plan configuration',
-    outFields: '*',
+    responseBodyOutFields: '*'
   })
   async checkInConfiguration(
     @Param('planId') planId: string,
