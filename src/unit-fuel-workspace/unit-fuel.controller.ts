@@ -6,6 +6,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -28,6 +29,7 @@ export class UnitFuelWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getUnitFuels(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
@@ -44,6 +46,7 @@ export class UnitFuelWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: UnitFuelDTO,
     description: 'Updates a workspace unit control record by unit control ID',
@@ -71,6 +74,7 @@ export class UnitFuelWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: UnitFuelDTO,

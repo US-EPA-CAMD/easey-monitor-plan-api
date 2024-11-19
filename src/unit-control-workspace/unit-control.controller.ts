@@ -8,6 +8,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceService } from './unit-control.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -33,6 +34,7 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getUnitControls(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
@@ -49,6 +51,7 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: UnitControlDTO,
     description: 'Updates a workspace unit control record by unit control ID',
@@ -79,6 +82,7 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: UnitControlDTO,

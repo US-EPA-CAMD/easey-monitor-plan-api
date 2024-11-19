@@ -5,6 +5,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
 import { UnitProgramWorkspaceService } from './unit-program.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,6 +28,7 @@ export class UnitProgramWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getUnitProgramsByUnitRecordId(
     @Param('unitId') unitId: number,
   ): Promise<UnitProgramDTO[]> {

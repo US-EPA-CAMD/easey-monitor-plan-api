@@ -4,6 +4,7 @@ import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -26,6 +27,7 @@ export class MonitorLocationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getLocation(@Param('locId') locationId: string): Promise<MonitorLocationDTO> {
     return this.service.getLocation(locationId);
   }
@@ -39,6 +41,7 @@ export class MonitorLocationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getLocationRelationships(@Param('locId') locId: string) {
     return this.service.getLocationRelationships(locId);
   }

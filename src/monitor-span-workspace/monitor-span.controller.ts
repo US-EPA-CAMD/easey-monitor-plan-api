@@ -7,6 +7,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanChecksService } from './monitor-span-checks.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -26,6 +27,7 @@ export class MonitorSpanWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,
@@ -44,6 +46,7 @@ export class MonitorSpanWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorSpanDTO,
     description: 'Updates a workspace span record for a monitor location',
@@ -72,6 +75,7 @@ export class MonitorSpanWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,

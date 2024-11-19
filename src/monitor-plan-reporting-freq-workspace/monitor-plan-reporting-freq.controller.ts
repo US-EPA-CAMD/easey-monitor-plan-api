@@ -5,6 +5,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { MonitorPlanReportingFrequencyWorkspaceService } from './monitor-plan-reporting-freq.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -29,6 +30,7 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getReportingFreqs(
     @Param('unitId') unitId: number,
   ): Promise<ReportingFreqDTO[]> {

@@ -9,6 +9,7 @@ import {
 } from '../dtos/monitor-default.dto';
 import { MonitorDefaultWorkspaceService } from './monitor-default.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -25,6 +26,7 @@ export class MonitorDefaultWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: MonitorDefaultDTO,
@@ -45,6 +47,7 @@ export class MonitorDefaultWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Updates a workspace default record for a monitor location',
@@ -72,6 +75,7 @@ export class MonitorDefaultWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Creates a workspace defaults record for a monitor location',

@@ -10,6 +10,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -26,6 +27,7 @@ export class AnalyzerRangeWorkspaceController {
     type: AnalyzerRangeDTO,
     description: 'Retrieves workspace Analyzer Range records for a component',
   })
+  @ApiExcludeEndpointByEnv()
   @RoleGuard(
     {
       enforceCheckout: false,
@@ -42,6 +44,7 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Post()
+  @ApiExcludeEndpointByEnv()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -71,6 +74,7 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Put(':analyzerRangeId')
+  @ApiExcludeEndpointByEnv()
   @RoleGuard(
     {
       pathParam: 'locId',

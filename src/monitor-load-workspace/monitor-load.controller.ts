@@ -6,6 +6,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -22,6 +23,7 @@ export class MonitorLoadWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: MonitorLoadDTO,
@@ -40,6 +42,7 @@ export class MonitorLoadWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorLoadDTO,
     description: 'Updates a workspace load record for a monitor location',
@@ -67,6 +70,7 @@ export class MonitorLoadWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: MonitorLoadDTO,

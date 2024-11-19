@@ -10,6 +10,7 @@ import {
 } from '../dtos/monitor-system.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiTags('Systems')
@@ -35,6 +36,7 @@ export class MonitorSystemWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getSystems(@Param('locId') locationId: string): Promise<MonitorSystemDTO[]> {
     return this.service.getSystems(locationId);
   }
@@ -48,6 +50,7 @@ export class MonitorSystemWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description: 'Creates a workspace system record for a give location',
@@ -74,6 +77,7 @@ export class MonitorSystemWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description:

@@ -9,6 +9,7 @@ import {
   LEEQualificationDTO,
 } from '../dtos/lee-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,6 +32,7 @@ export class LEEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getLEEQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
@@ -47,6 +49,7 @@ export class LEEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: LEEQualificationDTO,
     description:
@@ -77,6 +80,7 @@ export class LEEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: LEEQualificationDTO,

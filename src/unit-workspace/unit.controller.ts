@@ -6,6 +6,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitWorkspaceService } from './unit.service';
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -28,6 +29,7 @@ export class UnitWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getUnits(
     @Param('locId') locId: string,
     @Param('id') unitId: number,
@@ -44,6 +46,7 @@ export class UnitWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: UnitDTO,
     description: 'Updates a workspace unit record by unit ID',

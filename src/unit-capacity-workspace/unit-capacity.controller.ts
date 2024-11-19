@@ -9,6 +9,7 @@ import {
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,6 +32,7 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getUnitCapacities(
     @Param('locId') locationId: string,
     @Param('unitId') unitId: number,
@@ -47,6 +49,7 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: UnitCapacityDTO,
@@ -75,6 +78,7 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: UnitCapacityDTO,
     description: 'Updates a workspace unit capacity record by unit capacity ID',

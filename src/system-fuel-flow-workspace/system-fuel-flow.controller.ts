@@ -9,6 +9,7 @@ import {
 } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -30,6 +31,7 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getFuelFlows(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
@@ -46,6 +48,7 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description: 'Creates official fuel flow records for a monitor system',
@@ -73,6 +76,7 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description:

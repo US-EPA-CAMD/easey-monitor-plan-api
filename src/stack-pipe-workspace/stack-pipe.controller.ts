@@ -6,6 +6,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { StackPipeBaseDTO, StackPipeDTO } from '../dtos/stack-pipe.dto';
 import { StackPipeWorkspaceService } from './stack-pipe.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -26,6 +27,7 @@ export class StackPipeWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   importStackPipe(
     @Query('draft') draft: boolean,
     @Body() stackPipe: StackPipeBaseDTO,

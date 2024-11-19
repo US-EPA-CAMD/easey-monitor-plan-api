@@ -10,6 +10,7 @@ import {
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,6 +32,7 @@ export class SystemComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getSystemComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
@@ -47,6 +49,7 @@ export class SystemComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
@@ -76,6 +79,7 @@ export class SystemComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Creates a workspace system component for a monitor system',

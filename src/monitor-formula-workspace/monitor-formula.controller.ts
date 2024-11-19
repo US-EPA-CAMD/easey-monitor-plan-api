@@ -10,6 +10,7 @@ import {
   MonitorFormulaDTO,
 } from '../dtos/monitor-formula.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -29,6 +30,7 @@ export class MonitorFormulaWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: MonitorFormulaDTO,
@@ -49,6 +51,7 @@ export class MonitorFormulaWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorFormulaDTO,
     description: 'Creates workspace formula record for a monitor location',
@@ -75,6 +78,7 @@ export class MonitorFormulaWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorFormulaDTO,
     description: 'Updates workspace formula record for a monitor location',

@@ -9,6 +9,7 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -30,6 +31,7 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getAttributes(
     @Param('locId') locationId: string,
   ): Promise<MonitorAttributeDTO[]> {
@@ -45,6 +47,7 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Creates a workspace monitor location attribute record',
@@ -70,6 +73,7 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Updates a workspace monitor location attribute record',

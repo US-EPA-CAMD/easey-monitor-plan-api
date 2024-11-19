@@ -9,6 +9,7 @@ import {
   MonitorQualificationDTO,
 } from '../dtos/monitor-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,6 +32,7 @@ export class MonitorQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getQualifications(
     @Param('locId') locationId: string,
   ): Promise<MonitorQualificationDTO[]> {
@@ -46,6 +48,7 @@ export class MonitorQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:
@@ -72,6 +75,7 @@ export class MonitorQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:

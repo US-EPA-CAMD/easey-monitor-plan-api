@@ -9,6 +9,7 @@ import {
   MonitorMethodDTO,
 } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -25,6 +26,7 @@ export class MonitorMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: MonitorMethodDTO,
@@ -43,6 +45,7 @@ export class MonitorMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Creates workspace Monitor Method record',
@@ -68,6 +71,7 @@ export class MonitorMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',

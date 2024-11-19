@@ -7,6 +7,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceService } from './mats-method.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -32,6 +33,7 @@ export class MatsMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
     return this.service.getMethods(locationId);
   }
@@ -45,6 +47,7 @@ export class MatsMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
@@ -71,6 +74,7 @@ export class MatsMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',

@@ -9,6 +9,7 @@ import {
 } from '../dtos/lme-qualification.dto';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,6 +32,7 @@ export class LMEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getLMEQualifications(
     @Param('locId') locationId: string,
     @Param('qualId') qualificationId: string,
@@ -47,6 +49,7 @@ export class LMEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: LMEQualificationDTO,
     description:
@@ -77,6 +80,7 @@ export class LMEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: LMEQualificationDTO,

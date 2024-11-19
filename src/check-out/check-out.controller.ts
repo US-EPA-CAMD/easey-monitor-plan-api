@@ -10,6 +10,7 @@ import {
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -36,6 +37,7 @@ export class CheckOutController {
     { pathParam: 'planId', enforceCheckout: false },
     LookupType.MonitorPlan,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Checks Out a Monitor Plan configuration',
@@ -57,6 +59,7 @@ export class CheckOutController {
     { pathParam: 'planId', enforceCheckout: false },
     LookupType.MonitorPlan,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: UserCheckOutBaseDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
@@ -76,6 +79,7 @@ export class CheckOutController {
     { pathParam: 'planId', enforceCheckout: false },
     LookupType.MonitorPlan,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })

@@ -6,6 +6,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,6 +28,7 @@ export class DuctWafWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getDuctWafs(@Param('locId') locationId: string): Promise<DuctWafDTO[]> {
     return this.service.getDuctWafs(locationId);
   }
@@ -40,6 +42,7 @@ export class DuctWafWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Create a workspace duct waf record for a monitor location',
@@ -65,6 +68,7 @@ export class DuctWafWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Updates a workspace duct waf record for a monitor location',

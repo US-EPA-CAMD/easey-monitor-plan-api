@@ -22,6 +22,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -46,6 +47,7 @@ export class MonitorPlanWorkspaceController {
     },
     LookupType.MonitorPlan,
   )
+  @ApiExcludeEndpointByEnv()
   @AuditLog({
     label: 'Export Monitor Plan',
     requestQueryOutFields: ['planId']
@@ -71,6 +73,7 @@ export class MonitorPlanWorkspaceController {
     },
     LookupType.MonitorPlan,
   )
+  @ApiExcludeEndpointByEnv()
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
   }
@@ -84,6 +87,7 @@ export class MonitorPlanWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorPlanImportResponseDTO,
     description: 'imports an entire monitor plan from JSON payload',
@@ -109,6 +113,7 @@ export class MonitorPlanWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description:
@@ -136,6 +141,7 @@ export class MonitorPlanWorkspaceController {
     },
     LookupType.MonitorPlan,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',

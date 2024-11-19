@@ -9,6 +9,7 @@ import {
 } from '../dtos/pct-qualification.dto';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,6 +32,7 @@ export class PCTQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getPCTQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
@@ -47,6 +49,7 @@ export class PCTQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: PCTQualificationDTO,
     description:
@@ -77,6 +80,7 @@ export class PCTQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: PCTQualificationDTO,

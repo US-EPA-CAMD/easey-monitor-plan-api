@@ -6,6 +6,7 @@ import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-p
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -39,6 +40,7 @@ export class MonitorConfigurationsWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   getConfigurations(
     @Query() dto: ConfigurationMultipleParamsDTO,
   ): Promise<MonitorPlanDTO[]> {

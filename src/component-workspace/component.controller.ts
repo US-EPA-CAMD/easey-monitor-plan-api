@@ -7,6 +7,7 @@ import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { ComponentCheckService } from './component-checks.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -31,6 +32,7 @@ export class ComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
     return this.service.getComponents(locationId);
   }
@@ -44,6 +46,7 @@ export class ComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: ComponentDTO,
