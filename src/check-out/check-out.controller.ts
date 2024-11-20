@@ -28,6 +28,7 @@ export class CheckOutController {
     description:
       'Retrieves workspace Monitor Plan configuration records that are checked out by users',
   })
+  @ApiExcludeEndpointByEnv()
   getCheckedOutConfigurations(): Promise<UserCheckOutDTO[]> {
     return this.ucoService.getCheckedOutConfigurations();
   }
