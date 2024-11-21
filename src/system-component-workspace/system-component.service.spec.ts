@@ -22,6 +22,9 @@ const sysComps = [sysComp];
 
 const payload = new SystemComponentBaseDTO();
 
+const mockSystemComponent = new SystemComponent();
+mockSystemComponent.component = new Component();
+
 const repositoryFactory = () => ({
   getSystemComponents: jest.fn().mockResolvedValue(sysComps),
   getSystemComponent: jest.fn().mockResolvedValue(sysComp),
@@ -112,7 +115,7 @@ describe('SystemComponentWorkspaceService', () => {
     it('should update and return the system component', async () => {
       jest
         .spyOn(service, 'getSystemComponent')
-        .mockResolvedValue(new SystemComponent());
+        .mockResolvedValue(mockSystemComponent);
 
       const result = await service.updateSystemComponent({
         locationId: '1',
