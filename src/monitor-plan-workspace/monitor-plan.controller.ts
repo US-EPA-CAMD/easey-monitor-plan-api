@@ -16,7 +16,7 @@ import { SingleUnitMonitorPlanRequestDTO } from '../dtos/single-unit-monitor-pla
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
 import { ImportChecksService } from '../import-checks/import-checks.service';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
@@ -31,7 +31,7 @@ export class MonitorPlanWorkspaceController {
     private readonly service: MonitorPlanWorkspaceService,
     private readonly importChecksService: ImportChecksService,
     private readonly mpChecksService: MonitorPlanChecksService,
-  ) {}
+  ) { }
 
   @Get('export')
   @ApiOkResponse({
@@ -46,6 +46,10 @@ export class MonitorPlanWorkspaceController {
     },
     LookupType.MonitorPlan,
   )
+  @AuditLog({
+    label: 'Export Monitor Plan',
+    requestQueryOutFields: ['planId']
+  })
   exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
     return this.service.exportMonitorPlan(
       params.planId,
@@ -84,6 +88,10 @@ export class MonitorPlanWorkspaceController {
   @ApiOkResponse({
     type: MonitorPlanImportResponseDTO,
     description: 'imports an entire monitor plan from JSON payload',
+  })
+  @AuditLog({
+    label: 'Import a Monitor Plan',
+    requestBodyOutFields: ['orisCode'],
   })
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
@@ -132,6 +140,10 @@ export class MonitorPlanWorkspaceController {
   @ApiOkResponse({
     description:
       'Revert workspace monitor plan back to official submitted record',
+  })
+  @AuditLog({
+    label: 'Revert workspace monitor plan back to official submitted record',
+    requestParamsOutFields: ['planId'],
   })
   revertToOfficialRecord(@Param('planId') planId: string) {
     return this.service.revertToOfficialRecord(planId);
