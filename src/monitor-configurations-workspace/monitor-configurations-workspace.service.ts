@@ -48,10 +48,12 @@ export class MonitorConfigurationsWorkspaceService {
     plan.unitStackConfigurations = unitStackConfigurations;
   }
 
+  //workspace/configurations endpoint will call this method directly
   async getConfigurations(
     orisCodes: number[],
     monPlanIds: string[] = [],
   ): Promise<MonitorPlanDTO[]> {
+    console.log(`we are in monitor configurations workspace service: getConfigurations()`);
     let plans: MonitorPlan[];
     const relations = {
       beginReportingPeriod: true,

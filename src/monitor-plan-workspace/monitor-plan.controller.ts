@@ -75,7 +75,6 @@ export class MonitorPlanWorkspaceController {
     return this.service.getMonitorPlan(planId);
   }
 
-  //http://localhost:8010/monitor-plan-mgmt/workspace/plans/import.
   @Post('import')
   @RoleGuard(
     {

@@ -116,15 +116,9 @@ export class MonitorDefaultWorkspaceService {
     isImport?: boolean;
     trx?: EntityManager;
   }): Promise<MonitorDefaultDTO> {
-    this.logger.debug(`we are in monitorDefaultWorkspaceService.updateDefault()`);
-    this.logger.debug(`passed-in locationId: ${locationId}`);
-    this.logger.debug(`passed-in defaultId: ${defaultId}`);
     const monDefault = await this.getDefault(locationId, defaultId, trx);
 
-    this.logger.debug(`parameterCode from payload: ${payload.parameterCode}`);
-    this.logger.debug(`parameterCode from monDefault: ${monDefault.parameterCode}`);
     monDefault.parameterCode = payload.parameterCode;
-    this.logger.debug(`parameterCode from monDefault after assigned: ${monDefault.parameterCode}`);
     monDefault.defaultValue = payload.defaultValue;
     monDefault.defaultUnitsOfMeasureCode = payload.defaultUnitsOfMeasureCode;
     monDefault.defaultPurposeCode = payload.defaultPurposeCode;
@@ -134,10 +128,7 @@ export class MonitorDefaultWorkspaceService {
     monDefault.groupId = payload.groupId;
     monDefault.beginDate = payload.beginDate;
     monDefault.beginHour = payload.beginHour;
-    this.logger.debug(`endDate from payload: ${payload.endDate}`);
-    this.logger.debug(`endDate from monDefault: ${monDefault.endDate}`);
     monDefault.endDate = payload.endDate;
-    this.logger.debug(`endDate from monDefault after assigned: ${monDefault.endDate}`);
     monDefault.endHour = payload.endHour;
     monDefault.userId = userId;
     monDefault.updateDate = currentDateTime();
@@ -151,32 +142,19 @@ export class MonitorDefaultWorkspaceService {
     return this.map.one(monDefault);
   }
 
-  //when we import the default, override happend
   async importDefault(
     locationId: string,
     monDefaults: MonitorDefaultBaseDTO[],
     userId: string,
     trx?: EntityManager,
   ) {
-    this.logger.debug(`we are in monitorDefaultWorkspaceService.importDefault()`);
-    //
-    monDefaults.forEach ( item => {
-      this.logger.debug(`${item.parameterCode}`);
-      this.logger.debug(`${item.beginDate}`);
-      this.logger.debug(`${item.endDate}`);
-      this.logger.debug(`=========================`);
-
-    });
-    
     await Promise.all(
       monDefaults.map(async monDefault => {
-        //get each of the record from the imported file
         const monDefaultRecord = await withTransaction(
           this.repository,
           trx,
         ).getDefaultBySpecs(
           locationId,
-          //MonitorDefaultBaseDTO do not have the id so it can not be used 
           monDefault.parameterCode,
           monDefault.defaultPurposeCode,
           monDefault.fuelCode,
@@ -187,8 +165,6 @@ export class MonitorDefaultWorkspaceService {
           monDefault.endHour,
         );
 
-        //if we can find the exact matching record, then we will update the record, if not found, then need to create a new records
-        //my question is: if we use the exactly same matching, then what's the point of updating it using the same info?
         if (monDefaultRecord) {
           await this.updateDefault({
             locationId,
