@@ -1,4 +1,5 @@
-import { forwardRef, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
@@ -23,13 +24,12 @@ export class SystemComponentWorkspaceService {
     @Inject(forwardRef(() => ComponentWorkspaceService))
     private readonly componentService: ComponentWorkspaceService,
     private readonly map: SystemComponentMap,
-    private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
-
-  // log values in terminal for debugging purpose
-  private readonly logger = new Logger(SystemComponentWorkspaceService.name);
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext('SystemComponentWorkspaceService');
+  }
 
   async getSystemComponents(
     locationId: string,
@@ -90,35 +90,6 @@ export class SystemComponentWorkspaceService {
       sysComponentRecordId,
       trx,
     );
-
-    // Check if payload component is present
-    // if not valid throw an error regarding component not presetn
-    // else proceed with updating the Component 
-    if (systemComponent.component.componentId !== payload.componentId) {
-      throw new EaseyException(
-        new Error('Component was not found'),
-        HttpStatus.NOT_FOUND,
-        {
-          componentId: payload.componentId,
-        },
-      );
-    }
-    else
-    if (systemComponent.component.componentId!= null) {
-      // Get Component 
-      let component = await this.componentService.getComponentByIdentifier(
-        locationId,
-        payload.componentId,
-        trx,
-      );
-      component.updateDate =  new Date().toISOString();
-
-      // apply changes to the Component 
-      Object.assign(component, payload);
-
-      // update the Component entity
-      await withTransaction(this.componentWorkspaceRepository, trx).save(component);
-  }
 
     systemComponent.beginDate = payload.beginDate;
     systemComponent.beginHour = payload.beginHour;
