@@ -13,7 +13,6 @@ import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-
 export class MonitorConfigurationsWorkspaceController {
   constructor(private service: MonitorConfigurationsWorkspaceService) {}
 
-  //this is the endpoint workspace/configurations
   @Get()
   @ApiOkResponse({
     isArray: true,
