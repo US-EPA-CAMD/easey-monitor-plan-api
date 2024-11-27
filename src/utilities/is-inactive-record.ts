@@ -10,6 +10,5 @@ export const isInactiveRecord = (beginDate: Date, endDate: Date) => {
     ) {
         return true;
     }
-    console.log("beginDate===", beginDate, "endDate===", endDate)
     return false;
 };

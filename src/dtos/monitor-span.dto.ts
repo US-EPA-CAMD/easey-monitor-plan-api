@@ -161,9 +161,9 @@ export class MonitorSpanBaseDTO {
     },
   })
   @IsActiveRecord({
-    fieldname: "mpfValue",
-    conditions: { mpfValue: true, componentTypeCode: "FLOW" }
+    fieldname: "mpfValue"
   })
+  @ValidateIf(o => o.componentTypeCode === 'FLOW' || o.mpfValue !== null)
   mpfValue: number;
 
   @ApiProperty({
