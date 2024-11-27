@@ -39,6 +39,7 @@ import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { SystemTypeCode } from '../entities/system-type-code.entity';
 import { BeginEndDatesConsistent } from '../utils';
 import { SystemDesignationCode } from '../entities/system-designation-code.entity';
+import { IsActiveRecord } from '../import-checks/pipes/is-inactive-records.pipe';
 
 const KEY = 'Monitor System';
 
@@ -63,6 +64,9 @@ export class MonitorSystemBaseDTO {
         iD: args.value,
       });
     },
+  })
+  @IsActiveRecord({
+    fieldname: "monitoringSystemId"
   })
   monitoringSystemId: string;
 

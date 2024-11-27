@@ -30,6 +30,7 @@ import {
 } from '../utilities/constants';
 import { FuelCode } from '../entities/fuel-code.entity';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { IsActiveRecord } from '../import-checks/pipes/is-inactive-records.pipe';
 
 const KEY = 'Monitor Default';
 
@@ -168,7 +169,7 @@ export class MonitorDefaultBaseDTO {
     },
   )
   @IsString()
-  @ValidateIf(o => o.defaultPurposeCode || o.endDate === null || o.endHour === null)
+  @IsActiveRecord({ fieldname: 'defaultPurposeCode' })
   defaultPurposeCode: string;
 
   @ApiProperty({
@@ -194,7 +195,9 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsString()
-  @ValidateIf(o => o.fuelCode || o.endDate === null || o.endHour === null)
+  @IsActiveRecord({
+    fieldname: "fuelCode"
+  })
   fuelCode: string;
 
   @ApiProperty({
@@ -260,7 +263,9 @@ export class MonitorDefaultBaseDTO {
     },
   )
   @IsString()
-  @ValidateIf(o => o.defaultSourceCode || o.endDate === null || o.endHour === null)
+  @IsActiveRecord({
+    fieldname: "defaultSourceCode"
+  })
   defaultSourceCode: string;
 
   @ApiProperty({

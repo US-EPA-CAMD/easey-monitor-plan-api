@@ -31,6 +31,7 @@ import {
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
 import { BeginEndDatesConsistent } from '../utils';
+import { IsActiveRecord } from '../import-checks/pipes/is-inactive-records.pipe';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
@@ -159,7 +160,10 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
-  @ValidateIf(o => o.componentTypeCode === 'FLOW' || o.mpfValue !== null)
+  @IsActiveRecord({
+    fieldname: "mpfValue",
+    conditions: { mpfValue: true, componentTypeCode: "FLOW" }
+  })
   mpfValue: number;
 
   @ApiProperty({
