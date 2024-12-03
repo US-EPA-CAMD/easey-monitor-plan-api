@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -22,6 +22,10 @@ export class UnitCapacityWorkspaceController {
     type: UnitCapacityDTO,
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
+  })
+  @AuditLog({
+    label: 'Retrieved workspace monitor location unit capacity records',
+    requestParamsOutFields: ['locId', 'unitId']
   })
   @RoleGuard(
     {
@@ -47,6 +51,11 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Create workspace monitor location unit capacity record',
+    requestParamsOutFields: ['locId', 'unitId'],
+    requestBodyOutFields:'*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: UnitCapacityDTO,
@@ -75,6 +84,11 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Update workspace monitor location unit capacity record',
+    requestParamsOutFields: ['locId', 'unitId'],
+    requestBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: UnitCapacityDTO,
     description: 'Updates a workspace unit capacity record by unit capacity ID',
