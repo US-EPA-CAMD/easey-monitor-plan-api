@@ -82,7 +82,7 @@ export class MatsMethodWorkspaceController {
   )
   @AuditLog({
     label: 'Updated workspace monitor location MATS method record',
-    requestParamsOutFields:['locId'],
+    requestParamsOutFields:['locId', 'methodId'],
     responseBodyOutFields:'*'
   })
   @ApiOkResponse({
