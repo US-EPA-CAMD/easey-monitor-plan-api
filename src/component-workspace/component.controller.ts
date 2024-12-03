@@ -3,7 +3,7 @@ import { Get, Param, Controller, Post, Body } from '@nestjs/common';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { ComponentWorkspaceService } from './component.service';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { ComponentCheckService } from './component-checks.service';
@@ -31,6 +31,10 @@ export class ComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location components',
+    requestParamsOutFields: ['locId']
+  })
   getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
     return this.service.getComponents(locationId);
   }
@@ -44,6 +48,11 @@ export class ComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location component record',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: ComponentDTO,
