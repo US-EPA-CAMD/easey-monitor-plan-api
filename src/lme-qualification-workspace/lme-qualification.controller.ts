@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -31,6 +31,10 @@ export class LMEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location LME qualifications',
+    requestParamsOutFields: ['locId', 'qualId']
+  })
   getLMEQualifications(
     @Param('locId') locationId: string,
     @Param('qualId') qualificationId: string,
@@ -47,6 +51,11 @@ export class LMEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location LME qualification record',
+    requestParamsOutFields: ['locId', 'qualId', 'lmeQualId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: LMEQualificationDTO,
     description:
@@ -77,6 +86,11 @@ export class LMEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location LME qualification record',
+    requestParamsOutFields: ['locId', 'qualId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: LMEQualificationDTO,
