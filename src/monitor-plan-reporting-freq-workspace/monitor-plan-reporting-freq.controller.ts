@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
@@ -29,6 +29,10 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location unit reporting frequencies',
+    requestParamsOutFields: ['unitId']
+  })
   getReportingFreqs(
     @Param('unitId') unitId: number,
   ): Promise<ReportingFreqDTO[]> {
