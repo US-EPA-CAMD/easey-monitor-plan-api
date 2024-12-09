@@ -52,16 +52,18 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
     });
 
     query.andWhere(
-      `((
-        c.beginDate = :beginDate
-      ) OR (
-        c.endDate IS NOT NULL AND c.endDate = :endDate
-      ))`,
-      {
-        beginDate,
-        endDate,
-      },
+      `(c.beginDate = :beginDate)`,
+      { beginDate }
     );
+
+    if (endDate !== null) {
+      query.andWhere(
+        '(c.endDate = :endDate)',
+        { endDate }
+      );
+    } else {
+      query.andWhere('c.endDate IS NULL');
+    }
 
     query.orderBy('c.unitId, c.endDate, c.maximumHourlyHeatInputCapacity');
     return query.getOne();
