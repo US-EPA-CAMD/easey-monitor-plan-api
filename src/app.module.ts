@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { RouterModule } from 'nest-router';
 import { ConfigModule } from '@nestjs/config';
+import { RouterModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CheckCatalogModule } from '@us-epa-camd/easey-common/check-catalog';
@@ -30,7 +30,7 @@ import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.modu
 
 @Module({
   imports: [
-    RouterModule.forRoutes(routes),
+    RouterModule.register(routes),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [dbConfig, appConfig],

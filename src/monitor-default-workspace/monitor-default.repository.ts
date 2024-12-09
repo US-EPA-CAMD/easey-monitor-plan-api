@@ -29,7 +29,7 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
     endDate: Date,
     endHour: number,
   ): Promise<MonitorDefault> {
-    return this.createQueryBuilder('md')
+    const query = this.createQueryBuilder('md')
       .where('md.locationId = :locationId', { locationId })
       .andWhere('md.parameterCode = :parameterCode', { parameterCode })
       .andWhere('md.defaultPurposeCode = :defaultPurposeCode', {
@@ -40,18 +40,19 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
         operatingConditionCode,
       })
       .andWhere(
-        `((
-          md.beginDate = :beginDate AND md.beginHour = :beginHour
-        ) OR (
-          md.endDate IS NOT NULL AND md.endDate = :endDate AND md.endHour = :endHour
-        ))`,
-        {
-          beginDate,
-          beginHour,
-          endDate,
-          endHour,
-        },
-      )
-      .getOne();
+        `(md.beginDate = :beginDate AND md.beginHour = :beginHour)`,
+        { beginDate, beginHour }
+      );
+
+    if (endDate !== null && endHour !== null) {
+      query.andWhere(
+        '(md.endDate = :endDate AND md.endHour = :endHour)',
+        { endDate, endHour }
+      );
+    } else {
+      query.andWhere('md.endDate IS NULL AND md.endHour IS NULL');
+    }
+
+    return query.getOne();
   }
 }

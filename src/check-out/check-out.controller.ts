@@ -1,6 +1,6 @@
 import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User, AuditLog } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -18,7 +18,7 @@ export class CheckOutController {
   constructor(
     private readonly ucoService: UserCheckOutService,
     private readonly mpWksService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -40,6 +40,10 @@ export class CheckOutController {
     type: UserCheckOutBaseDTO,
     description: 'Checks Out a Monitor Plan configuration',
   })
+  @AuditLog({
+    label: 'Checks Out a Monitor Plan configuration',
+    responseBodyOutFields: '*'
+  })
   checkOutConfiguration(
     @Param('planId') planId: string,
     @User() user: CurrentUser,
@@ -57,6 +61,10 @@ export class CheckOutController {
     type: UserCheckOutBaseDTO,
     description: 'Updates last activity for a checked out Monitor Plan',
   })
+  @AuditLog({
+    label: 'Updates last activity for a checked out Monitor Plan',
+    responseBodyOutFields: '*',
+  })
   updateLastActivity(
     @Param('planId') planId: string,
   ): Promise<UserCheckOutDTO> {
@@ -71,11 +79,16 @@ export class CheckOutController {
   @ApiOkResponse({
     description: 'Check-In a Monitor Plan configuration',
   })
+  @AuditLog({
+    label: 'Check In a Monitor Plan configuration',
+    responseBodyOutFields: '*'
+  })
   async checkInConfiguration(
     @Param('planId') planId: string,
     @User() user: CurrentUser,
   ) {
     const result = await this.ucoService.getCheckedOutConfiguration(planId);
     if (result) await this.ucoService.checkInConfiguration(planId)
+    return result
   }
 }

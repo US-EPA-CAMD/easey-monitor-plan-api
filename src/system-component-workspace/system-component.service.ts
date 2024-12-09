@@ -181,6 +181,8 @@ export class SystemComponentWorkspaceService {
           component.componentId,
           component.beginDate,
           component.beginHour,
+          component.endDate,
+          component.endHour,
         );
 
         if (systemComponentRecord) {

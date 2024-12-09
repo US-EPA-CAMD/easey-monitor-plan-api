@@ -50,18 +50,18 @@ export class SystemFuelFlowWorkspaceRepository extends Repository<
     ).where('sff.monitoringSystemRecordId = :monSysId', { monSysId });
 
     query.andWhere(
-      `((
-        sff.beginDate = :beginDate AND sff.beginHour = :beginHour
-      ) OR (
-        sff.endDate IS NOT NULL AND sff.endDate = :endDate AND sff.endHour = :endHour
-      ))`,
-      {
-        beginDate,
-        beginHour,
-        endDate,
-        endHour,
-      },
+      `(sff.beginDate = :beginDate AND sff.beginHour = :beginHour)`,
+      { beginDate, beginHour }
     );
+
+    if (endDate !== null && endHour !== null) {
+      query.andWhere(
+        '(sff.endDate = :endDate AND sff.endHour = :endHour)',
+        { endDate, endHour }
+      );
+    } else {
+      query.andWhere('sff.endDate IS NULL AND sff.endHour IS NULL');
+    }
 
     return query.getOne();
   }

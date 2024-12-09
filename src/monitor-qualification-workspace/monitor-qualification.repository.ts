@@ -17,24 +17,24 @@ export class MonitorQualificationWorkspaceRepository extends Repository<
     beginDate: Date,
     endDate: Date,
   ): Promise<MonitorQualification> {
-    const result = this.createQueryBuilder('c')
+    const query = this.createQueryBuilder('c')
       .where('c.locationId = :locationId', { locationId })
       .andWhere('c.qualificationTypeCode = :qualType', { qualType })
       .andWhere(
-        `((
-          c.beginDate = :beginDate
-        ) OR (
-          c.endDate IS NOT NULL AND c.endDate = :endDate
-        ))`,
-        {
-          qualType,
-          beginDate,
-          endDate,
-        },
-      )
-      .getOne();
+        `(c.beginDate = :beginDate)`,
+        { beginDate }
+      );
 
-    return result;
+    if (endDate !== null) {
+      query.andWhere(
+        '(c.endDate = :endDate)',
+        { endDate }
+      );
+    } else {
+      query.andWhere('c.endDate IS NULL');
+    }
+
+    return query.getOne();
   }
 
   async getQualification(
