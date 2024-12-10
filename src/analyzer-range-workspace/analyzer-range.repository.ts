@@ -21,25 +21,26 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
     const endDate = analyzerRange.endDate;
     const endHour = analyzerRange.endHour;
 
-    return this.createQueryBuilder('ar')
+    const query = this.createQueryBuilder('ar')
       .innerJoin('ar.component', 'c')
       .where('c.id = :componentId', {
         componentId,
       })
       .andWhere(
-        `((
-          ar.beginDate = :beginDate AND ar.beginHour = :beginHour
-        ) OR (
-          ar.endDate IS NOT NULL AND ar.endDate = :endDate AND ar.endHour = :endHour
-        ))`,
-        {
-          beginDate,
-          beginHour,
-          endDate,
-          endHour,
-        },
+        `(ar.beginDate = :beginDate AND ar.beginHour = :beginHour)`,
+        { beginDate, beginHour }
       )
-      .getOne();
+
+      if (endDate !== null && endHour !== null) {
+        query.andWhere(
+          '(ar.endDate = :endDate AND ar.endHour = :endHour)',
+          { endDate, endHour }
+        );
+      } else {
+        query.andWhere('ar.endDate IS NULL AND ar.endHour IS NULL');
+      }
+
+    return query.getOne();
   }
 
   async getAnalyzerRangesByCompIds(
