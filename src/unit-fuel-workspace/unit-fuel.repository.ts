@@ -40,16 +40,18 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
         fuelCode,
       })
       .andWhere(
-        `((
-          u.beginDate = :beginDate
-        ) OR (
-          u.endDate IS NOT NULL AND u.endDate = :endDate
-        ))`,
-        {
-          beginDate,
-          endDate,
-        },
+        `(u.beginDate = :beginDate)`,
+        { beginDate, }
       );
+    
+    if (endDate !== null) {
+      qb.andWhere(
+        '(u.endDate = :endDate)',
+        { endDate, }
+      );
+    } else {
+      qb.andWhere('u.endDate IS NULL');
+    }
 
     return qb.getOne();
   }

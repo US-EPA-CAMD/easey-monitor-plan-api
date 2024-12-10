@@ -53,7 +53,6 @@ export class StackPipeWorkspaceService {
       retireDate: loc.retireDate,
       userId,
       addDate: currentDateTime(),
-      updateDate: currentDateTime(),
     });
 
     return await repository.save(stackPipe);
