@@ -20,7 +20,7 @@ export class MatsMethodWorkspaceRepository extends Repository<MatsMethod> {
     const endDate = matsMethod.endDate;
     const endHour = matsMethod.endHour;
 
-    return this.createQueryBuilder('mm')
+    const query =  this.createQueryBuilder('mm')
       .where('mm.locationId = :locationId', {
         locationId,
       })
@@ -28,18 +28,19 @@ export class MatsMethodWorkspaceRepository extends Repository<MatsMethod> {
         paramCode,
       })
       .andWhere(
-        `((
-          mm.beginDate = :beginDate AND mm.beginHour = :beginHour
-        ) OR (
-          mm.endDate IS NOT NULL AND mm.endDate = :endDate AND mm.endHour = :endHour
-        ))`,
-        {
-          beginDate,
-          beginHour,
-          endDate,
-          endHour,
-        },
+        `(mm.beginDate = :beginDate AND mm.beginHour = :beginHour)`,
+        { beginDate, beginHour }
       )
-      .getOne();
+
+      if (endDate !== null && endHour !== null) {
+        query.andWhere(
+          '(mm.endDate = :endDate AND mm.endHour = :endHour)',
+          { endDate, endHour }
+        );
+      } else {
+        query.andWhere('mm.endDate IS NULL AND mm.endHour IS NULL');
+      }
+
+    return query.getOne();
   }
 }

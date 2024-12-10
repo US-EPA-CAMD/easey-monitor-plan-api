@@ -27,7 +27,6 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       lastUpdated: currentDateTime(),
       needsEvalFlag: 'Y',
       submissionAvailabilityCode: 'GRANTED',
-      updateDate: currentDateTime(),
       updatedStatusFlag: 'Y',
       userId,
     });

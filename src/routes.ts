@@ -1,5 +1,3 @@
-import { Routes } from 'nest-router';
-
 import { MonitorPlanModule } from './monitor-plan/monitor-plan.module';
 import { MonitorPlanWorkspaceModule } from './monitor-plan-workspace/monitor-plan.module';
 
@@ -80,7 +78,7 @@ import { UnitModule } from './unit/unit.module';
 import { MonitorPlanReportingFreqModule } from './monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
 import { MonitorPlanReportingFreqWorkspaceModule } from './monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.module';
 
-const routes: Routes = [
+const routes = [
   {
     path: '/what-has-data',
     module: WhatHasDataModule,
