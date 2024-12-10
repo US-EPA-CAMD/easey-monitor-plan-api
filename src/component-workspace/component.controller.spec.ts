@@ -82,4 +82,23 @@ describe('ComponentWorkspaceController', () => {
       );
     });
   });
+
+  describe('updateCompnent', () => {
+    it('should updates a component record', async () => {
+      const mockedReturnDto = new ComponentDTO();
+      const mockedPayloadDto = new UpdateComponentBaseDTO();
+      const user: CurrentUser = {
+        userId: '',
+        sessionId: '',
+        expiration: '',
+        clientIp: '',
+        facilities: [],
+        roles: [],
+      };
+      jest.spyOn(service, 'updateComponent').mockResolvedValue(mockedReturnDto);
+      expect(await controller.updateComponent('','', mockedPayloadDto, user)).toBe(
+        mockedReturnDto,
+      );
+    });
+  });
 });

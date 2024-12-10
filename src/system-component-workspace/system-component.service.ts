@@ -1,4 +1,5 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
@@ -23,10 +24,12 @@ export class SystemComponentWorkspaceService {
     @Inject(forwardRef(() => ComponentWorkspaceService))
     private readonly componentService: ComponentWorkspaceService,
     private readonly map: SystemComponentMap,
-    private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext('SystemComponentWorkspaceService');
+  }
 
   async getSystemComponents(
     locationId: string,
