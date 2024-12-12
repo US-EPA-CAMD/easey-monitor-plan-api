@@ -94,7 +94,7 @@ export class MonitorPlanWorkspaceController {
   })
   @AuditLog({
     label: 'Imported monitoring plan',
-    requestBodyOutFields: ['orisCode']
+    requestBodyOutFields: ['orisCode','unitStackConfigurationData.unitId', 'unitStackConfigurationData.stackPipeId', 'monitoringLocationData.unitId']
   })
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
