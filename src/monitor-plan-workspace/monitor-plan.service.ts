@@ -213,6 +213,7 @@ export class MonitorPlanWorkspaceService {
         beginReportPeriod: methodBeginReportingPeriod.periodAbbreviation,
       });
       firstPlanRecord.beginReportPeriodId = methodBeginReportingPeriod.id;
+      firstPlanRecord.updateDate = currentDateTime();
       const repository = withTransaction(this.repository, trx);
       await repository.save(firstPlanRecord);
       await repository.resetToNeedsEvaluation(firstPlanRecord.id, userId);
@@ -1199,12 +1200,42 @@ export class MonitorPlanWorkspaceService {
     existingPlans: MonitorPlanWorkspace[],
     beginReportPeriodId: number,
   ) {
+    return this.matchToPlanByLocationsAndPeriod(
+      locationIds,
+      existingPlans,
+      beginReportPeriodId,
+      'begin',
+    );
+  }
+
+  private async matchToPlanByLocationsAndEndPeriod(
+    locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> },
+    existingPlans: MonitorPlanWorkspace[],
+    endReportPeriodId: number | null,
+  ) {
+    return this.matchToPlanByLocationsAndPeriod(
+      locationIds,
+      existingPlans,
+      endReportPeriodId,
+      'end',
+    );
+  }
+
+  private async matchToPlanByLocationsAndPeriod(
+    locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> },
+    existingPlans: MonitorPlanWorkspace[],
+    periodId: number | null,
+    periodType: 'begin' | 'end',
+  ) {
     const locationIdsString = Array.from(locationIds.unitIds)
       .concat(Array.from(locationIds.stackPipeIds))
       .sort((a, b) => a.localeCompare(b))
       .join(',');
-    const matchedPlan = existingPlans.find(plan => {
-      if (plan.beginReportPeriodId !== beginReportPeriodId) return false;
+    const matchPlan = (plan: MonitorPlanWorkspace) => {
+      if (periodType === 'begin' && plan.beginReportPeriodId !== periodId)
+        return false;
+      if (periodType === 'end' && plan.endReportPeriodId !== periodId)
+        return false;
 
       const planLocationIdsString = plan.locations
         .map(l => l.unit?.name ?? l.stackPipe?.name)
@@ -1214,9 +1245,22 @@ export class MonitorPlanWorkspaceService {
       if (locationIdsString !== planLocationIdsString) return false;
 
       return true;
-    });
+    };
 
+    const firstMatch = existingPlans.find(matchPlan);
+    const lastMatch = [...existingPlans].reverse().find(matchPlan);
+
+    const matchedPlan = firstMatch;
     if (!matchedPlan) return null;
+
+    if (firstMatch !== lastMatch) {
+      throw new EaseyException(
+        new Error(
+          'The calculated monitor plan matched multiple existing monitor plans',
+        ),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     return this.getMonitorPlan(matchedPlan.id, { full: true });
   }
@@ -1305,6 +1349,80 @@ export class MonitorPlanWorkspaceService {
     throwIfErrors(errorList);
   }
 
+  private async syncLegacyMonitorPlan({
+    existingPlans,
+    trx,
+    userId,
+    workingPlan,
+  }: {
+    existingPlans: MonitorPlanWorkspace[];
+    trx: EntityManager;
+    userId: string;
+    workingPlan: WorkingConfiguration;
+  }) {
+    if (workingPlan.endYear && workingPlan.endYear < 2009) {
+      // Plans with end years before 2009 existed before ECMPS 1.0 was fully implemented, leave them alone.
+      return {
+        status: 'unchanged',
+        plan: null,
+      };
+    }
+
+    const planEndReportPeriodId =
+      workingPlan.endYear && workingPlan.endQuarter
+        ? (
+            await this.reportingPeriodRepository.getByYearQuarter(
+              workingPlan.endYear,
+              workingPlan.endQuarter,
+            )
+          ).id
+        : null;
+
+    // Get the monitoring locations associated with the working plan.
+    const locationIds = this.getItemLocationIds(workingPlan.items);
+
+    // Match the working plan to an existing monitor plan by locations and end period.
+    const matchedPlan =
+      (await this.matchToPlanByLocationsAndEndPeriod(
+        locationIds,
+        existingPlans,
+        planEndReportPeriodId,
+      )) ??
+      (planEndReportPeriodId !== null
+        ? await this.matchToPlanByLocationsAndEndPeriod(
+            locationIds,
+            existingPlans,
+            null,
+          )
+        : null);
+
+    if (matchedPlan) {
+      if (!matchedPlan.endReportPeriodId && planEndReportPeriodId) {
+        return {
+          status: 'ended',
+          plan: await this.updateEndReportingPeriod(
+            matchedPlan,
+            planEndReportPeriodId,
+            userId,
+            trx,
+          ),
+        };
+      } else {
+        return {
+          status: 'unchanged',
+          plan: null,
+        };
+      }
+    } else {
+      throw new EaseyException(
+        new Error(
+          'Cannot create a new monitor plan with a begin period before 2009',
+        ),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   private async syncMonitorPlan({
     existingPlans,
     facilityId,
@@ -1320,6 +1438,15 @@ export class MonitorPlanWorkspaceService {
     userId: string;
     workingPlan: WorkingConfiguration;
   }) {
+    if (workingPlan.beginYear < 2009) {
+      return this.syncLegacyMonitorPlan({
+        existingPlans,
+        trx,
+        userId,
+        workingPlan,
+      });
+    }
+
     // Calculate the report period range from the working monitor plan.
     const planBeginReportPeriodId = (
       await this.reportingPeriodRepository.getByYearQuarter(
@@ -1361,7 +1488,7 @@ export class MonitorPlanWorkspaceService {
       } else {
         return {
           status: 'unchanged',
-          plan: matchedPlan,
+          plan: null,
         };
       }
     } else {

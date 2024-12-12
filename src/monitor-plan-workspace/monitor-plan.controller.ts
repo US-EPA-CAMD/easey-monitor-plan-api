@@ -110,6 +110,8 @@ export class MonitorPlanWorkspaceController {
   @RoleGuard(
     {
       bodyParam: 'orisCode',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
+      permissionsForFacility: ['DSMP'],
     },
     LookupType.Facility,
   )

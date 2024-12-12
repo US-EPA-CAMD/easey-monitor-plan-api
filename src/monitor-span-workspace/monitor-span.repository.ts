@@ -38,18 +38,18 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
     }
 
     query.andWhere(
-      `((
-        ms.beginDate = :beginDate AND ms.beginHour = :beginHour
-      ) OR (
-        ms.endDate = :endDate AND ms.endHour = :endHour
-      ))`,
-      {
-        beginDate,
-        beginHour,
-        endDate,
-        endHour,
-      },
+      `(ms.beginDate = :beginDate AND ms.beginHour = :beginHour)`,
+      { beginDate, beginHour }
     );
+
+    if (endDate !== null && endHour !== null) {
+      query.andWhere(
+        '(ms.endDate = :endDate AND ms.endHour = :endHour)',
+        { endDate, endHour }
+      );
+    } else {
+      query.andWhere('ms.endDate IS NULL AND ms.endHour IS NULL');
+    }
 
     return query.getOne();
   }

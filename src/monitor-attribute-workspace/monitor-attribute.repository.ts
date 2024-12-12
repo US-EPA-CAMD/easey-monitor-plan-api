@@ -24,14 +24,25 @@ export class MonitorAttributeWorkspaceRepository extends Repository<
   async getAttributeByLocIdAndDate(
     locationId: string,
     beginDate: Date,
+    endDate: Date,
   ): Promise<MonitorAttribute> {
-    return this.createQueryBuilder('ma')
+    const query = this.createQueryBuilder('ma')
       .where('ma.locationId = :locationId', {
         locationId,
       })
       .andWhere('ma.beginDate = :beginDate', {
         beginDate,
-      })
-      .getOne();
+      });
+    
+    if (endDate !== null) {
+      query.andWhere(
+        '(ma.endDate = :endDate)',
+        { endDate, }
+      );
+    } else {
+      query.andWhere('ma.endDate IS NULL');
+    }
+
+    return query.getOne();
   }
 }
