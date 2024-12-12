@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
@@ -13,6 +13,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Components')
+@ApiExcludeController()
 export class ComponentWorkspaceController {
   constructor(
     private readonly repository: ComponentWorkspaceRepository,
@@ -24,7 +25,6 @@ export class ComponentWorkspaceController {
   }
 
   @Get()
-  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: ComponentDTO,
@@ -43,7 +43,6 @@ export class ComponentWorkspaceController {
   }
 
   @Post()
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -67,7 +66,6 @@ export class ComponentWorkspaceController {
   }
 
   @Put(':compId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

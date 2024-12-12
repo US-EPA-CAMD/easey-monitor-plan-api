@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -13,11 +13,11 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Qualifications')
+@ApiExcludeController()
 export class MonitorQualificationWorkspaceController {
   constructor(private readonly service: MonitorQualificationWorkspaceService) {}
 
   @Get()
-  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: MonitorQualificationDTO,
@@ -39,7 +39,6 @@ export class MonitorQualificationWorkspaceController {
   }
 
   @Post()
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -66,7 +65,6 @@ export class MonitorQualificationWorkspaceController {
   }
 
   @Put(':qualId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

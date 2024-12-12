@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
@@ -9,11 +9,11 @@ import { UnitProgramWorkspaceService } from './unit-program.service';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Programs')
+@ApiExcludeController()
 export class UnitProgramWorkspaceController {
   constructor(private readonly service: UnitProgramWorkspaceService) {}
 
   @Get()
-  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: UnitProgramDTO,

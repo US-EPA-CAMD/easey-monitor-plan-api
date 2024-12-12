@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -13,11 +13,11 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('LME Qualifications')
+@ApiExcludeController()
 export class LMEQualificationWorkspaceController {
   constructor(private readonly service: LMEQualificationWorkspaceService) {}
 
   @Get()
-  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: LMEQualificationDTO,
@@ -40,7 +40,6 @@ export class LMEQualificationWorkspaceController {
   }
 
   @Put(':lmeQualId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -71,7 +70,6 @@ export class LMEQualificationWorkspaceController {
   }
 
   @Post()
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

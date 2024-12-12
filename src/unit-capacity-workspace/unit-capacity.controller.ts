@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiExcludeEndpoint, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -13,11 +13,11 @@ import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Capacities')
+@ApiExcludeController()
 export class UnitCapacityWorkspaceController {
   constructor(private readonly service: UnitCapacityWorkspaceService) {}
 
   @Get()
-  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: UnitCapacityDTO,
@@ -40,7 +40,6 @@ export class UnitCapacityWorkspaceController {
   }
 
   @Post()
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -69,7 +68,6 @@ export class UnitCapacityWorkspaceController {
   }
 
   @Put(':unitCapacityId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

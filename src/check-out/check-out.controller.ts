@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiSecurity, ApiOkResponse, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiSecurity, ApiOkResponse, ApiExcludeController } from '@nestjs/swagger';
 import { RoleGuard, User, AuditLog } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -14,6 +14,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Check-Outs')
+@ApiExcludeController()
 export class CheckOutController {
   constructor(
     private readonly ucoService: UserCheckOutService,
@@ -21,7 +22,6 @@ export class CheckOutController {
   ) { }
 
   @Get()
-  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: UserCheckOutDTO,
@@ -33,7 +33,6 @@ export class CheckOutController {
   }
 
   @Post(':planId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     { pathParam: 'planId', enforceCheckout: false },
     LookupType.MonitorPlan,
@@ -55,7 +54,6 @@ export class CheckOutController {
   }
 
   @Put(':planId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     { pathParam: 'planId', enforceCheckout: false },
     LookupType.MonitorPlan,
@@ -75,7 +73,6 @@ export class CheckOutController {
   }
 
   @Delete(':planId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     { pathParam: 'planId', enforceCheckout: false },
     LookupType.MonitorPlan,

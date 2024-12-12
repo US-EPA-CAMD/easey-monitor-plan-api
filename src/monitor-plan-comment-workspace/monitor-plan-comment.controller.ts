@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
@@ -9,11 +9,11 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Comments')
+@ApiExcludeController()
 export class MonitorPlanCommentWorkspaceController {
   constructor(private readonly service: MonitorPlanCommentWorkspaceService) {}
 
   @Get()
-  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: MonitorPlanCommentDTO,

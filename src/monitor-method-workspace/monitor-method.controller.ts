@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -13,11 +13,11 @@ import { MonitorMethodWorkspaceService } from './monitor-method.service';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Methods')
+@ApiExcludeController()
 export class MonitorMethodWorkspaceController {
   constructor(private service: MonitorMethodWorkspaceService) {}
 
   @Get()
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       enforceCheckout: false,
@@ -36,7 +36,6 @@ export class MonitorMethodWorkspaceController {
   }
 
   @Post()
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -62,7 +61,6 @@ export class MonitorMethodWorkspaceController {
   }
 
   @Put(':methodId')
-  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
