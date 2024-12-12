@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
@@ -24,6 +24,7 @@ export class ComponentWorkspaceController {
   }
 
   @Get()
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: ComponentDTO,
@@ -42,6 +43,7 @@ export class ComponentWorkspaceController {
   }
 
   @Post()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -65,6 +67,7 @@ export class ComponentWorkspaceController {
   }
 
   @Put(':compId')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

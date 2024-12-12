@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiSecurity, ApiOkResponse, ApiExcludeEndpoint } from '@nestjs/swagger';
 import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
@@ -21,6 +21,7 @@ export class AnalyzerRangeWorkspaceController {
   ) {}
 
   @Get()
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: AnalyzerRangeDTO,
@@ -42,6 +43,7 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Post()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -71,6 +73,7 @@ export class AnalyzerRangeWorkspaceController {
   }
 
   @Put(':analyzerRangeId')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

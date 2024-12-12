@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -18,6 +18,7 @@ export class MonitorSpanWorkspaceController {
   ) {}
 
   @Get()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       enforceCheckout: false,
@@ -36,6 +37,7 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Put(':spanId')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -64,6 +66,7 @@ export class MonitorSpanWorkspaceController {
   }
 
   @Post()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

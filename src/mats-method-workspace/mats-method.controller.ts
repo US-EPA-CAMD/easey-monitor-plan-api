@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -18,6 +18,7 @@ export class MatsMethodWorkspaceController {
   ) {}
 
   @Get()
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: MatsMethodDTO,
@@ -37,6 +38,7 @@ export class MatsMethodWorkspaceController {
   }
 
   @Post()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -63,6 +65,7 @@ export class MatsMethodWorkspaceController {
   }
 
   @Put(':methodId')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

@@ -7,7 +7,7 @@ import {
   Controller,
   Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanImportResponseDTO } from '../dtos/monitor-plan-import-response.dto';
@@ -34,6 +34,7 @@ export class MonitorPlanWorkspaceController {
   ) { }
 
   @Get('export')
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'Retrieves workspace Monitor Plan record.',
@@ -59,6 +60,7 @@ export class MonitorPlanWorkspaceController {
 
   // TEMP: unconventional route path to avoid messing with URL's before demo
   @Get(':planId')
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     type: MonitorPlanDTO,
     description: 'Retrieves information needed to refresh a monitor plan',
@@ -76,6 +78,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Post('import')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       importLocationSources: ['locations'],
@@ -103,6 +106,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Post('single-unit')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       bodyParam: 'orisCode',
@@ -130,6 +134,7 @@ export class MonitorPlanWorkspaceController {
   }
 
   @Delete(':planId/revert')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'planId',

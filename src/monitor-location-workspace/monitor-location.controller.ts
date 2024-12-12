@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
@@ -12,6 +12,7 @@ export class MonitorLocationWorkspaceController {
   constructor(readonly service: MonitorLocationWorkspaceService) {}
 
   @Get(':locId')
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: MonitorLocationDTO,
@@ -31,6 +32,7 @@ export class MonitorLocationWorkspaceController {
   }
 
   @Get(':locId/relationships')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       enforceCheckout: false,

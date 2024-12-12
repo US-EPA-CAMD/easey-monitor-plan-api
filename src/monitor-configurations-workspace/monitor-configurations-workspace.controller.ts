@@ -1,5 +1,5 @@
 import { Get, Controller, Query } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
@@ -14,6 +14,7 @@ export class MonitorConfigurationsWorkspaceController {
   constructor(private service: MonitorConfigurationsWorkspaceService) {}
 
   @Get()
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: MonitorPlanDTO,

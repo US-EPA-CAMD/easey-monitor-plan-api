@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -14,6 +14,7 @@ export class DuctWafWorkspaceController {
   constructor(private readonly service: DuctWafWorkspaceService) {}
 
   @Get()
+  @ApiExcludeEndpoint()
   @ApiOkResponse({
     isArray: true,
     type: DuctWafDTO,
@@ -32,6 +33,7 @@ export class DuctWafWorkspaceController {
   }
 
   @Post()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -57,6 +59,7 @@ export class DuctWafWorkspaceController {
   }
 
   @Put(':ductWafId')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',

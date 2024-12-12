@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -17,6 +17,7 @@ export class MonitorDefaultWorkspaceController {
   constructor(private readonly service: MonitorDefaultWorkspaceService) {}
 
   @Get()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       enforceCheckout: false,
@@ -37,6 +38,7 @@ export class MonitorDefaultWorkspaceController {
   }
 
   @Put(':defaultId')
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
@@ -64,6 +66,7 @@ export class MonitorDefaultWorkspaceController {
   }
 
   @Post()
+  @ApiExcludeEndpoint()
   @RoleGuard(
     {
       pathParam: 'locId',
