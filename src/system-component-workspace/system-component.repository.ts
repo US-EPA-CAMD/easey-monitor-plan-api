@@ -51,13 +51,26 @@ export class SystemComponentWorkspaceRepository extends Repository<
     componentId: string,
     beginDate: Date,
     beginHour: number,
+    endDate: Date,
+    endHour: number,
   ): Promise<SystemComponent> {
-    return this.createQueryBuilder('msc')
+    const query = this.createQueryBuilder('msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('c.componentId = :componentId', { componentId })
       .andWhere('msc.monitoringSystemRecordId = :monSysId', { monSysId })
       .andWhere('msc.beginDate = :beginDate', { beginDate })
-      .andWhere('msc.beginHour = :beginHour', { beginHour })
-      .getOne();
+      .andWhere('msc.beginHour = :beginHour', { beginHour });
+    
+    if (endDate !== null && endHour !== null) {
+      query.andWhere(
+        '(msc.endDate = :endDate AND msc.endHour = :endHour)',
+        { endDate, endHour }
+      );
+    } else {
+      query.andWhere('msc.endDate IS NULL AND msc.endHour IS NULL');
+    }
+
+
+    return query.getOne();
   }
 }
