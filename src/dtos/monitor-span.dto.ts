@@ -9,9 +9,9 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  Min,
   ValidateIf,
   ValidationArguments,
+  min
 } from 'class-validator';
 import {
   IsInRange,
@@ -31,7 +31,7 @@ import {
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
 import { BeginEndDatesConsistent } from '../utils';
-import { IsActiveRecord } from '../import-checks/pipes/is-inactive-records.pipe';
+import { IfIsAtive } from '../import-checks/pipes/if-is-active-records.pipe';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
@@ -153,15 +153,12 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
-  @Min(MPF_MIN_VALUE, {
+  @IfIsAtive((value) => min(value, MPF_MIN_VALUE), {}, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-3-B', {
         key: KEY,
       });
     },
-  })
-  @IsActiveRecord({
-    fieldname: "mpfValue"
   })
   @ValidateIf(o => o.componentTypeCode === 'FLOW' || o.mpfValue !== null)
   mpfValue: number;
