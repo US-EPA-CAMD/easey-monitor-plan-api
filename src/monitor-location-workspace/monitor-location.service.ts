@@ -39,7 +39,7 @@ import { MonitorLocationWorkspaceRepository } from './monitor-location.repositor
 
 @Injectable()
 export class MonitorLocationWorkspaceService {
-  readonly errorMsg: 'Monitor Location Not Found';
+  readonly errorMsg:string = 'Monitor Location Not Found';
   constructor(
     private readonly repository: MonitorLocationWorkspaceRepository,
     private readonly map: MonitorLocationMap,

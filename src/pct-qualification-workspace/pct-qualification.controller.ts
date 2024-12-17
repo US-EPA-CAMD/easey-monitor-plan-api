@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -31,6 +31,10 @@ export class PCTQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location PCT qualifications',
+    requestParamsOutFields: ['locId', 'qualId'],
+  })
   getPCTQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
@@ -47,6 +51,11 @@ export class PCTQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location PCT qualification record',
+    requestParamsOutFields: ['locId', 'qualId', 'pctQualId'],
+    requestBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: PCTQualificationDTO,
     description:
@@ -77,6 +86,11 @@ export class PCTQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location PCT qualification record',
+    requestParamsOutFields: ['locId', 'qualId'],
+    requestBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: PCTQualificationDTO,
