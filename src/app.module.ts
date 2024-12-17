@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, RequestMethod, MiddlewareConsumer } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { RouterModule } from 'nest-router';
 import { ConfigModule } from '@nestjs/config';
+import { RouterModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CheckCatalogModule } from '@us-epa-camd/easey-common/check-catalog';
@@ -10,6 +10,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { CorsOptionsModule } from '@us-epa-camd/easey-common/cors-options';
 import { ConnectionModule } from '@us-epa-camd/easey-common/connection';
 import { DbLookupValidator } from '@us-epa-camd/easey-common/validators';
+import { MaintenanceMiddleware } from '@us-epa-camd/easey-common/middleware/maintenance.middleware';
 
 import routes from './routes';
 import appConfig from './config/app.config';
@@ -30,7 +31,7 @@ import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.modu
 
 @Module({
   imports: [
-    RouterModule.forRoutes(routes),
+    RouterModule.register(routes),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [dbConfig, appConfig],
@@ -61,4 +62,8 @@ import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.modu
   ],
   providers: [DbLookupValidator],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MaintenanceMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL })
+  }
+}
