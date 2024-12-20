@@ -3,7 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
-import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
@@ -27,6 +27,10 @@ export class MonitorPlanCommentWorkspaceController {
     },
     LookupType.MonitorPlan,
   )
+  @AuditLog({
+    label: 'Retrieved workspace comments',
+    requestParamsOutFields: ['planId'],
+  })
   getComments(
     @Param('planId') planId: string,
   ): Promise<MonitorPlanCommentDTO[]> {

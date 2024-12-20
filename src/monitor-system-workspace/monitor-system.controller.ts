@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorSystemWorkspaceService } from './monitor-system.service';
@@ -19,7 +19,7 @@ export class MonitorSystemWorkspaceController {
   constructor(
     private service: MonitorSystemWorkspaceService,
     private checkService: MonitorSystemCheckService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -36,6 +36,10 @@ export class MonitorSystemWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location systems',
+    requestParamsOutFields: ['locId'],
+  })
   getSystems(@Param('locId') locationId: string): Promise<MonitorSystemDTO[]> {
     return this.service.getSystems(locationId);
   }
@@ -49,6 +53,11 @@ export class MonitorSystemWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location system record',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description: 'Creates a workspace system record for a give location',
@@ -75,6 +84,11 @@ export class MonitorSystemWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location system record',
+    requestParamsOutFields: ['locId', 'sysId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: MonitorSystemDTO,
     description:

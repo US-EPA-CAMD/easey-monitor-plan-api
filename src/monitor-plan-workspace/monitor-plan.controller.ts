@@ -48,7 +48,7 @@ export class MonitorPlanWorkspaceController {
     LookupType.MonitorPlan,
   )
   @AuditLog({
-    label: 'Export Monitor Plan',
+    label: 'Exported monitoring plan',
     requestQueryOutFields: ['planId']
   })
   exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
@@ -72,6 +72,10 @@ export class MonitorPlanWorkspaceController {
     },
     LookupType.MonitorPlan,
   )
+  @AuditLog({
+    label: 'Retrieved monitoring plan',
+    requestParamsOutFields: ['planId']
+  })
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
   }
@@ -90,8 +94,8 @@ export class MonitorPlanWorkspaceController {
     description: 'imports an entire monitor plan from JSON payload',
   })
   @AuditLog({
-    label: 'Import a Monitor Plan',
-    requestBodyOutFields: ['orisCode'],
+    label: 'Imported monitoring plan',
+    requestBodyOutFields: ['orisCode','unitStackConfigurationData.unitId', 'unitStackConfigurationData.stackPipeId', 'monitoringLocationData.unitId']
   })
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,
@@ -116,6 +120,10 @@ export class MonitorPlanWorkspaceController {
     type: MonitorPlanDTO,
     description:
       'creates a new monitor plan for a single unit that has not been associated with any other plan',
+  })
+  @AuditLog({
+    label: 'Created single unit plan',
+    requestBodyOutFields: ['orisCode', 'unitId'],
   })
   async createNewSingleUnitMonitorPlan(
     @Body() payload: SingleUnitMonitorPlanRequestDTO,

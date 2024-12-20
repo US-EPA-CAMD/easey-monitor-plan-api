@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
-import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
@@ -28,6 +28,10 @@ export class UnitProgramWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location unit programs',
+    requestParamsOutFields: ['unitId']
+  })
   getUnitProgramsByUnitRecordId(
     @Param('unitId') unitId: number,
   ): Promise<UnitProgramDTO[]> {

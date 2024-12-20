@@ -4,7 +4,7 @@ import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
 } from '../dtos/analyzer-range.dto';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
@@ -35,6 +35,10 @@ export class AnalyzerRangeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location component analyzer range records',
+    requestParamsOutFields: ['locId', 'compId']
+  })
   getAnalyzerRanges(
     @Param('locId') locId: string,
     @Param('compId') compId: string,
@@ -51,6 +55,11 @@ export class AnalyzerRangeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location component analyzer range record',
+    requestParamsOutFields: ['locId', 'compId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -80,6 +89,11 @@ export class AnalyzerRangeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location component analyzer range record',
+    requestParamsOutFields: ['locId', 'compId', 'analyzerRangeId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,

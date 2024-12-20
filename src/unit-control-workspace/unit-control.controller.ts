@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -34,6 +34,10 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location unit controls',
+    requestParamsOutFields:['locId', 'unitId']
+  })
   getUnitControls(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
@@ -50,6 +54,11 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location unit control record',
+    requestParamsOutFields:['locId', 'unitId', 'unitControlId'],
+    responseBodyOutFields:'*',
+  })
   @ApiOkResponse({
     type: UnitControlDTO,
     description: 'Updates a workspace unit control record by unit control ID',
@@ -80,6 +89,11 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location unit control record',
+    requestParamsOutFields:['locId', 'unitId'],
+    responseBodyOutFields:'*',
+  })
   @ApiOkResponse({
     isArray: true,
     type: UnitControlDTO,

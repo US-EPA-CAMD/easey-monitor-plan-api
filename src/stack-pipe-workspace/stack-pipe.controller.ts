@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Query } from '@nestjs/common';
 import { ApiExcludeController, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
@@ -27,6 +27,10 @@ export class StackPipeWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Imported workspace stack pipes',
+    responseBodyOutFields:'*'
+  })
   importStackPipe(
     @Query('draft') draft: boolean,
     @Body() stackPipe: StackPipeBaseDTO,

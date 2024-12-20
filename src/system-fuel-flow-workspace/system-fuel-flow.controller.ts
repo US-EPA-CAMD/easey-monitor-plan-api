@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -31,6 +31,10 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location system fuel flow records',
+    requestParamsOutFields: ['locId', 'sysId']
+  })
   getFuelFlows(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
@@ -47,6 +51,11 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location system fuel flow record',
+    requestParamsOutFields: ['locId', 'sysId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description: 'Creates official fuel flow records for a monitor system',
@@ -74,6 +83,11 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location system fuel flow record',
+    requestParamsOutFields: ['locId', 'sysId', 'fuelFlowId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description:

@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
@@ -26,6 +26,10 @@ export class MonitorMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location methods',
+    requestParamsOutFields: ['locId']
+  })
   @ApiOkResponse({
     isArray: true,
     type: MonitorMethodDTO,
@@ -44,6 +48,11 @@ export class MonitorMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location method record',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Creates workspace Monitor Method record',
@@ -69,6 +78,11 @@ export class MonitorMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location method record',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorMethodDTO,
     description: 'Updates workspace Monitor Method record',

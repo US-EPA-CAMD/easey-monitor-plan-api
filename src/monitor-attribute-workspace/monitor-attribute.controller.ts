@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import {AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -31,6 +31,10 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location attribute records',
+    requestParamsOutFields:['locId']
+  })
   getAttributes(
     @Param('locId') locationId: string,
   ): Promise<MonitorAttributeDTO[]> {
@@ -46,6 +50,11 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location attribute record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Creates a workspace monitor location attribute record',
@@ -71,6 +80,11 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location attribute record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Updates a workspace monitor location attribute record',

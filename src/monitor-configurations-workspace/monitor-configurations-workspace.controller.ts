@@ -1,6 +1,6 @@
 import { Get, Controller, Query } from '@nestjs/common';
+import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery, ApiExcludeController } from '@nestjs/swagger';
-import { RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
 
@@ -40,6 +40,10 @@ export class MonitorConfigurationsWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Retrieved workspace configurations',
+    requestQueryOutFields: ['orisCodes', 'monPlanIds']
+  })
   getConfigurations(
     @Query() dto: ConfigurationMultipleParamsDTO,
   ): Promise<MonitorPlanDTO[]> {

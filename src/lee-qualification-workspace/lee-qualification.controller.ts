@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { LEEQualificationWorkspaceService } from './lee-qualification.service';
@@ -32,6 +32,10 @@ export class LEEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location LEE qualifications',
+    requestParamsOutFields: ['locId', 'qualId']
+  })
   getLEEQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
@@ -48,6 +52,11 @@ export class LEEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location LEE qualification record',
+    requestParamsOutFields: ['locId', 'qualId', 'leeQualId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: LEEQualificationDTO,
     description:
@@ -78,6 +87,11 @@ export class LEEQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location LEE qualification record',
+    requestParamsOutFields: ['locId', 'qualId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: LEEQualificationDTO,

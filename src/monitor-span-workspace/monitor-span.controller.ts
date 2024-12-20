@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
@@ -27,6 +27,10 @@ export class MonitorSpanWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location spans',
+    requestParamsOutFields:['locId']
+  })
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,
@@ -45,6 +49,11 @@ export class MonitorSpanWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location span record',
+    requestParamsOutFields:['locId', 'spanId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorSpanDTO,
     description: 'Updates a workspace span record for a monitor location',
@@ -73,6 +82,11 @@ export class MonitorSpanWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location span record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: MonitorSpanDTO,
