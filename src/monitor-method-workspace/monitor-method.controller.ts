@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -9,11 +9,12 @@ import {
   MonitorMethodDTO,
 } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Methods')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class MonitorMethodWorkspaceController {
   constructor(private service: MonitorMethodWorkspaceService) {}
 

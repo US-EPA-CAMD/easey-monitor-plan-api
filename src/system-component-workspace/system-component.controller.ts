@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -10,11 +10,12 @@ import {
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Components')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class SystemComponentWorkspaceController {
   constructor(private service: SystemComponentWorkspaceService) {}
 

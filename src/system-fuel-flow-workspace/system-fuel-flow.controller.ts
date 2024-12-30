@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -9,11 +9,12 @@ import {
 } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Fuel Flows')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class SystemFuelFlowWorkspaceController {
   constructor(private readonly service: SystemFuelFlowWorkspaceService) {}
 

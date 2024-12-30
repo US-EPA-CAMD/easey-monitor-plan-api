@@ -1,15 +1,16 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { MonitorPlanReportingFrequencyWorkspaceService } from './monitor-plan-reporting-freq.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Reporting Frequencies')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class MonitorPlanReportingFrequencyWorkspaceController {
   constructor(
     private readonly service: MonitorPlanReportingFrequencyWorkspaceService,

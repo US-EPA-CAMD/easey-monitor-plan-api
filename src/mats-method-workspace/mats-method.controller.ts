@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -7,11 +7,12 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceService } from './mats-method.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('MATS Methods')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class MatsMethodWorkspaceController {
   constructor(
     private readonly service: MatsMethodWorkspaceService,

@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiSecurity, ApiOkResponse, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
 import { RoleGuard, User, AuditLog } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -10,11 +10,12 @@ import {
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Check-Outs')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class CheckOutController {
   constructor(
     private readonly ucoService: UserCheckOutService,

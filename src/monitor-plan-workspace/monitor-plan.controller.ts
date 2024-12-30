@@ -7,7 +7,7 @@ import {
   Controller,
   Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanImportResponseDTO } from '../dtos/monitor-plan-import-response.dto';
@@ -22,11 +22,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Plans')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class MonitorPlanWorkspaceController {
   constructor(
     private readonly service: MonitorPlanWorkspaceService,

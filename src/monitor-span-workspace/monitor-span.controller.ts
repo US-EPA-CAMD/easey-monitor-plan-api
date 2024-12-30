@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -7,11 +7,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanChecksService } from './monitor-span-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Spans')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class MonitorSpanWorkspaceController {
   constructor(
     private service: MonitorSpanWorkspaceService,

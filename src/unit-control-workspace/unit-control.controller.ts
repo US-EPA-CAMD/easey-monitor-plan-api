@@ -1,18 +1,18 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceService } from './unit-control.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Controls')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class UnitControlWorkspaceController {
   constructor(
     private readonly service: UnitControlWorkspaceService,

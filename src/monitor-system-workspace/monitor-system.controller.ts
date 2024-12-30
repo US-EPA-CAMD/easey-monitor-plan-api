@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -10,11 +10,12 @@ import {
 } from '../dtos/monitor-system.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiTags('Systems')
 @ApiSecurity('APIKey')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class MonitorSystemWorkspaceController {
   constructor(
     private service: MonitorSystemWorkspaceService,

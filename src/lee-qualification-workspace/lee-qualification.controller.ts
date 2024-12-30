@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExcludeController } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -9,11 +9,12 @@ import {
   LEEQualificationDTO,
 } from '../dtos/lee-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('LEE Qualifications')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class LEEQualificationWorkspaceController {
   constructor(private readonly service: LEEQualificationWorkspaceService) {}
 
