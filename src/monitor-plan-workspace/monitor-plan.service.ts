@@ -446,9 +446,9 @@ export class MonitorPlanWorkspaceService {
     draft = false,
   ) {
     if (draft) {
-      this.logger.debug(`Formulating a draft monitor plan for unit ${unitId}`);
+      this.logger.log(`Formulating a draft monitor plan for unit ${unitId}`);
     } else {
-      this.logger.debug(`Creating a new monitor plan for unit ${unitId}`);
+      this.logger.log(`Creating a new monitor plan for unit ${unitId}`);
     }
 
     // Check if the unit is already associated with a monitor plan.
@@ -1035,9 +1035,9 @@ export class MonitorPlanWorkspaceService {
     draft = false,
   ) {
     if (draft) {
-      this.logger.debug('Formulating a draft monitor plan');
+      this.logger.log('Formulating a draft monitor plan');
     } else {
-      this.logger.debug('Importing monitor plan');
+      this.logger.log('Importing monitor plan');
     }
 
     const facilityId = await this.plantService.getFacIdFromOris(
@@ -1058,7 +1058,7 @@ export class MonitorPlanWorkspaceService {
 
       /* MONITOR LOCATION MERGE LOGIC */
 
-      this.logger.debug('Importing monitor locations');
+      this.logger.log('Importing monitor locations');
       await this.monitorLocationService.importMonitorLocations(
         payload,
         facilityId,
@@ -1068,7 +1068,7 @@ export class MonitorPlanWorkspaceService {
 
       /* UNIT STACK CONFIGURATION MERGE LOGIC */
 
-      this.logger.debug('Importing unit stack configurations');
+      this.logger.log('Importing unit stack configurations');
       await this.unitStackService.importUnitStacks(
         payload,
         facilityId,
