@@ -8,8 +8,8 @@ import { Injectable } from '@nestjs/common';
 import { isInactiveRecord } from './is-inactive-record';
 
 @Injectable()
-@ValidatorConstraint({ name: 'IfIsAtive' })
-export class IfIsAtiveValidator implements ValidatorConstraintInterface {
+@ValidatorConstraint({ name: 'IfIsInActive' })
+export class IfIsActiveValidator implements ValidatorConstraintInterface {
     constructor() { }
 
     async validate(value: any, args: ValidationArguments) {

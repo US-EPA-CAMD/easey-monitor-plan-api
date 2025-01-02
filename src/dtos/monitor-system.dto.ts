@@ -24,6 +24,7 @@ import {
   IsIsoFormat,
   IsValidCode,
   IsValidDate,
+  matchesRegex
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -38,8 +39,7 @@ import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { SystemTypeCode } from '../entities/system-type-code.entity';
 import { BeginEndDatesConsistent } from '../utils';
 import { SystemDesignationCode } from '../entities/system-designation-code.entity';
-import { IfIsAtive } from '../import-checks/pipes/if-is-active-records.pipe';
-import { matchesRegex } from '../import-checks/pipes/matches-regex.pipe';
+import { IfIsActive } from '../import-checks/pipes/if-is-active-records.pipe';
 
 const KEY = 'Monitor System';
 
@@ -58,7 +58,7 @@ export class MonitorSystemBaseDTO {
       });
     },
   })
-  @IfIsAtive((value) => matchesRegex(value, '^[A-Z0-9]{1,3}$'), {}, {
+  @IfIsActive((value) => matchesRegex(value, '^[A-Z0-9]{1,3}$'), {}, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-7-B', {
         iD: args.value,

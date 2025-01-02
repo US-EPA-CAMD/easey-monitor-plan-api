@@ -1,19 +1,19 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { IfIsAtiveValidator } from '../../utilities/if-is-active.validator';
+import { IfIsActiveValidator } from '../../utilities/if-is-active.validator';
 
-export function IfIsAtive(
+export function IfIsActive(
   validateFunction: (value: unknown) => boolean,
   isInactiveOtions: unknown,
   validationOptions?: ValidationOptions
 ) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
-      name: "IfIsAtive",
+      name: "IfIsActive",
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [{ validateFunction, isInactiveOtions }],
-      validator: IfIsAtiveValidator,
+      validator: IfIsActiveValidator,
     });
   };
 }

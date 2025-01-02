@@ -8,7 +8,8 @@ import {
   MaxLength,
   ValidateIf,
   ValidationArguments,
-  isNotEmpty
+  isNotEmpty,
+  isString
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -31,7 +32,7 @@ import {
 } from '../utilities/constants';
 import { FuelCode } from '../entities/fuel-code.entity';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { IfIsAtive } from '../import-checks/pipes/if-is-active-records.pipe';
+import { IfIsActive } from '../import-checks/pipes/if-is-active-records.pipe';
 
 const KEY = 'Monitor Default';
 
@@ -147,6 +148,14 @@ export class MonitorDefaultBaseDTO {
     name:
       propertyMetadata.monitorDefaultDTODefaultPurposeCode.fieldLabels.value,
   })
+  @IfIsActive(isNotEmpty, {}, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-51-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct purpose_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -160,22 +169,23 @@ export class MonitorDefaultBaseDTO {
         );
       },
     },
+    { ignoreEmptyIfInactive: true }
   )
-  @IsString()
-  @IfIsAtive(isNotEmpty, {}, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('DEFAULT-51-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
+  @IfIsActive(isString, {})
   defaultPurposeCode: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorDefaultDTOFuelCode.description,
     example: propertyMetadata.monitorDefaultDTOFuelCode.example,
     name: propertyMetadata.monitorDefaultDTOFuelCode.fieldLabels.value,
+  })
+  @IfIsActive(isNotEmpty, {}, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-53-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   @IsValidCode(FuelCode, {
     message: (args: ValidationArguments) => {
@@ -186,15 +196,7 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
-  @IsString()
-  @IfIsAtive(isNotEmpty, {}, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('DEFAULT-53-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
+  @IfIsActive(isString, {})
   fuelCode: string;
 
   @ApiProperty({
@@ -237,6 +239,14 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTODefaultSourceCode.example,
     name: propertyMetadata.monitorDefaultDTODefaultSourceCode.fieldLabels.value,
   })
+  @IfIsActive(isNotEmpty, {}, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('DEFAULT-52-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInDbValues(
     'SELECT distinct source_code as "value" FROM camdecmpsmd.vw_defaults_master_data_relationships',
     {
@@ -250,16 +260,9 @@ export class MonitorDefaultBaseDTO {
         );
       },
     },
+    { ignoreEmptyIfInactive: true }
   )
-  @IsString()
-  @IfIsAtive(isNotEmpty, {}, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('DEFAULT-52-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
+  @IfIsActive(isString, {})
   defaultSourceCode: string;
 
   @ApiProperty({
