@@ -9,6 +9,8 @@ import { SystemComponentBaseDTO } from '../dtos/system-component.dto';
 import { SystemComponentMasterDataRelationshipRepository } from '../system-component-master-data-relationship/system-component-master-data-relationship.repository';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
 import { ComponentWorkspaceRepository } from './component.repository';
+import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
+import { isInactiveRecord } from '../utilities/is-inactive-record';
 
 const KEY = 'Component';
 
@@ -19,7 +21,7 @@ export class ComponentCheckService {
     private readonly sysCompMDRelRepository: SystemComponentMasterDataRelationshipRepository,
     private readonly usedIdRepository: UsedIdentifierRepository,
     private readonly componentRepository: ComponentWorkspaceRepository,
-  ) {}
+  ) { }
 
   private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
@@ -40,11 +42,12 @@ export class ComponentCheckService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     errorLocation: string = '',
+    monitoringSystemData?: UpdateMonitorSystemDTO[]
   ) {
     const errorList: string[] = [];
     let error: string = null;
 
-    error = await this.component13Check(component, errorLocation);
+    error = await this.component13Check(component, errorLocation, monitoringSystemData);
     if (error) {
       errorList.push(error);
     }
@@ -73,6 +76,7 @@ export class ComponentCheckService {
   private async component13Check(
     component: UpdateComponentBaseDTO,
     errorLocation: string = '',
+    monitoringSystemData?: UpdateMonitorSystemDTO[]
   ): Promise<string> {
     let error = null;
 
@@ -83,7 +87,14 @@ export class ComponentCheckService {
         basisCode: component.basisCode ?? IsNull(),
       });
 
-      if (!result) {
+      const validateActiveRecord = new Set();
+      monitoringSystemData?.forEach((system) => {
+        system.monitoringSystemComponentData?.forEach((com) => {
+          validateActiveRecord.add(!isInactiveRecord(com.beginDate, com.endDate))
+        })
+      })
+
+      if (!result && validateActiveRecord.has(true)) {
         error =
           errorLocation +
           this.getMessage('COMPON-13-A', {

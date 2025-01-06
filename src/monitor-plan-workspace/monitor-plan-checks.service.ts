@@ -115,18 +115,6 @@ export class MonitorPlanChecksService {
         }
       });
 
-      monitorLocation.componentData?.forEach((component, compIdx) => {
-        promises.push(
-          this.componentChecksService.runChecks(
-            locationId,
-            component,
-            true,
-            false,
-            `locations.${locIdx}.components.${compIdx}.`,
-          ),
-        );
-      });
-
       monitorLocation.monitoringSystemData?.forEach((system, sysIdx) => {
         if (!system.endDate) {
           promises.push(
@@ -140,6 +128,21 @@ export class MonitorPlanChecksService {
           );
         }
       });
+
+      monitorLocation.componentData?.forEach((component, compIdx) => {
+        promises.push(
+          this.componentChecksService.runChecks(
+            locationId,
+            component,
+            true,
+            false,
+            `locations.${locIdx}.components.${compIdx}.`,
+            monitorLocation.monitoringSystemData
+          ),
+        );
+      });
+
+      
     });
 
     this.throwIfErrors(await this.extractErrors(promises));

@@ -6,15 +6,30 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
+import { isInactiveRecord } from '../../utilities/is-inactive-record';
 import { DataSource } from 'typeorm';
+
+interface ignoreOptions {
+  ignoreEmptyIfInactive?: boolean;
+}
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsInDbValuesConstraint implements ValidatorConstraintInterface {
-  constructor(private readonly connection: DataSource) {}
+  constructor(private readonly connection: DataSource) { }
 
   validate(sql: string, args: ValidationArguments) {
-    return this.connection.query(args.constraints[0]).then(data => {
+    const options = args.constraints[0].options;
+    if (options && options.ignoreEmptyIfInactive) {
+      const beginDate = args.object['beginDate'];
+      const endDate = args.object['endDate'];
+
+      if (!args.value && isInactiveRecord(beginDate, endDate)) {
+        return true;
+      }
+    }
+
+    return this.connection.query(args.constraints[0].sql).then(data => {
       let found = false;
 
       for (const entry of data) {
@@ -31,13 +46,14 @@ export class IsInDbValuesConstraint implements ValidatorConstraintInterface {
 export function IsInDbValues(
   sql: string,
   validationOptions?: ValidationOptions,
+  options?: ignoreOptions
 ) {
-  return function(object: Object, propertyName: string) {
+  return function (object: Object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      constraints: [sql],
+      constraints: [{ sql, options }],
       validator: IsInDbValuesConstraint,
     });
   };
