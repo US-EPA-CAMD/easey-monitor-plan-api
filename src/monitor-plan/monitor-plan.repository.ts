@@ -59,8 +59,6 @@ export class MonitorPlanRepository extends Repository<MonitorPlan> {
       [queryDate],
     );
 
-    console.log(planIdsQuery);
-
     if (planIdsQuery.length === 0) {
       return {
         changedOrisCodes: [],
