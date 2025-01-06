@@ -8,6 +8,8 @@ import {
   MaxLength,
   ValidateIf,
   ValidationArguments,
+  isNotEmpty,
+  isString
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -30,6 +32,7 @@ import {
 } from '../utilities/constants';
 import { FuelCode } from '../entities/fuel-code.entity';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { IfIsActive } from '../import-checks/pipes/if-is-active-records.pipe';
 
 const KEY = 'Monitor Default';
 
@@ -145,7 +148,7 @@ export class MonitorDefaultBaseDTO {
     name:
       propertyMetadata.monitorDefaultDTODefaultPurposeCode.fieldLabels.value,
   })
-  @IsNotEmpty({
+  @IfIsActive(isNotEmpty, {}, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-51-A', {
         fieldname: args.property,
@@ -166,9 +169,9 @@ export class MonitorDefaultBaseDTO {
         );
       },
     },
+    { ignoreEmptyIfInactive: true }
   )
-  @IsString()
-  @ValidateIf(o => o.defaultPurposeCode || o.endDate === null || o.endHour === null)
+  @IfIsActive(isString, {})
   defaultPurposeCode: string;
 
   @ApiProperty({
@@ -176,7 +179,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTOFuelCode.example,
     name: propertyMetadata.monitorDefaultDTOFuelCode.fieldLabels.value,
   })
-  @IsNotEmpty({
+  @IfIsActive(isNotEmpty, {}, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-53-A', {
         fieldname: args.property,
@@ -193,8 +196,7 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
-  @IsString()
-  @ValidateIf(o => o.fuelCode || o.endDate === null || o.endHour === null)
+  @IfIsActive(isString, {})
   fuelCode: string;
 
   @ApiProperty({
@@ -237,7 +239,7 @@ export class MonitorDefaultBaseDTO {
     example: propertyMetadata.monitorDefaultDTODefaultSourceCode.example,
     name: propertyMetadata.monitorDefaultDTODefaultSourceCode.fieldLabels.value,
   })
-  @IsNotEmpty({
+  @IfIsActive(isNotEmpty, {}, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-52-A', {
         fieldname: args.property,
@@ -258,9 +260,9 @@ export class MonitorDefaultBaseDTO {
         );
       },
     },
+    { ignoreEmptyIfInactive: true }
   )
-  @IsString()
-  @ValidateIf(o => o.defaultSourceCode || o.endDate === null || o.endHour === null)
+  @IfIsActive(isString, {})
   defaultSourceCode: string;
 
   @ApiProperty({
