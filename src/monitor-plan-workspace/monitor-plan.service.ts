@@ -169,54 +169,78 @@ export class MonitorPlanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    // Get the first single-unit moitor plan associated with the method.
-    const firstPlanRecord = await withTransaction(this.repository, trx)
+    // Get the first single-unit monitor plan associated with the method.
+    const firstPlan = await withTransaction(this.repository, trx)
       .createQueryBuilder('mp')
+      .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
+      .innerJoinAndSelect('mp.endReportingPeriod', 'erp')
       .innerJoin('mp.monitorPlanLocations', 'mpl')
       .innerJoin('mpl.monitorLocation', 'ml')
-      .innerJoin('mp.beginReportingPeriod', 'brp')
-      .where(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('COUNT(*)')
-          .from(MonitorLocationWorkspace, 'ml')
-          .innerJoin('ml.methods', 'm')
-          .where('m.id = :methodId', {
-            methodId: method.id,
-          })
-          .getQuery();
-        return `(${subQuery}) = 1`;
-      })
-      .andWhere('ml.unitId IS NOT NULL')
+      .innerJoin('ml.methods', 'm')
+      .where('m.id = :methodId', { methodId: method.id })
       .orderBy('brp.beginDate', 'ASC')
+      .limit(1)
       .getOne();
 
-    if (!firstPlanRecord) return;
+    if (!firstPlan) {
+      this.logger.debug(
+        `No monitor plan found for the method with id "${method.id}"`,
+      );
+      return;
+    }
 
-    // Update the begin reporting period of the monitor plan if the method's begin date is earlier.
-    const [
-      firstPlanReportingPeriod,
-      methodBeginReportingPeriod,
-    ] = await Promise.all([
-      this.reportingPeriodRepository.getById(
-        firstPlanRecord.beginReportPeriodId,
-      ),
-      this.reportingPeriodRepository.getByDate(method.beginDate),
-    ]);
+    const earliestMethod = await withTransaction(this.methodRepository, trx)
+      .createQueryBuilder('m')
+      .innerJoin('m.location', 'ml')
+      .innerJoin('ml.monitorPlanLocations', 'mpl')
+      .innerJoin('mpl.monitorPlan', 'mp')
+      .where('mp.id = :monitorPlanId', { monitorPlanId: firstPlan.id })
+      .orderBy('m.beginDate', 'ASC')
+      .limit(1)
+      .getOne();
+
+    const earliestMethodBeginReportingPeriod = await this.reportingPeriodRepository.getByDate(
+      earliestMethod.beginDate,
+    );
+
+    const planBeginYear = firstPlan.beginReportingPeriod.year;
+    const planBeginQuarter = firstPlan.beginReportingPeriod.quarter;
+    const methodBeginYear = earliestMethodBeginReportingPeriod.year;
+    const methodBeginQuarter = earliestMethodBeginReportingPeriod.quarter;
+
+    // Update the begin reporting period of the monitor plan to the method's begin date if they differ.
     if (
-      methodBeginReportingPeriod.year < firstPlanReportingPeriod.year ||
-      (methodBeginReportingPeriod.year === firstPlanReportingPeriod.year &&
-        methodBeginReportingPeriod.quarter < firstPlanReportingPeriod.quarter)
+      planBeginYear !== methodBeginYear ||
+      planBeginQuarter !== methodBeginQuarter
     ) {
+      // Make sure the new begin date is not after the end date of the monitor plan.
+      // TODO: Does this need more checks?
+      if (firstPlan.endReportingPeriod) {
+        const planEndYear = firstPlan.endReportingPeriod.year;
+        const planEndQuarter = firstPlan.endReportingPeriod.quarter;
+        if (
+          methodBeginYear > planEndYear ||
+          (methodBeginYear === planEndYear &&
+            methodBeginQuarter > planEndQuarter)
+        ) {
+          throw new EaseyException(
+            new Error(
+              'The method begin date is after the monitor plan end date',
+            ),
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
       this.logger.debug('Updating the monitor plan begin reporting period', {
-        monPlanId: firstPlanRecord.id,
-        beginReportPeriod: methodBeginReportingPeriod.periodAbbreviation,
+        monPlanId: firstPlan.id,
+        beginReportPeriod:
+          earliestMethodBeginReportingPeriod.periodAbbreviation,
       });
-      firstPlanRecord.beginReportPeriodId = methodBeginReportingPeriod.id;
-      firstPlanRecord.updateDate = currentDateTime();
+      firstPlan.beginReportPeriodId = earliestMethodBeginReportingPeriod.id;
+      firstPlan.updateDate = currentDateTime();
       const repository = withTransaction(this.repository, trx);
-      await repository.save(firstPlanRecord);
-      await repository.resetToNeedsEvaluation(firstPlanRecord.id, userId);
+      await repository.save(firstPlan);
+      await repository.resetToNeedsEvaluation(firstPlan.id, userId);
     }
   }
 
@@ -482,8 +506,19 @@ export class MonitorPlanWorkspaceService {
       unitId,
       userId,
     });
+
+    // If there is an existing method on the unit, use that begin date for the begin reporting period.
+    // Otherwise, use the current date.
+    const firstMethod = await this.methodRepository.findOne({
+      order: { beginDate: 'ASC' },
+      where: {
+        locationId: location.id,
+      },
+    });
     const beginReportPeriodId = (
-      await this.reportingPeriodRepository.getByDate(new Date())
+      await this.reportingPeriodRepository.getByDate(
+        firstMethod?.beginDate ?? new Date(),
+      )
     ).id;
 
     // Start a transaction.
