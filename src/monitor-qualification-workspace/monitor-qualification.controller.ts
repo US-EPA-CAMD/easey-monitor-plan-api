@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorQualificationWorkspaceService } from './monitor-qualification.service';
@@ -9,10 +9,12 @@ import {
   MonitorQualificationDTO,
 } from '../dtos/monitor-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Qualifications')
+@ApiExcludeControllerByEnv()
 export class MonitorQualificationWorkspaceController {
   constructor(private readonly service: MonitorQualificationWorkspaceService) {}
 
@@ -31,6 +33,10 @@ export class MonitorQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location qualifications',
+    requestParamsOutFields: ['locId'],
+  })
   getQualifications(
     @Param('locId') locationId: string,
   ): Promise<MonitorQualificationDTO[]> {
@@ -46,6 +52,11 @@ export class MonitorQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location qualification record',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:
@@ -72,6 +83,11 @@ export class MonitorQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location qualification record',
+    requestParamsOutFields: ['locId', 'qualId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: MonitorQualificationDTO,
     description:

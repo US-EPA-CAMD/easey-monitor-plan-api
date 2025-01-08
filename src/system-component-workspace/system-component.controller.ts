@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -10,10 +10,12 @@ import {
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Components')
+@ApiExcludeControllerByEnv()
 export class SystemComponentWorkspaceController {
   constructor(private service: SystemComponentWorkspaceService) {}
 
@@ -31,6 +33,10 @@ export class SystemComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location system components',
+    requestParamsOutFields: ['locId', 'sysId'],
+  })
   async getSystemComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
@@ -47,6 +53,11 @@ export class SystemComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location system component record',
+    requestParamsOutFields: ['locId', 'sysId', 'monSysCompId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Updates workspace component records for a monitor system',
@@ -76,6 +87,11 @@ export class SystemComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location system component record',
+    requestParamsOutFields: ['locId', 'sysId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: SystemComponentDTO,
     description: 'Creates a workspace system component for a monitor system',

@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -9,10 +9,12 @@ import {
 } from '../dtos/monitor-default.dto';
 import { MonitorDefaultWorkspaceService } from './monitor-default.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Defaults')
+@ApiExcludeControllerByEnv()
 export class MonitorDefaultWorkspaceController {
   constructor(private readonly service: MonitorDefaultWorkspaceService) {}
 
@@ -25,6 +27,10 @@ export class MonitorDefaultWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location default records',
+    requestParamsOutFields:['locId'],
+  })
   @ApiOkResponse({
     isArray: true,
     type: MonitorDefaultDTO,
@@ -45,6 +51,11 @@ export class MonitorDefaultWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location default record',
+    requestParamsOutFields:['locId', 'defaultId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Updates a workspace default record for a monitor location',
@@ -72,6 +83,11 @@ export class MonitorDefaultWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location default record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorDefaultDTO,
     description: 'Creates a workspace defaults record for a monitor location',

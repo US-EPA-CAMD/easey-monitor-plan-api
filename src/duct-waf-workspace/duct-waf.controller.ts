@@ -1,15 +1,17 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rectangular Duct WAF')
+@ApiExcludeControllerByEnv()
 export class DuctWafWorkspaceController {
   constructor(private readonly service: DuctWafWorkspaceService) {}
 
@@ -27,6 +29,10 @@ export class DuctWafWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location duct waf records',
+    requestParamsOutFields:['locId']
+  })
   getDuctWafs(@Param('locId') locationId: string): Promise<DuctWafDTO[]> {
     return this.service.getDuctWafs(locationId);
   }
@@ -40,6 +46,11 @@ export class DuctWafWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location duct waf record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Create a workspace duct waf record for a monitor location',
@@ -65,6 +76,11 @@ export class DuctWafWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location duct waf record',
+    requestParamsOutFields:['locId', 'ductWafId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: DuctWafDTO,
     description: 'Updates a workspace duct waf record for a monitor location',
