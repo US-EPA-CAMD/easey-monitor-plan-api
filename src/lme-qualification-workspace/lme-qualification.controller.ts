@@ -9,10 +9,12 @@ import {
 } from '../dtos/lme-qualification.dto';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('LME Qualifications')
+@ApiExcludeControllerByEnv()
 export class LMEQualificationWorkspaceController {
   constructor(private readonly service: LMEQualificationWorkspaceService) {}
 

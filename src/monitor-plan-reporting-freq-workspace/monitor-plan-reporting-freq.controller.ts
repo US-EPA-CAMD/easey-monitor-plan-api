@@ -5,10 +5,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { MonitorPlanReportingFrequencyWorkspaceService } from './monitor-plan-reporting-freq.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Reporting Frequencies')
+@ApiExcludeControllerByEnv()
 export class MonitorPlanReportingFrequencyWorkspaceController {
   constructor(
     private readonly service: MonitorPlanReportingFrequencyWorkspaceService,

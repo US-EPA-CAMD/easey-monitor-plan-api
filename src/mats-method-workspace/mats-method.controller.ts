@@ -7,10 +7,12 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceService } from './mats-method.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('MATS Methods')
+@ApiExcludeControllerByEnv()
 export class MatsMethodWorkspaceController {
   constructor(
     private readonly service: MatsMethodWorkspaceService,

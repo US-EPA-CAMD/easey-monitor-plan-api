@@ -10,10 +10,12 @@ import {
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Check-Outs')
+@ApiExcludeControllerByEnv()
 export class CheckOutController {
   constructor(
     private readonly ucoService: UserCheckOutService,

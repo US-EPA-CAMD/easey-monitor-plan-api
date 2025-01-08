@@ -9,10 +9,12 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Attributes')
+@ApiExcludeControllerByEnv()
 export class MonitorAttributeWorkspaceController {
   constructor(private readonly service: MonitorAttributeWorkspaceService) {}
 

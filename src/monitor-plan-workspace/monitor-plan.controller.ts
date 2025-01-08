@@ -22,10 +22,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanParamsDTO } from '../dtos/monitor-plan-params.dto';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Plans')
+@ApiExcludeControllerByEnv()
 export class MonitorPlanWorkspaceController {
   constructor(
     private readonly service: MonitorPlanWorkspaceService,

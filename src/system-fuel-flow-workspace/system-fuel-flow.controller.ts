@@ -9,10 +9,12 @@ import {
 } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Fuel Flows')
+@ApiExcludeControllerByEnv()
 export class SystemFuelFlowWorkspaceController {
   constructor(private readonly service: SystemFuelFlowWorkspaceService) {}
 

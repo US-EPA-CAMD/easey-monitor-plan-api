@@ -9,10 +9,12 @@ import {
   MonitorQualificationDTO,
 } from '../dtos/monitor-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Qualifications')
+@ApiExcludeControllerByEnv()
 export class MonitorQualificationWorkspaceController {
   constructor(private readonly service: MonitorQualificationWorkspaceService) {}
 

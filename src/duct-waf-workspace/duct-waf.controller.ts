@@ -1,15 +1,17 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rectangular Duct WAF')
+@ApiExcludeControllerByEnv()
 export class DuctWafWorkspaceController {
   constructor(private readonly service: DuctWafWorkspaceService) {}
 

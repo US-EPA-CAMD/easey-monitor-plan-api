@@ -10,10 +10,12 @@ import {
   MonitorFormulaDTO,
 } from '../dtos/monitor-formula.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Formulas')
+@ApiExcludeControllerByEnv()
 export class MonitorFormulaWorkspaceController {
   constructor(
     private readonly service: MonitorFormulaWorkspaceService,

@@ -9,10 +9,12 @@ import {
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Capacities')
+@ApiExcludeControllerByEnv()
 export class UnitCapacityWorkspaceController {
   constructor(private readonly service: UnitCapacityWorkspaceService) {}
 

@@ -10,10 +10,12 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Analyzer Ranges')
+@ApiExcludeControllerByEnv()
 export class AnalyzerRangeWorkspaceController {
   constructor(
     private readonly service: AnalyzerRangeWorkspaceService,

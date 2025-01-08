@@ -9,10 +9,12 @@ import {
   LEEQualificationDTO,
 } from '../dtos/lee-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('LEE Qualifications')
+@ApiExcludeControllerByEnv()
 export class LEEQualificationWorkspaceController {
   constructor(private readonly service: LEEQualificationWorkspaceService) {}
 

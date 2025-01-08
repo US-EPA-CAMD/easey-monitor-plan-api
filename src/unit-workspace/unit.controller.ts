@@ -6,10 +6,12 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitWorkspaceService } from './unit.service';
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Units')
+@ApiExcludeControllerByEnv()
 export class UnitWorkspaceController {
   constructor(private readonly service: UnitWorkspaceService) {}
 

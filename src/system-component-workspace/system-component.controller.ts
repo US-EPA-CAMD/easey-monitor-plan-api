@@ -10,10 +10,12 @@ import {
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Components')
+@ApiExcludeControllerByEnv()
 export class SystemComponentWorkspaceController {
   constructor(private service: SystemComponentWorkspaceService) {}
 
