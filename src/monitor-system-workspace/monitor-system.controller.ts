@@ -10,10 +10,12 @@ import {
 } from '../dtos/monitor-system.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiTags('Systems')
 @ApiSecurity('APIKey')
+@ApiExcludeControllerByEnv()
 export class MonitorSystemWorkspaceController {
   constructor(
     private service: MonitorSystemWorkspaceService,

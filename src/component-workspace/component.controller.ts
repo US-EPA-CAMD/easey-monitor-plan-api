@@ -9,10 +9,12 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { ComponentCheckService } from './component-checks.service';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Components')
+@ApiExcludeControllerByEnv()
 export class ComponentWorkspaceController {
   constructor(
     private readonly repository: ComponentWorkspaceRepository,

@@ -5,10 +5,12 @@ import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Comments')
+@ApiExcludeControllerByEnv()
 export class MonitorPlanCommentWorkspaceController {
   constructor(private readonly service: MonitorPlanCommentWorkspaceService) {}
 

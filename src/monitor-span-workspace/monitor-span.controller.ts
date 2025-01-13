@@ -7,10 +7,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanChecksService } from './monitor-span-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Spans')
+@ApiExcludeControllerByEnv()
 export class MonitorSpanWorkspaceController {
   constructor(
     private service: MonitorSpanWorkspaceService,

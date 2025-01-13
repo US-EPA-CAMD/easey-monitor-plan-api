@@ -6,10 +6,12 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Loads')
+@ApiExcludeControllerByEnv()
 export class MonitorLoadWorkspaceController {
   constructor(private readonly service: MonitorLoadWorkspaceService) { }
 

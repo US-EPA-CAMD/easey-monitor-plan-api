@@ -9,6 +9,7 @@ import { UsedIdentifier } from '../entities/used-identifier.entity';
 import { ComponentWorkspaceRepository } from './component.repository';
 import { Component } from '../entities/workspace/component.entity';
 import { SystemComponentMasterDataRelationships } from '../entities/system-component-master-data-relationship.entity';
+import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -72,9 +73,13 @@ describe('Component Checks Service Test', () => {
       payload.basisCode = null;
 
       let errored = false;
-
+      const errorLocation = ""
+      const monitoringSystemData = new UpdateMonitorSystemDTO();
+      
+      monitoringSystemData.monitoringSystemComponentData = [{ componentId: "abc", endDate: new Date('2022-10-10'), beginDate: new Date('2022-10-02'), endHour: 0, beginHour: 0 }]
+ 
       try {
-        await service.runChecks(locationId, payload);
+        await service.runChecks(locationId, payload, true, false, errorLocation, [monitoringSystemData]);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));

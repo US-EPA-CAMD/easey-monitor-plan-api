@@ -41,9 +41,6 @@ export class UnitStackConfigurationChecksService {
         new Date(usc.endDate).getTime() !==
           new Date(uscRecord.endDate).getTime())
     ) {
-      console.log(
-        `record end date: ${uscRecord.endDate}, usc end date: ${usc.endDate}`,
-      );
       errorList.push(
         'Cannot update an existing End Date of a Unit Stack Configuration',
       );

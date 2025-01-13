@@ -6,10 +6,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { StackPipeBaseDTO, StackPipeDTO } from '../dtos/stack-pipe.dto';
 import { StackPipeWorkspaceService } from './stack-pipe.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Stacks & Pipes')
+@ApiExcludeControllerByEnv()
 export class StackPipeWorkspaceController {
   constructor(private readonly service: StackPipeWorkspaceService) {}
 

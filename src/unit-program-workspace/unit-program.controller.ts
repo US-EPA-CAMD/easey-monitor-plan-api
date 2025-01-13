@@ -5,10 +5,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
 import { UnitProgramWorkspaceService } from './unit-program.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Programs')
+@ApiExcludeControllerByEnv()
 export class UnitProgramWorkspaceController {
   constructor(private readonly service: UnitProgramWorkspaceService) {}
 

@@ -9,10 +9,12 @@ import {
 } from '../dtos/monitor-default.dto';
 import { MonitorDefaultWorkspaceService } from './monitor-default.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Defaults')
+@ApiExcludeControllerByEnv()
 export class MonitorDefaultWorkspaceController {
   constructor(private readonly service: MonitorDefaultWorkspaceService) {}
 

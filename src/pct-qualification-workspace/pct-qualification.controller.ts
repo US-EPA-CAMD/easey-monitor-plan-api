@@ -9,10 +9,12 @@ import {
 } from '../dtos/pct-qualification.dto';
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('PCT Qualifications')
+@ApiExcludeControllerByEnv()
 export class PCTQualificationWorkspaceController {
   constructor(private readonly service: PCTQualificationWorkspaceService) {}
 
