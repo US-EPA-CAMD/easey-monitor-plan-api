@@ -169,11 +169,13 @@ export class MonitorPlanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
+    const repository = withTransaction(this.repository, trx);
+
     // Get the first single-unit monitor plan associated with the method.
-    const firstPlan = await withTransaction(this.repository, trx)
+    const firstPlan = await repository
       .createQueryBuilder('mp')
       .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
-      .innerJoinAndSelect('mp.endReportingPeriod', 'erp')
+      .leftJoinAndSelect('mp.endReportingPeriod', 'erp')
       .innerJoin('mp.monitorPlanLocations', 'mpl')
       .innerJoin('mpl.monitorLocation', 'ml')
       .innerJoin('ml.methods', 'm')
@@ -214,7 +216,6 @@ export class MonitorPlanWorkspaceService {
       planBeginQuarter !== methodBeginQuarter
     ) {
       // Make sure the new begin date is not after the end date of the monitor plan.
-      // TODO: Does this need more checks?
       if (firstPlan.endReportingPeriod) {
         const planEndYear = firstPlan.endReportingPeriod.year;
         const planEndQuarter = firstPlan.endReportingPeriod.quarter;
@@ -236,10 +237,10 @@ export class MonitorPlanWorkspaceService {
         beginReportPeriod:
           earliestMethodBeginReportingPeriod.periodAbbreviation,
       });
-      firstPlan.beginReportPeriodId = earliestMethodBeginReportingPeriod.id;
-      firstPlan.updateDate = currentDateTime();
-      const repository = withTransaction(this.repository, trx);
-      await repository.save(firstPlan);
+      await repository.update(firstPlan.id, {
+        beginReportPeriodId: earliestMethodBeginReportingPeriod.id,
+        updateDate: currentDateTime(),
+      });
       await repository.resetToNeedsEvaluation(firstPlan.id, userId);
     }
   }
