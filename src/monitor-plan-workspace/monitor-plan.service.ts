@@ -1169,6 +1169,7 @@ export class MonitorPlanWorkspaceService {
       /* MONITOR PLAN COMMENT MERGE LOGIC */
 
       // Apply the monitor plan comments to the earliest changed plan.
+      // NOTE:XXX: This is not a great way to determine the target plan: if the import doesn't contain any new or ended plans, the comments will not be imported. However, since the import schema can contain multiple plans, it is impossible to determine the target plan without additional information.
       const targetPlan = [...result.newPlans, ...result.endedPlans].reduce(
         (acc, cur) => {
           if (!acc) return cur;
