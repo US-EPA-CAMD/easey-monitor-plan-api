@@ -1633,6 +1633,7 @@ export class MonitorPlanWorkspaceService {
     const repository = withTransaction(this.repository, trx);
 
     const plan = await repository.getActivePlanByLocationId(locId);
+    if (!plan) return;
 
     const planId = plan.id;
 

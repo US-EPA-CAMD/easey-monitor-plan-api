@@ -16,7 +16,11 @@ import { SingleUnitMonitorPlanRequestDTO } from '../dtos/single-unit-monitor-pla
 import { MonitorPlanWorkspaceService } from './monitor-plan.service';
 
 import { ImportChecksService } from '../import-checks/import-checks.service';
-import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import {
+  AuditLog,
+  RoleGuard,
+  User,
+} from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorPlanChecksService } from './monitor-plan-checks.service';
@@ -33,7 +37,7 @@ export class MonitorPlanWorkspaceController {
     private readonly service: MonitorPlanWorkspaceService,
     private readonly importChecksService: ImportChecksService,
     private readonly mpChecksService: MonitorPlanChecksService,
-  ) { }
+  ) {}
 
   @Get('export')
   @ApiOkResponse({
@@ -50,7 +54,7 @@ export class MonitorPlanWorkspaceController {
   )
   @AuditLog({
     label: 'Exported monitoring plan',
-    requestQueryOutFields: ['planId']
+    requestQueryOutFields: ['planId'],
   })
   exportMonitorPlan(@Query() params: MonitorPlanParamsDTO) {
     return this.service.exportMonitorPlan(
@@ -75,7 +79,7 @@ export class MonitorPlanWorkspaceController {
   )
   @AuditLog({
     label: 'Retrieved monitoring plan',
-    requestParamsOutFields: ['planId']
+    requestParamsOutFields: ['planId'],
   })
   getMonitorPlan(@Param('planId') planId: string): Promise<MonitorPlanDTO> {
     return this.service.getMonitorPlan(planId);
@@ -96,7 +100,12 @@ export class MonitorPlanWorkspaceController {
   })
   @AuditLog({
     label: 'Imported monitoring plan',
-    requestBodyOutFields: ['orisCode','unitStackConfigurationData.unitId', 'unitStackConfigurationData.stackPipeId', 'monitoringLocationData.unitId']
+    requestBodyOutFields: [
+      'orisCode',
+      'unitStackConfigurationData.unitId',
+      'unitStackConfigurationData.stackPipeId',
+      'monitoringLocationData.unitId',
+    ],
   })
   async importPlan(
     @Body() plan: UpdateMonitorPlanDTO,

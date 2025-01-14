@@ -136,7 +136,7 @@ export class ComponentWorkspaceService {
         if (!compRecord) {
           // Check used_identifier table to see if the componentId has already
           // been used, and if so grab that component record for update
-          let usedIdentifier = await withTransaction(
+          const usedIdentifier = await withTransaction(
             this.usedIdRepo,
             trx,
           ).getBySpecs(locationId, component.componentId, 'C');
@@ -163,13 +163,15 @@ export class ComponentWorkspaceService {
           );
         }
 
-        await this.analyzerRangeDataService.importAnalyzerRange(
-          compRecord.id,
-          locationId,
-          userId,
-          component.analyzerRangeData,
-          trx,
-        );
+        if ((component.analyzerRangeData ?? []).length > 0) {
+          await this.analyzerRangeDataService.importAnalyzerRange(
+            compRecord.id,
+            locationId,
+            userId,
+            component.analyzerRangeData,
+            trx,
+          );
+        }
       }),
     );
     this.logger.debug(`Imported ${location.componentData.length} components`);
