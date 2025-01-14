@@ -3,7 +3,11 @@ import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { ComponentWorkspaceService } from './component.service';
-import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import {
+  AuditLog,
+  RoleGuard,
+  User,
+} from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { ComponentCheckService } from './component-checks.service';
@@ -41,7 +45,7 @@ export class ComponentWorkspaceController {
   )
   @AuditLog({
     label: 'Retrieved workspace monitor location components',
-    requestParamsOutFields: ['locId']
+    requestParamsOutFields: ['locId'],
   })
   getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
     return this.service.getComponents(locationId);
@@ -59,7 +63,7 @@ export class ComponentWorkspaceController {
   @AuditLog({
     label: 'Created workspace monitor location component record',
     requestParamsOutFields: ['locId'],
-    responseBodyOutFields: '*'
+    responseBodyOutFields: '*',
   })
   @ApiOkResponse({
     isArray: true,
@@ -72,7 +76,11 @@ export class ComponentWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<ComponentDTO> {
     await this.checkService.runChecks(locId, payload, false, true);
-    return this.service.createComponent(locId, payload, user.userId);
+    return this.service.createComponent({
+      locationId: locId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':compId')

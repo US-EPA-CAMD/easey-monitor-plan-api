@@ -74,6 +74,7 @@ export class MonitorLoadWorkspaceService {
             payload: load,
             userId,
             trx,
+            isImport: true,
           });
         } else {
           await this.createLoad({
@@ -140,12 +141,14 @@ export class MonitorLoadWorkspaceService {
     payload,
     userId,
     trx,
+    isImport = false,
   }: {
     locationId: string;
     loadId: string;
     payload: MonitorLoadBaseDTO;
     userId: string;
     trx?: EntityManager;
+    isImport?: boolean;
   }): Promise<MonitorLoadDTO> {
     const load = await this.getLoad(loadId, trx);
 
@@ -165,7 +168,11 @@ export class MonitorLoadWorkspaceService {
     load.updateDate = currentDateTime();
 
     await withTransaction(this.repository, trx).save(load);
-    await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+    }
+
     return this.map.one(load);
   }
 }

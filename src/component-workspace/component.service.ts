@@ -154,9 +154,16 @@ export class ComponentWorkspaceService {
             payload: component,
             userId,
             trx,
+            isImport: true,
           });
         } else {
-          await this.createComponent(locationId, component, userId, trx);
+          await this.createComponent({
+            locationId,
+            payload: component,
+            userId,
+            trx,
+            isImport: true,
+          });
           compRecord = await repository.getComponentByLocIdAndCompId(
             locationId,
             component.componentId,
@@ -181,12 +188,14 @@ export class ComponentWorkspaceService {
   async updateComponent({
     locationId,
     componentRecord,
+    isImport = false,
     payload,
     userId,
     trx,
   }: {
     locationId: string;
     componentRecord: Component;
+    isImport?: boolean;
     payload: UpdateComponentBaseDTO;
     userId: string;
     trx?: EntityManager;
@@ -206,17 +215,26 @@ export class ComponentWorkspaceService {
       componentRecord,
     );
 
-    await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+    }
 
     return this.map.one(result);
   }
 
-  async createComponent(
-    locationId: string,
-    payload: UpdateComponentBaseDTO,
-    userId: string,
-    trx?: EntityManager,
-  ): Promise<ComponentDTO> {
+  async createComponent({
+    locationId,
+    payload,
+    userId,
+    trx,
+    isImport = false,
+  }: {
+    isImport?: boolean;
+    locationId: string;
+    payload: UpdateComponentBaseDTO;
+    userId: string;
+    trx?: EntityManager;
+  }): Promise<ComponentDTO> {
     const repository = withTransaction(this.repository, trx);
     const component = repository.create({
       id: uuid(),
@@ -236,7 +254,9 @@ export class ComponentWorkspaceService {
 
     const result = await repository.save(component);
 
-    await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+    if (!isImport) {
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+    }
 
     return this.map.one(result);
   }

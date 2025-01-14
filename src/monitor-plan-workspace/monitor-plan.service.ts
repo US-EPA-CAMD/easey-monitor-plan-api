@@ -1636,9 +1636,7 @@ export class MonitorPlanWorkspaceService {
     const plan = await repository.getActivePlanByLocationId(locId);
     if (!plan) return;
 
-    const planId = plan.id;
-
-    await repository.resetToNeedsEvaluation(planId, userId);
+    await repository.resetToNeedsEvaluation(plan.id, userId);
   }
 
   async exportMonitorPlan(
