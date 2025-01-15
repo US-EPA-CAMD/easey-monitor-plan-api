@@ -1095,7 +1095,7 @@ export class MonitorPlanWorkspaceService {
       /* MONITOR LOCATION MERGE LOGIC */
 
       this.logger.log('Importing monitor locations');
-      await this.monitorLocationService.importMonitorLocations(
+      const monitorLocations = await this.monitorLocationService.importMonitorLocations(
         payload,
         facilityId,
         userId,
@@ -1190,6 +1190,13 @@ export class MonitorPlanWorkspaceService {
           trx,
         );
       }
+
+      // Reset all active monitor plans associated with locations in the import to "needs evaluation".
+      await Promise.all(
+        monitorLocations.map(async loc =>
+          this.resetToNeedsEvaluation(loc.id, userId, trx),
+        ),
+      );
 
       if (draft) {
         // Rollback the transaction if the operation is a draft.
