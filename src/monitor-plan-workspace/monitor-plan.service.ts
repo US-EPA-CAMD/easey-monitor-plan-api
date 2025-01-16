@@ -169,54 +169,79 @@ export class MonitorPlanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    // Get the first single-unit moitor plan associated with the method.
-    const firstPlanRecord = await withTransaction(this.repository, trx)
+    const repository = withTransaction(this.repository, trx);
+
+    // Get the first single-unit monitor plan associated with the method.
+    const firstPlan = await repository
       .createQueryBuilder('mp')
+      .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
+      .leftJoinAndSelect('mp.endReportingPeriod', 'erp')
       .innerJoin('mp.monitorPlanLocations', 'mpl')
       .innerJoin('mpl.monitorLocation', 'ml')
-      .innerJoin('mp.beginReportingPeriod', 'brp')
-      .where(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('COUNT(*)')
-          .from(MonitorLocationWorkspace, 'ml')
-          .innerJoin('ml.methods', 'm')
-          .where('m.id = :methodId', {
-            methodId: method.id,
-          })
-          .getQuery();
-        return `(${subQuery}) = 1`;
-      })
-      .andWhere('ml.unitId IS NOT NULL')
+      .innerJoin('ml.methods', 'm')
+      .where('m.id = :methodId', { methodId: method.id })
       .orderBy('brp.beginDate', 'ASC')
+      .limit(1)
       .getOne();
 
-    if (!firstPlanRecord) return;
+    if (!firstPlan) {
+      this.logger.debug(
+        `No monitor plan found for the method with id "${method.id}"`,
+      );
+      return;
+    }
 
-    // Update the begin reporting period of the monitor plan if the method's begin date is earlier.
-    const [
-      firstPlanReportingPeriod,
-      methodBeginReportingPeriod,
-    ] = await Promise.all([
-      this.reportingPeriodRepository.getById(
-        firstPlanRecord.beginReportPeriodId,
-      ),
-      this.reportingPeriodRepository.getByDate(method.beginDate),
-    ]);
+    const earliestMethod = await withTransaction(this.methodRepository, trx)
+      .createQueryBuilder('m')
+      .innerJoin('m.location', 'ml')
+      .innerJoin('ml.monitorPlanLocations', 'mpl')
+      .innerJoin('mpl.monitorPlan', 'mp')
+      .where('mp.id = :monitorPlanId', { monitorPlanId: firstPlan.id })
+      .orderBy('m.beginDate', 'ASC')
+      .limit(1)
+      .getOne();
+
+    const earliestMethodBeginReportingPeriod = await this.reportingPeriodRepository.getByDate(
+      earliestMethod.beginDate,
+    );
+
+    const planBeginYear = firstPlan.beginReportingPeriod.year;
+    const planBeginQuarter = firstPlan.beginReportingPeriod.quarter;
+    const methodBeginYear = earliestMethodBeginReportingPeriod.year;
+    const methodBeginQuarter = earliestMethodBeginReportingPeriod.quarter;
+
+    // Update the begin reporting period of the monitor plan to the method's begin date if they differ.
     if (
-      methodBeginReportingPeriod.year < firstPlanReportingPeriod.year ||
-      (methodBeginReportingPeriod.year === firstPlanReportingPeriod.year &&
-        methodBeginReportingPeriod.quarter < firstPlanReportingPeriod.quarter)
+      planBeginYear !== methodBeginYear ||
+      planBeginQuarter !== methodBeginQuarter
     ) {
+      // Make sure the new begin date is not after the end date of the monitor plan.
+      if (firstPlan.endReportingPeriod) {
+        const planEndYear = firstPlan.endReportingPeriod.year;
+        const planEndQuarter = firstPlan.endReportingPeriod.quarter;
+        if (
+          methodBeginYear > planEndYear ||
+          (methodBeginYear === planEndYear &&
+            methodBeginQuarter > planEndQuarter)
+        ) {
+          throw new EaseyException(
+            new Error(
+              'The method begin date is after the monitor plan end date',
+            ),
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
       this.logger.debug('Updating the monitor plan begin reporting period', {
-        monPlanId: firstPlanRecord.id,
-        beginReportPeriod: methodBeginReportingPeriod.periodAbbreviation,
+        monPlanId: firstPlan.id,
+        beginReportPeriod:
+          earliestMethodBeginReportingPeriod.periodAbbreviation,
       });
-      firstPlanRecord.beginReportPeriodId = methodBeginReportingPeriod.id;
-      firstPlanRecord.updateDate = currentDateTime();
-      const repository = withTransaction(this.repository, trx);
-      await repository.save(firstPlanRecord);
-      await repository.resetToNeedsEvaluation(firstPlanRecord.id, userId);
+      await repository.update(firstPlan.id, {
+        beginReportPeriodId: earliestMethodBeginReportingPeriod.id,
+        updateDate: currentDateTime(),
+      });
+      await repository.resetToNeedsEvaluation(firstPlan.id, userId);
     }
   }
 
@@ -482,8 +507,19 @@ export class MonitorPlanWorkspaceService {
       unitId,
       userId,
     });
+
+    // If there is an existing method on the unit, use that begin date for the begin reporting period.
+    // Otherwise, use the current date.
+    const firstMethod = await this.methodRepository.findOne({
+      order: { beginDate: 'ASC' },
+      where: {
+        locationId: location.id,
+      },
+    });
     const beginReportPeriodId = (
-      await this.reportingPeriodRepository.getByDate(new Date())
+      await this.reportingPeriodRepository.getByDate(
+        firstMethod?.beginDate ?? new Date(),
+      )
     ).id;
 
     // Start a transaction.
@@ -1059,7 +1095,7 @@ export class MonitorPlanWorkspaceService {
       /* MONITOR LOCATION MERGE LOGIC */
 
       this.logger.log('Importing monitor locations');
-      await this.monitorLocationService.importMonitorLocations(
+      const monitorLocations = await this.monitorLocationService.importMonitorLocations(
         payload,
         facilityId,
         userId,
@@ -1133,6 +1169,7 @@ export class MonitorPlanWorkspaceService {
       /* MONITOR PLAN COMMENT MERGE LOGIC */
 
       // Apply the monitor plan comments to the earliest changed plan.
+      // NOTE:XXX: This is not a great way to determine the target plan: if the import doesn't contain any new or ended plans, the comments will not be imported. However, since the import schema can contain multiple plans, it is impossible to determine the target plan without additional information.
       const targetPlan = [...result.newPlans, ...result.endedPlans].reduce(
         (acc, cur) => {
           if (!acc) return cur;
@@ -1153,6 +1190,13 @@ export class MonitorPlanWorkspaceService {
           trx,
         );
       }
+
+      // Reset all active monitor plans associated with locations in the import to "needs evaluation".
+      await Promise.all(
+        monitorLocations.map(async loc =>
+          this.resetToNeedsEvaluation(loc.id, userId, trx),
+        ),
+      );
 
       if (draft) {
         // Rollback the transaction if the operation is a draft.
@@ -1598,10 +1642,9 @@ export class MonitorPlanWorkspaceService {
     const repository = withTransaction(this.repository, trx);
 
     const plan = await repository.getActivePlanByLocationId(locId);
+    if (!plan) return;
 
-    const planId = plan.id;
-
-    await repository.resetToNeedsEvaluation(planId, userId);
+    await repository.resetToNeedsEvaluation(plan.id, userId);
   }
 
   async exportMonitorPlan(
