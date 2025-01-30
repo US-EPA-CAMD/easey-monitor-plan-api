@@ -3,7 +3,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
+import { DeleteResult, EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
@@ -169,54 +169,80 @@ export class MonitorPlanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    // Get the first single-unit moitor plan associated with the method.
-    const firstPlanRecord = await withTransaction(this.repository, trx)
+    const repository = withTransaction(this.repository, trx);
+
+    // Get the first single-unit monitor plan associated with the method.
+    const firstPlan = await repository
       .createQueryBuilder('mp')
+      .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
+      .leftJoinAndSelect('mp.endReportingPeriod', 'erp')
       .innerJoin('mp.monitorPlanLocations', 'mpl')
       .innerJoin('mpl.monitorLocation', 'ml')
-      .innerJoin('mp.beginReportingPeriod', 'brp')
-      .where(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('COUNT(*)')
-          .from(MonitorLocationWorkspace, 'ml')
-          .innerJoin('ml.methods', 'm')
-          .where('m.id = :methodId', {
-            methodId: method.id,
-          })
-          .getQuery();
-        return `(${subQuery}) = 1`;
-      })
-      .andWhere('ml.unitId IS NOT NULL')
+      .innerJoin('ml.methods', 'm')
+      .where('m.id = :methodId', { methodId: method.id })
       .orderBy('brp.beginDate', 'ASC')
+      .limit(1)
       .getOne();
 
-    if (!firstPlanRecord) return;
+    if (!firstPlan) {
+      this.logger.debug(
+        `No monitor plan found for the method with id "${method.id}"`,
+      );
+      return;
+    }
 
-    // Update the begin reporting period of the monitor plan if the method's begin date is earlier.
-    const [
-      firstPlanReportingPeriod,
-      methodBeginReportingPeriod,
-    ] = await Promise.all([
-      this.reportingPeriodRepository.getById(
-        firstPlanRecord.beginReportPeriodId,
-      ),
-      this.reportingPeriodRepository.getByDate(method.beginDate),
-    ]);
+    const earliestMethod = await withTransaction(this.methodRepository, trx)
+      .createQueryBuilder('m')
+      .innerJoin('m.location', 'ml')
+      .innerJoin('ml.monitorPlanLocations', 'mpl')
+      .innerJoin('mpl.monitorPlan', 'mp')
+      .where('mp.id = :monitorPlanId', { monitorPlanId: firstPlan.id })
+      .orderBy('m.beginDate', 'ASC')
+      .limit(1)
+      .getOne();
+
+    const earliestMethodBeginReportingPeriod = await this.reportingPeriodRepository.getByDate(
+      earliestMethod.beginDate,
+    );
+
+    const planBeginYear = firstPlan.beginReportingPeriod.year;
+    const planBeginQuarter = firstPlan.beginReportingPeriod.quarter;
+    const methodBeginYear = earliestMethodBeginReportingPeriod.year;
+    const methodBeginQuarter = earliestMethodBeginReportingPeriod.quarter;
+
+    // Update the begin reporting period of the monitor plan to the method's begin date if they differ.
     if (
-      methodBeginReportingPeriod.year < firstPlanReportingPeriod.year ||
-      (methodBeginReportingPeriod.year === firstPlanReportingPeriod.year &&
-        methodBeginReportingPeriod.quarter < firstPlanReportingPeriod.quarter)
+      planBeginYear !== methodBeginYear ||
+      planBeginQuarter !== methodBeginQuarter
     ) {
+      // Make sure the new begin date is not after the end date of the monitor plan.
+      if (firstPlan.endReportingPeriod) {
+        const planEndYear = firstPlan.endReportingPeriod.year;
+        const planEndQuarter = firstPlan.endReportingPeriod.quarter;
+        if (
+          methodBeginYear > planEndYear ||
+          (methodBeginYear === planEndYear &&
+            methodBeginQuarter > planEndQuarter)
+        ) {
+          throw new EaseyException(
+            new Error(
+              'The method begin date is after the monitor plan end date',
+            ),
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
       this.logger.debug('Updating the monitor plan begin reporting period', {
-        monPlanId: firstPlanRecord.id,
-        beginReportPeriod: methodBeginReportingPeriod.periodAbbreviation,
+        monPlanId: firstPlan.id,
+        beginReportPeriod:
+          earliestMethodBeginReportingPeriod.periodAbbreviation,
       });
-      firstPlanRecord.beginReportPeriodId = methodBeginReportingPeriod.id;
-      firstPlanRecord.updateDate = currentDateTime();
-      const repository = withTransaction(this.repository, trx);
-      await repository.save(firstPlanRecord);
-      await repository.resetToNeedsEvaluation(firstPlanRecord.id, userId);
+      await repository.update(firstPlan.id, {
+        beginReportPeriodId: earliestMethodBeginReportingPeriod.id,
+        updateDate: currentDateTime(),
+      });
+      await this.updateReportingFrequencies(firstPlan.id, userId, trx);
+      await repository.resetToNeedsEvaluation(firstPlan.id, userId);
     }
   }
 
@@ -482,8 +508,19 @@ export class MonitorPlanWorkspaceService {
       unitId,
       userId,
     });
+
+    // If there is an existing method on the unit, use that begin date for the begin reporting period.
+    // Otherwise, use the current date.
+    const firstMethod = await this.methodRepository.findOne({
+      order: { beginDate: 'ASC' },
+      where: {
+        locationId: location.id,
+      },
+    });
     const beginReportPeriodId = (
-      await this.reportingPeriodRepository.getByDate(new Date())
+      await this.reportingPeriodRepository.getByDate(
+        firstMethod?.beginDate ?? new Date(),
+      )
     ).id;
 
     // Start a transaction.
@@ -1059,7 +1096,7 @@ export class MonitorPlanWorkspaceService {
       /* MONITOR LOCATION MERGE LOGIC */
 
       this.logger.log('Importing monitor locations');
-      await this.monitorLocationService.importMonitorLocations(
+      const monitorLocations = await this.monitorLocationService.importMonitorLocations(
         payload,
         facilityId,
         userId,
@@ -1133,6 +1170,7 @@ export class MonitorPlanWorkspaceService {
       /* MONITOR PLAN COMMENT MERGE LOGIC */
 
       // Apply the monitor plan comments to the earliest changed plan.
+      // NOTE:XXX: This is not a great way to determine the target plan: if the import doesn't contain any new or ended plans, the comments will not be imported. However, since the import schema can contain multiple plans, it is impossible to determine the target plan without additional information.
       const targetPlan = [...result.newPlans, ...result.endedPlans].reduce(
         (acc, cur) => {
           if (!acc) return cur;
@@ -1153,6 +1191,13 @@ export class MonitorPlanWorkspaceService {
           trx,
         );
       }
+
+      // Reset all active monitor plans associated with locations in the import to "needs evaluation".
+      await Promise.all(
+        monitorLocations.map(async loc =>
+          this.resetToNeedsEvaluation(loc.id, userId, trx),
+        ),
+      );
 
       if (draft) {
         // Rollback the transaction if the operation is a draft.
@@ -1526,68 +1571,160 @@ export class MonitorPlanWorkspaceService {
       end_rpt_period_id: newEndReportPeriodId,
     });
     const repository = withTransaction(this.repository, trx);
+
+    const planRecord = await repository.findOneBy({
+      id: plan.id,
+    });
+    planRecord.endReportPeriodId = newEndReportPeriodId;
+    await repository.save(planRecord);
+
+    await this.updateReportingFrequencies(plan.id, userId, trx);
+    await repository.resetToNeedsEvaluation(plan.id, userId);
+    return await this.getMonitorPlan(plan.id, { full: true, trx });
+  }
+
+  private async updateReportingFrequencies(
+    monitorPlanId: string,
+    userId: string,
+    trx?: EntityManager,
+  ) {
+    const planRecord = await withTransaction(this.repository, trx).findOne({
+      where: { id: monitorPlanId },
+      relations: {
+        reportingFrequencies: {
+          beginReportingPeriod: true,
+          endReportingPeriod: true,
+        },
+        beginReportingPeriod: true,
+        endReportingPeriod: true,
+      },
+    });
+
     const reportingFreqRepository = withTransaction(
       this.reportingFreqRepository,
       trx,
     );
 
-    const planRecord = await repository.findOne({
-      where: { id: plan.id },
-      relations: { reportingFrequencies: true },
-    });
-    planRecord.endReportPeriodId = newEndReportPeriodId;
-    await repository.save(planRecord);
+    const deletePromises: Array<Promise<DeleteResult>> = [];
 
-    // Update the reporting frequency records of the previously active plan.
-    const {
-      year: updatedEndYear,
-      quarter: updatedEndQuarter,
-    } = await this.reportingPeriodRepository.getById(newEndReportPeriodId);
+    const { earliestRf, latestRf } = planRecord.reportingFrequencies.reduce(
+      (acc, rf) => {
+        let shouldDelete = false;
 
-    let latestReportingFrequency: MonitorPlanReportingFrequency;
-    let latestReportingFrequencyYear: number;
-    let latestReportingFrequencyQuarter: number;
+        // Find the latest reporting frequency.
 
-    for (const rf of planRecord.reportingFrequencies) {
-      // Get the year and quarter of the begin period of the reporting frequency.
-      const {
-        year: rfBeginYear,
-        quarter: rfBeginQuarter,
-      } = await this.reportingPeriodRepository.getById(rf.beginReportPeriodId);
+        const planEndYear = planRecord.endReportingPeriod?.year;
+        const planEndQuarter = planRecord.endReportingPeriod?.quarter;
+        const rfBeginYear = rf.beginReportingPeriod.year;
+        const rfBeginQuarter = rf.beginReportingPeriod.quarter;
+        const latestRfBeginYear = acc.latestRf?.beginReportingPeriod.year;
+        const latestRfBeginQuarter = acc.latestRf?.beginReportingPeriod.quarter;
 
-      // If the begin period of the reporting frequency is after the updated end period, delete the record.
-      if (
-        rfBeginYear > updatedEndYear ||
-        (rfBeginYear === updatedEndYear && rfBeginQuarter > updatedEndQuarter)
-      ) {
-        await reportingFreqRepository.delete(rf.id);
-      } else if (!latestReportingFrequency) {
-        latestReportingFrequency = rf;
-      } else if (
-        rfBeginYear > latestReportingFrequencyYear ||
-        (rfBeginYear === latestReportingFrequencyYear &&
-          rfBeginQuarter > latestReportingFrequencyQuarter)
-      ) {
-        // Compare the reporting frequencies and store the latest one for a later update.
-        latestReportingFrequency = rf;
-        latestReportingFrequencyYear = rfBeginYear;
-        latestReportingFrequencyQuarter = rfBeginQuarter;
-      }
-    }
+        if (
+          planEndYear &&
+          planEndQuarter &&
+          (rfBeginYear > planEndYear ||
+            (rfBeginYear === planEndYear && rfBeginQuarter > planEndQuarter))
+        ) {
+          // If the begin period of the reporting frequency is after the end period, flag it for deletion.
+          shouldDelete = true;
+        } else if (!acc.latestRf) {
+          acc.latestRf = rf;
+        } else if (
+          rfBeginYear > latestRfBeginYear ||
+          (rfBeginYear === latestRfBeginYear &&
+            rfBeginQuarter > latestRfBeginQuarter)
+        ) {
+          // Compare the reporting frequencies and keep the latest.
+          acc.latestRf = rf;
+        }
+
+        // Find the earliest reporting frequency.
+
+        const planBeginYear = planRecord.beginReportingPeriod.year;
+        const planBeginQuarter = planRecord.beginReportingPeriod.quarter;
+        const rfEndYear = rf.endReportingPeriod?.year;
+        const rfEndQuarter = rf.endReportingPeriod?.quarter;
+        const earliestRfEndYear = acc.earliestRf?.endReportingPeriod?.year;
+        const earliestRfEndQuarter =
+          acc.earliestRf?.endReportingPeriod?.quarter;
+
+        if (
+          rfEndYear &&
+          rfEndQuarter &&
+          (rfEndYear < planBeginYear ||
+            (rfEndYear === planBeginYear && rfEndQuarter < planBeginQuarter))
+        ) {
+          // If the end period of the reporting frequency is before the begin period, flag it for deletion.
+          shouldDelete = true;
+        } else if (!acc.earliestRf?.endReportingPeriod) {
+          // If there is no earliest reporting frequency, or if the end period is null, set the current reporting frequency as the earliest.
+          acc.earliestRf = rf;
+        } else if (
+          rfEndYear &&
+          rfEndQuarter &&
+          (rfEndYear < earliestRfEndYear ||
+            (rfEndYear === earliestRfEndYear &&
+              rfEndQuarter < earliestRfEndQuarter))
+        ) {
+          // Compare the reporting frequencies and keep the earliest.
+          acc.earliestRf = rf;
+        }
+
+        if (shouldDelete) {
+          this.logger.debug('Deleting reporting frequency', {
+            mon_plan_id: monitorPlanId,
+            rf_id: rf.id,
+          });
+          deletePromises.push(reportingFreqRepository.delete(rf.id));
+        }
+
+        return acc;
+      },
+      { earliestRf: null, latestRf: null },
+    );
+
+    await Promise.all(deletePromises);
+
     if (
-      latestReportingFrequency &&
-      latestReportingFrequency.endReportPeriodId !== newEndReportPeriodId
+      latestRf &&
+      latestRf.endReportPeriodId !== planRecord.endReportPeriodId
     ) {
       // Update the end report period of the latest reporting frequency.
-      reportingFreqRepository.update(latestReportingFrequency.id, {
-        endReportPeriodId: newEndReportPeriodId,
+      this.logger.debug(
+        'Updating end report period of latest reporting frequency',
+        {
+          mon_plan_id: monitorPlanId,
+          rf_id: latestRf.id,
+          end_rpt_period_id: planRecord.endReportPeriodId,
+        },
+      );
+      await reportingFreqRepository.update(latestRf.id, {
+        endReportPeriodId: planRecord.endReportPeriodId,
         updateDate: currentDateTime(),
         userId,
       });
     }
 
-    await repository.resetToNeedsEvaluation(plan.id, userId);
-    return await this.getMonitorPlan(plan.id, { full: true, trx });
+    if (
+      earliestRf &&
+      earliestRf.beginReportPeriodId !== planRecord.beginReportPeriodId
+    ) {
+      // Update the begin report period of the earliest reporting frequency.
+      this.logger.debug(
+        'Updating begin report period of earliest reporting frequency',
+        {
+          mon_plan_id: monitorPlanId,
+          rf_id: earliestRf.id,
+          begin_rpt_period_id: planRecord.beginReportPeriodId,
+        },
+      );
+      await reportingFreqRepository.update(earliestRf.id, {
+        beginReportPeriodId: planRecord.beginReportPeriodId,
+        updateDate: currentDateTime(),
+        userId,
+      });
+    }
   }
 
   async resetToNeedsEvaluation(
@@ -1598,10 +1735,9 @@ export class MonitorPlanWorkspaceService {
     const repository = withTransaction(this.repository, trx);
 
     const plan = await repository.getActivePlanByLocationId(locId);
+    if (!plan) return;
 
-    const planId = plan.id;
-
-    await repository.resetToNeedsEvaluation(planId, userId);
+    await repository.resetToNeedsEvaluation(plan.id, userId);
   }
 
   async exportMonitorPlan(

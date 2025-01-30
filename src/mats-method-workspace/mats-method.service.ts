@@ -141,7 +141,7 @@ export class MatsMethodWorkspaceService {
   ) {
     await Promise.all(
       matsMethods.map(async matsMethod => {
-        let method = await withTransaction(
+        const method = await withTransaction(
           this.repository,
           trx,
         ).getMatsMethodByLodIdParamCodeAndDate(locationId, matsMethod);

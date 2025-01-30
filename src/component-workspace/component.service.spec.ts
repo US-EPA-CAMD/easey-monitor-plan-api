@@ -278,11 +278,11 @@ describe('ComponentWorkspaceService', () => {
 
   describe('createComponent', () => {
     it('should create and return a component dto', async () => {
-      const response = await service.createComponent(
+      const response = await service.createComponent({
         locationId,
         payload,
         userId,
-      );
+      });
       expect(response).toEqual(componentDto);
     });
   });

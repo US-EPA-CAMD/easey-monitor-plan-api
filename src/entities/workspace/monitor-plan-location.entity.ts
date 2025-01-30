@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { MonitorLocation } from './monitor-location.entity';
-import { MonitorPlan } from '../monitor-plan.entity';
+import { MonitorPlan } from './monitor-plan.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_plan_location' })
 export class MonitorPlanLocation extends BaseEntity {
