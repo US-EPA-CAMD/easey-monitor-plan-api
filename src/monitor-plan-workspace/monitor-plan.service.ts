@@ -3,7 +3,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
+import { DeleteResult, EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
@@ -241,6 +241,7 @@ export class MonitorPlanWorkspaceService {
         beginReportPeriodId: earliestMethodBeginReportingPeriod.id,
         updateDate: currentDateTime(),
       });
+      await this.updateReportingFrequencies(firstPlan.id, userId, trx);
       await repository.resetToNeedsEvaluation(firstPlan.id, userId);
     }
   }
@@ -1570,68 +1571,160 @@ export class MonitorPlanWorkspaceService {
       end_rpt_period_id: newEndReportPeriodId,
     });
     const repository = withTransaction(this.repository, trx);
+
+    const planRecord = await repository.findOneBy({
+      id: plan.id,
+    });
+    planRecord.endReportPeriodId = newEndReportPeriodId;
+    await repository.save(planRecord);
+
+    await this.updateReportingFrequencies(plan.id, userId, trx);
+    await repository.resetToNeedsEvaluation(plan.id, userId);
+    return await this.getMonitorPlan(plan.id, { full: true, trx });
+  }
+
+  private async updateReportingFrequencies(
+    monitorPlanId: string,
+    userId: string,
+    trx?: EntityManager,
+  ) {
+    const planRecord = await withTransaction(this.repository, trx).findOne({
+      where: { id: monitorPlanId },
+      relations: {
+        reportingFrequencies: {
+          beginReportingPeriod: true,
+          endReportingPeriod: true,
+        },
+        beginReportingPeriod: true,
+        endReportingPeriod: true,
+      },
+    });
+
     const reportingFreqRepository = withTransaction(
       this.reportingFreqRepository,
       trx,
     );
 
-    const planRecord = await repository.findOne({
-      where: { id: plan.id },
-      relations: { reportingFrequencies: true },
-    });
-    planRecord.endReportPeriodId = newEndReportPeriodId;
-    await repository.save(planRecord);
+    const deletePromises: Array<Promise<DeleteResult>> = [];
 
-    // Update the reporting frequency records of the previously active plan.
-    const {
-      year: updatedEndYear,
-      quarter: updatedEndQuarter,
-    } = await this.reportingPeriodRepository.getById(newEndReportPeriodId);
+    const { earliestRf, latestRf } = planRecord.reportingFrequencies.reduce(
+      (acc, rf) => {
+        let shouldDelete = false;
 
-    let latestReportingFrequency: MonitorPlanReportingFrequency;
-    let latestReportingFrequencyYear: number;
-    let latestReportingFrequencyQuarter: number;
+        // Find the latest reporting frequency.
 
-    for (const rf of planRecord.reportingFrequencies) {
-      // Get the year and quarter of the begin period of the reporting frequency.
-      const {
-        year: rfBeginYear,
-        quarter: rfBeginQuarter,
-      } = await this.reportingPeriodRepository.getById(rf.beginReportPeriodId);
+        const planEndYear = planRecord.endReportingPeriod?.year;
+        const planEndQuarter = planRecord.endReportingPeriod?.quarter;
+        const rfBeginYear = rf.beginReportingPeriod.year;
+        const rfBeginQuarter = rf.beginReportingPeriod.quarter;
+        const latestRfBeginYear = acc.latestRf?.beginReportingPeriod.year;
+        const latestRfBeginQuarter = acc.latestRf?.beginReportingPeriod.quarter;
 
-      // If the begin period of the reporting frequency is after the updated end period, delete the record.
-      if (
-        rfBeginYear > updatedEndYear ||
-        (rfBeginYear === updatedEndYear && rfBeginQuarter > updatedEndQuarter)
-      ) {
-        await reportingFreqRepository.delete(rf.id);
-      } else if (!latestReportingFrequency) {
-        latestReportingFrequency = rf;
-      } else if (
-        rfBeginYear > latestReportingFrequencyYear ||
-        (rfBeginYear === latestReportingFrequencyYear &&
-          rfBeginQuarter > latestReportingFrequencyQuarter)
-      ) {
-        // Compare the reporting frequencies and store the latest one for a later update.
-        latestReportingFrequency = rf;
-        latestReportingFrequencyYear = rfBeginYear;
-        latestReportingFrequencyQuarter = rfBeginQuarter;
-      }
-    }
+        if (
+          planEndYear &&
+          planEndQuarter &&
+          (rfBeginYear > planEndYear ||
+            (rfBeginYear === planEndYear && rfBeginQuarter > planEndQuarter))
+        ) {
+          // If the begin period of the reporting frequency is after the end period, flag it for deletion.
+          shouldDelete = true;
+        } else if (!acc.latestRf) {
+          acc.latestRf = rf;
+        } else if (
+          rfBeginYear > latestRfBeginYear ||
+          (rfBeginYear === latestRfBeginYear &&
+            rfBeginQuarter > latestRfBeginQuarter)
+        ) {
+          // Compare the reporting frequencies and keep the latest.
+          acc.latestRf = rf;
+        }
+
+        // Find the earliest reporting frequency.
+
+        const planBeginYear = planRecord.beginReportingPeriod.year;
+        const planBeginQuarter = planRecord.beginReportingPeriod.quarter;
+        const rfEndYear = rf.endReportingPeriod?.year;
+        const rfEndQuarter = rf.endReportingPeriod?.quarter;
+        const earliestRfEndYear = acc.earliestRf?.endReportingPeriod?.year;
+        const earliestRfEndQuarter =
+          acc.earliestRf?.endReportingPeriod?.quarter;
+
+        if (
+          rfEndYear &&
+          rfEndQuarter &&
+          (rfEndYear < planBeginYear ||
+            (rfEndYear === planBeginYear && rfEndQuarter < planBeginQuarter))
+        ) {
+          // If the end period of the reporting frequency is before the begin period, flag it for deletion.
+          shouldDelete = true;
+        } else if (!acc.earliestRf?.endReportingPeriod) {
+          // If there is no earliest reporting frequency, or if the end period is null, set the current reporting frequency as the earliest.
+          acc.earliestRf = rf;
+        } else if (
+          rfEndYear &&
+          rfEndQuarter &&
+          (rfEndYear < earliestRfEndYear ||
+            (rfEndYear === earliestRfEndYear &&
+              rfEndQuarter < earliestRfEndQuarter))
+        ) {
+          // Compare the reporting frequencies and keep the earliest.
+          acc.earliestRf = rf;
+        }
+
+        if (shouldDelete) {
+          this.logger.debug('Deleting reporting frequency', {
+            mon_plan_id: monitorPlanId,
+            rf_id: rf.id,
+          });
+          deletePromises.push(reportingFreqRepository.delete(rf.id));
+        }
+
+        return acc;
+      },
+      { earliestRf: null, latestRf: null },
+    );
+
+    await Promise.all(deletePromises);
+
     if (
-      latestReportingFrequency &&
-      latestReportingFrequency.endReportPeriodId !== newEndReportPeriodId
+      latestRf &&
+      latestRf.endReportPeriodId !== planRecord.endReportPeriodId
     ) {
       // Update the end report period of the latest reporting frequency.
-      reportingFreqRepository.update(latestReportingFrequency.id, {
-        endReportPeriodId: newEndReportPeriodId,
+      this.logger.debug(
+        'Updating end report period of latest reporting frequency',
+        {
+          mon_plan_id: monitorPlanId,
+          rf_id: latestRf.id,
+          end_rpt_period_id: planRecord.endReportPeriodId,
+        },
+      );
+      await reportingFreqRepository.update(latestRf.id, {
+        endReportPeriodId: planRecord.endReportPeriodId,
         updateDate: currentDateTime(),
         userId,
       });
     }
 
-    await repository.resetToNeedsEvaluation(plan.id, userId);
-    return await this.getMonitorPlan(plan.id, { full: true, trx });
+    if (
+      earliestRf &&
+      earliestRf.beginReportPeriodId !== planRecord.beginReportPeriodId
+    ) {
+      // Update the begin report period of the earliest reporting frequency.
+      this.logger.debug(
+        'Updating begin report period of earliest reporting frequency',
+        {
+          mon_plan_id: monitorPlanId,
+          rf_id: earliestRf.id,
+          begin_rpt_period_id: planRecord.beginReportPeriodId,
+        },
+      );
+      await reportingFreqRepository.update(earliestRf.id, {
+        beginReportPeriodId: planRecord.beginReportPeriodId,
+        updateDate: currentDateTime(),
+        userId,
+      });
+    }
   }
 
   async resetToNeedsEvaluation(
