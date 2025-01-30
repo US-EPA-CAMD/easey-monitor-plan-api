@@ -61,7 +61,11 @@ export class ComponentWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<ComponentDTO> {
     await this.checkService.runChecks(locId, payload, false, true);
-    return this.service.createComponent(locId, payload, user.userId);
+    return this.service.createComponent({
+      locationId: locId,
+      payload,
+      userId: user.userId,
+    });
   }
 
   @Put(':compId')

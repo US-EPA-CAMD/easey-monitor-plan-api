@@ -1,5 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
@@ -19,10 +20,13 @@ export class AnalyzerRangeWorkspaceService {
   constructor(
     private readonly repository: AnalyzerRangeWorkspaceRepository,
     private readonly map: AnalyzerRangeMap,
+    private readonly logger: Logger,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) {
+    this.logger.setContext('AnalyzerRangeWorkspaceService');
+  }
 
   async getAnalyzerRanges(compId: string): Promise<AnalyzerRangeDTO[]> {
     const results = await this.repository.findBy({ componentRecordId: compId });
@@ -130,7 +134,7 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRanges: AnalyzerRangeBaseDTO[] = [],
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    await Promise.all(
       analyzerRanges.map(async analyzerRange => {
         const analyzerRangeRecord = await withTransaction(
           this.repository,
@@ -161,5 +165,7 @@ export class AnalyzerRangeWorkspaceService {
         }
       }),
     );
+    this.logger.debug(`Imported ${analyzerRanges.length} analyzer ranges`);
+    return true;
   }
 }
