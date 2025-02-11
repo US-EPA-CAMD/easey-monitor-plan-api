@@ -10,6 +10,7 @@ import {
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,11 +38,15 @@ export class PCTQualificationWorkspaceController {
     label: 'Retrieved workspace monitor location PCT qualifications',
     requestParamsOutFields: ['locId', 'qualId'],
   })
-  getPCTQualifications(
+  async getPCTQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
-  ): Promise<PCTQualificationDTO[]> {
-    return this.service.getPCTQualifications(locId, qualId);
+  ): Promise<ArrayResponse<PCTQualificationDTO>> {
+    const pctQualificationDTOS = await this.service.getPCTQualifications(locId, qualId);
+
+    return  {
+      items: pctQualificationDTOS
+    }
   }
 
   @Put(':pctQualId')

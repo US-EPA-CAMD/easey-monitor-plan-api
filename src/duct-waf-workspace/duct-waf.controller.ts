@@ -7,6 +7,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -33,8 +34,12 @@ export class DuctWafWorkspaceController {
     label: 'Retrieved workspace monitor location duct waf records',
     requestParamsOutFields:['locId']
   })
-  getDuctWafs(@Param('locId') locationId: string): Promise<DuctWafDTO[]> {
-    return this.service.getDuctWafs(locationId);
+  async getDuctWafs(@Param('locId') locationId: string): Promise<ArrayResponse<DuctWafDTO>> {
+    const ductWafs = await this.service.getDuctWafs(locationId);
+
+    return  {
+      items: ductWafs
+    };
   }
 
   @Post()

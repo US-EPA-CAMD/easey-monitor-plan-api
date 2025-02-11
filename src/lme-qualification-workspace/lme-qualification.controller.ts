@@ -10,6 +10,7 @@ import {
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,11 +38,15 @@ export class LMEQualificationWorkspaceController {
     label: 'Retrieved workspace monitor location LME qualifications',
     requestParamsOutFields: ['locId', 'qualId']
   })
-  getLMEQualifications(
+  async getLMEQualifications(
     @Param('locId') locationId: string,
     @Param('qualId') qualificationId: string,
-  ): Promise<LMEQualificationDTO[]> {
-    return this.service.getLMEQualifications(locationId, qualificationId);
+  ): Promise<ArrayResponse<LMEQualificationDTO>> {
+    const lmeQualifications = await this.service.getLMEQualifications(locationId, qualificationId);
+
+    return  {
+      items: lmeQualifications
+    }
   }
 
   @Put(':lmeQualId')

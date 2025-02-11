@@ -7,6 +7,7 @@ import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-p
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -45,9 +46,13 @@ export class MonitorConfigurationsWorkspaceController {
     label: 'Retrieved workspace configurations',
     requestQueryOutFields: ['orisCodes', 'monPlanIds']
   })
-  getConfigurations(
+  async getConfigurations(
     @Query() dto: ConfigurationMultipleParamsDTO,
-  ): Promise<MonitorPlanDTO[]> {
-    return this.service.getConfigurations(dto.orisCodes, dto.monPlanIds);
+  ): Promise<ArrayResponse<MonitorPlanDTO>> {
+    const monitorPlanDTOs = await this.service.getConfigurations(dto.orisCodes, dto.monPlanIds);
+
+    return  {
+      items: monitorPlanDTOs
+    };
   }
 }

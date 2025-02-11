@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeService } from './monitor-attribute.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,9 +17,13 @@ export class MonitorAttributeController {
     type: MonitorAttributeDTO,
     description: 'Retrieves official attribute records for a monitor location',
   })
-  getAttributes(
+  async getAttributes(
     @Param('locId') locationId: string,
-  ): Promise<MonitorAttributeDTO[]> {
-    return this.service.getAttributes(locationId);
+  ): Promise<ArrayResponse<MonitorAttributeDTO>> {
+    const attributes = await this.service.getAttributes(locationId);
+
+    return  {
+      items: attributes
+    };
   }
 }

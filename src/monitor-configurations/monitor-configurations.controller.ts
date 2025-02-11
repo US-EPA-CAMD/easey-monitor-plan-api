@@ -5,6 +5,7 @@ import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorConfigurationsService } from './monitor-configurations.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -30,10 +31,14 @@ export class MonitorConfigurationsController {
     required: false,
     explode: false,
   })
-  getConfigurations(
+  async getConfigurations(
     @Query() dto: ConfigurationMultipleParamsDTO,
-  ): Promise<MonitorPlanDTO[]> {
-    return this.service.getConfigurations(dto.orisCodes, dto.monPlanIds);
+  ): Promise<ArrayResponse<MonitorPlanDTO>> {
+    const configurations = await this.service.getConfigurations(dto.orisCodes, dto.monPlanIds);
+
+    return  {
+      items: configurations
+    };
   }
 
   @Get('last-updated')

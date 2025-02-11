@@ -64,9 +64,7 @@ describe('LMEQualificationWorkspaceController', () => {
       jest
         .spyOn(service, 'getLMEQualifications')
         .mockResolvedValue(returnedLMEQualifications);
-      expect(await controller.getLMEQualifications(locId, qualId)).toBe(
-        returnedLMEQualifications,
-      );
+      expect(await controller.getLMEQualifications(locId, qualId)).toStrictEqual({ items: returnedLMEQualifications} );
     });
   });
 

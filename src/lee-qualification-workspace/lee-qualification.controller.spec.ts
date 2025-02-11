@@ -63,9 +63,7 @@ describe('LEEQualificationWorkspaceController', () => {
       jest
         .spyOn(service, 'getLEEQualifications')
         .mockResolvedValue(returnedLEEQualifications);
-      expect(await controller.getLEEQualifications(locId, qualId)).toBe(
-        returnedLEEQualifications,
-      );
+      expect(await controller.getLEEQualifications(locId, qualId)).toStrictEqual({ items: returnedLEEQualifications} );
     });
   });
 

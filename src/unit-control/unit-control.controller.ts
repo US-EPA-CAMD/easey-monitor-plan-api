@@ -3,6 +3,7 @@ import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 
 import { UnitControlService } from './unit-control.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -17,10 +18,14 @@ export class UnitControlController {
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })
-  getUnitControls(
+  async getUnitControls(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitControlDTO[]> {
-    return this.service.getUnitControls(locId, unitId);
+  ): Promise<ArrayResponse<UnitControlDTO>> {
+    const unitCapacityDTOS = await this.service.getUnitControls(locId, unitId);
+
+    return  {
+      items: unitCapacityDTOS
+    }
   }
 }

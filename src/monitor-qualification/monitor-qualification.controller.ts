@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualificationService } from './monitor-qualification.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -17,9 +18,13 @@ export class MonitorQualificationController {
     description:
       'Retrieves official qualification records for a monitor location',
   })
-  getQualifications(
+  async getQualifications(
     @Param('locId') locationId: string,
-  ): Promise<MonitorQualificationDTO[]> {
-    return this.service.getQualifications(locationId);
+  ): Promise<ArrayResponse<MonitorQualificationDTO>> {
+    const qualifications = await this.service.getQualifications(locationId);
+
+    return  {
+      items: qualifications
+    }
   }
 }

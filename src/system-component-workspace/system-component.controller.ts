@@ -9,8 +9,8 @@ import {
 } from '../dtos/system-component.dto';
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { ComponentCheckService } from '../component-workspace/component-checks.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -40,8 +40,12 @@ export class SystemComponentWorkspaceController {
   async getSystemComponents(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
-  ): Promise<SystemComponentDTO[]> {
-    return this.service.getSystemComponents(locationId, monSysId);
+  ): Promise<ArrayResponse<SystemComponentDTO>> {
+    const systemComponents = await this.service.getSystemComponents(locationId, monSysId);
+
+    return  {
+      items: systemComponents
+    }
   }
 
   @Put(':monSysCompId')

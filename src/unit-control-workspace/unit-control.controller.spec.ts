@@ -70,9 +70,7 @@ describe('UnitControlWorkspaceController', () => {
       jest
         .spyOn(service, 'getUnitControls')
         .mockResolvedValue(returnedUnitControls);
-      expect(await controller.getUnitControls(locId, unitRecordId)).toBe(
-        returnedUnitControls,
-      );
+      expect(await controller.getUnitControls(locId, unitRecordId)).toStrictEqual({ items: returnedUnitControls} );
     });
   });
 

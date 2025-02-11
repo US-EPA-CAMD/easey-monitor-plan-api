@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationService } from './pct-qualification.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -17,10 +18,14 @@ export class PCTQualificationController {
     description:
       'Retrieves official pct qualification records for a monitor location',
   })
-  getPCTQualifications(
+  async getPCTQualifications(
     @Param('locId') locationId: string,
     @Param('qualId') qualificationId: string,
-  ): Promise<PCTQualificationDTO[]> {
-    return this.service.getPCTQualifications(qualificationId);
+  ): Promise<ArrayResponse<PCTQualificationDTO>> {
+    const pctQualifications = await this.service.getPCTQualifications(qualificationId);
+
+    return  {
+      items: pctQualifications
+    }
   }
 }

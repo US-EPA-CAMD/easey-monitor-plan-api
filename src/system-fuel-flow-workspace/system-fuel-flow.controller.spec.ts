@@ -46,7 +46,7 @@ describe('SystemFuelFlowController', () => {
   describe('getFuelFlows', () => {
     it('should return array of system fuel flows', async () => {
       jest.spyOn(service, 'getFuelFlows').mockResolvedValue(data);
-      expect(await controller.getFuelFlows(locId, sysId)).toBe(data);
+      expect(await controller.getFuelFlows(locId, sysId)).toStrictEqual({ items: data} );
     });
   });
 });

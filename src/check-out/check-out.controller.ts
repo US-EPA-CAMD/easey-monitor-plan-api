@@ -11,6 +11,7 @@ import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -32,8 +33,12 @@ export class CheckOutController {
   @AuditLog({
     label: 'Retrieved workspace check-out plans'
   })
-  getCheckedOutConfigurations(): Promise<UserCheckOutDTO[]> {
-    return this.ucoService.getCheckedOutConfigurations();
+  async getCheckedOutConfigurations(): Promise<ArrayResponse<UserCheckOutDTO>> {
+    const checkedOutConfigurations = await this.ucoService.getCheckedOutConfigurations();
+
+    return  {
+      items: checkedOutConfigurations
+    };
   }
 
   @Post(':planId')

@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationService } from './lee-qualification.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -17,10 +18,14 @@ export class LEEQualificationController {
     description:
       'Retrieves official lee qualification records for a monitor location',
   })
-  getLEEQualifications(
+  async getLEEQualifications(
     @Param('locId') locationId: string,
     @Param('qualId') qualificationId: string,
-  ): Promise<LEEQualificationDTO[]> {
-    return this.service.getLEEQualifications(qualificationId);
+  ): Promise<ArrayResponse<LEEQualificationDTO>> {
+    const lEEQualifications = await this.service.getLEEQualifications(qualificationId);
+
+    return  {
+      items: lEEQualifications
+    };
   }
 }

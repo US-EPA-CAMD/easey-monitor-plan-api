@@ -39,7 +39,7 @@ describe('MonitorConfigurations', () => {
     it('should return array of monitor plan configurations', async () => {
       jest.spyOn(service, 'getConfigurations').mockResolvedValue(data);
       const dto = new ConfigurationMultipleParamsDTO();
-      expect(await controller.getConfigurations(dto)).toBe(data);
+      expect(await controller.getConfigurations(dto)).toStrictEqual({ items: data} );
     });
   });
 

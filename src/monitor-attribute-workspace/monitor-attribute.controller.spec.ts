@@ -66,9 +66,7 @@ describe('MonitorAttributeWorkspaceController', () => {
       jest
         .spyOn(service, 'getAttributes')
         .mockResolvedValue(returnedAttributes);
-      expect(await controller.getAttributes(data.locId)).toBe(
-        returnedAttributes,
-      );
+      expect(await controller.getAttributes(data.locId)).toStrictEqual({ items: returnedAttributes} );
     });
   });
 

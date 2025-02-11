@@ -14,6 +14,7 @@ import { ComponentCheckService } from './component-checks.service';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,8 +48,12 @@ export class ComponentWorkspaceController {
     label: 'Retrieved workspace monitor location components',
     requestParamsOutFields: ['locId'],
   })
-  getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
-    return this.service.getComponents(locationId);
+  async getComponents(@Param('locId') locationId: string): Promise<ArrayResponse<ComponentDTO>> {
+    const components = await this.service.getComponents(locationId);
+
+    return  {
+      items: components
+    };
   }
 
   @Post()

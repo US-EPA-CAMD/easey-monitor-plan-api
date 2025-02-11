@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadService } from './monitor-load.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,7 +17,11 @@ export class MonitorLoadController {
     type: MonitorLoadDTO,
     description: 'Retrieves official load records for a monitor location',
   })
-  getLoads(@Param('locId') locationId: string): Promise<MonitorLoadDTO[]> {
-    return this.service.getLoads(locationId);
+  async getLoads(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorLoadDTO>> {
+    const loads = await this.service.getLoads(locationId);
+
+    return  {
+      items: loads
+    }
   }
 }

@@ -48,7 +48,7 @@ describe('UnitWorkspaceController', () => {
   describe('getUnits', () => {
     it('should return array of workspace units', async () => {
       jest.spyOn(service, 'getUnits').mockResolvedValue(data);
-      expect(await controller.getUnits('locId', unitId)).toBe(data);
+      expect(await controller.getUnits('locId', unitId)).toStrictEqual({ items: data} );
     });
   });
 

@@ -34,7 +34,7 @@ describe('UnitController', () => {
   describe('getUnits', () => {
     it('should return array of units', async () => {
       jest.spyOn(service, 'getUnits').mockResolvedValue(data);
-      expect(await controller.getUnits(unitId)).toBe(data);
+      expect(await controller.getUnits(unitId)).toStrictEqual({ items: data} );
     });
   });
 });

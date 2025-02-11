@@ -3,6 +3,7 @@ import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelService } from './unit-fuel.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,10 +17,14 @@ export class UnitFuelController {
     type: UnitFuelDTO,
     description: 'Retrieves official unit fuel records from a specific unit ID',
   })
-  getUnitFuels(
+  async getUnitFuels(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitFuelDTO[]> {
-    return this.service.getUnitFuels(locId, unitId);
+  ): Promise<ArrayResponse<UnitFuelDTO>> {
+    const unitFuels = await this.service.getUnitFuels(locId, unitId);
+
+    return  {
+      items: unitFuels
+    }
   }
 }

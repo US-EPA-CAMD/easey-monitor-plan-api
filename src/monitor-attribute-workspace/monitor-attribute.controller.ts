@@ -10,6 +10,7 @@ import {
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -36,10 +37,14 @@ export class MonitorAttributeWorkspaceController {
     label: 'Retrieved workspace monitor location attribute records',
     requestParamsOutFields:['locId']
   })
-  getAttributes(
+  async getAttributes(
     @Param('locId') locationId: string,
-  ): Promise<MonitorAttributeDTO[]> {
-    return this.service.getAttributes(locationId);
+  ): Promise<ArrayResponse<MonitorAttributeDTO>> {
+    const attributeDTOS = await this.service.getAttributes(locationId);
+
+    return  {
+      items: attributeDTOS
+    }
   }
 
   @Post()

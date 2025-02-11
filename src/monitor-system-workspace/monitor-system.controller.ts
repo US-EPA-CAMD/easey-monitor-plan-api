@@ -11,6 +11,7 @@ import {
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiTags('Systems')
@@ -41,8 +42,12 @@ export class MonitorSystemWorkspaceController {
     label: 'Retrieved workspace monitor location systems',
     requestParamsOutFields: ['locId'],
   })
-  getSystems(@Param('locId') locationId: string): Promise<MonitorSystemDTO[]> {
-    return this.service.getSystems(locationId);
+  async getSystems(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorSystemDTO>> {
+    const systems = await this.service.getSystems(locationId);
+
+    return  {
+      items: systems
+    }
   }
 
   @Post()

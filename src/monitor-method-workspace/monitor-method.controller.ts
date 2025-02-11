@@ -10,6 +10,7 @@ import {
 } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -36,8 +37,12 @@ export class MonitorMethodWorkspaceController {
     type: MonitorMethodDTO,
     description: 'Retrieves workspace Monitor Method records',
   })
-  getMethods(@Param('locId') locId: string): Promise<MonitorMethodDTO[]> {
-    return this.service.getMethods(locId);
+  async getMethods(@Param('locId') locId: string): Promise<ArrayResponse<MonitorMethodDTO>> {
+    const methods = await this.service.getMethods(locId);
+
+    return  {
+      items: methods
+    }
   }
 
   @Post()

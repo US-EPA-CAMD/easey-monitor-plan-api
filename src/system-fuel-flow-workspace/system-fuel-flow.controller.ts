@@ -10,6 +10,7 @@ import {
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -36,11 +37,15 @@ export class SystemFuelFlowWorkspaceController {
     label: 'Retrieved workspace monitor location system fuel flow records',
     requestParamsOutFields: ['locId', 'sysId']
   })
-  getFuelFlows(
+  async getFuelFlows(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
-  ): Promise<SystemFuelFlowDTO[]> {
-    return this.service.getFuelFlows(monSysId);
+  ): Promise<ArrayResponse<SystemFuelFlowDTO>> {
+    const fuelFlows = await this.service.getFuelFlows(monSysId);
+
+    return  {
+      items: fuelFlows
+    }
   }
 
   @Post()

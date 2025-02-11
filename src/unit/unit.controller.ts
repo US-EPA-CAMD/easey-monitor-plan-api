@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitService } from './unit.service';
 import { UnitDTO } from '../dtos/unit.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -15,7 +16,11 @@ export class UnitController {
     type: UnitDTO,
     description: 'Retrieves unit records from a specific unit ID',
   })
-  getUnits(@Param('id') id: number): Promise<UnitDTO[]> {
-    return this.service.getUnits(id);
+  async getUnits(@Param('id') id: number): Promise<ArrayResponse<UnitDTO>> {
+    const units = await this.service.getUnits(id);
+
+    return  {
+      items: units
+    };
   }
 }

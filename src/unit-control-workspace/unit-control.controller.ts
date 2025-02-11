@@ -8,6 +8,7 @@ import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceService } from './unit-control.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -38,11 +39,15 @@ export class UnitControlWorkspaceController {
     label: 'Retrieved workspace monitor location unit controls',
     requestParamsOutFields:['locId', 'unitId']
   })
-  getUnitControls(
+  async getUnitControls(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitControlDTO[]> {
-    return this.service.getUnitControls(locId, unitId);
+  ): Promise<ArrayResponse<UnitControlDTO>> {
+    const unitCapacityDTOS = await this.service.getUnitControls(locId, unitId);
+
+    return  {
+      items: unitCapacityDTOS
+    }
   }
 
   @Put(':unitControlId')

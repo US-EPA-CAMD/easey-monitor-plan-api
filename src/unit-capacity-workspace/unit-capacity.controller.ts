@@ -10,6 +10,7 @@ import {
 } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,11 +38,15 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
-  getUnitCapacities(
+  async getUnitCapacities(
     @Param('locId') locationId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitCapacityDTO[]> {
-    return this.service.getUnitCapacities(locationId, unitId);
+  ): Promise<ArrayResponse<UnitCapacityDTO>> {
+    const unitCapacityDTOS = await this.service.getUnitCapacities(locationId, unitId);
+
+    return  {
+      items: unitCapacityDTOS
+    }
   }
 
   @Post()

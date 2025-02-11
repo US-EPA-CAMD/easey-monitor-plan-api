@@ -60,7 +60,7 @@ describe('ComponentWorkspaceController', () => {
   describe('getComponents', () => {
     it('should return array of components', async () => {
       jest.spyOn(service, 'getComponents').mockResolvedValue(data);
-      expect(await controller.getComponents(locId)).toBe(data);
+      expect(await controller.getComponents(locId)).toStrictEqual({ items: data} );
     });
   });
 

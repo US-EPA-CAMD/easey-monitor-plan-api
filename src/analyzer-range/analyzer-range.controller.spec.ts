@@ -36,7 +36,7 @@ describe('AnalyzerRangeController', () => {
   describe('getAnalyzerRanges', () => {
     it('should return array of analyzer ranges', async () => {
       jest.spyOn(service, 'getAnalyzerRanges').mockResolvedValue(data);
-      expect(await controller.getAnalyzerRanges(locId, compId)).toBe(data);
+      expect(await controller.getAnalyzerRanges(locId, compId)).toStrictEqual({ items: data} );
     });
   });
 });

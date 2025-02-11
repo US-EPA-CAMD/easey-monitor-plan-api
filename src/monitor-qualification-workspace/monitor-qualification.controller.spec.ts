@@ -63,7 +63,7 @@ describe('MonitorQualificationWorkspaceController', () => {
   describe('getQualifications', () => {
     it('should return array of monitor systems', async () => {
       jest.spyOn(service, 'getQualifications').mockResolvedValue(data);
-      expect(await controller.getQualifications(locId)).toBe(data);
+      expect(await controller.getQualifications(locId)).toStrictEqual({ items: data} );
     });
   });
 
