@@ -71,6 +71,7 @@ describe('Component Checks Service Test', () => {
       payload.sampleAcquisitionMethodCode = null;
       payload.componentTypeCode = 'ABC';
       payload.basisCode = null;
+      payload.componentId = 'abc'
 
       let errored = false;
       const errorLocation = ""
@@ -94,11 +95,13 @@ describe('Component Checks Service Test', () => {
 
       payload.componentTypeCode = 'NOX';
       payload.basisCode = null;
-
+      const errorLocation = ""
       let errored = false;
-
+      const monitoringSystemData = new UpdateMonitorSystemDTO();
+      monitoringSystemData.monitoringSystemComponentData = [{ componentId: "abc", endDate: new Date('2022-10-10'), beginDate: new Date('2022-10-02'), endHour: 0, beginHour: 0 }]
+      
       try {
-        await service.runChecks(locationId, payload);
+        await service.runChecks(locationId, payload, true, false, errorLocation, [monitoringSystemData]);
       } catch (err) {
         errored = true;
         expect(err.response.message).toEqual(JSON.stringify([MOCK_ERROR_MSG]));

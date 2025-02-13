@@ -52,7 +52,7 @@ export class ComponentCheckService {
       errorList.push(error);
     }
 
-    error = await this.component14Check(locationId, component, errorLocation);
+    error = await this.component14Check(locationId, component, errorLocation, monitoringSystemData);
     if (error) {
       errorList.push(error);
     }
@@ -90,7 +90,9 @@ export class ComponentCheckService {
       const validateActiveRecord = new Set();
       monitoringSystemData?.forEach((system) => {
         system.monitoringSystemComponentData?.forEach((com) => {
-          validateActiveRecord.add(!isInactiveRecord(com.beginDate, com.endDate))
+          if (com.componentId === component.componentId) {
+            validateActiveRecord.add(!isInactiveRecord(com.beginDate, com.endDate))
+          }
         })
       })
 
@@ -111,6 +113,7 @@ export class ComponentCheckService {
     locationId: string | null,
     component: UpdateComponentBaseDTO,
     errorLocation: string = '',
+    monitoringSystemData?: UpdateMonitorSystemDTO[]
   ): Promise<string> {
     let error = null;
     let errorCode = null;
@@ -121,7 +124,17 @@ export class ComponentCheckService {
       )
     ) {
       if (!component.basisCode) {
-        errorCode = 'COMPON-14-A';
+        const validateActiveRecord = new Set();
+        monitoringSystemData?.forEach((system) => {
+          system.monitoringSystemComponentData?.forEach((com) => {
+            if (com.componentId === component.componentId) {
+              validateActiveRecord.add(!isInactiveRecord(com.beginDate, com.endDate))
+            }
+          })
+        })
+        if(validateActiveRecord.has(true)){
+          errorCode = 'COMPON-14-A';
+        }
       } else {
         if (
           !['W', 'D', 'B'].includes(component.basisCode) ||
