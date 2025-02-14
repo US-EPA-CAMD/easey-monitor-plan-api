@@ -105,9 +105,7 @@ export class MonitorSpanChecksService {
       if (monitorSpan.componentTypeCode === 'FLOW') {
         if (!monitorSpan.flowFullScaleRange) {
           errorCode = 'SPAN-17-A';
-        }
-
-        if (
+        } else if (
           monitorSpan.flowSpanValue &&
           monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue
         ) {

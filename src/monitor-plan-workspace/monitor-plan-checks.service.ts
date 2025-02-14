@@ -103,7 +103,6 @@ export class MonitorPlanChecksService {
       });
 
       monitorLocation.monitoringSpanData?.forEach((span, spanIdx) => {
-        if (!span.endDate) {
           promises.push(
             this.monSpanChecksService.runChecks(
               span,
@@ -112,11 +111,9 @@ export class MonitorPlanChecksService {
               `locations.${locIdx}.span.${spanIdx}.`,
             ),
           );
-        }
       });
 
       monitorLocation.monitoringSystemData?.forEach((system, sysIdx) => {
-        if (!system.endDate) {
           promises.push(
             this.monSysCheckService.runChecks(
               locationId,
@@ -126,7 +123,6 @@ export class MonitorPlanChecksService {
               `locations.${locIdx}.systems.${sysIdx}.`,
             ),
           );
-        }
       });
 
       monitorLocation.componentData?.forEach((component, compIdx) => {
