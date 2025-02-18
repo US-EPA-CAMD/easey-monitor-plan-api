@@ -35,7 +35,7 @@ describe('MonitorFormulaController', () => {
   describe('getFormulas', () => {
     it('should return array of monitor formulas', async () => {
       jest.spyOn(service, 'getFormulas').mockResolvedValue(data);
-      expect(await controller.getFormulas(locId)).toBe(data);
+      expect(await controller.getFormulas(locId)).toStrictEqual({ items: data} );
     });
   });
 });

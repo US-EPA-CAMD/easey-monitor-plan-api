@@ -10,6 +10,7 @@ import {
 } from '../dtos/lee-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,11 +38,15 @@ export class LEEQualificationWorkspaceController {
     label: 'Retrieved workspace monitor location LEE qualifications',
     requestParamsOutFields: ['locId', 'qualId']
   })
-  getLEEQualifications(
+  async getLEEQualifications(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
-  ): Promise<LEEQualificationDTO[]> {
-    return this.service.getLEEQualifications(locId, qualId);
+  ): Promise<ArrayResponse<LEEQualificationDTO>> {
+    const leeQualifications = await this.service.getLEEQualifications(locId, qualId);
+
+    return  {
+      items: leeQualifications
+    }
   }
 
   @Put(':leeQualId')

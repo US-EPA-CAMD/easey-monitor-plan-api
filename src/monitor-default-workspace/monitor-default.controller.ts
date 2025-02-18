@@ -10,6 +10,7 @@ import {
 import { MonitorDefaultWorkspaceService } from './monitor-default.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -36,10 +37,14 @@ export class MonitorDefaultWorkspaceController {
     type: MonitorDefaultDTO,
     description: 'Retrieves workspace default records for a monitor location',
   })
-  getDefaults(
+  async getDefaults(
     @Param('locId') locationId: string,
-  ): Promise<MonitorDefaultDTO[]> {
-    return this.service.getDefaults(locationId);
+  ): Promise<ArrayResponse<MonitorDefaultDTO>> {
+    const defaults = await this.service.getDefaults(locationId);
+
+    return  {
+      items: defaults
+    };
   }
 
   @Put(':defaultId')

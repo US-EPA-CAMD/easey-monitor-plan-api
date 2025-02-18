@@ -8,6 +8,7 @@ import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -38,8 +39,12 @@ export class MatsMethodWorkspaceController {
     label: 'Retrieved workspace monitor location MATS methods',
     requestParamsOutFields:['locId']
   })
-  getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
-    return this.service.getMethods(locationId);
+  async getMethods(@Param('locId') locationId: string): Promise<ArrayResponse<MatsMethodDTO>> {
+    const methods = await this.service.getMethods(locationId);
+
+    return  {
+      items: methods
+    };
   }
 
   @Post()

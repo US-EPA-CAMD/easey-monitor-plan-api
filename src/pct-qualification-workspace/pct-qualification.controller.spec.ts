@@ -63,9 +63,7 @@ describe('PCTQualificationWorkspaceController', () => {
       jest
         .spyOn(service, 'getPCTQualifications')
         .mockResolvedValue(returnedPCTQualifications);
-      expect(await controller.getPCTQualifications(locId, qualId)).toBe(
-        returnedPCTQualifications,
-      );
+      expect(await controller.getPCTQualifications(locId, qualId)).toStrictEqual({ items: returnedPCTQualifications} );
     });
   });
 

@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { SystemFuelFlowService } from './system-fuel-flow.service';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,10 +17,14 @@ export class SystemFuelFlowController {
     type: SystemFuelFlowDTO,
     description: 'Retrieves official fuel flow records for a monitor system',
   })
-  getFuelFlows(
+  async getFuelFlows(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
-  ): Promise<SystemFuelFlowDTO[]> {
-    return this.service.getFuelFlows(monSysId);
+  ): Promise<ArrayResponse<SystemFuelFlowDTO>> {
+    const fuelFlows = await this.service.getFuelFlows(monSysId);
+
+    return  {
+      items: fuelFlows
+    }
   }
 }

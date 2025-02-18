@@ -7,6 +7,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -34,11 +35,15 @@ export class UnitFuelWorkspaceController {
     label: 'Retrieved workspace monitor location unit fuels',
     requestParamsOutFields:['locId', 'unitId']
   })
-  getUnitFuels(
+  async getUnitFuels(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitFuelDTO[]> {
-    return this.service.getUnitFuels(locId, unitId);
+  ): Promise<ArrayResponse<UnitFuelDTO>> {
+    const unitFuelDTOS = await this.service.getUnitFuels(locId, unitId);
+
+    return  {
+      items: unitFuelDTOS
+    }
   }
 
   @Put(':unitFuelId')

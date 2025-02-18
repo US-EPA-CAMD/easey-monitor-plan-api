@@ -62,7 +62,7 @@ describe('MonitorSpanWorkspaceController', () => {
   describe('getSpans', () => {
     it('should return array of monitor spans', async () => {
       jest.spyOn(service, 'getSpans').mockResolvedValue(data);
-      expect(await controller.getSpans(locId)).toBe(data);
+      expect(await controller.getSpans(locId)).toStrictEqual({ items: data} );
     });
   });
 

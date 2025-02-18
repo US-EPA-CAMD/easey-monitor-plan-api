@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 import { MonitorDefaultService } from './monitor-default.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,9 +17,13 @@ export class MonitorDefaultController {
     type: MonitorDefaultDTO,
     description: 'Retrieves official default records for a monitor location',
   })
-  getDefaults(
+  async getDefaults(
     @Param('locId') locationId: string,
-  ): Promise<MonitorDefaultDTO[]> {
-    return this.service.getDefaults(locationId);
+  ): Promise<ArrayResponse<MonitorDefaultDTO>> {
+    const defaults = await this.service.getDefaults(locationId);
+
+    return  {
+      items: defaults
+    };
   }
 }

@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { ComponentDTO } from '../dtos/component.dto';
 import { ComponentService } from './component.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,7 +17,11 @@ export class ComponentController {
     type: ComponentDTO,
     description: 'Retrieves official component records for a monitor location',
   })
-  getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
-    return this.service.getComponents(locationId);
+  async getComponents(@Param('locId') locationId: string): Promise<ArrayResponse<ComponentDTO>> {
+    const components = await  this.service.getComponents(locationId);
+
+    return  {
+      items: components
+    };
   }
 }

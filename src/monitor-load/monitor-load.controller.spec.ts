@@ -35,7 +35,7 @@ describe('MonitorLoadController', () => {
   describe('getLoads', () => {
     it('should return array of monitor loads', async () => {
       jest.spyOn(service, 'getLoads').mockResolvedValue(data);
-      expect(await controller.getLoads(locId)).toBe(data);
+      expect(await controller.getLoads(locId)).toStrictEqual({ items: data} );
     });
   });
 });

@@ -3,6 +3,7 @@ import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { UnitProgramService } from './unit-program.service';
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,9 +17,13 @@ export class UnitProgramController {
     type: UnitProgramDTO,
     description: 'Retrieves unit control records from a specific unit ID',
   })
-  getUnitProgramsByUnitRecordId(
+  async getUnitProgramsByUnitRecordId(
     @Param('unitId') unitRecordId: number,
-  ): Promise<UnitProgramDTO[]> {
-    return this.service.getUnitProgramsByUnitRecordId(unitRecordId);
+  ): Promise<ArrayResponse<UnitProgramDTO>> {
+    const unitProgramDTOS = await this.service.getUnitProgramsByUnitRecordId(unitRecordId);
+
+    return  {
+      items: unitProgramDTOS
+    }
   }
 }

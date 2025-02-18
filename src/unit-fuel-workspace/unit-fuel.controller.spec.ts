@@ -61,9 +61,7 @@ describe('UnitFuelWorkspaceController', () => {
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
       jest.spyOn(service, 'getUnitFuels').mockResolvedValue(returnedUnitFuels);
-      expect(await controller.getUnitFuels(locId, unitRecordId)).toBe(
-        returnedUnitFuels,
-      );
+      expect(await controller.getUnitFuels(locId, unitRecordId)).toStrictEqual({ items: returnedUnitFuels} );
     });
   });
 

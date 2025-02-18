@@ -78,7 +78,7 @@ describe('MonitorFormulaWorkspaceController', () => {
   describe('getFormulas', () => {
     it('should call the MonitorFormulaWorkspaceService.getFormulas', async () => {
       const formulas = await controller.getFormulas(locationId);
-      expect(formulas).toEqual([]);
+      expect(formulas).toEqual({items: []} );
       expect(service.getFormulas).toHaveBeenCalled();
     });
   });

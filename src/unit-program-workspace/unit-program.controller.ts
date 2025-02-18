@@ -6,6 +6,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
 import { UnitProgramWorkspaceService } from './unit-program.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -33,9 +34,13 @@ export class UnitProgramWorkspaceController {
     label: 'Retrieved workspace monitor location unit programs',
     requestParamsOutFields: ['unitId']
   })
-  getUnitProgramsByUnitRecordId(
+  async getUnitProgramsByUnitRecordId(
     @Param('unitId') unitId: number,
-  ): Promise<UnitProgramDTO[]> {
-    return this.service.getUnitProgramsByUnitRecordId(unitId);
+  ): Promise<ArrayResponse<UnitProgramDTO>> {
+    const unitProgramDTOS = await this.service.getUnitProgramsByUnitRecordId(unitId);
+
+    return  {
+      items: unitProgramDTOS
+    }
   }
 }

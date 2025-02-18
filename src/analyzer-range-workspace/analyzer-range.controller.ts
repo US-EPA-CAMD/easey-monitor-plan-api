@@ -11,6 +11,7 @@ import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -40,11 +41,15 @@ export class AnalyzerRangeWorkspaceController {
     label: 'Retrieved workspace monitor location component analyzer range records',
     requestParamsOutFields: ['locId', 'compId']
   })
-  getAnalyzerRanges(
+  async getAnalyzerRanges(
     @Param('locId') locId: string,
     @Param('compId') compId: string,
-  ): Promise<AnalyzerRangeDTO[]> {
-    return this.service.getAnalyzerRanges(compId);
+  ): Promise<ArrayResponse<AnalyzerRangeDTO>> {
+    const analyzerRanges = await this.service.getAnalyzerRanges(compId);
+
+    return  {
+      items: analyzerRanges
+    };
   }
 
   @Post()

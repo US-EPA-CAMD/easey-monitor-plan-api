@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeService } from './analyzer-range.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,10 +17,14 @@ export class AnalyzerRangeController {
     type: AnalyzerRangeDTO,
     description: 'Retrieves official analyzer range records for a component',
   })
-  getAnalyzerRanges(
+  async getAnalyzerRanges(
     @Param('locId') locId: string,
     @Param('compId') compId: string,
-  ): Promise<AnalyzerRangeDTO[]> {
-    return this.service.getAnalyzerRanges(compId);
+  ): Promise<ArrayResponse<AnalyzerRangeDTO>> {
+    const analyzerRanges = await this.service.getAnalyzerRanges(compId);
+
+    return  {
+      items: analyzerRanges
+    };
   }
 }

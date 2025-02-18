@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanService } from './monitor-span.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,7 +17,11 @@ export class MonitorSpanController {
     type: MonitorSpanDTO,
     description: 'Retrieves official span records for a monitor location',
   })
-  getSpans(@Param('locId') locationId: string): Promise<MonitorSpanDTO[]> {
-    return this.service.getSpans(locationId);
+  async getSpans(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorSpanDTO>> {
+    const spans = await this.service.getSpans(locationId);
+
+    return  {
+      items: spans
+    }
   }
 }

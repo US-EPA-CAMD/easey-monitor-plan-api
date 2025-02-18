@@ -10,6 +10,7 @@ import {
 } from '../dtos/monitor-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,10 +38,14 @@ export class MonitorQualificationWorkspaceController {
     label: 'Retrieved workspace monitor location qualifications',
     requestParamsOutFields: ['locId'],
   })
-  getQualifications(
+  async getQualifications(
     @Param('locId') locationId: string,
-  ): Promise<MonitorQualificationDTO[]> {
-    return this.service.getQualifications(locationId);
+  ): Promise<ArrayResponse<MonitorQualificationDTO>> {
+    const monitorQualificationDTOS = await this.service.getQualifications(locationId);
+
+    return  {
+      items: monitorQualificationDTOS
+    }
   }
 
   @Post()

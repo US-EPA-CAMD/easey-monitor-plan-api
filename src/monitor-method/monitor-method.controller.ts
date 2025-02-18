@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodService } from './monitor-method.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,7 +17,11 @@ export class MonitorMethodController {
     type: MonitorMethodDTO,
     description: 'Retrieves official method records for a monitor location',
   })
-  getMethods(@Param('locId') locationId: string): Promise<MonitorMethodDTO[]> {
-    return this.service.getMethods(locationId);
+  async getMethods(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorMethodDTO>> {
+    const methods = await this.service.getMethods(locationId);
+
+    return  {
+      items: methods
+    }
   }
 }

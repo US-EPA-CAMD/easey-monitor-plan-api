@@ -3,6 +3,7 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentService } from './monitor-plan-comment.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -16,9 +17,13 @@ export class MonitorPlanCommentController {
     type: MonitorPlanCommentDTO,
     description: 'Retrieves official comment records for a monitor plan',
   })
-  getComments(
+  async getComments(
     @Param('planId') planId: string,
-  ): Promise<MonitorPlanCommentDTO[]> {
-    return this.service.getComments(planId);
+  ): Promise<ArrayResponse<MonitorPlanCommentDTO>> {
+    const comments = await this.service.getComments(planId);
+
+    return  {
+      items: comments
+    }
   }
 }

@@ -7,6 +7,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { UnitWorkspaceService } from './unit.service';
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -34,11 +35,15 @@ export class UnitWorkspaceController {
     label: 'Retrieved workspace monitor location unit',
     requestParamsOutFields: ['locId', 'id']
   })
-  getUnits(
+  async getUnits(
     @Param('locId') locId: string,
     @Param('id') unitId: number,
-  ): Promise<UnitDTO[]> {
-    return this.service.getUnits(locId, unitId);
+  ): Promise<ArrayResponse<UnitDTO>> {
+    const unitDTOS = await this.service.getUnits(locId, unitId);
+
+    return  {
+      items: unitDTOS
+    }
   }
 
   @Put(':id')

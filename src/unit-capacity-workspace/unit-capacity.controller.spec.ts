@@ -60,9 +60,7 @@ describe('UnitCapacityController', () => {
       jest
         .spyOn(service, 'getUnitCapacities')
         .mockResolvedValue(returnedUnitCapacities);
-      expect(await controller.getUnitCapacities(locId, unitRecordId)).toBe(
-        returnedUnitCapacities,
-      );
+      expect(await controller.getUnitCapacities(locId, unitRecordId)).toStrictEqual({ items: returnedUnitCapacities} );
     });
   });
 
