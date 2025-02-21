@@ -24,7 +24,7 @@ import {
   IsIsoFormat,
   IsValidCode,
   IsValidDate,
-  matchesRegex
+  MatchesRegEx
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -58,7 +58,7 @@ export class MonitorSystemBaseDTO {
       });
     },
   })
-  @IfIsActive((value) => matchesRegex(value, '^[A-Z0-9]{1,3}$'), {}, {
+  @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-7-B', {
         iD: args.value,
