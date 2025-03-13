@@ -12,7 +12,7 @@ import {
 import { MonitorDefault } from '../entities/workspace/monitor-default.entity';
 import { MonitorDefaultMap } from '../maps/monitor-default.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorDefaultWorkspaceRepository } from './monitor-default.repository';
 
 @Injectable()
@@ -148,7 +148,7 @@ export class MonitorDefaultWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       monDefaults.map(async monDefault => {
         const monDefaultRecord = await withTransaction(
           this.repository,

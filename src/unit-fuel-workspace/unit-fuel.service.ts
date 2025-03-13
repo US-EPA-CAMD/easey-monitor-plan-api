@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 
 @Injectable()
@@ -137,7 +137,7 @@ export class UnitFuelWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       unitFuels.map(async unitFuel => {
         const unitFuelRecord = await withTransaction(
           this.repository,

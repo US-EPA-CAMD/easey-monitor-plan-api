@@ -9,7 +9,7 @@ import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoad } from '../entities/workspace/monitor-load.entity';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorLoadWorkspaceRepository } from './monitor-load.repository';
 
 @Injectable()
@@ -54,7 +54,7 @@ export class MonitorLoadWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       loads.map(async load => {
         const loadRecord = await withTransaction(
           this.repository,

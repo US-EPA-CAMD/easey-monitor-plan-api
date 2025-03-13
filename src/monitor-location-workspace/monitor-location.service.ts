@@ -594,7 +594,7 @@ export class MonitorLocationWorkspaceService {
           );
         }
 
-        await Promise.all(innerPromises);
+        await settlePromises(innerPromises);
         locations.push(
           await this.getLocation(monitorLocationRecord.id, trx), // Re-query the location to populate newly added relationships
         );

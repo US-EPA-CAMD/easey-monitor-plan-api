@@ -11,7 +11,7 @@ import {
 import { SystemFuelFlow } from '../entities/workspace/system-fuel-flow.entity';
 import { SystemFuelFlowMap } from '../maps/system-fuel-flow.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { SystemFuelFlowWorkspaceRepository } from './system-fuel-flow.repository';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class SystemFuelFlowWorkspaceService {
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) { }
+  ) {}
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlowDTO[]> {
     const results = await this.repository.getFuelFlows(monSysId);
@@ -136,7 +136,7 @@ export class SystemFuelFlowWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    return settlePromises(
       systemFuelFlows.map(async fuelFlow => {
         const fuelFlowRecord = await withTransaction(
           this.repository,

@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MatsMethodWorkspaceRepository } from './mats-method.repository';
 
 @Injectable()
@@ -139,7 +139,7 @@ export class MatsMethodWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       matsMethods.map(async matsMethod => {
         const method = await withTransaction(
           this.repository,

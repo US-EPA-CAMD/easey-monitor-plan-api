@@ -11,7 +11,7 @@ import { Component } from '../entities/workspace/component.entity';
 import { ComponentMap } from '../maps/component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { ComponentWorkspaceRepository } from './component.repository';
 
 @Injectable()
@@ -126,7 +126,7 @@ export class ComponentWorkspaceService {
     trx?: EntityManager,
   ) {
     const repository = withTransaction(this.repository, trx);
-    await Promise.all(
+    await settlePromises(
       location.componentData.map(async component => {
         let compRecord = await repository.getComponentByLocIdAndCompId(
           locationId,

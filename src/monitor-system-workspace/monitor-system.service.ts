@@ -17,7 +17,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { SystemComponentWorkspaceService } from '../system-component-workspace/system-component.service';
 import { SystemFuelFlowWorkspaceService } from '../system-fuel-flow-workspace/system-fuel-flow.service';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 
 @Injectable()
@@ -205,7 +205,7 @@ export class MonitorSystemWorkspaceService {
       );
     }
 
-    await Promise.all(promises);
+    await settlePromises(promises);
 
     return true;
   }
@@ -252,7 +252,7 @@ export class MonitorSystemWorkspaceService {
     trx?: EntityManager,
   ) {
     const repository = withTransaction(this.repository, trx);
-    await Promise.all(
+    await settlePromises(
       systems.map(async system => {
         const innerPromises = [];
         let systemRecord = await repository.getSystemByLocIdSysIdentifier(
@@ -313,7 +313,7 @@ export class MonitorSystemWorkspaceService {
           );
         }
 
-        await Promise.all(innerPromises);
+        await settlePromises(innerPromises);
       }),
     );
     this.logger.debug(`Imported ${systems.length} systems`);

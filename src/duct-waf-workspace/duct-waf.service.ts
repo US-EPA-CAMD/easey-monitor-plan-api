@@ -9,7 +9,7 @@ import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWaf } from '../entities/duct-waf.entity';
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
 
 @Injectable()
@@ -141,7 +141,7 @@ export class DuctWafWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       ductWafs.map(async ductWaf => {
         const ductWafRecord = await withTransaction(
           this.repository,

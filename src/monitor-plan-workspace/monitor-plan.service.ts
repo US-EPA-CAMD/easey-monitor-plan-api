@@ -40,6 +40,7 @@ import { MonitorSpanWorkspaceRepository } from '../monitor-span-workspace/monito
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system.repository';
 import { PCTQualificationWorkspaceRepository } from '../pct-qualification-workspace/pct-qualification.repository';
 import { PlantService } from '../plant/plant.service';
+import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { SystemComponentWorkspaceRepository } from '../system-component-workspace/system-component.repository';
 import { SystemFuelFlowWorkspaceRepository } from '../system-fuel-flow-workspace/system-fuel-flow.repository';
@@ -280,6 +281,11 @@ export class MonitorPlanWorkspaceService {
     endReportPeriodId: number;
     trx?: EntityManager;
   }) {
+    const reportingPeriodRepository = withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    );
+
     // Create the `monitor_plan` record.
     const monitorPlanRecord = await withTransaction(
       this.repository,
@@ -292,7 +298,7 @@ export class MonitorPlanWorkspaceService {
     );
 
     // Create the `monitor_plan_location` record(s).
-    await Promise.all(
+    await settlePromises(
       locations.map(l =>
         this.monitorPlanLocationService.createMonPlanLocationRecord(
           monitorPlanRecord.id,
@@ -312,22 +318,20 @@ export class MonitorPlanWorkspaceService {
     ).getUnitProgramsByUnitRecordIds(unitRecordIds);
 
     // Get the program ranges and types from the unit programs.
-    const programRanges: ProgramRange[] = await Promise.all(
+    const programRanges: ProgramRange[] = await settlePromises<ProgramRange>(
       unitPrograms
         .filter(up => up.unitMonitorCertBeginDate !== null)
         .map(async up => {
-          const [begin, end] = await Promise.all([
-            this.reportingPeriodRepository.getByDate(
-              up.unitMonitorCertBeginDate,
-            ),
-            up.endDate && this.reportingPeriodRepository.getByDate(up.endDate),
+          const [begin, end] = await settlePromises<ReportingPeriod>([
+            reportingPeriodRepository.getByDate(up.unitMonitorCertBeginDate),
+            up.endDate && reportingPeriodRepository.getByDate(up.endDate),
           ]);
           return {
             type:
               up.program.code.ozoneSeasonIndicator === 1 ? 'ozone' : 'annual',
             begin: { year: begin.year, quarter: begin.quarter },
             end: end && { year: end.year, quarter: end.quarter },
-          };
+          } as ProgramRange;
         }),
     );
 
@@ -421,7 +425,7 @@ export class MonitorPlanWorkspaceService {
     const freqRanges = getFrequencyRanges(periodFreqAssoc);
 
     // Create the reporting frequency records.
-    await Promise.all(
+    await settlePromises(
       freqRanges.map(async ([begin, end], i) => {
         const [beginYear, beginQuarter, beginFreq] = begin;
         const [endYear, endQuarter, endFreq] = end;
@@ -434,12 +438,9 @@ export class MonitorPlanWorkspaceService {
             HttpStatus.INTERNAL_SERVER_ERROR,
           );
         }
-        const [beginReportPeriod, endReportPeriod] = await Promise.all([
-          this.reportingPeriodRepository.getByYearQuarter(
-            beginYear,
-            beginQuarter,
-          ),
-          this.reportingPeriodRepository.getByYearQuarter(endYear, endQuarter),
+        const [beginReportPeriod, endReportPeriod] = await settlePromises([
+          reportingPeriodRepository.getByYearQuarter(beginYear, beginQuarter),
+          reportingPeriodRepository.getByYearQuarter(endYear, endQuarter),
         ]);
         await withTransaction(
           this.reportingFreqRepository,
@@ -1687,7 +1688,7 @@ export class MonitorPlanWorkspaceService {
       { earliestRf: null, latestRf: null },
     );
 
-    await Promise.all(deletePromises);
+    await settlePromises(deletePromises);
 
     if (
       latestRf &&
