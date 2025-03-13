@@ -200,9 +200,10 @@ export class MonitorPlanWorkspaceService {
       .limit(1)
       .getOne();
 
-    const earliestMethodBeginReportingPeriod = await this.reportingPeriodRepository.getByDate(
-      earliestMethod.beginDate,
-    );
+    const earliestMethodBeginReportingPeriod = await withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    ).getByDate(earliestMethod.beginDate);
 
     const planBeginYear = firstPlan.beginReportingPeriod.year;
     const planBeginQuarter = firstPlan.beginReportingPeriod.quarter;
