@@ -17,9 +17,9 @@ import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UnitDTO } from '../dtos/unit.dto';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
+import { MonitorPlanLocation } from '../entities/workspace/monitor-plan-location.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
@@ -172,24 +172,33 @@ export class MonitorPlanWorkspaceService {
     const repository = withTransaction(this.repository, trx);
 
     // Get the first single-unit monitor plan associated with the method.
-    const firstPlan = await repository
+    const firstPlan = await this.repository
       .createQueryBuilder('mp')
       .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
       .leftJoinAndSelect('mp.endReportingPeriod', 'erp')
       .innerJoin('mp.monitorPlanLocations', 'mpl')
-      .innerJoin('mpl.monitorLocation', 'ml')
+      .innerJoinAndSelect('mpl.monitorLocation', 'ml')
       .innerJoin('ml.methods', 'm')
       .where('m.id = :methodId', { methodId: method.id })
+      .andWhere('ml.unitId IS NOT NULL')
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('COUNT(mpl_sub.id)')
+          .from(MonitorPlanLocation, 'mpl_sub')
+          .where('mpl_sub.planId = mp.id')
+          .getQuery();
+        return `(${subQuery}) = 1`;
+      })
       .orderBy('brp.beginDate', 'ASC')
       .limit(1)
       .getOne();
 
-    if (!firstPlan) {
-      this.logger.debug(
-        `No monitor plan found for the method with id "${method.id}"`,
-      );
-      return;
-    }
+    if (!firstPlan) return;
+
+    this.logger.debug(
+      `Single-unit monitor plan found for the method with id "${method.id}, checking if the begin reporting period should be updated"`,
+    );
 
     const earliestMethod = await withTransaction(this.methodRepository, trx)
       .createQueryBuilder('m')
@@ -201,9 +210,10 @@ export class MonitorPlanWorkspaceService {
       .limit(1)
       .getOne();
 
-    const earliestMethodBeginReportingPeriod = await this.reportingPeriodRepository.getByDate(
-      earliestMethod.beginDate,
-    );
+    const earliestMethodBeginReportingPeriod = await withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    ).getByDate(earliestMethod.beginDate);
 
     const planBeginYear = firstPlan.beginReportingPeriod.year;
     const planBeginQuarter = firstPlan.beginReportingPeriod.quarter;
