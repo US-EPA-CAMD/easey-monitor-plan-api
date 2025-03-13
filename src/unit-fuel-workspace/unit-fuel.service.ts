@@ -165,6 +165,7 @@ export class UnitFuelWorkspaceService {
             payload: unitFuel,
             userId,
             isImport: true,
+            trx,
           });
         }
       }),

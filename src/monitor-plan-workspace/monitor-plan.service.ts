@@ -10,14 +10,12 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorPlanReportingFrequency } from '../entities/workspace/monitor-plan-reporting-freq.entity';
 import { MonitorPlan as MonitorPlanWorkspace } from '../entities/workspace/monitor-plan.entity';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UnitDTO } from '../dtos/unit.dto';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
-import { MonitorLocation as MonitorLocationWorkspace } from '../entities/workspace/monitor-location.entity';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
@@ -1086,6 +1084,17 @@ export class MonitorPlanWorkspaceService {
       newPlans: MonitorPlanDTO[];
     } = { endedPlans: [], newPlans: [] };
 
+    // Get a list of existing monitor plans from the database.
+    const existingPlans = await this.repository.find({
+      where: { facId: facilityId },
+      relations: {
+        locations: {
+          unit: true,
+          stackPipe: true,
+        },
+      },
+    });
+
     // Start a transaction.
     const queryRunner = this.entityManager.connection.createQueryRunner();
     await queryRunner.startTransaction();
@@ -1128,17 +1137,6 @@ export class MonitorPlanWorkspaceService {
 
       // Check the configurations for validity.
       this.runConfigurationChecks(workingPlans);
-
-      // Get a list of existing monitor plans from the database (outside of the transaction).
-      const existingPlans = await this.repository.find({
-        where: { facId: facilityId },
-        relations: {
-          locations: {
-            unit: true,
-            stackPipe: true,
-          },
-        },
-      });
 
       // Compare each working plan to the previous database state and update accordingly.
       result = (
@@ -1240,7 +1238,7 @@ export class MonitorPlanWorkspaceService {
     });
   }
 
-  private async matchToPlanByLocationsAndBeginPeriod(
+  private matchToPlanByLocationsAndBeginPeriod(
     locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> },
     existingPlans: MonitorPlanWorkspace[],
     beginReportPeriodId: number,
@@ -1253,7 +1251,7 @@ export class MonitorPlanWorkspaceService {
     );
   }
 
-  private async matchToPlanByLocationsAndEndPeriod(
+  private matchToPlanByLocationsAndEndPeriod(
     locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> },
     existingPlans: MonitorPlanWorkspace[],
     endReportPeriodId: number | null,
@@ -1266,7 +1264,7 @@ export class MonitorPlanWorkspaceService {
     );
   }
 
-  private async matchToPlanByLocationsAndPeriod(
+  private matchToPlanByLocationsAndPeriod(
     locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> },
     existingPlans: MonitorPlanWorkspace[],
     periodId: number | null,
@@ -1307,7 +1305,7 @@ export class MonitorPlanWorkspaceService {
       );
     }
 
-    return this.getMonitorPlan(matchedPlan.id, { full: true });
+    return matchedPlan;
   }
 
   private mergePartialConfigurations(
@@ -1416,10 +1414,10 @@ export class MonitorPlanWorkspaceService {
     const planEndReportPeriodId =
       workingPlan.endYear && workingPlan.endQuarter
         ? (
-            await this.reportingPeriodRepository.getByYearQuarter(
-              workingPlan.endYear,
-              workingPlan.endQuarter,
-            )
+            await withTransaction(
+              this.reportingPeriodRepository,
+              trx,
+            ).getByYearQuarter(workingPlan.endYear, workingPlan.endQuarter)
           ).id
         : null;
 
@@ -1428,13 +1426,13 @@ export class MonitorPlanWorkspaceService {
 
     // Match the working plan to an existing monitor plan by locations and end period.
     const matchedPlan =
-      (await this.matchToPlanByLocationsAndEndPeriod(
+      this.matchToPlanByLocationsAndEndPeriod(
         locationIds,
         existingPlans,
         planEndReportPeriodId,
-      )) ??
+      ) ??
       (planEndReportPeriodId !== null
-        ? await this.matchToPlanByLocationsAndEndPeriod(
+        ? this.matchToPlanByLocationsAndEndPeriod(
             locationIds,
             existingPlans,
             null,
@@ -1492,9 +1490,14 @@ export class MonitorPlanWorkspaceService {
       });
     }
 
+    const reportingPeriodRepository = withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    );
+
     // Calculate the report period range from the working monitor plan.
     const planBeginReportPeriodId = (
-      await this.reportingPeriodRepository.getByYearQuarter(
+      await reportingPeriodRepository.getByYearQuarter(
         workingPlan.beginYear,
         workingPlan.beginQuarter,
       )
@@ -1502,7 +1505,7 @@ export class MonitorPlanWorkspaceService {
     const planEndReportPeriodId =
       workingPlan.endYear && workingPlan.endQuarter
         ? (
-            await this.reportingPeriodRepository.getByYearQuarter(
+            await reportingPeriodRepository.getByYearQuarter(
               workingPlan.endYear,
               workingPlan.endQuarter,
             )
@@ -1513,7 +1516,7 @@ export class MonitorPlanWorkspaceService {
     const locationIds = this.getItemLocationIds(workingPlan.items);
 
     // Match the working plan to an existing monitor plan by locations and begin period.
-    const matchedPlan = await this.matchToPlanByLocationsAndBeginPeriod(
+    const matchedPlan = this.matchToPlanByLocationsAndBeginPeriod(
       locationIds,
       existingPlans,
       planBeginReportPeriodId,
@@ -1561,7 +1564,7 @@ export class MonitorPlanWorkspaceService {
   }
 
   async updateEndReportingPeriod(
-    plan: MonitorPlanDTO,
+    plan: MonitorPlanWorkspace,
     newEndReportPeriodId: number,
     userId: string,
     trx?: EntityManager,
