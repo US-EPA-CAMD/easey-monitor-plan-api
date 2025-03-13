@@ -1206,7 +1206,7 @@ export class MonitorPlanWorkspaceService {
       }
     } catch (err) {
       await queryRunner.rollbackTransaction();
-      throw err;
+      throw new EaseyException(new Error(err.message), HttpStatus.BAD_REQUEST);
     } finally {
       await queryRunner.release();
     }
