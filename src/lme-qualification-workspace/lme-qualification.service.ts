@@ -12,7 +12,7 @@ import {
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
 
 @Injectable()
@@ -181,7 +181,7 @@ export class LMEQualificationWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    return settlePromises(
       lmeQualifications.map(async lmeQualification => {
         const lmeQualRecord = await this.getLMEQualificationByDataYear(
           locationId,

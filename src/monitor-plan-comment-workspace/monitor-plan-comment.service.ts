@@ -3,7 +3,7 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import {
   MonitorPlanCommentBaseDTO,
   MonitorPlanCommentDTO,
@@ -97,7 +97,7 @@ export class MonitorPlanCommentWorkspaceService {
     monitorPlanId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    return settlePromises(
       commentData.map(async comment => {
         const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
           monitorPlanId,

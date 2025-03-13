@@ -12,7 +12,7 @@ import {
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { LEEQualificationWorkspaceRepository } from './lee-qualification.repository';
 
 @Injectable()
@@ -184,7 +184,7 @@ export class LEEQualificationWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    return settlePromises(
       leeQualifications.map(async leeQualification => {
         const leeQualificationRecord = await withTransaction(
           this.repository,
