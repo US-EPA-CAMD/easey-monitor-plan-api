@@ -54,7 +54,7 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
-import { throwIfErrors, withTransaction } from '../utils';
+import { settlePromises, throwIfErrors, withTransaction } from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 @Injectable()
@@ -1142,7 +1142,7 @@ export class MonitorPlanWorkspaceService {
 
       // Compare each working plan to the previous database state and update accordingly.
       result = (
-        await Promise.all(
+        await settlePromises(
           workingPlans.map(workingPlan =>
             this.syncMonitorPlan({
               workingPlan,
@@ -1193,7 +1193,7 @@ export class MonitorPlanWorkspaceService {
       }
 
       // Reset all active monitor plans associated with locations in the import to "needs evaluation".
-      await Promise.all(
+      await settlePromises(
         monitorLocations.map(async loc =>
           this.resetToNeedsEvaluation(loc.id, userId, trx),
         ),

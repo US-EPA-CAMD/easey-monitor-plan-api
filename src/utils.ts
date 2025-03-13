@@ -122,6 +122,35 @@ export const throwIfErrors = (errorList: string[]) => {
   }
 };
 
+export const settlePromises = async <T>(promises: Array<Promise<T>>) => {
+  const { values, errors } = (await Promise.allSettled(promises)).reduce<{
+    values: T[];
+    errors: any[];
+  }>(
+    (acc, result) => {
+      if (result.status === 'fulfilled')
+        return {
+          ...acc,
+          values: [...acc.values, result.value],
+        };
+      return {
+        ...acc,
+        errors: [...acc.errors, result.reason],
+      };
+    },
+    { values: [], errors: [] },
+  );
+
+  if (errors.length > 0) {
+    throw new EaseyException(
+      new Error(JSON.stringify(errors)),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return values;
+};
+
 /**
  * Pass a transaction manager, if it exists, to a custom repository. If not, return the original repository.
  */

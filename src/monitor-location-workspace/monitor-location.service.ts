@@ -34,7 +34,7 @@ import { UnitControlWorkspaceService } from '../unit-control-workspace/unit-cont
 import { UnitFuelWorkspaceService } from '../unit-fuel-workspace/unit-fuel.service';
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { UnitService } from '../unit/unit.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorLocationWorkspaceRepository } from './monitor-location.repository';
 
 @Injectable()
@@ -356,7 +356,7 @@ export class MonitorLocationWorkspaceService {
   ) {
     const locations: MonitorLocationDTO[] = [];
 
-    await Promise.all(
+    await settlePromises(
       plan.monitoringLocationData.map(async location => {
         const innerPromises = [];
 
