@@ -12,7 +12,7 @@ import {
 import { AnalyzerRange } from '../entities/workspace/analyzer-range.entity';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 
 @Injectable()
@@ -134,7 +134,7 @@ export class AnalyzerRangeWorkspaceService {
     analyzerRanges: AnalyzerRangeBaseDTO[] = [],
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       analyzerRanges.map(async analyzerRange => {
         const analyzerRangeRecord = await withTransaction(
           this.repository,

@@ -9,7 +9,7 @@ import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
 import { isInactiveRecord } from '../utilities/is-inactive-record';
 
@@ -168,7 +168,13 @@ export class MonitorSpanWorkspaceService {
       }
 
       mustBeNull.forEach(category => {
-        if ((span[category] !== null) && !(category === 'flowFullScaleRange' && isInactiveRecord(span.beginDate, span.endDate))) {
+        if (
+          span[category] !== null &&
+          !(
+            category === 'flowFullScaleRange' &&
+            isInactiveRecord(span.beginDate, span.endDate)
+          )
+        ) {
           errorList.push(
             `[IMPORT10-NONCRIT-A] An extraneous value has been reported for ${category} in the span record for ${span.componentTypeCode}. This value was not imported.`,
           );
@@ -185,7 +191,7 @@ export class MonitorSpanWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ): Promise<boolean> {
-    await Promise.all(
+    await settlePromises(
       spans.map(async span => {
         const spanRecord = await withTransaction(
           this.repository,

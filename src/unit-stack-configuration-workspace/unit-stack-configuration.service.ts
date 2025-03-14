@@ -11,7 +11,7 @@ import {
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 
 @Injectable()
@@ -126,7 +126,7 @@ export class UnitStackConfigurationWorkspaceService {
   ) {
     const unitStackConfigDTOs: UnitStackConfigurationDTO[] = [];
 
-    await Promise.all(
+    await settlePromises(
       plan.unitStackConfigurationData.map(async unitStackConfig => {
         const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
           unitStackConfig.stackPipeId,

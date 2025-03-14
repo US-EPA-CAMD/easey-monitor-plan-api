@@ -12,7 +12,7 @@ import {
 import { MonitorMethod } from '../entities/workspace/monitor-method.entity';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorMethodWorkspaceRepository } from './monitor-method.repository';
 
 @Injectable()
@@ -153,7 +153,7 @@ export class MonitorMethodWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       methods.map(async method => {
         const methodRecord = await withTransaction(
           this.repository,

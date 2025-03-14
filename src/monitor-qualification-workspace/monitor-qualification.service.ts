@@ -16,7 +16,7 @@ import { LMEQualificationWorkspaceService } from '../lme-qualification-workspace
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
 
 @Injectable()
@@ -135,7 +135,7 @@ export class MonitorQualificationWorkspaceService {
         ),
       );
     }
-    await Promise.all(promises);
+    await settlePromises(promises);
   }
 
   async importQualification(
@@ -144,7 +144,7 @@ export class MonitorQualificationWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       qualifications.map(async qualification => {
         const qualificationRecord = await withTransaction(
           this.repository,
