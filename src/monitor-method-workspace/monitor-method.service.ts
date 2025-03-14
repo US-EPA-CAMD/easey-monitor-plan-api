@@ -87,17 +87,17 @@ export class MonitorMethodWorkspaceService {
 
     await repository.save(monMethod);
 
-    if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
-    }
-
     const monMethodDto = await this.map.one(monMethod);
 
-    await this.mpService.updatePlanPeriodOnMethodUpdate(
-      monMethodDto,
-      userId,
-      trx,
-    );
+    if (!isImport) {
+      this.logger.debug('Creating Monitor Method'); // XXX
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      await this.mpService.updatePlanPeriodOnMethodUpdate(
+        monMethodDto,
+        userId,
+        trx,
+      );
+    }
 
     return monMethodDto;
   }
@@ -132,13 +132,17 @@ export class MonitorMethodWorkspaceService {
 
     await withTransaction(this.repository, trx).save(method);
 
-    if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
-    }
-
     const methodDto = await this.map.one(method);
 
-    await this.mpService.updatePlanPeriodOnMethodUpdate(methodDto, userId, trx);
+    if (!isImport) {
+      this.logger.debug('Updating Monitor Method'); // XXX
+      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      await this.mpService.updatePlanPeriodOnMethodUpdate(
+        methodDto,
+        userId,
+        trx,
+      );
+    }
 
     return methodDto;
   }
@@ -173,6 +177,7 @@ export class MonitorMethodWorkspaceService {
             trx,
           });
         } else {
+          this.logger.debug('Monitor Method: Calling createMethod'); // XXX
           await this.createMethod({
             locationId,
             payload: method,

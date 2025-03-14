@@ -550,7 +550,9 @@ export class MonitorPlanWorkspaceService {
         trx,
       });
 
-      if (draft) {
+      // XXX
+      if (true) {
+        //if (draft) {
         // Rollback the transaction if the operation is a draft.
         await queryRunner.rollbackTransaction();
       } else {
@@ -1202,14 +1204,22 @@ export class MonitorPlanWorkspaceService {
         );
       }
 
-      // Reset all active monitor plans associated with locations in the import to "needs evaluation".
       await Promise.all(
-        monitorLocations.map(async loc =>
+        monitorLocations.map(async loc => {
+          // Reset all active monitor plans associated with locations in the import to "needs evaluation".
           this.resetToNeedsEvaluation(loc.id, userId, trx),
-        ),
+            await Promise.all(
+              loc.monitoringMethodData.map(async method => {
+                // Update the begin reporting period for all single-unit plans associated with methods in the import (if necessary).
+                await this.updatePlanPeriodOnMethodUpdate(method, userId, trx);
+              }),
+            );
+        }),
       );
 
-      if (draft) {
+      // XXX
+      if (true) {
+        //if (draft) {
         // Rollback the transaction if the operation is a draft.
         await queryRunner.rollbackTransaction();
       } else {
