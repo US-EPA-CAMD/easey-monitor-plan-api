@@ -3,7 +3,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { BaseEntity, DeleteResult, EntityManager, In } from 'typeorm';
+import { DeleteResult, EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
@@ -30,7 +30,6 @@ import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/
 import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
-import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
 import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
@@ -109,7 +108,6 @@ export class MonitorPlanWorkspaceService {
     private readonly userCheckOutService: UserCheckOutService,
 
     private readonly map: MonitorPlanMap,
-    private readonly monitorMethodMap: MonitorMethodMap,
   ) {
     this.logger.setContext('MonitorPlanWorkspaceService');
   }
@@ -481,6 +479,29 @@ export class MonitorPlanWorkspaceService {
     this.logger.debug(`Created a new monitor plan with ID ${result.id}`);
 
     return result;
+  }
+
+  private async getExistingPlansForImport(facilityId: number, userId: string) {
+    const relations = {
+      beginReportingPeriod: true,
+      endReportingPeriod: true,
+      locations: {
+        unit: true,
+        stackPipe: true,
+      },
+    };
+    const plans = await this.repository.find({
+      where: { facId: facilityId },
+      relations,
+    });
+    // Make sure the begin reporting periods are correct so they can be properly matched in the import.
+    const updatedPlans = await Promise.all(
+      plans.map(plan => this.syncPlanBeginRptPeriod(plan, userId)),
+    );
+    return this.repository.find({
+      where: { id: In(updatedPlans.map(plan => plan.id)) },
+      relations,
+    });
   }
 
   private getItemLocationIds(
@@ -1011,24 +1032,10 @@ export class MonitorPlanWorkspaceService {
       newPlans: MonitorPlanDTO[];
     } = { endedPlans: [], newPlans: [] };
 
-    // Get a list of existing monitor plans from the database.
-    const existingPlans = await this.repository.find({
-      where: { facId: facilityId },
-      relations: {
-        beginReportingPeriod: true,
-        endReportingPeriod: true,
-        locations: {
-          unit: true,
-          stackPipe: true,
-        },
-      },
-    });
-
-    // Ensure plan reporting periods are correct for all existing plans.
-    await Promise.all(
-      existingPlans.map(async plan => {
-        await this.syncPlanBeginRptPeriod(plan, userId);
-      }),
+    // Get a list of existing monitor plans from the database, updating the begin reporting period if incorrect.
+    const existingPlans = await this.getExistingPlansForImport(
+      facilityId,
+      userId,
     );
 
     // Start a transaction.
@@ -2050,17 +2057,27 @@ export class MonitorPlanWorkspaceService {
       this.logger.log(
         'Only single-unit monitor plans are supported for begin reporting period updates.',
       );
-      return;
+      return plan;
     }
 
-    await this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod(plan, userId);
+    return this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod({
+      planRecord: plan,
+      userId,
+      isImport: false,
+    });
   }
 
-  private async syncSingleUnitPlanBeginRptPeriodToEarliestMethod(
-    planRecord: MonitorPlanWorkspace,
-    userId: string,
-    trx?: EntityManager,
-  ) {
+  private async syncSingleUnitPlanBeginRptPeriodToEarliestMethod({
+    planRecord,
+    userId,
+    isImport = false,
+    trx,
+  }: {
+    planRecord: MonitorPlanWorkspace;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }) {
     const repository = withTransaction(this.repository, trx);
 
     // Ensure the plan record has the required relations.
@@ -2074,6 +2091,10 @@ export class MonitorPlanWorkspaceService {
           relations: {
             beginReportingPeriod: true,
             endReportingPeriod: true,
+            locations: {
+              unit: true,
+              stackPipe: true,
+            },
           },
         });
 
@@ -2093,6 +2114,8 @@ export class MonitorPlanWorkspaceService {
       .orderBy('m.beginDate', 'ASC')
       .limit(1)
       .getOne();
+
+    if (!earliestMethod) return plan;
 
     const earliestMethodBeginReportingPeriod = await withTransaction(
       this.reportingPeriodRepository,
@@ -2128,6 +2151,17 @@ export class MonitorPlanWorkspaceService {
         }
       }
 
+      // Disallow updating the begin reporting period during an import.
+      if (isImport) {
+        const planDto = await this.map.one(plan);
+        throw new EaseyException(
+          new Error(
+            `Changing the begin reporting period of a monitor plan during an import is not supported. This was likely caused by a mismatch with the begin date of one of the methods associated with the monitoring plan "${planDto.name}. Please update the method's begin date in the interface and try again.`,
+          ),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       this.logger.debug('Updating the monitor plan begin reporting period', {
         monPlanId: plan.id,
         beginReportPeriod:
@@ -2140,7 +2174,11 @@ export class MonitorPlanWorkspaceService {
       });
       await this.updateReportingFrequencies(plan.id, userId, trx);
       await repository.resetToNeedsEvaluation(plan.id, userId);
+
+      return repository.findOneBy({ id: plan.id });
     }
+
+    return plan;
   }
 
   async updatePlanPeriodOnMethodUpdate({
@@ -2181,24 +2219,18 @@ export class MonitorPlanWorkspaceService {
 
     if (!firstPlan) return;
 
-    this.logger.debug(
-      `Single-unit monitor plan found for the method with id "${method.id}, checking if the begin reporting period should be updated"`,
-    );
-
-    if (isImport) {
-      throw new EaseyException(
-        new Error(
-          "Changing the begin reporting period of a monitor plan during an import is not supported. This was likely caused by a change in the method's begin date. Please update the method's begin date in the interface and try again.",
-        ),
-        HttpStatus.BAD_REQUEST,
+    if (!isImport) {
+      this.logger.debug(
+        `Single-unit monitor plan found for the method with id "${method.id}, checking if the begin reporting period should be updated"`,
       );
     }
 
-    await this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod(
-      firstPlan,
+    await this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod({
+      planRecord: firstPlan,
       userId,
+      isImport,
       trx,
-    );
+    });
   }
 }
 

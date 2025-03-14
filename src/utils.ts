@@ -181,7 +181,8 @@ export const settlePromises = async <T>(promises: Array<Promise<T>>) => {
   );
 
   if (errors.length > 0) {
-    throw new Error(JSON.stringify(errors));
+    const distinctErrors = Array.from(new Set(errors));
+    throw new Error(JSON.stringify(distinctErrors));
   }
 
   return values;
