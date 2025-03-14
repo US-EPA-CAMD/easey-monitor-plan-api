@@ -3,7 +3,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { DeleteResult, EntityManager, In } from 'typeorm';
+import { BaseEntity, DeleteResult, EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
@@ -30,6 +30,7 @@ import { MonitorFormulaWorkspaceRepository } from '../monitor-formula-workspace/
 import { MonitorLoadWorkspaceRepository } from '../monitor-load-workspace/monitor-load.repository';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
+import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method.repository';
 import { MonitorPlanCommentWorkspaceRepository } from '../monitor-plan-comment-workspace/monitor-plan-comment.repository';
 import { MonitorPlanCommentWorkspaceService } from '../monitor-plan-comment-workspace/monitor-plan-comment.service';
@@ -54,7 +55,12 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
-import { settlePromises, throwIfErrors, withTransaction } from '../utils';
+import {
+  hasRequiredRelations,
+  settlePromises,
+  throwIfErrors,
+  withTransaction,
+} from '../utils';
 import { MonitorPlanWorkspaceRepository } from './monitor-plan.repository';
 
 @Injectable()
@@ -102,7 +108,8 @@ export class MonitorPlanWorkspaceService {
     private readonly monitorPlanLocationService: MonitorPlanLocationService,
     private readonly userCheckOutService: UserCheckOutService,
 
-    private map: MonitorPlanMap,
+    private readonly map: MonitorPlanMap,
+    private readonly monitorMethodMap: MonitorMethodMap,
   ) {
     this.logger.setContext('MonitorPlanWorkspaceService');
   }
@@ -162,98 +169,6 @@ export class MonitorPlanWorkspaceService {
     if (a.endYear === b.beginYear && a.endQuarter < b.beginQuarter)
       return false;
     return true;
-  }
-
-  async updatePlanPeriodOnMethodUpdate(
-    method: MonitorMethodDTO,
-    userId: string,
-    trx?: EntityManager,
-  ) {
-    const repository = withTransaction(this.repository, trx);
-
-    // Get the first single-unit monitor plan associated with the method.
-    const firstPlan = await this.repository
-      .createQueryBuilder('mp')
-      .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
-      .leftJoinAndSelect('mp.endReportingPeriod', 'erp')
-      .innerJoin('mp.monitorPlanLocations', 'mpl')
-      .innerJoinAndSelect('mpl.monitorLocation', 'ml')
-      .innerJoin('ml.methods', 'm')
-      .where('m.id = :methodId', { methodId: method.id })
-      .andWhere('ml.unitId IS NOT NULL')
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('COUNT(mpl_sub.id)')
-          .from(MonitorPlanLocation, 'mpl_sub')
-          .where('mpl_sub.planId = mp.id')
-          .getQuery();
-        return `(${subQuery}) = 1`;
-      })
-      .orderBy('brp.beginDate', 'ASC')
-      .limit(1)
-      .getOne();
-
-    if (!firstPlan) return;
-
-    this.logger.debug(
-      `Single-unit monitor plan found for the method with id "${method.id}, checking if the begin reporting period should be updated"`,
-    );
-
-    const earliestMethod = await withTransaction(this.methodRepository, trx)
-      .createQueryBuilder('m')
-      .innerJoin('m.location', 'ml')
-      .innerJoin('ml.monitorPlanLocations', 'mpl')
-      .innerJoin('mpl.monitorPlan', 'mp')
-      .where('mp.id = :monitorPlanId', { monitorPlanId: firstPlan.id })
-      .orderBy('m.beginDate', 'ASC')
-      .limit(1)
-      .getOne();
-
-    const earliestMethodBeginReportingPeriod = await withTransaction(
-      this.reportingPeriodRepository,
-      trx,
-    ).getByDate(earliestMethod.beginDate);
-
-    const planBeginYear = firstPlan.beginReportingPeriod.year;
-    const planBeginQuarter = firstPlan.beginReportingPeriod.quarter;
-    const methodBeginYear = earliestMethodBeginReportingPeriod.year;
-    const methodBeginQuarter = earliestMethodBeginReportingPeriod.quarter;
-
-    // Update the begin reporting period of the monitor plan to the method's begin date if they differ.
-    if (
-      planBeginYear !== methodBeginYear ||
-      planBeginQuarter !== methodBeginQuarter
-    ) {
-      // Make sure the new begin date is not after the end date of the monitor plan.
-      if (firstPlan.endReportingPeriod) {
-        const planEndYear = firstPlan.endReportingPeriod.year;
-        const planEndQuarter = firstPlan.endReportingPeriod.quarter;
-        if (
-          methodBeginYear > planEndYear ||
-          (methodBeginYear === planEndYear &&
-            methodBeginQuarter > planEndQuarter)
-        ) {
-          throw new EaseyException(
-            new Error(
-              'The method begin date is after the monitor plan end date',
-            ),
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      }
-      this.logger.debug('Updating the monitor plan begin reporting period', {
-        monPlanId: firstPlan.id,
-        beginReportPeriod:
-          earliestMethodBeginReportingPeriod.periodAbbreviation,
-      });
-      await repository.update(firstPlan.id, {
-        beginReportPeriodId: earliestMethodBeginReportingPeriod.id,
-        updateDate: currentDateTime(),
-      });
-      await this.updateReportingFrequencies(firstPlan.id, userId, trx);
-      await repository.resetToNeedsEvaluation(firstPlan.id, userId);
-    }
   }
 
   private compareReportPeriodDescriptions(a: string, b: string) {
@@ -1100,12 +1015,21 @@ export class MonitorPlanWorkspaceService {
     const existingPlans = await this.repository.find({
       where: { facId: facilityId },
       relations: {
+        beginReportingPeriod: true,
+        endReportingPeriod: true,
         locations: {
           unit: true,
           stackPipe: true,
         },
       },
     });
+
+    // Ensure plan reporting periods are correct for all existing plans.
+    await Promise.all(
+      existingPlans.map(async plan => {
+        await this.syncPlanBeginRptPeriod(plan, userId);
+      }),
+    );
 
     // Start a transaction.
     const queryRunner = this.entityManager.connection.createQueryRunner();
@@ -1204,15 +1128,9 @@ export class MonitorPlanWorkspaceService {
 
       // Reset all active monitor plans associated with locations in the import to "needs evaluation".
       await settlePromises(
-        monitorLocations.map(async loc => {
-          await this.resetToNeedsEvaluation(loc.id, userId, trx);
-          await Promise.all(
-            loc.monitoringMethodData.map(async method => {
-              // Update the begin reporting period for all single-unit plans associated with methods in the import (if necessary).
-              await this.updatePlanPeriodOnMethodUpdate(method, userId, trx);
-            }),
-          );
-        }),
+        monitorLocations.map(loc =>
+          this.resetToNeedsEvaluation(loc.id, userId, trx),
+        ),
       );
 
       // XXX
@@ -1383,6 +1301,7 @@ export class MonitorPlanWorkspaceService {
   private runConfigurationChecks(configurations: WorkingConfiguration[]) {
     const errorList: string[] = [];
     configurations.forEach(plan => {
+      // Check that the proper USC records exist for multi-location configurations.
       const { unitUnitIds, unitStackConfigUnitIds } = plan.items.reduce(
         (acc, item) => {
           if (this.isUnitDTO(item)) {
@@ -2094,6 +2013,192 @@ export class MonitorPlanWorkspaceService {
       await removeNonReportedValues(mpDTO);
     }
     return mpDTO;
+  }
+
+  private async syncPlanBeginRptPeriod(
+    planRecord: MonitorPlanWorkspace,
+    userId: string,
+  ) {
+    // Ensure the plan record has the required relations.
+    const plan = hasRequiredRelations<MonitorPlanWorkspace>(planRecord, {
+      beginReportingPeriod: true,
+      endReportingPeriod: true,
+      locations: { unit: true, stackPipe: true },
+    })
+      ? planRecord
+      : await this.repository.findOne({
+          where: { id: planRecord.id },
+          relations: {
+            beginReportingPeriod: true,
+            endReportingPeriod: true,
+            locations: {
+              unit: true,
+              stackPipe: true,
+            },
+          },
+        });
+
+    if (!plan) {
+      throw new EaseyException(
+        new Error('Monitor plan not found'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // Check that the plan only has a single location, and that location is a unit.
+    if (plan.locations.length > 1 || !plan.locations[0]?.unit) {
+      this.logger.log(
+        'Only single-unit monitor plans are supported for begin reporting period updates.',
+      );
+      return;
+    }
+
+    await this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod(plan, userId);
+  }
+
+  private async syncSingleUnitPlanBeginRptPeriodToEarliestMethod(
+    planRecord: MonitorPlanWorkspace,
+    userId: string,
+    trx?: EntityManager,
+  ) {
+    const repository = withTransaction(this.repository, trx);
+
+    // Ensure the plan record has the required relations.
+    const plan = hasRequiredRelations<MonitorPlanWorkspace>(planRecord, {
+      beginReportingPeriod: true,
+      endReportingPeriod: true,
+    })
+      ? planRecord
+      : await repository.findOne({
+          where: { id: planRecord.id },
+          relations: {
+            beginReportingPeriod: true,
+            endReportingPeriod: true,
+          },
+        });
+
+    if (!plan) {
+      throw new EaseyException(
+        new Error('Monitor plan not found'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const earliestMethod = await withTransaction(this.methodRepository, trx)
+      .createQueryBuilder('m')
+      .innerJoin('m.location', 'ml')
+      .innerJoin('ml.monitorPlanLocations', 'mpl')
+      .innerJoin('mpl.monitorPlan', 'mp')
+      .where('mp.id = :monitorPlanId', { monitorPlanId: plan.id })
+      .orderBy('m.beginDate', 'ASC')
+      .limit(1)
+      .getOne();
+
+    const earliestMethodBeginReportingPeriod = await withTransaction(
+      this.reportingPeriodRepository,
+      trx,
+    ).getByDate(earliestMethod.beginDate);
+
+    const planBeginYear = plan.beginReportingPeriod.year;
+    const planBeginQuarter = plan.beginReportingPeriod.quarter;
+
+    const methodBeginYear = earliestMethodBeginReportingPeriod.year;
+    const methodBeginQuarter = earliestMethodBeginReportingPeriod.quarter;
+
+    // Update the begin reporting period of the monitor plan to the method's begin date if they differ.
+    if (
+      planBeginYear !== methodBeginYear ||
+      planBeginQuarter !== methodBeginQuarter
+    ) {
+      // Make sure the new begin date is not after the end date of the monitor plan.
+      if (plan.endReportingPeriod) {
+        const planEndYear = plan.endReportingPeriod.year;
+        const planEndQuarter = plan.endReportingPeriod.quarter;
+        if (
+          methodBeginYear > planEndYear ||
+          (methodBeginYear === planEndYear &&
+            methodBeginQuarter > planEndQuarter)
+        ) {
+          throw new EaseyException(
+            new Error(
+              'The method begin date is after the monitor plan end date',
+            ),
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
+
+      this.logger.debug('Updating the monitor plan begin reporting period', {
+        monPlanId: plan.id,
+        beginReportPeriod:
+          earliestMethodBeginReportingPeriod.periodAbbreviation,
+      });
+
+      await repository.update(plan.id, {
+        beginReportPeriodId: earliestMethodBeginReportingPeriod.id,
+        updateDate: currentDateTime(),
+      });
+      await this.updateReportingFrequencies(plan.id, userId, trx);
+      await repository.resetToNeedsEvaluation(plan.id, userId);
+    }
+  }
+
+  async updatePlanPeriodOnMethodUpdate({
+    method,
+    userId,
+    isImport = false,
+    trx,
+  }: {
+    method: MonitorMethodDTO;
+    userId: string;
+    isImport?: boolean;
+    trx?: EntityManager;
+  }) {
+    const repository = withTransaction(this.repository, trx);
+
+    // Get the first single-unit monitor plan associated with the method.
+    const firstPlan = await repository
+      .createQueryBuilder('mp')
+      .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
+      .leftJoinAndSelect('mp.endReportingPeriod', 'erp')
+      .innerJoin('mp.monitorPlanLocations', 'mpl')
+      .innerJoin('mpl.monitorLocation', 'ml')
+      .innerJoin('ml.methods', 'm')
+      .where('m.id = :methodId', { methodId: method.id })
+      .andWhere('ml.unitId IS NOT NULL')
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('COUNT(mpl_sub.id)')
+          .from(MonitorPlanLocation, 'mpl_sub')
+          .where('mpl_sub.planId = mp.id')
+          .getQuery();
+        return `(${subQuery}) = 1`;
+      })
+      .orderBy('brp.beginDate', 'ASC')
+      .limit(1)
+      .getOne();
+
+    if (!firstPlan) return;
+
+    this.logger.debug(
+      `Single-unit monitor plan found for the method with id "${method.id}, checking if the begin reporting period should be updated"`,
+    );
+
+    if (isImport) {
+      throw new EaseyException(
+        new Error(
+          "Changing the begin reporting period of a monitor plan during an import is not supported. This was likely caused by a change in the method's begin date. Please update the method's begin date in the interface and try again.",
+        ),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod(
+      firstPlan,
+      userId,
+      trx,
+    );
   }
 }
 

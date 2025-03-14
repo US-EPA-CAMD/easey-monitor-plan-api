@@ -5,12 +5,41 @@ import {
   ValidationArguments,
   ValidationOptions,
 } from 'class-validator';
-import { EntityManager, Repository } from 'typeorm';
+import {
+  BaseEntity,
+  EntityManager,
+  FindOptionsRelations,
+  Repository,
+} from 'typeorm';
 
 export const getEarliestDate = (date1: Date | string, date2: Date | string) => {
   if (!date1) return date2;
   if (!date2) return date1;
   return new Date(date1) < new Date(date2) ? date1 : date2;
+};
+
+export const hasRequiredRelations = <T extends BaseEntity>(
+  obj: unknown,
+  requiredStructure: FindOptionsRelations<T>,
+) => {
+  if (typeof obj !== 'object' || obj === null) return false;
+
+  for (const key in requiredStructure) {
+    if (!(key in obj)) {
+      return false; // Missing required property
+    }
+
+    const schemaValue = requiredStructure[key];
+    const objValue = (obj as Record<string, unknown>)[key];
+
+    if (typeof schemaValue === 'object' && schemaValue !== null) {
+      if (!hasRequiredRelations(objValue, schemaValue)) {
+        return false;
+      }
+    }
+  }
+
+  return true; // All required properties exist
 };
 
 export const parseToken = (token: string) => {
