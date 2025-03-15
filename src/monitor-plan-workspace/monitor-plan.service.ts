@@ -2154,12 +2154,10 @@ export class MonitorPlanWorkspaceService {
   private async syncSingleUnitPlanBeginRptPeriodToEarliestMethod({
     planRecord,
     userId,
-    isImport = false,
     trx,
   }: {
     planRecord: MonitorPlanWorkspace;
     userId: string;
-    isImport?: boolean;
     trx?: EntityManager;
   }) {
     const repository = withTransaction(this.repository, trx);
@@ -2239,22 +2237,16 @@ export class MonitorPlanWorkspaceService {
         updateDate: currentDateTime(),
       });
       await this.updateReportingFrequencies(plan.id, userId, trx);
-
-      if (!isImport) {
-        await repository.resetToNeedsEvaluation(plan.id, userId);
-      }
     }
   }
 
   async updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
     method,
     userId,
-    isImport = false,
     trx,
   }: {
     method: MonitorMethodDTO;
     userId: string;
-    isImport?: boolean;
     trx?: EntityManager;
   }) {
     const repository = withTransaction(this.repository, trx);
@@ -2291,7 +2283,6 @@ export class MonitorPlanWorkspaceService {
     await this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod({
       planRecord: firstPlan,
       userId,
-      isImport,
       trx,
     });
   }

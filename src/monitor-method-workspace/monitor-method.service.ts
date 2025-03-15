@@ -87,17 +87,16 @@ export class MonitorMethodWorkspaceService {
 
     await repository.save(monMethod);
 
+    const methodDto = await this.map.one(monMethod);
+
     if (!isImport) {
+      await this.mpService.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
+        method: methodDto,
+        userId,
+        trx,
+      });
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
     }
-
-    const methodDto = await this.map.one(monMethod);
-    await this.mpService.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
-      isImport,
-      method: methodDto,
-      userId,
-      trx,
-    });
 
     return methodDto;
   }
@@ -132,17 +131,16 @@ export class MonitorMethodWorkspaceService {
 
     await withTransaction(this.repository, trx).save(method);
 
+    const methodDto = await this.map.one(method);
+
     if (!isImport) {
       await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      await this.mpService.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
+        method: methodDto,
+        userId,
+        trx,
+      });
     }
-
-    const methodDto = await this.map.one(method);
-    await this.mpService.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
-      isImport,
-      method: methodDto,
-      userId,
-      trx,
-    });
 
     return methodDto;
   }
