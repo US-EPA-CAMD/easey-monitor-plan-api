@@ -4,6 +4,7 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { MonitorPlanLocation } from '../entities/workspace/monitor-plan-location.entity';
 
 @Injectable()
 export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
@@ -32,6 +33,30 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     });
 
     return await this.save(monitorPlan);
+  }
+
+  async getFirstFacilitySingleUnitPlanByUnit(
+    facId: number,
+    unitId: string,
+  ): Promise<MonitorPlan> {
+    return this.createQueryBuilder('mp')
+      .innerJoin('mp.beginReportingPeriod', 'brp')
+      .leftJoin('mp.endReportingPeriod', 'erp')
+      .innerJoin('mp.locations', 'ml')
+      .where('mp.facId = :facId', { facId })
+      .andWhere('ml.unitId = :unitId', { unitId })
+      .andWhere(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('COUNT(mpl_sub.id)')
+          .from(MonitorPlanLocation, 'mpl_sub')
+          .where('mpl_sub.planId = mp.id')
+          .getQuery();
+        return `(${subQuery}) = 1`;
+      })
+      .orderBy('brp.beginDate', 'ASC')
+      .limit(1)
+      .getOne();
   }
 
   async getMonitorPlansByOrisCode(orisCode: number): Promise<MonitorPlan[]> {

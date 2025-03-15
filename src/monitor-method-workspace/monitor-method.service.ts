@@ -92,7 +92,7 @@ export class MonitorMethodWorkspaceService {
     }
 
     const methodDto = await this.map.one(monMethod);
-    await this.mpService.updatePlanPeriodOnMethodUpdate({
+    await this.mpService.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
       isImport,
       method: methodDto,
       userId,
@@ -137,7 +137,7 @@ export class MonitorMethodWorkspaceService {
     }
 
     const methodDto = await this.map.one(method);
-    await this.mpService.updatePlanPeriodOnMethodUpdate({
+    await this.mpService.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
       isImport,
       method: methodDto,
       userId,

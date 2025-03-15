@@ -9,6 +9,7 @@ import {
   BaseEntity,
   EntityManager,
   FindOptionsRelations,
+  FindOptionsWhere,
   Repository,
 } from 'typeorm';
 
@@ -40,6 +41,25 @@ export const hasRequiredRelations = <T extends BaseEntity>(
   }
 
   return true; // All required properties exist
+};
+
+export const withRequiredRelations = async <T extends BaseEntity>({
+  record,
+  relations,
+  where,
+  repository,
+}: {
+  record: T;
+  relations: FindOptionsRelations<T>;
+  where: FindOptionsWhere<T>;
+  repository: Repository<T>;
+}): Promise<T> => {
+  return hasRequiredRelations<T>(record, relations)
+    ? record
+    : await repository.findOne({
+        where,
+        relations,
+      });
 };
 
 export const parseToken = (token: string) => {
