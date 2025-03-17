@@ -133,6 +133,45 @@ export class MonitorPlanWorkspaceService {
     );
   }
 
+  private checkIsFirstConfigurationOccurrence(
+    workingPlan: WorkingConfiguration,
+    workingPlans: WorkingConfiguration[],
+  ) {
+    return (
+      workingPlans
+        .filter(wp => this.checkLocationsEqual(wp, workingPlan))
+        .sort(
+          (a, b) =>
+            a.beginYear - b.beginYear || a.beginQuarter - b.beginQuarter,
+        )
+        .findIndex(wp => wp.id === workingPlan.id) === 0
+    );
+  }
+
+  private checkLocationsEqual(
+    a: WorkingConfiguration,
+    b: WorkingConfiguration,
+  ) {
+    const {
+      unitIds: unitIdsA,
+      stackPipeIds: stackPipeIdsA,
+    } = this.getItemLocationIds(a.items);
+    const {
+      unitIds: unitIdsB,
+      stackPipeIds: stackPipeIdsB,
+    } = this.getItemLocationIds(b.items);
+
+    for (const unitId of unitIdsA) {
+      if (!unitIdsB.has(unitId)) return false;
+    }
+
+    for (const stackPipeId of stackPipeIdsA) {
+      if (!stackPipeIdsB.has(stackPipeId)) return false;
+    }
+
+    return true;
+  }
+
   private checkLocationsIntersect(
     a: WorkingConfiguration,
     b: WorkingConfiguration,
@@ -1071,18 +1110,14 @@ export class MonitorPlanWorkspaceService {
 
       // Compare each working plan to the previous database state and update accordingly.
       result = (
-        await settlePromises(
-          workingPlans.map(workingPlan => {
-            return this.syncMonitorPlan({
-              workingPlan,
-              existingPlans,
-              facilityId,
-              orisCode: payload.orisCode,
-              userId,
-              trx,
-            });
-          }),
-        )
+        await this.syncMonitorPlans({
+          existingPlans,
+          facilityId,
+          orisCode: payload.orisCode,
+          trx,
+          userId,
+          workingPlans,
+        })
       ).reduce((acc, cur) => {
         const { plan, status } = cur;
         if (status === 'new') {
@@ -1240,14 +1275,17 @@ export class MonitorPlanWorkspaceService {
   }
 
   private matchToSingleUnitPlanByFacilityAndUnit({
+    isFirstConfigurationOccurrence,
     locationIds,
     existingPlans,
     trx,
   }: {
+    isFirstConfigurationOccurrence: boolean;
     locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> };
     existingPlans: MonitorPlanWorkspace[];
     trx?: EntityManager;
   }) {
+    if (!isFirstConfigurationOccurrence) return;
     if (locationIds.unitIds.size > 1) return;
 
     const facId = existingPlans[0]?.facId;
@@ -1262,11 +1300,13 @@ export class MonitorPlanWorkspaceService {
   }
 
   private matchWorkingPlanToExistingPlan({
+    isFirstConfigurationOccurrence,
     locationIds,
     existingPlans,
     beginReportPeriodId,
     trx,
   }: {
+    isFirstConfigurationOccurrence: boolean;
     locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> };
     existingPlans: MonitorPlanWorkspace[];
     beginReportPeriodId: number;
@@ -1279,6 +1319,7 @@ export class MonitorPlanWorkspaceService {
         beginReportPeriodId,
       ) ??
       this.matchToSingleUnitPlanByFacilityAndUnit({
+        isFirstConfigurationOccurrence,
         locationIds,
         existingPlans,
         trx,
@@ -1287,11 +1328,13 @@ export class MonitorPlanWorkspaceService {
   }
 
   private matchWorkingPlanToExistingLegacyPlan({
+    isFirstConfigurationOccurrence,
     locationIds,
     existingPlans,
     endReportPeriodId,
     trx,
   }: {
+    isFirstConfigurationOccurrence: boolean;
     locationIds: { unitIds: Set<string>; stackPipeIds: Set<string> };
     existingPlans: MonitorPlanWorkspace[];
     endReportPeriodId: number | null;
@@ -1311,6 +1354,7 @@ export class MonitorPlanWorkspaceService {
           )
         : null) ??
       this.matchToSingleUnitPlanByFacilityAndUnit({
+        isFirstConfigurationOccurrence,
         locationIds,
         existingPlans,
         trx,
@@ -1405,11 +1449,13 @@ export class MonitorPlanWorkspaceService {
 
   private async syncLegacyMonitorPlan({
     existingPlans,
+    isFirstConfigurationOccurrence,
     trx,
     userId,
     workingPlan,
   }: {
     existingPlans: MonitorPlanWorkspace[];
+    isFirstConfigurationOccurrence: boolean;
     trx: EntityManager;
     userId: string;
     workingPlan: WorkingConfiguration;
@@ -1437,6 +1483,7 @@ export class MonitorPlanWorkspaceService {
 
     // Match the working plan to an existing monitor plan.
     const matchedPlan = await this.matchWorkingPlanToExistingLegacyPlan({
+      isFirstConfigurationOccurrence,
       locationIds,
       existingPlans,
       endReportPeriodId: workingPlanEndReportPeriodId,
@@ -1473,6 +1520,7 @@ export class MonitorPlanWorkspaceService {
   private async syncMonitorPlan({
     existingPlans,
     facilityId,
+    isFirstConfigurationOccurrence,
     orisCode,
     trx,
     userId,
@@ -1480,6 +1528,7 @@ export class MonitorPlanWorkspaceService {
   }: {
     existingPlans: MonitorPlanWorkspace[];
     facilityId: number;
+    isFirstConfigurationOccurrence: boolean;
     orisCode: number;
     trx: EntityManager;
     userId: string;
@@ -1487,6 +1536,7 @@ export class MonitorPlanWorkspaceService {
   }): Promise<PlanSyncResult> {
     if (workingPlan.beginYear < 2009) {
       return this.syncLegacyMonitorPlan({
+        isFirstConfigurationOccurrence,
         existingPlans,
         trx,
         userId,
@@ -1521,6 +1571,7 @@ export class MonitorPlanWorkspaceService {
 
     // Match the working plan to an existing monitor plan.
     const matchedPlan = await this.matchWorkingPlanToExistingPlan({
+      isFirstConfigurationOccurrence,
       locationIds,
       existingPlans,
       beginReportPeriodId: workingPlanBeginReportPeriodId,
@@ -1562,6 +1613,40 @@ export class MonitorPlanWorkspaceService {
         }),
       };
     }
+  }
+
+  private async syncMonitorPlans({
+    existingPlans,
+    facilityId,
+    orisCode,
+    trx,
+    userId,
+    workingPlans,
+  }: {
+    existingPlans: MonitorPlanWorkspace[];
+    facilityId: number;
+    orisCode: number;
+    trx: EntityManager;
+    userId: string;
+    workingPlans: WorkingConfiguration[];
+  }) {
+    return settlePromises(
+      workingPlans.map(workingPlan => {
+        const isFirstConfigurationOccurrence = this.checkIsFirstConfigurationOccurrence(
+          workingPlan,
+          workingPlans,
+        );
+        return this.syncMonitorPlan({
+          isFirstConfigurationOccurrence,
+          workingPlan,
+          existingPlans,
+          facilityId,
+          orisCode,
+          userId,
+          trx,
+        });
+      }),
+    );
   }
 
   async updateDateAndUserId(monPlanId: string, userId: string): Promise<void> {
