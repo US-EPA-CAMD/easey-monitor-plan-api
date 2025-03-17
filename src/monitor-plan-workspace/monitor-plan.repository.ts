@@ -43,8 +43,9 @@ export class MonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
       .innerJoin('mp.beginReportingPeriod', 'brp')
       .leftJoin('mp.endReportingPeriod', 'erp')
       .innerJoin('mp.locations', 'ml')
+      .innerJoin('ml.unit', 'u')
       .where('mp.facId = :facId', { facId })
-      .andWhere('ml.unitId = :unitId', { unitId })
+      .andWhere('u.unitId = :unitId', { unitId })
       .andWhere(qb => {
         const subQuery = qb
           .subQuery()
