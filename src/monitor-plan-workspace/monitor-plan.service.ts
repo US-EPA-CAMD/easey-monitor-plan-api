@@ -18,7 +18,6 @@ import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto'
 import { DuctWafWorkspaceRepository } from '../duct-waf-workspace/duct-waf.repository';
 import { LEEQualificationWorkspaceRepository } from '../lee-qualification-workspace/lee-qualification.repository';
 import { LMEQualificationWorkspaceRepository } from '../lme-qualification-workspace/lme-qualification.repository';
-import { MonitorPlanLocation } from '../entities/workspace/monitor-plan-location.entity';
 import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { MatsMethodWorkspaceRepository } from '../mats-method-workspace/mats-method.repository';
