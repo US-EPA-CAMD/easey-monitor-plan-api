@@ -161,10 +161,12 @@ export class MonitorPlanWorkspaceService {
       stackPipeIds: stackPipeIdsB,
     } = this.getItemLocationIds(b.items);
 
+    if (unitIdsA.size !== unitIdsB.size) return false;
     for (const unitId of unitIdsA) {
       if (!unitIdsB.has(unitId)) return false;
     }
 
+    if (stackPipeIdsA.size !== stackPipeIdsB.size) return false;
     for (const stackPipeId of stackPipeIdsA) {
       if (!stackPipeIdsB.has(stackPipeId)) return false;
     }
@@ -1286,6 +1288,7 @@ export class MonitorPlanWorkspaceService {
     trx?: EntityManager;
   }) {
     if (!isFirstConfigurationOccurrence) return;
+    if (locationIds.stackPipeIds.size > 0) return;
     if (locationIds.unitIds.size > 1) return;
 
     const facId = existingPlans[0]?.facId;
@@ -2271,28 +2274,19 @@ export class MonitorPlanWorkspaceService {
       .createQueryBuilder('mp')
       .innerJoinAndSelect('mp.beginReportingPeriod', 'brp')
       .leftJoinAndSelect('mp.endReportingPeriod', 'erp')
-      .innerJoin('mp.monitorPlanLocations', 'mpl')
-      .innerJoin('mpl.monitorLocation', 'ml')
+      .innerJoinAndSelect('mp.locations', 'ml')
       .innerJoin('ml.methods', 'm')
       .where('m.id = :methodId', { methodId: method.id })
-      .andWhere('ml.unitId IS NOT NULL')
-      .andWhere(qb => {
-        const subQuery = qb
-          .subQuery()
-          .select('COUNT(mpl_sub.id)')
-          .from(MonitorPlanLocation, 'mpl_sub')
-          .where('mpl_sub.planId = mp.id')
-          .getQuery();
-        return `(${subQuery}) = 1`;
-      })
       .orderBy('brp.beginDate', 'ASC')
       .limit(1)
       .getOne();
 
     if (!firstPlan) return;
+    if (firstPlan.locations.length > 1) return;
+    if (firstPlan.locations[0].unitId === null) return;
 
     this.logger.debug(
-      `Single-unit monitor plan found for the method with id "${method.id}, checking if the begin reporting period should be updated"`,
+      `First plan for the method with id "${method.id} is a single-unit plan, checking if the begin reporting period should be updated"`,
     );
 
     await this.syncSingleUnitPlanBeginRptPeriodToEarliestMethod({
