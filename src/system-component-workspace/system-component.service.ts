@@ -1,11 +1,10 @@
-import { forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
 import {
   SystemComponentBaseDTO,
@@ -14,7 +13,7 @@ import {
 import { SystemComponent } from '../entities/workspace/system-component.entity';
 import { SystemComponentMap } from '../maps/system-component.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { SystemComponentWorkspaceRepository } from './system-component.repository';
 
 @Injectable()
@@ -174,7 +173,7 @@ export class SystemComponentWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    return settlePromises(
       systemComponents.map(async component => {
         const systemComponentRecord = await withTransaction(
           this.repository,

@@ -13,7 +13,7 @@ import { MonitorFormula } from '../entities/workspace/monitor-formula.entity';
 import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UsedIdentifierRepository } from '../used-identifier/used-identifier.repository';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorFormulaWorkspaceRepository } from './monitor-formula.repository';
 
 @Injectable()
@@ -178,7 +178,7 @@ export class MonitorFormulaWorkspaceService {
   ) {
     const repository = withTransaction(this.repository, trx);
 
-    await Promise.all(
+    await settlePromises(
       formulas.map(async formula => {
         let formulaRecord = await repository.getFormulaByLocIdAndFormulaIdentifier(
           locationId,

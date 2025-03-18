@@ -11,7 +11,7 @@ import {
 } from '../dtos/unit-capacity.dto';
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 
 @Injectable()
@@ -34,7 +34,7 @@ export class UnitCapacityWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       unitCapacities.map(async unitCapacity => {
         const unitCapacityRecord = await withTransaction(
           this.repository,

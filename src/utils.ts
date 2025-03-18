@@ -123,6 +123,42 @@ export const throwIfErrors = (errorList: string[]) => {
 };
 
 /**
+ * Wrapper around `Promise.allSettled` that throws an error if any promises are rejected (as a JSON stringified array of error messages).
+ */
+export const settlePromises = async <T>(promises: Array<Promise<T>>) => {
+  const { values, errors } = (await Promise.allSettled(promises)).reduce<{
+    values: T[];
+    errors: unknown[];
+  }>(
+    (acc, result) => {
+      if (result.status === 'fulfilled') {
+        acc.values.push(result.value);
+      } else {
+        let reason = result.reason;
+        try {
+          // If the reason is already a JSON string, parse it.
+          const parsed = JSON.parse(reason.message);
+          // If it's an array, flatten it; otherwise, wrap it in an array.
+          reason = Array.isArray(parsed) ? parsed : [parsed];
+        } catch {
+          // If parsing fails, just store the message as a single-element array.
+          reason = [reason.message];
+        }
+        acc.errors.push(...reason); // Flatten errors into the main array
+      }
+      return acc;
+    },
+    { values: [], errors: [] },
+  );
+
+  if (errors.length > 0) {
+    throw new Error(JSON.stringify(errors));
+  }
+
+  return values;
+};
+
+/**
  * Pass a transaction manager, if it exists, to a custom repository. If not, return the original repository.
  */
 export function withTransaction<E, T extends Repository<E>>(
