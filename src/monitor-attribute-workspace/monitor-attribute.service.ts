@@ -11,7 +11,7 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { MonitorAttributeWorkspaceRepository } from './monitor-attribute.repository';
 
 @Injectable()
@@ -152,12 +152,16 @@ export class MonitorAttributeWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       attributes.map(async attribute => {
         const attributeRecord = await withTransaction(
           this.repository,
           trx,
-        ).getAttributeByLocIdAndDate(locationId, attribute.beginDate, attribute.endDate);
+        ).getAttributeByLocIdAndDate(
+          locationId,
+          attribute.beginDate,
+          attribute.endDate,
+        );
 
         if (attributeRecord) {
           await this.updateAttribute({

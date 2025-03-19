@@ -11,7 +11,7 @@ import {
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 
 @Injectable()
@@ -194,7 +194,7 @@ export class PCTQualificationWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    return Promise.all(
+    return settlePromises(
       pctQualifications.map(async pctQualification => {
         const pctQualificationRecord = await this.getPCTQualificationByDataYear(
           locationId,

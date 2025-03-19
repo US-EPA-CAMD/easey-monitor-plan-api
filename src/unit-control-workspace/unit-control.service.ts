@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { withTransaction } from '../utils';
+import { settlePromises, withTransaction } from '../utils';
 import { UnitControlWorkspaceRepository } from './unit-control.repository';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class UnitControlWorkspaceService {
     userId: string,
     trx?: EntityManager,
   ) {
-    await Promise.all(
+    await settlePromises(
       unitControls.map(async unitControl => {
         const unitControlRecord = await withTransaction(
           this.repository,
