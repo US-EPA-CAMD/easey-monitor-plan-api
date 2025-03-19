@@ -5,12 +5,61 @@ import {
   ValidationArguments,
   ValidationOptions,
 } from 'class-validator';
-import { EntityManager, Repository } from 'typeorm';
+import {
+  BaseEntity,
+  EntityManager,
+  FindOptionsRelations,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 
 export const getEarliestDate = (date1: Date | string, date2: Date | string) => {
   if (!date1) return date2;
   if (!date2) return date1;
   return new Date(date1) < new Date(date2) ? date1 : date2;
+};
+
+export const hasRequiredRelations = <T extends BaseEntity>(
+  obj: unknown,
+  requiredStructure: FindOptionsRelations<T>,
+) => {
+  if (typeof obj !== 'object' || obj === null) return false;
+
+  for (const key in requiredStructure) {
+    if (!(key in obj)) {
+      return false; // Missing required property
+    }
+
+    const schemaValue = requiredStructure[key];
+    const objValue = (obj as Record<string, unknown>)[key];
+
+    if (typeof schemaValue === 'object' && schemaValue !== null) {
+      if (!hasRequiredRelations(objValue, schemaValue)) {
+        return false;
+      }
+    }
+  }
+
+  return true; // All required properties exist
+};
+
+export const withRequiredRelations = async <T extends BaseEntity>({
+  record,
+  relations,
+  where,
+  repository,
+}: {
+  record: T;
+  relations: FindOptionsRelations<T>;
+  where: FindOptionsWhere<T>;
+  repository: Repository<T>;
+}): Promise<T> => {
+  return hasRequiredRelations<T>(record, relations)
+    ? record
+    : await repository.findOne({
+        where,
+        relations,
+      });
 };
 
 export const parseToken = (token: string) => {
@@ -152,7 +201,8 @@ export const settlePromises = async <T>(promises: Array<Promise<T>>) => {
   );
 
   if (errors.length > 0) {
-    throw new Error(JSON.stringify(errors));
+    const distinctErrors = Array.from(new Set(errors));
+    throw new Error(JSON.stringify(distinctErrors));
   }
 
   return values;
