@@ -28,6 +28,7 @@ export async function removeNonReportedValues(dto: MonitorPlanDTO) {
   delete dto.id;
   delete dto.facId;
   delete dto.facilityName;
+  delete dto.facilityRegistrySystemId;
   delete dto.configTypeCode;
   delete dto.lastUpdated;
   delete dto.updatedStatusFlag;
