@@ -1,7 +1,7 @@
-const moment = require('moment');
+import moment from 'moment';
 
 export const MAXIMUM_FUTURE_DATE = moment()
-  .add(30, 'days')
+  .add(90, 'days')
   .format('YYYY-MM-DD');
 export const MINIMUM_DATE = '1993-01-01';
 export const MIN_HOUR = 0;
