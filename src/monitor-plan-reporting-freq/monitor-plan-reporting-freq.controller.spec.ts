@@ -12,6 +12,10 @@ const data: ReportingFreqDTO[] = [];
 data.push(new ReportingFreqDTO());
 data.push(new ReportingFreqDTO());
 
+const dataList = {
+  items:data
+}
+
 describe('MonitorPlanReportingFrequencyController', () => {
   let controller: MonitorPlanReportingFrequencyController;
   let service: MonitorPlanReportingFrequencyService;
@@ -34,7 +38,7 @@ describe('MonitorPlanReportingFrequencyController', () => {
   describe('getReportingFreqs', () => {
     it('should return array of reporting frequencies', async () => {
       jest.spyOn(service, 'getReportingFreqs').mockResolvedValue(data);
-      expect(await controller.getReportingFreqs(unitId)).toBe(data);
+      expect(await controller.getReportingFreqs(unitId)).toBe(dataList);
     });
   });
 });
