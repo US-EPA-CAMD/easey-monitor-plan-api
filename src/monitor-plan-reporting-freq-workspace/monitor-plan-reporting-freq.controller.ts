@@ -6,6 +6,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { MonitorPlanReportingFrequencyWorkspaceService } from './monitor-plan-reporting-freq.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -35,9 +36,13 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
     label: 'Retrieved workspace monitor location unit reporting frequencies',
     requestParamsOutFields: ['unitId']
   })
-  getReportingFreqs(
+  async getReportingFreqs(
     @Param('unitId') unitId: number,
-  ): Promise<ReportingFreqDTO[]> {
-    return this.service.getReportingFreqs(unitId);
+  ): Promise<ArrayResponse<ReportingFreqDTO>> {
+    const frequencies = await this.service.getReportingFreqs(unitId);
+    
+    return {
+      items:frequencies
+    }
   }
 }

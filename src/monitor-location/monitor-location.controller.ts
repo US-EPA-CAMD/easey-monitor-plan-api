@@ -2,6 +2,8 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationService } from './monitor-location.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -27,7 +29,12 @@ export class MonitorLocationController {
     description:
       'Retrieves official relationships record for a specific location ID',
   })
-  async getLocationRelationships(@Param('locId') locId: string) {
-    return this.service.getLocationRelationships(locId);
+  async getLocationRelationships(@Param('locId') locId: string
+): Promise<ArrayResponse<UnitStackConfigurationDTO>> {
+    const relationships = await this.service.getLocationRelationships(locId);
+
+    return {
+      items : relationships
+    }
   }
 }
