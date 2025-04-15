@@ -6,6 +6,7 @@ import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.servi
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -32,9 +33,13 @@ export class MonitorPlanCommentWorkspaceController {
     label: 'Retrieved workspace comments',
     requestParamsOutFields: ['planId'],
   })
-  getComments(
+  async getComments(
     @Param('planId') planId: string,
-  ): Promise<MonitorPlanCommentDTO[]> {
-    return this.service.getComments(planId);
+  ): Promise<ArrayResponse<MonitorPlanCommentDTO>> {
+    const monitorPlanCommentDTOS = await this.service.getComments(planId);
+
+    return  {
+      items: monitorPlanCommentDTOS
+    };
   }
 }
