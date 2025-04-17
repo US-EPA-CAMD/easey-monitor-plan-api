@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
 import { MonitorQualificationService } from './monitor-qualification.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorQualificationDTO = createArrayResponseDto(MonitorQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorQualificationController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorQualificationDTO,
+    type: ArrayResponseMonitorQualificationDTO,
     description:
       'Retrieves official qualification records for a monitor location',
   })

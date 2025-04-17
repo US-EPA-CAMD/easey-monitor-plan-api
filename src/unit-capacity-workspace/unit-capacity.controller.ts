@@ -10,7 +10,10 @@ import {
 } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
+
+const ArrayResponseUnitCapacityDTO = createArrayResponseDto(UnitCapacityDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +24,7 @@ export class UnitCapacityWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitCapacityDTO,
+    type: ArrayResponseUnitCapacityDTO,
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
   })
@@ -64,7 +66,6 @@ export class UnitCapacityWorkspaceController {
     requestBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: UnitCapacityDTO,
     description: 'Creates a workspace unit capacity record for a unit',
   })

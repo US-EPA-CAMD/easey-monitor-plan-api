@@ -10,7 +10,10 @@ import {
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MatsMethodDTO } from '../dtos/mats-method.dto';
+
+const ArrayResponseMonitorAttributeDTO = createArrayResponseDto(MonitorAttributeDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +24,7 @@ export class MonitorAttributeWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorAttributeDTO,
+    type: ArrayResponseMonitorAttributeDTO,
     description: 'Retrieves workspace attribute records for a monitor location',
   })
   @RoleGuard(

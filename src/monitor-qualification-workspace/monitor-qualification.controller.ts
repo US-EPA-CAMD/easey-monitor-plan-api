@@ -10,7 +10,10 @@ import {
 } from '../dtos/monitor-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
+
+const ArrayResponseMonitorQualificationDTO = createArrayResponseDto(MonitorQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +24,7 @@ export class MonitorQualificationWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorQualificationDTO,
+    type: ArrayResponseMonitorQualificationDTO,
     description:
       'Retrieves workspace qualification records for a monitor location',
   })

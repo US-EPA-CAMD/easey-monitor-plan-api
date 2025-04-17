@@ -7,7 +7,10 @@ import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
+
+const ArrayResponseMonitorLoadDTO = createArrayResponseDto(MonitorLoadDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -30,8 +33,7 @@ export class MonitorLoadWorkspaceController {
     requestParamsOutFields: ['locId']
   })
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorLoadDTO,
+    type: ArrayResponseMonitorLoadDTO,
     description: 'Retrieves official load records for a monitor location',
   })
   async getLoads(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorLoadDTO>> {
@@ -89,7 +91,6 @@ export class MonitorLoadWorkspaceController {
     responseBodyOutFields: '*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: MonitorLoadDTO,
     description: 'Creates a workspace load record for a monitor location',
   })

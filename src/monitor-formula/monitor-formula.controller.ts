@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorFormulaDTO } from '../dtos/monitor-formula.dto';
 import { MonitorFormulaService } from './monitor-formula.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorFormulaDTO = createArrayResponseDto(MonitorFormulaDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorFormulaController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorFormulaDTO,
+    type: ArrayResponseMonitorFormulaDTO,
     description: 'Retrieves official formula records for a monitor location',
   })
   async getFormulas(

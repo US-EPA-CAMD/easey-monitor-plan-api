@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { SystemFuelFlowService } from './system-fuel-flow.service';
 import { SystemFuelFlowDTO } from '../dtos/system-fuel-flow.dto';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseSystemFuelFlowDTO = createArrayResponseDto(SystemFuelFlowDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class SystemFuelFlowController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: SystemFuelFlowDTO,
+    type: ArrayResponseSystemFuelFlowDTO,
     description: 'Retrieves official fuel flow records for a monitor system',
   })
   async getFuelFlows(

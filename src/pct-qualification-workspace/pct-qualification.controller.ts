@@ -10,7 +10,10 @@ import {
 import { PCTQualificationWorkspaceService } from './pct-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+
+const ArrayResponsePCTQualificationDTO = createArrayResponseDto(PCTQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +24,7 @@ export class PCTQualificationWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: PCTQualificationDTO,
+    type: ArrayResponsePCTQualificationDTO,
     description:
       'Retrieves workspace PCT Qualification records for a qualification ID and location ID',
   })
@@ -99,7 +101,6 @@ export class PCTQualificationWorkspaceController {
     requestBodyOutFields: '*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: PCTQualificationDTO,
     description:
       'Creates a PCT Qualification record for a qualification and monitor location',

@@ -10,7 +10,10 @@ import {
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { SystemComponentDTO } from '../dtos/system-component.dto';
+
+const ArrayResponseSystemFuelFlowDTO = createArrayResponseDto(SystemFuelFlowDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +24,7 @@ export class SystemFuelFlowWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: SystemFuelFlowDTO,
+    type: ArrayResponseSystemFuelFlowDTO,
     description: 'Retrieves workspace fuel flow records for a monitor system',
   })
   @RoleGuard(

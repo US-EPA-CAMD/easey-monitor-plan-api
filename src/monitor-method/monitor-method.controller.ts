@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodService } from './monitor-method.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorMethodDTO = createArrayResponseDto(MonitorMethodDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorMethodController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorMethodDTO,
+    type: ArrayResponseMonitorMethodDTO,
     description: 'Retrieves official method records for a monitor location',
   })
   async getMethods(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorMethodDTO>> {

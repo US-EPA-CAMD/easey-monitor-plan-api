@@ -11,7 +11,10 @@ import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
+
+const ArrayResponseUserCheckOutDTO = createArrayResponseDto(UserCheckOutDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -25,8 +28,7 @@ export class CheckOutController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UserCheckOutDTO,
+    type: ArrayResponseUserCheckOutDTO,
     description:
       'Retrieves workspace Monitor Plan configuration records that are checked out by users',
   })

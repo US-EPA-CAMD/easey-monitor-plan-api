@@ -8,7 +8,10 @@ import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceService } from './mats-method.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
+
+const ArrayResponseMatsMethodDTO = createArrayResponseDto(MatsMethodDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -22,8 +25,7 @@ export class MatsMethodWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MatsMethodDTO,
+    type: ArrayResponseMatsMethodDTO,
     description:
       'Retrieves workspace copy MATS Method records for a monitor location',
   })

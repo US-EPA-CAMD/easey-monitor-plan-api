@@ -11,7 +11,10 @@ import {
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorSystemCheckService } from './monitor-system-checks.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
+
+const ArrayResponseMonitorSystemDTO = createArrayResponseDto(MonitorSystemDTO);
 
 @Controller()
 @ApiTags('Systems')
@@ -25,8 +28,7 @@ export class MonitorSystemWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorSystemDTO,
+    type: ArrayResponseMonitorSystemDTO,
     description:
       'Retrieves workspace system records for a given monitor location',
   })

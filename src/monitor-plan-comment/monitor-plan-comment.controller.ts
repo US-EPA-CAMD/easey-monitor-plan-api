@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentService } from './monitor-plan-comment.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorPlanCommentDTO = createArrayResponseDto(MonitorPlanCommentDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorPlanCommentController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanCommentDTO,
+    type: ArrayResponseMonitorPlanCommentDTO,
     description: 'Retrieves official comment records for a monitor plan',
   })
   async getComments(

@@ -10,7 +10,10 @@ import {
 } from '../dtos/monitor-method.dto';
 import { MonitorMethodWorkspaceService } from './monitor-method.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
+
+const ArrayResponseMonitorMethodDTO = createArrayResponseDto(MonitorMethodDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -33,8 +36,7 @@ export class MonitorMethodWorkspaceController {
     requestParamsOutFields: ['locId']
   })
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorMethodDTO,
+    type: ArrayResponseMonitorMethodDTO,
     description: 'Retrieves workspace Monitor Method records',
   })
   async getMethods(@Param('locId') locId: string): Promise<ArrayResponse<MonitorMethodDTO>> {

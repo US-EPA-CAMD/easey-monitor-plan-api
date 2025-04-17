@@ -7,7 +7,9 @@ import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-p
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorPlanDTO = createArrayResponseDto(MonitorPlanDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +20,7 @@ export class MonitorConfigurationsWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanDTO,
+    type: ArrayResponseMonitorPlanDTO,
     description: 'Retrieves official Monitor Plan configurations',
   })
   @ApiQuery({

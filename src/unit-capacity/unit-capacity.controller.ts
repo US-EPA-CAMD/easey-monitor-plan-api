@@ -2,7 +2,9 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityService } from './unit-capacity.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseUnitCapacityDTO = createArrayResponseDto(UnitCapacityDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -12,8 +14,7 @@ export class UnitCapacityController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitCapacityDTO,
+    type: ArrayResponseUnitCapacityDTO,
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
   })

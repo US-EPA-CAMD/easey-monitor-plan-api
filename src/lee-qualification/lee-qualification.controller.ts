@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationService } from './lee-qualification.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseLEEQualificationDTO = createArrayResponseDto(LEEQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class LEEQualificationController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LEEQualificationDTO,
+    type: ArrayResponseLEEQualificationDTO,
     description:
       'Retrieves official lee qualification records for a monitor location',
   })

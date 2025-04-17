@@ -3,7 +3,9 @@ import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 
 import { UnitControlService } from './unit-control.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseUnitControlDTO = createArrayResponseDto(UnitControlDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class UnitControlController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitControlDTO,
+    type: ArrayResponseUnitControlDTO,
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })

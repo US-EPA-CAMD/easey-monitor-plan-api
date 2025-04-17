@@ -2,7 +2,10 @@ import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationService } from './lme-qualification.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
+
+const ArrayResponseLMEQualificationDTO = createArrayResponseDto(LMEQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -12,8 +15,7 @@ export class LMEQualificationController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LMEQualificationDTO,
+    type: ArrayResponseLMEQualificationDTO,
     description:
       'Retrieves official lme qualification records for a monitor location',
   })

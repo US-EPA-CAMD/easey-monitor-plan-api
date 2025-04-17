@@ -8,7 +8,10 @@ import { MonitorSpanWorkspaceService } from './monitor-span.service';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanChecksService } from './monitor-span-checks.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { SystemComponentDTO } from '../dtos/system-component.dto';
+
+const ArrayResponseMonitorSpanDTO = createArrayResponseDto(MonitorSpanDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -34,8 +37,7 @@ export class MonitorSpanWorkspaceController {
     requestParamsOutFields:['locId']
   })
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorSpanDTO,
+    type: ArrayResponseMonitorSpanDTO,
     description: 'Retrieves workspace span records for a monitor location',
   })
   async getSpans(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorSpanDTO>> {
@@ -94,7 +96,6 @@ export class MonitorSpanWorkspaceController {
     responseBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: MonitorSpanDTO,
     description: 'Creates a workspace span record for a monitor location',
   })

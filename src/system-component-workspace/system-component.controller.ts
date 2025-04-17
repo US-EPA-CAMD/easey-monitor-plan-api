@@ -10,7 +10,10 @@ import {
 import { SystemComponentWorkspaceService } from './system-component.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+
+const ArrayResponseSystemComponentDTO = createArrayResponseDto(SystemComponentDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +24,7 @@ export class SystemComponentWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: SystemComponentDTO,
+    type: ArrayResponseSystemComponentDTO,
     description: 'Retrieves workspace component records for a monitor system',
   })
   @RoleGuard(

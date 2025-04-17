@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanService } from './monitor-span.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorSpanDTO = createArrayResponseDto(MonitorSpanDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorSpanController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorSpanDTO,
+    type: ArrayResponseMonitorSpanDTO,
     description: 'Retrieves official span records for a monitor location',
   })
   async getSpans(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorSpanDTO>> {

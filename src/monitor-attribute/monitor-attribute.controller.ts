@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeService } from './monitor-attribute.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorAttributeDTO = createArrayResponseDto(MonitorAttributeDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorAttributeController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorAttributeDTO,
+    type: ArrayResponseMonitorAttributeDTO,
     description: 'Retrieves official attribute records for a monitor location',
   })
   async getAttributes(

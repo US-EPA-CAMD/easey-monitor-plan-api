@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.0",
-    "@nestjs/common": "^11.0.15",
+    "@nestjs/common": "^11.0.16",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.15",
     "@nestjs/platform-express": "^11.0.15",
@@ -41,7 +41,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.0.15",
     "@types/pg": "^8.6.4",
-    "@us-epa-camd/easey-common": "21.0.0",
+    "@us-epa-camd/easey-common": "21.1.1 ",
     "axios": "^1.8.4",
     "class-transformer": "0.4.0",
     "class-validator": "0.14.1",

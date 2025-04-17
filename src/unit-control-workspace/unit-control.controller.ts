@@ -8,7 +8,10 @@ import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceService } from './unit-control.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
+
+const ArrayResponseUnitControlDTO = createArrayResponseDto(UnitControlDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -22,8 +25,7 @@ export class UnitControlWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitControlDTO,
+    type: ArrayResponseUnitControlDTO,
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })
@@ -100,7 +102,6 @@ export class UnitControlWorkspaceController {
     responseBodyOutFields:'*',
   })
   @ApiOkResponse({
-    isArray: true,
     type: UnitControlDTO,
     description: 'Creates a workspace unit control record for a unit',
   })

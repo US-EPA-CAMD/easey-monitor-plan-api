@@ -10,7 +10,10 @@ import {
 } from '../dtos/lee-qualification.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { DuctWafDTO } from '../dtos/duct-waf.dto';
+
+const ArrayResponseLEEQualificationDTO = createArrayResponseDto(LEEQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +24,7 @@ export class LEEQualificationWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LEEQualificationDTO,
+    type: ArrayResponseLEEQualificationDTO,
     description:
       'Retrieves workspace lee qualification records for a monitor location',
   })
@@ -99,7 +101,6 @@ export class LEEQualificationWorkspaceController {
     responseBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: LEEQualificationDTO,
     description:
       'Creates a LEE Qualification record for a qualification and monitor location',

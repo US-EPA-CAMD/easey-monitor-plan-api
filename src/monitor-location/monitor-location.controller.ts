@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationService } from './monitor-location.service';
+import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -11,7 +12,6 @@ export class MonitorLocationController {
 
   @Get(':locId')
   @ApiOkResponse({
-    isArray: true,
     type: MonitorLocationDTO,
     description:
       'Retrieves official location record from a specific location ID',
@@ -23,7 +23,7 @@ export class MonitorLocationController {
   @Get(':locId/relationships')
   @ApiOkResponse({
     isArray: true,
-    type: MonitorLocationDTO,
+    type: UnitStackConfigurationDTO,
     description:
       'Retrieves official relationships record for a specific location ID',
   })

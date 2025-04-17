@@ -3,7 +3,10 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { SystemComponentService } from './system-component.service';
 import { SystemComponentDTO } from '../dtos/system-component.dto';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
+
+const ArrayResponseSystemComponentDTO = createArrayResponseDto(SystemComponentDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +16,7 @@ export class SystemComponentController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: SystemComponentDTO,
+    type: ArrayResponseSystemComponentDTO,
     description: 'Retrieves official component records for a monitor system',
   })
   async getComponents(

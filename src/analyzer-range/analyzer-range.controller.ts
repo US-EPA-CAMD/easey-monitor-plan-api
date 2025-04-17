@@ -3,7 +3,10 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeService } from './analyzer-range.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
+
+const ArrayResponseAnalyzerRangeDTO = createArrayResponseDto(AnalyzerRangeDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +16,7 @@ export class AnalyzerRangeController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AnalyzerRangeDTO,
+    type: ArrayResponseAnalyzerRangeDTO,
     description: 'Retrieves official analyzer range records for a component',
   })
   async getAnalyzerRanges(

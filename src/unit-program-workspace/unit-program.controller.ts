@@ -6,7 +6,10 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
 import { UnitProgramWorkspaceService } from './unit-program.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
+
+const ArrayResponseUnitProgramDTO = createArrayResponseDto(UnitProgramDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -17,8 +20,7 @@ export class UnitProgramWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitProgramDTO,
+    type: ArrayResponseUnitProgramDTO,
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })

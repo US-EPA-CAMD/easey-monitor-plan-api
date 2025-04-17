@@ -7,7 +7,10 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UnitControlDTO } from '../dtos/unit-control.dto';
+
+const ArrayResponseUnitFuelDTO = createArrayResponseDto(UnitFuelDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +21,7 @@ export class UnitFuelWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitFuelDTO,
+    type: ArrayResponseUnitFuelDTO,
     description:
       'Retrieves workspace unit control records from a specific unit ID',
   })
@@ -93,7 +95,6 @@ export class UnitFuelWorkspaceController {
     responseBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: UnitFuelDTO,
     description: 'Creates a workspace unit control record for a unit',
   })

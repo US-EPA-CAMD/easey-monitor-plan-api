@@ -3,7 +3,9 @@ import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { UnitProgramService } from './unit-program.service';
 import { UnitProgramDTO } from '../dtos/unit-program.dto';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseUnitProgramDTO = createArrayResponseDto(UnitProgramDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class UnitProgramController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitProgramDTO,
+    type: ArrayResponseUnitProgramDTO,
     description: 'Retrieves unit control records from a specific unit ID',
   })
   async getUnitProgramsByUnitRecordId(

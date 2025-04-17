@@ -5,7 +5,10 @@ import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorConfigurationsService } from './monitor-configurations.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorAttributeDTO } from '../dtos/monitor-attribute.dto';
+
+const ArrayResponseMonitorPlanDTO = createArrayResponseDto(MonitorPlanDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -15,8 +18,7 @@ export class MonitorConfigurationsController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanDTO,
+    type: ArrayResponseMonitorPlanDTO,
     description: 'Retrieves official Monitor Plan configurations',
   })
   @ApiQuery({
@@ -43,8 +45,7 @@ export class MonitorConfigurationsController {
 
   @Get('last-updated')
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanDTO,
+    type: LastUpdatedConfigDTO,
     description:
       'Retrieves workspace Monitor Plan configurations that have been updated after a certain date',
   })

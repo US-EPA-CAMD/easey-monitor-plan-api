@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { MonitorLoadService } from './monitor-load.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorLoadDTO = createArrayResponseDto(MonitorLoadDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorLoadController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorLoadDTO,
+    type: ArrayResponseMonitorLoadDTO,
     description: 'Retrieves official load records for a monitor location',
   })
   async getLoads(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorLoadDTO>> {

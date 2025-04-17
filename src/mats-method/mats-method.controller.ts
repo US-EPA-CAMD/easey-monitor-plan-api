@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodService } from './mats-method.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMatsMethodDTO = createArrayResponseDto(MatsMethodDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MatsMethodController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MatsMethodDTO,
+    type: ArrayResponseMatsMethodDTO,
     description:
       'Retrieves official MATS Method records for a monitor location',
   })

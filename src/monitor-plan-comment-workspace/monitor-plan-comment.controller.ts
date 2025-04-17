@@ -6,7 +6,10 @@ import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.servi
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ComponentDTO } from '../dtos/component.dto';
+
+const ArrayResponseMonitorPlanCommentDTO = createArrayResponseDto(MonitorPlanCommentDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -17,8 +20,7 @@ export class MonitorPlanCommentWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanCommentDTO,
+    type: ArrayResponseMonitorPlanCommentDTO,
     description: 'Retrieves workspace comment records for a monitor plan',
   })
   @RoleGuard(

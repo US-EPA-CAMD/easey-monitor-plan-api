@@ -3,7 +3,9 @@ import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelService } from './unit-fuel.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseUnitFuelDTO = createArrayResponseDto(UnitFuelDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class UnitFuelController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitFuelDTO,
+    type: ArrayResponseUnitFuelDTO,
     description: 'Retrieves official unit fuel records from a specific unit ID',
   })
   async getUnitFuels(

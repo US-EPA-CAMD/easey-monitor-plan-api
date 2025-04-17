@@ -10,7 +10,9 @@ import {
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseLMEQualificationDTO = createArrayResponseDto(LMEQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +23,7 @@ export class LMEQualificationWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LMEQualificationDTO,
+    type: ArrayResponseLMEQualificationDTO,
     description:
       'Retrieves workspace lme qualification records for a monitor location',
   })
@@ -99,7 +100,6 @@ export class LMEQualificationWorkspaceController {
     responseBodyOutFields: '*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: LMEQualificationDTO,
     description:
       'Creates an LME Qualification record for a qualification and monitor location',

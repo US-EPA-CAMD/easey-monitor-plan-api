@@ -7,7 +7,10 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { UnitWorkspaceService } from './unit.service';
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UnitProgramDTO } from '../dtos/unit-program.dto';
+
+const ArrayResponseUnitDTO = createArrayResponseDto(UnitDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +21,7 @@ export class UnitWorkspaceController {
 
   @Get(':id')
   @ApiOkResponse({
-    isArray: true,
-    type: UnitDTO,
+    type: ArrayResponseUnitDTO,
     description:
       'Retrieves workspace unit for a specific unit ID',
   })

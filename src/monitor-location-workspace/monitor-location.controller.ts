@@ -5,6 +5,8 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorLoadDTO } from '../dtos/monitor-load.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -15,7 +17,6 @@ export class MonitorLocationWorkspaceController {
 
   @Get(':locId')
   @ApiOkResponse({
-    isArray: true,
     type: MonitorLocationDTO,
     description:
       'Retrieves workspace location record from specific location ID',

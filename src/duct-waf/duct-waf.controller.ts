@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { DuctWafService } from './duct-waf.service';
 import { DuctWafDTO } from '../dtos/duct-waf.dto';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseDuctWafDTO = createArrayResponseDto(DuctWafDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class DuctWafController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: DuctWafDTO,
+    type: ArrayResponseDuctWafDTO,
     description: 'Retrieves official duct waf records for a monitor location',
   })
   async getDuctWafs(@Param('locId') locationId: string): Promise<ArrayResponse<DuctWafDTO>> {

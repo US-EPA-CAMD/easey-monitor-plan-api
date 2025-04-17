@@ -6,7 +6,10 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 import { MonitorPlanReportingFrequencyWorkspaceService } from './monitor-plan-reporting-freq.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
+
+const ArrayResponseReportingFreqDTO = createArrayResponseDto(ReportingFreqDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,8 +22,7 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: ReportingFreqDTO,
+    type: ArrayResponseReportingFreqDTO,
     description:
       'Retrieves workspace reporting frequency records from a specific unit ID',
   })

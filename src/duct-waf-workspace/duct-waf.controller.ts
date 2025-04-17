@@ -7,7 +7,10 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWafWorkspaceService } from './duct-waf.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ComponentDTO } from '../dtos/component.dto';
+
+const ArrayResponseDuctWafDTO = createArrayResponseDto(DuctWafDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +21,7 @@ export class DuctWafWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: DuctWafDTO,
+    type: ArrayResponseDuctWafDTO,
     description: 'Retrieves workspace duct waf records for a monitor location',
   })
   @RoleGuard(

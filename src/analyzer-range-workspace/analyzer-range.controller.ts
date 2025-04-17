@@ -11,7 +11,10 @@ import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
+
+const ArrayResponseAnalyzerRangeDTO = createArrayResponseDto(AnalyzerRangeDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -25,8 +28,7 @@ export class AnalyzerRangeWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AnalyzerRangeDTO,
+    type: ArrayResponseAnalyzerRangeDTO,
     description: 'Retrieves workspace Analyzer Range records for a component',
   })
   @RoleGuard(

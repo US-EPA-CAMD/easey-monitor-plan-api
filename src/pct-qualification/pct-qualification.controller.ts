@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationService } from './pct-qualification.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponsePCTQualificationDTO = createArrayResponseDto(PCTQualificationDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class PCTQualificationController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: PCTQualificationDTO,
+    type: ArrayResponsePCTQualificationDTO,
     description:
       'Retrieves official pct qualification records for a monitor location',
   })

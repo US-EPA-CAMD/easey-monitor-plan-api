@@ -14,7 +14,10 @@ import { ComponentCheckService } from './component-checks.service';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
+
+const ArrayResponseComponentDTO = createArrayResponseDto(ComponentDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -32,8 +35,7 @@ export class ComponentWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: ComponentDTO,
+    type: ArrayResponseComponentDTO,
     description: 'Retrieves workspace component records for a monitor location',
   })
   @RoleGuard(
@@ -71,7 +73,6 @@ export class ComponentWorkspaceController {
     responseBodyOutFields: '*',
   })
   @ApiOkResponse({
-    isArray: true,
     type: ComponentDTO,
     description: 'Creates a component',
   })

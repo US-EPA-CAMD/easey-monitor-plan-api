@@ -3,7 +3,9 @@ import { Get, Param, Controller } from '@nestjs/common';
 
 import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
 import { MonitorDefaultService } from './monitor-default.service';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+
+const ArrayResponseMonitorDefaultDTO = createArrayResponseDto(MonitorDefaultDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -13,8 +15,7 @@ export class MonitorDefaultController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorDefaultDTO,
+    type: ArrayResponseMonitorDefaultDTO,
     description: 'Retrieves official default records for a monitor location',
   })
   async getDefaults(

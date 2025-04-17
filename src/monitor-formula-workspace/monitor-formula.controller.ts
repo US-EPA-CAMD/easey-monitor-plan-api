@@ -11,7 +11,10 @@ import {
 } from '../dtos/monitor-formula.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { ArrayResponse, createArrayResponseDto } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { MonitorDefaultDTO } from '../dtos/monitor-default.dto';
+
+const ArrayResponseMonitorFormulaDTO = createArrayResponseDto(MonitorFormulaDTO);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,8 +40,7 @@ export class MonitorFormulaWorkspaceController {
     requestParamsOutFields:['locId']
   })
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorFormulaDTO,
+    type: ArrayResponseMonitorFormulaDTO,
     description: 'Retrieves workspace formula records for a monitor location',
   })
   async getFormulas(
