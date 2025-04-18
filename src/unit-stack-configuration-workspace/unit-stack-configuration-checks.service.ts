@@ -4,6 +4,7 @@ import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configur
 import { EmissionEvaluationService } from '../emission-evaluation/emission-evaluation.service';
 import { UnitStackConfigurationBaseDTO } from '../dtos/unit-stack-configuration.dto';
 import { PlantService } from '../plant/plant.service';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 
 @Injectable()
 export class UnitStackConfigurationChecksService {
@@ -11,6 +12,7 @@ export class UnitStackConfigurationChecksService {
     private readonly repository: UnitStackConfigurationWorkspaceRepository,
     private readonly emissionEvaluationService: EmissionEvaluationService,
     private readonly plantService: PlantService,
+    private readonly reportingPeriodRepository: ReportingPeriodRepository,
   ) {}
 
   async runChecks(usc: UnitStackConfigurationBaseDTO, orisCode: number) {
@@ -56,6 +58,7 @@ export class UnitStackConfigurationChecksService {
         facilityId,
       ),
     ]);
+    const uscEndReportingPeriod = usc.endDate ? (await this.reportingPeriodRepository.getByDate(usc.endDate)) : null;
 
     evaluations.forEach(evaluation => {
       if (!evaluation) return;
@@ -63,8 +66,8 @@ export class UnitStackConfigurationChecksService {
       if (
         uscRecord &&
         !uscRecord.endDate &&
-        usc.endDate &&
-        new Date(usc.endDate) < new Date(evaluation.reportingPeriod.endDate)
+        uscEndReportingPeriod &&
+        new Date(uscEndReportingPeriod.endDate) < new Date(evaluation.reportingPeriod.endDate)
       ) {
         // Check the end date if the record exists.
         errorList.push(

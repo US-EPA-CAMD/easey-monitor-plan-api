@@ -8,6 +8,7 @@ import {
   UnitStackConfigurationBaseDTO,
   UnitStackConfigurationDTO,
 } from '../dtos/unit-stack-configuration.dto';
+import { UnitMap } from '../maps/unit.map';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.service';
 import { UnitService } from '../unit/unit.service';
@@ -18,6 +19,7 @@ import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configur
 export class UnitStackConfigurationWorkspaceService {
   constructor(
     private readonly repository: UnitStackConfigurationWorkspaceRepository,
+    private readonly unitMap: UnitMap,
     private readonly unitService: UnitService,
     private readonly stackPipeService: StackPipeWorkspaceService,
     private readonly map: UnitStackConfigurationMap,
@@ -197,6 +199,41 @@ export class UnitStackConfigurationWorkspaceService {
 
     await repository.save(unitStackConfig);
     return this.map.one(unitStackConfig);
+  }
+
+  /**
+   * Synchronizes the end date of unit stack configurations with the end date of the unit or stack pipe.
+   */
+  async syncFacilityUnitStackConfigs(
+    facId: number,
+    userId: string,
+    trx?: EntityManager,
+  ) {
+    const uscs = await withTransaction(this.repository, trx).find({
+      relations: {
+        stackPipe: true,
+        unit: {
+          opStatuses: true,
+        },
+      },
+      where: [{ unit: { facId } }, { stackPipe: { facId } }],
+    });
+
+    for (const usc of uscs) {
+      const unitDto = await this.unitMap.one(usc.unit);
+      if ((unitDto.endDate || usc.stackPipe.retireDate) && !usc.endDate) {
+        const newEndDate = new Date(
+          Math.min(
+            unitDto.endDate?.getTime() ?? Infinity,
+            usc.stackPipe.retireDate?.getTime() ?? Infinity,
+          ),
+        );
+        usc.endDate = newEndDate;
+        usc.updateDate = currentDateTime();
+        usc.userId = userId;
+        await withTransaction(this.repository, trx).save(usc);
+      }
+    }
   }
 
   async updateUnitStackConfig(

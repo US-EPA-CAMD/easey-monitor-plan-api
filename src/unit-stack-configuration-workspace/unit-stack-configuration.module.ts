@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmissionEvaluationModule } from '../emission-evaluation/emission-evaluation.module';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { PlantModule } from '../plant/plant.module';
+import { ReportingPeriodModule } from '../reporting-period/reporting-period.module';
 import { StackPipeWorkspaceModule } from '../stack-pipe-workspace/stack-pipe.module';
 import { UnitModule } from '../unit/unit.module';
 import { UnitStackConfigurationChecksService } from './unit-stack-configuration-checks.service';
@@ -20,6 +21,7 @@ import { UnitStackConfigurationWorkspaceService } from './unit-stack-configurati
     UnitModule,
     StackPipeWorkspaceModule,
     PlantModule,
+    ReportingPeriodModule,
   ],
   controllers: [UnitStackConfigurationWorkspaceController],
   providers: [
