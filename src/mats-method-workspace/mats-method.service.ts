@@ -144,7 +144,7 @@ export class MatsMethodWorkspaceService {
         const method = await withTransaction(
           this.repository,
           trx,
-        ).getMatsMethodByLodIdParamCodeAndDate(locationId, matsMethod);
+        ).getMatsMethodByLocIdParamCodeBeginOrEndDate(locationId, matsMethod);
 
         if (method) {
           await this.updateMethod({

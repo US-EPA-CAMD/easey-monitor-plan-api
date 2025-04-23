@@ -9,31 +9,33 @@ export class DuctWafWorkspaceRepository extends Repository<DuctWaf> {
     super(DuctWaf, entityManager);
   }
 
-  async getDuctWafByLocIdBDateBHourWafValue(
+  async getDuctWafByLocIdBeginOrEndDate(
     locationId: string,
     wafBeginDate: Date,
     wafBeginHour: number,
-    wafEndDate: Date,
-    wafEndHour: number,
-  ): Promise<DuctWaf> {
+    wafEndDate: Date | null,
+    wafEndHour: number | null,
+  ): Promise<DuctWaf | null> {
     const query = this.createQueryBuilder('dw')
-      .where('dw.locationId = :locationId', {
-        locationId,
-      })
-      .andWhere(
-        `(dw.wafBeginDate = :wafBeginDate AND dw.wafBeginHour = :wafBeginHour)`,
-        { wafBeginDate, wafBeginHour }
-      );
+      .where('dw.locationId = :locationId', { locationId })
+      .andWhere('dw.wafBeginDate = :wafBeginDate AND dw.wafBeginHour = :wafBeginHour', { wafBeginDate, wafBeginHour, });
+
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
 
     if (wafEndDate !== null && wafEndHour !== null) {
-      query.andWhere(
-        '(dw.wafEndDate = :wafEndDate AND dw.wafEndHour = :wafEndHour)',
-        { wafEndDate, wafEndHour }
-      );
-    } else {
-      query.andWhere('dw.wafEndDate IS NULL AND dw.wafEndHour IS NULL');
+      const endQuery = this.createQueryBuilder('dw')
+        .where('dw.locationId = :locationId', { locationId })
+        .andWhere('dw.wafEndDate = :wafEndDate AND dw.wafEndHour = :wafEndHour', {
+          wafEndDate,
+          wafEndHour,
+        });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
     }
 
-    return query.getOne();
+    return null;
   }
+
 }
