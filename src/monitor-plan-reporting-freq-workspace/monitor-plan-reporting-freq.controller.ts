@@ -39,10 +39,10 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
   async getReportingFreqs(
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<ReportingFreqDTO>> {
-    const frequencies = await this.service.getReportingFreqs(unitId);
-    
-    return {
-      items:frequencies
-    }
+    const reportingFreqDTOS = await this.service.getReportingFreqs(unitId);
+
+    return  {
+      items: reportingFreqDTOS
+    };
   }
 }
