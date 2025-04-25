@@ -44,7 +44,7 @@ describe('MonitorPlanReportingFrequencyWorkspaceController', () => {
   describe('getReportingFreqs', () => {
     it('should return array of workspace reporting frequencies', async () => {
       jest.spyOn(service, 'getReportingFreqs').mockResolvedValue(data);
-      expect(await controller.getReportingFreqs(unitId)).toBe(data);
+      expect(await controller.getReportingFreqs(unitId)).toStrictEqual({ items: data});
     });
   });
 });
