@@ -5,6 +5,8 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorLocationWorkspaceService } from './monitor-location.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -50,7 +52,12 @@ export class MonitorLocationWorkspaceController {
     label: 'Retrieved workspace relationship data',
     requestParamsOutFields:['locId']
   })
-  async getLocationRelationships(@Param('locId') locId: string) {
-    return this.service.getLocationRelationships(locId);
+  async getLocationRelationships(@Param('locId') locId: string
+  ): Promise<ArrayResponse<UnitStackConfigurationDTO>> {
+    const relationships = await this.service.getLocationRelationships(locId);
+
+    return {
+      items:relationships
+    }
   }
 }
