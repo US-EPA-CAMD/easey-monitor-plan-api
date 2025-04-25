@@ -24,7 +24,7 @@ import {
   IsIsoFormat,
   IsValidCode,
   IsValidDate,
-  MatchesRegEx,
+  MatchesRegEx
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -39,6 +39,7 @@ import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { SystemTypeCode } from '../entities/system-type-code.entity';
 import { BeginEndDatesConsistent } from '../utils';
 import { SystemDesignationCode } from '../entities/system-designation-code.entity';
+import { IfIsActive } from '../import-checks/pipes/if-is-active-records.pipe';
 
 const KEY = 'Monitor System';
 
@@ -293,7 +294,7 @@ export class MonitorSystemBaseDTO {
   monitoringSystemFuelFlowData: SystemFuelFlowBaseDTO[];
 }
 
-export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO {}
+export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO { }
 
 export class MonitorSystemDTO extends MonitorSystemBaseDTO {
   @ApiProperty({

@@ -1,16 +1,19 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodWorkspaceService } from './mats-method.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('MATS Methods')
+@ApiExcludeControllerByEnv()
 export class MatsMethodWorkspaceController {
   constructor(
     private readonly service: MatsMethodWorkspaceService,
@@ -32,8 +35,16 @@ export class MatsMethodWorkspaceController {
     },
     LookupType.Location,
   )
-  getMethods(@Param('locId') locationId: string): Promise<MatsMethodDTO[]> {
-    return this.service.getMethods(locationId);
+  @AuditLog({
+    label: 'Retrieved workspace monitor location MATS methods',
+    requestParamsOutFields:['locId']
+  })
+  async getMethods(@Param('locId') locationId: string): Promise<ArrayResponse<MatsMethodDTO>> {
+    const methods = await this.service.getMethods(locationId);
+
+    return  {
+      items: methods
+    };
   }
 
   @Post()
@@ -45,6 +56,11 @@ export class MatsMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location MATS method record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Creates workspace MATS Method record',
@@ -71,6 +87,11 @@ export class MatsMethodWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location MATS method record',
+    requestParamsOutFields:['locId', 'methodId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MatsMethodDTO,
     description: 'Updates workspace MATS Method record',

@@ -35,7 +35,7 @@ describe('MonitorSystemController', () => {
   describe('getSystems', () => {
     it('should return array of monitor systems', async () => {
       jest.spyOn(service, 'getSystems').mockResolvedValue(data);
-      expect(await controller.getSystems(locId)).toBe(data);
+      expect(await controller.getSystems(locId)).toStrictEqual({ items: data} );
     });
   });
 });

@@ -3,16 +3,23 @@ import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { ComponentWorkspaceService } from './component.service';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import {
+  AuditLog,
+  RoleGuard,
+  User,
+} from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { ComponentCheckService } from './component-checks.service';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Components')
+@ApiExcludeControllerByEnv()
 export class ComponentWorkspaceController {
   constructor(
     private readonly repository: ComponentWorkspaceRepository,
@@ -37,8 +44,16 @@ export class ComponentWorkspaceController {
     },
     LookupType.Location,
   )
-  getComponents(@Param('locId') locationId: string): Promise<ComponentDTO[]> {
-    return this.service.getComponents(locationId);
+  @AuditLog({
+    label: 'Retrieved workspace monitor location components',
+    requestParamsOutFields: ['locId'],
+  })
+  async getComponents(@Param('locId') locationId: string): Promise<ArrayResponse<ComponentDTO>> {
+    const components = await this.service.getComponents(locationId);
+
+    return  {
+      items: components
+    };
   }
 
   @Post()
@@ -50,6 +65,11 @@ export class ComponentWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location component record',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields: '*',
+  })
   @ApiOkResponse({
     isArray: true,
     type: ComponentDTO,

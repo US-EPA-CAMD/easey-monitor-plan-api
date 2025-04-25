@@ -10,10 +10,13 @@ import {
 import { UserCheckOutService } from '../user-check-out/user-check-out.service';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Check-Outs')
+@ApiExcludeControllerByEnv()
 export class CheckOutController {
   constructor(
     private readonly ucoService: UserCheckOutService,
@@ -27,8 +30,15 @@ export class CheckOutController {
     description:
       'Retrieves workspace Monitor Plan configuration records that are checked out by users',
   })
-  getCheckedOutConfigurations(): Promise<UserCheckOutDTO[]> {
-    return this.ucoService.getCheckedOutConfigurations();
+  @AuditLog({
+    label: 'Retrieved workspace check-out plans'
+  })
+  async getCheckedOutConfigurations(): Promise<ArrayResponse<UserCheckOutDTO>> {
+    const checkedOutConfigurations = await this.ucoService.getCheckedOutConfigurations();
+
+    return  {
+      items: checkedOutConfigurations
+    };
   }
 
   @Post(':planId')
@@ -41,7 +51,8 @@ export class CheckOutController {
     description: 'Checks Out a Monitor Plan configuration',
   })
   @AuditLog({
-    label: 'Checks Out a Monitor Plan configuration',
+    label: 'Checked out workspace plan',
+    requestParamsOutFields: ['planId'],
     responseBodyOutFields: '*'
   })
   checkOutConfiguration(
@@ -62,7 +73,8 @@ export class CheckOutController {
     description: 'Updates last activity for a checked out Monitor Plan',
   })
   @AuditLog({
-    label: 'Updates last activity for a checked out Monitor Plan',
+    label: 'Updated workspace last activity for a checked out plan',
+    requestParamsOutFields: ['planId'],
     responseBodyOutFields: '*',
   })
   updateLastActivity(
@@ -80,8 +92,8 @@ export class CheckOutController {
     description: 'Check-In a Monitor Plan configuration',
   })
   @AuditLog({
-    label: 'Check In a Monitor Plan configuration',
-    responseBodyOutFields: '*'
+    label: 'Checked in workspace plan',
+    requestParamsOutFields: ['planId']
   })
   async checkInConfiguration(
     @Param('planId') planId: string,

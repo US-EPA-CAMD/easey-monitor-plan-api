@@ -6,6 +6,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSpanBaseDTO, MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 import { MonitorSpanWorkspaceRepository } from './monitor-span.repository';
+import { isInactiveRecord } from '../utilities/is-inactive-record';
 
 const KEY = 'Monitor Span';
 
@@ -14,7 +15,7 @@ export class MonitorSpanChecksService {
   constructor(
     private readonly logger: Logger,
     private readonly repository: MonitorSpanWorkspaceRepository,
-  ) {}
+  ) { }
 
   public throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
@@ -100,20 +101,20 @@ export class MonitorSpanChecksService {
     let errorCode = null;
     let FIELDNAME = 'flowFullScaleRange';
 
-    if (monitorSpan.componentTypeCode === 'FLOW') {
-      if (!monitorSpan.flowFullScaleRange) {
-        errorCode = 'SPAN-17-A';
-      }
-
-      if (
-        monitorSpan.flowSpanValue &&
-        monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue
-      ) {
-        errorCode = 'SPAN-17-B';
-      }
-    } else {
-      if (monitorSpan.flowFullScaleRange) {
-        errorCode = 'SPAN-17-C';
+    if (!isInactiveRecord(monitorSpan.beginDate, monitorSpan.endDate)) {
+      if (monitorSpan.componentTypeCode === 'FLOW') {
+        if (!monitorSpan.flowFullScaleRange) {
+          errorCode = 'SPAN-17-A';
+        } else if (
+          monitorSpan.flowSpanValue &&
+          monitorSpan.flowFullScaleRange < monitorSpan.flowSpanValue
+        ) {
+          errorCode = 'SPAN-17-B';
+        }
+      } else {
+        if (monitorSpan.flowFullScaleRange) {
+          errorCode = 'SPAN-17-C';
+        }
       }
     }
 

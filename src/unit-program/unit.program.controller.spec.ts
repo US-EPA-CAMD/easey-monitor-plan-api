@@ -36,7 +36,7 @@ describe('UnitProgramController', () => {
       jest
         .spyOn(service, 'getUnitProgramsByUnitRecordId')
         .mockResolvedValue(data);
-      expect(await controller.getUnitProgramsByUnitRecordId(unitId)).toBe(data);
+      expect(await controller.getUnitProgramsByUnitRecordId(unitId)).toStrictEqual({ items: data} );
     });
   });
 });

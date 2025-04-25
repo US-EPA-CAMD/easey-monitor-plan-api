@@ -36,7 +36,7 @@ describe('SystemComponentController', () => {
   describe('getComponents', () => {
     it('should return array of system components', async () => {
       jest.spyOn(service, 'getComponents').mockResolvedValue(data);
-      expect(await controller.getComponents(locId, sysId)).toBe(data);
+      expect(await controller.getComponents(locId, sysId)).toStrictEqual({ items: data} );
     });
   });
 });

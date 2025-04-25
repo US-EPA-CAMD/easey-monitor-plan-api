@@ -74,8 +74,8 @@ describe('MatsMethodWorkspaceController', () => {
   });
 
   describe('getMethods', () => {
-    it('should call the MatsMethodWorkspaceService.getMethods', () => {
-      expect(controller.getMethods(locationId)).toEqual([]);
+    it('should call the MatsMethodWorkspaceService.getMethods', async () => {
+      await expect(controller.getMethods(locationId)).resolves.toStrictEqual({ items: []} );
       expect(service.getMethods).toHaveBeenCalled();
     });
   });

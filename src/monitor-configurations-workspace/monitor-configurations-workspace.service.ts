@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanConfigurationDTO } from '../dtos/monitor-plan-configuration.dto';
@@ -22,14 +22,70 @@ export class MonitorConfigurationsWorkspaceService {
     private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
     private readonly plantWorkspaceRepository: PlantWorkspaceRepository,
     private readonly uscWorkspaceRepository: UnitStackConfigurationWorkspaceRepository,
-  ) {}
+    private readonly entityManager: EntityManager,
+  ) { }
+
+  async getEvaluationQueuePosition(monPlanId: string): Promise<string> {
+    const query = `
+      WITH ord AS (
+        SELECT  
+            evs.evaluation_set_id, 
+            evq.evaluation_id,
+            evs.mon_plan_id,
+            evq.test_sum_id,
+            evq.qa_cert_event_id,
+            evq.test_extension_exemption_id,
+            evq.rpt_period_id,
+            ROW_NUMBER() OVER (ORDER BY evs.queued_time) AS queue_position 
+        FROM camdecmpsaux.EVALUATION_SET evs 
+        JOIN camdecmpsaux.EVALUATION_QUEUE evq
+            ON evq.evaluation_set_id = evs.evaluation_set_id 
+            AND evq.status_cd = 'QUEUED'
+        LEFT JOIN camdecmpswks.MONITOR_PLAN pln
+            ON pln.mon_plan_id = evs.mon_plan_id 
+        LEFT JOIN camdecmpswks.TEST_SUMMARY tst
+            ON tst.test_sum_id = evq.test_sum_id
+        LEFT JOIN camdecmpswks.QA_CERT_EVENT qce
+            ON qce.qa_cert_event_id = evq.qa_cert_event_id
+        LEFT JOIN camdecmpswks.TEST_EXTENSION_EXEMPTION tee
+            ON tee.test_extension_exemption_id = evq.test_extension_exemption_id
+        LEFT JOIN camdecmpswks.EMISSION_EVALUATION ems
+            ON ems.mon_plan_id = evs.mon_plan_id
+            AND ems.rpt_period_id = evq.rpt_period_id
+        WHERE (
+            evq.process_cd = 'MP' AND pln.eval_status_cd = 'INQ'
+            OR
+            evq.process_cd = 'QA' AND evq.test_sum_id IS NOT NULL AND tst.eval_status_cd = 'INQ'
+            OR
+            evq.process_cd = 'QA' AND evq.qa_cert_event_id IS NOT NULL AND qce.eval_status_cd = 'INQ'
+            OR
+            evq.process_cd = 'QA' AND evq.test_extension_exemption_id IS NOT NULL AND tee.eval_status_cd = 'INQ'
+            OR
+            evq.process_cd = 'EM' AND ems.eval_status_cd = 'INQ'
+        )
+      )
+      SELECT * 
+      FROM ord
+      WHERE mon_plan_id = $1;
+    `;
+
+    const result = await this.entityManager.query(query, [monPlanId]);
+    
+    const queuePlace = result && result[0]?.queue_position ? `In Queue (# ${result[0]?.queue_position} in queue)`: "In Queue"
+    return queuePlace;
+  }
+
 
   async populateDescriptions(plan: MonitorPlanConfigurationDTO) {
-    plan['evalStatusCodeDescription'] = (
-      await this.evalStatusCodeRepository.findOneBy({
-        evalStatusCd: plan.evalStatusCode,
-      })
-    ).evalStatusCodeDescription;
+    if (plan.evalStatusCode === 'INQ') {
+      plan['evalStatusCodeDescription'] = await this.getEvaluationQueuePosition(plan.id)
+    } else {
+      plan['evalStatusCodeDescription'] = (
+        await this.evalStatusCodeRepository.findOneBy({
+          evalStatusCd: plan.evalStatusCode,
+        })
+      ).evalStatusCodeDescription;
+    }
 
     plan['submissionAvailabilityCodeDescription'] = (
       await this.submissionStatusCodeRepository.findOneBy({

@@ -1,17 +1,19 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
 import { UnitControlChecksService } from './unit-control-checks.service';
 import { UnitControlWorkspaceService } from './unit-control.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Controls')
+@ApiExcludeControllerByEnv()
 export class UnitControlWorkspaceController {
   constructor(
     private readonly service: UnitControlWorkspaceService,
@@ -33,11 +35,19 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
-  getUnitControls(
+  @AuditLog({
+    label: 'Retrieved workspace monitor location unit controls',
+    requestParamsOutFields:['locId', 'unitId']
+  })
+  async getUnitControls(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitControlDTO[]> {
-    return this.service.getUnitControls(locId, unitId);
+  ): Promise<ArrayResponse<UnitControlDTO>> {
+    const unitCapacityDTOS = await this.service.getUnitControls(locId, unitId);
+
+    return  {
+      items: unitCapacityDTOS
+    }
   }
 
   @Put(':unitControlId')
@@ -49,6 +59,11 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location unit control record',
+    requestParamsOutFields:['locId', 'unitId', 'unitControlId'],
+    responseBodyOutFields:'*',
+  })
   @ApiOkResponse({
     type: UnitControlDTO,
     description: 'Updates a workspace unit control record by unit control ID',
@@ -79,6 +94,11 @@ export class UnitControlWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location unit control record',
+    requestParamsOutFields:['locId', 'unitId'],
+    responseBodyOutFields:'*',
+  })
   @ApiOkResponse({
     isArray: true,
     type: UnitControlDTO,

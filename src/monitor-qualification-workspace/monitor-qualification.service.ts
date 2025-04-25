@@ -80,8 +80,6 @@ export class MonitorQualificationWorkspaceService {
       }
     }
 
-    console.log('errorList', errorList);
-
     return errorList;
   }
 

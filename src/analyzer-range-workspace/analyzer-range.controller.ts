@@ -4,16 +4,19 @@ import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
 } from '../dtos/analyzer-range.dto';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { AnalyzerRangeWorkspaceService } from './analyzer-range.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AnalyzerRangeChecksService } from './analyzer-range-checks.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Analyzer Ranges')
+@ApiExcludeControllerByEnv()
 export class AnalyzerRangeWorkspaceController {
   constructor(
     private readonly service: AnalyzerRangeWorkspaceService,
@@ -34,11 +37,19 @@ export class AnalyzerRangeWorkspaceController {
     },
     LookupType.Location,
   )
-  getAnalyzerRanges(
+  @AuditLog({
+    label: 'Retrieved workspace monitor location component analyzer range records',
+    requestParamsOutFields: ['locId', 'compId']
+  })
+  async getAnalyzerRanges(
     @Param('locId') locId: string,
     @Param('compId') compId: string,
-  ): Promise<AnalyzerRangeDTO[]> {
-    return this.service.getAnalyzerRanges(compId);
+  ): Promise<ArrayResponse<AnalyzerRangeDTO>> {
+    const analyzerRanges = await this.service.getAnalyzerRanges(compId);
+
+    return  {
+      items: analyzerRanges
+    };
   }
 
   @Post()
@@ -50,6 +61,11 @@ export class AnalyzerRangeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location component analyzer range record',
+    requestParamsOutFields: ['locId', 'compId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,
@@ -79,6 +95,11 @@ export class AnalyzerRangeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location component analyzer range record',
+    requestParamsOutFields: ['locId', 'compId', 'analyzerRangeId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: false,
     type: AnalyzerRangeDTO,

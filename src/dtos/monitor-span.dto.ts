@@ -9,15 +9,16 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  Min,
   ValidateIf,
   ValidationArguments,
+  min
 } from 'class-validator';
 import {
   IsInRange,
   IsIsoFormat,
   IsValidCode,
   IsValidDate,
+  isInRange
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -31,6 +32,7 @@ import {
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
 import { BeginEndDatesConsistent } from '../utils';
+import { IfIsActive } from '../import-checks/pipes/if-is-active-records.pipe';
 
 const KEY = 'Monitor Span';
 const MPF_MIN_VALUE = 500000;
@@ -139,7 +141,14 @@ export class MonitorSpanBaseDTO {
     example: propertyMetadata.monitorSpanDTOMpfValue.example,
     name: propertyMetadata.monitorSpanDTOMpfValue.fieldLabels.value,
   })
-  @IsInRange(MPF_MIN_VALUE, 9999999999, {
+  @IfIsActive((value) => min(value, MPF_MIN_VALUE), {}, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SPAN-3-B', {
+        key: KEY,
+      });
+    },
+  })
+  @IfIsActive((value) => isInRange(value, MPF_MIN_VALUE, 9999999999), {}, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of ${MPF_MIN_VALUE} and 9999999999 for [${KEY}].`;
     },
@@ -148,13 +157,6 @@ export class MonitorSpanBaseDTO {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-3-A', {
         fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @Min(MPF_MIN_VALUE, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('SPAN-3-B', {
         key: KEY,
       });
     },

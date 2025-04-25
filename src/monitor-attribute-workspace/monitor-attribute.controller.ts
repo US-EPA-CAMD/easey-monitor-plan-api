@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import {AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -9,10 +9,13 @@ import {
 } from '../dtos/monitor-attribute.dto';
 import { MonitorAttributeWorkspaceService } from './monitor-attribute.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Attributes')
+@ApiExcludeControllerByEnv()
 export class MonitorAttributeWorkspaceController {
   constructor(private readonly service: MonitorAttributeWorkspaceService) {}
 
@@ -30,10 +33,18 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
-  getAttributes(
+  @AuditLog({
+    label: 'Retrieved workspace monitor location attribute records',
+    requestParamsOutFields:['locId']
+  })
+  async getAttributes(
     @Param('locId') locationId: string,
-  ): Promise<MonitorAttributeDTO[]> {
-    return this.service.getAttributes(locationId);
+  ): Promise<ArrayResponse<MonitorAttributeDTO>> {
+    const attributeDTOS = await this.service.getAttributes(locationId);
+
+    return  {
+      items: attributeDTOS
+    }
   }
 
   @Post()
@@ -45,6 +56,11 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location attribute record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Creates a workspace monitor location attribute record',
@@ -70,6 +86,11 @@ export class MonitorAttributeWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location attribute record',
+    requestParamsOutFields:['locId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: MonitorAttributeDTO,
     description: 'Updates a workspace monitor location attribute record',

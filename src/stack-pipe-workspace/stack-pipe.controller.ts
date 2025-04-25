@@ -1,15 +1,17 @@
 import { Body, Controller, Post, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 import { StackPipeBaseDTO, StackPipeDTO } from '../dtos/stack-pipe.dto';
 import { StackPipeWorkspaceService } from './stack-pipe.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Stacks & Pipes')
+@ApiExcludeControllerByEnv()
 export class StackPipeWorkspaceController {
   constructor(private readonly service: StackPipeWorkspaceService) {}
 
@@ -26,6 +28,10 @@ export class StackPipeWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Imported workspace stack pipes',
+    responseBodyOutFields:'*'
+  })
   importStackPipe(
     @Query('draft') draft: boolean,
     @Body() stackPipe: StackPipeBaseDTO,

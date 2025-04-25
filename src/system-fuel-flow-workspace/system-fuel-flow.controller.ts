@@ -1,6 +1,6 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -9,10 +9,13 @@ import {
 } from '../dtos/system-fuel-flow.dto';
 import { SystemFuelFlowWorkspaceService } from './system-fuel-flow.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('System Fuel Flows')
+@ApiExcludeControllerByEnv()
 export class SystemFuelFlowWorkspaceController {
   constructor(private readonly service: SystemFuelFlowWorkspaceService) {}
 
@@ -30,11 +33,19 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
-  getFuelFlows(
+  @AuditLog({
+    label: 'Retrieved workspace monitor location system fuel flow records',
+    requestParamsOutFields: ['locId', 'sysId']
+  })
+  async getFuelFlows(
     @Param('locId') locationId: string,
     @Param('sysId') monSysId: string,
-  ): Promise<SystemFuelFlowDTO[]> {
-    return this.service.getFuelFlows(monSysId);
+  ): Promise<ArrayResponse<SystemFuelFlowDTO>> {
+    const fuelFlows = await this.service.getFuelFlows(monSysId);
+
+    return  {
+      items: fuelFlows
+    }
   }
 
   @Post()
@@ -46,6 +57,11 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location system fuel flow record',
+    requestParamsOutFields: ['locId', 'sysId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description: 'Creates official fuel flow records for a monitor system',
@@ -73,6 +89,11 @@ export class SystemFuelFlowWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location system fuel flow record',
+    requestParamsOutFields: ['locId', 'sysId', 'fuelFlowId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: SystemFuelFlowDTO,
     description:

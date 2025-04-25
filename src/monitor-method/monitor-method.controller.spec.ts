@@ -35,7 +35,7 @@ describe('MonitorMethodController', () => {
   describe('getMethods', () => {
     it('should return array of monitor methods', async () => {
       jest.spyOn(service, 'getMethods').mockResolvedValue(data);
-      expect(await controller.getMethods(locId)).toBe(data);
+      expect(await controller.getMethods(locId)).toStrictEqual({ items: data} );
     });
   });
 });

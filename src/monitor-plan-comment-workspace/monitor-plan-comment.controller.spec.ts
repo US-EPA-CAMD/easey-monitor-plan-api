@@ -45,7 +45,7 @@ describe('MonitorPlanCommentWorkspaceController', () => {
   describe('getComments', () => {
     it('should return array of monitor plan comments', async () => {
       jest.spyOn(service, 'getComments').mockResolvedValue(data);
-      expect(await controller.getComments(planId)).toBe(data);
+      expect(await controller.getComments(planId)).toStrictEqual({ items: data});
     });
   });
 });

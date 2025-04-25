@@ -1,15 +1,18 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Fuels')
+@ApiExcludeControllerByEnv()
 export class UnitFuelWorkspaceController {
   constructor(private readonly service: UnitFuelWorkspaceService) {}
 
@@ -28,11 +31,19 @@ export class UnitFuelWorkspaceController {
     },
     LookupType.Location,
   )
-  getUnitFuels(
+  @AuditLog({
+    label: 'Retrieved workspace monitor location unit fuels',
+    requestParamsOutFields:['locId', 'unitId']
+  })
+  async getUnitFuels(
     @Param('locId') locId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitFuelDTO[]> {
-    return this.service.getUnitFuels(locId, unitId);
+  ): Promise<ArrayResponse<UnitFuelDTO>> {
+    const unitFuelDTOS = await this.service.getUnitFuels(locId, unitId);
+
+    return  {
+      items: unitFuelDTOS
+    }
   }
 
   @Put(':unitFuelId')
@@ -44,6 +55,11 @@ export class UnitFuelWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location unit fuel record',
+    requestParamsOutFields:['locId', 'unitFuelId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: UnitFuelDTO,
     description: 'Updates a workspace unit control record by unit control ID',
@@ -71,6 +87,11 @@ export class UnitFuelWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location unit fuel record',
+    requestParamsOutFields:['locId', 'unitId'],
+    responseBodyOutFields:'*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: UnitFuelDTO,

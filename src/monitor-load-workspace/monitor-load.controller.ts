@@ -1,17 +1,20 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { MonitorLoadWorkspaceService } from './monitor-load.service';
 import { MonitorLoadBaseDTO, MonitorLoadDTO } from '../dtos/monitor-load.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Loads')
+@ApiExcludeControllerByEnv()
 export class MonitorLoadWorkspaceController {
-  constructor(private readonly service: MonitorLoadWorkspaceService) {}
+  constructor(private readonly service: MonitorLoadWorkspaceService) { }
 
   @Get()
   @RoleGuard(
@@ -22,13 +25,21 @@ export class MonitorLoadWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved workspace monitor location loads',
+    requestParamsOutFields: ['locId']
+  })
   @ApiOkResponse({
     isArray: true,
     type: MonitorLoadDTO,
     description: 'Retrieves official load records for a monitor location',
   })
-  getLoads(@Param('locId') locationId: string): Promise<MonitorLoadDTO[]> {
-    return this.service.getLoads(locationId);
+  async getLoads(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorLoadDTO>> {
+    const loads = await this.service.getLoads(locationId);
+
+    return  {
+      items: loads
+    };
   }
 
   @Put(':loadId')
@@ -40,6 +51,11 @@ export class MonitorLoadWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Updated workspace monitor location load record',
+    requestParamsOutFields: ['locId', 'loadId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     type: MonitorLoadDTO,
     description: 'Updates a workspace load record for a monitor location',
@@ -67,6 +83,11 @@ export class MonitorLoadWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Created workspace monitor location load record',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields: '*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: MonitorLoadDTO,

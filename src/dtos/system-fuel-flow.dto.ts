@@ -54,11 +54,7 @@ export class SystemFuelFlowBaseDTO {
     99999999.9,
     {
       message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('FUELFLW-2-B', {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        });
+        return `The Max Fuel Flow Rate value must be in the range 0 to 99,999,999.9`;
       },
     },
     false,

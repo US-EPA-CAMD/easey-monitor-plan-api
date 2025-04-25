@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -9,10 +9,13 @@ import {
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
 import { UnitCapacityWorkspaceService } from './unit-capacity.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Capacities')
+@ApiExcludeControllerByEnv()
 export class UnitCapacityWorkspaceController {
   constructor(private readonly service: UnitCapacityWorkspaceService) {}
 
@@ -23,6 +26,10 @@ export class UnitCapacityWorkspaceController {
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
   })
+  @AuditLog({
+    label: 'Retrieved workspace monitor location unit capacity records',
+    requestParamsOutFields: ['locId', 'unitId']
+  })
   @RoleGuard(
     {
       enforceCheckout: false,
@@ -31,11 +38,15 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
-  getUnitCapacities(
+  async getUnitCapacities(
     @Param('locId') locationId: string,
     @Param('unitId') unitId: number,
-  ): Promise<UnitCapacityDTO[]> {
-    return this.service.getUnitCapacities(locationId, unitId);
+  ): Promise<ArrayResponse<UnitCapacityDTO>> {
+    const unitCapacityDTOS = await this.service.getUnitCapacities(locationId, unitId);
+
+    return  {
+      items: unitCapacityDTOS
+    }
   }
 
   @Post()
@@ -47,6 +58,11 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Create workspace monitor location unit capacity record',
+    requestParamsOutFields: ['locId', 'unitId'],
+    requestBodyOutFields:'*'
+  })
   @ApiOkResponse({
     isArray: true,
     type: UnitCapacityDTO,
@@ -75,6 +91,11 @@ export class UnitCapacityWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Update workspace monitor location unit capacity record',
+    requestParamsOutFields: ['locId', 'unitId'],
+    requestBodyOutFields:'*'
+  })
   @ApiOkResponse({
     type: UnitCapacityDTO,
     description: 'Updates a workspace unit capacity record by unit capacity ID',
