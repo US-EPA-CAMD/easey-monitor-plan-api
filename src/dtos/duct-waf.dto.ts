@@ -39,7 +39,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
+        `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
         {
           fieldname: args.property,
           key: KEY,
@@ -82,7 +82,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
+        `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
         {
           fieldname: args.property,
           key: KEY,
@@ -136,7 +136,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [${args.value}] for [${args.property}] is invalid`,
+          `The value of [${args.value}] for [${args.property}] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -370,7 +370,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [${args.value}] for [${args.property}] must be a valid ISO date format [dateFormat]`,
+        `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,
