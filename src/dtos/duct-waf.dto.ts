@@ -39,7 +39,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
         {
           fieldname: args.property,
           key: KEY,
@@ -82,7 +82,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
         {
           fieldname: args.property,
           key: KEY,
@@ -136,7 +136,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is invalid`,
+          `The value for [${args.value}] for [${args.property}] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -196,7 +196,7 @@ export class DuctWafBaseDTO {
   @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 1 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 1 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -218,7 +218,7 @@ export class DuctWafBaseDTO {
   @IsInRange(12, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 12 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 12 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -238,7 +238,7 @@ export class DuctWafBaseDTO {
   @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 1 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 1 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -260,7 +260,7 @@ export class DuctWafBaseDTO {
   @IsInRange(12, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 12 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 12 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -289,7 +289,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
+          `The value of [${args.value}] for [${args.property}] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -328,7 +328,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
+          `The value of [${args.value}] for [${args.property}] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -370,7 +370,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value for [${args.value}] for [${args.property}] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,
