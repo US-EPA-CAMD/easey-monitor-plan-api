@@ -70,8 +70,56 @@ export class MonitorConfigurationsWorkspaceService {
     `;
 
     const result = await this.entityManager.query(query, [monPlanId]);
-    
-    const queuePlace = result && result[0]?.queue_position ? `In Queue (# ${result[0]?.queue_position} in queue)`: "In Queue"
+
+    const queuePlace = result && result[0]?.queue_position ? `In Queue (# ${result[0]?.queue_position} in queue)` : "In Queue"
+    return queuePlace;
+  }
+
+  async getSubmissionQueuePosition(monPlanId: string): Promise<string> {
+    const query = `
+      WITH submission_ord AS (
+        SELECT  
+          ss.submission_set_id, 
+          sq.submission_id,
+          ss.mon_plan_id,
+          sq.test_sum_id,
+          sq.qa_cert_event_id,
+          sq.test_extension_exemption_id,
+          sq.rpt_period_id,
+          ROW_NUMBER() OVER (ORDER BY ss.queued_time) AS submission_queue_position 
+        FROM camdecmpsaux.submission_set ss 
+        JOIN camdecmpsaux.submission_queue sq
+        ON sq.submission_set_id = ss.submission_set_id 
+        AND sq.status_cd = 'QUEUED'
+        LEFT JOIN camdecmpswks.MONITOR_PLAN pln
+        ON pln.mon_plan_id = ss.mon_plan_id 
+        LEFT JOIN camdecmpswks.TEST_SUMMARY tst
+        ON tst.test_sum_id = sq.test_sum_id
+        LEFT JOIN camdecmpswks.QA_CERT_EVENT qce
+        ON qce.qa_cert_event_id = sq.qa_cert_event_id
+        LEFT JOIN camdecmpswks.TEST_EXTENSION_EXEMPTION tee
+        ON tee.test_extension_exemption_id = sq.test_extension_exemption_id
+        LEFT JOIN camdecmpswks.EMISSION_EVALUATION ems
+        ON ems.mon_plan_id = ss.mon_plan_id
+        AND ems.rpt_period_id = sq.rpt_period_id
+        WHERE (
+          sq.process_cd = 'MP' AND pln.submission_availability_cd = 'PENDING'
+          OR
+          sq.process_cd = 'QA' AND sq.qa_cert_event_id IS NOT NULL AND qce.submission_availability_cd = 'PENDING'
+          OR
+          sq.process_cd = 'QA' AND sq.test_extension_exemption_id IS NOT NULL AND tee.submission_availability_cd = 'PENDING'
+          OR
+          sq.process_cd = 'EM' AND ems.submission_availability_cd = 'PENDING'
+        )
+      )
+      SELECT * 
+      FROM submission_ord
+      WHERE mon_plan_id = $1;
+    `;
+
+    const result = await this.entityManager.query(query, [monPlanId]);
+
+    const queuePlace = result && result[0]?.submission_queue_position ? `Submitted, Host Update Pending (# ${result[0]?.submission_queue_position} in queue)` : "Submitted, Host Update Pending"
     return queuePlace;
   }
 
@@ -87,11 +135,16 @@ export class MonitorConfigurationsWorkspaceService {
       ).evalStatusCodeDescription;
     }
 
-    plan['submissionAvailabilityCodeDescription'] = (
-      await this.submissionStatusCodeRepository.findOneBy({
-        subAvailabilityCode: plan.submissionAvailabilityCode,
-      })
-    ).subAvailabilityCodeDescription;
+    if (plan.submissionAvailabilityCode === 'PENDING') {
+      plan['submissionAvailabilityCodeDescription'] = await this.getSubmissionQueuePosition(plan.id)
+    } else {
+      plan['submissionAvailabilityCodeDescription'] = (
+        await this.submissionStatusCodeRepository.findOneBy({
+          subAvailabilityCode: plan.submissionAvailabilityCode,
+        })
+      ).subAvailabilityCodeDescription;
+    }
+
   }
   async populateLocationsAndStackConfigs(plan: MonitorPlan) {
     const [locations, unitStackConfigurations] = await Promise.all([
