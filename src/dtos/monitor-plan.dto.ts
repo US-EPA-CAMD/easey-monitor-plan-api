@@ -62,6 +62,10 @@ export class MonitorPlanDTO {
 
   @IsString()
   @IsOptional()
+  facilityRegistrySystemId: string;
+
+  @IsString()
+  @IsOptional()
   configTypeCode: string;
 
   @IsDateString()

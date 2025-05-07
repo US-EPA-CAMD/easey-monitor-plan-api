@@ -37,6 +37,11 @@ export class Plant extends BaseEntity {
   })
   region: number;
 
+  @Column({
+    name: 'frs_id',
+  })
+  facilityRegistrySystemId: string;
+
   @OneToMany(
     () => Unit,
     unit => unit.plant,
