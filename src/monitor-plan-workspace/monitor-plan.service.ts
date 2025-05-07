@@ -1092,6 +1092,11 @@ export class MonitorPlanWorkspaceService {
         userId,
         trx,
       );
+      await this.unitStackService.syncFacilityUnitStackConfigs(
+        facilityId,
+        userId,
+        trx,
+      );
 
       /* MONITOR PLAN MERGE LOGIC */
 
@@ -1386,6 +1391,7 @@ export class MonitorPlanWorkspaceService {
         currentConfig,
         compareConfig,
       );
+
       if (mergedConfig) {
         return this.mergePartialConfigurations(
           partialConfigurations
@@ -2281,8 +2287,10 @@ export class MonitorPlanWorkspaceService {
       .getOne();
 
     if (!firstPlan) return;
-    if (firstPlan.locations.length > 1) return;
-    if (firstPlan.locations[0].unitId === null) return;
+    if (firstPlan.locations.length > 1) return; // Only single-location plans.
+    if (firstPlan.locations[0].unitId === null) return; // Only single-unit plans.
+    if (firstPlan.endReportPeriodId) return; // Only active plans.
+    if (firstPlan.beginReportingPeriod.year < 2008) return; // Only plans with begin dates after 2008.
 
     this.logger.debug(
       `First plan for the method with id "${method.id} is a single-unit plan, checking if the begin reporting period should be updated"`,
