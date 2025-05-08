@@ -1905,7 +1905,7 @@ export class MonitorPlanWorkspaceService {
 
     //Update affected EM Records
     const emResult = await manager.query(
-      'SELECT * FROM camdecmpswks.delete_calculated_em_data_for_mp_updates($1)',
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_mp_updates($1)',
       [monitorPlan.id],
     );
 
