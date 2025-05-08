@@ -146,6 +146,7 @@ const mockUnitStackConfigService = () => ({
   getUnitStackConfigsByMonitorPlanId: jest.fn().mockResolvedValue([]),
   getUnitStackConfigurationsByFacId: jest.fn().mockResolvedValue([]),
   importUnitStacks: jest.fn().mockResolvedValue([]),
+  syncFacilityUnitStackConfigs: jest.fn(),
 });
 
 const mockEvalStatusCodeRepo = () => ({
