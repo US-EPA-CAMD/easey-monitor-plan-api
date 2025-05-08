@@ -133,6 +133,9 @@ const mockMonitorPlanRepo = () => ({
   find: jest.fn().mockResolvedValue([MONITOR_PLAN]),
   findOneBy: jest.fn().mockResolvedValue(MONITOR_PLAN),
   save: jest.fn().mockResolvedValue(MONITOR_PLAN),
+  manager: {
+    query: jest.fn().mockResolvedValue(['']),
+  },
 });
 
 const mockMonitorPlanCommentService = () => ({
@@ -501,6 +504,8 @@ describe('Monitor Plan Service', () => {
   describe('resetToNeedsEvaluation', () => {
     it('Should call resetToNeedsEvaluation on repo', async () => {
       const result = await service.resetToNeedsEvaluation(LOC_ID, USER_ID);
+
+      expect(service['repository'].manager.query).toHaveBeenCalled();
     });
   });
 
