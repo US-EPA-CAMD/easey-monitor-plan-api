@@ -1842,10 +1842,10 @@ export class MonitorPlanWorkspaceService {
 
     //Finally, perform the updates (reset needs eval flag, etc) for those records
     // that may have been collaterally affected by the change in the monitoring plan.
-    await this.updateCollaterallyAffectedRecords(locId, plan, userId, trx);
+    await this.updateCollaterallyAffectedRecords(locId, plan, trx);
   }
 
-  async updateCollaterallyAffectedRecords( locId: string, monitorPlan: MonitorPlan, userId: string, trx?: EntityManager, ): Promise<void> {
+  async updateCollaterallyAffectedRecords( locId: string, monitorPlan: MonitorPlan, trx?: EntityManager, ): Promise<void> {
     const manager = trx ?? this.repository.manager;
     const currDate = currentDateTime();
 
@@ -1862,13 +1862,17 @@ export class MonitorPlanWorkspaceService {
     //2. Update affected QCE Records
     //2a. Delete CHECK_SESSION row associated with the Affected QCE
     await manager.query(`
-        DELETE FROM camdecmpswks.check_session
-        WHERE chk_session_id IN (
-            SELECT DISTINCT chk_session_id
-            FROM camdecmpswks.qa_cert_event
-            WHERE mon_loc_id = $1
-              AND needs_eval_flg = 'N'
-              AND ( submission_availability_cd = 'REQUIRE' OR updated_status_flg = 'Y' )
+        DELETE FROM camdecmpswks.check_session cs
+        WHERE EXISTS (
+            SELECT 1
+            FROM camdecmpswks.qa_cert_event qce
+            WHERE qce.chk_session_id = cs.chk_session_id
+              AND qce.mon_loc_id = $1
+              AND qce.needs_eval_flg = 'N'
+              AND (
+                qce.submission_availability_cd = 'REQUIRE'
+                    OR qce.updated_status_flg = 'Y'
+                )
         )
     `, [locId]);
 
@@ -1876,24 +1880,28 @@ export class MonitorPlanWorkspaceService {
     await manager.query(`
       UPDATE camdecmpswks.qa_cert_event
       SET 
-        needs_eval_flg = 'Y', eval_status_cd = 'EVAL', chk_session_id = NULL, update_date = $1, userid = $3 
+        needs_eval_flg = 'Y', eval_status_cd = 'EVAL', chk_session_id = NULL, update_date = $1 
       WHERE mon_loc_id = $2 AND needs_eval_flg = 'N'
         AND (
           submission_availability_cd = 'REQUIRE'
           OR updated_status_flg = 'Y'
         )
-    `, [currDate,locId, userId]);
+    `, [currDate,locId]);
 
     //3. Update affected TEE Records
     //3a. Delete CHECK_SESSION row associated with the Affected TEE
     await manager.query(`
-        DELETE FROM camdecmpswks.check_session
-        WHERE chk_session_id IN (
-            SELECT DISTINCT chk_session_id
-            FROM camdecmpswks.test_extension_exemption
-            WHERE mon_loc_id = $1
-              AND needs_eval_flg = 'Y'
-              AND ( submission_availability_cd = 'REQUIRE' OR updated_status_flg = 'Y' )
+        DELETE FROM camdecmpswks.check_session cs
+        WHERE EXISTS (
+            SELECT 1
+            FROM camdecmpswks.test_extension_exemption tee
+            WHERE tee.chk_session_id = cs.chk_session_id
+              AND tee.mon_loc_id = $1
+              AND tee.needs_eval_flg = 'Y'
+              AND (
+                tee.submission_availability_cd = 'REQUIRE'
+                    OR tee.updated_status_flg = 'Y'
+                )
         )
     `, [locId]);
 
@@ -1901,13 +1909,13 @@ export class MonitorPlanWorkspaceService {
     await manager.query(`
       UPDATE camdecmpswks.test_extension_exemption
       SET 
-        needs_eval_flg = 'Y', eval_status_cd = 'EVAL', chk_session_id = NULL, update_date = $1, userid = $3 
+        needs_eval_flg = 'Y', eval_status_cd = 'EVAL', chk_session_id = NULL, update_date = $1 
       WHERE mon_loc_id = $2 AND needs_eval_flg = 'N'
         AND (
           submission_availability_cd = 'REQUIRE'
           OR updated_status_flg = 'Y'
         )
-    `, [currDate,locId, userId]);
+    `, [currDate,locId]);
 
     //Update affected EM Records
     const emResult = await manager.query(
