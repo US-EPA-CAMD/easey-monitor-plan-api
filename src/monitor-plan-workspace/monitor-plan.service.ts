@@ -1852,7 +1852,7 @@ export class MonitorPlanWorkspaceService {
     //1. Update affected QAT Records
     //1a. Invoke an existing function to set up and update/delete collateral data.
     const qaResult = await manager.query(
-      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_mp_updates($1)',
+      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_mp_changes($1)',
       [locId],
     );
     if (qaResult[0].result === 'F') {
@@ -1919,7 +1919,7 @@ export class MonitorPlanWorkspaceService {
 
     //Update affected EM Records
     const emResult = await manager.query(
-      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_mp_updates($1)',
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_mp_changes($1)',
       [monitorPlan.id],
     );
 
