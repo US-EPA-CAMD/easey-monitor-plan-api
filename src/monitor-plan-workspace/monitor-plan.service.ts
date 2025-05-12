@@ -1897,7 +1897,7 @@ export class MonitorPlanWorkspaceService {
             FROM camdecmpswks.test_extension_exemption tee
             WHERE tee.chk_session_id = cs.chk_session_id
               AND tee.mon_loc_id = $1
-              AND tee.needs_eval_flg = 'Y'
+              AND tee.needs_eval_flg = 'N'
               AND (
                 tee.submission_availability_cd = 'REQUIRE'
                     OR tee.updated_status_flg = 'Y'
