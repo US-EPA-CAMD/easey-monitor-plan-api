@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 
@@ -12,6 +12,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Reporting Frequencies')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(ReportingFreqDTO)
 export class MonitorPlanReportingFrequencyWorkspaceController {
   constructor(
     private readonly service: MonitorPlanReportingFrequencyWorkspaceService,
@@ -19,10 +20,21 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: ReportingFreqDTO,
     description:
       'Retrieves workspace reporting frequency records from a specific unit ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(ReportingFreqDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
