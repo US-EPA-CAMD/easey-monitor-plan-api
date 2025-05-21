@@ -23,13 +23,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {
-  DATE_FORMAT,
-  MAX_HOUR,
-  MAXIMUM_FUTURE_DATE,
-  MIN_HOUR,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MIN_HOUR, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { FuelCode } from '../entities/fuel-code.entity';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { IfIsActive } from '../import-checks/pipes/if-is-active-records.pipe';
@@ -298,7 +292,7 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-39-B', {
         fieldname: args.property,
@@ -354,7 +348,7 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-41-A', {
         fieldname: args.property,

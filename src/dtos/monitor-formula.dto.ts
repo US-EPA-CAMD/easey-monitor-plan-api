@@ -21,13 +21,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAX_HOUR,
-  MAXIMUM_FUTURE_DATE,
-  MIN_HOUR,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MIN_HOUR, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 import { EquationCode } from '../entities/equation-code.entity';
 import { FormulaMdRelationshipsView } from '../entities/formula-md-relationships-view.entity';
@@ -131,7 +125,7 @@ export class MonitorFormulaBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-1-B', {
         fieldname: args.property,
@@ -199,7 +193,7 @@ export class MonitorFormulaBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FORMULA-3-A', {
         fieldname: args.property,

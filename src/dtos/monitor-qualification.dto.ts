@@ -27,11 +27,7 @@ import {
 } from './pct-qualification.dto';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 import { IsValidDate } from '@us-epa-camd/easey-common/pipes';
 
@@ -91,7 +87,7 @@ export class MonitorQualificationBaseDTO {
     name: propertyMetadata.monitorQualificationDTOEndDate.fieldLabels.value,
   })
   @ValidateIf(o => o.endDate !== null)
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('QUAL-19-A', {
         fieldname: args.property,

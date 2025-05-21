@@ -22,13 +22,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MAX_HOUR,
-  MINIMUM_DATE,
-  MIN_HOUR,
-} from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MINIMUM_DATE, MIN_HOUR, getMaximumFutureDate } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { VwSpanMasterDataRelationships } from '../entities/vw-span-master-data-relationships.entity';
 import { BeginEndDatesConsistent } from '../utils';
@@ -308,7 +302,7 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-8-B', {
         fieldname: args.property,
@@ -376,7 +370,7 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-10-A', {
         fieldname: args.property,

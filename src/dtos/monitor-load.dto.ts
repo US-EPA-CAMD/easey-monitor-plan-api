@@ -18,13 +18,7 @@ import {
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAX_HOUR,
-  MAXIMUM_FUTURE_DATE,
-  MIN_HOUR,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MIN_HOUR, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Monitoring Load';
@@ -176,7 +170,7 @@ export class MonitorLoadBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LOAD-2-B', {
         fieldname: args.property,
@@ -238,7 +232,7 @@ export class MonitorLoadBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LOAD-4-A', {
         fieldname: args.property,
