@@ -100,6 +100,7 @@ export class UnitControlBaseDTO {
       return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
+  //passed by reference
   @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-5-B', {

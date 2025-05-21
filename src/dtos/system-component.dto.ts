@@ -64,6 +64,7 @@ export class SystemComponentBaseDTO {
       });
     },
   })
+  //passed by reference
   @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-3-B', {

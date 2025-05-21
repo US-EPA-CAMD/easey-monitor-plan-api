@@ -115,6 +115,7 @@ export class UnitFuelBaseDTO {
       });
     },
   })
+  //passed by reference
   @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUEL-42-B', {

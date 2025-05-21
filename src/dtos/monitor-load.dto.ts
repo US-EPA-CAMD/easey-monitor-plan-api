@@ -170,6 +170,7 @@ export class MonitorLoadBaseDTO {
       });
     },
   })
+  //passed by reference
   @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LOAD-2-B', {

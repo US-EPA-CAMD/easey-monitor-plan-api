@@ -292,6 +292,7 @@ export class MonitorDefaultBaseDTO {
       });
     },
   })
+  //passed by reference
   @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-39-B', {

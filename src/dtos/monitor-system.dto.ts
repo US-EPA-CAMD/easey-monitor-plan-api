@@ -143,6 +143,7 @@ export class MonitorSystemBaseDTO {
       });
     },
   })
+  //passed by reference
   @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-1-B', {

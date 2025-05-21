@@ -61,6 +61,7 @@ export class UnitCapacityBaseDTO {
       });
     },
   })
+  //passed by reference
   @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CAPAC-5-B', {

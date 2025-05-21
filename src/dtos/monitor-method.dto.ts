@@ -106,6 +106,7 @@ export class MonitorMethodBaseDTO {
       });
     },
   })
+  //passed by reference
   @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('METHOD-1-B', {

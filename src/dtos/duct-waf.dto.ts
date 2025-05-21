@@ -24,7 +24,7 @@ import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Rectangular Duct Waf';
 const MINIMUM_DATE = '2004-01-01';
-// Using getMaximumFutureDate() from constants.ts instead of CURRENT_DATE
+// Using getMaximumFutureDate() (passed by reference) from constants.ts instead of CURRENT_DATE
 // This allows dates up to 90 days in the future, consistent with other DTOs
 // const CURRENT_DATE = () => {
 //   return new Date().toISOString().split('T')[0];
