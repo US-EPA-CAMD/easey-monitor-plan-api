@@ -82,7 +82,7 @@ export class AnalyzerRangeBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-18-B', {
         fieldname: args.property,
@@ -150,7 +150,7 @@ export class AnalyzerRangeBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-20-A', {
         fieldname: args.property,

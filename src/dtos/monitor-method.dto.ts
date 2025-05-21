@@ -106,7 +106,7 @@ export class MonitorMethodBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('METHOD-1-B', {
         fieldname: args.property,
@@ -168,7 +168,7 @@ export class MonitorMethodBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('METHOD-3-A', {
         fieldname: args.property,

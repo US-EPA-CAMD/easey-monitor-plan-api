@@ -69,7 +69,7 @@ describe('Mats Method Checks Service Test', () => {
 
       payload.beginDate = new Date('2023-02-28');
       payload.beginHour = 5;
-      payload.endDate = moment(getMaximumFutureDate()).add(1, 'days');
+      payload.endDate = moment(getMaximumFutureDate).add(1, 'days');
       payload.endHour = 1;
 
       let errored = false;

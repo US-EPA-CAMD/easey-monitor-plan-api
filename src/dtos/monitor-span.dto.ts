@@ -302,7 +302,7 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-8-B', {
         fieldname: args.property,
@@ -370,7 +370,7 @@ export class MonitorSpanBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SPAN-10-A', {
         fieldname: args.property,

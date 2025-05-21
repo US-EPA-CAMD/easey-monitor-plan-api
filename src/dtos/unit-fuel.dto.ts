@@ -115,7 +115,7 @@ export class UnitFuelBaseDTO {
       });
     },
   })
-  @IsInDateRange('1930-01-01', getMaximumFutureDate(), {
+  @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUEL-42-B', {
         fieldname: args.property,
@@ -143,7 +143,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOEndDate.example,
     name: propertyMetadata.unitFuelDTOEndDate.fieldLabels.value,
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUEL-43-A', {
         fieldname: args.property,

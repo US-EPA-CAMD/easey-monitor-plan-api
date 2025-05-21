@@ -61,7 +61,7 @@ export class UnitCapacityBaseDTO {
       });
     },
   })
-  @IsInDateRange('1930-01-01', getMaximumFutureDate(), {
+  @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CAPAC-5-B', {
         fieldname: args.property,
@@ -90,7 +90,7 @@ export class UnitCapacityBaseDTO {
     name: propertyMetadata.unitCapacityDTOEndDate.fieldLabels.value,
   })
   @IsOptional()
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CAPAC-2-A', {
         fieldname: args.property,

@@ -153,7 +153,7 @@ export class MonitorAttributeBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('MONLOC-11-B', {
         fieldname: args.property,
@@ -181,7 +181,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOEndDate.example,
     name: propertyMetadata.monitorAttributeDTOEndDate.fieldLabels.value,
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('MONLOC-12-A', {
         fieldname: args.property,

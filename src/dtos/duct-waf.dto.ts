@@ -70,7 +70,7 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-82-B', {
         Fieldname: args.property,
@@ -358,7 +358,7 @@ export class DuctWafBaseDTO {
       return `You reported [wafEndHour] but did not report an [wafEndDate] for [[${KEY}]].`;
     },
   })
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-84-A', {
         Fieldname: args.property,

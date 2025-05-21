@@ -100,7 +100,7 @@ export class UnitControlBaseDTO {
       return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
-  @IsInDateRange('1930-01-01', getMaximumFutureDate(), {
+  @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-5-B', {
         fieldname: args.property,
@@ -160,7 +160,7 @@ export class UnitControlBaseDTO {
     name: propertyMetadata.unitControlDTORetireDate.fieldLabels.value,
   })
   @IsOptional()
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-6-A', {
         fieldname: args.property,

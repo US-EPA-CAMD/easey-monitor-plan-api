@@ -70,7 +70,7 @@ export class MatsMethodChecksService {
 
       if (beginDate && endDate.isBefore(beginDate)) {
         error = this.getMessage('MATSMTH-3-A');
-      } else if (endDate.isAfter(moment(getMaximumFutureDate()))) {
+      } else if (endDate.isAfter(moment(getMaximumFutureDate))) {
         error = this.getMessage('MATSMTH-3-B');
       }
     }

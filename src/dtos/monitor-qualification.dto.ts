@@ -87,7 +87,7 @@ export class MonitorQualificationBaseDTO {
     name: propertyMetadata.monitorQualificationDTOEndDate.fieldLabels.value,
   })
   @ValidateIf(o => o.endDate !== null)
-  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate(), {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('QUAL-19-A', {
         fieldname: args.property,
