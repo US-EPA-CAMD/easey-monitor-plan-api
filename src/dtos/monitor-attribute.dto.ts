@@ -18,11 +18,7 @@ import {
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Monitoring Location Attribute';
@@ -157,7 +153,8 @@ export class MonitorAttributeBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('MONLOC-11-B', {
         fieldname: args.property,
@@ -185,7 +182,7 @@ export class MonitorAttributeBaseDTO {
     example: propertyMetadata.monitorAttributeDTOEndDate.example,
     name: propertyMetadata.monitorAttributeDTOEndDate.fieldLabels.value,
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('MONLOC-12-A', {
         fieldname: args.property,

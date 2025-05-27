@@ -19,13 +19,7 @@ import {
 import { BeginEndDatesConsistent } from '../utils';
 
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MAX_HOUR,
-  MINIMUM_DATE,
-  MIN_HOUR,
-} from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MINIMUM_DATE, MIN_HOUR, getMaximumFutureDate } from '../utilities/constants';
 import { AnalyzerRangeCode } from '../entities/analyzer-range-code.entity';
 
 const KEY = 'Analyzer Range';
@@ -88,7 +82,8 @@ export class AnalyzerRangeBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-18-B', {
         fieldname: args.property,
@@ -156,7 +151,7 @@ export class AnalyzerRangeBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-20-A', {
         fieldname: args.property,

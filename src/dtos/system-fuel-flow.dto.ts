@@ -19,13 +19,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {
-  MINIMUM_DATE,
-  MAXIMUM_FUTURE_DATE,
-  MAX_HOUR,
-  MIN_HOUR,
-  DATE_FORMAT,
-} from '../utilities/constants';
+import { MINIMUM_DATE, MAX_HOUR, MIN_HOUR, DATE_FORMAT, getMaximumFutureDate } from '../utilities/constants';
 import { SystemFuelMasterDataRelationship } from '../entities/system-fuel-md-relationship.entity';
 import { FindManyOptions } from 'typeorm';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
@@ -142,7 +136,8 @@ export class SystemFuelFlowBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUELFLW-3-B', {
         fieldname: args.property,
@@ -203,7 +198,7 @@ export class SystemFuelFlowBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUELFLW-5-A', {
         fieldname: args.property,
