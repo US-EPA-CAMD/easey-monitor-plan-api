@@ -4,7 +4,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import { MatsMethodChecksService } from './mats-method-checks.service';
 import { MatsMethodBaseDTO } from '../dtos/mats-method.dto';
-import { MAXIMUM_FUTURE_DATE } from '../utilities/constants';
+import { getMaximumFutureDate } from '../utilities/constants';
 const moment = require('moment');
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
@@ -69,7 +69,7 @@ describe('Mats Method Checks Service Test', () => {
 
       payload.beginDate = new Date('2023-02-28');
       payload.beginHour = 5;
-      payload.endDate = moment(MAXIMUM_FUTURE_DATE).add(1, 'days');
+      payload.endDate = moment(getMaximumFutureDate()).add(1, 'days').toDate();
       payload.endHour = 1;
 
       let errored = false;

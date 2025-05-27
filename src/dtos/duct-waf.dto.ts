@@ -19,12 +19,12 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { DATE_FORMAT, MAX_HOUR, MIN_HOUR, MAXIMUM_FUTURE_DATE } from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MIN_HOUR, getMaximumFutureDate } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Rectangular Duct Waf';
 const MINIMUM_DATE = '2004-01-01';
-// Using MAXIMUM_FUTURE_DATE from constants.ts instead of CURRENT_DATE
+// Using getMaximumFutureDate() (passed by reference) from constants.ts instead of CURRENT_DATE
 // This allows dates up to 90 days in the future, consistent with other DTOs
 // const CURRENT_DATE = () => {
 //   return new Date().toISOString().split('T')[0];
@@ -70,7 +70,7 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-82-B', {
         Fieldname: args.property,
@@ -358,7 +358,7 @@ export class DuctWafBaseDTO {
       return `You reported [wafEndHour] but did not report an [wafEndDate] for [[${KEY}]].`;
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-84-A', {
         Fieldname: args.property,

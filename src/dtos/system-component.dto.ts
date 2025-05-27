@@ -22,13 +22,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MAX_HOUR,
-  MINIMUM_DATE,
-  MIN_HOUR,
-} from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MINIMUM_DATE, MIN_HOUR, getMaximumFutureDate } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'System Component';
@@ -70,7 +64,8 @@ export class SystemComponentBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-3-B', {
         fieldname: args.property,
@@ -138,7 +133,7 @@ export class SystemComponentBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('COMPON-5-A', {
         fieldname: args.property,
