@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MAXIMUM_FUTURE_DATE } from '../utilities/constants';
+import { getMaximumFutureDate } from '../utilities/constants';
 import { MatsMethodBaseDTO, MatsMethodDTO } from '../dtos/mats-method.dto';
 
 const moment = require('moment');
@@ -70,7 +70,7 @@ export class MatsMethodChecksService {
 
       if (beginDate && endDate.isBefore(beginDate)) {
         error = this.getMessage('MATSMTH-3-A');
-      } else if (MAXIMUM_FUTURE_DATE && endDate.isAfter(MAXIMUM_FUTURE_DATE)) {
+      } else if (endDate.isAfter(moment(getMaximumFutureDate()))) {
         error = this.getMessage('MATSMTH-3-B');
       }
     }

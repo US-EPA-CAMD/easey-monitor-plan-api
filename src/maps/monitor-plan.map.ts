@@ -56,6 +56,7 @@ export class MonitorPlanMap extends BaseMap<
       id: entity.id,
       facId: entity.facId,
       facilityName: entity.plant.name,
+      facilityRegistrySystemId: entity.plant.facilityRegistrySystemId,
       configTypeCode: entity.configTypeCode,
       lastUpdated: entity.lastUpdated,
       updatedStatusFlag: entity.updatedStatusFlag,

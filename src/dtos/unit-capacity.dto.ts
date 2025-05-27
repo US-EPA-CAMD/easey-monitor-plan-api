@@ -16,11 +16,7 @@ import {
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Unit Capacity';
@@ -65,7 +61,8 @@ export class UnitCapacityBaseDTO {
       });
     },
   })
-  @IsInDateRange('1930-01-01', MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CAPAC-5-B', {
         fieldname: args.property,
@@ -94,7 +91,7 @@ export class UnitCapacityBaseDTO {
     name: propertyMetadata.unitCapacityDTOEndDate.fieldLabels.value,
   })
   @IsOptional()
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CAPAC-2-A', {
         fieldname: args.property,
