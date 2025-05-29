@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
+import { UnitDTO } from '../dtos/unit.dto';
+import { UnitMap } from '../maps/unit.map';
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { UnitStackConfigurationWorkspaceService } from './unit-stack-configuration.service';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
@@ -22,6 +24,7 @@ const unitRecordId = 'uuid';
 const stackPipeID = 'CS0AN';
 const unitStack = new UnitStackConfiguration();
 const unitStackDto = new UnitStackConfigurationDTO();
+const unitDto = new UnitDTO();
 
 const payload = new UnitStackConfigurationBaseDTO();
 payload.beginDate = new Date();
@@ -61,6 +64,10 @@ const mockStackPipe = () => ({
 const mockUnit = () => ({
   getUnitByNameAndFacId: jest.fn().mockResolvedValue(''),
 });
+const mockUnitMap = () => ({
+  many: jest.fn().mockResolvedValue([unitDto]),
+  one: jest.fn().mockResolvedValue(unitDto),
+});
 
 describe('UnitStackConfigurationWorkspaceService', () => {
   let service: UnitStackConfigurationWorkspaceService;
@@ -86,6 +93,10 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         {
           provide: UnitStackConfigurationMap,
           useFactory: mockMap,
+        },
+        {
+          provide: UnitMap,
+          useFactory: mockUnitMap,
         },
       ],
     }).compile();

@@ -18,11 +18,7 @@ import {
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Unit Fuel';
@@ -119,7 +115,8 @@ export class UnitFuelBaseDTO {
       });
     },
   })
-  @IsInDateRange('1930-01-01', MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUEL-42-B', {
         fieldname: args.property,
@@ -147,7 +144,7 @@ export class UnitFuelBaseDTO {
     example: propertyMetadata.unitFuelDTOEndDate.example,
     name: propertyMetadata.unitFuelDTOEndDate.fieldLabels.value,
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('FUEL-43-A', {
         fieldname: args.property,
