@@ -18,7 +18,7 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
       .getOne();
   }
 
-  async getDefaultBySpecs(
+  async getDefaultBySpecsBeginOrEndDate(
     locationId: string,
     parameterCode: string,
     defaultPurposeCode: string,
@@ -26,33 +26,40 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
     operatingConditionCode: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date,
-    endHour: number,
-  ): Promise<MonitorDefault> {
+    endDate: Date | null,
+    endHour: number | null,
+  ): Promise<MonitorDefault | null> {
     const query = this.createQueryBuilder('md')
       .where('md.locationId = :locationId', { locationId })
       .andWhere('md.parameterCode = :parameterCode', { parameterCode })
-      .andWhere('md.defaultPurposeCode = :defaultPurposeCode', {
-        defaultPurposeCode,
-      })
+      .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
       .andWhere('md.fuelCode = :fuelCode', { fuelCode })
-      .andWhere('md.operatingConditionCode = :operatingConditionCode', {
-        operatingConditionCode,
-      })
-      .andWhere(
-        `(md.beginDate = :beginDate AND md.beginHour = :beginHour)`,
-        { beginDate, beginHour }
-      );
+      .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
+      .andWhere('(md.beginDate = :beginDate AND md.beginHour = :beginHour)', {
+        beginDate,
+        beginHour,
+      });
+
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
 
     if (endDate !== null && endHour !== null) {
-      query.andWhere(
-        '(md.endDate = :endDate AND md.endHour = :endHour)',
-        { endDate, endHour }
-      );
-    } else {
-      query.andWhere('md.endDate IS NULL AND md.endHour IS NULL');
+      const endQuery = this.createQueryBuilder('md')
+        .where('md.locationId = :locationId', { locationId })
+        .andWhere('md.parameterCode = :parameterCode', { parameterCode })
+        .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
+        .andWhere('md.fuelCode = :fuelCode', { fuelCode })
+        .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
+        .andWhere('(md.endDate = :endDate AND md.endHour = :endHour)', {
+          endDate,
+          endHour,
+        });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
     }
 
-    return query.getOne();
+    return null;
   }
+
 }

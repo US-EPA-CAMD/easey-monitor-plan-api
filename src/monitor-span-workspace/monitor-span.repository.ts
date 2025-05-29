@@ -16,43 +16,52 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       .getOne();
   }
 
-  async getSpanByLocIdCompTypeCdBDateBHour(
+  async getSpanByLocIdCompTypeCdBeginOrEndDate(
     locationId: string,
     componentTypeCode: string,
     spanScaleCode: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date,
-    endHour: number,
-  ): Promise<MonitorSpan> {
+    endDate: Date | null,
+    endHour: number | null,
+  ): Promise<MonitorSpan | null> {
     const query = this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
-      .andWhere('ms.componentTypeCode = :componentTypeCode', {
-        componentTypeCode,
-      });
+      .andWhere('ms.componentTypeCode = :componentTypeCode', { componentTypeCode });
 
     if (spanScaleCode) {
-      query.andWhere('ms.spanScaleCode = :spanScaleCode', {
-        spanScaleCode,
-      });
+      query.andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode });
     }
 
     query.andWhere(
-      `(ms.beginDate = :beginDate AND ms.beginHour = :beginHour)`,
-      { beginDate, beginHour }
+      '(ms.beginDate = :beginDate AND ms.beginHour = :beginHour)',
+      { beginDate, beginHour },
     );
 
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
+
     if (endDate !== null && endHour !== null) {
-      query.andWhere(
+      const endQuery = this.createQueryBuilder('ms')
+        .where('ms.locationId = :locationId', { locationId })
+        .andWhere('ms.componentTypeCode = :componentTypeCode', { componentTypeCode });
+
+      if (spanScaleCode) {
+        endQuery.andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode });
+      }
+
+      endQuery.andWhere(
         '(ms.endDate = :endDate AND ms.endHour = :endHour)',
-        { endDate, endHour }
+        { endDate, endHour },
       );
-    } else {
-      query.andWhere('ms.endDate IS NULL AND ms.endHour IS NULL');
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
     }
 
-    return query.getOne();
+    return null;
   }
+
 
   async getSpanByLocIdCompTypeCdEDateEHour(
     locationId: string,

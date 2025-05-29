@@ -11,31 +11,33 @@ export class MonitorQualificationWorkspaceRepository extends Repository<
     super(MonitorQualification, entityManager);
   }
 
-  async getQualificationByLocTypeDate(
+  async getQualificationByLocTypeBeginOrEndDate(
     locationId: string,
     qualType: string,
     beginDate: Date,
-    endDate: Date,
-  ): Promise<MonitorQualification> {
+    endDate: Date | null,
+  ): Promise<MonitorQualification | null> {
     const query = this.createQueryBuilder('c')
       .where('c.locationId = :locationId', { locationId })
       .andWhere('c.qualificationTypeCode = :qualType', { qualType })
-      .andWhere(
-        `(c.beginDate = :beginDate)`,
-        { beginDate }
-      );
+      .andWhere('c.beginDate = :beginDate', { beginDate });
+
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
 
     if (endDate !== null) {
-      query.andWhere(
-        '(c.endDate = :endDate)',
-        { endDate }
-      );
-    } else {
-      query.andWhere('c.endDate IS NULL');
+      const endQuery = this.createQueryBuilder('c')
+        .where('c.locationId = :locationId', { locationId })
+        .andWhere('c.qualificationTypeCode = :qualType', { qualType })
+        .andWhere('c.endDate = :endDate', { endDate });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
     }
 
-    return query.getOne();
+    return null;
   }
+
 
   async getQualification(
     locId: string,
