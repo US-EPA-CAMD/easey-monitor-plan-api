@@ -149,6 +149,10 @@ export class MonitorPlanDTO {
   evalStatusCodeDescription: string;
 
   @IsString()
+  @IsOptional()
+  severityDescription: string;
+
+  @IsString()
   userId: string;
 
   @IsDateString()

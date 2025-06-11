@@ -8,6 +8,7 @@ import { MonitorLocationMap } from './monitor-location.map';
 import { MonitorPlanCommentMap } from './monitor-plan-comment.map';
 import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyMap } from './monitor-plan-reporting-freq.map';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class MonitorPlanMap extends BaseMap<
@@ -15,6 +16,7 @@ export class MonitorPlanMap extends BaseMap<
   MonitorPlanDTO
 > {
   constructor(
+    private readonly entityManager: EntityManager,
     private locationMap: MonitorLocationMap,
     private commentMap: MonitorPlanCommentMap,
     private readonly unitStackConfigurationMap: UnitStackConfigurationMap,
@@ -26,6 +28,8 @@ export class MonitorPlanMap extends BaseMap<
   public async one(
     entity: MonitorPlan | WorkspaceMonitorPlan,
   ): Promise<MonitorPlanDTO> {
+    let severityDescription = null;
+
     const monitoringLocationData = entity.locations
       ? await this.locationMap.many(entity.locations)
       : [];
@@ -52,6 +56,18 @@ export class MonitorPlanMap extends BaseMap<
       evalStatusCode = entity['evalStatusCode'];
     }
 
+    // Will show severity description only if entity is workspace. If not workspace status show be pass always. 
+        const severity = await this.entityManager.query(
+        `SELECT sc.severity_cd_description 
+          FROM camdecmpswks.monitor_plan p
+          JOIN camdecmpswks.check_session cs on cs.chk_session_id = p.chk_session_id
+          JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+          WHERE p.mon_plan_id = $1;`,
+          [entity.id],
+        );
+
+        severityDescription = severity?.[0]?.severity_cd_description;
+
     return {
       id: entity.id,
       facId: entity.facId,
@@ -71,6 +87,7 @@ export class MonitorPlanMap extends BaseMap<
       pendingStatusCode,
       evalStatusCode,
       evalStatusCodeDescription: '',
+      severityDescription,
       unitStackConfigurationData,
       reportingFrequencies,
       monitoringLocationData,
