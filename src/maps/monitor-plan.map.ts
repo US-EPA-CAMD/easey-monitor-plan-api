@@ -56,18 +56,6 @@ export class MonitorPlanMap extends BaseMap<
       evalStatusCode = entity['evalStatusCode'];
     }
 
-    // Will show severity description only if entity is workspace. If not workspace status show be pass always. 
-        const severity = await this.entityManager.query(
-        `SELECT sc.severity_cd_description 
-          FROM camdecmpswks.monitor_plan p
-          JOIN camdecmpswks.check_session cs on cs.chk_session_id = p.chk_session_id
-          JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
-          WHERE p.mon_plan_id = $1;`,
-          [entity.id],
-        );
-
-        severityDescription = severity?.[0]?.severity_cd_description;
-
     return {
       id: entity.id,
       facId: entity.facId,
