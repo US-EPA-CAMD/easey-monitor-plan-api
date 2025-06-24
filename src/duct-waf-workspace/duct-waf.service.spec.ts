@@ -23,7 +23,7 @@ const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(ENTITY),
   create: jest.fn(),
   save: jest.fn(),
-  getDuctWafByLocIdBDateBHourWafValue: jest.fn(),
+  getDuctWafByLocIdBeginOrEndDate: jest.fn(),
 });
 
 const mockMap = () => ({

@@ -16,28 +16,36 @@ export class MonitorLoadWorkspaceRepository extends Repository<MonitorLoad> {
       .getOne();
   }
 
-  async getLoadByLocBDateBHour(
+  async getLoadByLocBeginOrEndDate(
     locationId: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date,
-    endHour: number,
-  ): Promise<MonitorLoad> {
-    const query =  this.createQueryBuilder('ml')
+    endDate: Date | null,
+    endHour: number | null,
+  ): Promise<MonitorLoad | null> {
+    const query = this.createQueryBuilder('ml')
       .where('ml.locationId = :locationId', { locationId })
-      .andWhere(
-        `(ml.beginDate = :beginDate AND ml.beginHour = :beginHour)`,
-        { beginDate, beginHour }
-      )
+      .andWhere('(ml.beginDate = :beginDate AND ml.beginHour = :beginHour)', {
+        beginDate,
+        beginHour,
+      });
 
-      if (endDate !== null && endHour !== null) {
-        query.andWhere(
-          '(ml.endDate = :endDate AND ml.endHour = :endHour)',
-          { endDate, endHour }
-        );
-      } else {
-        query.andWhere('ml.endDate IS NULL AND ml.endHour IS NULL');
-      }
-    return query.getOne();
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
+
+    if (endDate !== null && endHour !== null) {
+      const endQuery = this.createQueryBuilder('ml')
+        .where('ml.locationId = :locationId', { locationId })
+        .andWhere('(ml.endDate = :endDate AND ml.endHour = :endHour)', {
+          endDate,
+          endHour,
+        });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
+    }
+
+    return null;
   }
+
 }

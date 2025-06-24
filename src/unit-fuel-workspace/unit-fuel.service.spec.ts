@@ -20,7 +20,7 @@ const payload: UnitFuelBaseDTO = new UnitFuelBaseDTO();
 const mockRepository = () => ({
   getUnitFuels: jest.fn().mockResolvedValue([unitFuel]),
   getUnitFuel: jest.fn().mockResolvedValue(unitFuel),
-  getUnitFuelBySpecs: jest.fn().mockResolvedValue(unitFuel),
+  getUnitFuelBySpecsBeginOrEndDate: jest.fn().mockResolvedValue(unitFuel),
   findOneBy: jest.fn().mockResolvedValue(unitFuel),
   create: jest.fn().mockResolvedValue(unitFuel),
   save: jest.fn().mockResolvedValue(unitFuel),
@@ -124,7 +124,7 @@ describe('UnitFuelService', () => {
       expect(result).toEqual(true);
     });
     it('should create while importing monitor default', async () => {
-      jest.spyOn(repository, 'getUnitFuelBySpecs').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'getUnitFuelBySpecsBeginOrEndDate').mockResolvedValue(undefined);
 
       const result = await service.importUnitFuel(
         [payload],

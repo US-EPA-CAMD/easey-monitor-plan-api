@@ -17,11 +17,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MINIMUM_DATE,
-} from '../utilities/constants';
+import { DATE_FORMAT, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
 import { VwUnitcontrolMasterDataRelationships } from '../entities/vw-unitcontrol-master-data-relationships.entity';
 import { ControlCode } from '../entities/control-code.entity';
 
@@ -104,7 +100,8 @@ export class UnitControlBaseDTO {
       return `The value for [${args.value}] in the Unit Control record [${args.property}] must be a valid ISO date format [${DATE_FORMAT}]`;
     },
   })
-  @IsInDateRange('1930-01-01', MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange('1930-01-01', getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-5-B', {
         fieldname: args.property,
@@ -164,7 +161,7 @@ export class UnitControlBaseDTO {
     name: propertyMetadata.unitControlDTORetireDate.fieldLabels.value,
   })
   @IsOptional()
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('CONTROL-6-A', {
         fieldname: args.property,

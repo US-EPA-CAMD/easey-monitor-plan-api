@@ -164,6 +164,10 @@ export class ComponentCheckService {
           }
         }
       }
+    } else if (component.componentTypeCode === 'PM') {
+      if (component.basisCode && !['W', 'D'].includes(component.basisCode)) {
+        errorCode = 'COMPON-14-B';
+      }
     } else {
       if (component.basisCode) {
         errorCode = 'COMPON-14-D';
