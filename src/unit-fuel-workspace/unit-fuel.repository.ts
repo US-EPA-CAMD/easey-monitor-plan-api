@@ -26,33 +26,31 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
     return query.getOne();
   }
 
-  async getUnitFuelBySpecs(
+  async getUnitFuelBySpecsBeginOrEndDate(
     unitId: number,
     fuelCode: string,
     beginDate: Date,
-    endDate: Date,
-  ): Promise<UnitFuel> {
+    endDate: Date | null,
+  ): Promise<UnitFuel | null> {
     const qb = this.createQueryBuilder('u')
-      .where('u.unitId = :unitId', {
-        unitId,
-      })
-      .andWhere('u.fuelCode = :fuelCode', {
-        fuelCode,
-      })
-      .andWhere(
-        `(u.beginDate = :beginDate)`,
-        { beginDate, }
-      );
-    
+      .where('u.unitId = :unitId', { unitId })
+      .andWhere('u.fuelCode = :fuelCode', { fuelCode })
+      .andWhere('u.beginDate = :beginDate', { beginDate });
+
+    const beginMatch = await qb.getOne();
+    if (beginMatch) return beginMatch;
+
     if (endDate !== null) {
-      qb.andWhere(
-        '(u.endDate = :endDate)',
-        { endDate, }
-      );
-    } else {
-      qb.andWhere('u.endDate IS NULL');
+      const endQuery = this.createQueryBuilder('u')
+        .where('u.unitId = :unitId', { unitId })
+        .andWhere('u.fuelCode = :fuelCode', { fuelCode })
+        .andWhere('u.endDate = :endDate', { endDate });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
     }
 
-    return qb.getOne();
+    return null;
   }
+
 }

@@ -52,7 +52,7 @@ describe('MonitorAttributeWorkspaceRepository', () => {
     });
   });
 
-  describe('getAttributeByLocIdAndDate', () => {
+  describe('getAttributeByLocIdBeginOrEndDate', () => {
     it('calls createQueryBuilder and gets all monitor attribute from the repository with the location id and begin or end date', async () => {
       monitorAttributeRepository.createQueryBuilder = jest
         .fn()
@@ -61,7 +61,7 @@ describe('MonitorAttributeWorkspaceRepository', () => {
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(returnAttribute);
 
-      const result = await monitorAttributeRepository.getAttributeByLocIdAndDate(
+      const result = await monitorAttributeRepository.getAttributeByLocIdBeginOrEndDate(
         0,
         new MonitorAttributeBaseDTO(),
       );

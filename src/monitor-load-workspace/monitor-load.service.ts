@@ -59,7 +59,7 @@ export class MonitorLoadWorkspaceService {
         const loadRecord = await withTransaction(
           this.repository,
           trx,
-        ).getLoadByLocBDateBHour(
+        ).getLoadByLocBeginOrEndDate(
           locationId,
           load.beginDate,
           load.beginHour,

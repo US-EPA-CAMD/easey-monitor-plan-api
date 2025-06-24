@@ -28,6 +28,7 @@ import { SystemComponentMasterDataRelationshipModule } from './system-component-
 import { UsedIdentifierModule } from './used-identifier/used-identifier.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.module';
+import { HealthModule } from '@us-epa-camd/easey-common/health/health.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.modu
       'camdecmpsmd.vw_monitor_plan_api_check_catalog_results',
     ),
     HttpModule,
+    HealthModule,
     LoggerModule,
     CorsOptionsModule,
     ConnectionModule,
@@ -64,6 +66,13 @@ import { StackPipeWorkspaceModule } from './stack-pipe-workspace/stack-pipe.modu
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(MaintenanceMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL })
+    consumer.apply(MaintenanceMiddleware)
+      .exclude(
+        {
+          path: '/health',
+          method: RequestMethod.GET,
+        },
+      )
+      .forRoutes({ path: '*', method: RequestMethod.ALL })
   }
 }

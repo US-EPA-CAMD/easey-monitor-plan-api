@@ -63,7 +63,7 @@ describe('UnitFuelWorkspaceRepository', () => {
     });
   });
 
-  describe('getUnitFuelBySpecs', () => {
+  describe('getUnitFuelBySpecsBeginOrEndDate', () => {
     it('calls createQueryBuilder and gets a Unit Fuel from the repository with the specified unitId, fuelCode and beginDate or endDate', async () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
@@ -71,7 +71,7 @@ describe('UnitFuelWorkspaceRepository', () => {
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitFuel);
 
-      const result = await repository.getUnitFuelBySpecs(
+      const result = await repository.getUnitFuelBySpecsBeginOrEndDate(
         1,
         'CODE',
         new Date(),

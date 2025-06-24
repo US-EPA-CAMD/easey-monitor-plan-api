@@ -19,7 +19,7 @@ const mockMap = () => ({
 });
 
 const mockRepo = () => ({
-  getAnalyzerRangeByComponentIdAndDate: jest.fn(),
+  getAnalyzerRangeByComponentIdBeginOrEndDate: jest.fn(),
 });
 
 describe('AnalyzerRangeWorkspaceService', () => {
@@ -54,7 +54,7 @@ describe('AnalyzerRangeWorkspaceService', () => {
   describe('importAnalyzerRange', () => {
     const analyzerRangeImport = [new AnalyzerRangeBaseDTO()];
     it('should create analyzer range if not exists', async () => {
-      repositoryMock.getAnalyzerRangeByComponentIdAndDate = jest
+      repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate = jest
         .fn()
         .mockResolvedValue(null);
       const createAnalyzerRange = jest
@@ -67,13 +67,13 @@ describe('AnalyzerRangeWorkspaceService', () => {
         analyzerRangeImport,
       );
       expect(
-        repositoryMock.getAnalyzerRangeByComponentIdAndDate,
+        repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate,
       ).toHaveBeenCalledWith('componentId', analyzerRangeImport[0]);
       expect(createAnalyzerRange).toHaveBeenCalled;
     });
 
     it('should update analyzer range if exists', async () => {
-      repositoryMock.getAnalyzerRangeByComponentIdAndDate = jest
+      repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate = jest
         .fn()
         .mockResolvedValue(new AnalyzerRangeDTO());
       const updateAnalyzerRange = jest
@@ -86,7 +86,7 @@ describe('AnalyzerRangeWorkspaceService', () => {
         analyzerRangeImport,
       );
       expect(
-        repositoryMock.getAnalyzerRangeByComponentIdAndDate,
+        repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate,
       ).toHaveBeenCalledWith('componentId', analyzerRangeImport[0]);
       expect(updateAnalyzerRange).toHaveBeenCalled;
     });
