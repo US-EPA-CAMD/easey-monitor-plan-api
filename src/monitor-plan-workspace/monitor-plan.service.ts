@@ -1139,28 +1139,18 @@ export class MonitorPlanWorkspaceService {
 
       /* MONITOR PLAN COMMENT MERGE LOGIC */
 
-      // Apply the monitor plan comments to the earliest changed plan.
-      // NOTE:XXX: This is not a great way to determine the target plan: if the import doesn't contain any new or ended plans, the comments will not be imported. However, since the import schema can contain multiple plans, it is impossible to determine the target plan without additional information.
-      const targetPlan = [...result.newPlans, ...result.endedPlans].reduce(
-        (acc, cur) => {
-          if (!acc) return cur;
-          const compareResult = this.compareReportPeriodDescriptions(
-            acc.beginReportPeriodDescription,
-            cur.beginReportPeriodDescription,
-          );
-          if (compareResult === 1) return cur; // If the current plan is earlier than the accumulator, return it.
-          return acc;
-        },
-        null,
-      );
-      if (targetPlan) {
+      // Apply the monitor plan comments.
+
+      const targetLocationId =  monitorLocations[0]?.id;
+      const repository = withTransaction(this.repository, trx);
+      const plan = await repository.getActivePlanByLocationId(targetLocationId);
         await this.monitorPlanCommentService.importComments(
           payload.monitoringPlanCommentData,
           userId,
-          targetPlan.id,
+          plan.id,
+          true,
           trx,
         );
-      }
 
       // Reset all active monitor plans associated with locations in the import to "needs evaluation".
       await settlePromises(

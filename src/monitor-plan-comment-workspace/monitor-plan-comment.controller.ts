@@ -1,12 +1,13 @@
 import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
-import { Get, Param, Controller } from '@nestjs/common';
+import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 
-import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
+import { MonitorPlanCommentDTO, MonitorPlanCommentBaseDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
-import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -15,7 +16,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 export class MonitorPlanCommentWorkspaceController {
   constructor(private readonly service: MonitorPlanCommentWorkspaceService) {}
 
-  @Get()
+  @Get('comments')
   @ApiOkResponse({
     isArray: true,
     type: MonitorPlanCommentDTO,
@@ -42,4 +43,66 @@ export class MonitorPlanCommentWorkspaceController {
       items: monitorPlanCommentDTOS
     };
   }
+
+  @Put('comments/:monitorPlantCommentId')
+  @RoleGuard(
+    {
+      pathParam: 'planId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
+      permissionsForFacility: ['DSMP'],
+    },
+    LookupType.MonitorPlan,
+  )
+    @AuditLog({
+      label: 'Update workspace Monitor Plan Comment record',
+      requestParamsOutFields: ['planId'],
+      requestBodyOutFields:'*'
+    })
+    @ApiOkResponse({
+      type: MonitorPlanCommentDTO,
+      description: 'Updates a workspace Monitor Plan Comment record by Monitor Plant Comment ID',
+    })
+    async updatePlanMonitorComment(
+      @Param('planId') monPlanId: string,
+      @Param('monitorPlantCommentId') monitorPlantCommentId: string,
+      @Body() payload: MonitorPlanCommentBaseDTO,
+      @User() user: CurrentUser,
+    ): Promise<any> {
+      return this.service.updateComment(
+        monPlanId,
+        payload,
+        user.userId,
+        monitorPlantCommentId
+      );
+    }
+
+  @Post('comments/')
+  @RoleGuard(
+    {
+      pathParam: 'planId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
+      permissionsForFacility: ['DSMP'],
+    },
+    LookupType.MonitorPlan,
+  )
+    @AuditLog({
+      label: 'Create workspace Monitor Plan Comment record',
+      requestParamsOutFields: ['planId'],
+      requestBodyOutFields:'*'
+    })
+    @ApiOkResponse({
+      type: MonitorPlanCommentDTO,
+      description: 'Create a workspace Monitor Plan Comment record by Monitor Plant Comment ID',
+    })
+    async createUnitCapacity(
+      @Param('planId') monPlanId: string,
+      @Body() payload: MonitorPlanCommentBaseDTO,
+      @User() user: CurrentUser,
+    ): Promise<MonitorPlanCommentDTO> {
+      return this.service.createComment(
+        monPlanId,
+        payload,
+        user.userId,
+      );
+    }
 }

@@ -6,16 +6,18 @@ import { v4 } from 'uuid';
 import { settlePromises, withTransaction } from '../utils';
 import {
   MonitorPlanCommentBaseDTO,
-  MonitorPlanCommentDTO,
+  MonitorPlanCommentDTO
 } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
+import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 
 @Injectable()
 export class MonitorPlanCommentWorkspaceService {
   constructor(
+    private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
     private readonly repository: MonitorPlanCommentWorkspaceRepository,
-    private readonly map: MonitorPlanCommentMap,
+    private readonly map: MonitorPlanCommentMap
   ) {}
 
   async getComments(planId: string): Promise<MonitorPlanCommentDTO[]> {
@@ -51,6 +53,7 @@ export class MonitorPlanCommentWorkspaceService {
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
     trx?: EntityManager,
+    isImport:boolean = false
   ): Promise<MonitorPlanCommentDTO> {
     const repository = withTransaction(this.repository, trx);
 
@@ -65,6 +68,12 @@ export class MonitorPlanCommentWorkspaceService {
       updateDate: currentDateTime(),
     });
     const result = await repository.save(comment);
+    
+    if (!isImport) {
+    const monitorPlanWorkspaceRepository = withTransaction(this.monitorPlanWorkspaceRepository, trx);
+    await monitorPlanWorkspaceRepository.resetToNeedsEvaluation(monPlanId, userId)
+    }
+
     return this.map.one(result);
   }
 
@@ -72,22 +81,30 @@ export class MonitorPlanCommentWorkspaceService {
     monPlanId: string,
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
+    monitorPlantCommentId: string,
     trx?: EntityManager,
+    isImport: boolean = false
   ): Promise<MonitorPlanCommentDTO> {
     const repository = withTransaction(this.repository, trx);
 
     const comment = await repository.findOne({
       where: {
         monitorPlanId: monPlanId,
-        monitorPlanComment: payload.monitoringPlanComment,
-        beginDate: payload.beginDate,
+        id : monitorPlantCommentId
       },
     });
 
+    comment.monitorPlanComment = payload.monitoringPlanComment,
+    comment.beginDate = payload.beginDate,
     comment.endDate = payload.endDate;
     comment.userId = userId;
     comment.updateDate = currentDateTime();
     const result = await repository.save(comment);
+    
+    if (!isImport) {
+    const monitorPlanWorkspaceRepository = withTransaction(this.monitorPlanWorkspaceRepository, trx);
+    await monitorPlanWorkspaceRepository.resetToNeedsEvaluation(monPlanId, userId)
+    }
     return this.map.one(result);
   }
 
@@ -95,6 +112,7 @@ export class MonitorPlanCommentWorkspaceService {
     commentData: MonitorPlanCommentBaseDTO[],
     userId: string,
     monitorPlanId: string,
+    isImport: boolean,
     trx?: EntityManager,
   ) {
     return settlePromises(
@@ -107,10 +125,10 @@ export class MonitorPlanCommentWorkspaceService {
         );
 
         if (!monitorPlanComment) {
-          await this.createComment(monitorPlanId, comment, userId, trx);
+          await this.createComment(monitorPlanId, comment, userId, trx, isImport);
         } else {
           if (monitorPlanComment.endDate !== comment.endDate) {
-            await this.updateComment(monitorPlanId, comment, userId, trx);
+            await this.updateComment(monitorPlanId, comment, userId, monitorPlanComment.id, trx, isImport);
           }
         }
       }),
