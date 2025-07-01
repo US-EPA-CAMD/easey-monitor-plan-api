@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Put, Body } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -14,6 +14,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Spans')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(MonitorSpanDTO)
 export class MonitorSpanWorkspaceController {
   constructor(
     private service: MonitorSpanWorkspaceService,
@@ -34,9 +35,20 @@ export class MonitorSpanWorkspaceController {
     requestParamsOutFields:['locId']
   })
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorSpanDTO,
     description: 'Retrieves workspace span records for a monitor location',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MonitorSpanDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getSpans(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorSpanDTO>> {
     const spans = await this.service.getSpans(locationId);
