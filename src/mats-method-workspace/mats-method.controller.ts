@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -14,6 +14,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('MATS Methods')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(MatsMethodDTO)
 export class MatsMethodWorkspaceController {
   constructor(
     private readonly service: MatsMethodWorkspaceService,
@@ -22,10 +23,21 @@ export class MatsMethodWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MatsMethodDTO,
     description:
       'Retrieves workspace copy MATS Method records for a monitor location',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MatsMethodDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
