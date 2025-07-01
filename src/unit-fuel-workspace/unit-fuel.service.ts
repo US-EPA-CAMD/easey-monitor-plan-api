@@ -142,7 +142,7 @@ export class UnitFuelWorkspaceService {
         const unitFuelRecord = await withTransaction(
           this.repository,
           trx,
-        ).getUnitFuelBySpecs(
+        ).getUnitFuelBySpecsBeginOrEndDate(
           unitId,
           unitFuel.fuelCode,
           unitFuel.beginDate,

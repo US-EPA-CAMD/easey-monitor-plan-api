@@ -77,8 +77,13 @@ import { UnitProgramWorkspaceModule } from './unit-program-workspace/unit-progra
 import { UnitModule } from './unit/unit.module';
 import { MonitorPlanReportingFreqModule } from './monitor-plan-reporting-freq/monitor-plan-reporting-freq.module';
 import { MonitorPlanReportingFreqWorkspaceModule } from './monitor-plan-reporting-freq-workspace/monitor-plan-reporting-freq.module';
+import { HealthModule } from '@us-epa-camd/easey-common/health/health.module';
 
 const routes = [
+  {
+    path: '/health',
+    module: HealthModule,
+  },
   {
     path: '/what-has-data',
     module: WhatHasDataModule,

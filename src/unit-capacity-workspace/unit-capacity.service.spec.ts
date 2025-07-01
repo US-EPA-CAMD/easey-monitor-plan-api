@@ -20,7 +20,7 @@ const payload = new UnitCapacityBaseDTO();
 const mockRepository = () => ({
   getUnitCapacities: jest.fn().mockResolvedValue(unitCapacity),
   getUnitCapacity: jest.fn().mockResolvedValue(unitCapacity),
-  getUnitCapacityByUnitIdAndDate: jest.fn().mockResolvedValue(unitCapacity),
+  getUnitCapacityByUnitIdBeginOrEndDate: jest.fn().mockResolvedValue(unitCapacity),
   create: jest.fn().mockResolvedValue(unitCapacity),
   save: jest.fn().mockResolvedValue(unitCapacity),
 });
@@ -125,7 +125,7 @@ describe('UnitCapacityWorkspaceService', () => {
     });
     it('should create while importing monitor default', async () => {
       jest
-        .spyOn(repository, 'getUnitCapacityByUnitIdAndDate')
+        .spyOn(repository, 'getUnitCapacityByUnitIdBeginOrEndDate')
         .mockResolvedValue(undefined);
 
       const result = await service.importUnitCapacity(

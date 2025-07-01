@@ -36,7 +36,7 @@ describe('AnalyzerRangeWorkspaceRepository', () => {
     );
   });
 
-  describe('getAnalyzerRangeByComponentIdAndDate', () => {
+  describe('getAnalyzerRangeByComponentIdBeginOrEndDate', () => {
     it('calls createQueryBuilder and get one analyzer range from the repository with the specified componentId', async () => {
       analyzerRangeRepository.createQueryBuilder = jest
         .fn()
@@ -46,7 +46,7 @@ describe('AnalyzerRangeWorkspaceRepository', () => {
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(analyzerRange);
 
-      const result = await analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+      const result = await analyzerRangeRepository.getAnalyzerRangeByComponentIdBeginOrEndDate(
         'componentId',
         analyzerRangeBaseDto,
       );

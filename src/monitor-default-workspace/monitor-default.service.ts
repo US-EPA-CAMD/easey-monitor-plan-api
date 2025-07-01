@@ -153,7 +153,7 @@ export class MonitorDefaultWorkspaceService {
         const monDefaultRecord = await withTransaction(
           this.repository,
           trx,
-        ).getDefaultBySpecs(
+        ).getDefaultBySpecsBeginOrEndDate(
           locationId,
           monDefault.parameterCode,
           monDefault.defaultPurposeCode,

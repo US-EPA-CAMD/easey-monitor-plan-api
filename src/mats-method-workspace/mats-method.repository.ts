@@ -10,37 +10,41 @@ export class MatsMethodWorkspaceRepository extends Repository<MatsMethod> {
     super(MatsMethod, entityManager);
   }
 
-  async getMatsMethodByLodIdParamCodeAndDate(
+  async getMatsMethodByLocIdParamCodeBeginOrEndDate(
     locationId: string,
     matsMethod: MatsMethodBaseDTO,
-  ): Promise<MatsMethod> {
+  ): Promise<MatsMethod | null> {
     const paramCode = matsMethod.supplementalMATSParameterCode;
     const beginDate = matsMethod.beginDate;
     const beginHour = matsMethod.beginHour;
     const endDate = matsMethod.endDate;
     const endHour = matsMethod.endHour;
 
-    const query =  this.createQueryBuilder('mm')
-      .where('mm.locationId = :locationId', {
-        locationId,
-      })
-      .andWhere('mm.supplementalMATSParameterCode = :paramCode', {
-        paramCode,
-      })
-      .andWhere(
-        `(mm.beginDate = :beginDate AND mm.beginHour = :beginHour)`,
-        { beginDate, beginHour }
-      )
+    const query = this.createQueryBuilder('mm')
+      .where('mm.locationId = :locationId', { locationId })
+      .andWhere('mm.supplementalMATSParameterCode = :paramCode', { paramCode })
+      .andWhere('(mm.beginDate = :beginDate AND mm.beginHour = :beginHour)', {
+        beginDate,
+        beginHour,
+      });
 
-      if (endDate !== null && endHour !== null) {
-        query.andWhere(
-          '(mm.endDate = :endDate AND mm.endHour = :endHour)',
-          { endDate, endHour }
-        );
-      } else {
-        query.andWhere('mm.endDate IS NULL AND mm.endHour IS NULL');
-      }
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
 
-    return query.getOne();
+    if (endDate !== null && endHour !== null) {
+      const endQuery = this.createQueryBuilder('mm')
+        .where('mm.locationId = :locationId', { locationId })
+        .andWhere('mm.supplementalMATSParameterCode = :paramCode', { paramCode })
+        .andWhere('(mm.endDate = :endDate AND mm.endHour = :endHour)', {
+          endDate,
+          endHour,
+        });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
+    }
+
+    return null;
   }
+
 }

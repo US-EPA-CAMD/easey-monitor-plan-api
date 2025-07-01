@@ -196,7 +196,7 @@ export class MonitorSpanWorkspaceService {
         const spanRecord = await withTransaction(
           this.repository,
           trx,
-        ).getSpanByLocIdCompTypeCdBDateBHour(
+        ).getSpanByLocIdCompTypeCdBeginOrEndDate(
           locationId,
           span.componentTypeCode,
           span.spanScaleCode,

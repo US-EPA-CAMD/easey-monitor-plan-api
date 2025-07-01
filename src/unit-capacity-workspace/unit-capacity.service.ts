@@ -39,7 +39,7 @@ export class UnitCapacityWorkspaceService {
         const unitCapacityRecord = await withTransaction(
           this.repository,
           trx,
-        ).getUnitCapacityByUnitIdAndDate(
+        ).getUnitCapacityByUnitIdBeginOrEndDate(
           unitId,
           unitCapacity.beginDate,
           unitCapacity.endDate,

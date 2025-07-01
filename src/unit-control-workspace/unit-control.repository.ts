@@ -26,54 +26,49 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
       .getOne();
   }
 
-  async getUnitControlBySpecs(
+  async getUnitControlBySpecsInstallOrRetireDate(
     unitRecordId: number,
     parameterCode: string,
     controlCode: string,
-    installDate: Date,
-    retireDate: Date,
-  ): Promise<UnitControl> {
-    const query = this.createQueryBuilder('uc')
-      .where('uc.unitId = :unitRecordId', {
-        unitRecordId,
-      })
-      .andWhere('uc.parameterCode = :parameterCode', {
-        parameterCode,
-      })
+    installDate: Date | null,
+    retireDate: Date | null,
+  ): Promise<UnitControl | null> {
+    const baseQuery = this.createQueryBuilder('uc')
+      .where('uc.unitId = :unitRecordId', { unitRecordId })
+      .andWhere('uc.parameterCode = :parameterCode', { parameterCode })
       .andWhere('uc.controlCode = :controlCode', { controlCode });
 
-    if (installDate) {
-      query.andWhere(
-        `uc.installDate = :installDate`,
-        {installDate,},
-      );
-      if (retireDate !== null) {
-        query.andWhere(
-          '(uc.retireDate = :retireDate)',
-          { retireDate, }
-        );
-      } else {
-        query.andWhere('uc.retireDate IS NULL');
-      }
+    if (installDate !== null) {
+      baseQuery.andWhere('uc.installDate = :installDate', { installDate });
     } else {
-      query.andWhere(
-        `uc.installDate IS NULL`,
-        {installDate,},
-      );
-      if (retireDate !== null) {
-        query.andWhere(
-          '(uc.retireDate = :retireDate)',
-          { retireDate, }
-        );
-      } else {
-        query.andWhere('uc.retireDate IS NULL');
-      }
+      baseQuery.andWhere('uc.installDate IS NULL');
     }
 
-    query.orderBy(
-      'uc.unitId, uc.parameterCode, uc.controlCode, uc.installDate',
-    );
+    const installMatch = await baseQuery
+      .orderBy('uc.unitId, uc.parameterCode, uc.controlCode, uc.installDate')
+      .getOne();
 
-    return await query.getOne();
+    if (installMatch) return installMatch;
+
+    if (retireDate !== null) {
+      const retireQuery = this.createQueryBuilder('uc')
+        .where('uc.unitId = :unitRecordId', { unitRecordId })
+        .andWhere('uc.parameterCode = :parameterCode', { parameterCode })
+        .andWhere('uc.controlCode = :controlCode', { controlCode })
+        .andWhere('uc.retireDate = :retireDate', { retireDate });
+
+      if (installDate !== null) {
+        retireQuery.andWhere('uc.installDate = :installDate', { installDate });
+      } else {
+        retireQuery.andWhere('uc.installDate IS NULL');
+      }
+
+      return await retireQuery
+        .orderBy('uc.unitId, uc.parameterCode, uc.controlCode, uc.installDate')
+        .getOne();
+    }
+
+    return null;
   }
+
 }
