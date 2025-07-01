@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Param, Controller } from '@nestjs/common';
 import { LMEQualificationDTO } from '../dtos/lme-qualification.dto';
 import { LMEQualificationService } from './lme-qualification.service';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('LME Qualifications')
+@ApiExtraModels(LMEQualificationDTO)
 export class LMEQualificationController {
   constructor(private readonly service: LMEQualificationService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LMEQualificationDTO,
     description:
       'Retrieves official lme qualification records for a monitor location',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(LMEQualificationDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getLMEQualifications(
     @Param('locId') locationId: string,

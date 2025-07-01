@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -16,15 +16,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Qualifications')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(MonitorQualificationDTO)
 export class MonitorQualificationWorkspaceController {
   constructor(private readonly service: MonitorQualificationWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorQualificationDTO,
     description:
       'Retrieves workspace qualification records for a monitor location',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MonitorQualificationDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

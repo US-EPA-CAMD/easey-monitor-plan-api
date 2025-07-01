@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Put, Post, Body, Param, Controller } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -16,6 +16,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Methods')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(MonitorMethodDTO)
 export class MonitorMethodWorkspaceController {
   constructor(private service: MonitorMethodWorkspaceService) {}
 
@@ -33,9 +34,20 @@ export class MonitorMethodWorkspaceController {
     requestParamsOutFields: ['locId']
   })
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorMethodDTO,
     description: 'Retrieves workspace Monitor Method records',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MonitorMethodDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getMethods(@Param('locId') locId: string): Promise<ArrayResponse<MonitorMethodDTO>> {
     const methods = await this.service.getMethods(locId);
