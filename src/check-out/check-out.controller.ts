@@ -1,5 +1,5 @@
 import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiSecurity, ApiOkResponse, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { RoleGuard, User, AuditLog } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -17,6 +17,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Check-Outs')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(UserCheckOutDTO)
 export class CheckOutController {
   constructor(
     private readonly ucoService: UserCheckOutService,
@@ -25,10 +26,21 @@ export class CheckOutController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UserCheckOutDTO,
     description:
       'Retrieves workspace Monitor Plan configuration records that are checked out by users',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(UserCheckOutDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @AuditLog({
     label: 'Retrieved workspace check-out plans'

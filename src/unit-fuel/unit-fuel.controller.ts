@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
 import { UnitFuelService } from './unit-fuel.service';
@@ -8,14 +8,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Fuels')
+@ApiExtraModels(UnitFuelDTO)
 export class UnitFuelController {
   constructor(private readonly service: UnitFuelService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitFuelDTO,
     description: 'Retrieves official unit fuel records from a specific unit ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(UnitFuelDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getUnitFuels(
     @Param('locId') locId: string,

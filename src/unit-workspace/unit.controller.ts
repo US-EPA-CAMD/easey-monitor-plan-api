@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Put } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -13,15 +13,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Units')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(UnitDTO)
 export class UnitWorkspaceController {
   constructor(private readonly service: UnitWorkspaceService) {}
 
   @Get(':id')
   @ApiOkResponse({
-    isArray: true,
-    type: UnitDTO,
     description:
       'Retrieves workspace unit for a specific unit ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(UnitDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

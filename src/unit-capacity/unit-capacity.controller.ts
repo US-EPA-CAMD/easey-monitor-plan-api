@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { UnitCapacityDTO } from '../dtos/unit-capacity.dto';
 import { UnitCapacityService } from './unit-capacity.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Capacities')
+@ApiExtraModels(UnitCapacityDTO)
 export class UnitCapacityController {
   constructor(private readonly service: UnitCapacityService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitCapacityDTO,
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(UnitCapacityDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getUnitCapacities(
     @Param('locId') locId: string,
