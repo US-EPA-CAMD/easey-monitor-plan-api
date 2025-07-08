@@ -1,6 +1,5 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
-
 import { MonitorPlanCommentDTO, MonitorPlanCommentBaseDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
@@ -13,14 +12,26 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 @ApiSecurity('APIKey')
 @ApiTags('Comments')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(MonitorPlanCommentDTO)
 export class MonitorPlanCommentWorkspaceController {
   constructor(private readonly service: MonitorPlanCommentWorkspaceService) {}
 
   @Get('comments')
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanCommentDTO,
     description: 'Retrieves workspace comment records for a monitor plan',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MonitorPlanCommentDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

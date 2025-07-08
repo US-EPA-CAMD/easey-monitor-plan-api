@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Param, Controller, Put, Body, Post } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -16,15 +16,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('LEE Qualifications')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(LEEQualificationDTO)
 export class LEEQualificationWorkspaceController {
   constructor(private readonly service: LEEQualificationWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LEEQualificationDTO,
     description:
       'Retrieves workspace lee qualification records for a monitor location',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(LEEQualificationDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
