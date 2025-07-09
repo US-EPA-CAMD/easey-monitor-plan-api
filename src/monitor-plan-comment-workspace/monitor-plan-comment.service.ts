@@ -81,7 +81,7 @@ export class MonitorPlanCommentWorkspaceService {
     monPlanId: string,
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
-    monitorPlantCommentId: string,
+    monitorPlanCommentId: string,
     trx?: EntityManager,
     isImport: boolean = false
   ): Promise<MonitorPlanCommentDTO> {
@@ -90,7 +90,7 @@ export class MonitorPlanCommentWorkspaceService {
     const comment = await repository.findOne({
       where: {
         monitorPlanId: monPlanId,
-        id : monitorPlantCommentId
+        id : monitorPlanCommentId
       },
     });
 

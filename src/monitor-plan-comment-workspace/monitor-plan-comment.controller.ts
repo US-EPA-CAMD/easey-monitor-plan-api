@@ -55,7 +55,7 @@ export class MonitorPlanCommentWorkspaceController {
     };
   }
 
-  @Put('comments/:monitorPlantCommentId')
+  @Put('comments/:monitorPlanCommentId')
   @RoleGuard(
     {
       pathParam: 'planId',
@@ -75,7 +75,7 @@ export class MonitorPlanCommentWorkspaceController {
     })
     async updatePlanMonitorComment(
       @Param('planId') monPlanId: string,
-      @Param('monitorPlantCommentId') monitorPlantCommentId: string,
+      @Param('monitorPlanCommentId') monitorPlanCommentId: string,
       @Body() payload: MonitorPlanCommentBaseDTO,
       @User() user: CurrentUser,
     ): Promise<any> {
@@ -83,7 +83,7 @@ export class MonitorPlanCommentWorkspaceController {
         monPlanId,
         payload,
         user.userId,
-        monitorPlantCommentId
+        monitorPlanCommentId
       );
     }
 
