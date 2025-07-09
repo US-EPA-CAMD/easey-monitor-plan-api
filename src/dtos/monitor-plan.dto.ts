@@ -150,6 +150,10 @@ export class MonitorPlanDTO {
 
   @IsString()
   @IsOptional()
+  severityCode: string;
+
+  @IsString()
+  @IsOptional()
   severityDescription: string;
 
   @IsString()

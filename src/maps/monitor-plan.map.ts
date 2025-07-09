@@ -29,7 +29,7 @@ export class MonitorPlanMap extends BaseMap<
     entity: MonitorPlan | WorkspaceMonitorPlan,
   ): Promise<MonitorPlanDTO> {
     let severityDescription = null;
-
+    let severityCode = null;
     const monitoringLocationData = entity.locations
       ? await this.locationMap.many(entity.locations)
       : [];
@@ -75,6 +75,7 @@ export class MonitorPlanMap extends BaseMap<
       pendingStatusCode,
       evalStatusCode,
       evalStatusCodeDescription: '',
+      severityCode,
       severityDescription,
       unitStackConfigurationData,
       reportingFrequencies,

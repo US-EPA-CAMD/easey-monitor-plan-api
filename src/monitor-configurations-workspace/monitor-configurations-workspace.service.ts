@@ -40,7 +40,7 @@ export class MonitorConfigurationsWorkspaceService {
     ).subAvailabilityCodeDescription;
 
     const severity = await this.entityManager.query(
-        `SELECT sc.severity_cd_description 
+        `SELECT sc.severity_cd_description, sc.severity_cd
           FROM camdecmpswks.monitor_plan p
           JOIN camdecmpswks.check_session cs on cs.chk_session_id = p.chk_session_id
           JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
@@ -49,6 +49,8 @@ export class MonitorConfigurationsWorkspaceService {
         );
 
         plan['severityDescription'] = severity?.[0]?.severity_cd_description;
+        plan['severityCode'] = severity?.[0]?.severity_cd;
+
   }
   async populateLocationsAndStackConfigs(plan: MonitorPlan) {
     const [locations, unitStackConfigurations] = await Promise.all([

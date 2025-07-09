@@ -5,5 +5,7 @@ export class MonitorPlanConfigurationDTO extends MonitorPlanDTO {
 
   submissionAvailabilityCodeDescription: string;
 
+  severityCode: string;
+
   severityDescription: string;
 }
