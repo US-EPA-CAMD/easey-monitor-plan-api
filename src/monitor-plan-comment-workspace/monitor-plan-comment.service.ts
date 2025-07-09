@@ -127,7 +127,7 @@ export class MonitorPlanCommentWorkspaceService {
         if (!monitorPlanComment) {
           await this.createComment(monitorPlanId, comment, userId, trx, isImport);
         } else {
-          if (monitorPlanComment.endDate !== comment.endDate) {
+          if (monitorPlanComment.endDate !== comment.endDate || monitorPlanComment.beginDate !== comment.beginDate || monitorPlanComment.monitoringPlanComment !== comment.monitoringPlanComment) {
             await this.updateComment(monitorPlanId, comment, userId, monitorPlanComment.id, trx, isImport);
           }
         }
