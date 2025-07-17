@@ -42,46 +42,42 @@ export class UnitControlWorkspaceController {
   @RoleGuard(
     {
       enforceCheckout: false,
-      pathParam: 'locId',
+      pathParam: 'unitId',
       enforceEvalSubmitCheck: false,
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Retrieved workspace monitor location unit controls',
-    requestParamsOutFields:['locId', 'unitId']
+    requestParamsOutFields: ['unitId'],
   })
   async getUnitControls(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<UnitControlDTO>> {
-    const unitCapacityDTOS = await this.service.getUnitControls(locId, unitId);
+    const unitCapacityDTOS = await this.service.getUnitControls(unitId);
 
-    return  {
-      items: unitCapacityDTOS
-    }
+    return { items: unitCapacityDTOS };
   }
 
   @Put(':unitControlId')
   @RoleGuard(
     {
-      pathParam: 'locId',
+      pathParam: 'unitId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Updated workspace monitor location unit control record',
-    requestParamsOutFields:['locId', 'unitId', 'unitControlId'],
-    responseBodyOutFields:'*',
+    requestParamsOutFields: ['unitId', 'unitControlId'],
+    responseBodyOutFields: '*',
   })
   @ApiOkResponse({
     type: UnitControlDTO,
     description: 'Updates a workspace unit control record by unit control ID',
   })
   async updateUnitControl(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Param('unitControlId') unitControlId: string,
     @Body() payload: UnitControlBaseDTO,
@@ -89,7 +85,6 @@ export class UnitControlWorkspaceController {
   ): Promise<UnitControlDTO> {
     await this.checksService.runChecks(unitId, payload, false, true);
     return this.service.updateUnitControl({
-      locationId: locId,
       unitRecordId: unitId,
       unitControlId,
       payload,
@@ -100,16 +95,16 @@ export class UnitControlWorkspaceController {
   @Post()
   @RoleGuard(
     {
-      pathParam: 'locId',
+      pathParam: 'unitId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Created workspace monitor location unit control record',
-    requestParamsOutFields:['locId', 'unitId'],
-    responseBodyOutFields:'*',
+    requestParamsOutFields: ['unitId'],
+    responseBodyOutFields: '*',
   })
   @ApiOkResponse({
     isArray: true,
@@ -117,14 +112,12 @@ export class UnitControlWorkspaceController {
     description: 'Creates a workspace unit control record for a unit',
   })
   async createUnitControl(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Body() payload: UnitControlBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitControlDTO> {
     await this.checksService.runChecks(unitId, payload);
     return this.service.createUnitControl({
-      locationId: locId,
       unitRecordId: unitId,
       payload,
       userId: user.userId,

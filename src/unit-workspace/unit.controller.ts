@@ -38,55 +38,44 @@ export class UnitWorkspaceController {
   @RoleGuard(
     {
       enforceCheckout: false,
-      pathParam: 'locId',
+      pathParam: 'id',
       enforceEvalSubmitCheck: false,
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Retrieved workspace monitor location unit',
-    requestParamsOutFields: ['locId', 'id']
+    requestParamsOutFields: ['locId', 'id'],
   })
-  async getUnits(
-    @Param('locId') locId: string,
-    @Param('id') unitId: number,
-  ): Promise<ArrayResponse<UnitDTO>> {
-    const unitDTOS = await this.service.getUnits(locId, unitId);
+  async getUnits(@Param('id') unitId: number): Promise<ArrayResponse<UnitDTO>> {
+    const unitDTOS = await this.service.getUnits(unitId);
 
-    return  {
-      items: unitDTOS
-    }
+    return { items: unitDTOS };
   }
 
   @Put(':id')
   @RoleGuard(
     {
-      pathParam: 'locId',
+      pathParam: 'id',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Updated workspace monitor location unit',
-    requestParamsOutFields: ['locId', 'id'],
-    responseBodyOutFields:'*'
+    requestParamsOutFields: ['id'],
+    responseBodyOutFields: '*',
   })
   @ApiOkResponse({
     type: UnitDTO,
     description: 'Updates a workspace unit record by unit ID',
   })
   async updateUnit(
-    @Param('locId') locationId: string,
     @Param('id') unitId: number,
     @Body() payload: UnitBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitDTO> {
-    return this.service.updateUnit(
-      locationId,
-      unitId,
-      payload,
-      user.userId,
-    );
+    return this.service.updateUnit(unitId, payload, user.userId);
   }
 }

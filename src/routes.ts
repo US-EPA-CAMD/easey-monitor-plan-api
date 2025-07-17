@@ -96,6 +96,10 @@ const routes = [
         path: ':planId/comments',
         module: MonitorPlanCommentModule,
       },
+      {
+        path: ':planId/reporting-frequencies',
+        module: MonitorPlanReportingFreqModule,
+      },
     ],
   },
   {
@@ -113,6 +117,10 @@ const routes = [
       {
         path: ':planId/comments',
         module: MonitorPlanCommentWorkspaceModule,
+      },
+      {
+        path: ':planId/reporting-frequencies',
+        module: MonitorPlanReportingFreqWorkspaceModule,
       },
     ],
   },
@@ -194,31 +202,27 @@ const routes = [
           },
         ],
       },
+    ],
+  },
+  {
+    path: '/units',
+    module: UnitModule,
+    children: [
       {
-        path: ':locId/units',
-        module: UnitModule,
-        children: [
-          {
-            path: ':unitId/unit-fuels',
-            module: UnitFuelModule,
-          },
-          {
-            path: ':unitId/unit-controls',
-            module: UnitControlModule,
-          },
-          {
-            path: ':unitId/unit-capacities',
-            module: UnitCapacityModule,
-          },
-          {
-            path: ':unitId/unit-programs',
-            module: UnitProgramModule,
-          },
-          {
-            path: ':unitId/reporting-frequencies',
-            module: MonitorPlanReportingFreqModule,
-          },
-        ],
+        path: ':unitId/unit-fuels',
+        module: UnitFuelModule,
+      },
+      {
+        path: ':unitId/unit-controls',
+        module: UnitControlModule,
+      },
+      {
+        path: ':unitId/unit-capacities',
+        module: UnitCapacityModule,
+      },
+      {
+        path: ':unitId/unit-programs',
+        module: UnitProgramModule,
       },
     ],
   },
@@ -300,41 +304,37 @@ const routes = [
           },
         ],
       },
-      {
-        path: ':locId/units',
-        module: UnitWorkspaceModule,
-        children: [
-          {
-            path: ':unitId/unit-fuels',
-            module: UnitFuelWorkspaceModule,
-          },
-          {
-            path: ':unitId/unit-controls',
-            module: UnitControlWorkspaceModule,
-          },
-          {
-            path: ':unitId/unit-capacities',
-            module: UnitCapacityWorkspaceModule,
-          },
-          {
-            path: ':unitId/unit-programs',
-            module: UnitProgramWorkspaceModule,
-          },
-          {
-            path: ':unitId/reporting-frequencies',
-            module: MonitorPlanReportingFreqWorkspaceModule,
-          },
-        ],
-      },
     ],
   },
   {
-    path: 'workspace/check-outs/plans',
+    path: '/workspace/check-outs/plans',
     module: CheckOutModule,
   },
   {
-    path: 'workspace/stack-pipes',
+    path: '/workspace/stack-pipes',
     module: StackPipeWorkspaceModule,
+  },
+  {
+    path: '/workspace/units',
+    module: UnitWorkspaceModule,
+    children: [
+      {
+        path: ':unitId/unit-fuels',
+        module: UnitFuelWorkspaceModule,
+      },
+      {
+        path: ':unitId/unit-controls',
+        module: UnitControlWorkspaceModule,
+      },
+      {
+        path: ':unitId/unit-capacities',
+        module: UnitCapacityWorkspaceModule,
+      },
+      {
+        path: ':unitId/unit-programs',
+        module: UnitProgramWorkspaceModule,
+      },
+    ],
   },
 ];
 

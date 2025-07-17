@@ -1,19 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitMap } from '../maps/unit.map';
-import { UnitDTO, UnitBaseDTO } from '../dtos/unit.dto';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import { EntityManager } from 'typeorm';
 import { Unit } from '../entities/workspace/unit.entity';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
-import { UnitWorkspaceService } from '../unit-workspace/unit.service';
-import { UnitWorkspaceRepository } from '../unit-workspace/unit.repository';
+import { UnitMap } from '../maps/unit.map';
+import { UnitRepository } from './unit.repository';
+import { UnitService } from './unit.service';
 
+const unit = new Unit();
 
 const mockMap = () => ({
   many: jest.fn().mockResolvedValue([]),
 });
 
 const mockRepository = () => ({
-  findOneBy: jest.fn().mockResolvedValue(new UnitDTO()),
+  findOne: jest.fn().mockResolvedValue(unit),
+  findOneBy: jest.fn().mockResolvedValue(unit),
   save: jest.fn().mockResolvedValue({}),
 });
 
@@ -22,25 +24,19 @@ const mockEntityManager = () => ({
 });
 
 describe('UnitWorkspaceService', () => {
-  let service: UnitWorkspaceService;
-  let repository: UnitWorkspaceRepository;
+  let service: UnitService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
-        UnitWorkspaceService,
+        UnitService,
         {
           provide: UnitMap,
           useFactory: mockMap,
         },
         {
-          provide: MonitorPlanWorkspaceService,
-          useFactory: () => ({
-            resetToNeedsEvaluation: jest.fn(),
-          }),
-        },
-        {
-          provide: UnitWorkspaceRepository,
+          provide: UnitRepository,
           useFactory: mockRepository,
         },
         {
@@ -50,8 +46,7 @@ describe('UnitWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get(UnitWorkspaceService);
-    repository = module.get(UnitWorkspaceRepository);
+    service = module.get(UnitService);
   });
 
   it('should be defined', () => {
@@ -60,28 +55,17 @@ describe('UnitWorkspaceService', () => {
 
   describe('getUnits', () => {
     it('should return an array of units', async () => {
-      const result = await service.getUnits('locId', 1);
+      const result = await service.getUnits(1);
       expect(result).toEqual([]);
     });
   });
 
-  describe('updateUnit', () => {
-    it('should return the updated unit', async () => {
-      const payload = new UnitBaseDTO();
-      const unit: Unit = new Unit();
-      const unitDetails: UnitDTO[] = [new UnitDTO(), new UnitDTO()]; // Mocked UnitDTO array
-
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(unit);
-      jest.spyOn(repository, 'save').mockResolvedValue(unit);
-      jest.spyOn(service as any, 'getUnitDetails').mockResolvedValue(unitDetails);
-
-      const result = await service.updateUnit('locId', 1, payload, 'userId');
-
-      // Check if the getUnitDetails method was called
-      expect(service['getUnitDetails']).toHaveBeenCalledWith(1);
-
-      // Check if the result is the first element of the mocked UnitDTO array
-      expect(result).toBe(unitDetails[0]);
+  describe('getUnitByNameAndFacId', () => {
+    it('should return a unit by name and facility ID', async () => {
+      const unitName = 'Test Unit';
+      const facilityId = 1;
+      const result = await service.getUnitByNameAndFacId(unitName, facilityId);
+      expect(result).toEqual(unit);
     });
   });
 });

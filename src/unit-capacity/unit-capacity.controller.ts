@@ -30,10 +30,9 @@ export class UnitCapacityController {
       }
   })
   async getUnitCapacities(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<UnitCapacityDTO>> {
-    const unitCapacityDTOS = await this.service.getUnitCapacities(locId, unitId);
+    const unitCapacityDTOS = await this.service.getUnitCapacities(unitId);
 
     return  {
       items: unitCapacityDTOS

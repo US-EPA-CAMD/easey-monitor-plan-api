@@ -1,14 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
+import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
-import { UnitControlMap } from '../maps/unit-control.map';
-import { UnitControlWorkspaceService } from './unit-control.service';
-import { UnitControlWorkspaceRepository } from './unit-control.repository';
-import { UnitControlBaseDTO } from '../dtos/unit-control.dto';
+import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { UnitControl } from '../entities/workspace/unit-control.entity';
-import { UnitControlDTO } from '../dtos/unit-control.dto';
+import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UnitControlWorkspaceRepository } from './unit-control.repository';
+import { UnitControlWorkspaceService } from './unit-control.service';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 
@@ -33,11 +34,13 @@ const mockMap = () => ({
 describe('UnitControlService', () => {
   let service: UnitControlWorkspaceService;
   let repository: UnitControlWorkspaceRepository;
+  let entityManager: EntityManager;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       providers: [
+        EntityManager,
         UnitControlWorkspaceService,
         MonitorPlanWorkspaceService,
         {
@@ -53,19 +56,22 @@ describe('UnitControlService', () => {
 
     service = module.get(UnitControlWorkspaceService);
     repository = module.get(UnitControlWorkspaceRepository);
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getUnitControls', () => {
     it('should return array of unit controls', async () => {
-      const result = await service.getUnitControls('1', 1);
+      const result = await service.getUnitControls(1);
       expect(result).toEqual([returnedUnitControl]);
     });
   });
 
   describe('createUnitControl', () => {
     it('creates a unit control record for a specified unit ID', async () => {
+      jest
+        .spyOn(entityManager, 'findOneBy')
+        .mockResolvedValue(new MonitorLocation());
       const result = await service.createUnitControl({
-        locationId: '1',
         unitRecordId: 1,
         payload,
         userId: 'testUser',
@@ -76,10 +82,12 @@ describe('UnitControlService', () => {
 
   describe('updateUnitControl', () => {
     it('updates a unit control record for a specified unit control ID', async () => {
+      jest
+        .spyOn(entityManager, 'findOneBy')
+        .mockResolvedValue(new MonitorLocation());
       jest.spyOn(repository, 'getUnitControl').mockResolvedValue(unitControl);
 
       const result = await service.updateUnitControl({
-        locationId: '1',
         unitRecordId: 1,
         unitControlId: '1',
         payload,
@@ -91,12 +99,7 @@ describe('UnitControlService', () => {
 
   describe('importUnitControl', () => {
     it('should update while importing monitor default', async () => {
-      const result = await service.importUnitControl(
-        [payload],
-        1,
-        '1',
-        'testUser',
-      );
+      const result = await service.importUnitControl([payload], 1, 'testUser');
       expect(result).toEqual(true);
     });
     it('should create while importing monitor default', async () => {
@@ -104,12 +107,7 @@ describe('UnitControlService', () => {
         .spyOn(repository, 'getUnitControlBySpecsInstallOrRetireDate')
         .mockResolvedValue(undefined);
 
-      const result = await service.importUnitControl(
-        [payload],
-        1,
-        '1',
-        'testUser',
-      );
+      const result = await service.importUnitControl([payload], 1, 'testUser');
       expect(result).toEqual(true);
     });
   });

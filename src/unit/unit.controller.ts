@@ -6,7 +6,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 
 @Controller()
 @ApiSecurity('APIKey')
-@ApiTags('Unit')
+@ApiTags('Units')
 @ApiExtraModels(UnitDTO)
 export class UnitController {
   constructor(private readonly service: UnitService) {}

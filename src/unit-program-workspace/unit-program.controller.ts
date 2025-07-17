@@ -37,22 +37,21 @@ export class UnitProgramWorkspaceController {
   @RoleGuard(
     {
       enforceCheckout: false,
-      pathParam: 'locId',
+      pathParam: 'unitId',
       enforceEvalSubmitCheck: false,
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Retrieved workspace monitor location unit programs',
-    requestParamsOutFields: ['unitId']
+    requestParamsOutFields: ['unitId'],
   })
   async getUnitProgramsByUnitRecordId(
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<UnitProgramDTO>> {
-    const unitProgramDTOS = await this.service.getUnitProgramsByUnitRecordId(unitId);
+    const unitProgramDTOS =
+      await this.service.getUnitProgramsByUnitRecordId(unitId);
 
-    return  {
-      items: unitProgramDTOS
-    }
+    return { items: unitProgramDTOS };
   }
 }

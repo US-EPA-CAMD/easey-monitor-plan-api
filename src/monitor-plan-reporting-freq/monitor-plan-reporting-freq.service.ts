@@ -7,12 +7,12 @@ import { EntityManager } from 'typeorm';
 export class MonitorPlanReportingFrequencyService {
   constructor(private readonly entityManager: EntityManager) {}
 
-  async getReportingFreqs(unitRecordId: number): Promise<ReportingFreqDTO[]> {
-    return await this.retrieveReportingFreq(unitRecordId);
+  async getReportingFreqs(planId: string): Promise<ReportingFreqDTO[]> {
+    return await this.retrieveReportingFreq(planId);
   }
 
   private async retrieveReportingFreq(
-    unitRecordId: number,
+    planId: string,
   ): Promise<ReportingFreqDTO[]> {
     const sql = `
         SELECT
@@ -44,11 +44,11 @@ export class MonitorPlanReportingFrequencyService {
                       ON mprf.begin_rpt_period_id = rp_begin.rpt_period_id
                  LEFT JOIN camdecmpsmd.reporting_period rp_end
                            ON mprf.end_rpt_period_id = rp_end.rpt_period_id
-        WHERE ml.unit_id = $1
+        WHERE mpl.mon_plan_id = $1
         GROUP BY mprf.mon_plan_rf_id, mprf.report_freq_cd, rp_begin.period_abbreviation, rp_end.period_abbreviation, rp_end.end_date;;
     `;
 
-    const result = await this.entityManager.query(sql, [unitRecordId]);
+    const result = await this.entityManager.query(sql, [planId]);
     return result;
   }
 }
