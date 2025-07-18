@@ -1,6 +1,6 @@
 import { Get, Controller, Query } from '@nestjs/common';
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
 
@@ -13,14 +13,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Configurations')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(MonitorPlanDTO)
 export class MonitorConfigurationsWorkspaceController {
   constructor(private service: MonitorConfigurationsWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: MonitorPlanDTO,
     description: 'Retrieves official Monitor Plan configurations',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MonitorPlanDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @ApiQuery({
     style: 'pipeDelimited',

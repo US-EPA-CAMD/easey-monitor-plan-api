@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiSecurity, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiSecurity, ApiOkResponse, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import {
   AnalyzerRangeBaseDTO,
   AnalyzerRangeDTO,
@@ -17,6 +17,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Analyzer Ranges')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(AnalyzerRangeDTO)
 export class AnalyzerRangeWorkspaceController {
   constructor(
     private readonly service: AnalyzerRangeWorkspaceService,
@@ -25,9 +26,20 @@ export class AnalyzerRangeWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AnalyzerRangeDTO,
     description: 'Retrieves workspace Analyzer Range records for a component',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AnalyzerRangeDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
