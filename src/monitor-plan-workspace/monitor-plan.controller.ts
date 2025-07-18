@@ -88,7 +88,7 @@ export class MonitorPlanWorkspaceController {
   @Post('import')
   @RoleGuard(
     {
-      importLocationSources: ['locations'],
+      importLocationSources: ['monitoringLocationData'],
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
