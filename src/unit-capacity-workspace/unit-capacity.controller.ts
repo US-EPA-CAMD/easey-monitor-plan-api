@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -16,15 +16,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Unit Capacities')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(UnitCapacityDTO)
 export class UnitCapacityWorkspaceController {
   constructor(private readonly service: UnitCapacityWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitCapacityDTO,
     description:
       'Retrieves workspace unit capacity records from a specific unit ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(UnitCapacityDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @AuditLog({
     label: 'Retrieved workspace monitor location unit capacity records',

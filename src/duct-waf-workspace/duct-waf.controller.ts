@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
-import { ApiOkResponse, ApiTags, ApiSecurity } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -13,14 +13,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Rectangular Duct WAF')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(DuctWafDTO)
 export class DuctWafWorkspaceController {
   constructor(private readonly service: DuctWafWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: DuctWafDTO,
     description: 'Retrieves workspace duct waf records for a monitor location',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(DuctWafDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
