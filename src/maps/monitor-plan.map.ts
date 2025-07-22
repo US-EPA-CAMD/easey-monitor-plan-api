@@ -8,6 +8,7 @@ import { MonitorLocationMap } from './monitor-location.map';
 import { MonitorPlanCommentMap } from './monitor-plan-comment.map';
 import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyMap } from './monitor-plan-reporting-freq.map';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class MonitorPlanMap extends BaseMap<
@@ -15,6 +16,7 @@ export class MonitorPlanMap extends BaseMap<
   MonitorPlanDTO
 > {
   constructor(
+    private readonly entityManager: EntityManager,
     private locationMap: MonitorLocationMap,
     private commentMap: MonitorPlanCommentMap,
     private readonly unitStackConfigurationMap: UnitStackConfigurationMap,
@@ -26,6 +28,8 @@ export class MonitorPlanMap extends BaseMap<
   public async one(
     entity: MonitorPlan | WorkspaceMonitorPlan,
   ): Promise<MonitorPlanDTO> {
+    let severityDescription = null;
+    let severityCode = null;
     const monitoringLocationData = entity.locations
       ? await this.locationMap.many(entity.locations)
       : [];
@@ -71,6 +75,8 @@ export class MonitorPlanMap extends BaseMap<
       pendingStatusCode,
       evalStatusCode,
       evalStatusCodeDescription: '',
+      severityCode,
+      severityDescription,
       unitStackConfigurationData,
       reportingFrequencies,
       monitoringLocationData,

@@ -11,10 +11,12 @@ import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.
 import { EvalStatusCodeRepository } from './eval-status.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
+import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class MonitorConfigurationsWorkspaceService {
   constructor(
+    private readonly entityManager: EntityManager,
     private readonly map: MonitorPlanConfigurationMap,
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
@@ -36,6 +38,19 @@ export class MonitorConfigurationsWorkspaceService {
         subAvailabilityCode: plan.submissionAvailabilityCode,
       })
     ).subAvailabilityCodeDescription;
+
+    const severity = await this.entityManager.query(
+        `SELECT sc.severity_cd_description, sc.severity_cd
+          FROM camdecmpswks.monitor_plan p
+          JOIN camdecmpswks.check_session cs on cs.chk_session_id = p.chk_session_id
+          JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+          WHERE p.mon_plan_id = $1;`,
+          [plan.id],
+        );
+
+        plan['severityDescription'] = severity?.[0]?.severity_cd_description;
+        plan['severityCode'] = severity?.[0]?.severity_cd;
+
   }
   async populateLocationsAndStackConfigs(plan: MonitorPlan) {
     const [locations, unitStackConfigurations] = await Promise.all([
