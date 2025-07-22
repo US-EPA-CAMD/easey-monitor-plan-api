@@ -46,15 +46,22 @@ const mockMonitorPlanService = () => ({
 });
 
 describe('MonitorConfigurationsWorkspaceService', () => {
+  let manager: jest.Mock;
   let service: MonitorConfigurationsWorkspaceService;
   let plantWorkspaceRepository: PlantWorkspaceRepository;
   let monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository;
+  manager = jest.fn().mockResolvedValue([{}]);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       providers: [
-        EntityManager,
+        {
+          provide: EntityManager,
+          useValue: {
+            query: manager,
+          },
+        },
         MonitorConfigurationsWorkspaceService,
         {
           provide: MonitorPlanWorkspaceRepository,
