@@ -23,6 +23,8 @@ export class MonitorPlanConfigurationMap extends BaseMap<
       ...dto,
       submissionAvailabilityCodeDescription: null,
       evalStatusCodeDescription: null,
+      severityCode:null,
+      severityDescription: null
     };
   }
 }
