@@ -111,7 +111,6 @@ export class LMEQualificationWorkspaceController {
     responseBodyOutFields: '*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: LMEQualificationDTO,
     description:
       'Creates an LME Qualification record for a qualification and monitor location',

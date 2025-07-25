@@ -111,7 +111,6 @@ export class LEEQualificationWorkspaceController {
     responseBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: LEEQualificationDTO,
     description:
       'Creates a LEE Qualification record for a qualification and monitor location',

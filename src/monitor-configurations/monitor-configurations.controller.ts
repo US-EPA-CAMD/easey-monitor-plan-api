@@ -55,7 +55,6 @@ export class MonitorConfigurationsController {
 
   @Get('last-updated')
   @ApiOkResponse({
-    isArray: true,
     type: MonitorPlanDTO,
     description:
       'Retrieves workspace Monitor Plan configurations that have been updated after a certain date',
