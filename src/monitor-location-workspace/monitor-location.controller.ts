@@ -18,7 +18,6 @@ export class MonitorLocationWorkspaceController {
 
   @Get(':locId')
   @ApiOkResponse({
-    isArray: true,
     type: MonitorLocationDTO,
     description:
       'Retrieves workspace location record from specific location ID',

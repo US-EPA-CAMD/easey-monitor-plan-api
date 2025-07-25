@@ -76,7 +76,6 @@ export class UnitCapacityWorkspaceController {
     requestBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: UnitCapacityDTO,
     description: 'Creates a workspace unit capacity record for a unit',
   })
