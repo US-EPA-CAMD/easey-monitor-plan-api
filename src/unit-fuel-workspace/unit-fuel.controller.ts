@@ -105,7 +105,6 @@ export class UnitFuelWorkspaceController {
     responseBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: UnitFuelDTO,
     description: 'Creates a workspace unit control record for a unit',
   })

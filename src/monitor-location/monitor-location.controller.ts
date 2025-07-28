@@ -14,7 +14,6 @@ export class MonitorLocationController {
 
   @Get(':locId')
   @ApiOkResponse({
-    isArray: true,
     type: MonitorLocationDTO,
     description:
       'Retrieves official location record from a specific location ID',
