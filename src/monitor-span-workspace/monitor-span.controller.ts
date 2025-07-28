@@ -106,7 +106,6 @@ export class MonitorSpanWorkspaceController {
     responseBodyOutFields:'*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: MonitorSpanDTO,
     description: 'Creates a workspace span record for a monitor location',
   })

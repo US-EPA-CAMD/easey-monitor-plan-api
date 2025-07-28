@@ -83,7 +83,6 @@ export class ComponentWorkspaceController {
     responseBodyOutFields: '*',
   })
   @ApiOkResponse({
-    isArray: true,
     type: ComponentDTO,
     description: 'Creates a component',
   })

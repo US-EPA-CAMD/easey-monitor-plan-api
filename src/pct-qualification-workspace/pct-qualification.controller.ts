@@ -111,7 +111,6 @@ export class PCTQualificationWorkspaceController {
     requestBodyOutFields: '*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: PCTQualificationDTO,
     description:
       'Creates a PCT Qualification record for a qualification and monitor location',
