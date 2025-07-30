@@ -20,7 +20,7 @@ const mockRepository = () => ({
 });
 
 const mockEntityManager = () => ({
-  query: jest.fn().mockResolvedValue([]),
+  query: jest.fn().mockResolvedValue([unit]),
 });
 
 describe('UnitWorkspaceService', () => {
@@ -55,8 +55,8 @@ describe('UnitWorkspaceService', () => {
 
   describe('getUnits', () => {
     it('should return an array of units', async () => {
-      const result = await service.getUnits(1);
-      expect(result).toEqual([]);
+      const result = await service.getUnit(1);
+      expect(result).toEqual(unit);
     });
   });
 

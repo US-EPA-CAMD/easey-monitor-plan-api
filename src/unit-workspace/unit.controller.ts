@@ -1,13 +1,21 @@
 import { Body, Controller, Get, Param, Put } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
-import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiExtraModels,
+} from '@nestjs/swagger';
+import {
+  AuditLog,
+  RoleGuard,
+  User,
+} from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import { UnitWorkspaceService } from './unit.service';
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,21 +27,8 @@ export class UnitWorkspaceController {
 
   @Get(':id')
   @ApiOkResponse({
-    description:
-      'Retrieves workspace unit for a specific unit ID',
-    content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              items: {
-                type: 'array',
-                items: { $ref: getSchemaPath(UnitDTO) },
-              },
-            },
-          },
-        },
-      }
+    description: 'Retrieves workspace unit for a specific unit ID',
+    type: UnitDTO,
   })
   @RoleGuard(
     {
@@ -47,10 +42,8 @@ export class UnitWorkspaceController {
     label: 'Retrieved workspace monitor location unit',
     requestParamsOutFields: ['locId', 'id'],
   })
-  async getUnits(@Param('id') unitId: number): Promise<ArrayResponse<UnitDTO>> {
-    const unitDTOS = await this.service.getUnits(unitId);
-
-    return { items: unitDTOS };
+  async getUnit(@Param('id') unitId: number): Promise<UnitDTO> {
+    return this.service.getUnit(unitId);
   }
 
   @Put(':id')

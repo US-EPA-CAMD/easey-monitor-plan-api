@@ -19,8 +19,8 @@ export class UnitWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
-  async getUnits(unitId: number): Promise<UnitDTO[]> {
-    return await this.getUnitDetails(unitId);
+  async getUnit(unitId: number): Promise<UnitDTO> {
+    return this.getUnitDetails(unitId);
   }
 
   async updateUnit(
@@ -41,11 +41,10 @@ export class UnitWorkspaceService {
     });
     await this.mpService.resetToNeedsEvaluation(location?.id, userId);
 
-    const unitDetails = await this.getUnitDetails(unitId);
-    return unitDetails && unitDetails.length > 0 ? unitDetails[0] : null;
+    return this.getUnitDetails(unitId);
   }
 
-  private async getUnitDetails(unitId: number): Promise<UnitDTO[]> {
+  private async getUnitDetails(unitId: number): Promise<UnitDTO> {
     const sql = `
         SELECT
             unt.UNIT_ID as "id",
@@ -91,7 +90,7 @@ export class UnitWorkspaceService {
     `;
 
     const result = await this.entityManager.query(sql, [unitId]);
-    return result;
+    return result.pop() || null; // The query returns at most one row, so we can safely use pop() to get the result or null if empty
   }
 
   async getUnitsByFacId(facId: number, trx?: EntityManager) {
