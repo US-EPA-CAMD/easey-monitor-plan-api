@@ -1127,9 +1127,9 @@ export class MonitorPlanWorkspaceService {
       ).filter(plan =>
         plan.items.some(item =>
           targetLocations.some(loc =>
-            loc.stackPipeId
-              ? item.unitId === loc.unitId && item['stackPipeId'] === loc.stackPipeId
-              : item.unitId === loc.unitId
+            this.isUnitDTO(item)
+              ? item.unitId === loc.unitId
+              : item.unitId === loc.unitId || item.stackPipeId === loc.stackPipeId
           )
         )
       );
