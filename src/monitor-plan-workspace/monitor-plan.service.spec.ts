@@ -81,7 +81,25 @@ const DTO = new MonitorPlanDTO();
 DTO.monitoringLocationData = [];
 DTO.beginReportPeriodId = 1;
 const UPDATE_DTO = new UpdateMonitorPlanDTO();
-UPDATE_DTO.monitoringLocationData = [];
+UPDATE_DTO.monitoringLocationData = [{
+  unitId: '5',
+  monitoringLocationAttribData: [],
+  unitCapacityData: [],
+  unitControlData: [],
+  unitFuelData: [],
+  monitoringMethodData: [],
+  supplementalMATSMonitoringMethodData: [],
+  monitoringFormulaData: [],
+  monitoringDefaultData: [],
+  monitoringSpanData: [],
+  rectangularDuctWAFData: [],
+  monitoringLoadData: [],
+  componentData: [],
+  monitoringSystemData: [],
+  monitoringQualificationData: [],
+  stackPipeId: '',
+  nonLoadBasedIndicator: 0
+}];
 UPDATE_DTO.unitStackConfigurationData = [];
 const MONITOR_LOCATION = new MonitorLocation();
 MONITOR_LOCATION.id = LOC_ID;
@@ -93,7 +111,7 @@ const WORKING_PLAN = {
   beginQuarter: 1,
   endYear: 2024,
   endQuarter: 2,
-  items: [],
+  items: [{unitId:'5'}],
 };
 
 const mockPlantService = () => ({

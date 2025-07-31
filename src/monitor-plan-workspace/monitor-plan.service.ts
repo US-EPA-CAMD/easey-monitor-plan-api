@@ -1111,6 +1111,8 @@ export class MonitorPlanWorkspaceService {
         trx,
       );
 
+      const targetLocations = payload.monitoringLocationData;
+
       /* MONITOR PLAN MERGE LOGIC */
 
       // Calculate a list of working plans from the database via transaction state.
@@ -1122,6 +1124,14 @@ export class MonitorPlanWorkspaceService {
             trx,
           )),
         ]),
+      ).filter(plan =>
+        plan.items.some(item =>
+          targetLocations.some(loc =>
+            loc.stackPipeId
+              ? item.unitId === loc.unitId && item['stackPipeId'] === loc.stackPipeId
+              : item.unitId === loc.unitId
+          )
+        )
       );
 
       // Check the configurations for validity.
