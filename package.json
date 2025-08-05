@@ -41,7 +41,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.5",
     "@types/pg": "^8.11.14",
-    "@us-epa-camd/easey-common": "../easey-common/lib",
+    "@us-epa-camd/easey-common": "21.2.0",
     "axios": "^1.11.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.2",
