@@ -11,8 +11,12 @@ import {
   MaxLength,
   MinLength,
   ValidationArguments,
+  ValidateIf,
 } from 'class-validator';
-import { DATE_FORMAT } from '../utilities/constants';
+const KEY = 'Monitor Plan Comment';
+import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
+import { DATE_FORMAT, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
+import { BeginEndDatesConsistent } from '../utils';
 
 export class MonitorPlanCommentBaseDTO {
   @ApiProperty({
@@ -24,7 +28,14 @@ export class MonitorPlanCommentBaseDTO {
       propertyMetadata.monitorPlanCommentDTOMonitoringPlanComment.fieldLabels
         .value,
   })
-  @IsNotEmpty()
+   @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('MONPLAN-7-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @MinLength(1, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must exceed 1 character`;
@@ -42,7 +53,23 @@ export class MonitorPlanCommentBaseDTO {
     example: propertyMetadata.monitorPlanCommentDTOBeginDate.example,
     name: propertyMetadata.monitorPlanCommentDTOBeginDate.fieldLabels.value,
   })
-  @IsNotEmpty()
+   @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('MONPLAN-4-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })  
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('MONPLAN-4-B', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}.`;
@@ -63,6 +90,16 @@ export class MonitorPlanCommentBaseDTO {
     name: propertyMetadata.monitorPlanCommentDTOEndDate.fieldLabels.value,
   })
   @IsOptional()
+  @IsNotEmpty()
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('MONPLAN-5-A', {
+        fieldname: args.property,
+        date: args.value,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}.`;
@@ -75,6 +112,16 @@ export class MonitorPlanCommentBaseDTO {
       );
     },
   })
+  @BeginEndDatesConsistent({
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('MONPLAN-6-A', {
+          datefield2: 'endDate',
+          datefield1: 'beginDate',
+          key: KEY,
+        });
+      },
+    })
+    @ValidateIf(o => o.endDate !== null)
   endDate: Date;
 }
 
