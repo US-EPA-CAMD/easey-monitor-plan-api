@@ -101,7 +101,6 @@ export class MonitorLoadWorkspaceController {
     responseBodyOutFields: '*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: MonitorLoadDTO,
     description: 'Creates a workspace load record for a monitor location',
   })
