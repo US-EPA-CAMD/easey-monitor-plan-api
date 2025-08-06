@@ -1,7 +1,7 @@
 import { Get, Controller, Query } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
-import { LastUpdatedConfigDTO } from '../dtos/last-updated-config.dto';
+import { LastUpdatedConfigDTO, LastUpdatedConfigQueryDTO } from '../dtos/last-updated-config.dto';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorConfigurationsService } from './monitor-configurations.service';
@@ -60,8 +60,8 @@ export class MonitorConfigurationsController {
       'Retrieves workspace Monitor Plan configurations that have been updated after a certain date',
   })
   getLastUpdated(
-    @Query('date') queryTime: string,
+    @Query() params: LastUpdatedConfigQueryDTO,
   ): Promise<LastUpdatedConfigDTO> {
-    return this.service.getConfigurationsByLastUpdated(queryTime);
+    return this.service.getConfigurationsByLastUpdated(params.date);
   }
 }
