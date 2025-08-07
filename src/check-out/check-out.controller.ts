@@ -25,22 +25,26 @@ export class CheckOutController {
   ) { }
 
   @Get()
+  @RoleGuard(
+    { enforceCheckout: false },
+    LookupType.MonitorPlan,
+  )
   @ApiOkResponse({
     description:
       'Retrieves workspace Monitor Plan configuration records that are checked out by users',
     content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              items: {
-                type: 'array',
-                items: { $ref: getSchemaPath(UserCheckOutDTO) },
-              },
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: { $ref: getSchemaPath(UserCheckOutDTO) },
             },
           },
         },
-      }
+      },
+    }
   })
   @AuditLog({
     label: 'Retrieved workspace check-out plans'
@@ -48,7 +52,7 @@ export class CheckOutController {
   async getCheckedOutConfigurations(): Promise<ArrayResponse<UserCheckOutDTO>> {
     const checkedOutConfigurations = await this.ucoService.getCheckedOutConfigurations();
 
-    return  {
+    return {
       items: checkedOutConfigurations
     };
   }
