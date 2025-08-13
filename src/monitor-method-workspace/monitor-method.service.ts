@@ -156,7 +156,7 @@ export class MonitorMethodWorkspaceService {
         const methodRecord = await withTransaction(
           this.repository,
           trx,
-        ).getMethodByLocIdParamCDBDate(
+        ).getMethodByLocIdParamBeginOrEndDate(
           locationId,
           method.parameterCode,
           method.beginDate,

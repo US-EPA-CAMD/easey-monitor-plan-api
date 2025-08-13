@@ -21,28 +21,28 @@ export class MonitorAttributeWorkspaceRepository extends Repository<
       .getOne();
   }
 
-  async getAttributeByLocIdAndDate(
+  async getAttributeByLocIdBeginOrEndDate(
     locationId: string,
     beginDate: Date,
-    endDate: Date,
-  ): Promise<MonitorAttribute> {
+    endDate: Date | null,
+  ): Promise<MonitorAttribute | null> {
     const query = this.createQueryBuilder('ma')
-      .where('ma.locationId = :locationId', {
-        locationId,
-      })
-      .andWhere('ma.beginDate = :beginDate', {
-        beginDate,
-      });
-    
+      .where('ma.locationId = :locationId', { locationId })
+      .andWhere('ma.beginDate = :beginDate', { beginDate });
+
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
+
     if (endDate !== null) {
-      query.andWhere(
-        '(ma.endDate = :endDate)',
-        { endDate, }
-      );
-    } else {
-      query.andWhere('ma.endDate IS NULL');
+      const endQuery = this.createQueryBuilder('ma')
+        .where('ma.locationId = :locationId', { locationId })
+        .andWhere('ma.endDate = :endDate', { endDate });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
     }
 
-    return query.getOne();
+    return null;
   }
+
 }

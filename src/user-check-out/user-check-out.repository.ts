@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class UserCheckOutRepository extends Repository<UserCheckOut> {
@@ -20,7 +21,7 @@ export class UserCheckOutRepository extends Repository<UserCheckOut> {
       );
       return this.findOneBy({ monPlanId: id });
     } catch (error) {
-      throw new BadRequestException(error['message']);
+      throw new EaseyException(new Error(error?.message), HttpStatus.BAD_REQUEST);
     }
   }
 }

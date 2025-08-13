@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 
 import { ComponentDTO, UpdateComponentBaseDTO } from '../dtos/component.dto';
@@ -20,6 +20,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Components')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(ComponentDTO)
 export class ComponentWorkspaceController {
   constructor(
     private readonly repository: ComponentWorkspaceRepository,
@@ -32,9 +33,20 @@ export class ComponentWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: ComponentDTO,
     description: 'Retrieves workspace component records for a monitor location',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(ComponentDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
@@ -71,7 +83,6 @@ export class ComponentWorkspaceController {
     responseBodyOutFields: '*',
   })
   @ApiOkResponse({
-    isArray: true,
     type: ComponentDTO,
     description: 'Creates a component',
   })

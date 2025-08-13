@@ -11,36 +11,35 @@ export class MonitorMethodWorkspaceRepository extends Repository<
     super(MonitorMethod, entityManager);
   }
 
-  async getMethodByLocIdParamCDBDate(
+  async getMethodByLocIdParamBeginOrEndDate(
     locationId: string,
     parameterCode: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date,
-    endHour: number,
-  ): Promise<MonitorMethod> {
+    endDate: Date | null,
+    endHour: number | null,
+  ): Promise<MonitorMethod | null> {
+
     const query = this.createQueryBuilder('mme')
-      .where('mme.locationId = :locationId', {
-        locationId,
-      })
-      .andWhere('mme.parameterCode = :parameterCode', {
-        parameterCode,
-      })
-      .andWhere(
-        `(mme.beginDate = :beginDate AND mme.beginHour = :beginHour)`,
-        { beginDate, beginHour }
-      )
+      .where('mme.locationId = :locationId', { locationId })
+      .andWhere('mme.parameterCode = :parameterCode', { parameterCode })
+      .andWhere(`(mme.beginDate = :beginDate AND mme.beginHour = :beginHour)`,{ beginDate, beginHour },
+    );
 
-      if (endDate !== null && endHour !== null) {
-        query.andWhere(
-          '(mme.endDate = :endDate AND mme.endHour = :endHour)',
-          { endDate, endHour }
-        );
-      } else {
-        query.andWhere('mme.endDate IS NULL AND mme.endHour IS NULL');
-      }
-      
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
 
-      return query.getOne();
+    if (endDate !== null && endHour !== null) {
+      const endQuery = this.createQueryBuilder('mme')
+        .where('mme.locationId = :locationId', { locationId })
+        .andWhere('mme.parameterCode = :parameterCode', { parameterCode })
+        .andWhere('mme.endDate = :endDate AND mme.endHour = :endHour', { endDate, endHour, });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
+    }
+
+    return null;
   }
+
 }

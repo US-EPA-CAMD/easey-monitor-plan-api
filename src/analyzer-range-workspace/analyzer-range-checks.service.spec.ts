@@ -21,7 +21,7 @@ const mockComponentWorkspaceRepository = () => ({
 
 const analyzerRangeWorkspaceRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(analyzerRange),
-  getAnalyzerRangeByComponentIdAndDate: jest
+  getAnalyzerRangeByComponentIdBeginOrEndDate: jest
     .fn()
     .mockResolvedValue(analyzerRange),
   getAnalyzerRangesByCompIds: jest.fn().mockResolvedValue([analyzerRange]),
@@ -69,7 +69,7 @@ describe('Analyzer Range Checks Service Test', () => {
 
     it('Should get [COMPON-54-A] error', async () => {
       jest
-        .spyOn(analyzerRangeRepository, 'getAnalyzerRangeByComponentIdAndDate')
+        .spyOn(analyzerRangeRepository, 'getAnalyzerRangeByComponentIdBeginOrEndDate')
         .mockResolvedValueOnce(analyzerRange);
 
       try {

@@ -28,13 +28,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {
-  DATE_FORMAT,
-  MAXIMUM_FUTURE_DATE,
-  MAX_HOUR,
-  MINIMUM_DATE,
-  MIN_HOUR,
-} from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MINIMUM_DATE, MIN_HOUR, getMaximumFutureDate } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 import { SystemTypeCode } from '../entities/system-type-code.entity';
 import { BeginEndDatesConsistent } from '../utils';
@@ -149,7 +143,8 @@ export class MonitorSystemBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  //passed by reference
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-1-B', {
         fieldname: args.property,
@@ -193,7 +188,7 @@ export class MonitorSystemBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('SYSTEM-3-A', {
         fieldname: args.property,

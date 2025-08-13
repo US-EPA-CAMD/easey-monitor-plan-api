@@ -75,7 +75,7 @@ export class AnalyzerRangeChecksService {
     let error: string = null;
     let record: AnalyzerRange;
 
-    record = await this.analyzerRangeWorkspaceRepository.getAnalyzerRangeByComponentIdAndDate(
+    record = await this.analyzerRangeWorkspaceRepository.getAnalyzerRangeByComponentIdBeginOrEndDate(
       componentId,
       analyzerRange,
     );

@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
@@ -12,12 +12,12 @@ import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto'
 @ApiSecurity('APIKey')
 @ApiTags('Locations')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(UnitStackConfigurationDTO)
 export class MonitorLocationWorkspaceController {
   constructor(readonly service: MonitorLocationWorkspaceService) {}
 
   @Get(':locId')
   @ApiOkResponse({
-    isArray: true,
     type: MonitorLocationDTO,
     description:
       'Retrieves workspace location record from specific location ID',

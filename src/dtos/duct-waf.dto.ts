@@ -19,12 +19,12 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { IsInDbValues } from '../import-checks/pipes/is-in-db-values.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { DATE_FORMAT, MAX_HOUR, MIN_HOUR, MAXIMUM_FUTURE_DATE } from '../utilities/constants';
+import { DATE_FORMAT, MAX_HOUR, MIN_HOUR, getMaximumFutureDate } from '../utilities/constants';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
 
 const KEY = 'Rectangular Duct Waf';
 const MINIMUM_DATE = '2004-01-01';
-// Using MAXIMUM_FUTURE_DATE from constants.ts instead of CURRENT_DATE
+// Using getMaximumFutureDate() (passed by reference) from constants.ts instead of CURRENT_DATE
 // This allows dates up to 90 days in the future, consistent with other DTOs
 // const CURRENT_DATE = () => {
 //   return new Date().toISOString().split('T')[0];
@@ -39,7 +39,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
         {
           fieldname: args.property,
           key: KEY,
@@ -70,7 +70,7 @@ export class DuctWafBaseDTO {
       });
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-82-B', {
         Fieldname: args.property,
@@ -82,7 +82,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value of [${args.value}] for [${args.property}] must be a valid ISO date format ${DATE_FORMAT}`,
         {
           fieldname: args.property,
           key: KEY,
@@ -136,7 +136,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is invalid`,
+          `The value of [${args.value}] for [${args.property}] is invalid`,
           {
             fieldname: args.property,
             key: KEY,
@@ -196,7 +196,7 @@ export class DuctWafBaseDTO {
   @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 1 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 1 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -218,7 +218,7 @@ export class DuctWafBaseDTO {
   @IsInRange(12, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 12 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 12 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -238,7 +238,7 @@ export class DuctWafBaseDTO {
   @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 1 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 1 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -260,7 +260,7 @@ export class DuctWafBaseDTO {
   @IsInRange(12, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be in range 12 and 99`,
+        `The value of [${args.value}] for [${args.property}] must be in range 12 and 99`,
         {
           fieldname: args.property,
           key: KEY,
@@ -289,7 +289,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
+          `The value of [${args.value}] for [${args.property}] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -328,7 +328,7 @@ export class DuctWafBaseDTO {
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
-          `The value for [fieldname] for [key] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
+          `The value of [${args.value}] for [${args.property}] is in range 0.1 and 9999.9 and is allowed only 1 decimal place`,
           {
             fieldname: args.property,
             key: KEY,
@@ -358,7 +358,7 @@ export class DuctWafBaseDTO {
       return `You reported [wafEndHour] but did not report an [wafEndDate] for [[${KEY}]].`;
     },
   })
-  @IsInDateRange(MINIMUM_DATE, MAXIMUM_FUTURE_DATE, {
+  @IsInDateRange(MINIMUM_DATE, getMaximumFutureDate, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('DEFAULT-84-A', {
         Fieldname: args.property,
@@ -370,7 +370,7 @@ export class DuctWafBaseDTO {
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] for [key] must be a valid ISO date format [dateFormat]`,
+        `The value of [${args.value}] for [${args.property}] must be a valid ISO date format [dateFormat]`,
         {
           fieldname: args.property,
           key: KEY,

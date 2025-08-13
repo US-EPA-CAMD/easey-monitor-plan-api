@@ -269,6 +269,7 @@ const entityManagerMock = {
   connection: {
     createQueryRunner: jest.fn().mockImplementation(() => queryRunnerMock),
   },
+  query: jest.fn().mockResolvedValue([]),
   createQueryBuilder: () => queryBuilderMock,
   transaction: jest.fn(
     async passedFunction => await passedFunction(entityManagerMock),

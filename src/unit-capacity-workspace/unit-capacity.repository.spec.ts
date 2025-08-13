@@ -82,7 +82,7 @@ describe('UnitCapacityWorkspaceRepository', () => {
     });
   });
 
-  describe('getUnitCapacityByUnitIdAndDate', () => {
+  describe('getUnitCapacityByUnitIdBeginOrEndDate', () => {
     it('calls createQueryBuilder and gets a Unit Capacity from the repository with the specified unitId, beginDate and endDate', async () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
@@ -90,7 +90,7 @@ describe('UnitCapacityWorkspaceRepository', () => {
       queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitCapacity);
 
-      const result = await repository.getUnitCapacityByUnitIdAndDate(
+      const result = await repository.getUnitCapacityByUnitIdBeginOrEndDate(
         '1',
         new Date(),
         new Date(),

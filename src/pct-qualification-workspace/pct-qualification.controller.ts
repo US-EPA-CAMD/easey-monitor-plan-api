@@ -1,4 +1,4 @@
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { Get, Param, Controller, Post, Body, Put } from '@nestjs/common';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -16,15 +16,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('PCT Qualifications')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(PCTQualificationDTO)
 export class PCTQualificationWorkspaceController {
   constructor(private readonly service: PCTQualificationWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: PCTQualificationDTO,
     description:
       'Retrieves workspace PCT Qualification records for a qualification ID and location ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(PCTQualificationDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
@@ -99,7 +111,6 @@ export class PCTQualificationWorkspaceController {
     requestBodyOutFields: '*'
   })
   @ApiOkResponse({
-    isArray: true,
     type: PCTQualificationDTO,
     description:
       'Creates a PCT Qualification record for a qualification and monitor location',

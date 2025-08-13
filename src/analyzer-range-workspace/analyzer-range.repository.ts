@@ -12,10 +12,10 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
     super(AnalyzerRange, entityManager);
   }
 
-  async getAnalyzerRangeByComponentIdAndDate(
+  async getAnalyzerRangeByComponentIdBeginOrEndDate(
     componentId: string,
     analyzerRange: AnalyzerRangeBaseDTO,
-  ): Promise<AnalyzerRange> {
+  ): Promise<AnalyzerRange | null> {
     const beginDate = analyzerRange.beginDate;
     const beginHour = analyzerRange.beginHour;
     const endDate = analyzerRange.endDate;
@@ -23,25 +23,31 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
 
     const query = this.createQueryBuilder('ar')
       .innerJoin('ar.component', 'c')
-      .where('c.id = :componentId', {
-        componentId,
-      })
-      .andWhere(
-        `(ar.beginDate = :beginDate AND ar.beginHour = :beginHour)`,
-        { beginDate, beginHour }
-      )
+      .where('c.id = :componentId', { componentId })
+      .andWhere('(ar.beginDate = :beginDate AND ar.beginHour = :beginHour)', {
+        beginDate,
+        beginHour,
+      });
 
-      if (endDate !== null && endHour !== null) {
-        query.andWhere(
-          '(ar.endDate = :endDate AND ar.endHour = :endHour)',
-          { endDate, endHour }
-        );
-      } else {
-        query.andWhere('ar.endDate IS NULL AND ar.endHour IS NULL');
-      }
+    const beginMatch = await query.getOne();
+    if (beginMatch) return beginMatch;
 
-    return query.getOne();
+    if (endDate !== null && endHour !== null) {
+      const endQuery = this.createQueryBuilder('ar')
+        .innerJoin('ar.component', 'c')
+        .where('c.id = :componentId', { componentId })
+        .andWhere('(ar.endDate = :endDate AND ar.endHour = :endHour)', {
+          endDate,
+          endHour,
+        });
+
+      const endMatch = await endQuery.getOne();
+      if (endMatch) return endMatch;
+    }
+
+    return null;
   }
+
 
   async getAnalyzerRangesByCompIds(
     componentIds: string[],
