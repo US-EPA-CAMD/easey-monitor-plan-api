@@ -1,7 +1,8 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiSecurity, ApiOkResponse, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
+import { Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiSecurity, ApiOkResponse, ApiExtraModels, getSchemaPath, ApiBearerAuth } from '@nestjs/swagger';
 import { RoleGuard, User, AuditLog } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import {
   UserCheckOutBaseDTO,
@@ -25,10 +26,8 @@ export class CheckOutController {
   ) { }
 
   @Get()
-  @RoleGuard(
-    { enforceCheckout: false },
-    LookupType.MonitorPlan,
-  )
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description:
       'Retrieves workspace Monitor Plan configuration records that are checked out by users',
