@@ -8,12 +8,17 @@ import { MonitorConfigurationsWorkspaceController } from './monitor-configuratio
 import { ConfigurationMultipleParamsDTO } from '../dtos/configuration-multiple-params.dto';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 jest.mock('./monitor-configurations-workspace.service');
 
 const data: MonitorPlanDTO[] = [];
 data.push(new MonitorPlanDTO());
 data.push(new MonitorPlanDTO());
+
+const mockArrayResponse: ArrayResponse<MonitorPlanDTO> = {
+  items: data,
+};
 
 describe('MonitorConfigurations', () => {
   let controller: MonitorConfigurationsWorkspaceController;
@@ -39,6 +44,13 @@ describe('MonitorConfigurations', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('getAllConfigurations', () => {
+    it('should return array of all monitor plan configurations', async () => {
+      jest.spyOn(service, 'getAllConfigurations').mockResolvedValue(data);
+      expect(await controller.getAllConfigurations()).toStrictEqual(mockArrayResponse);
+    });
   });
 
   describe('getConfigurations', () => {

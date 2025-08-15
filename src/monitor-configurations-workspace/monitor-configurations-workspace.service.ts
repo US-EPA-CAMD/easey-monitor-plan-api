@@ -12,12 +12,15 @@ import { EvalStatusCodeRepository } from './eval-status.repository';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { EntityManager } from 'typeorm';
+import { VwMPLocationsAndUnitStackConfigurationsMap } from '../maps/vw-mp-locations-and-unit-stack-configurations.map';
+import { VwMPLocationsAndUnitStackConfigurations } from '../entities/workspace/vw-mp-locations-and-unit-stack-configurations.entity';
 
 @Injectable()
 export class MonitorConfigurationsWorkspaceService {
   constructor(
     private readonly entityManager: EntityManager,
     private readonly map: MonitorPlanConfigurationMap,
+    private readonly vwMPLocationsmap: VwMPLocationsAndUnitStackConfigurationsMap,
     private readonly evalStatusCodeRepository: EvalStatusCodeRepository,
     private readonly submissionStatusCodeRepository: SubmissionsAvailabilityStatusCodeRepository,
     private readonly monitorLocationWorkspaceRepository: MonitorLocationWorkspaceRepository,
@@ -61,6 +64,41 @@ export class MonitorConfigurationsWorkspaceService {
     ]);
     plan.locations = locations;
     plan.unitStackConfigurations = unitStackConfigurations;
+  }
+
+  async getAllConfigurations(): Promise<MonitorPlanDTO[]> {
+
+    const MPLocationsConfigurationsRecords = await this.entityManager.find(
+      VwMPLocationsAndUnitStackConfigurations,
+    );
+    const monPlanDto = await this.vwMPLocationsmap.many(MPLocationsConfigurationsRecords);
+    monPlanDto.sort((a, b) => {
+      if (a.orisCode !== b.orisCode) {
+        return a.orisCode - b.orisCode;
+      }
+
+      const nameCompare = a.name.localeCompare(b.name);
+      if (nameCompare !== 0) {
+        return nameCompare;
+      }
+
+      if (a.beginReportPeriodId !== b.beginReportPeriodId) {
+        return a.beginReportPeriodId - b.beginReportPeriodId;
+      }
+
+      if (a.endReportPeriodId === null && b.endReportPeriodId === null) {
+        return 0;
+      }
+      if (a.endReportPeriodId === null) {
+        return 1;
+      }
+      if (b.endReportPeriodId === null) {
+        return -1;
+      }
+      return a.endReportPeriodId - b.endReportPeriodId;
+    });
+
+    return monPlanDto;
   }
 
   async getConfigurations(

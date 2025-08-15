@@ -17,9 +17,37 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 export class MonitorConfigurationsWorkspaceController {
   constructor(private service: MonitorConfigurationsWorkspaceService) {}
 
+  @Get('all')
+  @ApiOkResponse({
+    description: 'Retrieves all the workspace Monitor Plan configurations',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MonitorPlanDTO) },
+              },
+            },
+          },
+        },
+      }
+  })
+  @AuditLog({
+    label: 'Retrieved all the workspace configurations',
+  })
+  async getAllConfigurations(): Promise<ArrayResponse<MonitorPlanDTO>> {
+    const configurations = await this.service.getAllConfigurations();
+
+    return  {
+      items: configurations
+    };
+  }
+
   @Get()
   @ApiOkResponse({
-    description: 'Retrieves official Monitor Plan configurations',
+    description: 'Retrieves workspace Monitor Plan configurations',
     content: {
         'application/json': {
           schema: {
