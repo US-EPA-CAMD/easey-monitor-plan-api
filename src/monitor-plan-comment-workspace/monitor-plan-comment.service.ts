@@ -17,7 +17,8 @@ export class MonitorPlanCommentWorkspaceService {
   constructor(
     private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
     private readonly repository: MonitorPlanCommentWorkspaceRepository,
-    private readonly map: MonitorPlanCommentMap
+    private readonly map: MonitorPlanCommentMap,
+    private readonly entityManager: EntityManager,
   ) {}
 
   async getComments(planId: string): Promise<MonitorPlanCommentDTO[]> {
@@ -111,24 +112,29 @@ export class MonitorPlanCommentWorkspaceService {
   async importComments(
     commentData: MonitorPlanCommentBaseDTO[],
     userId: string,
-    monitorPlanId: string,
+    targetLocationId: string,
     isImport: boolean,
     trx?: EntityManager,
   ) {
     return settlePromises(
       commentData.map(async comment => {
+        const planId = await this.entityManager.query(
+          'select * from camdecmpswks.get_plan_by_comment_begin_and_end_date($1,$2,$3)',
+          [targetLocationId,comment.beginDate,comment.endDate],
+        );
+        const id = planId?.[0]?.get_plan_by_comment_begin_and_end_date;
+
         const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
-          monitorPlanId,
+          id,
           comment.monitoringPlanComment,
           comment.beginDate,
           trx,
         );
-
         if (!monitorPlanComment) {
-          await this.createComment(monitorPlanId, comment, userId, trx, isImport);
+          await this.createComment(id, comment, userId, trx, isImport);
         } else {
           if (monitorPlanComment.endDate !== comment.endDate || monitorPlanComment.beginDate !== comment.beginDate || monitorPlanComment.monitoringPlanComment !== comment.monitoringPlanComment) {
-            await this.updateComment(monitorPlanId, comment, userId, monitorPlanComment.id, trx, isImport);
+            await this.updateComment(id, comment, userId, monitorPlanComment.id, trx, isImport);
           }
         }
       }),
