@@ -5,6 +5,11 @@ import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceService } from './monitor-plan-comment.service';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
+import { EntityManager } from 'typeorm';
+
+const entityManagerMock = {
+  query: jest.fn().mockResolvedValue([]),
+};
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -37,6 +42,10 @@ describe('MonitorPlanCommentWorkspaceService', () => {
         {
           provide: MonitorPlanCommentMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useFactory: () => entityManagerMock,
         },
       ],
     }).compile();
