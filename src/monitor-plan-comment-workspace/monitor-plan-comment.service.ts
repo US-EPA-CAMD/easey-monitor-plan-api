@@ -111,32 +111,48 @@ export class MonitorPlanCommentWorkspaceService {
 
   async importComments(
     commentData: MonitorPlanCommentBaseDTO[],
+    locationIds: string[],
     userId: string,
-    targetLocationId: string,
-    isImport: boolean,
     trx?: EntityManager,
   ) {
     return settlePromises(
-      commentData.map(async comment => {
-        const planId = await this.entityManager.query(
+      commentData.map(async (comment) => {
+        const res = await this.entityManager.query(
           'select * from camdecmpswks.get_plan_by_comment_begin_and_end_date($1,$2,$3)',
-          [targetLocationId,comment.beginDate,comment.endDate],
+          [locationIds, comment.beginDate, comment.endDate],
         );
-        const id = planId?.[0]?.get_plan_by_comment_begin_and_end_date;
-
-        const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
-          id,
-          comment.monitoringPlanComment,
-          comment.beginDate,
-          trx,
+        console.log("plantsIds!")
+        const planIds = res.map((row) => row.mon_plan_id);
+        console.log(planIds)
+        await settlePromises(
+          planIds.map(async (id) => {
+            const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
+              id,
+              comment.monitoringPlanComment,
+              comment.beginDate,
+              trx,
+            );
+            if (!monitorPlanComment) {
+              await this.createComment(id, comment, userId, trx, true);
+            } else {
+              if (
+                monitorPlanComment.endDate !== comment.endDate ||
+                monitorPlanComment.beginDate !== comment.beginDate ||
+                monitorPlanComment.monitoringPlanComment !==
+                  comment.monitoringPlanComment
+              ) {
+                await this.updateComment(
+                  id,
+                  comment,
+                  userId,
+                  monitorPlanComment.id,
+                  trx,
+                  true,
+                );
+              }
+            }
+          }),
         );
-        if (!monitorPlanComment) {
-          await this.createComment(id, comment, userId, trx, isImport);
-        } else {
-          if (monitorPlanComment.endDate !== comment.endDate || monitorPlanComment.beginDate !== comment.beginDate || monitorPlanComment.monitoringPlanComment !== comment.monitoringPlanComment) {
-            await this.updateComment(id, comment, userId, monitorPlanComment.id, trx, isImport);
-          }
-        }
       }),
     );
   }

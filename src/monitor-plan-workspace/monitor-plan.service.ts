@@ -1154,12 +1154,10 @@ export class MonitorPlanWorkspaceService {
 
       // Apply the monitor plan comments.
       if(payload?.monitoringPlanCommentData){
-        const targetLocationId =  monitorLocations[0]?.id;
         await this.monitorPlanCommentService.importComments(
           payload.monitoringPlanCommentData,
+          monitorLocations.map((ml) => ml.id),
           userId,
-          targetLocationId,
-          true,
           trx,
         )
       };
