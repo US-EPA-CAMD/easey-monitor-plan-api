@@ -121,9 +121,7 @@ export class MonitorPlanCommentWorkspaceService {
           'select * from camdecmpswks.get_plan_by_comment_begin_and_end_date($1,$2,$3)',
           [locationIds, comment.beginDate, comment.endDate],
         );
-        console.log("plantsIds!")
         const planIds = res.map((row) => row.mon_plan_id);
-        console.log(planIds)
         await settlePromises(
           planIds.map(async (id) => {
             const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
