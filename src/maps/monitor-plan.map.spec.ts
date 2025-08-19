@@ -26,6 +26,7 @@ import { UnitControlMap } from './unit-control.map';
 import { UnitFuelMap } from './unit-fuel.map';
 import { UnitStackConfigurationMap } from './unit-stack-configuration.map';
 import { MonitorPlanReportingFrequencyMap } from './monitor-plan-reporting-freq.map';
+import { EntityManager } from 'typeorm';
 
 const id = '';
 const facId = 0;
@@ -58,12 +59,20 @@ entity.updateDate = updateDate;
 entity.plant = plant;
 
 describe('MonitorPlanMap', () => {
+  let manager: jest.Mock;
   let map: MonitorPlanMap;
+  manager = jest.fn().mockResolvedValue([{}]);
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [],
       providers: [
+         {
+          provide: EntityManager,
+          useValue: {
+            query: manager,
+          },
+        },
         MonitorPlanMap,
         MonitorLocationMap,
         MonitorMethodMap,

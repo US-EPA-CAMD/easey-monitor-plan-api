@@ -988,6 +988,19 @@ export class MonitorPlanWorkspaceService {
 
     const dto = await this.map.one(mp);
 
+    const severity = await this.entityManager.query(
+        `SELECT sc.severity_cd_description, sc.severity_cd
+          FROM camdecmpswks.monitor_plan p
+          JOIN camdecmpswks.check_session cs on cs.chk_session_id = p.chk_session_id
+          JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+          WHERE p.mon_plan_id = $1;`,
+          [dto.id],
+    );
+
+    dto.severityDescription = severity?.[0]?.severity_cd_description;
+    dto.severityCode = severity?.[0]?.severity_cd;
+
+
     dto.submissionAvailabilityCodeDescription = (
       await withTransaction(
         this.submissionsAvailabilityStatusCodeRepository,
@@ -1139,28 +1152,15 @@ export class MonitorPlanWorkspaceService {
 
       /* MONITOR PLAN COMMENT MERGE LOGIC */
 
-      // Apply the monitor plan comments to the earliest changed plan.
-      // NOTE:XXX: This is not a great way to determine the target plan: if the import doesn't contain any new or ended plans, the comments will not be imported. However, since the import schema can contain multiple plans, it is impossible to determine the target plan without additional information.
-      const targetPlan = [...result.newPlans, ...result.endedPlans].reduce(
-        (acc, cur) => {
-          if (!acc) return cur;
-          const compareResult = this.compareReportPeriodDescriptions(
-            acc.beginReportPeriodDescription,
-            cur.beginReportPeriodDescription,
-          );
-          if (compareResult === 1) return cur; // If the current plan is earlier than the accumulator, return it.
-          return acc;
-        },
-        null,
-      );
-      if (targetPlan) {
+      // Apply the monitor plan comments.
+      if(payload?.monitoringPlanCommentData){
         await this.monitorPlanCommentService.importComments(
           payload.monitoringPlanCommentData,
+          monitorLocations.map((ml) => ml.id),
           userId,
-          targetPlan.id,
           trx,
-        );
-      }
+        )
+      };
 
       // Reset all active monitor plans associated with locations in the import to "needs evaluation".
       await settlePromises(
