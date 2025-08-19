@@ -17,7 +17,8 @@ export class MonitorPlanCommentWorkspaceService {
   constructor(
     private readonly monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository,
     private readonly repository: MonitorPlanCommentWorkspaceRepository,
-    private readonly map: MonitorPlanCommentMap
+    private readonly map: MonitorPlanCommentMap,
+    private readonly entityManager: EntityManager,
   ) {}
 
   async getComments(planId: string): Promise<MonitorPlanCommentDTO[]> {
@@ -110,27 +111,46 @@ export class MonitorPlanCommentWorkspaceService {
 
   async importComments(
     commentData: MonitorPlanCommentBaseDTO[],
+    locationIds: string[],
     userId: string,
-    monitorPlanId: string,
-    isImport: boolean,
     trx?: EntityManager,
   ) {
     return settlePromises(
-      commentData.map(async comment => {
-        const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
-          monitorPlanId,
-          comment.monitoringPlanComment,
-          comment.beginDate,
-          trx,
+      commentData.map(async (comment) => {
+        const res = await this.entityManager.query(
+          'select * from camdecmpswks.get_plan_by_comment_begin_and_end_date($1,$2,$3)',
+          [locationIds, comment.beginDate, comment.endDate],
         );
-
-        if (!monitorPlanComment) {
-          await this.createComment(monitorPlanId, comment, userId, trx, isImport);
-        } else {
-          if (monitorPlanComment.endDate !== comment.endDate || monitorPlanComment.beginDate !== comment.beginDate || monitorPlanComment.monitoringPlanComment !== comment.monitoringPlanComment) {
-            await this.updateComment(monitorPlanId, comment, userId, monitorPlanComment.id, trx, isImport);
-          }
-        }
+        const planIds = res.map((row) => row.mon_plan_id);
+        await settlePromises(
+          planIds.map(async (id) => {
+            const monitorPlanComment = await this.getCommentsByPlanIdCommentBD(
+              id,
+              comment.monitoringPlanComment,
+              comment.beginDate,
+              trx,
+            );
+            if (!monitorPlanComment) {
+              await this.createComment(id, comment, userId, trx, true);
+            } else {
+              if (
+                monitorPlanComment.endDate !== comment.endDate ||
+                monitorPlanComment.beginDate !== comment.beginDate ||
+                monitorPlanComment.monitoringPlanComment !==
+                  comment.monitoringPlanComment
+              ) {
+                await this.updateComment(
+                  id,
+                  comment,
+                  userId,
+                  monitorPlanComment.id,
+                  trx,
+                  true,
+                );
+              }
+            }
+          }),
+        );
       }),
     );
   }
