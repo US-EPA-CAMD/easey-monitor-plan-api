@@ -1153,17 +1153,14 @@ export class MonitorPlanWorkspaceService {
       /* MONITOR PLAN COMMENT MERGE LOGIC */
 
       // Apply the monitor plan comments.
-
-      const targetLocationId =  monitorLocations[0]?.id;
-      const repository = withTransaction(this.repository, trx);
-      const plan = await repository.getActivePlanByLocationId(targetLocationId);
+      if(payload?.monitoringPlanCommentData){
         await this.monitorPlanCommentService.importComments(
           payload.monitoringPlanCommentData,
+          monitorLocations.map((ml) => ml.id),
           userId,
-          plan.id,
-          true,
           trx,
-        );
+        )
+      };
 
       // Reset all active monitor plans associated with locations in the import to "needs evaluation".
       await settlePromises(
