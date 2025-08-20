@@ -115,7 +115,7 @@ const routes = [
     module: MonitorPlanWorkspaceModule,
     children: [
       {
-        path: ':planId/comments',
+        path: ':planId',
         module: MonitorPlanCommentWorkspaceModule,
       },
       {

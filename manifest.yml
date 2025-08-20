@@ -7,7 +7,8 @@ applications:
       - nodejs_buildpack
     health-check-type: http
     health-check-http-endpoint: /monitor-plan-mgmt/health
-    health-check-interval: 30
+    health-check-interval: ((healthCheckInterval))
+    health-check-invocation-timeout: ((healthCheckInvocationTimeout))
     env:
       OPTIMIZE_MEMORY: true
       EASEY_DB_SERVICE: ((dbSvc))
@@ -35,6 +36,7 @@ applications:
       EASEY_DB_MAX_USES_BEFORE_CONN_RECREATE: ((maxUsesBeforeRecreatingConnection))
       EASEY_DB_SQL_LOGGING: ((sqlLogging))
       EASEY_DB_MAX_QUERY_EXECUTION_TIMEOUT: ((maxQueryExecutionTime))
+      EASEY_DB_HEALTH_TIMEOUT: ((dbHealthTimeout))
       EASEY_MONITOR_PLAN_API_ENABLE_AUDIT_LOG: ((enableAuditLog))
     routes:
       - route: ((host))/((path))

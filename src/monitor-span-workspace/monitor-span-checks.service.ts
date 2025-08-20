@@ -66,6 +66,8 @@ export class MonitorSpanChecksService {
       monitorSpan.spanScaleCode,
       monitorSpan.mecValue,
       monitorSpan.defaultHighRange,
+      monitorSpan.beginDate,
+      monitorSpan.endDate
     );
     if (error) {
       errorList.push(error);
@@ -248,6 +250,8 @@ export class MonitorSpanChecksService {
     spanScaleCode: string,
     mecValue: number,
     defaultHighRange: number,
+    beginDate: Date,
+    endDate: Date
   ): string {
     let error: string = null;
 
@@ -265,7 +269,8 @@ export class MonitorSpanChecksService {
         if (
           ['SO2', 'HG', 'NOX'].includes(componentTypeCode) &&
           spanScaleCode === 'H' &&
-          defaultHighRange
+          defaultHighRange &&
+          !isInactiveRecord(beginDate, endDate)
         ) {
           error = this.getMessage('SPAN-57-B', {
             key: KEY,
