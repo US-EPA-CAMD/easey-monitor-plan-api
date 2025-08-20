@@ -38,52 +38,49 @@ export class UnitFuelWorkspaceController {
   @RoleGuard(
     {
       enforceCheckout: false,
-      pathParam: 'locId',
+      pathParam: 'unitId',
       enforceEvalSubmitCheck: false,
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Retrieved workspace monitor location unit fuels',
-    requestParamsOutFields:['locId', 'unitId']
+    requestParamsOutFields: ['unitId'],
   })
   async getUnitFuels(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<UnitFuelDTO>> {
-    const unitFuelDTOS = await this.service.getUnitFuels(locId, unitId);
+    const unitFuelDTOS = await this.service.getUnitFuels(unitId);
 
-    return  {
-      items: unitFuelDTOS
-    }
+    return { items: unitFuelDTOS };
   }
 
   @Put(':unitFuelId')
   @RoleGuard(
     {
-      pathParam: 'locId',
+      pathParam: 'unitId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Updated workspace monitor location unit fuel record',
-    requestParamsOutFields:['locId', 'unitFuelId'],
-    responseBodyOutFields:'*'
+    requestParamsOutFields: ['unitId', 'unitFuelId'],
+    responseBodyOutFields: '*',
   })
   @ApiOkResponse({
     type: UnitFuelDTO,
     description: 'Updates a workspace unit control record by unit control ID',
   })
   async updateUnitFuel(
-    @Param('locId') locId: string,
+    @Param('unitId') unitId: number,
     @Param('unitFuelId') unitFuelId: string,
     @Body() payload: UnitFuelBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
     return this.service.updateUnitFuel({
-      locationId: locId,
+      unitId,
       unitFuelId,
       payload,
       userId: user.userId,
@@ -97,25 +94,23 @@ export class UnitFuelWorkspaceController {
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Created workspace monitor location unit fuel record',
-    requestParamsOutFields:['locId', 'unitId'],
-    responseBodyOutFields:'*'
+    requestParamsOutFields: ['unitId'],
+    responseBodyOutFields: '*',
   })
   @ApiOkResponse({
     type: UnitFuelDTO,
     description: 'Creates a workspace unit control record for a unit',
   })
   createUnitFuel(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Body() payload: UnitFuelBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
     return this.service.createUnitFuel({
-      locationId: locId,
       unitId,
       payload,
       userId: user.userId,

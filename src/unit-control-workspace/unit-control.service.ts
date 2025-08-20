@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { UnitControlBaseDTO, UnitControlDTO } from '../dtos/unit-control.dto';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { UnitControlMap } from '../maps/unit-control.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { settlePromises, withTransaction } from '../utils';
@@ -13,6 +14,7 @@ import { UnitControlWorkspaceRepository } from './unit-control.repository';
 @Injectable()
 export class UnitControlWorkspaceService {
   constructor(
+    private readonly entityManager: EntityManager,
     private readonly repository: UnitControlWorkspaceRepository,
     private readonly map: UnitControlMap,
     private readonly logger: Logger,
@@ -23,23 +25,19 @@ export class UnitControlWorkspaceService {
     this.logger.setContext('UnitControlWorkspaceService');
   }
 
-  async getUnitControls(
-    locId: string,
-    unitId: number,
-  ): Promise<UnitControlDTO[]> {
-    const results = await this.repository.getUnitControls(locId, unitId);
+  async getUnitControls(unitId: number): Promise<UnitControlDTO[]> {
+    const results = await this.repository.getUnitControls(unitId);
     return this.map.many(results);
   }
 
   async importUnitControl(
     unitControls: UnitControlBaseDTO[],
     unitRecordId: number,
-    locationId: string,
     userId: string,
     trx?: EntityManager,
   ) {
     await settlePromises(
-      unitControls.map(async unitControl => {
+      unitControls.map(async (unitControl) => {
         const unitControlRecord = await withTransaction(
           this.repository,
           trx,
@@ -53,7 +51,6 @@ export class UnitControlWorkspaceService {
 
         if (unitControlRecord) {
           await this.updateUnitControl({
-            locationId,
             unitRecordId,
             unitControlId: unitControlRecord.id,
             payload: unitControl,
@@ -63,7 +60,6 @@ export class UnitControlWorkspaceService {
           });
         } else {
           await this.createUnitControl({
-            locationId,
             unitRecordId,
             payload: unitControl,
             userId,
@@ -78,14 +74,12 @@ export class UnitControlWorkspaceService {
   }
 
   async createUnitControl({
-    locationId,
     unitRecordId,
     payload,
     userId,
     isImport = false,
     trx,
   }: {
-    locationId: string;
     unitRecordId: number;
     payload: UnitControlBaseDTO;
     userId: string;
@@ -112,14 +106,16 @@ export class UnitControlWorkspaceService {
     const result = await repository.save(unitControl);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      const location = await this.entityManager.findOneBy(MonitorLocation, {
+        unitId: unitRecordId,
+      });
+      await this.mpService.resetToNeedsEvaluation(location?.id, userId, trx);
     }
 
     return this.map.one(result);
   }
 
   async updateUnitControl({
-    locationId,
     unitRecordId,
     unitControlId,
     payload,
@@ -127,7 +123,6 @@ export class UnitControlWorkspaceService {
     isImport = false,
     trx,
   }: {
-    locationId: string;
     unitRecordId: number;
     unitControlId: string;
     payload: UnitControlBaseDTO;
@@ -152,7 +147,10 @@ export class UnitControlWorkspaceService {
     await repository.save(unitControl);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      const location = await this.entityManager.findOneBy(MonitorLocation, {
+        unitId: unitRecordId,
+      });
+      await this.mpService.resetToNeedsEvaluation(location?.id, userId, trx);
     }
 
     return this.map.one(unitControl);

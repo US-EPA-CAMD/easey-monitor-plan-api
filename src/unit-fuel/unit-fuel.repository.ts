@@ -9,7 +9,7 @@ export class UnitFuelRepository extends Repository<UnitFuel> {
     super(UnitFuel, entityManager);
   }
 
-  async getUnitFuels(locId: string, unitId: number): Promise<UnitFuel[]> {
+  async getUnitFuels(unitId: number): Promise<UnitFuel[]> {
     return this.createQueryBuilder('uf')
       .innerJoinAndSelect('uf.unit', 'u')
       .innerJoinAndSelect('u.location', 'l')
