@@ -90,7 +90,7 @@ export class UnitFuelWorkspaceController {
   @Post()
   @RoleGuard(
     {
-      pathParam: 'locId',
+      pathParam: 'unitId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
