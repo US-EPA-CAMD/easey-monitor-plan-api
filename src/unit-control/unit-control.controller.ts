@@ -31,13 +31,12 @@ export class UnitControlController {
       }
   })
   async getUnitControls(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<UnitControlDTO>> {
-    const unitCapacityDTOS = await this.service.getUnitControls(locId, unitId);
+    const unitCapacityDTOS = await this.service.getUnitControls(unitId);
 
-    return  {
-      items: unitCapacityDTOS
-    }
+    return {
+      items: unitCapacityDTOS,
+    };
   }
 }

@@ -9,16 +9,14 @@ export class UnitControlWorkspaceRepository extends Repository<UnitControl> {
     super(UnitControl, entityManager);
   }
 
-  async getUnitControls(
-    locId: string,
-    unitRecordId: number,
-  ): Promise<UnitControl[]> {
+  async getUnitControls(unitRecordId: number): Promise<UnitControl[]> {
     return this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.location', 'l')
       .andWhere('u.id = :unitRecordId', { unitRecordId })
       .getMany();
   }
+
   async getUnitControl(unitControlId: string): Promise<UnitControl> {
     return this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
