@@ -40,53 +40,50 @@ export class UnitCapacityWorkspaceController {
   })
   @AuditLog({
     label: 'Retrieved workspace monitor location unit capacity records',
-    requestParamsOutFields: ['locId', 'unitId']
+    requestParamsOutFields: ['unitId'],
   })
   @RoleGuard(
     {
       enforceCheckout: false,
-      pathParam: 'locId',
+      pathParam: 'unitId',
       enforceEvalSubmitCheck: false,
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   async getUnitCapacities(
-    @Param('locId') locationId: string,
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<UnitCapacityDTO>> {
-    const unitCapacityDTOS = await this.service.getUnitCapacities(locationId, unitId);
+    const unitCapacityDTOS = await this.service.getUnitCapacities(unitId);
 
-    return  {
-      items: unitCapacityDTOS
-    }
+    return {
+      items: unitCapacityDTOS,
+    };
   }
 
   @Post()
   @RoleGuard(
     {
-      pathParam: 'locId',
+      pathParam: 'unitId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Create workspace monitor location unit capacity record',
-    requestParamsOutFields: ['locId', 'unitId'],
-    requestBodyOutFields:'*'
+    requestParamsOutFields: ['unitId'],
+    requestBodyOutFields: '*',
   })
   @ApiOkResponse({
     type: UnitCapacityDTO,
     description: 'Creates a workspace unit capacity record for a unit',
   })
   createUnitCapcity(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
     @Body() payload: UnitCapacityBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitCapacityDTO> {
     return this.service.createUnitCapacity({
-      locationId: locId,
       unitId,
       payload,
       userId: user.userId,
@@ -96,30 +93,28 @@ export class UnitCapacityWorkspaceController {
   @Put(':unitCapacityId')
   @RoleGuard(
     {
-      pathParam: 'locId',
+      pathParam: 'unitId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSMP'],
     },
-    LookupType.Location,
+    LookupType.Unit,
   )
   @AuditLog({
     label: 'Update workspace monitor location unit capacity record',
-    requestParamsOutFields: ['locId', 'unitId'],
-    requestBodyOutFields:'*'
+    requestParamsOutFields: ['unitId'],
+    requestBodyOutFields: '*',
   })
   @ApiOkResponse({
     type: UnitCapacityDTO,
     description: 'Updates a workspace unit capacity record by unit capacity ID',
   })
   async updateUnitCapacity(
-    @Param('locId') locationId: string,
     @Param('unitId') unitId: number,
     @Param('unitCapacityId') unitCapacityId: string,
     @Body() payload: UnitCapacityBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitCapacityDTO> {
     return this.service.updateUnitCapacity({
-      locationId,
       unitRecordId: unitId,
       unitCapacityId: unitCapacityId,
       payload,

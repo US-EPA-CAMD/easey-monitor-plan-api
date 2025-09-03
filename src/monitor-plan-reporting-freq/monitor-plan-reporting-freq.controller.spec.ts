@@ -6,7 +6,7 @@ import { ReportingFreqDTO } from '../dtos/reporting-freq.dto';
 
 jest.mock('./monitor-plan-reporting-freq.service');
 
-const unitId = 1;
+const planId = '1;'
 
 const data: ReportingFreqDTO[] = [];
 data.push(new ReportingFreqDTO());
@@ -34,7 +34,9 @@ describe('MonitorPlanReportingFrequencyController', () => {
   describe('getReportingFreqs', () => {
     it('should return array of reporting frequencies', async () => {
       jest.spyOn(service, 'getReportingFreqs').mockResolvedValue(data);
-      expect(await controller.getReportingFreqs(unitId)).toStrictEqual({ items: data});
+      expect(await controller.getReportingFreqs(planId)).toStrictEqual({
+        items: data,
+      });
     });
   });
 });

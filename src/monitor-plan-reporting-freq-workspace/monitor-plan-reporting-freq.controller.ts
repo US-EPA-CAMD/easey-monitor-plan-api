@@ -21,7 +21,7 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
   @Get()
   @ApiOkResponse({
     description:
-      'Retrieves workspace reporting frequency records from a specific unit ID',
+      'Retrieves workspace reporting frequency records for a specific plan ID',
     content: {
         'application/json': {
           schema: {
@@ -39,21 +39,21 @@ export class MonitorPlanReportingFrequencyWorkspaceController {
   @RoleGuard(
     {
       enforceCheckout: false,
-      pathParam: 'locId',
+      pathParam: 'planId',
       enforceEvalSubmitCheck: false,
     },
-    LookupType.Location,
+    LookupType.MonitorPlan,
   )
   @AuditLog({
-    label: 'Retrieved workspace monitor location unit reporting frequencies',
-    requestParamsOutFields: ['unitId']
+    label: 'Retrieved workspace monitor plan reporting frequencies',
+    requestParamsOutFields: ['planId']
   })
   async getReportingFreqs(
-    @Param('unitId') unitId: number,
+    @Param('planId') planId: string,
   ): Promise<ArrayResponse<ReportingFreqDTO>> {
-    const reportingFreqDTOS = await this.service.getReportingFreqs(unitId);
+    const reportingFreqDTOS = await this.service.getReportingFreqs(planId);
 
-    return  {
+    return {
       items: reportingFreqDTOS
     };
   }

@@ -14,7 +14,6 @@ import { UnitControlChecksService } from './unit-control-checks.service';
 
 jest.mock('./unit-control.service');
 
-const locId = '6';
 const unitRecordId = 1;
 const unitControlId = 'some unit control id';
 const payload = new UnitControlBaseDTO();
@@ -70,7 +69,9 @@ describe('UnitControlWorkspaceController', () => {
       jest
         .spyOn(service, 'getUnitControls')
         .mockResolvedValue(returnedUnitControls);
-      expect(await controller.getUnitControls(locId, unitRecordId)).toStrictEqual({ items: returnedUnitControls} );
+      expect(await controller.getUnitControls(unitRecordId)).toStrictEqual({
+        items: returnedUnitControls,
+      });
     });
   });
 
@@ -79,7 +80,6 @@ describe('UnitControlWorkspaceController', () => {
       jest.spyOn(service, 'updateUnitControl').mockResolvedValue(returnedLoad);
       expect(
         await controller.updateUnitControl(
-          locId,
           unitRecordId,
           unitControlId,
           payload,
@@ -93,12 +93,7 @@ describe('UnitControlWorkspaceController', () => {
     it('should return the created unit control record', async () => {
       jest.spyOn(service, 'createUnitControl').mockResolvedValue(returnedLoad);
       expect(
-        await controller.createUnitControl(
-          locId,
-          unitRecordId,
-          payload,
-          currentUser,
-        ),
+        await controller.createUnitControl(unitRecordId, payload, currentUser),
       ).toBe(returnedLoad);
     });
   });

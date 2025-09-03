@@ -8,9 +8,7 @@ jest.mock('./unit.service');
 
 const unitId = 1;
 
-const data: UnitDTO[] = [];
-data.push(new UnitDTO());
-data.push(new UnitDTO());
+const data = new UnitDTO();
 
 describe('UnitController', () => {
   let controller: UnitController;
@@ -33,8 +31,8 @@ describe('UnitController', () => {
 
   describe('getUnits', () => {
     it('should return array of units', async () => {
-      jest.spyOn(service, 'getUnits').mockResolvedValue(data);
-      expect(await controller.getUnits(unitId)).toStrictEqual({ items: data} );
+      jest.spyOn(service, 'getUnit').mockResolvedValue(data);
+      expect(await controller.getUnit(unitId)).toStrictEqual(data);
     });
   });
 });

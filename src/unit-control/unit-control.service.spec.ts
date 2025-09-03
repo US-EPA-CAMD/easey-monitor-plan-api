@@ -6,7 +6,6 @@ import { UnitControlService } from './unit-control.service';
 import { UnitControlRepository } from './unit-control.repository';
 import { UnitControlDTO } from '../dtos/unit-control.dto';
 
-const locId = '1';
 const unitRecordId = 6;
 
 const returnedUnitControls: UnitControlDTO[] = [];
@@ -48,7 +47,7 @@ describe('UnitControlService', () => {
 
   describe('getUnitControls', () => {
     it('should return array of unit controls', async () => {
-      const result = await service.getUnitControls(locId, unitRecordId);
+      const result = await service.getUnitControls(unitRecordId);
       expect(result).toEqual('');
     });
   });

@@ -40,7 +40,7 @@ describe('MonitorPlanReportingFrequencyWorkspaceService', () => {
 
   describe('getReportingFreqs', () => {
     it('should return an array of reporting frequencies', async () => {
-      const result = await service.getReportingFreqs(1);
+      const result = await service.getReportingFreqs('1');
       expect(result).toEqual([]);
     });
   });

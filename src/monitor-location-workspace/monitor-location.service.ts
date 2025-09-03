@@ -394,7 +394,6 @@ export class MonitorLocationWorkspaceService {
               this.unitCapacityService.importUnitCapacity(
                 location.unitCapacityData,
                 unitRecord.id,
-                monitorLocationRecord.id,
                 userId,
                 trx,
               ),
@@ -406,7 +405,6 @@ export class MonitorLocationWorkspaceService {
               this.unitControlService.importUnitControl(
                 location.unitControlData,
                 unitRecord.id,
-                monitorLocationRecord.id,
                 userId,
                 trx,
               ),
@@ -418,7 +416,6 @@ export class MonitorLocationWorkspaceService {
               this.unitFuelService.importUnitFuel(
                 location.unitFuelData,
                 unitRecord.id,
-                monitorLocationRecord.id,
                 userId,
                 trx,
               ),
