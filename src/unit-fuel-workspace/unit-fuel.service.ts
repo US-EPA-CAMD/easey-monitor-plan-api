@@ -6,6 +6,7 @@ import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { settlePromises, withTransaction } from '../utils';
@@ -14,6 +15,7 @@ import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 @Injectable()
 export class UnitFuelWorkspaceService {
   constructor(
+    private readonly entityManager: EntityManager,
     private readonly repository: UnitFuelWorkspaceRepository,
     private readonly map: UnitFuelMap,
     private readonly logger: Logger,
@@ -24,8 +26,8 @@ export class UnitFuelWorkspaceService {
     this.logger.setContext('UnitFuelWorkspaceService');
   }
 
-  async getUnitFuels(locId: string, unitId: number): Promise<UnitFuelDTO[]> {
-    const results = await this.repository.getUnitFuels(locId, unitId);
+  async getUnitFuels(unitId: number): Promise<UnitFuelDTO[]> {
+    const results = await this.repository.getUnitFuels(unitId);
     return this.map.many(results);
   }
 
@@ -52,14 +54,12 @@ export class UnitFuelWorkspaceService {
   }
 
   async createUnitFuel({
-    locationId,
     unitId,
     payload,
     userId,
     isImport = false,
     trx,
   }: {
-    locationId: string;
     unitId: number;
     payload: UnitFuelBaseDTO;
     userId: string;
@@ -86,21 +86,24 @@ export class UnitFuelWorkspaceService {
     const result = await repository.save(unitFuel);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      const location = await this.entityManager.findOneBy(MonitorLocation, {
+        unitId,
+      });
+      await this.mpService.resetToNeedsEvaluation(location?.id, userId, trx);
     }
 
     return this.map.one(result);
   }
 
   async updateUnitFuel({
-    locationId,
+    unitId,
     unitFuelId,
     payload,
     userId,
     isImport = false,
     trx,
   }: {
-    locationId: string;
+    unitId: number;
     unitFuelId: string;
     payload: UnitFuelBaseDTO;
     userId: string;
@@ -124,7 +127,10 @@ export class UnitFuelWorkspaceService {
     await repository.save(unitFuel);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      const location = await this.entityManager.findOneBy(MonitorLocation, {
+        unitId,
+      });
+      await this.mpService.resetToNeedsEvaluation(location?.id, userId, trx);
     }
 
     return this.map.one(unitFuel);
@@ -133,12 +139,11 @@ export class UnitFuelWorkspaceService {
   async importUnitFuel(
     unitFuels: UnitFuelBaseDTO[],
     unitId: number,
-    locationId: string,
     userId: string,
     trx?: EntityManager,
   ) {
     await settlePromises(
-      unitFuels.map(async unitFuel => {
+      unitFuels.map(async (unitFuel) => {
         const unitFuelRecord = await withTransaction(
           this.repository,
           trx,
@@ -151,7 +156,7 @@ export class UnitFuelWorkspaceService {
 
         if (unitFuelRecord) {
           await this.updateUnitFuel({
-            locationId,
+            unitId,
             unitFuelId: unitFuelRecord.id,
             payload: unitFuel,
             userId,
@@ -160,7 +165,6 @@ export class UnitFuelWorkspaceService {
           });
         } else {
           await this.createUnitFuel({
-            locationId,
             unitId,
             payload: unitFuel,
             userId,

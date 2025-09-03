@@ -15,7 +15,7 @@ export class MonitorPlanReportingFrequencyController {
   @Get()
   @ApiOkResponse({
     description:
-      'Retrieves reporting frequency records from a specific unit ID',
+      'Retrieves reporting frequency records for a specific plan ID',
     content: {
         'application/json': {
           schema: {
@@ -31,13 +31,12 @@ export class MonitorPlanReportingFrequencyController {
       }
   })
   async getReportingFreqs(
-    @Param('unitId') unitRecordId: number,
+    @Param('planId') planId: string,
   ): Promise<ArrayResponse<ReportingFreqDTO>> {
+    const reportingFreqDTOS = await this.service.getReportingFreqs(planId);
 
-    const reportingFreqDTOS = await this.service.getReportingFreqs(unitRecordId);
-
-    return  {
-      items: reportingFreqDTOS
+    return {
+      items: reportingFreqDTOS,
     };
   }
 }

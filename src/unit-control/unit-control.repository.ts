@@ -9,7 +9,7 @@ export class UnitControlRepository extends Repository<UnitControl> {
     super(UnitControl, entityManager);
   }
 
-  async getUnitControls(locId: string, unitId: number): Promise<UnitControl[]> {
+  async getUnitControls(unitId: number): Promise<UnitControl[]> {
     return this.createQueryBuilder('uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.location', 'l')
