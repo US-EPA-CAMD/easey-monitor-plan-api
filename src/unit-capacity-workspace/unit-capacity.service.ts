@@ -9,6 +9,7 @@ import {
   UnitCapacityBaseDTO,
   UnitCapacityDTO,
 } from '../dtos/unit-capacity.dto';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { settlePromises, withTransaction } from '../utils';
@@ -20,6 +21,7 @@ export class UnitCapacityWorkspaceService {
     private readonly logger: Logger,
     private readonly repository: UnitCapacityWorkspaceRepository,
     private readonly map: UnitCapacityMap,
+    private readonly entityManager: EntityManager,
 
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
@@ -30,12 +32,11 @@ export class UnitCapacityWorkspaceService {
   async importUnitCapacity(
     unitCapacities: UnitCapacityBaseDTO[],
     unitId: number,
-    locationId: string,
     userId: string,
     trx?: EntityManager,
   ) {
     await settlePromises(
-      unitCapacities.map(async unitCapacity => {
+      unitCapacities.map(async (unitCapacity) => {
         const unitCapacityRecord = await withTransaction(
           this.repository,
           trx,
@@ -47,7 +48,6 @@ export class UnitCapacityWorkspaceService {
 
         if (unitCapacityRecord) {
           await this.updateUnitCapacity({
-            locationId,
             unitRecordId: unitId,
             unitCapacityId: unitCapacityRecord.id,
             payload: unitCapacity,
@@ -57,7 +57,6 @@ export class UnitCapacityWorkspaceService {
           });
         } else {
           await this.createUnitCapacity({
-            locationId,
             unitId,
             payload: unitCapacity,
             userId,
@@ -71,17 +70,13 @@ export class UnitCapacityWorkspaceService {
     return true;
   }
 
-  async getUnitCapacities(
-    locId: string,
-    unitId: number,
-  ): Promise<UnitCapacityDTO[]> {
-    const results = await this.repository.getUnitCapacities(locId, unitId);
+  async getUnitCapacities(unitId: number): Promise<UnitCapacityDTO[]> {
+    const results = await this.repository.getUnitCapacities(unitId);
 
     return this.map.many(results);
   }
 
   async getUnitCapacity(
-    locId: string,
     unitId: number,
     unitCapacityId: string,
     trx?: EntityManager,
@@ -103,14 +98,12 @@ export class UnitCapacityWorkspaceService {
   }
 
   async createUnitCapacity({
-    locationId,
     unitId,
     payload,
     userId,
     isImport = false,
     trx,
   }: {
-    locationId: string;
     unitId: number;
     payload: UnitCapacityBaseDTO;
     userId: string;
@@ -133,14 +126,16 @@ export class UnitCapacityWorkspaceService {
     const result = await repository.save(unitCapacity);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      const location = await this.entityManager.findOneBy(MonitorLocation, {
+        unitId,
+      });
+      await this.mpService.resetToNeedsEvaluation(location?.id, userId, trx);
     }
 
-    return this.getUnitCapacity(locationId, unitId, result.id, trx);
+    return this.getUnitCapacity(unitId, result.id, trx);
   }
 
   async updateUnitCapacity({
-    locationId,
     unitRecordId,
     unitCapacityId,
     payload,
@@ -148,7 +143,6 @@ export class UnitCapacityWorkspaceService {
     isImport = false,
     trx,
   }: {
-    locationId: string;
     unitRecordId: number;
     unitCapacityId: string;
     payload: UnitCapacityBaseDTO;
@@ -170,7 +164,10 @@ export class UnitCapacityWorkspaceService {
     await repository.save(unitCapacity);
 
     if (!isImport) {
-      await this.mpService.resetToNeedsEvaluation(locationId, userId, trx);
+      const location = await this.entityManager.findOneBy(MonitorLocation, {
+        unitId: unitRecordId,
+      });
+      await this.mpService.resetToNeedsEvaluation(location?.id, userId, trx);
     }
 
     return this.map.one(unitCapacity);

@@ -9,7 +9,7 @@ import { DataSource } from 'typeorm';
 
 jest.mock('./monitor-plan-reporting-freq.service');
 
-const unitId = 1;
+const planId = '1;'
 
 const data: ReportingFreqDTO[] = [];
 data.push(new ReportingFreqDTO());
@@ -44,7 +44,9 @@ describe('MonitorPlanReportingFrequencyWorkspaceController', () => {
   describe('getReportingFreqs', () => {
     it('should return array of workspace reporting frequencies', async () => {
       jest.spyOn(service, 'getReportingFreqs').mockResolvedValue(data);
-      expect(await controller.getReportingFreqs(unitId)).toStrictEqual({ items: data});
+      expect(await controller.getReportingFreqs(planId)).toStrictEqual({
+        items: data,
+      });
     });
   });
 });

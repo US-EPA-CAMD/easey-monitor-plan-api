@@ -30,13 +30,10 @@ export class UnitFuelController {
       }
   })
   async getUnitFuels(
-    @Param('locId') locId: string,
     @Param('unitId') unitId: number,
   ): Promise<ArrayResponse<UnitFuelDTO>> {
-    const unitFuels = await this.service.getUnitFuels(locId, unitId);
+    const unitFuels = await this.service.getUnitFuels(unitId);
 
-    return  {
-      items: unitFuels
-    }
+    return { items: unitFuels };
   }
 }
