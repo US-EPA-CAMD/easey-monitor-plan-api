@@ -16,7 +16,11 @@ import {
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInDateRange } from '../import-checks/pipes/is-in-date-range.pipe';
-import { DATE_FORMAT, MINIMUM_DATE, getMaximumFutureDate } from '../utilities/constants';
+import {
+  DATE_FORMAT,
+  MINIMUM_DATE,
+  getMaximumFutureDate,
+} from '../utilities/constants';
 import { BeginEndDatesConsistent } from '../utils';
 
 const KEY = 'Unit Capacity';
@@ -28,9 +32,8 @@ export class UnitCapacityBaseDTO {
         .description,
     example:
       propertyMetadata.unitCapacityDTOMaximumHourlyHeatInputCapacity.example,
-    name:
-      propertyMetadata.unitCapacityDTOMaximumHourlyHeatInputCapacity.fieldLabels
-        .value,
+    name: propertyMetadata.unitCapacityDTOMaximumHourlyHeatInputCapacity
+      .fieldLabels.value,
   })
   @IsNotEmpty()
   @IsNumber(
@@ -163,17 +166,21 @@ export class UnitCapacityDTO extends UnitCapacityBaseDTO {
   boilerTurbineType: string;
 
   @ApiProperty({
-    description: propertyMetadata.unitCapacityDTOBeginDate.description,
-    example: propertyMetadata.unitCapacityDTOBeginDate.example,
-    name: propertyMetadata.unitCapacityDTOBeginDate.fieldLabels.value,
+    description:
+      propertyMetadata.unitCapacityDTOBoilerTurbineBeginDate.description,
+    example: propertyMetadata.unitCapacityDTOBoilerTurbineBeginDate.example,
+    name: propertyMetadata.unitCapacityDTOBoilerTurbineBeginDate.fieldLabels
+      .value,
   })
   @IsDateString()
   boilerTurbineBeginDate: Date;
 
   @ApiProperty({
-    description: propertyMetadata.unitCapacityDTOEndDate.description,
-    example: propertyMetadata.unitCapacityDTOEndDate.example,
-    name: propertyMetadata.unitCapacityDTOEndDate.fieldLabels.value,
+    description:
+      propertyMetadata.unitCapacityDTOBoilerTurbineEndDate.description,
+    example: propertyMetadata.unitCapacityDTOBoilerTurbineEndDate.example,
+    name: propertyMetadata.unitCapacityDTOBoilerTurbineEndDate.fieldLabels
+      .value,
   })
   @IsDateString()
   @IsOptional()

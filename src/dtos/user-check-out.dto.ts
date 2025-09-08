@@ -4,28 +4,33 @@ import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UserCheckOutBaseDTO {
   @ApiProperty({
-    description: propertyMetadata.facilityId.description,
-    example: propertyMetadata.facilityId.example,
-    name: propertyMetadata.facilityId.fieldLabels.value,
+    description: propertyMetadata.userCheckOutDTO.facId.description,
+    example: propertyMetadata.userCheckOutDTO.facId.example,
+    name: propertyMetadata.userCheckOutDTO.facId.fieldLabels.value,
   })
   @IsNumber()
   facId: number;
 
   @ApiProperty({
-    description: propertyMetadata.date.description,
-    example: propertyMetadata.date.example,
-    name: propertyMetadata.date.fieldLabels.value,
+    description: propertyMetadata.userCheckOutDTO.checkedOutOn.description,
+    example: propertyMetadata.userCheckOutDTO.checkedOutOn.example,
+    name: propertyMetadata.userCheckOutDTO.checkedOutOn.fieldLabels.value,
   })
   @IsDateString()
   checkedOutOn: string;
 
+  @ApiProperty({
+    description: propertyMetadata.userCheckOutDTO.checkedOutBy.description,
+    example: propertyMetadata.userCheckOutDTO.checkedOutBy.example,
+    name: propertyMetadata.userCheckOutDTO.checkedOutBy.fieldLabels.value,
+  })
   @IsString()
   checkedOutBy: string;
 
   @ApiProperty({
-    description: propertyMetadata.date.description,
-    example: propertyMetadata.date.example,
-    name: propertyMetadata.date.fieldLabels.value,
+    description: propertyMetadata.userCheckOutDTO.lastActivity.description,
+    example: propertyMetadata.userCheckOutDTO.lastActivity.example,
+    name: propertyMetadata.userCheckOutDTO.lastActivity.fieldLabels.value,
   })
   @IsDateString()
   @IsOptional()
@@ -34,9 +39,9 @@ export class UserCheckOutBaseDTO {
 
 export class UserCheckOutDTO extends UserCheckOutBaseDTO {
   @ApiProperty({
-    description: propertyMetadata.monitorPlanDTOId.description,
-    example: propertyMetadata.monitorPlanDTOId.example,
-    name: propertyMetadata.monitorPlanDTOId.fieldLabels.value,
+    description: propertyMetadata.userCheckOutDTO.monPlanId.description,
+    example: propertyMetadata.userCheckOutDTO.monPlanId.example,
+    name: propertyMetadata.userCheckOutDTO.monPlanId.fieldLabels.value,
   })
   @IsString()
   monPlanId: string;
