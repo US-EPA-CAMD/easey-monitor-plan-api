@@ -11,11 +11,8 @@ export class UnitCapacityService {
     private readonly map: UnitCapacityMap,
   ) {}
 
-  async getUnitCapacities(
-    locId: string,
-    unitId: number,
-  ): Promise<UnitCapacityDTO[]> {
-    const results = await this.repository.getUnitCapacities(locId, unitId);
+  async getUnitCapacities(unitId: number): Promise<UnitCapacityDTO[]> {
+    const results = await this.repository.getUnitCapacities(unitId);
 
     return this.map.many(results);
   }

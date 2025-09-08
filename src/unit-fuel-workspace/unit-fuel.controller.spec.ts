@@ -12,7 +12,6 @@ import { UnitFuelWorkspaceService } from './unit-fuel.service';
 
 jest.mock('./unit-fuel.service');
 
-const locId = '6';
 const unitRecordId = 1;
 const unitFuelId = 'some unit fuel id';
 const payload = new UnitFuelBaseDTO();
@@ -61,7 +60,9 @@ describe('UnitFuelWorkspaceController', () => {
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
       jest.spyOn(service, 'getUnitFuels').mockResolvedValue(returnedUnitFuels);
-      expect(await controller.getUnitFuels(locId, unitRecordId)).toStrictEqual({ items: returnedUnitFuels} );
+      expect(await controller.getUnitFuels(unitRecordId)).toStrictEqual({
+        items: returnedUnitFuels,
+      });
     });
   });
 
@@ -70,7 +71,7 @@ describe('UnitFuelWorkspaceController', () => {
       jest.spyOn(service, 'updateUnitFuel').mockResolvedValue(returnedLoad);
       expect(
         await controller.updateUnitFuel(
-          locId,
+          unitRecordId,
           unitFuelId,
           payload,
           currentUser,
@@ -83,12 +84,7 @@ describe('UnitFuelWorkspaceController', () => {
     it('should return the created unit fuel record', async () => {
       jest.spyOn(service, 'createUnitFuel').mockResolvedValue(returnedLoad);
       expect(
-        await controller.createUnitFuel(
-          locId,
-          unitRecordId,
-          payload,
-          currentUser,
-        ),
+        await controller.createUnitFuel(unitRecordId, payload, currentUser),
       ).toBe(returnedLoad);
     });
   });

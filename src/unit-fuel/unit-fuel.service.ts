@@ -11,8 +11,8 @@ export class UnitFuelService {
     readonly map: UnitFuelMap,
   ) {}
 
-  async getUnitFuels(locId: string, unitId: number): Promise<UnitFuelDTO[]> {
-    const results = await this.repository.getUnitFuels(locId, unitId);
+  async getUnitFuels(unitId: number): Promise<UnitFuelDTO[]> {
+    const results = await this.repository.getUnitFuels(unitId);
     return this.map.many(results);
   }
 }

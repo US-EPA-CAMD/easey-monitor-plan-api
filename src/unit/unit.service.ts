@@ -19,7 +19,7 @@ export class UnitService {
     this.logger.setContext('UnitService');
   }
 
-  async getUnits(unitId: number): Promise<UnitDTO[]> {
+  async getUnit(unitId: number): Promise<UnitDTO> {
     return this.getUnitDetails(unitId);
   }
 
@@ -73,7 +73,7 @@ export class UnitService {
     });
   }
 
-  private async getUnitDetails(id: number): Promise<UnitDTO[]> {
+  private async getUnitDetails(id: number): Promise<UnitDTO> {
     const sql = `
         SELECT
             unt.UNIT_ID as "id",
@@ -119,6 +119,6 @@ export class UnitService {
     `;
 
     const result = await this.entityManager.query(sql, [id]);
-    return result;
+    return result.pop() || null; // The query returns at most one row, so we can safely use pop() to get the result or null if empty
   }
 }
