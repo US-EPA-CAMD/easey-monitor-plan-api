@@ -1,7 +1,8 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiSecurity, ApiOkResponse, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
+import { Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiSecurity, ApiOkResponse, ApiExtraModels, getSchemaPath, ApiBearerAuth } from '@nestjs/swagger';
 import { RoleGuard, User, AuditLog } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import {
   UserCheckOutBaseDTO,
@@ -25,22 +26,24 @@ export class CheckOutController {
   ) { }
 
   @Get()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description:
       'Retrieves workspace Monitor Plan configuration records that are checked out by users',
     content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              items: {
-                type: 'array',
-                items: { $ref: getSchemaPath(UserCheckOutDTO) },
-              },
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: { $ref: getSchemaPath(UserCheckOutDTO) },
             },
           },
         },
-      }
+      },
+    }
   })
   @AuditLog({
     label: 'Retrieved workspace check-out plans'
@@ -48,7 +51,7 @@ export class CheckOutController {
   async getCheckedOutConfigurations(): Promise<ArrayResponse<UserCheckOutDTO>> {
     const checkedOutConfigurations = await this.ucoService.getCheckedOutConfigurations();
 
-    return  {
+    return {
       items: checkedOutConfigurations
     };
   }
