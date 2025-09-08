@@ -11,12 +11,9 @@ import { HttpModule } from '@nestjs/axios';
 
 jest.mock('./unit.service');
 
-const locId = 'some location id';
 const unitId = 1;
 
-const data: UnitDTO[] = [];
-data.push(new UnitDTO());
-data.push(new UnitDTO());
+const data = new UnitDTO();
 
 describe('UnitWorkspaceController', () => {
   let controller: UnitWorkspaceController;
@@ -47,8 +44,8 @@ describe('UnitWorkspaceController', () => {
 
   describe('getUnits', () => {
     it('should return array of workspace units', async () => {
-      jest.spyOn(service, 'getUnits').mockResolvedValue(data);
-      expect(await controller.getUnits('locId', unitId)).toStrictEqual({ items: data} );
+      jest.spyOn(service, 'getUnit').mockResolvedValue(data);
+      expect(await controller.getUnit(unitId)).toStrictEqual(data);
     });
   });
 
@@ -67,7 +64,7 @@ describe('UnitWorkspaceController', () => {
       };
 
       jest.spyOn(service, 'updateUnit').mockResolvedValue(updatedUnit);
-      expect(await controller.updateUnit('locId', unitId, payload, user)).toBe(
+      expect(await controller.updateUnit(unitId, payload, user)).toBe(
         updatedUnit,
       );
     });

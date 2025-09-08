@@ -1,4 +1,4 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -10,7 +10,7 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
-import { MonitorPlan as MonitorPlanWorkspace } from '../entities/workspace/monitor-plan.entity';
+import { MonitorPlan, MonitorPlan as MonitorPlanWorkspace } from '../entities/workspace/monitor-plan.entity';
 import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { UnitDTO } from '../dtos/unit.dto';
@@ -1111,6 +1111,8 @@ export class MonitorPlanWorkspaceService {
         trx,
       );
 
+      const targetLocations = payload.monitoringLocationData;
+
       /* MONITOR PLAN MERGE LOGIC */
 
       // Calculate a list of working plans from the database via transaction state.
@@ -1122,6 +1124,14 @@ export class MonitorPlanWorkspaceService {
             trx,
           )),
         ]),
+      ).filter(plan =>
+        plan.items.some(item =>
+          targetLocations.some(loc =>
+            this.isUnitDTO(item)
+              ? item.unitId === loc.unitId
+              : item.unitId === loc.unitId || item.stackPipeId === loc.stackPipeId
+          )
+        )
       );
 
       // Check the configurations for validity.
@@ -1839,6 +1849,93 @@ export class MonitorPlanWorkspaceService {
     if (!plan) return;
 
     await repository.resetToNeedsEvaluation(plan.id, userId);
+
+    //Finally, perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by the change in the monitoring plan.
+    await this.updateCollaterallyAffectedRecords(locId, plan, trx);
+  }
+
+  async updateCollaterallyAffectedRecords( locId: string, monitorPlan: MonitorPlan, trx?: EntityManager, ): Promise<void> {
+    const manager = trx ?? this.repository.manager;
+    const currDate = currentDateTime();
+
+    //1. Update affected QAT Records
+    //1a. Invoke an existing function to set up and update/delete collateral data.
+    const qaResult = await manager.query(
+      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_mp_changes($1)',
+      [locId],
+    );
+    if (qaResult[0].result === 'F') {
+      throw new Error(`QA Deletion Failed: ${qaResult[0].error_msg}`);
+    }
+
+    //2. Update affected QCE Records
+    //2a. Delete CHECK_SESSION row associated with the Affected QCE
+    await manager.query(`
+        DELETE FROM camdecmpswks.check_session cs
+        WHERE EXISTS (
+            SELECT 1
+            FROM camdecmpswks.qa_cert_event qce
+            WHERE qce.chk_session_id = cs.chk_session_id
+              AND qce.mon_loc_id = $1
+              AND qce.needs_eval_flg = 'N'
+              AND (
+                qce.submission_availability_cd = 'REQUIRE'
+                    OR qce.updated_status_flg = 'Y'
+                )
+        )
+    `, [locId]);
+
+    //2b. Reset evaluation flag
+    await manager.query(`
+      UPDATE camdecmpswks.qa_cert_event
+      SET 
+        needs_eval_flg = 'Y', eval_status_cd = 'EVAL', chk_session_id = NULL, update_date = $1 
+      WHERE mon_loc_id = $2 AND needs_eval_flg = 'N'
+        AND (
+          submission_availability_cd = 'REQUIRE'
+          OR updated_status_flg = 'Y'
+        )
+    `, [currDate,locId]);
+
+    //3. Update affected TEE Records
+    //3a. Delete CHECK_SESSION row associated with the Affected TEE
+    await manager.query(`
+        DELETE FROM camdecmpswks.check_session cs
+        WHERE EXISTS (
+            SELECT 1
+            FROM camdecmpswks.test_extension_exemption tee
+            WHERE tee.chk_session_id = cs.chk_session_id
+              AND tee.mon_loc_id = $1
+              AND tee.needs_eval_flg = 'N'
+              AND (
+                tee.submission_availability_cd = 'REQUIRE'
+                    OR tee.updated_status_flg = 'Y'
+                )
+        )
+    `, [locId]);
+
+    //3b. Reset evaluation flag
+    await manager.query(`
+      UPDATE camdecmpswks.test_extension_exemption
+      SET 
+        needs_eval_flg = 'Y', eval_status_cd = 'EVAL', chk_session_id = NULL, update_date = $1 
+      WHERE mon_loc_id = $2 AND needs_eval_flg = 'N'
+        AND (
+          submission_availability_cd = 'REQUIRE'
+          OR updated_status_flg = 'Y'
+        )
+    `, [currDate,locId]);
+
+    //Update affected EM Records
+    const emResult = await manager.query(
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_mp_changes($1)',
+      [monitorPlan.id],
+    );
+
+    if (emResult[0].result === 'F') {
+      throw new Error(`EM Deletion Failed: ${emResult[0].error_msg}`);
+    }
   }
 
   async exportMonitorPlan(

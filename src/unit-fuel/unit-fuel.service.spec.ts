@@ -6,7 +6,6 @@ import { UnitFuelService } from './unit-fuel.service';
 import { UnitFuelRepository } from './unit-fuel.repository';
 import { UnitFuelDTO } from '../dtos/unit-fuel.dto';
 
-const locId = '6';
 const unitRecordId = 1;
 
 const returnedUnitFuels: UnitFuelDTO[] = [];
@@ -48,7 +47,7 @@ describe('UnitFuelService', () => {
 
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
-      const result = await service.getUnitFuels(locId, unitRecordId);
+      const result = await service.getUnitFuels(unitRecordId);
       expect(result).toEqual('');
     });
   });

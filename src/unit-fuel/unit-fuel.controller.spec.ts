@@ -7,7 +7,6 @@ import { UnitFuelService } from './unit-fuel.service';
 
 jest.mock('./unit-fuel.service');
 
-const locId = '6';
 const unitRecordId = 1;
 
 const data: UnitFuelDTO[] = [];
@@ -36,7 +35,9 @@ describe('UnitFuelController', () => {
   describe('getUnitFuels', () => {
     it('should return array of unit fuels', async () => {
       jest.spyOn(service, 'getUnitFuels').mockResolvedValue(data);
-      expect(await controller.getUnitFuels(locId, unitRecordId)).toStrictEqual({ items: data} );
+      expect(await controller.getUnitFuels(unitRecordId)).toStrictEqual({
+        items: data,
+      });
     });
   });
 });

@@ -13,7 +13,6 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 jest.mock('./unit-capacity.service');
 
-const locId = '6';
 const unitRecordId = 1;
 const id = '1';
 const currentUser: CurrentUser = {
@@ -60,7 +59,7 @@ describe('UnitCapacityController', () => {
       jest
         .spyOn(service, 'getUnitCapacities')
         .mockResolvedValue(returnedUnitCapacities);
-      expect(await controller.getUnitCapacities(locId, unitRecordId)).toStrictEqual({ items: returnedUnitCapacities} );
+      expect(await controller.getUnitCapacities(unitRecordId)).toStrictEqual({ items: returnedUnitCapacities} );
     });
   });
 
@@ -71,7 +70,6 @@ describe('UnitCapacityController', () => {
         .mockResolvedValue(returnedUnitCapacity);
       expect(
         await controller.createUnitCapcity(
-          locId,
           unitRecordId,
           payload,
           currentUser,
@@ -87,7 +85,6 @@ describe('UnitCapacityController', () => {
         .mockResolvedValue(returnedUnitCapacity);
       expect(
         await controller.updateUnitCapacity(
-          locId,
           unitRecordId,
           id,
           payload,

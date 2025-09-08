@@ -3,6 +3,7 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { UnitMap } from '../maps/unit.map';
 import { withTransaction } from '../utils';
 import { UnitWorkspaceRepository } from './unit.repository';
@@ -18,15 +19,14 @@ export class UnitWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {}
 
-  async getUnits(locId: string, unitId: number): Promise<UnitDTO[]> {
-    return await this.getUnitDetails(unitId);
+  async getUnit(unitId: number): Promise<UnitDTO> {
+    return this.getUnitDetails(unitId);
   }
 
   async updateUnit(
-    locationId: string,
     unitId: number,
     payload: UnitBaseDTO,
-    userId: string
+    userId: string,
   ): Promise<UnitDTO> {
     const unit = await this.repository.findOneBy({ id: unitId });
 
@@ -36,13 +36,15 @@ export class UnitWorkspaceService {
 
     await this.repository.save(unit);
 
-    await this.mpService.resetToNeedsEvaluation(locationId, userId);
+    const location = await this.entityManager.findOneBy(MonitorLocation, {
+      unitId,
+    });
+    await this.mpService.resetToNeedsEvaluation(location?.id, userId);
 
-    const unitDetails = await this.getUnitDetails(unitId);
-    return unitDetails && unitDetails.length > 0 ? unitDetails[0] : null;
+    return this.getUnitDetails(unitId);
   }
 
-  private async getUnitDetails(unitId: number): Promise<UnitDTO[]> {
+  private async getUnitDetails(unitId: number): Promise<UnitDTO> {
     const sql = `
         SELECT
             unt.UNIT_ID as "id",
@@ -88,7 +90,7 @@ export class UnitWorkspaceService {
     `;
 
     const result = await this.entityManager.query(sql, [unitId]);
-    return result;
+    return result.pop() || null; // The query returns at most one row, so we can safely use pop() to get the result or null if empty
   }
 
   async getUnitsByFacId(facId: number, trx?: EntityManager) {
