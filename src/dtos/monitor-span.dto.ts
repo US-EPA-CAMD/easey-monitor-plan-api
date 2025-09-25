@@ -63,7 +63,7 @@ export class MonitorSpanBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct span_scale_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
+    ' SELECT distinct span_scale_cd as "value" FROM camdecmpsmd.span_scale_code',
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for ${KEY}`;
@@ -79,7 +79,7 @@ export class MonitorSpanBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct span_method_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
+    'SELECT distinct span_method_cd as "value" FROM camdecmpsmd.span_method_code',
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for ${KEY}`;
@@ -216,7 +216,7 @@ export class MonitorSpanBaseDTO {
     },
   })
   @IsInDbValues(
-    'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_span_master_data_relationships',
+    `SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'SPAN'`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
