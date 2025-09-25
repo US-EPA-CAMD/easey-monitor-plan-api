@@ -14,7 +14,9 @@ import { UnitCapacityMap } from '../maps/unit-capacity.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { settlePromises, withTransaction } from '../utils';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
+const KEY = 'Unit Capacity';
 @Injectable()
 export class UnitCapacityWorkspaceService {
   constructor(
@@ -27,6 +29,15 @@ export class UnitCapacityWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {
     this.logger.setContext('UnitCapacityWorkspaceService');
+  }
+
+  public throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   async importUnitCapacity(
@@ -171,5 +182,49 @@ export class UnitCapacityWorkspaceService {
     }
 
     return this.map.one(unitCapacity);
+  }
+
+  async runChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number) {
+    let errorList: string[] = [];
+    let error: string = null;
+
+    error = await this.duplicateUnitCapacityChecks(unitCapacity, unitId)
+    if (error) {
+      errorList.push(error);
+    }
+
+    this.throwIfErrors(errorList);
+  }
+
+  private async duplicateUnitCapacityChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number) {
+    const existingUnitCapacities = await this.getUnitCapacities(unitId);
+
+    const duplicateBeginDate = existingUnitCapacities.find(existingCapacity =>
+      existingCapacity.beginDate &&
+      existingCapacity.beginDate === unitCapacity.beginDate
+    );
+
+    if (duplicateBeginDate) {
+      return CheckCatalogService.formatResultMessage('CAPAC-6-A', {
+        fieldnames: 'beginDate',
+        recordtype: KEY
+      })
+    }
+
+    if (unitCapacity.endDate) {
+      const duplicateEndDate = existingUnitCapacities.find(existingCapacity =>
+        existingCapacity.endDate &&
+        existingCapacity.endDate === unitCapacity.endDate
+      );
+
+      if (duplicateEndDate) {
+        return CheckCatalogService.formatResultMessage('CAPAC-6-A', {
+          fieldnames: 'endDate',
+          recordtype: KEY
+        })
+      }
+    }
+
+    return null;
   }
 }
