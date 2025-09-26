@@ -4,6 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 import { DuctWaf } from '../entities/duct-waf.entity';
@@ -11,6 +12,8 @@ import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { settlePromises, withTransaction } from '../utils';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
+
+const KEY = 'Rectangular Duct WAF';
 
 @Injectable()
 export class DuctWafWorkspaceService {
@@ -23,6 +26,66 @@ export class DuctWafWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {
     this.logger.setContext('DuctWafWorkspaceService');
+  }
+
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async runChecks(ductWaf: DuctWafBaseDTO, locationId: string, excludeDuctWafId?: string) {
+    let errorList: string[] = [];
+    let error: string = null;
+
+    error = await this.duplicateDuctWafChecks(ductWaf, locationId, excludeDuctWafId);
+    if (error) {
+      errorList.push(error);
+    }
+
+    this.throwIfErrors(errorList);
+  }
+
+  private async duplicateDuctWafChecks(
+    ductWaf: DuctWafBaseDTO,
+    locationId: string,
+    excludeDuctWafId?: string
+  ): Promise<string> {
+    const { wafBeginDate, wafBeginHour, wafEndDate, wafEndHour } = ductWaf;
+
+    const duplicateBegin = await this.repository.findOneBy({
+      locationId,
+      wafBeginDate,
+      wafBeginHour
+    });
+
+
+    if (duplicateBegin && duplicateBegin.id !== excludeDuctWafId) {
+      return CheckCatalogService.formatResultMessage('DEFAULT-96-A', {
+        fieldnames: 'wafBeginDate, wafBeginHour',
+        recordtype: KEY
+      });
+    }
+    // Second check: if end date exists, check for duplicate end date/hour
+    if (wafEndDate) {
+      const duplicateEnd = await this.repository.findOneBy({
+        locationId,
+        wafEndDate,
+        wafEndHour
+      });
+
+      if (duplicateEnd && duplicateEnd.id !== excludeDuctWafId) {
+        return CheckCatalogService.formatResultMessage('DEFAULT-96-A', {
+          fieldnames: 'wafEndDate, wafEndHour',
+          recordtype: KEY
+        });
+      }
+    }
+
+    return null;
   }
 
   async getDuctWafs(locationId: string): Promise<DuctWafDTO[]> {
