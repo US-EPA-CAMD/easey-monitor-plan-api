@@ -16,6 +16,8 @@ import { settlePromises, withTransaction } from '../utils';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
 import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
+const KEY = 'Unit Stack Configuration'
+
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
   constructor(
@@ -65,7 +67,13 @@ export class UnitStackConfigurationWorkspaceService {
 
     // Check for duplicate unit stack configurations.
     monitorPlan.unitStackConfigurationData.forEach((usc1, i) => {
-      if (
+      if (!usc1.unitId) {
+        const error = CheckCatalogService.formatResultMessage('MONLOC-107-A', {
+          fieldname: 'unitId',
+          key: KEY
+        })
+        errorList.push(error)
+      } else if (
         monitorPlan.unitStackConfigurationData.findIndex(
           usc2 =>
             usc1.unitId === usc2.unitId &&
