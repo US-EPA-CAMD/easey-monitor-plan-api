@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
+import { CheckCatalogService, EaseyException } from '@us-epa-camd/easey-common';
 
 import { settlePromises, withTransaction } from '../utils';
 import {
@@ -11,7 +12,9 @@ import {
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
+import { MonitorPlan } from 'src/entities/monitor-plan.entity';
 
+const KEY = 'Monitor Plan Comment';
 @Injectable()
 export class MonitorPlanCommentWorkspaceService {
   constructor(
@@ -19,7 +22,92 @@ export class MonitorPlanCommentWorkspaceService {
     private readonly repository: MonitorPlanCommentWorkspaceRepository,
     private readonly map: MonitorPlanCommentMap,
     private readonly entityManager: EntityManager,
-  ) {}
+  ) { }
+
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async runChecks(
+    monitorPlanComment: MonitorPlanCommentBaseDTO,
+    planId: string,
+    excludeCommentId?: string
+  ) {
+    let errorList: string[] = [];
+    let error: string = null;
+
+    const monitorPlan = await this.entityManager.findOne(MonitorPlan, {
+      where: { id: planId },
+      select: ['submissionAvailabilityCode']
+    });
+
+    if (!monitorPlan) {
+      throw new EaseyException(
+        new Error('Monitor Plan not found'),
+        HttpStatus.NOT_FOUND,
+        { planId }
+      );
+    }
+    error = await this.monplan3Check(
+      monitorPlanComment,
+      monitorPlan.submissionAvailabilityCode,
+      excludeCommentId
+    );
+
+    if (error) {
+      errorList.push(error);
+    }
+
+    this.throwIfErrors(errorList);
+  }
+
+  private async monplan3Check(
+    monitorPlanComment: MonitorPlanCommentBaseDTO,
+    submissionAvailabilityCode: string,
+    excludeCommentId?: string
+  ): Promise<string> {
+    const { monitoringPlanComment, beginDate, endDate } = monitorPlanComment;
+
+    // MONPLAN-3 Logic
+    if (submissionAvailabilityCode !== 'UPDATED') {
+      const duplicateBegin = await this.repository.findOneBy({
+        beginDate,
+        monitorPlanComment: monitoringPlanComment
+      });
+
+      if (duplicateBegin && duplicateBegin.id !== excludeCommentId) {
+        return CheckCatalogService.formatResultMessage('MONPLAN-3-A', {
+          fieldnames: 'monitoringPlanComment, beginDate',
+          recordtype: KEY
+        });
+      }
+
+      if (endDate) {
+        const duplicateEnd = await this.repository.findOneBy({
+          monitorPlanComment: monitoringPlanComment,
+          endDate
+        });
+
+        if (duplicateEnd && duplicateEnd.id !== excludeCommentId) {
+          return CheckCatalogService.formatResultMessage('MONPLAN-3-A', {
+            fieldnames: 'monitoringPlanComment, endDate',
+            recordtype: KEY
+          });
+        }
+      }
+    } else {
+      return CheckCatalogService.formatResultMessage('MONPLAN-3-B', {
+        key: KEY
+      });
+    }
+
+    return null;
+  }
 
   async getComments(planId: string): Promise<MonitorPlanCommentDTO[]> {
     const results = await this.repository.findBy({ monitorPlanId: planId });
@@ -54,7 +142,7 @@ export class MonitorPlanCommentWorkspaceService {
     payload: MonitorPlanCommentBaseDTO,
     userId: string,
     trx?: EntityManager,
-    isImport:boolean = false
+    isImport: boolean = false
   ): Promise<MonitorPlanCommentDTO> {
     const repository = withTransaction(this.repository, trx);
 
@@ -69,10 +157,10 @@ export class MonitorPlanCommentWorkspaceService {
       updateDate: currentDateTime(),
     });
     const result = await repository.save(comment);
-    
+
     if (!isImport) {
-    const monitorPlanWorkspaceRepository = withTransaction(this.monitorPlanWorkspaceRepository, trx);
-    await monitorPlanWorkspaceRepository.resetToNeedsEvaluation(monPlanId, userId)
+      const monitorPlanWorkspaceRepository = withTransaction(this.monitorPlanWorkspaceRepository, trx);
+      await monitorPlanWorkspaceRepository.resetToNeedsEvaluation(monPlanId, userId)
     }
 
     return this.map.one(result);
@@ -91,20 +179,20 @@ export class MonitorPlanCommentWorkspaceService {
     const comment = await repository.findOne({
       where: {
         monitorPlanId: monPlanId,
-        id : monitorPlanCommentId
+        id: monitorPlanCommentId
       },
     });
 
     comment.monitorPlanComment = payload.monitoringPlanComment,
-    comment.beginDate = payload.beginDate,
-    comment.endDate = payload.endDate;
+      comment.beginDate = payload.beginDate,
+      comment.endDate = payload.endDate;
     comment.userId = userId;
     comment.updateDate = currentDateTime();
     const result = await repository.save(comment);
-    
+
     if (!isImport) {
-    const monitorPlanWorkspaceRepository = withTransaction(this.monitorPlanWorkspaceRepository, trx);
-    await monitorPlanWorkspaceRepository.resetToNeedsEvaluation(monPlanId, userId)
+      const monitorPlanWorkspaceRepository = withTransaction(this.monitorPlanWorkspaceRepository, trx);
+      await monitorPlanWorkspaceRepository.resetToNeedsEvaluation(monPlanId, userId)
     }
     return this.map.one(result);
   }
@@ -137,7 +225,7 @@ export class MonitorPlanCommentWorkspaceService {
                 monitorPlanComment.endDate !== comment.endDate ||
                 monitorPlanComment.beginDate !== comment.beginDate ||
                 monitorPlanComment.monitoringPlanComment !==
-                  comment.monitoringPlanComment
+                comment.monitoringPlanComment
               ) {
                 await this.updateComment(
                   id,
