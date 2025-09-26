@@ -4,6 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import {
   MonitorQualificationBaseDTO,
@@ -18,6 +19,8 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 import { settlePromises, withTransaction } from '../utils';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
+
+const KEY = 'Monitoring Qualification';
 
 @Injectable()
 export class MonitorQualificationWorkspaceService {
@@ -34,6 +37,69 @@ export class MonitorQualificationWorkspaceService {
     private readonly pctQualificationService: PCTQualificationWorkspaceService,
   ) {
     this.logger.setContext('MonitorQualificationWorkspaceService');
+  }
+
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async runChecks(
+    qualification: MonitorQualificationBaseDTO,
+    locationId: string,
+    excludeQualificationId?: string
+  ) {
+    let errorList: string[] = [];
+    let error: string = null;
+
+    error = await this.qual35Check(qualification, locationId, excludeQualificationId);
+    if (error) {
+      errorList.push(error);
+    }
+
+    this.throwIfErrors(errorList);
+  }
+
+  private async qual35Check(
+    qualification: MonitorQualificationBaseDTO, 
+    locationId: string, 
+    excludeQualificationId?: string
+  ): Promise<string> {
+    const { qualificationTypeCode, beginDate, endDate } = qualification;
+
+    const duplicateBegin = await this.repository.findOneBy({
+      locationId,
+      qualificationTypeCode,
+      beginDate
+    });
+
+    if (duplicateBegin && duplicateBegin.id !== excludeQualificationId) {
+      return CheckCatalogService.formatResultMessage('QUAL-35-A', {
+        fieldnames: 'qualificationTypeCode, beginDate',
+        recordtype: KEY
+      });
+    }
+
+    if (endDate) {
+      const duplicateEnd = await this.repository.findOneBy({
+        locationId,
+        qualificationTypeCode,
+        endDate
+      });
+
+      if (duplicateEnd && duplicateEnd.id !== excludeQualificationId) {
+        return CheckCatalogService.formatResultMessage('QUAL-35-A', {
+          fieldnames: 'qualificationTypeCode, endDate',
+          recordtype: KEY
+        });
+      }
+    }
+
+    return null;
   }
 
   runQualificationImportCheck(qualifications: UpdateMonitorQualificationDTO[]) {
