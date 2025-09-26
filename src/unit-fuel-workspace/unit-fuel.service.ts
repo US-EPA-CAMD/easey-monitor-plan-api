@@ -4,6 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
@@ -12,6 +13,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { settlePromises, withTransaction } from '../utils';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 
+const KEY = 'Unit Fuel';
 @Injectable()
 export class UnitFuelWorkspaceService {
   constructor(
@@ -24,6 +26,60 @@ export class UnitFuelWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {
     this.logger.setContext('UnitFuelWorkspaceService');
+  }
+
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async runChecks(unitFuel: UnitFuelBaseDTO, unitId: number, excludeUnitFuelId?: string) {
+    let errorList: string[] = [];
+    let error: string = null;
+
+    error = await this.duplicateUnitFuelChecks(unitFuel, unitId, excludeUnitFuelId);
+    if (error) {
+      errorList.push(error);
+    }
+
+    this.throwIfErrors(errorList);
+  }
+
+  private async duplicateUnitFuelChecks(
+    unitFuel: UnitFuelBaseDTO, 
+    unitId: number, 
+    excludeUnitFuelId?: string
+  ): Promise<string> {
+    const { fuelCode, beginDate, endDate } = unitFuel;
+
+    // First check: duplicate fuel code and begin date
+    const duplicateBegin = await this.repository.findOneBy({
+      unitId,
+      fuelCode,
+      beginDate
+    });
+
+    if (duplicateBegin && duplicateBegin.id !== excludeUnitFuelId) {
+      return CheckCatalogService.formatMessage(`[FUEL-52-A] Another [${KEY}] record already exists with the same [beginDate].`);
+    }
+
+    if (endDate) {
+      const duplicateEnd = await this.repository.findOneBy({
+        unitId,
+        fuelCode,
+        endDate
+      });
+
+      if (duplicateEnd && duplicateEnd.id !== excludeUnitFuelId) {
+        return CheckCatalogService.formatMessage(`[FUEL-52-A] Another [${KEY}] record already exists with the same [endDate].`);
+      }
+    }
+
+    return null;
   }
 
   async getUnitFuels(unitId: number): Promise<UnitFuelDTO[]> {
