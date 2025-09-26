@@ -3,6 +3,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import {
   PCTQualificationBaseDTO,
@@ -14,6 +15,8 @@ import { MonitorQualificationWorkspaceService } from '../monitor-qualification-w
 import { settlePromises, withTransaction } from '../utils';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
 
+const KEY = 'Monitor Qualification Percentage';
+
 @Injectable()
 export class PCTQualificationWorkspaceService {
   constructor(
@@ -24,7 +27,54 @@ export class PCTQualificationWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
     @Inject(forwardRef(() => MonitorQualificationWorkspaceService))
     private readonly mpQualService: MonitorQualificationWorkspaceService,
-  ) {}
+  ) { }
+
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
+      throw new EaseyException(
+        new Error(JSON.stringify(errorList)),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async runChecks(
+    pctQualification: PCTQualificationBaseDTO,
+    qualificationId: string,
+    excludePctQualificationId?: string
+  ) {
+    let errorList: string[] = [];
+    let error: string = null;
+
+    error = await this.qual36Check(pctQualification, qualificationId, excludePctQualificationId);
+    if (error) {
+      errorList.push(error);
+    }
+
+    this.throwIfErrors(errorList);
+  }
+
+  private async qual36Check(
+    pctQualification: PCTQualificationBaseDTO,
+    qualificationId: string,
+    excludePctQualificationId?: string
+  ): Promise<string> {
+    const { qualificationYear } = pctQualification;
+
+    const duplicate = await this.repository.findOneBy({
+      qualificationId,
+      qualificationYear
+    });
+
+    if (duplicate && duplicate.id !== excludePctQualificationId) {
+      return CheckCatalogService.formatResultMessage('QUAL-36-A', {
+        fieldnames: 'qualificationYear',
+        recordtype: KEY
+      });
+    }
+
+    return null;
+  }
 
   async getPCTQualifications(
     locId: string,
