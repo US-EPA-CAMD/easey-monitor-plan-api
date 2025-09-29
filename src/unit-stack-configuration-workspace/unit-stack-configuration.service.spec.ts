@@ -321,9 +321,9 @@ describe('UnitStackConfigurationWorkspaceService', () => {
       unitStackConfig1.beginDate = sameBeginDate;
 
       const unitStackConfig2 = new UnitStackConfigurationBaseDTO();
-      unitStackConfig2.unitId = 'TEST'; 
-      unitStackConfig2.stackPipeId = 'CS0AN'; 
-      unitStackConfig2.beginDate = sameBeginDate; 
+      unitStackConfig2.unitId = 'TEST';
+      unitStackConfig2.stackPipeId = 'CS0AN';
+      unitStackConfig2.beginDate = sameBeginDate;
 
       const location1 = new UpdateMonitorLocationDTO();
       location1.unitId = 'TEST';
@@ -338,6 +338,29 @@ describe('UnitStackConfigurationWorkspaceService', () => {
 
       expect(monloc107BErrors.length).toBeGreaterThan(0);
       expect(monloc107BErrors[0]).toContain('[MONLOC-107-B]');
+    });
+  });
+
+  describe('IMPORT-4-A check', () => {
+    it('should return IMPORT-4-A error when unit has no stack configuration in multi-unit scenario', async () => {
+      const plan = new UpdateMonitorPlanDTO();
+      const location1 = new UpdateMonitorLocationDTO();
+      location1.unitId = 'UNIT1';
+
+      const location2 = new UpdateMonitorLocationDTO();
+      location2.unitId = 'UNIT2';
+
+      plan.monitoringLocationData = [location1, location2];
+
+      const stackConfig = new UnitStackConfigurationBaseDTO();
+      stackConfig.unitId = 'UNIT1';
+      stackConfig.stackPipeId = 'STACK1';
+
+      plan.unitStackConfigurationData = [stackConfig];
+
+      const result = await service.importUnitStackConfigurationChecks(plan);
+
+      expect(result).toContain('[IMPORT-4-A]');
     });
   });
 });
