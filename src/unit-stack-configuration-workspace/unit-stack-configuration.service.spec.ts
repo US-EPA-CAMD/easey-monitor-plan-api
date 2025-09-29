@@ -296,4 +296,48 @@ describe('UnitStackConfigurationWorkspaceService', () => {
       expect(response).toEqual([unitStackDto]);
     });
   });
+
+  describe('MONLOC-107 check', () => {
+    it('should return MONLOC-107-A error when unitId is missing in unit stack configuration', () => {
+      const unitStackConfig = new UnitStackConfigurationBaseDTO();
+      unitStackConfig.unitId = null;
+      unitStackConfig.stackPipeId = 'TEST';
+
+      const plan = new UpdateMonitorPlanDTO();
+      plan.unitStackConfigurationData = [unitStackConfig];
+      plan.monitoringLocationData = [];
+
+      const result = service.runUnitStackChecks(plan);
+
+      expect(result).toContain('[MONLOC-107-A]');
+    });
+
+    it('should return MONLOC-107-B error when duplicate unit stack configuration exists', () => {
+      const sameBeginDate = new Date('2023-01-01');
+
+      const unitStackConfig1 = new UnitStackConfigurationBaseDTO();
+      unitStackConfig1.unitId = 'TEST';
+      unitStackConfig1.stackPipeId = 'CS0AN';
+      unitStackConfig1.beginDate = sameBeginDate;
+
+      const unitStackConfig2 = new UnitStackConfigurationBaseDTO();
+      unitStackConfig2.unitId = 'TEST'; 
+      unitStackConfig2.stackPipeId = 'CS0AN'; 
+      unitStackConfig2.beginDate = sameBeginDate; 
+
+      const location1 = new UpdateMonitorLocationDTO();
+      location1.unitId = 'TEST';
+      location1.stackPipeId = 'CS0AN';
+
+      const plan = new UpdateMonitorPlanDTO();
+      plan.unitStackConfigurationData = [unitStackConfig1, unitStackConfig2];
+      plan.monitoringLocationData = [location1];
+
+      const result = service.runUnitStackChecks(plan);
+      const monloc107BErrors = result.filter(error => error.includes('MONLOC-107-B'));
+
+      expect(monloc107BErrors.length).toBeGreaterThan(0);
+      expect(monloc107BErrors[0]).toContain('[MONLOC-107-B]');
+    });
+  });
 });
