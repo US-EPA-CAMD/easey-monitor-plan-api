@@ -63,7 +63,7 @@ export class MonitorSpanBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    ' SELECT distinct span_scale_cd as "value" FROM camdecmpsmd.span_scale_code',
+    'SELECT distinct span_scale_cd as "value" FROM camdecmpsmd.span_scale_code',
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for ${KEY}`;
