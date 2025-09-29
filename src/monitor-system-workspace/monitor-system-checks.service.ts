@@ -4,13 +4,16 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
 import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
+import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
 
+const KEY = 'Monitor System';
 @Injectable()
 export class MonitorSystemCheckService {
   constructor(
     private readonly logger: Logger,
     private readonly componentChecksService: ComponentCheckService,
-  ) {}
+    private readonly monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository,
+  ) { }
 
   private async extractErrors(
     promises: Promise<string[]>[],
@@ -42,12 +45,46 @@ export class MonitorSystemCheckService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     errorLocation: string = '',
+    monitoringSystemId?: string
   ) {
+    let error: string = null;
     let errorList: string[] = [];
     const promises: Promise<string[]>[] = [];
 
     errorList = await this.extractErrors(promises);
+
+    if (!isImport) {
+      error = await this.system24Check(locationId, monitorSystem, isUpdate, monitoringSystemId);
+
+      if (error) {
+        errorList.push(error);
+      }
+    }
+
+
     this.throwIfErrors(errorList);
     return errorList;
+  }
+
+  private async system24Check(
+    locationId: string | null,
+    monitorSystem: UpdateMonitorSystemDTO,
+    isUpdate: boolean = false,
+    excludeSystemId?: string,
+  ): Promise<string> {
+
+    const existingSystem = await this.monitorSystemWorkspaceRepository.findOneBy({
+      locationId,
+      monitoringSystemId: monitorSystem.monitoringSystemId
+    });
+
+    if (existingSystem && (!isUpdate || existingSystem.id !== excludeSystemId)) {
+      return CheckCatalogService.formatResultMessage('SYSTEM-24-A', {
+        fieldnames: 'monitoringSystemId',
+        recordtype: KEY
+      });
+    }
+
+    return null;
   }
 }

@@ -29,18 +29,18 @@ export class MonitorSystemWorkspaceController {
     description:
       'Retrieves workspace system records for a given monitor location',
     content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              items: {
-                type: 'array',
-                items: { $ref: getSchemaPath(MonitorSystemDTO) },
-              },
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            items: {
+              type: 'array',
+              items: { $ref: getSchemaPath(MonitorSystemDTO) },
             },
           },
         },
-      }
+      },
+    }
   })
   @RoleGuard(
     {
@@ -57,7 +57,7 @@ export class MonitorSystemWorkspaceController {
   async getSystems(@Param('locId') locationId: string): Promise<ArrayResponse<MonitorSystemDTO>> {
     const systems = await this.service.getSystems(locationId);
 
-    return  {
+    return {
       items: systems
     }
   }
@@ -118,7 +118,7 @@ export class MonitorSystemWorkspaceController {
     @Body() payload: UpdateMonitorSystemDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorSystemDTO> {
-    await this.checkService.runChecks(locationId, payload, false, true);
+    await this.checkService.runChecks(locationId, payload, false, true, null, monitoringSystemId);
     return this.service.updateSystem({
       monitoringSystemRecordId: monitoringSystemId,
       payload,
