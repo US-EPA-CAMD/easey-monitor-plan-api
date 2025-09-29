@@ -12,7 +12,7 @@ import {
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
-import { MonitorPlan } from 'src/entities/monitor-plan.entity';
+import { MonitorPlan } from '../entities/monitor-plan.entity';
 
 const KEY = 'Monitor Plan Comment';
 @Injectable()
