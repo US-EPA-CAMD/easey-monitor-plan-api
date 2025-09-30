@@ -196,7 +196,7 @@ export class UnitCapacityWorkspaceService {
     this.throwIfErrors(errorList);
   }
 
-  private async duplicateUnitCapacityChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number, excludeUnitCapacityId: string) {
+  private async duplicateUnitCapacityChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number, excludeUnitCapacityId?: string) {
     const existingUnitCapacities = await this.getUnitCapacities(unitId);
 
     const duplicateBeginDate = existingUnitCapacities.find(existingCapacity =>
