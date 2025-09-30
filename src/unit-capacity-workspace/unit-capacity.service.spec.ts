@@ -157,6 +157,7 @@ describe('UnitCapacityWorkspaceService', () => {
       const existingCapacity = new UnitCapacityDTO();
       existingCapacity.beginDate = duplicateBeginDate;
       existingCapacity.endDate = new Date('2023-01-01');
+      existingCapacity.id = 'ABC'
 
       jest.spyOn(service, 'getUnitCapacities').mockResolvedValue([existingCapacity]);
 
@@ -180,6 +181,7 @@ describe('UnitCapacityWorkspaceService', () => {
       const existingCapacity = new UnitCapacityDTO();
       existingCapacity.beginDate = new Date('2022-01-02');
       existingCapacity.endDate = duplicateEndDate;
+      existingCapacity.id = 'ABC';
 
       jest.spyOn(service, 'getUnitCapacities').mockResolvedValue([existingCapacity]);
 
