@@ -184,11 +184,11 @@ export class UnitCapacityWorkspaceService {
     return this.map.one(unitCapacity);
   }
 
-  async runChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number) {
+  async runChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number, excludeUnitCapacityId?: string) {
     let errorList: string[] = [];
     let error: string = null;
 
-    error = await this.duplicateUnitCapacityChecks(unitCapacity, unitId)
+    error = await this.duplicateUnitCapacityChecks(unitCapacity, unitId, excludeUnitCapacityId)
     if (error) {
       errorList.push(error);
     }
@@ -196,7 +196,7 @@ export class UnitCapacityWorkspaceService {
     this.throwIfErrors(errorList);
   }
 
-  private async duplicateUnitCapacityChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number) {
+  private async duplicateUnitCapacityChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number, excludeUnitCapacityId: string) {
     const existingUnitCapacities = await this.getUnitCapacities(unitId);
 
     const duplicateBeginDate = existingUnitCapacities.find(existingCapacity =>
@@ -204,7 +204,7 @@ export class UnitCapacityWorkspaceService {
       existingCapacity.beginDate === unitCapacity.beginDate
     );
 
-    if (duplicateBeginDate) {
+    if (duplicateBeginDate && duplicateBeginDate.id !== excludeUnitCapacityId) {
       return CheckCatalogService.formatResultMessage('CAPAC-6-A', {
         fieldnames: 'beginDate',
         recordtype: KEY
@@ -217,7 +217,7 @@ export class UnitCapacityWorkspaceService {
         existingCapacity.endDate === unitCapacity.endDate
       );
 
-      if (duplicateEndDate) {
+      if (duplicateEndDate && duplicateEndDate.id !== excludeUnitCapacityId) {
         return CheckCatalogService.formatResultMessage('CAPAC-6-A', {
           fieldnames: 'endDate',
           recordtype: KEY

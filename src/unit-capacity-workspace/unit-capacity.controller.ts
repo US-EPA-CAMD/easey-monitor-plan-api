@@ -115,6 +115,7 @@ export class UnitCapacityWorkspaceController {
     @Body() payload: UnitCapacityBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitCapacityDTO> {
+    await this.service.runChecks(payload, unitId, unitCapacityId);
     return this.service.updateUnitCapacity({
       unitRecordId: unitId,
       unitCapacityId: unitCapacityId,
