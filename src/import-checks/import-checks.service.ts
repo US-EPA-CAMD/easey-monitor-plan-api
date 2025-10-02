@@ -41,12 +41,6 @@ export class ImportChecksService {
   public async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
     let errorList = [];
 
-    // // Plant Check
-    // errorList.push(
-    //   ...(await this.plantService.runPlantCheck(monPlan.orisCode)),
-    // );
-    // this.checkIfThrows(errorList);
-
     const facilityId = await this.plantService.getFacIdFromOris(
       monPlan.orisCode,
     );
