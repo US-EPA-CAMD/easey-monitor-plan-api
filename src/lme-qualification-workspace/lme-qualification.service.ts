@@ -15,6 +15,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { settlePromises, withTransaction } from '../utils';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
+import {  throwIfErrors } from '../utils';
 
 const KEY = 'Monitor Qualification LME';
 @Injectable()
@@ -30,15 +31,6 @@ export class LMEQualificationWorkspaceService {
     private readonly mpQualService: MonitorQualificationWorkspaceService,
   ) { }
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
   async runChecks(
     lmeQualification: LMEQualificationBaseDTO,
     qualificationId: string,
@@ -52,7 +44,7 @@ export class LMEQualificationWorkspaceService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
   }
 
   private async qual37Check(

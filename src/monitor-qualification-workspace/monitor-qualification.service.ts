@@ -19,6 +19,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { PCTQualificationWorkspaceService } from '../pct-qualification-workspace/pct-qualification.service';
 import { settlePromises, withTransaction } from '../utils';
 import { MonitorQualificationWorkspaceRepository } from './monitor-qualification.repository';
+import {  throwIfErrors } from '../utils';
 
 const KEY = 'Monitoring Qualification';
 
@@ -39,15 +40,6 @@ export class MonitorQualificationWorkspaceService {
     this.logger.setContext('MonitorQualificationWorkspaceService');
   }
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
   async runChecks(
     qualification: MonitorQualificationBaseDTO,
     locationId: string,
@@ -61,7 +53,7 @@ export class MonitorQualificationWorkspaceService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
   }
 
   private async qual35Check(

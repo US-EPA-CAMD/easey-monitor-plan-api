@@ -12,6 +12,7 @@ import { UnitFuelMap } from '../maps/unit-fuel.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { settlePromises, withTransaction } from '../utils';
 import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
+import {  throwIfErrors } from '../utils';
 
 const KEY = 'Unit Fuel';
 @Injectable()
@@ -28,15 +29,6 @@ export class UnitFuelWorkspaceService {
     this.logger.setContext('UnitFuelWorkspaceService');
   }
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
   async runChecks(unitFuel: UnitFuelBaseDTO, unitId: number, excludeUnitFuelId?: string) {
     let errorList: string[] = [];
     let error: string = null;
@@ -46,7 +38,7 @@ export class UnitFuelWorkspaceService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
   }
 
   private async duplicateUnitFuelChecks(

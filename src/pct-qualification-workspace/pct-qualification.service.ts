@@ -14,6 +14,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { settlePromises, withTransaction } from '../utils';
 import { PCTQualificationWorkspaceRepository } from './pct-qualification.repository';
+import {  throwIfErrors } from '../utils';
 
 const KEY = 'Monitor Qualification Percentage';
 
@@ -29,15 +30,6 @@ export class PCTQualificationWorkspaceService {
     private readonly mpQualService: MonitorQualificationWorkspaceService,
   ) { }
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
   async runChecks(
     pctQualification: PCTQualificationBaseDTO,
     qualificationId: string,
@@ -51,7 +43,7 @@ export class PCTQualificationWorkspaceService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
   }
 
   private async qual36Check(

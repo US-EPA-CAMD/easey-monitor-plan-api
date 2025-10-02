@@ -13,6 +13,7 @@ import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import {  throwIfErrors } from '../utils';
 
 const KEY = 'Monitor Plan Comment';
 @Injectable()
@@ -23,15 +24,6 @@ export class MonitorPlanCommentWorkspaceService {
     private readonly map: MonitorPlanCommentMap,
     private readonly entityManager: EntityManager,
   ) { }
-
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
 
   async runChecks(
     monitorPlanComment: MonitorPlanCommentBaseDTO,
@@ -63,7 +55,7 @@ export class MonitorPlanCommentWorkspaceService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
   }
 
   private async monplan3Check(

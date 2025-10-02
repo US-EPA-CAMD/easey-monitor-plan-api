@@ -12,6 +12,7 @@ import { DuctWafMap } from '../maps/duct-waf.map';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { settlePromises, withTransaction } from '../utils';
 import { DuctWafWorkspaceRepository } from './duct-waf.repository';
+import {  throwIfErrors } from '../utils';
 
 const KEY = 'Rectangular Duct WAF';
 
@@ -28,15 +29,6 @@ export class DuctWafWorkspaceService {
     this.logger.setContext('DuctWafWorkspaceService');
   }
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-
   async runChecks(ductWaf: DuctWafBaseDTO, locationId: string, excludeDuctWafId?: string) {
     let errorList: string[] = [];
     let error: string = null;
@@ -46,7 +38,7 @@ export class DuctWafWorkspaceService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
   }
 
   private async duplicateDuctWafChecks(

@@ -15,6 +15,7 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { settlePromises, withTransaction } from '../utils';
 import { UnitCapacityWorkspaceRepository } from './unit-capacity.repository';
 import { CheckCatalogService } from '@us-epa-camd/easey-common';
+import {  throwIfErrors } from '../utils';
 
 const KEY = 'Unit Capacity';
 @Injectable()
@@ -29,15 +30,6 @@ export class UnitCapacityWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
   ) {
     this.logger.setContext('UnitCapacityWorkspaceService');
-  }
-
-  public throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
   }
 
   async importUnitCapacity(
@@ -193,7 +185,7 @@ export class UnitCapacityWorkspaceService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
   }
 
   private async duplicateUnitCapacityChecks(unitCapacity: UnitCapacityBaseDTO, unitId: number, excludeUnitCapacityId?: string) {
