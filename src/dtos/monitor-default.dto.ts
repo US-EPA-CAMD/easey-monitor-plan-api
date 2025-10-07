@@ -45,7 +45,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsInDbValues(
-    `SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_dto_parameter_code where record_type = 'DEFAULT'`,
+    `SELECT parameter_code as "value" FROM camdecmpsmd.vw_dto_parameter_code where record_type = 'DEFAULT'`,
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
@@ -119,7 +119,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsInDbValues(
-    `SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'DEFAULT'`,
+    `SELECT unit_of_measure_code as "value" FROM camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'DEFAULT'`,
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
@@ -151,7 +151,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsInDbValues(
-    'SELECT distinct default_purpose_cd  as "value" FROM camdecmpsmd.default_purpose_code',
+    'SELECT default_purpose_cd  as "value" FROM camdecmpsmd.default_purpose_code',
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
@@ -210,7 +210,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsInDbValues(
-    'SELECT distinct operating_condition_cd as "value" FROM camdecmpsmd.operating_condition_code',
+    'SELECT operating_condition_cd as "value" FROM camdecmpsmd.operating_condition_code',
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
@@ -242,7 +242,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsInDbValues(
-    'SELECT distinct default_source_cd as "value" FROM camdecmpsmd.default_source_code',
+    'SELECT default_source_cd as "value" FROM camdecmpsmd.default_source_code',
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(

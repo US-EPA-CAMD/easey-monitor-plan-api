@@ -32,7 +32,7 @@ export class MonitorMethodBaseDTO {
   })
   @IsNotEmpty()
   @IsInDbValues(
-    `SELECT distinct parameter_code "value" FROM camdecmpsmd.vw_dto_parameter_code where record_type = 'METHOD'`,
+    `SELECT parameter_code "value" FROM camdecmpsmd.vw_dto_parameter_code where record_type = 'METHOD'`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
@@ -50,7 +50,7 @@ export class MonitorMethodBaseDTO {
   })
   @IsNotEmpty()
   @IsInDbValues(
-    `SELECT distinct method_cd "value" FROM camdecmpsmd.method_code`,
+    `SELECT method_cd "value" FROM camdecmpsmd.method_code`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
@@ -67,7 +67,7 @@ export class MonitorMethodBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    `SELECT distinct sub_data_cd "value" FROM camdecmpsmd.substitute_data_code`,
+    `SELECT sub_data_cd "value" FROM camdecmpsmd.substitute_data_code`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
@@ -84,7 +84,7 @@ export class MonitorMethodBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    `SELECT distinct bypass_approach_cd "value" FROM camdecmpsmd.bypass_approach_code`,
+    `SELECT bypass_approach_cd "value" FROM camdecmpsmd.bypass_approach_code`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;

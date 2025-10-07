@@ -31,7 +31,7 @@ export class UnitFuelBaseDTO {
   })
   @IsNotEmpty()
   @IsInDbValues(
-    'SELECT distinct fuel_type_cd as "value" FROM camdecmpsmd.fuel_type_code',
+    'SELECT fuel_type_cd as "value" FROM camdecmpsmd.fuel_type_code',
     {
       message: (args: ValidationArguments) => {
         return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;
@@ -47,7 +47,7 @@ export class UnitFuelBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct fuel_indicator_cd as "value" FROM camdecmpsmd.fuel_indicator_code',
+    'SELECT fuel_indicator_cd as "value" FROM camdecmpsmd.fuel_indicator_code',
     {
       message: (args: ValidationArguments) => {
         return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;
@@ -77,7 +77,7 @@ export class UnitFuelBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    `SELECT distinct dem_method_cd as "value" FROM camdecmpsmd.dem_method_code where dem_parameter = 'GCV'`,
+    `SELECT dem_method_cd as "value" FROM camdecmpsmd.dem_method_code where dem_parameter = 'GCV'`,
     {
       message: (args: ValidationArguments) => {
         return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;
@@ -93,7 +93,7 @@ export class UnitFuelBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    `SELECT distinct dem_method_cd as "value" FROM camdecmpsmd.dem_method_code where dem_parameter = 'SULFUR'`,
+    `SELECT dem_method_cd as "value" FROM camdecmpsmd.dem_method_code where dem_parameter = 'SULFUR'`,
     {
       message: (args: ValidationArguments) => {
         return `The value for [${args.value}] in the Unit Fuel record [${args.property}] is invalid`;

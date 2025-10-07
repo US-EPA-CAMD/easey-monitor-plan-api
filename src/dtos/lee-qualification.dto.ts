@@ -49,7 +49,7 @@ export class LEEQualificationBaseDTO {
     name: propertyMetadata.lEEQualificationDTOParameterCode.fieldLabels.value,
   })
   @IsInDbValues(
-    `SELECT distinct parameter_code as "value" FROM camdecmpsmd.vw_dto_parameter_code where record_type = 'QUALLEE'`,
+    `SELECT parameter_code as "value" FROM camdecmpsmd.vw_dto_parameter_code where record_type = 'QUALLEE'`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
@@ -68,7 +68,7 @@ export class LEEQualificationBaseDTO {
         .value,
   })
   @IsInDbValues(
-    'SELECT distinct qual_lee_test_type_cd as "value" FROM camdecmpsmd.qual_lee_test_type_code',
+    'SELECT qual_lee_test_type_cd as "value" FROM camdecmpsmd.qual_lee_test_type_code',
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
@@ -138,7 +138,7 @@ export class LEEQualificationBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    `SELECT distinct unit_of_standard_code as "value" FROM camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'QUALLEE'`,
+    `SELECT unit_of_standard_code as "value" FROM camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'QUALLEE'`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
