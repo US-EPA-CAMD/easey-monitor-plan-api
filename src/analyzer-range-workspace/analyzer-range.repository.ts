@@ -48,6 +48,19 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
     return null;
   }
 
+  async getAnalyzerRangeByLogicalKey(
+    componentId: string,
+    beginDate: Date,
+    beginHour: number,
+  ): Promise<AnalyzerRange | null> {
+    return this.createQueryBuilder('ar')
+      .innerJoin('ar.component', 'c')
+      .where('c.id = :componentId', { componentId })
+      .andWhere('ar.beginDate = :beginDate', { beginDate })
+      .andWhere('ar.beginHour = :beginHour', { beginHour })
+      .getOne();
+  }
+
 
   async getAnalyzerRangesByCompIds(
     componentIds: string[],
