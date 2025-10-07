@@ -216,7 +216,7 @@ export class MonitorSpanBaseDTO {
     },
   })
   @IsInDbValues(
-    `SELECT unit_of_measure_code as "value" FROM camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'SPAN'`,
+    `SELECT unit_of_measure_code as "value" FROM camdecmpsmd.vw_uom_code_for_span where record_type = 'SPAN'`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;

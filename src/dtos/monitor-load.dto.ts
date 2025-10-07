@@ -49,7 +49,7 @@ export class MonitorLoadBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    `SELECT unit_of_measure_code AS "value" from camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'LOAD'`,
+    `SELECT unit_of_measure_code AS "value" from camdecmpsmd.vw_uom_code_for_load where record_type = 'LOAD'`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid`;

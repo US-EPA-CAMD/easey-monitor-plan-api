@@ -119,7 +119,7 @@ export class MonitorDefaultBaseDTO {
     },
   })
   @IsInDbValues(
-    `SELECT unit_of_measure_code as "value" FROM camdecmpsmd.vw_dto_unit_of_measure_code where record_type = 'DEFAULT'`,
+    `SELECT unit_of_measure_code as "value" FROM camdecmpsmd.vw_uom_code_for_default where record_type = 'DEFAULT'`,
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatMessage(
