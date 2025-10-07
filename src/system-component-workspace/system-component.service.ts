@@ -178,7 +178,7 @@ export class SystemComponentWorkspaceService {
         const systemComponentRecord = await withTransaction(
           this.repository,
           trx,
-        ).getSystemComponentByBeginOrEndDate(
+        ).getSystemComponentByLogicalKey(
           sysId,
           component.componentId,
           component.beginDate,
