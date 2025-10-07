@@ -141,7 +141,7 @@ export class SystemFuelFlowWorkspaceService {
         const fuelFlowRecord = await withTransaction(
           this.repository,
           trx,
-        ).getFuelFlowByMonSysIdBeginOrEndDate(sysId, fuelFlow);
+        ).getFuelFlowByLogicalKey(sysId, fuelFlow.beginDate, fuelFlow.beginHour);
 
         if (fuelFlowRecord) {
           await this.updateFuelFlow({
