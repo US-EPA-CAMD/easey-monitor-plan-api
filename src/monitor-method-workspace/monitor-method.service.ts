@@ -156,13 +156,11 @@ export class MonitorMethodWorkspaceService {
         const methodRecord = await withTransaction(
           this.repository,
           trx,
-        ).getMethodByLocIdParamBeginOrEndDate(
+        ).getMethodByLogicalKey(
           locationId,
           method.parameterCode,
           method.beginDate,
           method.beginHour,
-          method.endDate,
-          method.endHour,
         );
 
         if (methodRecord) {
