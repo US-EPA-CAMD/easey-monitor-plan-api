@@ -24,7 +24,7 @@ const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(monDefault),
   save: jest.fn().mockResolvedValue(monDefault),
   getDefault: jest.fn().mockResolvedValue(monDefault),
-  getDefaultBySpecsBeginOrEndDate: jest.fn().mockResolvedValue(monDefault),
+  getDefaultByLogicalKey: jest.fn().mockResolvedValue(monDefault),
 });
 
 const mockMap = () => ({
@@ -120,7 +120,7 @@ describe('MonitorDefaultWorkspaceService', () => {
       expect(result).toEqual(true);
     });
     it('should create while importing monitor default', async () => {
-      jest.spyOn(repository, 'getDefaultBySpecsBeginOrEndDate').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'getDefaultByLogicalKey').mockResolvedValue(undefined);
 
       const result = await service.importDefault('1', [payload], 'testUser');
       expect(result).toEqual(true);
