@@ -78,7 +78,7 @@ describe('SystemFuelFlowWorkspaceRepository', () => {
   });
 
   describe('getFuelFlowByMonSysIdBeginOrEndDate', () => {
-    it('calls createQueryBuilder and gets a System Fuel Flow from the repository with the specified monSysId, beginDate, beginHour, endDate and endHour', async () => {
+    it('calls createQueryBuilder and gets a System Fuel Flow from the repository with the specified monSysId, beginDate, beginHour', async () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
@@ -88,10 +88,8 @@ describe('SystemFuelFlowWorkspaceRepository', () => {
       const sysFFDto = new SystemFuelFlowBaseDTO();
       sysFFDto.beginDate = new Date();
       sysFFDto.beginHour = 1;
-      sysFFDto.endDate = new Date();
-      sysFFDto.endHour = 1;
 
-      const result = await repository.getFuelFlowByMonSysIdBeginOrEndDate(
+      const result = await repository.getFuelFlowByLogicalKey(
         '1',
         sysFFDto,
       );
