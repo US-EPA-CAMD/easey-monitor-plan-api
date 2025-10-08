@@ -138,7 +138,7 @@ export class LEEQualificationBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    `SELECT unit_of_standard_code as "value" FROM camdecmpsmd.vw_uom_code_for_quallee`,
+    `SELECT unit_of_standard_code as "value" FROM camdecmpsmd.vw_dto_uom_code_for_quallee`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
