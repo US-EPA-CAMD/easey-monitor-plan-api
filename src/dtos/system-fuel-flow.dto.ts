@@ -79,7 +79,7 @@ export class SystemFuelFlowBaseDTO {
     },
   })
   @IsInDbValues(
-    'SELECT distinct unit_of_measure_code as "value" FROM camdecmpsmd.vw_systemfuel_master_data_relationships',
+    `SELECT unit_of_measure_code as "value" FROM camdecmpsmd.vw_dto_uom_code_for_sysfuel`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}].`;
