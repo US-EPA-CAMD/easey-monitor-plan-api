@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, IsNull, Repository } from 'typeorm';
 
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 
@@ -23,15 +23,12 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
     beginDate: Date,
     beginHour: number,
   ): Promise<MonitorSpan | null> {
-     const query = this.createQueryBuilder('ms')
+    const query = this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
       .andWhere('ms.componentTypeCode = :componentTypeCode', { componentTypeCode })
       .andWhere('ms.beginDate = :beginDate', { beginDate })
-      .andWhere('ms.beginHour = :beginHour', { beginHour });
-
-    if (spanScaleCode) {
-      query.andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode });
-    }
+      .andWhere('ms.beginHour = :beginHour', { beginHour })
+      .andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode: spanScaleCode ?? IsNull() })
 
     return query.getOne();
   }
