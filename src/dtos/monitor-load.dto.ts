@@ -49,7 +49,7 @@ export class MonitorLoadBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct unit_of_measure_code AS "value" from camdecmpsmd.vw_load_master_data_relationships',
+    `SELECT unit_of_measure_code AS "value" from camdecmpsmd.vw_dto_uom_code_for_load`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid`;
@@ -97,7 +97,7 @@ export class MonitorLoadBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct normal_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
+    `SELECT op_level_cd AS "value" from camdecmpsmd.operating_level_code where op_level_cd_description in ('High','Low','Mid')`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid`;
@@ -113,7 +113,7 @@ export class MonitorLoadBaseDTO {
   })
   @IsOptional()
   @IsInDbValues(
-    'SELECT distinct second_level AS "value" from camdecmpsmd.vw_load_master_data_relationships',
+    `SELECT op_level_cd AS "value" from camdecmpsmd.operating_level_code where op_level_cd_description in ('High','Low','Mid')`,
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is invalid`;
