@@ -54,8 +54,7 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
     beginHour: number,
   ): Promise<AnalyzerRange | null> {
     return this.createQueryBuilder('ar')
-      .innerJoin('ar.component', 'c')
-      .where('c.id = :componentId', { componentId })
+      .where('ar.componentRecordId = :componentId', { componentId })
       .andWhere('ar.beginDate = :beginDate', { beginDate })
       .andWhere('ar.beginHour = :beginHour', { beginHour })
       .getOne();
