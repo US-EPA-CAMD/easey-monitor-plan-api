@@ -207,11 +207,10 @@ export class MonitorQualificationWorkspaceService {
         const qualificationRecord = await withTransaction(
           this.repository,
           trx,
-        ).getQualificationByLocTypeBeginOrEndDate(
+        ).getQualificationByLogicalKey(
           locationId,
           qualification.qualificationTypeCode,
-          qualification.beginDate,
-          qualification.endDate,
+          qualification.beginDate
         );
 
         if (qualificationRecord) {

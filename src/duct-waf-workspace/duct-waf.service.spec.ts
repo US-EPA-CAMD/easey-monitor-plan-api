@@ -25,7 +25,7 @@ const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(ENTITY),
   create: jest.fn(),
   save: jest.fn(),
-  getDuctWafByLocIdBeginOrEndDate: jest.fn(),
+  getDuctWafByLogicalKey: jest.fn(),
 });
 
 const mockMap = () => ({

@@ -63,18 +63,17 @@ describe('UnitFuelWorkspaceRepository', () => {
     });
   });
 
-  describe('getUnitFuelBySpecsBeginOrEndDate', () => {
-    it('calls createQueryBuilder and gets a Unit Fuel from the repository with the specified unitId, fuelCode and beginDate or endDate', async () => {
+  describe('getUnitCapacityByLogicalKey', () => {
+    it('calls createQueryBuilder and gets a Unit Fuel from the repository with the specified unitId, fuelCode and beginDate', async () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitFuel);
 
-      const result = await repository.getUnitFuelBySpecsBeginOrEndDate(
+      const result = await repository.getUnitFuelByLogicalKey(
         1,
         'CODE',
-        new Date(),
         new Date(),
       );
 
