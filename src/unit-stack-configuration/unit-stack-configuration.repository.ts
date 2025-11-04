@@ -2,34 +2,39 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 
 import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
+import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UnitStackConfigurationRepository extends Repository<
   UnitStackConfiguration
 > {
-  constructor(entityManager: EntityManager) {
+  constructor( private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(UnitStackConfiguration, entityManager);
   }
 
   async getUnitStackConfigsByMonitorPlanId(planId: string) {
-    return this.createQueryBuilder('usc')
-      .innerJoinAndSelect('usc.unit', 'u')
-      .innerJoinAndSelect('usc.stackPipe', 'sp')
-      .innerJoin('u.location', 'u_ml')
-      .innerJoin('sp.location', 'sp_ml')
-      .innerJoin('u_ml.plans', 'u_mp')
-      .innerJoin('sp_ml.plans', 'sp_mp')
-      .innerJoin('u_mp.beginReportingPeriod', 'u_brp')
-      .innerJoin('sp_mp.beginReportingPeriod', 'sp_brp')
-      .leftJoin('u_mp.endReportingPeriod', 'u_erp')
-      .leftJoin('sp_mp.endReportingPeriod', 'sp_erp')
-      .where('u_mp.id = :planId', { planId })
-      .andWhere('sp_mp.id = :planId', { planId })
-      .andWhere('usc.beginDate <= u_brp.endDate')
-      .andWhere('usc.beginDate <= sp_brp.endDate')
-      .andWhere('(usc.endDate IS NULL OR usc.endDate >= u_erp.beginDate)')
-      .andWhere('(usc.endDate IS NULL OR usc.endDate >= sp_erp.beginDate)')
-      .getMany();
+      return useSlaveQueryRunner(this.dataSource, async (qr) => {
+          return qr
+          .createQueryBuilder(UnitStackConfiguration, 'usc')
+          .innerJoinAndSelect('usc.unit', 'u')
+          .innerJoinAndSelect('usc.stackPipe', 'sp')
+          .innerJoin('u.location', 'u_ml')
+          .innerJoin('sp.location', 'sp_ml')
+          .innerJoin('u_ml.plans', 'u_mp')
+          .innerJoin('sp_ml.plans', 'sp_mp')
+          .innerJoin('u_mp.beginReportingPeriod', 'u_brp')
+          .innerJoin('sp_mp.beginReportingPeriod', 'sp_brp')
+          .leftJoin('u_mp.endReportingPeriod', 'u_erp')
+          .leftJoin('sp_mp.endReportingPeriod', 'sp_erp')
+          .where('u_mp.id = :planId', { planId })
+          .andWhere('sp_mp.id = :planId', { planId })
+          .andWhere('usc.beginDate <= u_brp.endDate')
+          .andWhere('usc.beginDate <= sp_brp.endDate')
+          .andWhere('(usc.endDate IS NULL OR usc.endDate >= u_erp.beginDate)')
+          .andWhere('(usc.endDate IS NULL OR usc.endDate >= sp_erp.beginDate)')
+          .getMany();
+         });
   }
 
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {

@@ -11,6 +11,8 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
+import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class MonitorConfigurationsService {
@@ -24,6 +26,7 @@ export class MonitorConfigurationsService {
     private readonly unitControlRepository: UnitControlRepository,
     private readonly unitFuelRepository: UnitFuelRepository,
     private readonly map: MonitorPlanMap,
+    private readonly dataSource: DataSource,
   ) {}
 
   async populateLocationsAndStackConfigs(plan: MonitorPlan) {
@@ -46,18 +49,19 @@ export class MonitorConfigurationsService {
       plant: true,
     };
     if (monPlanIds.length > 0) {
-      plans = await this.monitorPlanRepository.find({
+      plans = await useSlaveRepository(this.dataSource, MonitorPlanRepository, async (repository) => repository.find({
         where: { id: In(monPlanIds) },
         relations,
-      });
+      }));
     } else {
-      const plants = await this.plantRepository.find({
+      const plants = await useSlaveRepository(this.dataSource, PlantRepository, async (repository) => repository.find({
         where: { orisCode: In(orisCodes) },
-      });
-      plans = await this.monitorPlanRepository.find({
+      }));
+      
+      plans = await useSlaveRepository(this.dataSource, MonitorPlanRepository, async (repository) => repository.find({
         where: { facId: In(plants.map(p => p.id)) },
         relations,
-      });
+      }));
     }
 
     await Promise.all(

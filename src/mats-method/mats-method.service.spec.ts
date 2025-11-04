@@ -4,6 +4,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodService } from './mats-method.service';
 import { MatsMethodRepository } from './mats-method.repository';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '../utilities/use-slave-repository';
+
+jest.mock('../utilities/use-slave-repository');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -15,8 +19,11 @@ const mockMap = () => ({
 
 describe('MatsMethodService', () => {
   let service: MatsMethodService;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
@@ -29,6 +36,7 @@ describe('MatsMethodService', () => {
           provide: MatsMethodMap,
           useFactory: mockMap,
         },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -41,6 +49,10 @@ describe('MatsMethodService', () => {
 
   describe('getMethods', () => {
     it('should return array of mats methods', async () => {
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+       );
       const result = await service.getMethods(null);
       expect(result).toEqual('');
     });

@@ -12,6 +12,7 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 import { StackPipe } from '../entities/stack-pipe.entity';
+import { DataSource } from 'typeorm';
 
 const locId = '6';
 const uscDto = new UnitStackConfigurationDTO();
@@ -31,8 +32,11 @@ const mockUscService = () => ({
 
 describe('MonitorLocationService', () => {
   let service: MonitorLocationService;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [NotFoundException, LoggerModule],
       providers: [
@@ -54,6 +58,7 @@ describe('MonitorLocationService', () => {
           provide: MonitorLocationMap,
           useFactory: mockMap,
         },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 

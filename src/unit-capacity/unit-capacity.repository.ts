@@ -1,21 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { UnitCapacity } from '../entities/unit-capacity.entity';
+import { useSlaveQueryRunner } from '../utilities/use-slave-query';
 
 @Injectable()
 export class UnitCapacityRepository extends Repository<UnitCapacity> {
-  constructor(entityManager: EntityManager) {
+  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(UnitCapacity, entityManager);
   }
 
   async getUnitCapacities(unitId: number): Promise<UnitCapacity[]> {
-    const query = this.createQueryBuilder('uc')
+     const query = useSlaveQueryRunner(this.dataSource, async (qr) => {
+        return qr.createQueryBuilder(UnitCapacity, 'uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.unitBoilerType', 'ubt')
-      .andWhere('u.id = :unitId', { unitId });
-
-    return query.getMany();
+      .andWhere('u.id = :unitId', { unitId })
+      .getMany();
+     })
+    return query;
   }
 
   async getUnitCapacitiesByLocationIds(

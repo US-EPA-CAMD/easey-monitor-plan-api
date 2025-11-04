@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { MonitorLocation } from '../entities/monitor-location.entity';
+import { useSlaveQueryRunner } from '../utilities/use-slave-query';
 
 @Injectable()
 export class MonitorLocationRepository extends Repository<MonitorLocation> {
-  constructor(entityManager: EntityManager) {
+  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(MonitorLocation, entityManager);
+    
   }
 
   async getMonitorLocationsByFacId(facId: number): Promise<MonitorLocation[]> {
@@ -25,8 +27,10 @@ export class MonitorLocationRepository extends Repository<MonitorLocation> {
   async getMonitorLocationsByPlanId(
     monPlanId: string,
   ): Promise<MonitorLocation[]> {
-    return this.createQueryBuilder('ml')
-      .innerJoinAndSelect('ml.plans', 'p')
+   return useSlaveQueryRunner(this.dataSource, async (qr) => {
+    return qr
+    .createQueryBuilder(MonitorLocation, 'ml')
+    .innerJoinAndSelect('ml.plans', 'p')
       .leftJoinAndSelect('ml.unit', 'u')
       .leftJoinAndSelect('ml.stackPipe', 'stp')
       .leftJoinAndSelect('u.opStatuses', 'uos')
@@ -35,5 +39,6 @@ export class MonitorLocationRepository extends Repository<MonitorLocation> {
       .andWhere('uos.endDate IS NULL')
       .addOrderBy('u.name, stp.name')
       .getMany();
+   });
   }
 }

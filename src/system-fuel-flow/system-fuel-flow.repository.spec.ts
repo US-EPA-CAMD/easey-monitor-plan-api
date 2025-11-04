@@ -3,28 +3,40 @@ import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
+import { DataSource } from 'typeorm';
+import { useSlaveQueryRunner } from '../utilities/use-slave-query';
 
 const monSysId = '1';
 
 const sysFuelFlow = new SystemFuelFlow();
 
-const mockQueryBuilder = () => ({
-  where: jest.fn(),
-  innerJoinAndSelect: jest.fn(),
-  getMany: jest.fn(),
-  orderBy: jest.fn(),
-});
+jest.mock('../utilities/use-slave-query');
+
+  const mockQueryBuilder = {
+    innerJoinAndSelect: jest.fn().mockReturnThis(),
+    where: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    getMany: jest.fn(),
+  };
+
+  const mockManager = {
+    createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+  };
 
 describe('SystemFuelFlowRepository', () => {
   let repository;
   let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
+    dataSource = {} as DataSource;
+
     const module = await Test.createTestingModule({
       providers: [
         EntityManager,
         SystemFuelFlowRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        { provide: SelectQueryBuilder, useFactory: () => mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -36,6 +48,10 @@ describe('SystemFuelFlowRepository', () => {
 
   describe('getFuelFlows', () => {
     it('calls createQueryBuilder and get SystemFuelFlows by monitor system id', async () => {
+
+      (useSlaveQueryRunner as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager)) 
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);

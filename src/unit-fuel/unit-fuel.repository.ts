@@ -1,20 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { UnitFuel } from '../entities/unit-fuel.entity';
+import { useSlaveQueryRunner } from '../utilities/use-slave-query';
 
 @Injectable()
 export class UnitFuelRepository extends Repository<UnitFuel> {
-  constructor(entityManager: EntityManager) {
+  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(UnitFuel, entityManager);
   }
 
   async getUnitFuels(unitId: number): Promise<UnitFuel[]> {
-    return this.createQueryBuilder('uf')
+    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+     return qr.createQueryBuilder(UnitFuel, 'uf')
       .innerJoinAndSelect('uf.unit', 'u')
       .innerJoinAndSelect('u.location', 'l')
       .andWhere('u.id = :unitId', { unitId })
       .getMany();
+    })
   }
 
   async getUnitFuelByLocationIds(locationIds: string[]): Promise<UnitFuel[]> {

@@ -4,6 +4,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorLoadMap } from '../maps/monitor-load.map';
 import { MonitorLoadService } from './monitor-load.service';
 import { MonitorLoadRepository } from './monitor-load.repository';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '../utilities/use-slave-repository';
+
+jest.mock('../utilities/use-slave-repository');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -15,8 +19,11 @@ const mockMap = () => ({
 
 describe('MonitorLoadService', () => {
   let service: MonitorLoadService;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
@@ -29,6 +36,7 @@ describe('MonitorLoadService', () => {
           provide: MonitorLoadMap,
           useFactory: mockMap,
         },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -41,6 +49,10 @@ describe('MonitorLoadService', () => {
 
   describe('getLoads', () => {
     it('should return array of monitor loads', async () => {
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+       );
       const result = await service.getLoads(null);
       expect(result).toEqual('');
     });

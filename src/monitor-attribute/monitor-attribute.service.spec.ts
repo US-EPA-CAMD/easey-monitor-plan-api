@@ -5,6 +5,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorAttributeService } from './monitor-attribute.service';
 import { MonitorAttributeRepository } from './monitor-attribute.repository';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '../utilities/use-slave-repository';
+
+jest.mock('../utilities/use-slave-repository');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -19,8 +23,11 @@ const locId = 'string';
 
 describe('MonitorAttributeService', () => {
   let service: MonitorAttributeService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule, HttpModule],
       providers: [
@@ -33,6 +40,7 @@ describe('MonitorAttributeService', () => {
           provide: MonitorAttributeMap,
           useFactory: mockMap,
         },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -45,6 +53,10 @@ describe('MonitorAttributeService', () => {
 
   describe('getAttributes', () => {
     it('should return array of location attributes', async () => {
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+       );
       const result = await service.getAttributes(locId);
       expect(result).toEqual('');
     });

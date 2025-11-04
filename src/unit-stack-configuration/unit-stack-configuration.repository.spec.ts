@@ -3,6 +3,7 @@ import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 import { UnitStackConfigurationRepository } from './unit-stack-configuration.repository';
+import { DataSource } from 'typeorm';
 
 const unitStackConfiguration = new UnitStackConfiguration();
 
@@ -18,13 +19,17 @@ const mockQueryBuilder = () => ({
 describe('UnitStackConfigurationRepository', () => {
   let repository;
   let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
+    dataSource = {} as DataSource;
+
     const module = await Test.createTestingModule({
       providers: [
         EntityManager,
         UnitStackConfigurationRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
