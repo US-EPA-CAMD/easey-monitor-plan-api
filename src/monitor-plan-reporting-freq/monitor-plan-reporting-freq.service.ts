@@ -50,7 +50,7 @@ export class MonitorPlanReportingFrequencyService {
         GROUP BY mprf.mon_plan_rf_id, mprf.report_freq_cd, rp_begin.period_abbreviation, rp_end.period_abbreviation, rp_end.end_date;;
     `;
 
-    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");;
+    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
     try {
       const result = await slaveQueryRunner.query(
         sql, [planId]
