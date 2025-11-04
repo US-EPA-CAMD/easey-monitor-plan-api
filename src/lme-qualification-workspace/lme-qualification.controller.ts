@@ -87,6 +87,7 @@ export class LMEQualificationWorkspaceController {
     @Body() payload: LMEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LMEQualificationDTO> {
+    await this.service.runChecks(payload, qualId, lmeQualId);
     return this.service.updateLMEQualification({
       locationId: locId,
       qualId,
@@ -115,12 +116,13 @@ export class LMEQualificationWorkspaceController {
     description:
       'Creates an LME Qualification record for a qualification and monitor location',
   })
-  createLMEQualification(
+  async createLMEQualification(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Body() payload: LMEQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LMEQualificationDTO> {
+    await this.service.runChecks(payload, qualId);
     return this.service.createLMEQualification({
       locationId: locId,
       qualId,

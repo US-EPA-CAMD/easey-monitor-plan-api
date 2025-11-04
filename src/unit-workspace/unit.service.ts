@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import { UnitBaseDTO, UnitDTO } from '../dtos/unit.dto';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
@@ -8,6 +9,7 @@ import { UnitMap } from '../maps/unit.map';
 import { withTransaction } from '../utils';
 import { UnitWorkspaceRepository } from './unit.repository';
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
+import { UpdateMonitorPlanDTO } from '../dtos/monitor-plan-update.dto';
 
 @Injectable()
 export class UnitWorkspaceService {
@@ -17,7 +19,7 @@ export class UnitWorkspaceService {
     private readonly entityManager: EntityManager,
     @Inject(forwardRef(() => MonitorPlanWorkspaceService))
     private readonly mpService: MonitorPlanWorkspaceService,
-  ) {}
+  ) { }
 
   async getUnit(unitId: number): Promise<UnitDTO> {
     return this.getUnitDetails(unitId);
@@ -113,5 +115,32 @@ export class UnitWorkspaceService {
       trx,
     ).getUnitsByMonPlanId(monPlanId);
     return this.map.many(results);
+  }
+
+  async runUnitChecks(
+    monPlan: UpdateMonitorPlanDTO,
+    facilityId: number,
+  ): Promise<string[]> {
+    const errorList: string[] = [];
+    const { monitoringLocationData, orisCode } = monPlan;
+
+    for (const location of monitoringLocationData) {
+      if (!location.unitId) continue;
+
+      const databaseUnit = await this.repository.findOneBy({
+        name: location.unitId,
+        facId: facilityId,
+      });
+      
+
+      if (!databaseUnit) {
+        const error = CheckCatalogService.formatResultMessage('IMPORT-2-A', {
+          orisCode: orisCode,
+          unitId: location.unitId
+        })
+        errorList.push(error);
+      }
+    }
+    return errorList;
   }
 }

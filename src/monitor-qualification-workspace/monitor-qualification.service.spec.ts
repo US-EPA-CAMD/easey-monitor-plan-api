@@ -202,4 +202,71 @@ describe('MonitorQualificationService', () => {
       expect(result).toEqual({ ...result });
     });
   });
+  describe('QUAL-35-A check', () => {
+    it('should throw error when qualification type code and begin date already exist for the same location', async () => {
+      const payload: UpdateMonitorQualificationDTO = {
+        qualificationTypeCode: 'PK',
+        beginDate: new Date('2023-01-01'),
+        endDate: new Date('2023-12-31'),
+        monitoringQualificationLEEData: [],
+        monitoringQualificationLMEData: [],
+        monitoringQualificationPercentData: [],
+      };
+
+      const duplicateQual = new MonitorQualification();
+      duplicateQual.id = 'different-id';
+      duplicateQual.qualificationTypeCode = 'PK';
+      duplicateQual.beginDate = new Date('2023-01-01');
+
+      const repository = loadService['repository'];
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(duplicateQual);
+
+      let errorThrown = false;
+      let errorMessage = '';
+
+      try {
+        await loadService.runChecks(payload, locId);
+      } catch (error) {
+        errorThrown = true;
+        errorMessage = error.response.message;
+      }
+
+      expect(errorThrown).toBe(true);
+      expect(errorMessage).toContain('QUAL-35-A');
+    });
+
+    it('should throw error when qualification type code and end date already exist for the same location', async () => {
+      const payload: UpdateMonitorQualificationDTO = {
+        qualificationTypeCode: 'LMEA',
+        beginDate: new Date('2023-01-01'),
+        endDate: new Date('2023-12-31'),
+        monitoringQualificationLEEData: [],
+        monitoringQualificationLMEData: [],
+        monitoringQualificationPercentData: [],
+      };
+
+      const duplicateQual = new MonitorQualification();
+      duplicateQual.id = 'different-id';
+      duplicateQual.qualificationTypeCode = 'LMEA';
+      duplicateQual.endDate = new Date('2023-12-31');
+
+      const repository = loadService['repository'];
+      jest.spyOn(repository, 'findOneBy')
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(duplicateQual);
+
+      let errorThrown = false;
+      let errorMessage = '';
+
+      try {
+        await loadService.runChecks(payload, locId);
+      } catch (error) {
+        errorThrown = true;
+        errorMessage = error.response.message;
+      }
+
+      expect(errorThrown).toBe(true);
+      expect(errorMessage).toContain('QUAL-35-A');
+    });
+  });
 });

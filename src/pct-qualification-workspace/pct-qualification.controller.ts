@@ -87,6 +87,7 @@ export class PCTQualificationWorkspaceController {
     @Body() payload: PCTQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<PCTQualificationDTO> {
+    await this.service.runChecks(payload, qualId, pctQualId);
     return this.service.updatePCTQualification({
       locationId: locId,
       qualId,
@@ -115,12 +116,13 @@ export class PCTQualificationWorkspaceController {
     description:
       'Creates a PCT Qualification record for a qualification and monitor location',
   })
-  createPCTQualification(
+  async createPCTQualification(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Body() payload: PCTQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<PCTQualificationDTO> {
+    await this.service.runChecks(payload, qualId);
     return this.service.createPCTQualification({
       locationId: locId,
       qualId,
