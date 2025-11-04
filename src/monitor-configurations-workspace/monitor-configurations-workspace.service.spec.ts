@@ -1,75 +1,54 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EntityManager } from 'typeorm';
 
-import { MonitorLocationDTO } from '../dtos/monitor-location.dto';
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { EvalStatusCode } from '../entities/eval-status-code.entity';
 import { SubmissionAvailabilityCode } from '../entities/submission-availability-code.entity';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { Plant } from '../entities/workspace/plant.entity';
 import { PlantWorkspaceRepository } from '../plant-workspace/plant.repository';
 import { MonitorPlanConfigurationMap } from '../maps/monitor-plan-configuration.map';
 import { MonitorLocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
-import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { UnitStackConfigurationWorkspaceRepository } from '../unit-stack-configuration-workspace/unit-stack-configuration.repository';
 import { EvalStatusCodeRepository } from './eval-status.repository';
 import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
+import { VwMPLocationsAndUnitStackConfigurations } from '../entities/workspace/vw-mp-locations-and-unit-stack-configurations.entity';
+import { VwMPLocationsAndUnitStackConfigurationsMap } from '../maps/vw-mp-locations-and-unit-stack-configurations.map';
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
-const DATE = new Date();
-const ORIS_CODES_AND_LAST_UPDATED = {
-  changedOrisCodes: [ORIS_CODE],
-  mostRecentUpdate: DATE,
-};
 const ENTITY = new MonitorPlan();
 const DTO = new MonitorPlanDTO();
-DTO.monitoringLocationData = [new MonitorLocationDTO()];
 
 const mockRepository = () => ({
   find: jest.fn(),
-  getMonitorPlanByIds: jest.fn().mockResolvedValue([ENTITY]),
-  getMonitorPlansByOrisCodes: jest.fn().mockResolvedValue([ENTITY]),
-  getOrisCodesByLastUpdatedTime: jest
-    .fn()
-    .mockResolvedValue(ORIS_CODES_AND_LAST_UPDATED),
 });
 
-const mockMonitorPlanMap = () => ({
+const mockMap = () => ({
   many: jest.fn().mockResolvedValue([DTO]),
 });
 
-const mockMonitorPlanService = () => ({
-  exportMonitorPlan: jest.fn().mockResolvedValue(DTO),
-});
-
 describe('MonitorConfigurationsWorkspaceService', () => {
-  let manager: jest.Mock;
   let service: MonitorConfigurationsWorkspaceService;
-  let plantWorkspaceRepository: PlantWorkspaceRepository;
   let monitorPlanWorkspaceRepository: MonitorPlanWorkspaceRepository;
-  manager = jest.fn().mockResolvedValue([{}]);
+  let plantWorkspaceRepository: PlantWorkspaceRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [],
       providers: [
+        MonitorConfigurationsWorkspaceService,
         {
           provide: EntityManager,
           useValue: {
-            query: manager,
+            find: jest.fn(),
+            query: jest.fn(),
           },
         },
-        MonitorConfigurationsWorkspaceService,
         {
           provide: MonitorPlanWorkspaceRepository,
           useFactory: mockRepository,
-        },
-        {
-          provide: MonitorPlanWorkspaceService,
-          useFactory: mockMonitorPlanService,
         },
         {
           provide: EvalStatusCodeRepository,
@@ -87,7 +66,11 @@ describe('MonitorConfigurationsWorkspaceService', () => {
         },
         {
           provide: MonitorPlanConfigurationMap,
-          useFactory: mockMonitorPlanMap,
+          useFactory: mockMap,
+        },
+        {
+          provide: VwMPLocationsAndUnitStackConfigurationsMap,
+          useFactory: mockMap,
         },
         MonitorLocationWorkspaceRepository,
         PlantWorkspaceRepository,
@@ -95,15 +78,19 @@ describe('MonitorConfigurationsWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get<MonitorConfigurationsWorkspaceService>(
-      MonitorConfigurationsWorkspaceService,
-    );
-    plantWorkspaceRepository = module.get<PlantWorkspaceRepository>(
-      PlantWorkspaceRepository,
-    );
-    monitorPlanWorkspaceRepository = module.get<MonitorPlanWorkspaceRepository>(
-      MonitorPlanWorkspaceRepository,
-    );
+    service = module.get(MonitorConfigurationsWorkspaceService);
+    entityManager = module.get(EntityManager);
+    plantWorkspaceRepository = module.get(PlantWorkspaceRepository);
+    monitorPlanWorkspaceRepository = module.get(MonitorPlanWorkspaceRepository);
+  });
+
+  describe('getAllConfigurations', () => {
+    it('Should return an array of all MonitoringPlanDTOs', async () => {
+      const mockEntities = [new VwMPLocationsAndUnitStackConfigurations()];
+      jest.spyOn(entityManager, 'find').mockResolvedValue(mockEntities);
+      const result = await service.getAllConfigurations();
+      expect(result).toEqual([DTO]);
+    });
   });
 
   describe('getConfigurations', () => {

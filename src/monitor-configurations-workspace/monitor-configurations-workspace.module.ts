@@ -12,6 +12,7 @@ import { MonitorConfigurationsWorkspaceController } from './monitor-configuratio
 import { MonitorConfigurationsWorkspaceService } from './monitor-configurations-workspace.service';
 import { SubmissionsAvailabilityStatusCodeRepository } from './submission-availability-status.repository';
 import { PlantWorkspaceModule } from '../plant-workspace/plant.module';
+import { VwMPLocationsAndUnitStackConfigurationsMap } from '../maps/vw-mp-locations-and-unit-stack-configurations.map';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PlantWorkspaceModule } from '../plant-workspace/plant.module';
     MonitorConfigurationsWorkspaceService,
     MonitorPlanConfigurationMap,
     SubmissionsAvailabilityStatusCodeRepository,
+    VwMPLocationsAndUnitStackConfigurationsMap,
   ],
   exports: [
     TypeOrmModule,
