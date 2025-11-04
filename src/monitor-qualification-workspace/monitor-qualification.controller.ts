@@ -79,11 +79,12 @@ export class MonitorQualificationWorkspaceController {
     description:
       'Creates a workspace qualification record for a given location',
   })
-  createQualification(
+  async createQualification(
     @Param('locId') locationId: string,
     @Body() payload: MonitorQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorQualificationDTO> {
+    await this.service.runChecks(payload, locationId);
     return this.service.createQualification({
       locationId,
       payload,
@@ -110,12 +111,13 @@ export class MonitorQualificationWorkspaceController {
     description:
       'Updates a workspace monitor qualification record for a given monitor location',
   })
-  updateQualification(
+  async updateQualification(
     @Param('locId') locId: string,
     @Param('qualId') qualId: string,
     @Body() payload: MonitorQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<MonitorQualificationDTO> {
+    await this.service.runChecks(payload, locId, qualId);
     return this.service.updateQualification({
       locationId: locId,
       qualId,

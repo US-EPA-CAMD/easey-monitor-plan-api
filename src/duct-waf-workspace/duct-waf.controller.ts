@@ -77,6 +77,7 @@ export class DuctWafWorkspaceController {
     @Body() payload: DuctWafBaseDTO,
     @User() user: CurrentUser,
   ): Promise<DuctWafDTO> {
+    await this.service.runChecks(payload, locationId);
     return this.service.createDuctWaf({
       locationId,
       payload,
@@ -108,6 +109,7 @@ export class DuctWafWorkspaceController {
     @Body() payload: DuctWafBaseDTO,
     @User() user: CurrentUser,
   ): Promise<DuctWafDTO> {
+    await this.service.runChecks(payload, locationId, ductWafId);
     return this.service.updateDuctWaf({
       locationId,
       ductWafId,

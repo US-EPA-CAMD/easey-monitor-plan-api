@@ -31,6 +31,13 @@ returnedUnitCapacities.push(new UnitCapacityDTO());
 
 const returnedUnitCapacity = new UnitCapacityDTO();
 
+const mockService = () => ({
+  getUnitCapacities: jest.fn(),
+  createUnitCapacity: jest.fn(),
+  updateUnitCapacity: jest.fn(),
+  runChecks: jest.fn(),
+});
+
 describe('UnitCapacityController', () => {
   let controller: UnitCapacityWorkspaceController;
   let service: UnitCapacityWorkspaceService;
@@ -46,6 +53,10 @@ describe('UnitCapacityController', () => {
         {
           provide: DataSource,
           useValue: {},
+        },
+        {
+          provide: UnitCapacityWorkspaceService,
+          useFactory: mockService,
         },
       ],
     }).compile();

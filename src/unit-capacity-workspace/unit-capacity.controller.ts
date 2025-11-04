@@ -78,11 +78,12 @@ export class UnitCapacityWorkspaceController {
     type: UnitCapacityDTO,
     description: 'Creates a workspace unit capacity record for a unit',
   })
-  createUnitCapcity(
+  async createUnitCapcity(
     @Param('unitId') unitId: number,
     @Body() payload: UnitCapacityBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitCapacityDTO> {
+    await this.service.runChecks(payload, unitId);
     return this.service.createUnitCapacity({
       unitId,
       payload,
@@ -114,6 +115,7 @@ export class UnitCapacityWorkspaceController {
     @Body() payload: UnitCapacityBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitCapacityDTO> {
+    await this.service.runChecks(payload, unitId, unitCapacityId);
     return this.service.updateUnitCapacity({
       unitRecordId: unitId,
       unitCapacityId: unitCapacityId,

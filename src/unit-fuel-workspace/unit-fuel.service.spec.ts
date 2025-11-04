@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { UnitFuelBaseDTO, UnitFuelDTO } from '../dtos/unit-fuel.dto';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
@@ -12,6 +13,7 @@ import { UnitFuelWorkspaceRepository } from './unit-fuel.repository';
 import { UnitFuelWorkspaceService } from './unit-fuel.service';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
+jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const returnedUnitFuel: UnitFuelDTO = new UnitFuelDTO();
 const unitFuel = new UnitFuel();
@@ -36,6 +38,7 @@ describe('UnitFuelService', () => {
   let service: UnitFuelWorkspaceService;
   let repository: UnitFuelWorkspaceRepository;
   let entityManager: EntityManager;
+  const KEY = 'Unit Fuel';
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -134,6 +137,57 @@ describe('UnitFuelService', () => {
 
       const result = await service.importUnitFuel([payload], 1, 'testUser');
       expect(result).toEqual(true);
+    });
+  });
+
+  describe('FUEL-52-A check', () => {
+    const unitId = 1;
+    const payload: UnitFuelBaseDTO = {
+      fuelCode: 'GAS',
+      indicatorCode: 'Y',
+      ozoneSeasonIndicator: 1,
+      demGCV: '1000',
+      demSO2: '50',
+      beginDate: new Date('2023-01-01'),
+      endDate: new Date('2023-12-31'),
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should return FUEL-52-A error | begin date exist', async () => {
+      const duplicateUnitFuel = new UnitFuel();
+      duplicateUnitFuel.id = 'different-id';
+      duplicateUnitFuel.unitId = unitId;
+      duplicateUnitFuel.fuelCode = 'GAS';
+      duplicateUnitFuel.beginDate = new Date('2023-01-01');
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(duplicateUnitFuel);
+
+      const result = await service['duplicateUnitFuelChecks'](payload, unitId);
+
+      expect(result).toBe(
+        CheckCatalogService.formatMessage(`[FUEL-52-A] Another [${KEY}] record already exists with the same [beginDate].`)
+      );
+    });
+
+    it('should return FUEL-52-A error | end date exist', async () => {
+      const duplicateUnitFuel = new UnitFuel();
+      duplicateUnitFuel.id = 'different-id';
+      duplicateUnitFuel.unitId = unitId;
+      duplicateUnitFuel.fuelCode = 'GAS';
+      duplicateUnitFuel.endDate = new Date('2023-12-31');
+
+      jest.spyOn(repository, 'findOneBy')
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(duplicateUnitFuel);
+
+      const result = await service['duplicateUnitFuelChecks'](payload, unitId);
+
+      expect(result).toBe(
+        CheckCatalogService.formatMessage(`[FUEL-52-A] Another [${KEY}] record already exists with the same [endDate].`)
+      );
     });
   });
 });
