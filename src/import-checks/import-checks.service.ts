@@ -11,6 +11,7 @@ import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configurat
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
 
 @Injectable()
 export class ImportChecksService {
@@ -20,12 +21,13 @@ export class ImportChecksService {
     private readonly monitorSystemService: MonitorSystemWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly unitService: UnitService,
+    private readonly unitWorkspaceService: UnitWorkspaceService,
     private readonly plantService: PlantService,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly formulaService: MonitorFormulaWorkspaceService,
     private readonly spanService: MonitorSpanWorkspaceService,
     private readonly stackPipeService: StackPipeWorkspaceService,
-  ) {}
+  ) { }
 
   private checkIfThrows(errorList: string[]) {
     if (errorList.length > 0) {
@@ -39,14 +41,26 @@ export class ImportChecksService {
   public async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
     let errorList = [];
 
-    // Plant Check
+    const facilityId = await this.plantService.getFacIdFromOris(
+      monPlan.orisCode,
+    );
+
+    // IMPORT-1 Check: ORIS Code exists in database
     errorList.push(
-      ...(await this.plantService.runPlantCheck(monPlan.orisCode)),
+      ...(await this.plantService.runImport1Checks(monPlan, facilityId)),
     );
     this.checkIfThrows(errorList);
 
-    const facilityId = await this.plantService.getFacIdFromOris(
-      monPlan.orisCode,
+
+
+    // IMPORT-2 Check: Units exist in database for the ORIS code
+    errorList.push(
+      ...await (this.unitWorkspaceService.runUnitChecks(monPlan, facilityId))
+    );
+
+    // IMPORT-4 Check: Unit-Stack configuration validation
+    errorList.push(
+      ...await this.unitStackService.importUnitStackConfigurationChecks(monPlan)
     );
 
     // Unit Stack Checks

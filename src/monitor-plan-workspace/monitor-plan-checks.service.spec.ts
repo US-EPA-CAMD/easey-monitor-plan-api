@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { UnitStackConfigurationChecksService } from '../unit-stack-configuration-workspace/unit-stack-configuration-checks.service';
@@ -133,6 +134,177 @@ describe('Monitor Plan Checks Service Test', () => {
       expect(monitorSystemCheckService.runChecks).toHaveBeenCalled();
       expect(monitorSpanCheckService.runChecks).toHaveBeenCalled();
       expect(unitStackConfigurationChecksService.runChecks).toHaveBeenCalled();
+        });
+      });
+
+  // Tests Location lookup with anyOf schema compliance
+  describe('Location Lookup - anyOf Schema Compliance', () => {
+    const mockLocationIdentifiers = [
+      { locationId: 'LOC1', unitId: '3', stackPipeId: null },
+      { locationId: 'LOC2', unitId: null, stackPipeId: 'CS1' },
+      { locationId: 'LOC3', unitId: '4', stackPipeId: 'CS2' },
+    ];
+
+    it('should find location with unitId only', async () => {
+      const testPayload = new UpdateMonitorPlanDTO();
+      testPayload.unitStackConfigurationData = [];
+
+      const testLocation = new UpdateMonitorLocationDTO();
+      testLocation.unitId = '3';
+      testLocation.stackPipeId = null;
+      testPayload.monitoringLocationData = [testLocation];
+
+      // Mock the service to return the test location identifiers
+      const mockService = {
+        runChecks: jest.fn().mockResolvedValue([mockLocationIdentifiers, []]),
+      };
+
+      const module = await Test.createTestingModule({
+        imports: [LoggerModule],
+        providers: [
+          MonitorPlanChecksService,
+          { provide: MonitorLocationChecksService, useValue: mockService },
+          { provide: MatsMethodChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitControlChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: ComponentCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSystemCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSpanChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitStackConfigurationChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+        ],
+      }).compile();
+
+      const testService = module.get(MonitorPlanChecksService);
+
+      // Should not throw an error
+      await expect(testService.runChecks(testPayload)).resolves.not.toThrow();
+    });
+
+    it('should find location with stackPipeId only', async () => {
+      const testPayload = new UpdateMonitorPlanDTO();
+      testPayload.unitStackConfigurationData = [];
+
+      const testLocation = new UpdateMonitorLocationDTO();
+      testLocation.unitId = null;
+      testLocation.stackPipeId = 'CS1';
+      testPayload.monitoringLocationData = [testLocation];
+
+      const mockService = {
+        runChecks: jest.fn().mockResolvedValue([mockLocationIdentifiers, []]),
+      };
+
+      const module = await Test.createTestingModule({
+        imports: [LoggerModule],
+        providers: [
+          MonitorPlanChecksService,
+          { provide: MonitorLocationChecksService, useValue: mockService },
+          { provide: MatsMethodChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitControlChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: ComponentCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSystemCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSpanChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitStackConfigurationChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+        ],
+      }).compile();
+
+      const testService = module.get(MonitorPlanChecksService);
+
+      await expect(testService.runChecks(testPayload)).resolves.not.toThrow();
+    });
+
+    it('should find location with both identifiers', async () => {
+      const testPayload = new UpdateMonitorPlanDTO();
+      testPayload.unitStackConfigurationData = [];
+
+      const testLocation = new UpdateMonitorLocationDTO();
+      testLocation.unitId = '4';
+      testLocation.stackPipeId = 'CS2';
+      testPayload.monitoringLocationData = [testLocation];
+
+      const mockService = {
+        runChecks: jest.fn().mockResolvedValue([mockLocationIdentifiers, []]),
+      };
+
+      const module = await Test.createTestingModule({
+        imports: [LoggerModule],
+        providers: [
+          MonitorPlanChecksService,
+          { provide: MonitorLocationChecksService, useValue: mockService },
+          { provide: MatsMethodChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitControlChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: ComponentCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSystemCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSpanChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitStackConfigurationChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+        ],
+      }).compile();
+
+      const testService = module.get(MonitorPlanChecksService);
+
+      await expect(testService.runChecks(testPayload)).resolves.not.toThrow();
+    });
+
+    it('should throw error when no location found', async () => {
+      const testPayload = new UpdateMonitorPlanDTO();
+      testPayload.unitStackConfigurationData = [];
+
+      const testLocation = new UpdateMonitorLocationDTO();
+      testLocation.unitId = '999';
+      testLocation.stackPipeId = null;
+      testPayload.monitoringLocationData = [testLocation];
+
+      const mockService = {
+        runChecks: jest.fn().mockResolvedValue([mockLocationIdentifiers, []]),
+      };
+
+      const module = await Test.createTestingModule({
+        imports: [LoggerModule],
+        providers: [
+          MonitorPlanChecksService,
+          { provide: MonitorLocationChecksService, useValue: mockService },
+          { provide: MatsMethodChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitControlChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: ComponentCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSystemCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSpanChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitStackConfigurationChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+        ],
+      }).compile();
+
+      const testService = module.get(MonitorPlanChecksService);
+
+      await expect(testService.runChecks(testPayload)).rejects.toThrow(BadRequestException);
+    });
+
+    it('should handle empty location identifiers', async () => {
+      const testPayload = new UpdateMonitorPlanDTO();
+      testPayload.unitStackConfigurationData = [];
+
+      const testLocation = new UpdateMonitorLocationDTO();
+      testLocation.unitId = '3';
+      testLocation.stackPipeId = null;
+      testPayload.monitoringLocationData = [testLocation];
+
+      const mockService = {
+        runChecks: jest.fn().mockResolvedValue([[], []]), // Empty location identifiers
+      };
+
+      const module = await Test.createTestingModule({
+        imports: [LoggerModule],
+        providers: [
+          MonitorPlanChecksService,
+          { provide: MonitorLocationChecksService, useValue: mockService },
+          { provide: MatsMethodChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitControlChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: ComponentCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSystemCheckService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: MonitorSpanChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+          { provide: UnitStackConfigurationChecksService, useValue: { runChecks: jest.fn().mockResolvedValue([]) } },
+        ],
+      }).compile();
+
+      const testService = module.get(MonitorPlanChecksService);
+
+      await expect(testService.runChecks(testPayload)).rejects.toThrow(BadRequestException);
     });
   });
 });

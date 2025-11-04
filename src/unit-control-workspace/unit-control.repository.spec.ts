@@ -65,7 +65,7 @@ describe('UnitControlWorkspaceRepository', () => {
   });
 
   describe('getUnitControlBySpecsInstallOrRetireDate', () => {
-    it('calls createQueryBuilder and gets a Unit Control from the repository with the specified unitId, beginDate and endDate', async () => {
+    it('calls createQueryBuilder and gets a Unit Control from the repository with the specified unitId, beginDate', async () => {
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
@@ -74,11 +74,10 @@ describe('UnitControlWorkspaceRepository', () => {
       queryBuilder.orderBy.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(unitControl);
 
-      const result = await repository.getUnitControlBySpecsInstallOrRetireDate(
+      const result = await repository.getUnitControlByLogicalKey(
         1,
         'CODE',
         'CODE',
-        new Date(),
         new Date(),
       );
 

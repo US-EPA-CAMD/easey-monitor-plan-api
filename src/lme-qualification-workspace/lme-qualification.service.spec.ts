@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EaseyException } from '@us-epa-camd/easey-common';
+import { HttpStatus } from '@nestjs/common';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { LMEQualificationMap } from '../maps/lme-qualification.map';
 import { LMEQualificationWorkspaceService } from './lme-qualification.service';
@@ -12,6 +15,8 @@ import {
 import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-plan.service';
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { MonitorQualificationDTO } from '../dtos/monitor-qualification.dto';
+
+jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
 jest.mock('../monitor-qualification-workspace/monitor-qualification.service');
@@ -199,6 +204,39 @@ describe('LMEQualificationWorkspaceService', () => {
         undefined,
       );
       expect(updateLMEQualification).toHaveBeenCalled;
+    });
+  });
+
+  describe('QUAL-37-A Duplicate Check', () => {
+    it('should throw QUAL-37-A', async () => {
+
+      const duplicateLMEQual = {
+        id: 'existing-lme-qual-id',
+        qualificationId: qualId,
+        qualificationDataYear: 2021
+      };
+
+      lmeQualRepository.findOneBy = jest.fn().mockResolvedValue(duplicateLMEQual as any);
+
+      (CheckCatalogService.formatResultMessage as jest.Mock).mockReturnValue(
+        '[QUAL-37-A] Duplicate LME Qualification record found.'
+      );
+
+      await expect(
+        lmeQualService.runChecks(payload, qualId)
+      ).rejects.toThrow(EaseyException);
+
+      try {
+        await lmeQualService.runChecks(payload, qualId);
+      } catch (error) {
+        expect(error.response.message).toContain('QUAL-37-A');
+        expect(error.status).toBe(HttpStatus.BAD_REQUEST);
+      }
+
+      expect(lmeQualRepository.findOneBy).toHaveBeenCalledWith({
+        qualificationId: qualId,
+        qualificationDataYear: 2021
+      });
     });
   });
 });

@@ -46,7 +46,7 @@ export class SystemComponentWorkspaceRepository extends Repository<
       .getMany();
   }
 
-  async getSystemComponentByBeginOrEndDate(
+  async getSystemComponentByLogicalKey(
     monSysId: string,
     componentId: string,
     beginDate: Date,

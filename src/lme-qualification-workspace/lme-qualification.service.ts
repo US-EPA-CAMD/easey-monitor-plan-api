@@ -4,6 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import {
   LMEQualificationBaseDTO,
@@ -14,7 +15,9 @@ import { MonitorPlanWorkspaceService } from '../monitor-plan-workspace/monitor-p
 import { MonitorQualificationWorkspaceService } from '../monitor-qualification-workspace/monitor-qualification.service';
 import { settlePromises, withTransaction } from '../utils';
 import { LMEQualificationWorkspaceRepository } from './lme-qualification.repository';
+import {  throwIfErrors } from '../utils';
 
+const KEY = 'Monitor Qualification LME';
 @Injectable()
 export class LMEQualificationWorkspaceService {
   constructor(
@@ -26,7 +29,45 @@ export class LMEQualificationWorkspaceService {
     private readonly mpService: MonitorPlanWorkspaceService,
     @Inject(forwardRef(() => MonitorQualificationWorkspaceService))
     private readonly mpQualService: MonitorQualificationWorkspaceService,
-  ) {}
+  ) { }
+
+  async runChecks(
+    lmeQualification: LMEQualificationBaseDTO,
+    qualificationId: string,
+    excludeLmeQualificationId?: string
+  ) {
+    let errorList: string[] = [];
+    let error: string = null;
+
+    error = await this.qual37Check(lmeQualification, qualificationId, excludeLmeQualificationId);
+    if (error) {
+      errorList.push(error);
+    }
+
+    throwIfErrors(errorList);
+  }
+
+  private async qual37Check(
+    lmeQualification: LMEQualificationBaseDTO,
+    qualificationId: string,
+    excludeLmeQualificationId?: string
+  ): Promise<string> {
+    const { qualificationDataYear } = lmeQualification;
+
+    const duplicate = await this.repository.findOneBy({
+      qualificationId,
+      qualificationDataYear
+    });
+
+    if (duplicate && duplicate.id !== excludeLmeQualificationId) {
+      return CheckCatalogService.formatResultMessage('QUAL-37-A', {
+        fieldnames: 'qualificationDataYear',
+        recordtype: KEY
+      });
+    }
+
+    return null;
+  }
 
   async getLMEQualifications(
     locId: string,

@@ -41,12 +41,11 @@ export class UnitControlWorkspaceService {
         const unitControlRecord = await withTransaction(
           this.repository,
           trx,
-        ).getUnitControlBySpecsInstallOrRetireDate(
+        ).getUnitControlByLogicalKey(
           unitRecordId,
           unitControl.parameterCode,
           unitControl.controlCode,
           unitControl.installDate,
-          unitControl.retireDate,
         );
 
         if (unitControlRecord) {

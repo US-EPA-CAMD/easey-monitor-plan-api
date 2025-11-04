@@ -19,7 +19,7 @@ const mockMap = () => ({
 });
 
 const mockRepo = () => ({
-  getAnalyzerRangeByComponentIdBeginOrEndDate: jest.fn(),
+  getAnalyzerRangeByLogicalKey: jest.fn(),
 });
 
 describe('AnalyzerRangeWorkspaceService', () => {
@@ -52,9 +52,13 @@ describe('AnalyzerRangeWorkspaceService', () => {
   });
 
   describe('importAnalyzerRange', () => {
-    const analyzerRangeImport = [new AnalyzerRangeBaseDTO()];
+     const mockAnalyzerRange = new AnalyzerRangeBaseDTO();
+    mockAnalyzerRange.beginDate = new Date('2023-01-01');
+    mockAnalyzerRange.beginHour = 0;
+
+    const analyzerRangeImport = [mockAnalyzerRange];
     it('should create analyzer range if not exists', async () => {
-      repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate = jest
+      repositoryMock.getAnalyzerRangeByLogicalKey = jest
         .fn()
         .mockResolvedValue(null);
       const createAnalyzerRange = jest
@@ -67,13 +71,13 @@ describe('AnalyzerRangeWorkspaceService', () => {
         analyzerRangeImport,
       );
       expect(
-        repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate,
-      ).toHaveBeenCalledWith('componentId', analyzerRangeImport[0]);
+        repositoryMock.getAnalyzerRangeByLogicalKey,
+      ).toHaveBeenCalledWith('componentId', mockAnalyzerRange.beginDate, mockAnalyzerRange.beginHour);
       expect(createAnalyzerRange).toHaveBeenCalled;
     });
 
     it('should update analyzer range if exists', async () => {
-      repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate = jest
+      repositoryMock.getAnalyzerRangeByLogicalKey = jest
         .fn()
         .mockResolvedValue(new AnalyzerRangeDTO());
       const updateAnalyzerRange = jest
@@ -86,8 +90,8 @@ describe('AnalyzerRangeWorkspaceService', () => {
         analyzerRangeImport,
       );
       expect(
-        repositoryMock.getAnalyzerRangeByComponentIdBeginOrEndDate,
-      ).toHaveBeenCalledWith('componentId', analyzerRangeImport[0]);
+        repositoryMock.getAnalyzerRangeByLogicalKey,
+      ).toHaveBeenCalledWith('componentId', mockAnalyzerRange.beginDate, mockAnalyzerRange.beginHour);
       expect(updateAnalyzerRange).toHaveBeenCalled;
     });
   });
