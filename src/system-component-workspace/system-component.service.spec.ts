@@ -25,7 +25,7 @@ const payload = new SystemComponentBaseDTO();
 const repositoryFactory = () => ({
   getSystemComponents: jest.fn().mockResolvedValue(sysComps),
   getSystemComponent: jest.fn().mockResolvedValue(sysComp),
-  getSystemComponentByBeginOrEndDate: jest.fn().mockResolvedValue(sysComp),
+  getSystemComponentByLogicalKey: jest.fn().mockResolvedValue(sysComp),
   save: jest.fn().mockResolvedValue(sysComp),
   create: jest.fn().mockResolvedValue(sysComp),
 });
@@ -168,7 +168,7 @@ describe('SystemComponentWorkspaceService', () => {
 
     it('should create system component while importing a system component and a system component record exists ', async () => {
       jest
-        .spyOn(repository, 'getSystemComponentByBeginOrEndDate')
+        .spyOn(repository, 'getSystemComponentByLogicalKey')
         .mockResolvedValue(null);
 
       jest

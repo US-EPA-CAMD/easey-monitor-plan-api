@@ -79,6 +79,7 @@ export class UnitFuelWorkspaceController {
     @Body() payload: UnitFuelBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
+    await this.service.runChecks(payload, unitId, unitFuelId);
     return this.service.updateUnitFuel({
       unitId,
       unitFuelId,
@@ -105,11 +106,12 @@ export class UnitFuelWorkspaceController {
     type: UnitFuelDTO,
     description: 'Creates a workspace unit control record for a unit',
   })
-  createUnitFuel(
+  async createUnitFuel(
     @Param('unitId') unitId: number,
     @Body() payload: UnitFuelBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitFuelDTO> {
+    await this.service.runChecks(payload, unitId);
     return this.service.createUnitFuel({
       unitId,
       payload,

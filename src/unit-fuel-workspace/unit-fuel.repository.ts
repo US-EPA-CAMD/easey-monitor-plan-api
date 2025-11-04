@@ -25,30 +25,15 @@ export class UnitFuelWorkspaceRepository extends Repository<UnitFuel> {
     return query.getOne();
   }
 
-  async getUnitFuelBySpecsBeginOrEndDate(
+  async getUnitFuelByLogicalKey(
     unitId: number,
     fuelCode: string,
     beginDate: Date,
-    endDate: Date | null,
   ): Promise<UnitFuel | null> {
-    const qb = this.createQueryBuilder('u')
-      .where('u.unitId = :unitId', { unitId })
-      .andWhere('u.fuelCode = :fuelCode', { fuelCode })
-      .andWhere('u.beginDate = :beginDate', { beginDate });
-
-    const beginMatch = await qb.getOne();
-    if (beginMatch) return beginMatch;
-
-    if (endDate !== null) {
-      const endQuery = this.createQueryBuilder('u')
-        .where('u.unitId = :unitId', { unitId })
-        .andWhere('u.fuelCode = :fuelCode', { fuelCode })
-        .andWhere('u.endDate = :endDate', { endDate });
-
-      const endMatch = await endQuery.getOne();
-      if (endMatch) return endMatch;
-    }
-
-    return null;
+    return this.createQueryBuilder('uf')
+      .where('uf.unitId = :unitId', { unitId })
+      .andWhere('uf.fuelCode = :fuelCode', { fuelCode })
+      .andWhere('uf.beginDate = :beginDate', { beginDate })
+      .getOne();
   }
 }

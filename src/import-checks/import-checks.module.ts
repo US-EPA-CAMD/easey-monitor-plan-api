@@ -11,6 +11,7 @@ import { MonitorFormulaWorkspaceModule } from '../monitor-formula-workspace/moni
 import { MonitorSpanWorkspaceModule } from '../monitor-span-workspace/monitor-span.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system.module';
 import { StackPipeWorkspaceModule } from '../stack-pipe-workspace/stack-pipe.module';
+import { UnitWorkspaceModule } from '../unit-workspace/unit.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { StackPipeWorkspaceModule } from '../stack-pipe-workspace/stack-pipe.mod
     UnitModule,
     UnitStackConfigurationWorkspaceModule,
     StackPipeWorkspaceModule,
+    UnitWorkspaceModule
   ],
   providers: [ImportChecksService, IsInDbValuesConstraint],
   exports: [ImportChecksService],

@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
@@ -538,6 +539,162 @@ describe('Monitor Plan Service', () => {
         true,
         true,
       );
+    });
+  });
+
+  // Tests -- Array access safety for location handling
+  describe('Array Access Safety - TT6932', () => {
+    it('should handle empty locations array safely', async () => {
+      const mockMethod = {
+        id: 'method-id-123',
+      };
+
+      const mockQueryBuilder = {
+        createQueryBuilder: jest.fn().mockReturnThis(),
+        innerJoinAndSelect: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        innerJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue({
+          locations: [], // Empty locations array
+          beginReportingPeriod: { year: 2020 },
+          endReportPeriodId: null,
+        }),
+      } as any;
+
+      const mockRepository = {
+        createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+      } as any;
+
+      // Test the private method
+      const serviceInstance = service as any;
+      serviceInstance.repository = mockRepository;
+
+      // Test:  To throw BadRequestException due to empty locations array
+      await expect(
+        serviceInstance.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
+          method: mockMethod,
+          userId: 'testuser',
+          trx: undefined
+        })
+      ).rejects.toThrow(BadRequestException);
+
+      expect(mockRepository.createQueryBuilder).toHaveBeenCalledWith('mp');
+    });
+
+    it('should process single location plan safely', async () => {
+      const mockMethod = {
+        id: 'method-id-123',
+      };
+
+      const mockQueryBuilder = {
+        createQueryBuilder: jest.fn().mockReturnThis(),
+        innerJoinAndSelect: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        innerJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue({
+          locations: [{ unitId: '1', stackPipeId: null }], // Single location
+          beginReportingPeriod: { year: 2020 },
+          endReportPeriodId: null,
+        }),
+      } as any;
+
+      const mockRepository = {
+        createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+      } as any;
+
+      const serviceInstance = service as any;
+      serviceInstance.repository = mockRepository;
+      serviceInstance.syncSingleUnitPlanBeginRptPeriodToEarliestMethod = jest.fn().mockResolvedValue(undefined);
+
+      // Should complete successfully
+      await expect(
+         serviceInstance.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
+          method: mockMethod,
+          userId: 'testuser',
+          trx: undefined
+        })
+      ).resolves.not.toThrow();
+    // Verify nested method was called for valid single location
+      expect(serviceInstance.syncSingleUnitPlanBeginRptPeriodToEarliestMethod).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return early for multi-location plans', async () => {
+      const mockMethod = {
+        id: 'method-id-123',
+      };
+
+      const mockQueryBuilder = {
+        createQueryBuilder: jest.fn().mockReturnThis(),
+        innerJoinAndSelect: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        innerJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue({
+          locations: [
+            { unitId: '1', stackPipeId: null },
+            { unitId: '2', stackPipeId: null }
+          ], // For multiple locations
+          beginReportingPeriod: { year: 2020 },
+          endReportPeriodId: null,
+        }),
+      } as any;
+
+      const mockRepository = {
+        createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+      } as any;
+
+      const serviceInstance = service as any;
+      serviceInstance.repository = mockRepository;
+
+      // Should return early for multi-location plans
+      await expect(
+        serviceInstance.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
+          method: mockMethod,
+          userId: 'testuser',
+          trx: undefined
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should return early when no plan found', async () => {
+      const mockMethod = {
+        id: 'method-id-123',
+      };
+
+      const mockQueryBuilder = {
+        createQueryBuilder: jest.fn().mockReturnThis(),
+        innerJoinAndSelect: jest.fn().mockReturnThis(),
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        innerJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue(null), // No plan found
+      } as any;
+
+      const mockRepository = {
+        createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+      } as any;
+
+      const serviceInstance = service as any;
+      serviceInstance.repository = mockRepository;
+
+      // Should return early when no plan found
+      await expect(
+        serviceInstance.updateFirstPlanPeriodOnMethodUpdateIfSingleUnit({
+          method: mockMethod,
+          userId: 'testuser',
+          trx: undefined
+        })
+      ).resolves.toBeUndefined();
     });
   });
 });

@@ -37,31 +37,13 @@ export class UnitCapacityWorkspaceRepository extends Repository<UnitCapacity> {
     return query.getMany();
   }
 
-  async getUnitCapacityByUnitIdBeginOrEndDate(
+  async getUnitCapacityByLogicalKey(
     unitId: number,
     beginDate: Date,
-    endDate: Date | null,
   ): Promise<UnitCapacity | null> {
-    const query = this.createQueryBuilder('c')
-      .where('c.unitId = :unitId', { unitId })
-      .andWhere('c.beginDate = :beginDate', { beginDate });
-
-    const beginMatch = await query
-      .orderBy('c.unitId, c.endDate, c.maximumHourlyHeatInputCapacity')
+    return this.createQueryBuilder('uc')
+      .where('uc.unitId = :unitId', { unitId })
+      .andWhere('uc.beginDate = :beginDate', { beginDate })
       .getOne();
-
-    if (beginMatch) return beginMatch;
-
-    if (endDate !== null) {
-      const endQuery = this.createQueryBuilder('c')
-        .where('c.unitId = :unitId', { unitId })
-        .andWhere('c.endDate = :endDate', { endDate });
-
-      return await endQuery
-        .orderBy('c.unitId, c.endDate, c.maximumHourlyHeatInputCapacity')
-        .getOne();
-    }
-
-    return null;
   }
 }

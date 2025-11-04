@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, IsNull, Repository } from 'typeorm';
 
 import { MonitorSpan } from '../entities/workspace/monitor-span.entity';
 
@@ -16,50 +16,21 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
       .getOne();
   }
 
-  async getSpanByLocIdCompTypeCdBeginOrEndDate(
+  async getSpanByLogicalKey(
     locationId: string,
     componentTypeCode: string,
     spanScaleCode: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date | null,
-    endHour: number | null,
   ): Promise<MonitorSpan | null> {
     const query = this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
-      .andWhere('ms.componentTypeCode = :componentTypeCode', { componentTypeCode });
+      .andWhere('ms.componentTypeCode = :componentTypeCode', { componentTypeCode })
+      .andWhere('ms.beginDate = :beginDate', { beginDate })
+      .andWhere('ms.beginHour = :beginHour', { beginHour })
+      .andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode: spanScaleCode ?? IsNull() })
 
-    if (spanScaleCode) {
-      query.andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode });
-    }
-
-    query.andWhere(
-      '(ms.beginDate = :beginDate AND ms.beginHour = :beginHour)',
-      { beginDate, beginHour },
-    );
-
-    const beginMatch = await query.getOne();
-    if (beginMatch) return beginMatch;
-
-    if (endDate !== null && endHour !== null) {
-      const endQuery = this.createQueryBuilder('ms')
-        .where('ms.locationId = :locationId', { locationId })
-        .andWhere('ms.componentTypeCode = :componentTypeCode', { componentTypeCode });
-
-      if (spanScaleCode) {
-        endQuery.andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode });
-      }
-
-      endQuery.andWhere(
-        '(ms.endDate = :endDate AND ms.endHour = :endHour)',
-        { endDate, endHour },
-      );
-
-      const endMatch = await endQuery.getOne();
-      if (endMatch) return endMatch;
-    }
-
-    return null;
+    return query.getOne();
   }
 
 

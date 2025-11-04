@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWafWorkspaceService } from './duct-waf.service';
@@ -10,6 +11,7 @@ import { DuctWaf } from '../entities/workspace/duct-waf.entity';
 import { DuctWafBaseDTO, DuctWafDTO } from '../dtos/duct-waf.dto';
 
 jest.mock('../monitor-plan-workspace/monitor-plan.service.ts');
+jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const ENTITY = new DuctWaf();
 const DTO = new DuctWafDTO();
@@ -23,7 +25,7 @@ const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(ENTITY),
   create: jest.fn(),
   save: jest.fn(),
-  getDuctWafByLocIdBeginOrEndDate: jest.fn(),
+  getDuctWafByLogicalKey: jest.fn(),
 });
 
 const mockMap = () => ({
@@ -34,6 +36,7 @@ const mockMap = () => ({
 describe('DuctWafWorkspaceService', () => {
   let service: DuctWafWorkspaceService;
   let repository: DuctWafWorkspaceRepository;
+  const KEY = 'Rectangular Duct WAF';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -116,6 +119,69 @@ describe('DuctWafWorkspaceService', () => {
     it('Should return true if DTOs are imported successfully', async () => {
       const result = await service.importDuctWaf(LOC_ID, [PAYLOAD], USER_ID);
       expect(result).toEqual(true);
+    });
+  });
+
+  describe('DEFAULT-96-A check', () => {
+    const locationId = 'A LOCATION ID';
+    const payload: DuctWafBaseDTO = {
+      wafDeterminationDate: new Date('2023-01-01'),
+      wafBeginDate: new Date('2023-01-01'),
+      wafBeginHour: 0,
+      wafMethodCode: 'METHOD1',
+      wafValue: 1.0,
+      numberOfTestRuns: 3,
+      numberOfTraversePointsWAF: 12,
+      numberOfTestPorts: 4,
+      numberOfTraversePointsRef: 12,
+      ductWidth: 2.0,
+      ductDepth: 1.5,
+      wafEndDate: new Date('2023-12-31'),
+      wafEndHour: 23,
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should return DEFAULT-96-A error | wafBeginHour exist', async () => {
+      const duplicateDuctWaf = new DuctWaf();
+      duplicateDuctWaf.id = 'different-id';
+      duplicateDuctWaf.locationId = locationId;
+      duplicateDuctWaf.wafBeginDate = new Date('2023-01-01');
+      duplicateDuctWaf.wafBeginHour = 0;
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(duplicateDuctWaf);
+
+      const result = await service['duplicateDuctWafChecks'](payload, locationId);
+
+      expect(result).toBe(
+        CheckCatalogService.formatResultMessage('DEFAULT-96-A', {
+          fieldnames: 'wafBeginDate, wafBeginHour',
+          recordtype: KEY
+        })
+      );
+    });
+
+    it('should return DEFAULT-96-A error | wafEndHour exist', async () => {
+      const duplicateDuctWaf = new DuctWaf();
+      duplicateDuctWaf.id = 'different-id';
+      duplicateDuctWaf.locationId = locationId;
+      duplicateDuctWaf.wafEndDate = new Date('2023-12-31');
+      duplicateDuctWaf.wafEndHour = 23;
+
+      jest.spyOn(repository, 'findOneBy')
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(duplicateDuctWaf);
+
+      const result = await service['duplicateDuctWafChecks'](payload, locationId);
+
+      expect(result).toBe(
+        CheckCatalogService.formatResultMessage('DEFAULT-96-A', {
+          fieldnames: 'wafEndDate, wafEndHour',
+          recordtype: KEY
+        })
+      );
     });
   });
 });

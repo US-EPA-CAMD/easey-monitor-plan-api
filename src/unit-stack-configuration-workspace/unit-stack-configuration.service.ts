@@ -14,6 +14,9 @@ import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.se
 import { UnitService } from '../unit/unit.service';
 import { settlePromises, withTransaction } from '../utils';
 import { UnitStackConfigurationWorkspaceRepository } from './unit-stack-configuration.repository';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
+
+const KEY = 'Unit Stack Configuration'
 
 @Injectable()
 export class UnitStackConfigurationWorkspaceService {
@@ -23,7 +26,7 @@ export class UnitStackConfigurationWorkspaceService {
     private readonly unitService: UnitService,
     private readonly stackPipeService: StackPipeWorkspaceService,
     private readonly map: UnitStackConfigurationMap,
-  ) {}
+  ) { }
 
   async getUnitStackConfigsByIds(ids: string[], trx?: EntityManager) {
     const results = await withTransaction(
@@ -64,7 +67,13 @@ export class UnitStackConfigurationWorkspaceService {
 
     // Check for duplicate unit stack configurations.
     monitorPlan.unitStackConfigurationData.forEach((usc1, i) => {
-      if (
+      if (!usc1.unitId) {
+        const error = CheckCatalogService.formatResultMessage('MONLOC-107-A', {
+          fieldname: 'unitId',
+          key: KEY
+        })
+        errorList.push(error)
+      } else if (
         monitorPlan.unitStackConfigurationData.findIndex(
           usc2 =>
             usc1.unitId === usc2.unitId &&
@@ -120,6 +129,32 @@ export class UnitStackConfigurationWorkspaceService {
     return errorList;
   }
 
+  async importUnitStackConfigurationChecks(monPlan: UpdateMonitorPlanDTO): Promise<string[]> {
+    const errorList: string[] = [];
+
+    const unitIds = new Set(
+      monPlan.monitoringLocationData
+        .filter(loc => loc.unitId)
+        .map(loc => loc.unitId)
+    );
+    if (unitIds.size > 1) {
+      for (const unitId of unitIds) {
+        const hasStackConfig = monPlan.unitStackConfigurationData?.some(
+          config => config.unitId === unitId
+        );
+        if (!hasStackConfig) {
+          const error = CheckCatalogService.formatResultMessage('IMPORT-4-A', {
+            fieldname: 'unitId',
+            unitId
+          })
+          errorList.push(error)
+        }
+      }
+    }
+
+    return errorList;
+  }
+
   async importUnitStacks(
     plan: UpdateMonitorPlanDTO,
     facilityId: number,
@@ -149,18 +184,18 @@ export class UnitStackConfigurationWorkspaceService {
 
         const unitStackConfigDTO = unitStackConfigRecord
           ? await this.updateUnitStackConfig(
-              unitStackConfigRecord.id,
-              unitStackConfig,
-              userId,
-              trx,
-            )
+            unitStackConfigRecord.id,
+            unitStackConfig,
+            userId,
+            trx,
+          )
           : await this.createUnitStackConfig(
-              unit.id,
-              stackPipe.id,
-              unitStackConfig,
-              userId,
-              trx,
-            );
+            unit.id,
+            stackPipe.id,
+            unitStackConfig,
+            userId,
+            trx,
+          );
 
         unitStackConfigDTOs.push(unitStackConfigDTO);
       }),

@@ -60,6 +60,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(returnedPCTQualification),
   create: jest.fn().mockResolvedValue(returnedPCTQualification),
   save: jest.fn().mockResolvedValue(returnedPCTQualification),
+  findOneBy: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -243,6 +244,55 @@ describe('PCTQualificationService', () => {
         undefined,
       );
       expect(updateLMEQualification).toHaveBeenCalled;
+    });
+  });
+
+  describe('QUAL-36-A check', () => {
+    it('should throw QUAL-36-A error', async () => {
+      const duplicatePctQual = new PCTQualification();
+      duplicatePctQual.id = 'different-id';
+      duplicatePctQual.qualificationYear = payload.qualificationYear;
+      
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(duplicatePctQual);
+
+      let errorThrown = false;
+      let errorMessage = '';
+
+      try {
+        await service.runChecks(payload, qualId);
+      } catch (error) {
+        errorThrown = true;
+        errorMessage = error.response.message;
+      }
+
+      expect(errorThrown).toBe(true);
+      expect(errorMessage).toContain('QUAL-36-A');
+      expect(repository.findOneBy).toHaveBeenCalledWith({
+        qualificationId: qualId,
+        qualificationYear: payload.qualificationYear
+      });
+    });
+
+    it('should not throw error when qualification year exists but is the same record being updated', async () => {
+      const samePctQual = new PCTQualification();
+      samePctQual.id = pctQualId; 
+      samePctQual.qualificationYear = payload.qualificationYear;
+      
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(samePctQual);
+
+      let errorThrown = false;
+
+      try {
+        await service.runChecks(payload, qualId, pctQualId);
+      } catch (error) {
+        errorThrown = true;
+      }
+
+      expect(errorThrown).toBe(false);
+      expect(repository.findOneBy).toHaveBeenCalledWith({
+        qualificationId: qualId,
+        qualificationYear: payload.qualificationYear
+      });
     });
   });
 });

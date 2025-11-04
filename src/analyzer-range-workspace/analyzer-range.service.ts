@@ -139,9 +139,10 @@ export class AnalyzerRangeWorkspaceService {
         const analyzerRangeRecord = await withTransaction(
           this.repository,
           trx,
-        ).getAnalyzerRangeByComponentIdBeginOrEndDate(
+        ).getAnalyzerRangeByLogicalKey(
           componentRecordId,
-          analyzerRange,
+          analyzerRange.beginDate,
+          analyzerRange.beginHour
         );
 
         if (analyzerRangeRecord) {
