@@ -2385,6 +2385,11 @@ export class MonitorPlanWorkspaceService {
 
     if (!firstPlan) return;
     if (firstPlan.locations.length > 1) return; // Only single-location plans.
+
+    // Check unsafe array access with proper null checking
+    if (firstPlan.locations.length === 0) {
+      throw new BadRequestException('No locations found in monitor plan');
+    }
     if (firstPlan.locations[0].unitId === null) return; // Only single-unit plans.
     if (firstPlan.endReportPeriodId) return; // Only active plans.
     if (firstPlan.beginReportingPeriod.year < 2008) return; // Only plans with begin dates after 2008.
