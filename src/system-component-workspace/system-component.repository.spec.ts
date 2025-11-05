@@ -89,7 +89,7 @@ describe('SystemComponentWorkspaceRepository', () => {
       queryBuilder.andWhere.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(sysComp);
 
-      const result = await repository.getSystemComponentByBeginOrEndDate(
+      const result = await repository.getSystemComponentByLogicalKey(
         '1',
         '1',
         new Date(),

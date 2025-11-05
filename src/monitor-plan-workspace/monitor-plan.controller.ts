@@ -112,8 +112,8 @@ export class MonitorPlanWorkspaceController {
     @User() user: CurrentUser,
     @Query('draft') draft: boolean,
   ): Promise<MonitorPlanImportResponseDTO> {
-    await this.mpChecksService.runChecks(plan);
     await this.importChecksService.runImportChecks(plan);
+    await this.mpChecksService.runChecks(plan);
     return await this.service.importMpPlan(plan, user.userId, draft);
   }
 

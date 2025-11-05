@@ -157,10 +157,9 @@ export class MonitorAttributeWorkspaceService {
         const attributeRecord = await withTransaction(
           this.repository,
           trx,
-        ).getAttributeByLocIdBeginOrEndDate(
+        ).getAttributeByLogicalKey(
           locationId,
           attribute.beginDate,
-          attribute.endDate,
         );
 
         if (attributeRecord) {

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import {
   UnitCapacityBaseDTO,
@@ -24,7 +25,7 @@ const payload = new UnitCapacityBaseDTO();
 const mockRepository = () => ({
   getUnitCapacities: jest.fn().mockResolvedValue(unitCapacity),
   getUnitCapacity: jest.fn().mockResolvedValue(unitCapacity),
-  getUnitCapacityByUnitIdBeginOrEndDate: jest.fn().mockResolvedValue(unitCapacity),
+  getUnitCapacityByLogicalKey: jest.fn().mockResolvedValue(unitCapacity),
   create: jest.fn().mockResolvedValue(unitCapacity),
   save: jest.fn().mockResolvedValue(unitCapacity),
 });
@@ -38,6 +39,7 @@ describe('UnitCapacityWorkspaceService', () => {
   let service: UnitCapacityWorkspaceService;
   let repository: UnitCapacityWorkspaceRepository;
   let entityManager: EntityManager;
+  const KEY = 'Unit Capacity';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -131,11 +133,66 @@ describe('UnitCapacityWorkspaceService', () => {
     });
     it('should create while importing monitor default', async () => {
       jest
-        .spyOn(repository, 'getUnitCapacityByUnitIdBeginOrEndDate')
+        .spyOn(repository, 'getUnitCapacityByLogicalKey')
         .mockResolvedValue(undefined);
 
       const result = await service.importUnitCapacity([payload], 1, 'testUser');
       expect(result).toEqual(true);
+    });
+  });
+
+  describe('CAPAC-6-A check', () => {
+    const unitId = 1;
+    const duplicateBeginDate = new Date('2022-01-01');
+    const duplicateEndDate = new Date('2022-12-31');
+
+
+    it('should return CAPAC-6-A | begin date exists', async () => {
+      const payload: UnitCapacityBaseDTO = {
+        maximumHourlyHeatInputCapacity: 100,
+        beginDate: duplicateBeginDate,
+        endDate: new Date('2022-12-31'),
+      };
+
+      const existingCapacity = new UnitCapacityDTO();
+      existingCapacity.beginDate = duplicateBeginDate;
+      existingCapacity.endDate = new Date('2023-01-01');
+      existingCapacity.id = 'ABC'
+
+      jest.spyOn(service, 'getUnitCapacities').mockResolvedValue([existingCapacity]);
+
+      const result = await service['duplicateUnitCapacityChecks'](payload, unitId);
+
+      expect(result).toContain(
+        CheckCatalogService.formatResultMessage('CAPAC-6-A', {
+          fieldnames: 'beginDate',
+          recordtype: KEY
+        })
+      );
+    });
+
+    it('should return CAPAC-6-A | endDate date exists', async () => {
+      const payload: UnitCapacityBaseDTO = {
+        maximumHourlyHeatInputCapacity: 100,
+        beginDate: new Date('2022-01-01'),
+        endDate: duplicateEndDate,
+      };
+
+      const existingCapacity = new UnitCapacityDTO();
+      existingCapacity.beginDate = new Date('2022-01-02');
+      existingCapacity.endDate = duplicateEndDate;
+      existingCapacity.id = 'ABC';
+
+      jest.spyOn(service, 'getUnitCapacities').mockResolvedValue([existingCapacity]);
+
+      const result = await service['duplicateUnitCapacityChecks'](payload, unitId);
+
+      expect(result).toContain(
+        CheckCatalogService.formatResultMessage('CAPAC-6-A', {
+          fieldnames: 'endDate',
+          recordtype: KEY
+        })
+      );
     });
   });
 });

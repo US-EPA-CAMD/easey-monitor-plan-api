@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, BadRequestException } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
@@ -67,12 +67,24 @@ export class MonitorPlanChecksService {
     });
 
     payload.monitoringLocationData.forEach((monitorLocation, locIdx) => {
-      const locationId = locationIdentifiers.find(i => {
-        return (
-          i.unitId === monitorLocation.unitId &&
-          i.stackPipeId === monitorLocation.stackPipeId
+      //Fix anyOf schema compliance for location lookup
+      const location = locationIdentifiers.find(i => {
+        if (monitorLocation.unitId && monitorLocation.stackPipeId) {
+          return i.unitId === monitorLocation.unitId && i.stackPipeId === monitorLocation.stackPipeId;
+        } else if (monitorLocation.unitId) {
+          return i.unitId === monitorLocation.unitId;
+        } else if (monitorLocation.stackPipeId) {
+          return i.stackPipeId === monitorLocation.stackPipeId;
+        }
+        return false;
+      });
+
+      if (!location) {
+        throw new BadRequestException(
+          `Location not found for unitId: ${monitorLocation.unitId}, stackPipeId: ${monitorLocation.stackPipeId}`
         );
-      }).locationId;
+      }
+      const locationId = location.locationId;
 
       monitorLocation.supplementalMATSMonitoringMethodData?.forEach(
         (matsMethod, matsMetIdx) => {

@@ -11,35 +11,19 @@ export class MonitorMethodWorkspaceRepository extends Repository<
     super(MonitorMethod, entityManager);
   }
 
-  async getMethodByLocIdParamBeginOrEndDate(
+  async getMethodByLogicalKey(
     locationId: string,
     parameterCode: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date | null,
-    endHour: number | null,
   ): Promise<MonitorMethod | null> {
 
-    const query = this.createQueryBuilder('mme')
+    return this.createQueryBuilder('mme')
       .where('mme.locationId = :locationId', { locationId })
       .andWhere('mme.parameterCode = :parameterCode', { parameterCode })
-      .andWhere(`(mme.beginDate = :beginDate AND mme.beginHour = :beginHour)`,{ beginDate, beginHour },
-    );
-
-    const beginMatch = await query.getOne();
-    if (beginMatch) return beginMatch;
-
-    if (endDate !== null && endHour !== null) {
-      const endQuery = this.createQueryBuilder('mme')
-        .where('mme.locationId = :locationId', { locationId })
-        .andWhere('mme.parameterCode = :parameterCode', { parameterCode })
-        .andWhere('mme.endDate = :endDate AND mme.endHour = :endHour', { endDate, endHour, });
-
-      const endMatch = await endQuery.getOne();
-      if (endMatch) return endMatch;
-    }
-
-    return null;
+      .andWhere('mme.beginDate = :beginDate', { beginDate })
+      .andWhere('mme.beginHour = :beginHour', { beginHour })
+      .getOne();
   }
 
 }
