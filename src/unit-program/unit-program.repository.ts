@@ -12,7 +12,7 @@ export class UnitProgramRepository extends Repository<UnitProgram> {
 
   async getUnitProgramByProgramId(progId: string): Promise<UnitProgram> {
      return useSlaveQueryRunner(this.dataSource, async (qr) => {
-        return qr.createQueryBuilder('up').where(
+        return qr.createQueryBuilder(UnitProgram,'up').where(
           'up.programId = :progId',
           { progId },
       ).getOne();

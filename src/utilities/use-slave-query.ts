@@ -5,6 +5,7 @@ export async function useSlaveQueryRunner<T>(
   callback: (query) => Promise<T>,
 ): Promise<T> {
   const qr = dataSource.createQueryRunner('slave');
+  await qr.connect();
   try {
     return await callback(qr.manager);
   } finally {

@@ -22,10 +22,12 @@ export class SystemFuelFlowRepository extends Repository<SystemFuelFlow> {
   async getFuelFlowsBySystemIds(
     monSysIds: string[],
   ): Promise<SystemFuelFlow[]> {
-    return this.createQueryBuilder('sff')
+    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+     return qr.createQueryBuilder(SystemFuelFlow, 'sff')
       .innerJoinAndSelect('sff.system', 'ms')
       .where('ms.id IN (:...monSysIds)', { monSysIds })
       .orderBy('sff.id')
       .getMany();
+    });
   }
 }

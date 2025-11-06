@@ -38,7 +38,8 @@ export class UnitStackConfigurationRepository extends Repository<
   }
 
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
-    return this.createQueryBuilder('usc')
+    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+          return qr.createQueryBuilder(UnitStackConfiguration,'usc')
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp')
       .innerJoin('u.location', 'mlu')
@@ -46,10 +47,12 @@ export class UnitStackConfigurationRepository extends Repository<
       .where('mlu.id IN (:...locationIds)', { locationIds })
       .andWhere('mlsp.id IN (:...locationIds)', { locationIds })
       .getMany();
+    })
   }
 
   async getUnitStackConfigsByUnitId(id: number | string, isUnit: boolean) {
-    const query = this.createQueryBuilder('usc')
+    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+         const query =  qr.createQueryBuilder(UnitStackConfiguration,'usc')
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp');
     if (isUnit) {
@@ -58,5 +61,6 @@ export class UnitStackConfigurationRepository extends Repository<
       query.where('sp.id = :id', { id });
     }
     return query.getMany();
+   })
   }
 }

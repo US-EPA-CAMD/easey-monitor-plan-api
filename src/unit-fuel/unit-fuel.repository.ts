@@ -17,14 +17,16 @@ export class UnitFuelRepository extends Repository<UnitFuel> {
       .innerJoinAndSelect('u.location', 'l')
       .andWhere('u.id = :unitId', { unitId })
       .getMany();
-    })
+    });
   }
 
   async getUnitFuelByLocationIds(locationIds: string[]): Promise<UnitFuel[]> {
-    return this.createQueryBuilder('uf')
+    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+     return qr.createQueryBuilder(UnitFuel,'uf')
       .innerJoin('uf.unit', 'u')
       .innerJoin('u.location', 'l')
       .where('l.id IN (:...locationIds)', { locationIds })
       .getMany();
+    });
   }
 }

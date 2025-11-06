@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { useSlaveQueryRunner } from '../utilities/use-slave-query';
 
 interface IorisCodesAndLastUpdatedTimes {
   changedOrisCodes: number[];
@@ -10,15 +11,17 @@ interface IorisCodesAndLastUpdatedTimes {
 
 @Injectable()
 export class MonitorPlanRepository extends Repository<MonitorPlan> {
-  constructor(entityManager: EntityManager) {
+  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(MonitorPlan, entityManager);
   }
 
   async getMonitorPlan(planId: string): Promise<MonitorPlan> {
-    return this.createQueryBuilder('plan')
+    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+        return qr.createQueryBuilder(MonitorPlan, 'plan')
       .innerJoinAndSelect('plan.plant', 'plant')
       .where('plan.id = :planId', { planId })
       .getOne();
+    });
   }
 
   async getMonitorPlanByIds(planIds: string[]): Promise<MonitorPlan[]> {

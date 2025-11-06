@@ -21,10 +21,12 @@ export class UnitControlRepository extends Repository<UnitControl> {
   }
 
   async getUnitControlsByLocationIds(locationIds: string[]): Promise<UnitControl[]> {
-    return this.createQueryBuilder('uc').addSelect('uc.fuelIndicatorCode')
+    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+      return qr.createQueryBuilder(UnitControl, 'uc').addSelect('uc.fuelIndicatorCode')
       .innerJoin('uc.unit', 'u')
       .innerJoin('u.location', 'l')
       .where('l.id IN (:...locationIds)', { locationIds })
       .getMany();
+    })
   }
 }

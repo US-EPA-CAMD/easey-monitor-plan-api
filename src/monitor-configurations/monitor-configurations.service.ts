@@ -50,9 +50,9 @@ export class MonitorConfigurationsService {
     };
     if (monPlanIds.length > 0) {
       plans = await useSlaveRepository(this.dataSource, MonitorPlanRepository, async (repository) => repository.find({
-        where: { id: In(monPlanIds) },
-        relations,
-      }));
+            where: { id: In(monPlanIds) },
+            relations,
+          }));
     } else {
       const plants = await useSlaveRepository(this.dataSource, PlantRepository, async (repository) => repository.find({
         where: { orisCode: In(orisCodes) },
@@ -113,17 +113,17 @@ export class MonitorConfigurationsService {
     queryTime: string,
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
-
-    const clock: Date = (await this.entityManager.query('SELECT now();'))[0]
+    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
+    const clock: Date = (await slaveQueryRunner.query('SELECT now();'))[0]
       .now;
     dto.mostRecentUpdate = clock;
 
     // Populate the monitor plans that have been changed
 
-    dto.changedConfigs = await this.monitorPlanRepository.find({
+    dto.changedConfigs = await useSlaveRepository(this.dataSource, MonitorPlanRepository, async (repository) => repository.find({
       where: { updateDate: MoreThanOrEqual(new Date(queryTime)) },
       relations: ['locations', 'comments', 'reportingFrequencies'],
-    });
+    }));
 
     const promises = [];
 
