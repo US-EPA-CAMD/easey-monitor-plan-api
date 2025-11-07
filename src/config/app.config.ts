@@ -8,7 +8,6 @@ import {
 require('dotenv').config();
 
 const host = getConfigValue('EASEY_MONITOR_PLAN_API_HOST', 'localhost');
-const replicaHost = getConfigValue('EASEY_MONITOR_PLAN_API_REPLICA_HOST', 'localhost');
 const port = getConfigValueNumber('EASEY_MONITOR_PLAN_API_PORT', 8010);
 const path = getConfigValue('EASEY_MONITOR_PLAN_API_PATH', 'monitor-plan-mgmt');
 
@@ -26,7 +25,6 @@ const apiHost = getConfigValue(
 export default registerAs('app', () => ({
   name: 'monitor-plan-api',
   host,
-  replicaHost,
   port,
   path,
   uri,

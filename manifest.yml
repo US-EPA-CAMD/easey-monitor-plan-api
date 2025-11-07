@@ -13,7 +13,6 @@ applications:
       OPTIMIZE_MEMORY: true
       EASEY_DB_SERVICE: ((dbSvc))
       EASEY_MONITOR_PLAN_API_HOST: ((host))
-      EASEY_MONITOR_PLAN_API_REPLICA_HOST: ((replicaHost))
       EASEY_MONITOR_PLAN_API_PORT: ((port))
       EASEY_MONITOR_PLAN_API_PATH: ((path))
       EASEY_MONITOR_PLAN_API_TITLE: ((title))

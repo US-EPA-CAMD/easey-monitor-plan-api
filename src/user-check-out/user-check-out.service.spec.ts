@@ -7,14 +7,10 @@ import { UserCheckOutService } from './user-check-out.service';
 import { UserCheckOutRepository } from './user-check-out.repository';
 import { UserCheckOut } from '../entities/workspace/user-check-out.entity';
 import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
-import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
 
 const monPlanId = '1';
 const userCheckout = new UserCheckOut();
 const userCheckoutDto = new UserCheckOutDTO();
-
-jest.mock('../utilities/use-slave-repository');
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([userCheckout]),
@@ -32,11 +28,8 @@ const mockMap = () => ({
 describe('UserCheckOutService', () => {
   let service: UserCheckOutService;
   let repository: UserCheckOutRepository;
-  let dataSource: DataSource;
 
   beforeAll(async () => {
-    dataSource = {} as DataSource;
-
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
@@ -50,7 +43,6 @@ describe('UserCheckOutService', () => {
           provide: UserCheckOutMap,
           useFactory: mockMap,
         },
-        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -60,10 +52,6 @@ describe('UserCheckOutService', () => {
 
   describe('getCheckedOutConfigurations', () => {
     it('should return array of checked out configurations', async () => {
-      (useSlaveRepository as jest.Mock).mockImplementation(
-        async (_dataSource, _repo, callback) =>
-          callback(mockRepository()) 
-       );
       const result = await service.getCheckedOutConfigurations();
       expect(result).toEqual([userCheckoutDto]);
     });
@@ -86,10 +74,7 @@ describe('UserCheckOutService', () => {
     });
 
     it('should throw error when a checked out configuration not found', async () => {
-      (useSlaveRepository as jest.Mock).mockImplementation(
-        async (_dataSource, _repo, callback) =>
-          callback(mockRepository()).mockResolvedValue(null)
-       );
+      jest.spyOn(repository, 'findOneBy').mockReturnValue(null);
       let errored = false;
       try {
         await service.getCheckedOutConfiguration(monPlanId);

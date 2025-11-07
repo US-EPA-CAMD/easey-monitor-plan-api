@@ -6,13 +6,12 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { PlantRepository } from '../plant/plant.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
-import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
+import { EntityManager, In, MoreThanOrEqual, DataSource } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 import { useSlaveRepository } from '../utilities/use-slave-repository';
-import { DataSource } from 'typeorm';
 
 @Injectable()
 export class MonitorConfigurationsService {
@@ -114,9 +113,14 @@ export class MonitorConfigurationsService {
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
     const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
-    const clock: Date = (await slaveQueryRunner.query('SELECT now();'))[0]
-      .now;
-    dto.mostRecentUpdate = clock;
+    slaveQueryRunner.connect();
+    try {
+      const clock: Date = (await slaveQueryRunner.query('SELECT now();'))[0]
+        .now;
+      dto.mostRecentUpdate = clock;
+    } finally {
+      slaveQueryRunner.release();
+    }
 
     // Populate the monitor plans that have been changed
 

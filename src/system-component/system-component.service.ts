@@ -4,13 +4,12 @@ import { SystemComponentDTO } from '../dtos/system-component.dto';
 import { SystemComponentMap } from '../maps/system-component.map';
 import { SystemComponentRepository } from './system-component.repository';
 
-
 @Injectable()
 export class SystemComponentService {
   constructor(
     private repository: SystemComponentRepository,
     private map: SystemComponentMap,
-    ) {}
+  ) {}
 
   async getComponents(
     locationId: string,

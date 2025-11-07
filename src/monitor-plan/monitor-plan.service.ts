@@ -130,12 +130,12 @@ export class MonitorPlanService {
 
     if (getReportingFrquencies) {
       REPORTING_FREQ = 0;
-      promises.push(  await useSlaveRepository(this.dataSource, MonitorPlanReportingFrequencyRepository, async (repository) => repository.findBy({ monitorPlanId: planId })));
+      promises.push( useSlaveRepository(this.dataSource, MonitorPlanReportingFrequencyRepository, async (repository) => repository.findBy({ monitorPlanId: planId })));
     }
 
     if (getComments) {
       COMMENTS = getReportingFrquencies === true ? REPORTING_FREQ + 1 : 0;
-      promises.push(await useSlaveRepository(this.dataSource, MonitorPlanCommentRepository, async (repository) => repository.findBy({ monitorPlanId: planId })));
+      promises.push( useSlaveRepository(this.dataSource, MonitorPlanCommentRepository, async (repository) => repository.findBy({ monitorPlanId: planId })));
     }
 
     if (getUnitStacks) {
@@ -175,7 +175,7 @@ export class MonitorPlanService {
 
       UNIT_CONTROLS = UNIT_CAPACITIES + 1;
       promises.push(
-        await useSlaveRepository(this.dataSource, UnitControlRepository, async (repository) => repository.find({
+         useSlaveRepository(this.dataSource, UnitControlRepository, async (repository) => repository.find({
           where: { unitId: In(unitIds) },
           order: { id: 'ASC' },
         }))
@@ -183,7 +183,7 @@ export class MonitorPlanService {
 
       UNIT_FUEL = UNIT_CONTROLS + 1;
       promises.push(
-        await useSlaveRepository(this.dataSource, UnitFuelRepository, async (repository) => repository.find({
+         useSlaveRepository(this.dataSource, UnitFuelRepository, async (repository) => repository.find({
           where: { unitId: In(unitIds) },
           order: { id: 'ASC' },
         }))
@@ -191,26 +191,26 @@ export class MonitorPlanService {
 
       ATTRIBUTES = UNIT_FUEL + 1;
       promises.push(
-        await useSlaveRepository(this.dataSource, MonitorAttributeRepository, async (repository) => repository.find({
+         useSlaveRepository(this.dataSource, MonitorAttributeRepository, async (repository) => repository.find({
           where: { locationId: In(locationIds) },
         }))
       );
 
       METHODS = ATTRIBUTES + 1;
       promises.push(
-         await useSlaveRepository(this.dataSource, MonitorMethodRepository, async (repository) => repository.find({ where: { locationId: In(locationIds) } }))
+          useSlaveRepository(this.dataSource, MonitorMethodRepository, async (repository) => repository.find({ where: { locationId: In(locationIds) } }))
       );
 
       MATS_METHODS = METHODS + 1;
       promises.push(
-        await useSlaveRepository(this.dataSource, MatsMethodRepository, async (repository) => repository.find({
+         useSlaveRepository(this.dataSource, MatsMethodRepository, async (repository) => repository.find({
           where: { locationId: In(locationIds) },
         }))
       );
 
       FORMULAS = MATS_METHODS + 1;
       promises.push(
-          await useSlaveRepository(this.dataSource, MonitorFormulaRepository, async (repository) => repository.find({
+           useSlaveRepository(this.dataSource, MonitorFormulaRepository, async (repository) => repository.find({
           where: { locationId: In(locationIds) },
           order: { id: 'ASC' },
         }))
@@ -218,13 +218,13 @@ export class MonitorPlanService {
 
       DEFAULTS = FORMULAS + 1;
       promises.push(
-      await useSlaveRepository(this.dataSource, MonitorDefaultRepository, async (repository) => repository.find({ 
+       useSlaveRepository(this.dataSource, MonitorDefaultRepository, async (repository) => repository.find({ 
         where: { locationId: In(locationIds) } }))
       );
 
       SPANS = DEFAULTS + 1;
       promises.push(
-      await useSlaveRepository(this.dataSource, MonitorSpanRepository, async (repository) => repository.find({
+       useSlaveRepository(this.dataSource, MonitorSpanRepository, async (repository) => repository.find({
           where: { locationId: In(locationIds) },
           order: {
             id: 'ASC',
@@ -234,13 +234,13 @@ export class MonitorPlanService {
 
       DUCT_WAFS = SPANS + 1;
       promises.push(
-      await useSlaveRepository(this.dataSource, DuctWafRepository, async (repository) => repository.find({
+       useSlaveRepository(this.dataSource, DuctWafRepository, async (repository) => repository.find({
          where: { locationId: In(locationIds) } }))
       );
 
       LOADS = DUCT_WAFS + 1;
       promises.push(
-      await useSlaveRepository(this.dataSource, MonitorLoadRepository, async (repository) => repository.find({
+       useSlaveRepository(this.dataSource, MonitorLoadRepository, async (repository) => repository.find({
           where: { locationId: In(locationIds) },
           order: { id: 'ASC' },
         }))
@@ -320,13 +320,13 @@ export class MonitorPlanService {
 
             if (quals.length !== 0) {
               const qualIds = quals.map(i => i.id);
-              const q1 = await useSlaveRepository(this.dataSource, LEEQualificationRepository, async (repository) => repository.find({
+              const q1 =  useSlaveRepository(this.dataSource, LEEQualificationRepository, async (repository) => repository.find({
                 where: { qualificationId: In(qualIds) },
               }));
-              const q2 = await useSlaveRepository(this.dataSource, LMEQualificationRepository, async (repository) => repository.find({
+              const q2 =  useSlaveRepository(this.dataSource, LMEQualificationRepository, async (repository) => repository.find({
                 where: { qualificationId: In(qualIds) },
               }))
-              const q3 = await useSlaveRepository(this.dataSource, PCTQualificationRepository, async (repository) => repository.find({
+              const q3 =  useSlaveRepository(this.dataSource, PCTQualificationRepository, async (repository) => repository.find({
                 where: { qualificationId: In(qualIds) },
               }));
 

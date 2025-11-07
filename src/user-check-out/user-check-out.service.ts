@@ -6,20 +6,18 @@ import { UserCheckOutDTO } from '../dtos/user-check-out.dto';
 import { UserCheckOutMap } from '../maps/user-check-out.map';
 import { withTransaction } from '../utils';
 import { UserCheckOutRepository } from './user-check-out.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
-import { DataSource } from 'typeorm';
+
 @Injectable()
 export class UserCheckOutService {
   constructor(
     private readonly entityManager: EntityManager,
     private readonly repository: UserCheckOutRepository,
-    private readonly dataSource: DataSource,
     @Inject(UserCheckOutMap)
     private readonly map: UserCheckOutMap,
   ) {}
 
   async getCheckedOutConfigurations(): Promise<UserCheckOutDTO[]> {
-    const userCheckOuts = await useSlaveRepository(this.dataSource, UserCheckOutRepository, async (repository) => repository.find());
+    const userCheckOuts = await this.repository.find();
     return this.map.many(userCheckOuts);
   }
 
@@ -47,9 +45,9 @@ export class UserCheckOutService {
   async getCheckedOutConfiguration(
     monPlanId: string,
   ): Promise<UserCheckOutDTO> {
-    const record = await useSlaveRepository(this.dataSource, UserCheckOutRepository, async (repository) => repository.findOneBy({
+    const record = await this.repository.findOneBy({
       monPlanId,
-    }));
+    });
 
     if (!record) {
       throw new EaseyException(

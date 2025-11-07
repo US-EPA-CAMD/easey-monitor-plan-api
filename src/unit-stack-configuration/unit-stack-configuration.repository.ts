@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
 import { useSlaveQueryRunner } from '../utilities/use-slave-query';
-import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UnitStackConfigurationRepository extends Repository<
