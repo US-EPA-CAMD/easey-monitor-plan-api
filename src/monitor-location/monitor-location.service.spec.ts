@@ -13,9 +13,9 @@ import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map'
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 import { StackPipe } from '../entities/stack-pipe.entity';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const locId = '6';
 const uscDto = new UnitStackConfigurationDTO();

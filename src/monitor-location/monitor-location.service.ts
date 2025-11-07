@@ -7,7 +7,7 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { UnitStackConfigurationService } from '../unit-stack-configuration/unit-stack-configuration.service';
 import { MonitorLocationRepository } from './monitor-location.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

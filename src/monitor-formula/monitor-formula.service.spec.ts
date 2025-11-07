@@ -5,9 +5,9 @@ import { MonitorFormulaMap } from '../maps/monitor-formula.map';
 import { MonitorFormulaService } from './monitor-formula.service';
 import { MonitorFormulaRepository } from './monitor-formula.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),

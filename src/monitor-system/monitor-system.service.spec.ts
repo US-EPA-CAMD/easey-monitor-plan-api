@@ -5,9 +5,9 @@ import { MonitorSystemMap } from '../maps/monitor-system.map';
 import { MonitorSystemService } from './monitor-system.service';
 import { MonitorSystemRepository } from './monitor-system.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),

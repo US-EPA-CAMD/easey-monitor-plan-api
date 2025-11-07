@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PCTQualificationDTO } from '../dtos/pct-qualification.dto';
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { PCTQualificationRepository } from './pct-qualification.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

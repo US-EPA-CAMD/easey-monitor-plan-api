@@ -5,9 +5,9 @@ import { LMEQualificationService } from './lme-qualification.service';
 import { LMEQualificationRepository } from './lme-qualification.repository';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),

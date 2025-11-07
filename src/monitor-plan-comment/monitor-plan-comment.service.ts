@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MonitorPlanCommentDTO } from '../dtos/monitor-plan-comment.dto';
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentRepository } from './monitor-plan-comment.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

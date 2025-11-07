@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MonitorMethodDTO } from '../dtos/monitor-method.dto';
 import { MonitorMethodMap } from '../maps/monitor-method.map';
 import { MonitorMethodRepository } from './monitor-method.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

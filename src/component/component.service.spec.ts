@@ -10,9 +10,9 @@ import { UpdateComponentBaseDTO } from '../dtos/component.dto';
 import { ArrayMaxSize } from 'class-validator';
 import { AnalyzerRangeBaseDTO } from '../dtos/analyzer-range.dto';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(''),

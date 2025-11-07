@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MatsMethodDTO } from '../dtos/mats-method.dto';
 import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodRepository } from './mats-method.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

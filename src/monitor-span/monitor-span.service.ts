@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MonitorSpanDTO } from '../dtos/monitor-span.dto';
 import { MonitorSpanMap } from '../maps/monitor-span.map';
 import { MonitorSpanRepository } from './monitor-span.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

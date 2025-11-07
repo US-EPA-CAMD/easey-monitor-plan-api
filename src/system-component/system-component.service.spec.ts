@@ -5,9 +5,9 @@ import { SystemComponentMap } from '../maps/system-component.map';
 import { SystemComponentService } from './system-component.service';
 import { SystemComponentRepository } from './system-component.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   getComponents: jest.fn().mockResolvedValue(''),

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { LEEQualificationDTO } from '../dtos/lee-qualification.dto';
 import { LEEQualificationMap } from '../maps/lee-qualification.map';
 import { LEEQualificationRepository } from './lee-qualification.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

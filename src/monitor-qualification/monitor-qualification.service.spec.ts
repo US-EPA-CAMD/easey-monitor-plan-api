@@ -5,9 +5,9 @@ import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorQualificationService } from './monitor-qualification.service';
 import { MonitorQualificationRepository } from './monitor-qualification.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),

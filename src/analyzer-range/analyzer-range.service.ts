@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AnalyzerRangeDTO } from '../dtos/analyzer-range.dto';
 import { AnalyzerRangeMap } from '../maps/analyzer-range.map';
 import { AnalyzerRangeRepository } from './analyzer-range.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 
 @Injectable()

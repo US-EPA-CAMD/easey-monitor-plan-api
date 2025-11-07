@@ -5,9 +5,9 @@ import { MatsMethodMap } from '../maps/mats-method.map';
 import { MatsMethodService } from './mats-method.service';
 import { MatsMethodRepository } from './mats-method.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),

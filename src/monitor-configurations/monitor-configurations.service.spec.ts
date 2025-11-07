@@ -16,9 +16,9 @@ import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;

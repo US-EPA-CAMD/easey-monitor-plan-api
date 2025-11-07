@@ -32,7 +32,7 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { MonitorPlanRepository } from './monitor-plan.repository';
 import { EaseyContentService } from '../monitor-plan-easey-content/easey-content.service';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class MonitorPlanService {

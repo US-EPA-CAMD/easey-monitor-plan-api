@@ -6,9 +6,9 @@ import { MonitorAttributeMap } from '../maps/monitor-attribute.map';
 import { MonitorAttributeService } from './monitor-attribute.service';
 import { MonitorAttributeRepository } from './monitor-attribute.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
-jest.mock('../utilities/use-slave-repository');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),

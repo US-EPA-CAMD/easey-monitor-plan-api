@@ -11,7 +11,7 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class MonitorConfigurationsService {
