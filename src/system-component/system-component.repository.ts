@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { SystemComponent } from '../entities/system-component.entity';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class SystemComponentRepository extends Repository<SystemComponent> {
   constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
@@ -13,7 +13,7 @@ export class SystemComponentRepository extends Repository<SystemComponent> {
     locationId: string,
     monSysId: string,
   ): Promise<SystemComponent[]> {
-    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+    return withSlaveConnection(this.dataSource, async (qr) => {
         return qr.createQueryBuilder(SystemComponent, 'msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('c.locationId = :locationId', { locationId })
@@ -26,7 +26,7 @@ export class SystemComponentRepository extends Repository<SystemComponent> {
   async getComponentsBySystemIds(
     monSysIds: string[],
   ): Promise<SystemComponent[]> {
-      return useSlaveQueryRunner(this.dataSource, async (qr) => {
+      return withSlaveConnection(this.dataSource, async (qr) => {
         return qr.createQueryBuilder(SystemComponent, 'msc')
       .innerJoinAndSelect('msc.component', 'c')
       .where('msc.monitoringSystemRecordId IN (:...monSysIds)', { monSysIds })

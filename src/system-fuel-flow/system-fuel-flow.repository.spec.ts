@@ -4,13 +4,13 @@ import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
 import { SystemFuelFlowRepository } from './system-fuel-flow.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const monSysId = '1';
 
 const sysFuelFlow = new SystemFuelFlow();
 
-jest.mock('../utilities/use-slave-query');
+jest.mock('@us-epa-camd/easey-common/connection');
 
   const mockQueryBuilder = {
     innerJoinAndSelect: jest.fn().mockReturnThis(),
@@ -49,7 +49,7 @@ describe('SystemFuelFlowRepository', () => {
   describe('getFuelFlows', () => {
     it('calls createQueryBuilder and get SystemFuelFlows by monitor system id', async () => {
 
-      (useSlaveQueryRunner as jest.Mock).mockImplementation(
+      (withSlaveConnection as jest.Mock).mockImplementation(
           async (_dataSource, callback) =>
       callback(mockManager)) 
       repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);

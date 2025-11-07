@@ -3,13 +3,13 @@ import { EntityManager, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanRepository } from './monitor-plan.repository';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const mp = new MonitorPlan();
 const mpArray = [];
 mpArray.push(mp);
 
-jest.mock('../utilities/use-slave-query');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockQueryBuilder = {
   getOne: jest.fn(),
@@ -89,7 +89,7 @@ describe('-- Monitor Plan Repository --', () => {
   });
 
   it('calls createQueryBuilder and gets data for a specific MonitorPlan from the repository', async () => {
-      (useSlaveQueryRunner as jest.Mock).mockImplementation(
+      (withSlaveConnection as jest.Mock).mockImplementation(
           async (_dataSource, callback) =>
       callback(mockManager))
     monitorPlanRepository.createQueryBuilder = jest

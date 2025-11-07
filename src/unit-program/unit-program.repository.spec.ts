@@ -3,10 +3,10 @@ import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { UnitProgramRepository } from './unit-program.repository';
 import { UnitProgram } from '../entities/workspace/unit-program.entity';
 import { DataSource } from 'typeorm';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const unitProgramEntity = new UnitProgram(); // Mocked UnitProgram entity
-jest.mock('../utilities/use-slave-query');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 // Mocking the SelectQueryBuilder and its methods
 const mockQueryBuilder =  {
@@ -42,7 +42,7 @@ describe('UnitProgramRepository', () => {
 
     // Mocking the createQueryBuilder to return the queryBuilder mock
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
-    (useSlaveQueryRunner as jest.Mock).mockImplementation(
+    (withSlaveConnection as jest.Mock).mockImplementation(
               async (_dataSource, callback) =>
           callback(mockManager)) 
   });

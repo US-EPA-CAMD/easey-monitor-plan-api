@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { MonitorLocation } from '../entities/monitor-location.entity';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class MonitorLocationRepository extends Repository<MonitorLocation> {
-  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
+  constructor( entityManager: EntityManager) {
     super(MonitorLocation, entityManager);
     
   }
@@ -27,7 +27,7 @@ export class MonitorLocationRepository extends Repository<MonitorLocation> {
   async getMonitorLocationsByPlanId(
     monPlanId: string,
   ): Promise<MonitorLocation[]> {
-   return useSlaveQueryRunner(this.dataSource, async (qr) => {
+   return withSlaveConnection(this.manager.connection, async (qr) => {
     return qr
     .createQueryBuilder(MonitorLocation, 'ml')
     .innerJoinAndSelect('ml.plans', 'p')

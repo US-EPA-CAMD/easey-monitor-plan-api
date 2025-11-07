@@ -4,11 +4,11 @@ import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { UnitStackConfiguration } from '../entities/workspace/unit-stack-configuration.entity';
 import { UnitStackConfigurationRepository } from './unit-stack-configuration.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const unitStackConfiguration = new UnitStackConfiguration();
 
-jest.mock('../utilities/use-slave-query');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockQueryBuilder = {
   innerJoinAndSelect: jest.fn(),
@@ -50,7 +50,7 @@ describe('UnitStackConfigurationRepository', () => {
 
   describe('getUnitStackConfigsByLocationIds', () => {
     it('calls createQueryBuilder and gets all Unit Stack Configurations from the repository', async () => {
-      (useSlaveQueryRunner as jest.Mock).mockImplementation(
+      (withSlaveConnection as jest.Mock).mockImplementation(
           async (_dataSource, callback) =>
       callback(mockManager))
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
@@ -67,7 +67,7 @@ describe('UnitStackConfigurationRepository', () => {
 
   describe('getUnitStackConfigsByUnitId', () => {
     it('calls createQueryBuilder and gets all Unit Stack Configations from the repository when it is a unit', async () => {
-      (useSlaveQueryRunner as jest.Mock).mockImplementation(
+      (withSlaveConnection as jest.Mock).mockImplementation(
           async (_dataSource, callback) =>
       callback(mockManager)) 
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
@@ -81,7 +81,7 @@ describe('UnitStackConfigurationRepository', () => {
     });
 
     it('calls createQueryBuilder and gets all Unit Stack Configations from the repository when it is not a unit', async () => {
-      (useSlaveQueryRunner as jest.Mock).mockImplementation(
+      (withSlaveConnection as jest.Mock).mockImplementation(
           async (_dataSource, callback) =>
       callback(mockManager)) 
       queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { UnitCapacity } from '../entities/unit-capacity.entity';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class UnitCapacityRepository extends Repository<UnitCapacity> {
@@ -11,7 +11,7 @@ export class UnitCapacityRepository extends Repository<UnitCapacity> {
   }
 
   async getUnitCapacities(unitId: number): Promise<UnitCapacity[]> {
-     const query = useSlaveQueryRunner(this.dataSource, async (qr) => {
+     const query = withSlaveConnection(this.dataSource, async (qr) => {
         return qr.createQueryBuilder(UnitCapacity, 'uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.unitBoilerType', 'ubt')
@@ -24,7 +24,7 @@ export class UnitCapacityRepository extends Repository<UnitCapacity> {
   async getUnitCapacitiesByLocationIds(
     locationIds: string[]
   ): Promise<UnitCapacity[]> {
-    const query = useSlaveQueryRunner(this.dataSource, async (qr) => {
+    const query = withSlaveConnection(this.dataSource, async (qr) => {
         return qr.createQueryBuilder(UnitCapacity, 'uc')
       .innerJoin('uc.unit', 'u')
       .innerJoin('u.location', 'l')
@@ -35,7 +35,7 @@ export class UnitCapacityRepository extends Repository<UnitCapacity> {
   }
 
   async getUnitCapacitiesByUnitIds(ids: number[]): Promise<UnitCapacity[]> {
-    const query = useSlaveQueryRunner(this.dataSource, async (qr) => {
+    const query = withSlaveConnection(this.dataSource, async (qr) => {
         return qr.createQueryBuilder(UnitCapacity,'uc')
       .innerJoinAndSelect('uc.unit', 'u')
       .innerJoinAndSelect('u.unitBoilerType', 'ubt')

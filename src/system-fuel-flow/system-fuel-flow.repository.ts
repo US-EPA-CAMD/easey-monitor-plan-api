@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { SystemFuelFlow } from '../entities/system-fuel-flow.entity';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class SystemFuelFlowRepository extends Repository<SystemFuelFlow> {
@@ -11,7 +11,7 @@ export class SystemFuelFlowRepository extends Repository<SystemFuelFlow> {
   }
 
   async getFuelFlows(monSysId: string): Promise<SystemFuelFlow[]> {
-    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+    return withSlaveConnection(this.dataSource, async (qr) => {
      return qr.createQueryBuilder(SystemFuelFlow, 'sff')
       .innerJoinAndSelect('sff.system', 'ms')
       .where('ms.id = :monSysId', { monSysId })
@@ -22,7 +22,7 @@ export class SystemFuelFlowRepository extends Repository<SystemFuelFlow> {
   async getFuelFlowsBySystemIds(
     monSysIds: string[],
   ): Promise<SystemFuelFlow[]> {
-    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+    return withSlaveConnection(this.dataSource, async (qr) => {
      return qr.createQueryBuilder(SystemFuelFlow, 'sff')
       .innerJoinAndSelect('sff.system', 'ms')
       .where('ms.id IN (:...monSysIds)', { monSysIds })

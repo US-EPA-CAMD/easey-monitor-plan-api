@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { UnitStackConfiguration } from '../entities/unit-stack-configuration.entity';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class UnitStackConfigurationRepository extends Repository<
@@ -13,7 +13,7 @@ export class UnitStackConfigurationRepository extends Repository<
   }
 
   async getUnitStackConfigsByMonitorPlanId(planId: string) {
-      return useSlaveQueryRunner(this.dataSource, async (qr) => {
+      return withSlaveConnection(this.dataSource, async (qr) => {
           return qr
           .createQueryBuilder(UnitStackConfiguration, 'usc')
           .innerJoinAndSelect('usc.unit', 'u')
@@ -37,7 +37,7 @@ export class UnitStackConfigurationRepository extends Repository<
   }
 
   async getUnitStackConfigsByLocationIds(locationIds: string[]) {
-    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+    return withSlaveConnection(this.dataSource, async (qr) => {
           return qr.createQueryBuilder(UnitStackConfiguration,'usc')
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp')
@@ -50,7 +50,7 @@ export class UnitStackConfigurationRepository extends Repository<
   }
 
   async getUnitStackConfigsByUnitId(id: number | string, isUnit: boolean) {
-    return useSlaveQueryRunner(this.dataSource, async (qr) => {
+    return withSlaveConnection(this.dataSource, async (qr) => {
          const query =  qr.createQueryBuilder(UnitStackConfiguration,'usc')
       .innerJoinAndSelect('usc.unit', 'u')
       .innerJoinAndSelect('usc.stackPipe', 'sp');

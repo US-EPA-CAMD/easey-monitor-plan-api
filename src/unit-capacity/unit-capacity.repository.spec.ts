@@ -4,11 +4,11 @@ import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { UnitCapacity } from '../entities/unit-capacity.entity';
 import { UnitCapacityRepository } from './unit-capacity.repository';
 import { DataSource } from 'typeorm';
-import { useSlaveQueryRunner } from '../utilities/use-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const unitCapacity = new UnitCapacity();
 
-jest.mock('../utilities/use-slave-query');
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockQueryBuilder = {
   innerJoinAndSelect: jest.fn().mockReturnThis(),
@@ -49,7 +49,7 @@ describe('UnitCapacityRepository', () => {
 
   describe('getUnitCapacities', () => {
     it('calls createQueryBuilder and gets all Unit Capacities from the repository with the specified LocId and UnitId', async () => {
-    (useSlaveQueryRunner as jest.Mock).mockImplementation(
+    (withSlaveConnection as jest.Mock).mockImplementation(
       async (_dataSource, callback) =>
       callback(mockManager)
     )
