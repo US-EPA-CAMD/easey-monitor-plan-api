@@ -14,7 +14,11 @@ export class UnitFuel extends BaseEntity {
   @PrimaryColumn({ name: 'uf_id' })
   id: string;
 
-  @Column({ name: 'unit_id', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'unit_id',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   unitId: number;
 
   @Column({ name: 'fuel_type' })
@@ -36,6 +40,7 @@ export class UnitFuel extends BaseEntity {
     nullable: true,
     name: 'ozone_seas_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   ozoneSeasonIndicator: number;
 
@@ -48,6 +53,7 @@ export class UnitFuel extends BaseEntity {
   @Column({
     name: 'sulfur_content',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   sulfurContent: number;
 

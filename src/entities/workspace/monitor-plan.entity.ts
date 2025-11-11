@@ -133,18 +133,11 @@ export class MonitorPlan extends BaseEntity {
   })
   evalStatusCode: string;
 
-  @ManyToOne(
-    () => Plant,
-    plant => plant.plans,
-    { eager: true },
-  )
+  @ManyToOne(() => Plant, (plant) => plant.plans, { eager: true })
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
 
-  @ManyToMany(
-    () => MonitorLocation,
-    location => location.plans,
-  )
+  @ManyToMany(() => MonitorLocation, (location) => location.plans)
   @JoinTable({
     name: 'camdecmpswks.monitor_plan_location',
     joinColumn: {
@@ -158,15 +151,12 @@ export class MonitorPlan extends BaseEntity {
   })
   locations: MonitorLocation[];
 
-  @OneToMany(
-    () => MonitorPlanComment,
-    comment => comment.plan,
-  )
+  @OneToMany(() => MonitorPlanComment, (comment) => comment.plan)
   comments: MonitorPlanComment[];
 
   @OneToMany(
     () => MonitorPlanReportingFrequency,
-    monitorPlanReportingFrequency => monitorPlanReportingFrequency.plan,
+    (monitorPlanReportingFrequency) => monitorPlanReportingFrequency.plan,
   )
   reportingFrequencies: MonitorPlanReportingFrequency[];
 
@@ -174,7 +164,7 @@ export class MonitorPlan extends BaseEntity {
 
   @OneToMany(
     () => EmissionEvaluation,
-    emissionEvaluation => emissionEvaluation.monitorPlan,
+    (emissionEvaluation) => emissionEvaluation.monitorPlan,
   )
   emissionEvaluations: EmissionEvaluation[];
 
@@ -190,9 +180,6 @@ export class MonitorPlan extends BaseEntity {
   })
   endReportingPeriod: ReportingPeriod;
 
-  @OneToMany(
-    () => MonitorPlanLocation,
-    mpl => mpl.monitorPlan,
-  )
+  @OneToMany(() => MonitorPlanLocation, (mpl) => mpl.monitorPlan)
   monitorPlanLocations: MonitorPlanLocation[];
 }

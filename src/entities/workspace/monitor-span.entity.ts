@@ -153,10 +153,7 @@ export class MonitorSpan extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
-  @ManyToOne(
-    () => MonitorLocation,
-    ml => ml.spans,
-  )
+  @ManyToOne(() => MonitorLocation, (ml) => ml.spans)
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 }
