@@ -25,14 +25,20 @@ export class MonitorSpanWorkspaceRepository extends Repository<MonitorSpan> {
   ): Promise<MonitorSpan | null> {
     const query = this.createQueryBuilder('ms')
       .where('ms.locationId = :locationId', { locationId })
-      .andWhere('ms.componentTypeCode = :componentTypeCode', { componentTypeCode })
+      .andWhere('ms.componentTypeCode = :componentTypeCode', {
+        componentTypeCode,
+      })
       .andWhere('ms.beginDate = :beginDate', { beginDate })
       .andWhere('ms.beginHour = :beginHour', { beginHour })
-      .andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode: spanScaleCode ?? IsNull() })
+
+    if (spanScaleCode === null || spanScaleCode === undefined) {
+      query.andWhere('ms.spanScaleCode IS NULL');
+    } else {
+      query.andWhere('ms.spanScaleCode = :spanScaleCode', { spanScaleCode });
+    }
 
     return query.getOne();
   }
-
 
   async getSpanByLocIdCompTypeCdEDateEHour(
     locationId: string,
