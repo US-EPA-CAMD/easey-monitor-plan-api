@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository, DataSource } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { UnitControl } from '../entities/unit-control.entity';
 import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';

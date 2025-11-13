@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository, DataSource } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
