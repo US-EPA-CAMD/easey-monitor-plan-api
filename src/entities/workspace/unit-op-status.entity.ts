@@ -14,10 +14,15 @@ export class UnitOpStatus extends BaseEntity {
   @PrimaryColumn({
     name: 'unit_op_status_id',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   id: number;
 
-  @Column({ name: 'unit_id', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'unit_id',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   unitId: number;
 
   @Column({ type: 'varchar', name: 'op_status_cd' })

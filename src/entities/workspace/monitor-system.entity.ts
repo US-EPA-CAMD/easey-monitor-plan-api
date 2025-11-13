@@ -51,10 +51,18 @@ export class MonitorSystem extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   beginHour: number;
 
-  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   endHour: number;
 
   @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })
@@ -66,10 +74,7 @@ export class MonitorSystem extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true, name: 'update_date' })
   updateDate: Date;
 
-  @ManyToMany(
-    () => Component,
-    c => c.systems,
-  )
+  @ManyToMany(() => Component, (c) => c.systems)
   @JoinTable({
     name: 'camdecmps.monitor_system_component',
     joinColumn: {
@@ -83,16 +88,10 @@ export class MonitorSystem extends BaseEntity {
   })
   components: SystemComponent[];
 
-  @OneToMany(
-    () => SystemFuelFlow,
-    sff => sff.system,
-  )
+  @OneToMany(() => SystemFuelFlow, (sff) => sff.system)
   fuelFlows: SystemFuelFlow[];
 
-  @ManyToOne(
-    () => MonitorLocation,
-    location => location.systems,
-  )
+  @ManyToOne(() => MonitorLocation, (location) => location.systems)
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 }

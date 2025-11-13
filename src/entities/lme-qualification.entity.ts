@@ -20,16 +20,29 @@ export class LMEQualification extends BaseEntity {
   @Column({
     name: 'qual_data_year',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   qualificationDataYear: number;
 
-  @Column({ name: 'so2_tons', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'so2_tons',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   so2Tons: number;
 
-  @Column({ name: 'nox_tons', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'nox_tons',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   noxTons: number;
 
-  @Column({ name: 'op_hours', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'op_hours',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   operatingHours: number;
 
   @Column({ type: 'varchar', length: 8, name: 'userid' })
@@ -41,10 +54,7 @@ export class LMEQualification extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
-  @ManyToOne(
-    () => MonitorQualification,
-    mq => mq.lmeQualifications,
-  )
+  @ManyToOne(() => MonitorQualification, (mq) => mq.lmeQualifications)
   @JoinColumn({ name: 'mon_qual_id' })
   qualification: MonitorQualification;
 }

@@ -40,6 +40,7 @@ export class MatsMethod extends BaseEntity {
     nullable: false,
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginHour: number;
 
@@ -50,6 +51,7 @@ export class MatsMethod extends BaseEntity {
     nullable: true,
     name: 'end_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endHour: number;
 
