@@ -39,7 +39,7 @@
     "@nestjs/platform-socket.io": "^11.1.9",
     "@nestjs/swagger": "^11.2.1",
     "@nestjs/typeorm": "^11.0.0",
-    "@nestjs/websockets": "^11.1.8",
+    "@nestjs/websockets": "^11.1.9",
     "@types/pg": "^8.15.6",
     "@us-epa-camd/easey-common": "21.4.1",
     "axios": "^1.13.2",
