@@ -59,99 +59,53 @@ export class MonitorLocation extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate?: Date;
 
-  @OneToOne(
-    () => StackPipe,
-    stackPipe => stackPipe.location,
-    { eager: true },
-  )
+  @OneToOne(() => StackPipe, (stackPipe) => stackPipe.location, { eager: true })
   @JoinColumn({ name: 'stack_pipe_id' })
   stackPipe: StackPipe;
 
-  @OneToOne(
-    () => Unit,
-    unit => unit.location,
-    { eager: true },
-  )
+  @OneToOne(() => Unit, (unit) => unit.location, { eager: true })
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;
 
-  @ManyToMany(
-    () => MonitorPlan,
-    plan => plan.locations,
-    { eager: true },
-  )
+  @ManyToMany(() => MonitorPlan, (plan) => plan.locations, { eager: true })
   plans: MonitorPlan[];
 
-  @OneToMany(
-    () => Component,
-    component => component.location,
-  )
+  @OneToMany(() => Component, (component) => component.location)
   components: Component[];
 
-  @OneToMany(
-    () => MonitorMethod,
-    method => method.location,
-    { eager: true },
-  )
+  @OneToMany(() => MonitorMethod, (method) => method.location, { eager: true })
   methods: MonitorMethod[];
 
-  @OneToMany(
-    () => MatsMethod,
-    matsMethod => matsMethod.location,
-  )
+  @OneToMany(() => MatsMethod, (matsMethod) => matsMethod.location)
   matsMethods: MatsMethod[];
 
-  @OneToMany(
-    () => MonitorFormula,
-    formula => formula.location,
-  )
+  @OneToMany(() => MonitorFormula, (formula) => formula.location)
   formulas: MonitorFormula[];
 
-  @OneToMany(
-    () => MonitorLoad,
-    load => load.location,
-  )
+  @OneToMany(() => MonitorLoad, (load) => load.location)
   loads: MonitorLoad[];
 
-  @OneToMany(
-    () => MonitorSpan,
-    span => span.location,
-  )
+  @OneToMany(() => MonitorSpan, (span) => span.location)
   spans: MonitorSpan[];
 
-  @OneToMany(
-    () => MonitorSystem,
-    system => system.location,
-  )
+  @OneToMany(() => MonitorSystem, (system) => system.location)
   systems: MonitorSystem[];
 
-  @OneToMany(
-    () => DuctWaf,
-    ductWaf => ductWaf.location,
-  )
+  @OneToMany(() => DuctWaf, (ductWaf) => ductWaf.location)
   ductWafs: DuctWaf[];
 
-  @OneToMany(
-    () => MonitorDefault,
-    defaults => defaults.location,
-  )
+  @OneToMany(() => MonitorDefault, (defaults) => defaults.location)
   defaults: MonitorDefault[];
 
-  @OneToMany(
-    () => MonitorAttribute,
-    attributes => attributes.location,
-  )
+  @OneToMany(() => MonitorAttribute, (attributes) => attributes.location)
   attributes: MonitorAttribute[];
 
   @OneToMany(
     () => MonitorQualification,
-    qualification => qualification.location,
+    (qualification) => qualification.location,
   )
   qualifications: MonitorQualification[];
 
-  @OneToMany(
-    () => MonitorPlanLocation,
-    mpl => mpl.monitorLocation,
-  )
+  @OneToMany(() => MonitorPlanLocation, (mpl) => mpl.monitorLocation)
   monitorPlanLocations: MonitorPlanLocation[];
 }

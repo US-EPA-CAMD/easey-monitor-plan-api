@@ -29,12 +29,14 @@ export class LEEQualification extends BaseEntity {
   @Column({
     name: 'potential_annual_emissions',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   potentialAnnualHgMassEmissions: number;
 
   @Column({
     name: 'applicable_emission_standard',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   applicableEmissionStandard: number;
 
@@ -44,6 +46,7 @@ export class LEEQualification extends BaseEntity {
   @Column({
     name: 'emission_standard_pct',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   percentageOfEmissionStandard: number;
 

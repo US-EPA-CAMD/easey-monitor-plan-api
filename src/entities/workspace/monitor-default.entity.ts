@@ -87,10 +87,7 @@ export class MonitorDefault extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
-  @ManyToOne(
-    () => MonitorLocation,
-    location => location.formulas,
-  )
+  @ManyToOne(() => MonitorLocation, (location) => location.formulas)
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 }

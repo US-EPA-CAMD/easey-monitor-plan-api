@@ -26,6 +26,7 @@ export class MonitorLoad extends BaseEntity {
   @Column({
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginHour: number;
 
@@ -36,6 +37,7 @@ export class MonitorLoad extends BaseEntity {
     nullable: true,
     name: 'end_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endHour: number;
 
@@ -43,24 +45,28 @@ export class MonitorLoad extends BaseEntity {
     nullable: true,
     name: 'max_load_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   maximumLoadValue: number;
 
   @Column({
     name: 'second_normal_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   secondNormalIndicator: number;
 
   @Column({
     name: 'up_op_boundary',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   upperOperationBoundary: number;
 
   @Column({
     name: 'low_op_boundary',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   lowerOperationBoundary: number;
 
