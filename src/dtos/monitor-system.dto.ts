@@ -282,11 +282,11 @@ export class MonitorSystemBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => SystemComponentBaseDTO)
-  monitoringSystemComponentData: SystemComponentBaseDTO[];
+  monitoringSystemComponentData?: SystemComponentBaseDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => SystemFuelFlowBaseDTO)
-  monitoringSystemFuelFlowData: SystemFuelFlowBaseDTO[];
+  monitoringSystemFuelFlowData?: SystemFuelFlowBaseDTO[];
 }
 
 export class UpdateMonitorSystemDTO extends MonitorSystemBaseDTO { }

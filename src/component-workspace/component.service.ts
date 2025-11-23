@@ -127,7 +127,7 @@ export class ComponentWorkspaceService {
   ) {
     const repository = withTransaction(this.repository, trx);
     await settlePromises(
-      location.componentData.map(async component => {
+      (location.componentData ?? []).map(async component => {
         let compRecord = await repository.getComponentByLocIdAndCompId(
           locationId,
           component.componentId,
@@ -181,7 +181,7 @@ export class ComponentWorkspaceService {
         }
       }),
     );
-    this.logger.debug(`Imported ${location.componentData.length} components`);
+    this.logger.debug(`Imported ${location.componentData?.length ?? 0} components`);
     return true;
   }
 
