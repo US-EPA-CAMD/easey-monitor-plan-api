@@ -12,8 +12,8 @@ import {
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
-import { MonitorPlan } from '../entities/monitor-plan.entity';
-import {  throwIfErrors } from '../utils';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { throwIfErrors } from '../utils';
 
 const KEY = 'Monitor Plan Comment';
 @Injectable()
@@ -35,7 +35,7 @@ export class MonitorPlanCommentWorkspaceService {
 
     const monitorPlan = await this.entityManager.findOne(MonitorPlan, {
       where: { id: planId },
-      select: ['submissionAvailabilityCode']
+      select: ['id', 'submissionAvailabilityCode']
     });
 
     if (!monitorPlan) {
