@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { PlantService } from '../plant/plant.service';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
@@ -10,8 +10,8 @@ import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.se
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { throwIfErrors } from '../utils';
 
 @Injectable()
 export class ImportChecksService {
@@ -29,14 +29,6 @@ export class ImportChecksService {
     private readonly stackPipeService: StackPipeWorkspaceService,
   ) { }
 
-  private checkIfThrows(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
 
   public async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
     let errorList = [];
@@ -49,7 +41,6 @@ export class ImportChecksService {
     errorList.push(
       ...(await this.plantService.runImport1Checks(monPlan, facilityId)),
     );
-    this.checkIfThrows(errorList);
 
 
 
@@ -65,7 +56,6 @@ export class ImportChecksService {
 
     // Unit Stack Checks
     errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
-    this.checkIfThrows(errorList);
 
     // Stack Pipe Checks
     errorList.push(
@@ -145,6 +135,6 @@ export class ImportChecksService {
 
       index++;
     }
-    this.checkIfThrows(errorList);
+    throwIfErrors(errorList);
   }
 }
