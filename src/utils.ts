@@ -165,7 +165,7 @@ export interface BeginEndDatesConsistentOptions extends ValidationOptions {
 export const throwIfErrors = (errorList: string[]) => {
   if (errorList.length > 0) {
     throw new EaseyException(
-      new Error(errorList.join(' ')),
+      new Error(JSON.stringify(errorList)),
       HttpStatus.BAD_REQUEST,
     );
   }
