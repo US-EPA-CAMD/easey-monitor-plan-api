@@ -90,14 +90,16 @@ describe('MonitorPlanCommentWorkspaceService', () => {
   });
 
   describe('runChecks', () => {
-    it('should throw MONPLAN-3-B', async () => {
-      entityManagerMock.findOne.mockResolvedValueOnce({
-        ...mockMonitorPlan,
-        submissionAvailabilityCode: 'UPDATED'
-      });
+    it('should throw MONPLAN-3-B when existing comment is UPDATED', async () => {
+      const mockCommentEntityUpdated = {
+        ...mockCommentEntity,
+        submissionAvailabilityCode: 'UPDATED',
+      } as any;
+
+      jest.spyOn(repository, 'findOneBy').mockResolvedValueOnce(mockCommentEntityUpdated);
 
       await expect(
-        service.runChecks(mockMonitorPlanComment, 'test-plan-id')
+        service.runChecks(mockMonitorPlanComment, 'test-plan-id', 'comment-id-1')
       ).rejects.toThrow('MONPLAN-3-B');
     });
 
@@ -126,14 +128,6 @@ describe('MonitorPlanCommentWorkspaceService', () => {
       await expect(
         service.runChecks(mockMonitorPlanComment, 'test-plan-id')
       ).resolves.not.toThrow();
-    });
-
-    it('should throw error when monitor plan not found', async () => {
-      entityManagerMock.findOne.mockResolvedValueOnce(null);
-
-      await expect(
-        service.runChecks(mockMonitorPlanComment, 'non-existent-plan')
-      ).rejects.toThrow('Monitor Plan not found');
     });
   });
 
