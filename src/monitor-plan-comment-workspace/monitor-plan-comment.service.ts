@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
-import { CheckCatalogService, EaseyException } from '@us-epa-camd/easey-common';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import { settlePromises, withTransaction } from '../utils';
 import {
@@ -12,7 +12,6 @@ import {
 import { MonitorPlanCommentMap } from '../maps/monitor-plan-comment.map';
 import { MonitorPlanCommentWorkspaceRepository } from './monitor-plan-comment.repository';
 import { MonitorPlanWorkspaceRepository } from '../monitor-plan-workspace/monitor-plan.repository';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { throwIfErrors } from '../utils';
 
 const KEY = 'Monitor Plan Comment';
@@ -33,21 +32,9 @@ export class MonitorPlanCommentWorkspaceService {
     let errorList: string[] = [];
     let error: string = null;
 
-    const monitorPlan = await this.entityManager.findOne(MonitorPlan, {
-      where: { id: planId },
-      select: ['id', 'submissionAvailabilityCode']
-    });
-
-    if (!monitorPlan) {
-      throw new EaseyException(
-        new Error('Monitor Plan not found'),
-        HttpStatus.NOT_FOUND,
-        { planId }
-      );
-    }
     error = await this.monplan3Check(
       monitorPlanComment,
-      monitorPlan.submissionAvailabilityCode,
+      planId,
       excludeCommentId
     );
 
@@ -60,42 +47,48 @@ export class MonitorPlanCommentWorkspaceService {
 
   private async monplan3Check(
     monitorPlanComment: MonitorPlanCommentBaseDTO,
-    submissionAvailabilityCode: string,
+    planId: string,
     excludeCommentId?: string
   ): Promise<string> {
     const { monitoringPlanComment, beginDate, endDate } = monitorPlanComment;
 
-    // MONPLAN-3 Logic
-    if (submissionAvailabilityCode !== 'UPDATED') {
-      const duplicateBegin = await this.repository.findOneBy({
-        beginDate,
-        monitorPlanComment: monitoringPlanComment
+    let currentRecord = null;
+    if (excludeCommentId) {
+      currentRecord = await this.repository.findOneBy({ id: excludeCommentId });
+    }
+
+    if (currentRecord && currentRecord.submissionAvailabilityCode === 'UPDATED') {
+      return CheckCatalogService.formatResultMessage('MONPLAN-3-B', {
+        key: KEY,
+      });
+    }
+
+    const duplicateBegin = await this.repository.findOneBy({
+      beginDate,
+      monitorPlanComment: monitoringPlanComment,
+      monitorPlanId: planId
+    });
+
+    if (duplicateBegin && duplicateBegin.id !== excludeCommentId) {
+      return CheckCatalogService.formatResultMessage('MONPLAN-3-A', {
+        fieldnames: 'monitoringPlanComment, beginDate',
+        recordtype: KEY
+      });
+    }
+
+    if (endDate) {
+      const duplicateEnd = await this.repository.findOneBy({
+        monitorPlanComment: monitoringPlanComment,
+        endDate,
+        monitorPlanId: planId
       });
 
-      if (duplicateBegin && duplicateBegin.id !== excludeCommentId) {
+      if (duplicateEnd && duplicateEnd.id !== excludeCommentId) {
         return CheckCatalogService.formatResultMessage('MONPLAN-3-A', {
-          fieldnames: 'monitoringPlanComment, beginDate',
+          fieldnames: 'monitoringPlanComment, endDate',
           recordtype: KEY
         });
       }
-
-      if (endDate) {
-        const duplicateEnd = await this.repository.findOneBy({
-          monitorPlanComment: monitoringPlanComment,
-          endDate
-        });
-
-        if (duplicateEnd && duplicateEnd.id !== excludeCommentId) {
-          return CheckCatalogService.formatResultMessage('MONPLAN-3-A', {
-            fieldnames: 'monitoringPlanComment, endDate',
-            recordtype: KEY
-          });
-        }
-      }
-    } else {
-      return CheckCatalogService.formatResultMessage('MONPLAN-3-B', {
-        key: KEY
-      });
     }
 
     return null;

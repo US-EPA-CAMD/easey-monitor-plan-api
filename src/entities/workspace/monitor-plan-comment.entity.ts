@@ -41,6 +41,13 @@ export class MonitorPlanComment extends BaseEntity {
   })
   addDate: Date;
 
+  @Column({
+    type: 'varchar',
+    length: 7,
+    name: 'submission_availability_cd',
+  })
+  submissionAvailabilityCode: string;
+
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
