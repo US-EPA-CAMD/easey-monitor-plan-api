@@ -55,7 +55,7 @@ export class ImportChecksService {
     );
 
     // Unit Stack Checks
-    errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
+    errorList.push(...await this.unitStackService.runUnitStackChecks(monPlan, facilityId));
 
     // Stack Pipe Checks
     errorList.push(

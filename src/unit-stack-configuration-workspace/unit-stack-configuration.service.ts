@@ -62,30 +62,44 @@ export class UnitStackConfigurationWorkspaceService {
     return await this.repository.getUnitStackConfigsByLocationIds(locationIds);
   }
 
-  runUnitStackChecks(monitorPlan: UpdateMonitorPlanDTO): string[] {
+  async runUnitStackChecks(monitorPlan: UpdateMonitorPlanDTO, facilityId: number): Promise<string[]> {
     const errorList: string[] = [];
 
     // Check for duplicate unit stack configurations.
-    monitorPlan.unitStackConfigurationData.forEach((usc1, i) => {
-      if (!usc1.unitId) {
+    for (const unitStackConfig of monitorPlan.unitStackConfigurationData) {
+      if (!unitStackConfig.unitId) {
         const error = CheckCatalogService.formatResultMessage('MONLOC-107-A', {
           fieldname: 'unitId',
           key: KEY
         })
         errorList.push(error)
-      } else if (
-        monitorPlan.unitStackConfigurationData.findIndex(
-          usc2 =>
-            usc1.unitId === usc2.unitId &&
-            usc1.stackPipeId === usc2.stackPipeId &&
-            usc1.beginDate === usc2.beginDate,
-        ) !== i
-      ) {
-        errorList.push(
-          `[MONLOC-107-B] Duplicate Unit Stack Configuration record found at index #${i}.`,
-        );
       }
-    });
+      if (unitStackConfig.unitId && unitStackConfig.stackPipeId) {
+        try {
+          const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+            unitStackConfig.stackPipeId,
+            facilityId,
+          );
+          const unit = await this.unitService.getUnitByNameAndFacId(
+            unitStackConfig.unitId,
+            facilityId,
+          );
+          const existingConfig = await withTransaction(
+            this.repository,
+          ).getUnitStackConfigByUnitIdStackId(unit.id, stackPipe.id);
+          if (existingConfig) {
+            const error = CheckCatalogService.formatResultMessage('MONLOC-107-B', {
+              recordtype: KEY,
+              fieldnames: 'unitId, stackPipeId',
+            })
+            errorList.push(error);
+            break;
+          }
+        } catch (error) {
+          continue;
+        }
+      }
+    }
 
     const unitStackIds: Set<string> = new Set<string>(); // Set for faster look up times
     const unitUnitIds: Set<string> = new Set<string>();

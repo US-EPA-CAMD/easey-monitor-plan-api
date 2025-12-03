@@ -41,15 +41,34 @@ unitStackConfig.unitId = unitID;
 mpPayload.unitStackConfigurationData = [unitStackConfig];
 mpPayload.monitoringLocationData = [location];
 
+// Mock CheckCatalogService
+jest.mock('@us-epa-camd/easey-common', () => ({
+  CheckCatalogService: {
+    formatResultMessage: jest.fn().mockImplementation((code, params) => {
+      if (code === 'MONLOC-107-A') {
+        return '[MONLOC-107-A]';
+      }
+      if (code === 'MONLOC-107-B') {
+        return '[MONLOC-107-B]';
+      }
+      if (code === 'IMPORT-4-A') {
+        return '[IMPORT-4-A]';
+      }
+      return `[${code}]`;
+    }),
+  },
+}));
+
 const mockRepository = () => ({
   getUnitStackById: jest.fn().mockResolvedValue(unitStack),
   save: jest.fn().mockResolvedValue(unitStack),
-  find: jest.fn().mockResolvedValue(unitStack),
+  find: jest.fn().mockResolvedValue([unitStack]),
   findOne: jest.fn().mockResolvedValue(undefined),
   update: jest.fn(),
   create: jest.fn().mockResolvedValue('Why'),
   getUnitStackConfigsByLocationIds: jest.fn().mockResolvedValue([unitStack]),
-  getUnitStackConfigByUnitIdStackId: jest.fn().mockResolvedValue(unitStack),
+  getUnitStackConfigByUnitIdStackId: jest.fn().mockResolvedValue(null), // Default to null for tests
+  findOneBy: jest.fn().mockResolvedValue(undefined),
 });
 
 const mockMap = () => ({
@@ -58,11 +77,17 @@ const mockMap = () => ({
 });
 
 const mockStackPipe = () => ({
-  getStackByNameAndFacId: jest.fn().mockResolvedValue(''),
+  getStackByNameAndFacId: jest.fn().mockResolvedValue({
+    id: 'stack-id',
+    name: 'TEST',
+  }),
 });
 
 const mockUnit = () => ({
-  getUnitByNameAndFacId: jest.fn().mockResolvedValue(''),
+  getUnitByNameAndFacId: jest.fn().mockResolvedValue({
+    id: 1,
+    name: 'TEST',
+  }),
 });
 const mockUnitMap = () => ({
   many: jest.fn().mockResolvedValue([unitDto]),
@@ -72,6 +97,8 @@ const mockUnitMap = () => ({
 describe('UnitStackConfigurationWorkspaceService', () => {
   let service: UnitStackConfigurationWorkspaceService;
   let repo: UnitStackConfigurationWorkspaceRepository;
+  let stackPipeService: StackPipeWorkspaceService;
+  let unitService: UnitService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -107,6 +134,10 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     service = module.get<UnitStackConfigurationWorkspaceService>(
       UnitStackConfigurationWorkspaceService,
     );
+    stackPipeService = module.get<StackPipeWorkspaceService>(
+      StackPipeWorkspaceService,
+    );
+    unitService = module.get<UnitService>(UnitService);
   });
 
   describe('getUnitStackConfigsByLocationIds', () => {
@@ -158,7 +189,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
 
   describe('Import Unit Stack Checks', () => {
     describe('Check3', () => {
-      it('Should pass given aligned unit stack config and unit data', () => {
+      it('Should pass given aligned unit stack config and unit data', async () => {
         const unitStackConfig = new UnitStackConfigurationBaseDTO();
         unitStackConfig.unitId = 'TEST';
         unitStackConfig.stackPipeId = 'TEST';
@@ -171,11 +202,11 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         plan.unitStackConfigurationData = [unitStackConfig];
         plan.monitoringLocationData = [location];
 
-        const result = service.runUnitStackChecks(plan);
+        const result = await service.runUnitStackChecks(plan, facilityId);
         expect(result.length).toBe(0);
       });
 
-      it('Should fail given unit stack not in unit stack config', () => {
+      it('Should fail given unit stack not in unit stack config', async () => {
         const unitStackConfig = new UnitStackConfigurationBaseDTO();
         unitStackConfig.unitId = 'TEST';
         unitStackConfig.stackPipeId = 'TEST';
@@ -192,7 +223,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         plan.unitStackConfigurationData = [unitStackConfig];
         plan.monitoringLocationData = [location, location2];
 
-        const result = service.runUnitStackChecks(plan);
+        const result = await service.runUnitStackChecks(plan, facilityId);
         expect(result).toEqual([
           '[IMPORT3-FATAL-A] Each stack or pipe must be associated with at least one unit. StackName TESTING is not associated with any units.',
         ]);
@@ -223,7 +254,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     //   });
     // });
     describe('Check8', () => {
-      it('Should fail given unit stack config stackId not in location', () => {
+      it('Should fail given unit stack config stackId not in location', async () => {
         const unitStackConfig = new UnitStackConfigurationBaseDTO();
         unitStackConfig.unitId = 'TEST';
         unitStackConfig.stackPipeId = 'TEST';
@@ -240,7 +271,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         plan.unitStackConfigurationData = [unitStackConfig, unitStackConfig2];
         plan.monitoringLocationData = [location];
 
-        const result = service.runUnitStackChecks(plan);
+        const result = await service.runUnitStackChecks(plan, facilityId);
         expect(result).toEqual([
           `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID TESTING was not associated with a Stack/Pipe record in the file.`,
         ]);
@@ -248,7 +279,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
     });
 
     describe('Check8', () => {
-      it('Should fail given unit stack config unitId not in location', () => {
+      it('Should fail given unit stack config unitId not in location', async () => {
         const unitStackConfig = new UnitStackConfigurationBaseDTO();
         unitStackConfig.unitId = 'TEST';
         unitStackConfig.stackPipeId = 'TEST';
@@ -265,7 +296,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
         plan.unitStackConfigurationData = [unitStackConfig, unitStackConfig2];
         plan.monitoringLocationData = [location];
 
-        const result = service.runUnitStackChecks(plan);
+        const result = await service.runUnitStackChecks(plan, facilityId);
         expect(result).toEqual([
           `[IMPORT8-CRIT1-B] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. UnitID TESTING was not associated with a Unit record in the file. This StackPipe Configuration Record was not imported.`,
         ]);
@@ -275,6 +306,10 @@ describe('UnitStackConfigurationWorkspaceService', () => {
 
   describe('importUnitStacks', () => {
     it('should update while importing unit stack config', async () => {
+      jest
+        .spyOn(repo, 'getUnitStackConfigByUnitIdStackId')
+        .mockResolvedValue(unitStack);
+
       const response = await service.importUnitStacks(
         mpPayload,
         facilityId,
@@ -298,7 +333,7 @@ describe('UnitStackConfigurationWorkspaceService', () => {
   });
 
   describe('MONLOC-107 check', () => {
-    it('should return MONLOC-107-A error when unitId is missing in unit stack configuration', () => {
+    it('should return MONLOC-107-A error when unitId is missing in unit stack configuration', async () => {
       const unitStackConfig = new UnitStackConfigurationBaseDTO();
       unitStackConfig.unitId = null;
       unitStackConfig.stackPipeId = 'TEST';
@@ -307,33 +342,30 @@ describe('UnitStackConfigurationWorkspaceService', () => {
       plan.unitStackConfigurationData = [unitStackConfig];
       plan.monitoringLocationData = [];
 
-      const result = service.runUnitStackChecks(plan);
+      const result = await service.runUnitStackChecks(plan, facilityId);
 
       expect(result).toContain('[MONLOC-107-A]');
     });
 
-    it('should return MONLOC-107-B error when duplicate unit stack configuration exists', () => {
-      const sameBeginDate = new Date('2023-01-01');
+    it('should return MONLOC-107-B error when duplicate unit stack configuration exists in database', async () => {
+      jest
+        .spyOn(repo, 'getUnitStackConfigByUnitIdStackId')
+        .mockResolvedValue(unitStack);
 
       const unitStackConfig1 = new UnitStackConfigurationBaseDTO();
       unitStackConfig1.unitId = 'TEST';
       unitStackConfig1.stackPipeId = 'CS0AN';
-      unitStackConfig1.beginDate = sameBeginDate;
-
-      const unitStackConfig2 = new UnitStackConfigurationBaseDTO();
-      unitStackConfig2.unitId = 'TEST';
-      unitStackConfig2.stackPipeId = 'CS0AN';
-      unitStackConfig2.beginDate = sameBeginDate;
+      unitStackConfig1.beginDate = new Date('2023-01-01');
 
       const location1 = new UpdateMonitorLocationDTO();
       location1.unitId = 'TEST';
       location1.stackPipeId = 'CS0AN';
 
       const plan = new UpdateMonitorPlanDTO();
-      plan.unitStackConfigurationData = [unitStackConfig1, unitStackConfig2];
+      plan.unitStackConfigurationData = [unitStackConfig1];
       plan.monitoringLocationData = [location1];
 
-      const result = service.runUnitStackChecks(plan);
+      const result = await service.runUnitStackChecks(plan, facilityId);
       const monloc107BErrors = result.filter(error => error.includes('MONLOC-107-B'));
 
       expect(monloc107BErrors.length).toBeGreaterThan(0);

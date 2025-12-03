@@ -4,6 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { CheckCatalogService } from '@us-epa-camd/easey-common';
 
 import { MonitorLocationBaseDTO } from '../dtos/monitor-location-base.dto';
 import { UpdateMonitorLocationDTO } from '../dtos/monitor-location-update.dto';
@@ -151,14 +152,27 @@ export class StackPipeWorkspaceService {
     const errorList: string[] = [];
 
     // Check if there are any duplicate stack/pipe IDs.
-    const stackPipeIds = locations.map(sp => sp.stackPipeId).filter(Boolean);
-    stackPipeIds.forEach((stackPipeId, i) => {
-      if (stackPipeIds.findIndex(sp => sp === stackPipeId) !== i) {
-        errorList.push(
-          `[MONLOC-106-A] Duplicate Stack/Pipe found with ID: ${stackPipeId}`,
-        );
+    for (const location of locations) {
+      if (location.stackPipeId) {
+        try {
+          const existingStackPipe = await this.getStackByNameAndFacId(
+            location.stackPipeId,
+            facId,
+          );
+
+          if (existingStackPipe) {
+            const error = CheckCatalogService.formatResultMessage('MONLOC-106-A', {
+              fieldnames: 'stackPipeId',
+              recordtype: 'Stack Pipe'
+            });
+            errorList.push(error);
+            break;
+          }
+        } catch (error) {
+          continue;
+        }
       }
-    });
+    }
 
     await Promise.all(
       locations.map(async location => {
