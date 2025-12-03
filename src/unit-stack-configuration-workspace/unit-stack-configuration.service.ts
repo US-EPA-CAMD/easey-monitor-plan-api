@@ -65,46 +65,155 @@ export class UnitStackConfigurationWorkspaceService {
   async runUnitStackChecks(monitorPlan: UpdateMonitorPlanDTO, facilityId: number): Promise<string[]> {
     const errorList: string[] = [];
 
-    // Check for duplicate unit stack configurations.
+    await this.validateUnitStackConfigs(monitorPlan, facilityId, errorList);
+    this.validateConfigLocationRelationships(monitorPlan, errorList);
+    this.validateStackUnitAssociations(monitorPlan, errorList);
+
+    return errorList
+  }
+
+  private async validateUnitStackConfigs(
+    monitorPlan: UpdateMonitorPlanDTO,
+    facilityId: number,
+    errorList: string[],
+  ): Promise<void> {
     for (const unitStackConfig of monitorPlan.unitStackConfigurationData) {
-      if (!unitStackConfig.unitId) {
-        const error = CheckCatalogService.formatResultMessage('MONLOC-107-A', {
-          fieldname: 'unitId',
-          key: KEY
-        })
-        errorList.push(error)
-      }
+      this.validateUnitStackConfig(unitStackConfig, errorList);
+
       if (unitStackConfig.unitId && unitStackConfig.stackPipeId) {
-        try {
-          const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
-            unitStackConfig.stackPipeId,
-            facilityId,
-          );
-          const unit = await this.unitService.getUnitByNameAndFacId(
-            unitStackConfig.unitId,
-            facilityId,
-          );
-          const existingConfig = await withTransaction(
-            this.repository,
-          ).getUnitStackConfigByUnitIdStackId(unit.id, stackPipe.id);
-          if (existingConfig) {
-            const error = CheckCatalogService.formatResultMessage('MONLOC-107-B', {
-              recordtype: KEY,
-              fieldnames: 'unitId, stackPipeId',
-            })
-            errorList.push(error);
-            break;
-          }
-        } catch (error) {
-          continue;
-        }
+        const hasDuplicate = await this.checkDatabaseDuplicate(
+          unitStackConfig,
+          facilityId,
+          errorList,
+        );
+        if (hasDuplicate) return;
+      }
+    }
+  }
+  private validateUnitStackConfig(
+    config: UnitStackConfigurationBaseDTO,
+    errorList: string[],
+  ): void {
+    if (!config.unitId) {
+      const error = CheckCatalogService.formatResultMessage('MONLOC-107-A', {
+        fieldname: 'unitId',
+        key: KEY,
+      });
+      errorList.push(error);
+    }
+  }
+  private async checkDatabaseDuplicate(
+    config: UnitStackConfigurationBaseDTO,
+    facilityId: number,
+    errorList: string[],
+  ): Promise<boolean> {
+
+    const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
+      config.stackPipeId,
+      facilityId,
+    ).catch(() => null);
+
+    if (!stackPipe) return false;
+
+    const unit = await this.unitService.getUnitByNameAndFacId(
+      config.unitId,
+      facilityId,
+    ).catch(() => null);
+    if (!unit) return false;
+
+
+    const existingConfig = await this.repository.getUnitStackConfigByUnitIdStackId(
+      unit.id,
+      stackPipe.id,
+    ).catch(() => null);
+
+    if (existingConfig) {
+      const error = CheckCatalogService.formatResultMessage('MONLOC-107-B', {
+        recordtype: KEY,
+        fieldnames: 'unitId, stackPipeId',
+      });
+      errorList.push(error);
+      return true;
+    }
+
+    return false;
+  }
+  private validateConfigLocationRelationships(
+    monitorPlan: UpdateMonitorPlanDTO,
+    errorList: string[],
+  ): void {
+    const { unitStackIds, unitUnitIds } = this.extractLocationIds(monitorPlan);
+
+    for (const unitStackConfig of monitorPlan.unitStackConfigurationData) {
+      this.validateConfigReferences(unitStackConfig, unitStackIds, unitUnitIds, errorList);
+    }
+  }
+
+  private validateConfigReferences(
+    config: UnitStackConfigurationBaseDTO,
+    unitStackIds: Set<string>,
+    unitUnitIds: Set<string>,
+    errorList: string[],
+  ): void {
+    if (!unitStackIds.has(config.stackPipeId)) {
+      errorList.push(
+        `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID ${config.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
+      );
+    }
+
+    if (!unitUnitIds.has(config.unitId)) {
+      errorList.push(
+        `[IMPORT8-CRIT1-B] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. UnitID ${config.unitId} was not associated with a Unit record in the file. This StackPipe Configuration Record was not imported.`,
+      );
+    }
+  }
+
+  private validateStackUnitAssociations(
+    monitorPlan: UpdateMonitorPlanDTO,
+    errorList: string[],
+  ): void {
+    const unitStackIds = this.extractStackIdsFromLocations(monitorPlan);
+    const unitStackConfigStackIds = this.extractStackIdsFromConfigs(monitorPlan);
+
+    for (const stackPipe of unitStackIds) {
+      if (!unitStackConfigStackIds.has(stackPipe)) {
+        errorList.push(
+          `[IMPORT3-FATAL-A] Each stack or pipe must be associated with at least one unit. StackName ${stackPipe} is not associated with any units.`,
+        );
+      }
+    }
+  }
+
+  private extractStackIdsFromLocations(monitorPlan: UpdateMonitorPlanDTO): Set<string> {
+    const unitStackIds: Set<string> = new Set<string>();
+
+    for (const location of monitorPlan.monitoringLocationData) {
+      if (location.stackPipeId) {
+        unitStackIds.add(location.stackPipeId);
       }
     }
 
-    const unitStackIds: Set<string> = new Set<string>(); // Set for faster look up times
-    const unitUnitIds: Set<string> = new Set<string>();
+    return unitStackIds;
+  }
 
+  private extractStackIdsFromConfigs(monitorPlan: UpdateMonitorPlanDTO): Set<string> {
     const unitStackConfigStackIds: Set<string> = new Set<string>();
+
+    for (const unitStackConfig of monitorPlan.unitStackConfigurationData) {
+      if (unitStackConfig.stackPipeId) {
+        unitStackConfigStackIds.add(unitStackConfig.stackPipeId);
+      }
+    }
+
+    return unitStackConfigStackIds;
+  }
+
+  private extractLocationIds(monitorPlan: UpdateMonitorPlanDTO): {
+    unitStackIds: Set<string>;
+    unitUnitIds: Set<string>;
+  } {
+    const unitStackIds: Set<string> = new Set<string>();
+    const unitUnitIds: Set<string> = new Set<string>();
 
     for (const location of monitorPlan.monitoringLocationData) {
       if (location.stackPipeId) {
@@ -115,32 +224,7 @@ export class UnitStackConfigurationWorkspaceService {
       }
     }
 
-    for (const unitStackConfig of monitorPlan.unitStackConfigurationData) {
-      if (!unitStackIds.has(unitStackConfig.stackPipeId)) {
-        errorList.push(
-          `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID ${unitStackConfig.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
-        );
-      }
-
-      if (!unitUnitIds.has(unitStackConfig.unitId)) {
-        errorList.push(
-          `[IMPORT8-CRIT1-B] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. UnitID ${unitStackConfig.unitId} was not associated with a Unit record in the file. This StackPipe Configuration Record was not imported.`,
-        );
-      }
-
-      unitStackConfigStackIds.add(unitStackConfig.stackPipeId);
-    }
-
-    for (const stackPipe of unitStackIds) {
-      if (!unitStackConfigStackIds.has(stackPipe)) {
-        errorList.push(
-          //CheckCatalogService.formatResultMessage('IMPORT-3-A', { stackName: stackPipe }),
-          `[IMPORT3-FATAL-A] Each stack or pipe must be associated with at least one unit. StackName ${stackPipe} is not associated with any units.`,
-        );
-      }
-    }
-
-    return errorList;
+    return { unitStackIds, unitUnitIds };
   }
 
   async importUnitStackConfigurationChecks(monPlan: UpdateMonitorPlanDTO): Promise<string[]> {

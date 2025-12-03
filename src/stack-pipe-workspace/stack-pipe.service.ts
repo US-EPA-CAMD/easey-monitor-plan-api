@@ -154,22 +154,21 @@ export class StackPipeWorkspaceService {
     // Check if there are any duplicate stack/pipe IDs.
     for (const location of locations) {
       if (location.stackPipeId) {
-        try {
-          const existingStackPipe = await this.getStackByNameAndFacId(
-            location.stackPipeId,
-            facId,
-          );
-
-          if (existingStackPipe) {
-            const error = CheckCatalogService.formatResultMessage('MONLOC-106-A', {
-              fieldnames: 'stackPipeId',
-              recordtype: 'Stack Pipe'
-            });
-            errorList.push(error);
-            break;
-          }
-        } catch (error) {
-          continue;
+        const queryRunner = this.entityManager.connection.createQueryRunner();
+        await queryRunner.startTransaction();
+        const trx = queryRunner.manager;
+        const existingStackPipe = await this.getStackByNameAndFacId(
+          location.stackPipeId,
+          facId,
+          trx
+        ).catch(() => null);
+        if (existingStackPipe) {
+          const error = CheckCatalogService.formatResultMessage('MONLOC-106-A', {
+            fieldnames: 'stackPipeId',
+            recordtype: 'Stack Pipe'
+          });
+          errorList.push(error);
+          break;
         }
       }
     }
