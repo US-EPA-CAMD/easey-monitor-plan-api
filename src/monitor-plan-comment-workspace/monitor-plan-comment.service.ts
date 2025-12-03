@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
@@ -57,7 +57,7 @@ export class MonitorPlanCommentWorkspaceService {
       currentRecord = await this.repository.findOneBy({ id: excludeCommentId });
     }
 
-    if (currentRecord && currentRecord.submissionAvailabilityCode === 'UPDATED') {
+    if (currentRecord?.submissionAvailabilityCode === 'UPDATED') {
       return CheckCatalogService.formatResultMessage('MONPLAN-3-B', {
         key: KEY,
       });
