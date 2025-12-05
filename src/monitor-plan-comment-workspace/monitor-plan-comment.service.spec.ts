@@ -90,17 +90,6 @@ describe('MonitorPlanCommentWorkspaceService', () => {
   });
 
   describe('runChecks', () => {
-    it('should throw MONPLAN-3-B', async () => {
-      entityManagerMock.findOne.mockResolvedValueOnce({
-        ...mockMonitorPlan,
-        submissionAvailabilityCode: 'UPDATED'
-      });
-
-      await expect(
-        service.runChecks(mockMonitorPlanComment, 'test-plan-id')
-      ).rejects.toThrow('MONPLAN-3-B');
-    });
-
     it('should throw MONPLAN-3-A', async () => {
       entityManagerMock.findOne.mockResolvedValueOnce({
         ...mockMonitorPlan,

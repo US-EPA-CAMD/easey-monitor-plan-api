@@ -92,10 +92,6 @@ export class MonitorPlanCommentWorkspaceService {
           });
         }
       }
-    } else {
-      return CheckCatalogService.formatResultMessage('MONPLAN-3-B', {
-        key: KEY
-      });
     }
 
     return null;
