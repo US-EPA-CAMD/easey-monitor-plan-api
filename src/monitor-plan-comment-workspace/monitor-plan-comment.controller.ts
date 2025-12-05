@@ -79,7 +79,7 @@ export class MonitorPlanCommentWorkspaceController {
       @Body() payload: MonitorPlanCommentBaseDTO,
       @User() user: CurrentUser,
     ): Promise<any> {
-      await this.service.runChecks(payload, monPlanId, monitorPlanCommentId);
+      await this.service.runChecks(payload, monitorPlanCommentId);
       return this.service.updateComment(
         monPlanId,
         payload,
@@ -111,7 +111,7 @@ export class MonitorPlanCommentWorkspaceController {
       @Body() payload: MonitorPlanCommentBaseDTO,
       @User() user: CurrentUser,
     ): Promise<MonitorPlanCommentDTO> {
-      await this.service.runChecks(payload, monPlanId);
+      await this.service.runChecks(payload);
       return this.service.createComment(
         monPlanId,
         payload,
