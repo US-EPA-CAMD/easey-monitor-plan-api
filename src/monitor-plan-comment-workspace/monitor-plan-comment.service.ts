@@ -27,27 +27,13 @@ export class MonitorPlanCommentWorkspaceService {
 
   async runChecks(
     monitorPlanComment: MonitorPlanCommentBaseDTO,
-    planId: string,
     excludeCommentId?: string
   ) {
     let errorList: string[] = [];
     let error: string = null;
 
-    const monitorPlan = await this.entityManager.findOne(MonitorPlan, {
-      where: { id: planId },
-      select: ['id', 'submissionAvailabilityCode']
-    });
-
-    if (!monitorPlan) {
-      throw new EaseyException(
-        new Error('Monitor Plan not found'),
-        HttpStatus.NOT_FOUND,
-        { planId }
-      );
-    }
     error = await this.monplan3Check(
       monitorPlanComment,
-      monitorPlan.submissionAvailabilityCode,
       excludeCommentId
     );
 
@@ -60,13 +46,11 @@ export class MonitorPlanCommentWorkspaceService {
 
   private async monplan3Check(
     monitorPlanComment: MonitorPlanCommentBaseDTO,
-    submissionAvailabilityCode: string,
     excludeCommentId?: string
   ): Promise<string> {
     const { monitoringPlanComment, beginDate, endDate } = monitorPlanComment;
 
     // MONPLAN-3 Logic
-    if (submissionAvailabilityCode !== 'UPDATED') {
       const duplicateBegin = await this.repository.findOneBy({
         beginDate,
         monitorPlanComment: monitoringPlanComment
@@ -92,7 +76,6 @@ export class MonitorPlanCommentWorkspaceService {
           });
         }
       }
-    }
 
     return null;
   }

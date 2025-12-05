@@ -93,7 +93,6 @@ describe('MonitorPlanCommentWorkspaceService', () => {
     it('should throw MONPLAN-3-A', async () => {
       entityManagerMock.findOne.mockResolvedValueOnce({
         ...mockMonitorPlan,
-        submissionAvailabilityCode: 'OTHER'
       });
 
       // Mock duplicate found
@@ -107,7 +106,6 @@ describe('MonitorPlanCommentWorkspaceService', () => {
     it('should not throw error when no duplicates found', async () => {
       entityManagerMock.findOne.mockResolvedValueOnce({
         ...mockMonitorPlan,
-        submissionAvailabilityCode: 'OTHER'
       });
 
       jest.spyOn(repository, 'findOneBy').mockResolvedValueOnce(null);
@@ -115,14 +113,6 @@ describe('MonitorPlanCommentWorkspaceService', () => {
       await expect(
         service.runChecks(mockMonitorPlanComment, 'test-plan-id')
       ).resolves.not.toThrow();
-    });
-
-    it('should throw error when monitor plan not found', async () => {
-      entityManagerMock.findOne.mockResolvedValueOnce(null);
-
-      await expect(
-        service.runChecks(mockMonitorPlanComment, 'non-existent-plan')
-      ).rejects.toThrow('Monitor Plan not found');
     });
   });
 
