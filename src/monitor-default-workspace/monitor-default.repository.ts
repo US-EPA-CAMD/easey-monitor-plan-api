@@ -27,14 +27,30 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
     beginDate: Date,
     beginHour: number,
   ): Promise<MonitorDefault | null> {
-    return this.createQueryBuilder('md')
+    const query = this.createQueryBuilder('md')
       .where('md.locationId = :locationId', { locationId })
       .andWhere('md.parameterCode = :parameterCode', { parameterCode })
-      .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
-      .andWhere('md.fuelCode = :fuelCode', { fuelCode })
-      .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
       .andWhere('md.beginDate = :beginDate', { beginDate })
-      .andWhere('md.beginHour = :beginHour', { beginHour })
-      .getOne();
+      .andWhere('md.beginHour = :beginHour', { beginHour });
+
+    if (defaultPurposeCode === null || defaultPurposeCode === undefined) {
+      query.andWhere('md.defaultPurposeCode IS NULL');
+    } else {
+      query.andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode });
+    }
+
+    if (fuelCode === null || fuelCode === undefined) {
+      query.andWhere('md.fuelCode IS NULL');
+    } else {
+      query.andWhere('md.fuelCode = :fuelCode', { fuelCode });
+    }
+
+    if (operatingConditionCode === null || operatingConditionCode === undefined) {
+      query.andWhere('md.operatingConditionCode IS NULL');
+    } else {
+      query.andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode });
+    }
+
+    return query.getOne();
   }
 }
