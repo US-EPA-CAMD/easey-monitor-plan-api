@@ -1,6 +1,5 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { IsNull } from 'typeorm';
 
@@ -11,6 +10,7 @@ import { UsedIdentifierRepository } from '../used-identifier/used-identifier.rep
 import { ComponentWorkspaceRepository } from './component.repository';
 import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { isInactiveRecord } from '../utilities/is-inactive-record';
+import { throwIfErrors } from '../utils';
 
 const KEY = 'Component';
 
@@ -23,14 +23,6 @@ export class ComponentCheckService {
     private readonly componentRepository: ComponentWorkspaceRepository,
   ) { }
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
 
   getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
@@ -69,7 +61,7 @@ export class ComponentCheckService {
       }
     }
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
     return errorList;
   }
 
