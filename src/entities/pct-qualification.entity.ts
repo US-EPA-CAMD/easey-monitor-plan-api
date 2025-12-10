@@ -17,7 +17,11 @@ export class PCTQualification extends BaseEntity {
   @Column({ name: 'mon_qual_id' })
   qualificationId: string;
 
-  @Column({ name: 'qual_year', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'qual_year',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   qualificationYear: number;
 
   @Column({ name: 'yr1_qual_data_type_cd' })
@@ -26,12 +30,14 @@ export class PCTQualification extends BaseEntity {
   @Column({
     name: 'yr1_qual_data_year',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   yr1QualificationDataYear: number;
 
   @Column({
     name: 'yr1_pct_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   yr1PercentageValue: number;
 
@@ -41,12 +47,14 @@ export class PCTQualification extends BaseEntity {
   @Column({
     name: 'yr2_qual_data_year',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   yr2QualificationDataYear: number;
 
   @Column({
     name: 'yr2_pct_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   yr2PercentageValue: number;
 
@@ -56,18 +64,21 @@ export class PCTQualification extends BaseEntity {
   @Column({
     name: 'yr3_qual_data_year',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   yr3QualificationDataYear: number;
 
   @Column({
     name: 'yr3_pct_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   yr3PercentageValue: number;
 
   @Column({
     name: 'avg_pct_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averagePercentValue: number;
 
@@ -80,10 +91,7 @@ export class PCTQualification extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
-  @ManyToOne(
-    () => MonitorQualification,
-    mq => mq.pctQualifications,
-  )
+  @ManyToOne(() => MonitorQualification, (mq) => mq.pctQualifications)
   @JoinColumn({ name: 'mon_qual_id' })
   qualification: MonitorQualification;
 }

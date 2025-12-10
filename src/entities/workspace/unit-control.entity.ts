@@ -14,7 +14,11 @@ export class UnitControl extends BaseEntity {
   @PrimaryColumn({ name: 'ctl_id' })
   id: string;
 
-  @Column({ name: 'unit_id', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'unit_id',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   unitId: number;
 
   @Column({ name: 'control_cd' })

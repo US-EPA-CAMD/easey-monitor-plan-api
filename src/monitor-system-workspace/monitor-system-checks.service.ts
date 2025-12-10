@@ -1,10 +1,10 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ComponentCheckService } from '../component-workspace/component-checks.service';
 import { UpdateMonitorSystemDTO } from '../dtos/monitor-system.dto';
 import { MonitorSystemWorkspaceRepository } from './monitor-system.repository';
+import { throwIfErrors } from '../utils';
 
 const KEY = 'Monitor System';
 @Injectable()
@@ -26,14 +26,6 @@ export class MonitorSystemCheckService {
     return [...new Set(errorList)];
   }
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
 
   getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
@@ -62,7 +54,7 @@ export class MonitorSystemCheckService {
     }
 
 
-    this.throwIfErrors(errorList);
+    throwIfErrors(errorList);
     return errorList;
   }
 
