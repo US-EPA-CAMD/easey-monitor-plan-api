@@ -18,7 +18,7 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
       .getOne();
   }
 
-  async getDefaultBySpecsBeginOrEndDate(
+  async getDefaultByLogicalKey(
     locationId: string,
     parameterCode: string,
     defaultPurposeCode: string,
@@ -26,40 +26,31 @@ export class MonitorDefaultWorkspaceRepository extends Repository<
     operatingConditionCode: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date | null,
-    endHour: number | null,
   ): Promise<MonitorDefault | null> {
     const query = this.createQueryBuilder('md')
       .where('md.locationId = :locationId', { locationId })
       .andWhere('md.parameterCode = :parameterCode', { parameterCode })
-      .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
-      .andWhere('md.fuelCode = :fuelCode', { fuelCode })
-      .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
-      .andWhere('(md.beginDate = :beginDate AND md.beginHour = :beginHour)', {
-        beginDate,
-        beginHour,
-      });
+      .andWhere('md.beginDate = :beginDate', { beginDate })
+      .andWhere('md.beginHour = :beginHour', { beginHour });
 
-    const beginMatch = await query.getOne();
-    if (beginMatch) return beginMatch;
-
-    if (endDate !== null && endHour !== null) {
-      const endQuery = this.createQueryBuilder('md')
-        .where('md.locationId = :locationId', { locationId })
-        .andWhere('md.parameterCode = :parameterCode', { parameterCode })
-        .andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode })
-        .andWhere('md.fuelCode = :fuelCode', { fuelCode })
-        .andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode })
-        .andWhere('(md.endDate = :endDate AND md.endHour = :endHour)', {
-          endDate,
-          endHour,
-        });
-
-      const endMatch = await endQuery.getOne();
-      if (endMatch) return endMatch;
+    if (defaultPurposeCode === null || defaultPurposeCode === undefined) {
+      query.andWhere('md.defaultPurposeCode IS NULL');
+    } else {
+      query.andWhere('md.defaultPurposeCode = :defaultPurposeCode', { defaultPurposeCode });
     }
 
-    return null;
-  }
+    if (fuelCode === null || fuelCode === undefined) {
+      query.andWhere('md.fuelCode IS NULL');
+    } else {
+      query.andWhere('md.fuelCode = :fuelCode', { fuelCode });
+    }
 
+    if (operatingConditionCode === null || operatingConditionCode === undefined) {
+      query.andWhere('md.operatingConditionCode IS NULL');
+    } else {
+      query.andWhere('md.operatingConditionCode = :operatingConditionCode', { operatingConditionCode });
+    }
+
+    return query.getOne();
+  }
 }

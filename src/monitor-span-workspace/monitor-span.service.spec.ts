@@ -21,7 +21,7 @@ const mockRepository = () => ({
   getSpan: jest.fn().mockResolvedValue(span),
   create: jest.fn().mockResolvedValue(span),
   save: jest.fn().mockResolvedValue(span),
-  getSpanByLocIdCompTypeCdBeginOrEndDate: jest.fn().mockResolvedValue(span),
+  getSpanByLogicalKey: jest.fn().mockResolvedValue(span),
 });
 
 const spanDTO = new MonitorSpanDTO();
@@ -159,7 +159,7 @@ describe('MonitorSpanWorkspaceService', () => {
     });
     it('should update while importing monitor span', async () => {
       jest
-        .spyOn(repository, 'getSpanByLocIdCompTypeCdBeginOrEndDate')
+        .spyOn(repository, 'getSpanByLogicalKey')
         .mockResolvedValue(undefined);
 
       const result = await service.importSpan('1', [payload], 'testUser');

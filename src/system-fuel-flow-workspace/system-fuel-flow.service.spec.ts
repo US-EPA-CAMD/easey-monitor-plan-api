@@ -28,7 +28,7 @@ const mockRepository = () => ({
   getFuelFlow: jest.fn().mockResolvedValue(ENTITY),
   create: jest.fn().mockResolvedValue(ENTITY),
   save: jest.fn(),
-  getFuelFlowByMonSysIdBeginOrEndDate: jest.fn().mockResolvedValue(ENTITY),
+  getFuelFlowByLogicalKey: jest.fn().mockResolvedValue(ENTITY),
 });
 
 const mockMap = () => ({

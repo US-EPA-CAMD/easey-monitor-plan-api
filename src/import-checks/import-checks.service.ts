@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MonitorLocationWorkspaceService } from '../monitor-location-workspace/monitor-location.service';
 import { PlantService } from '../plant/plant.service';
 import { ComponentWorkspaceService } from '../component-workspace/component.service';
@@ -10,7 +10,8 @@ import { StackPipeWorkspaceService } from '../stack-pipe-workspace/stack-pipe.se
 import { UnitStackConfigurationWorkspaceService } from '../unit-stack-configuration-workspace/unit-stack-configuration.service';
 import { MonitorFormulaWorkspaceService } from '../monitor-formula-workspace/monitor-formula.service';
 import { MonitorSpanWorkspaceService } from '../monitor-span-workspace/monitor-span.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { UnitWorkspaceService } from '../unit-workspace/unit.service';
+import { throwIfErrors } from '../utils';
 
 @Injectable()
 export class ImportChecksService {
@@ -20,38 +21,41 @@ export class ImportChecksService {
     private readonly monitorSystemService: MonitorSystemWorkspaceService,
     private readonly monitorLocationService: MonitorLocationWorkspaceService,
     private readonly unitService: UnitService,
+    private readonly unitWorkspaceService: UnitWorkspaceService,
     private readonly plantService: PlantService,
     private readonly unitStackService: UnitStackConfigurationWorkspaceService,
     private readonly formulaService: MonitorFormulaWorkspaceService,
     private readonly spanService: MonitorSpanWorkspaceService,
     private readonly stackPipeService: StackPipeWorkspaceService,
-  ) {}
+  ) { }
 
-  private checkIfThrows(errorList: string[]) {
-    if (errorList.length > 0) {
-      throw new EaseyException(
-        new Error(JSON.stringify(errorList)),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
 
   public async runImportChecks(monPlan: UpdateMonitorPlanDTO) {
     let errorList = [];
-
-    // Plant Check
-    errorList.push(
-      ...(await this.plantService.runPlantCheck(monPlan.orisCode)),
-    );
-    this.checkIfThrows(errorList);
 
     const facilityId = await this.plantService.getFacIdFromOris(
       monPlan.orisCode,
     );
 
+    // IMPORT-1 Check: ORIS Code exists in database
+    errorList.push(
+      ...(await this.plantService.runImport1Checks(monPlan, facilityId)),
+    );
+
+
+
+    // IMPORT-2 Check: Units exist in database for the ORIS code
+    errorList.push(
+      ...await (this.unitWorkspaceService.runUnitChecks(monPlan, facilityId))
+    );
+
+    // IMPORT-4 Check: Unit-Stack configuration validation
+    errorList.push(
+      ...await this.unitStackService.importUnitStackConfigurationChecks(monPlan)
+    );
+
     // Unit Stack Checks
     errorList.push(...this.unitStackService.runUnitStackChecks(monPlan));
-    this.checkIfThrows(errorList);
 
     // Stack Pipe Checks
     errorList.push(
@@ -131,6 +135,6 @@ export class ImportChecksService {
 
       index++;
     }
-    this.checkIfThrows(errorList);
+    throwIfErrors(errorList);
   }
 }

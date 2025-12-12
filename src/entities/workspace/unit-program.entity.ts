@@ -16,6 +16,7 @@ export class UnitProgram extends BaseEntity {
   @PrimaryColumn({
     name: 'up_id',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   id: number;
 

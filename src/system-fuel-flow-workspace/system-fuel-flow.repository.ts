@@ -36,38 +36,16 @@ export class SystemFuelFlowWorkspaceRepository extends Repository<
       .getMany();
   }
 
-  async getFuelFlowByMonSysIdBeginOrEndDate(
+  async getFuelFlowByLogicalKey(
     monSysId: string,
-    fuelFlow: SystemFuelFlowBaseDTO,
+    beginDate: Date,
+    beginHour: number,
   ): Promise<SystemFuelFlow | null> {
-    const beginDate = fuelFlow.beginDate;
-    const beginHour = fuelFlow.beginHour;
-    const endDate = fuelFlow.endDate;
-    const endHour = fuelFlow.endHour;
-
-    const query = this.createQueryBuilder('sff')
+    return this.createQueryBuilder('sff')
       .where('sff.monitoringSystemRecordId = :monSysId', { monSysId })
-      .andWhere('(sff.beginDate = :beginDate AND sff.beginHour = :beginHour)', {
-        beginDate,
-        beginHour,
-      });
-
-    const beginMatch = await query.getOne();
-    if (beginMatch) return beginMatch;
-
-    if (endDate !== null && endHour !== null) {
-      const endQuery = this.createQueryBuilder('sff')
-        .where('sff.monitoringSystemRecordId = :monSysId', { monSysId })
-        .andWhere('(sff.endDate = :endDate AND sff.endHour = :endHour)', {
-          endDate,
-          endHour,
-        });
-
-      const endMatch = await endQuery.getOne();
-      if (endMatch) return endMatch;
-    }
-
-    return null;
+      .andWhere('sff.beginDate = :beginDate', { beginDate })
+      .andWhere('sff.beginHour = :beginHour', { beginHour })
+      .getOne();
   }
 
 }

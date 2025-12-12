@@ -16,36 +16,16 @@ export class MonitorLoadWorkspaceRepository extends Repository<MonitorLoad> {
       .getOne();
   }
 
-  async getLoadByLocBeginOrEndDate(
+  async getLoadByLogicalKey(
     locationId: string,
     beginDate: Date,
     beginHour: number,
-    endDate: Date | null,
-    endHour: number | null,
   ): Promise<MonitorLoad | null> {
-    const query = this.createQueryBuilder('ml')
+    return this.createQueryBuilder('ml')
       .where('ml.locationId = :locationId', { locationId })
-      .andWhere('(ml.beginDate = :beginDate AND ml.beginHour = :beginHour)', {
-        beginDate,
-        beginHour,
-      });
-
-    const beginMatch = await query.getOne();
-    if (beginMatch) return beginMatch;
-
-    if (endDate !== null && endHour !== null) {
-      const endQuery = this.createQueryBuilder('ml')
-        .where('ml.locationId = :locationId', { locationId })
-        .andWhere('(ml.endDate = :endDate AND ml.endHour = :endHour)', {
-          endDate,
-          endHour,
-        });
-
-      const endMatch = await endQuery.getOne();
-      if (endMatch) return endMatch;
-    }
-
-    return null;
+      .andWhere('ml.beginDate = :beginDate', { beginDate })
+      .andWhere('ml.beginHour = :beginHour', { beginHour })
+      .getOne();
   }
 
 }

@@ -68,10 +68,7 @@ export class MonitorPlanReportingFrequency extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
-  @ManyToOne(
-    () => MonitorPlan,
-    mp => mp.reportingFrequencies,
-  )
+  @ManyToOne(() => MonitorPlan, (mp) => mp.reportingFrequencies)
   @JoinColumn({ name: 'mon_plan_id' })
   plan: MonitorPlan;
 

@@ -59,12 +59,10 @@ export class MonitorLoadWorkspaceService {
         const loadRecord = await withTransaction(
           this.repository,
           trx,
-        ).getLoadByLocBeginOrEndDate(
+        ).getLoadByLogicalKey(
           locationId,
           load.beginDate,
           load.beginHour,
-          load.endDate,
-          load.endHour,
         );
 
         if (loadRecord) {

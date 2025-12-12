@@ -17,7 +17,7 @@ const monLoadDto = new MonitorLoadDTO();
 const payload = new MonitorLoadBaseDTO();
 
 const mockRepository = () => ({
-  getLoadByLocBeginOrEndDate: jest.fn().mockRejectedValue(monLoad),
+  getLoadByLogicalKey: jest.fn().mockRejectedValue(monLoad),
   getLoad: jest.fn().mockRejectedValue(monLoad),
   findBy: jest.fn().mockResolvedValue([monLoad]),
   findOneBy: jest.fn().mockResolvedValue(monLoad),
@@ -111,14 +111,14 @@ describe('MonitorLoadService', () => {
   describe('importLoad', () => {
     it('should update while importing monitor load', async () => {
       jest
-        .spyOn(repository, 'getLoadByLocBeginOrEndDate')
+        .spyOn(repository, 'getLoadByLogicalKey')
         .mockResolvedValue(monLoad);
       const result = await service.importLoad('1', [payload], 'testUser');
       expect(result).toEqual(true);
     });
     it('should create while importing monitor load', async () => {
       jest
-        .spyOn(repository, 'getLoadByLocBeginOrEndDate')
+        .spyOn(repository, 'getLoadByLogicalKey')
         .mockResolvedValue(undefined);
 
       const result = await service.importLoad('1', [payload], 'testUser');

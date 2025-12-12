@@ -91,7 +91,7 @@ export class ComponentWorkspaceController {
     @Body() payload: UpdateComponentBaseDTO,
     @User() user: CurrentUser,
   ): Promise<ComponentDTO> {
-    await this.checkService.runChecks(locId, payload, false, true);
+    await this.checkService.runChecks(locId, payload, false, false);
     return this.service.createComponent({
       locationId: locId,
       payload,

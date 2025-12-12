@@ -26,7 +26,7 @@ const returnedMonitorAttribute = new MonitorAttributeDTO();
 
 const mockRepository = () => ({
   getAttribute: jest.fn().mockResolvedValue(monAttr),
-  getAttributeByLocIdBeginOrEndDate: jest.fn().mockResolvedValue(monAttr),
+  getAttributeByLogicalKey: jest.fn().mockResolvedValue(monAttr),
   findBy: jest.fn().mockResolvedValue([monAttr]),
   create: jest.fn().mockResolvedValue(monAttr),
   update: jest.fn().mockResolvedValue(monAttr),
@@ -127,7 +127,7 @@ describe('MonitorAttributeWorkspaceService', () => {
   describe('importAttributes', () => {
     it('should create monitor attribute if not exists', async () => {
       jest
-        .spyOn(repository, 'getAttributeByLocIdBeginOrEndDate')
+        .spyOn(repository, 'getAttributeByLogicalKey')
         .mockResolvedValue(undefined);
       const retult = await service.importAttributes(locId, [payload], userId);
       expect(retult).toEqual(true);
@@ -135,7 +135,7 @@ describe('MonitorAttributeWorkspaceService', () => {
 
     it('should update attribute if exists', async () => {
       jest
-        .spyOn(repository, 'getAttributeByLocIdBeginOrEndDate')
+        .spyOn(repository, 'getAttributeByLogicalKey')
         .mockResolvedValue(monAttr);
       const retult = await service.importAttributes(locId, [payload], userId);
       expect(retult).toEqual(true);
