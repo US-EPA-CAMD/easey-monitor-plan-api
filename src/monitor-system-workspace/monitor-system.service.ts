@@ -53,7 +53,7 @@ export class MonitorSystemWorkspaceService {
 
     const componentIdSet: Set<string> = new Set<string>();
     for (const loc of monPlan.monitoringLocationData) {
-      for (const component of loc.componentData) {
+      for (const component of loc.componentData ?? []) {
         componentIdSet.add(component.componentId);
       }
     }

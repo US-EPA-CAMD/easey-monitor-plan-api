@@ -38,11 +38,11 @@ export class UpdateMonitorPlanDTO {
 
   @ValidateNested()
   @Type(() => MonitorPlanCommentBaseDTO)
-  monitoringPlanCommentData: MonitorPlanCommentBaseDTO[];
+  monitoringPlanCommentData?: MonitorPlanCommentBaseDTO[];
 
   @ValidateNested()
   @Type(() => UnitStackConfigurationBaseDTO)
-  unitStackConfigurationData: UnitStackConfigurationBaseDTO[];
+  unitStackConfigurationData?: UnitStackConfigurationBaseDTO[];
 
   @ValidateNested()
   @Type(() => UpdateMonitorLocationDTO)

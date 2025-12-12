@@ -57,7 +57,7 @@ export class MonitorPlanChecksService {
     errorList.push(...errors);
     this.throwIfErrors(errorList);
 
-    payload.unitStackConfigurationData.forEach(usc => {
+    payload.unitStackConfigurationData?.forEach(usc => {
       promises.push(
         this.unitStackConfigurationChecksService.runChecks(
           usc,

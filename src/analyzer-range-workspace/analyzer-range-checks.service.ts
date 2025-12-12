@@ -44,7 +44,7 @@ export class AnalyzerRangeChecksService {
   ) {
     let errorList: string[] = [];
     let error: string = null;
-    let component: ComponentBaseDTO | UpdateComponentBaseDTO;
+    let component: ComponentBaseDTO | UpdateComponentBaseDTO | undefined | null;
 
     if (isImport) {
       component = componentData;
@@ -55,9 +55,9 @@ export class AnalyzerRangeChecksService {
     }
 
     // COMPON-54
-    if (!isUpdate) {
+    if (component && !isUpdate) {
       error = await this.duplicateAnalyzerRangeChecks(
-        component?.componentId,
+        component.componentId,
         analyzerRange,
       );
     }
