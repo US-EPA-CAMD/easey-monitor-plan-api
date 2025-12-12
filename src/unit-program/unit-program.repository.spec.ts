@@ -2,26 +2,35 @@ import { Test } from '@nestjs/testing';
 import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { UnitProgramRepository } from './unit-program.repository';
 import { UnitProgram } from '../entities/workspace/unit-program.entity';
+import { DataSource } from 'typeorm';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const unitProgramEntity = new UnitProgram(); // Mocked UnitProgram entity
+jest.mock('@us-epa-camd/easey-common/connection');
 
 // Mocking the SelectQueryBuilder and its methods
-const mockQueryBuilder = (): Partial<SelectQueryBuilder<UnitProgram>> => ({
+const mockQueryBuilder =  {
   where: jest.fn().mockReturnThis(),
   getMany: jest.fn().mockResolvedValue([unitProgramEntity]),
   getOne: jest.fn().mockResolvedValue(unitProgramEntity),
-});
+};
+
+const mockManager = {
+    createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+ };
 
 describe('UnitProgramRepository', () => {
   let repository: UnitProgramRepository;
   let queryBuilder: SelectQueryBuilder<UnitProgram>;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         EntityManager,
         UnitProgramRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        { provide: SelectQueryBuilder, useFactory: (): Partial<SelectQueryBuilder<UnitProgram>> => mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -33,6 +42,9 @@ describe('UnitProgramRepository', () => {
 
     // Mocking the createQueryBuilder to return the queryBuilder mock
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
+    (withSlaveConnection as jest.Mock).mockImplementation(
+              async (_dataSource, callback) =>
+          callback(mockManager)) 
   });
 
   it('should be defined', () => {

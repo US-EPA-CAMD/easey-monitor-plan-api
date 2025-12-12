@@ -4,6 +4,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { PCTQualificationMap } from '../maps/pct-qualification.map';
 import { PCTQualificationService } from './pct-qualification.service';
 import { PCTQualificationRepository } from './pct-qualification.repository';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -15,8 +19,11 @@ const mockMap = () => ({
 
 describe('PCTQualificationService', () => {
   let service: PCTQualificationService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
@@ -29,6 +36,7 @@ describe('PCTQualificationService', () => {
           provide: PCTQualificationMap,
           useFactory: mockMap,
         },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -41,6 +49,10 @@ describe('PCTQualificationService', () => {
 
   describe('getPCTQualifications', () => {
     it('should return array of pct qualifications', async () => {
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+       );
       const result = await service.getPCTQualifications(null);
       expect(result).toEqual('');
     });

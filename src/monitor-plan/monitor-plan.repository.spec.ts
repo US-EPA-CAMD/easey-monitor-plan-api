@@ -1,31 +1,40 @@
 import { Test } from '@nestjs/testing';
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorPlanRepository } from './monitor-plan.repository';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const mp = new MonitorPlan();
 const mpArray = [];
 mpArray.push(mp);
 
-const mockQueryBuilder = () => ({
+jest.mock('@us-epa-camd/easey-common/connection');
+
+const mockQueryBuilder = {
   getOne: jest.fn(),
   getMany: jest.fn(),
   where: jest.fn(),
   innerJoin: jest.fn(),
   innerJoinAndSelect: jest.fn(() => mpArray),
-});
+};
+
+const mockManager = {
+  createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+};
 
 describe('-- Monitor Plan Repository --', () => {
   let monitorPlanRepository;
   let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         EntityManager,
         MonitorPlanRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        { provide: SelectQueryBuilder, useFactory:() => mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -80,6 +89,9 @@ describe('-- Monitor Plan Repository --', () => {
   });
 
   it('calls createQueryBuilder and gets data for a specific MonitorPlan from the repository', async () => {
+      (withSlaveConnection as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager))
     monitorPlanRepository.createQueryBuilder = jest
       .fn()
       .mockReturnValue(queryBuilder);

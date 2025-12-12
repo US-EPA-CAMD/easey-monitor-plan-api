@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 interface IorisCodesAndLastUpdatedTimes {
   changedOrisCodes: number[];
@@ -10,15 +11,17 @@ interface IorisCodesAndLastUpdatedTimes {
 
 @Injectable()
 export class MonitorPlanRepository extends Repository<MonitorPlan> {
-  constructor(entityManager: EntityManager) {
+  constructor( entityManager: EntityManager) {
     super(MonitorPlan, entityManager);
   }
 
   async getMonitorPlan(planId: string): Promise<MonitorPlan> {
-    return this.createQueryBuilder('plan')
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+        return qr.createQueryBuilder(MonitorPlan, 'plan')
       .innerJoinAndSelect('plan.plant', 'plant')
       .where('plan.id = :planId', { planId })
       .getOne();
+    });
   }
 
   async getMonitorPlanByIds(planIds: string[]): Promise<MonitorPlan[]> {

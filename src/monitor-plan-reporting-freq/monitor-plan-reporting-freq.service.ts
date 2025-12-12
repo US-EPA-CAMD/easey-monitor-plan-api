@@ -5,7 +5,9 @@ import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class MonitorPlanReportingFrequencyService {
-  constructor(private readonly entityManager: EntityManager) {}
+  constructor(
+    private readonly entityManager: EntityManager,
+  ) {}
 
   async getReportingFreqs(planId: string): Promise<ReportingFreqDTO[]> {
     return await this.retrieveReportingFreq(planId);
@@ -48,7 +50,14 @@ export class MonitorPlanReportingFrequencyService {
         GROUP BY mprf.mon_plan_rf_id, mprf.report_freq_cd, rp_begin.period_abbreviation, rp_end.period_abbreviation, rp_end.end_date;;
     `;
 
-    const result = await this.entityManager.query(sql, [planId]);
-    return result;
+    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
+    try {
+      const result = await slaveQueryRunner.query(
+        sql, [planId]
+      );
+      return result;
+    } finally {
+      await slaveQueryRunner.release();
+    }
   }
 }

@@ -15,6 +15,10 @@ import { MonitorConfigurationsService } from './monitor-configurations.service';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const MON_PLAN_ID = 'MON_PLAN_ID';
 const ORIS_CODE = 2;
@@ -49,8 +53,11 @@ const mockPlantRepository = () => ({
 
 describe('MonitorConfigurationsService', () => {
   let service: MonitorConfigurationsService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       providers: [
@@ -72,6 +79,7 @@ describe('MonitorConfigurationsService', () => {
           provide: PlantRepository,
           useFactory: mockPlantRepository,
         },
+        {provide: DataSource, useValue: dataSource },
         UnitStackConfigurationRepository,
         MonitorLocationRepository,
         UnitControlRepository,
@@ -87,11 +95,19 @@ describe('MonitorConfigurationsService', () => {
 
   describe('getConfigurations', () => {
     it('Should return an array of MonitoringPlanDTO matching a query by monPlanId', async () => {
+      (useSlaveRepository as jest.Mock).mockImplementation(
+                async (_dataSource, _repo, callback) =>
+                  callback(mockRepository()) 
+      );
       const result = await service.getConfigurations([], [MON_PLAN_ID]);
       expect(result.length).toEqual(1);
     });
 
     it('Should return an array of MonitoringPlanDTO matching a query by orisCode', async () => {
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockPlantRepository()) 
+       );      
       const result = await service.getConfigurations([ORIS_CODE]);
       expect(result.length).toEqual(1);
     });

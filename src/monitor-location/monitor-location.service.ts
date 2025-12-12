@@ -7,6 +7,8 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationMap } from '../maps/monitor-location.map';
 import { UnitStackConfigurationService } from '../unit-stack-configuration/unit-stack-configuration.service';
 import { MonitorLocationRepository } from './monitor-location.repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class MonitorLocationService {
@@ -16,10 +18,11 @@ export class MonitorLocationService {
     readonly map: MonitorLocationMap,
     private readonly uscServcie: UnitStackConfigurationService,
     private Logger: Logger,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getLocation(locationId: string): Promise<MonitorLocationDTO> {
-    const result = await this.repository.findOneBy({ id: locationId });
+    const result = await useSlaveRepository(this.dataSource, MonitorLocationRepository, async (repository) => repository.findOneBy({ id: locationId }));
 
     if (!result) {
       throw new EaseyException(new Error(this.errorMsg), HttpStatus.NOT_FOUND, {

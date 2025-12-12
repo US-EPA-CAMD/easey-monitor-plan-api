@@ -4,6 +4,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorQualificationMap } from '../maps/monitor-qualification.map';
 import { MonitorQualificationService } from './monitor-qualification.service';
 import { MonitorQualificationRepository } from './monitor-qualification.repository';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -15,8 +19,11 @@ const mockMap = () => ({
 
 describe('MonitorQualificationService', () => {
   let service: MonitorQualificationService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
@@ -29,6 +36,7 @@ describe('MonitorQualificationService', () => {
           provide: MonitorQualificationMap,
           useFactory: mockMap,
         },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -43,6 +51,10 @@ describe('MonitorQualificationService', () => {
 
   describe('getQualifications', () => {
     it('should return array of location qualifications', async () => {
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+       );
       const result = await service.getQualifications(null);
       expect(result).toEqual('');
     });
