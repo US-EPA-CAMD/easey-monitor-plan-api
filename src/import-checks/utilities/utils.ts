@@ -81,9 +81,9 @@ export const checkComponentExistanceInFile = (
   monPlan: UpdateMonitorPlanDTO,
   systemComponent: SystemComponentBaseDTO,
 ) => {
-  const results = [];
+  const results: Boolean[] = [];
   for (const loc of monPlan.monitoringLocationData) {
-    for (const component of loc.componentData) {
+    for (const component of loc.componentData ?? []) {
       if (component.componentId !== systemComponent.componentId) {
         results.push(false);
       } else {

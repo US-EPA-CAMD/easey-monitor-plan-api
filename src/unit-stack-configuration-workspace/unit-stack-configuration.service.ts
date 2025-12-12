@@ -66,7 +66,7 @@ export class UnitStackConfigurationWorkspaceService {
     const errorList: string[] = [];
 
     // Check for duplicate unit stack configurations.
-    monitorPlan.unitStackConfigurationData.forEach((usc1, i) => {
+    monitorPlan.unitStackConfigurationData?.forEach((usc1, i) => {
       if (!usc1.unitId) {
         const error = CheckCatalogService.formatResultMessage('MONLOC-107-A', {
           fieldname: 'unitId',
@@ -74,7 +74,7 @@ export class UnitStackConfigurationWorkspaceService {
         })
         errorList.push(error)
       } else if (
-        monitorPlan.unitStackConfigurationData.findIndex(
+        monitorPlan.unitStackConfigurationData?.findIndex(
           usc2 =>
             usc1.unitId === usc2.unitId &&
             usc1.stackPipeId === usc2.stackPipeId &&
@@ -101,7 +101,7 @@ export class UnitStackConfigurationWorkspaceService {
       }
     }
 
-    for (const unitStackConfig of monitorPlan.unitStackConfigurationData) {
+    for (const unitStackConfig of monitorPlan.unitStackConfigurationData ?? []) {
       if (!unitStackIds.has(unitStackConfig.stackPipeId)) {
         errorList.push(
           `[IMPORT8-CRIT1-A] Each Stack/Pipe and Unit in a unit stack configuration record must be linked to unit and stack/pipe records that are also present in the file. StackPipeID ${unitStackConfig.stackPipeId} was not associated with a Stack/Pipe record in the file.`,
@@ -164,7 +164,7 @@ export class UnitStackConfigurationWorkspaceService {
     const unitStackConfigDTOs: UnitStackConfigurationDTO[] = [];
 
     await settlePromises(
-      plan.unitStackConfigurationData.map(async unitStackConfig => {
+      (plan.unitStackConfigurationData ?? []).map(async unitStackConfig => {
         const stackPipe = await this.stackPipeService.getStackByNameAndFacId(
           unitStackConfig.stackPipeId,
           facilityId,
