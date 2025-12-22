@@ -8,6 +8,7 @@ import { withTransaction } from '../utils';
 import { UnitRepository } from './unit.repository';
 import { UnitDTO } from '../dtos/unit.dto';
 import { EntityManager } from 'typeorm';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class UnitService {
@@ -118,15 +119,12 @@ export class UnitService {
             unt.UNIT_ID = $1
     `;
 
-    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
-    try {
-      const result = await slaveQueryRunner.query(
-        sql,
-        [id]
-      );
-      return result.pop() || null; // The query returns at most one row, so we can safely use pop() to get the result or null if empty
-    } finally {
-      await slaveQueryRunner.release();
-    }
+    const result = await withSlaveConnection(
+      this.entityManager.connection,
+      async (manager) => {
+        return manager.query(sql, [id]);
+      },
+    );
+    return result.pop() || null; // The query returns at most one row, so we can safely use pop() to get the result or null if empty
   }
 }
