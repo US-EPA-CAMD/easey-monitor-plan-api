@@ -118,7 +118,15 @@ export class UnitService {
             unt.UNIT_ID = $1
     `;
 
-    const result = await this.entityManager.query(sql, [id]);
-    return result.pop() || null; // The query returns at most one row, so we can safely use pop() to get the result or null if empty
+    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
+    try {
+      const result = await slaveQueryRunner.query(
+        sql,
+        [id]
+      );
+      return result.pop() || null; // The query returns at most one row, so we can safely use pop() to get the result or null if empty
+    } finally {
+      await slaveQueryRunner.release();
+    }
   }
 }

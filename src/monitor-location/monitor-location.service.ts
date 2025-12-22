@@ -34,8 +34,8 @@ export class MonitorLocationService {
   }
 
   async getLocationEntity(locationId: string): Promise<MonitorLocation> {
-    const result = await this.repository.findOneBy({ id: locationId });
-    if (!result) {
+     const result = await useSlaveRepository(this.dataSource, MonitorLocationRepository, async (repository) => repository.findOneBy({ id: locationId }));
+     if (!result) {
       throw new EaseyException(new Error(this.errorMsg), HttpStatus.NOT_FOUND, {
         locationId: locationId,
       });

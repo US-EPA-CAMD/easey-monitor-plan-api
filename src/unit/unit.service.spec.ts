@@ -13,15 +13,27 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([]),
 });
 
-const mockRepository = () => ({
+const mockRepository = {
   findOne: jest.fn().mockResolvedValue(unit),
   findOneBy: jest.fn().mockResolvedValue(unit),
   save: jest.fn().mockResolvedValue({}),
-});
+};
 
-const mockEntityManager = () => ({
-  query: jest.fn().mockResolvedValue([unit]),
-});
+const mockSlaveRepository = {
+  query: jest.fn(),
+  release: jest.fn(),
+
+};
+  const mockEntityManager = {
+    connection: {
+      createQueryRunner: jest.fn((type) => {
+        if (type === 'slave') {
+          return  mockSlaveRepository;
+        }
+        return mockRepository; // primary / default
+      }),
+    },
+  }
 
 describe('UnitWorkspaceService', () => {
   let service: UnitService;
@@ -37,11 +49,11 @@ describe('UnitWorkspaceService', () => {
         },
         {
           provide: UnitRepository,
-          useFactory: mockRepository,
+          useFactory: () => mockRepository,
         },
         {
           provide: EntityManager,
-          useFactory: mockEntityManager,
+          useValue:  mockEntityManager,
         },
       ],
     }).compile();
@@ -55,6 +67,7 @@ describe('UnitWorkspaceService', () => {
 
   describe('getUnits', () => {
     it('should return an array of units', async () => {
+      mockSlaveRepository.query.mockResolvedValue([unit]);
       const result = await service.getUnit(1);
       expect(result).toEqual(unit);
     });
