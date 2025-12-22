@@ -1,11 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
-import { EntityManager } from 'typeorm';
+import { EntityManager, DataSource } from 'typeorm';
 import { Unit } from '../entities/workspace/unit.entity';
 import { UnitMap } from '../maps/unit.map';
 import { UnitRepository } from './unit.repository';
 import { UnitService } from './unit.service';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const unit = new Unit();
 
@@ -13,18 +16,20 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([]),
 });
 
-const mockRepository = () => ({
+const mockRepository = {
   findOne: jest.fn().mockResolvedValue(unit),
   findOneBy: jest.fn().mockResolvedValue(unit),
   save: jest.fn().mockResolvedValue({}),
-});
+};
 
-const mockEntityManager = () => ({
+const mockManager = {
   query: jest.fn().mockResolvedValue([unit]),
-});
+  createQueryBuilder: jest.fn().mockReturnValue(mockRepository),
+}
 
 describe('UnitWorkspaceService', () => {
   let service: UnitService;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,12 +42,10 @@ describe('UnitWorkspaceService', () => {
         },
         {
           provide: UnitRepository,
-          useFactory: mockRepository,
+          useFactory: ()=> mockRepository,
         },
-        {
-          provide: EntityManager,
-          useFactory: mockEntityManager,
-        },
+        EntityManager,
+      {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -55,6 +58,9 @@ describe('UnitWorkspaceService', () => {
 
   describe('getUnits', () => {
     it('should return an array of units', async () => {
+      (withSlaveConnection as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager))
       const result = await service.getUnit(1);
       expect(result).toEqual(unit);
     });
