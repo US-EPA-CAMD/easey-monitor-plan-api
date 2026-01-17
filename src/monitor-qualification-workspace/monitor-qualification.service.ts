@@ -101,7 +101,7 @@ export class MonitorQualificationWorkspaceService {
       if (qual.endDate) continue; // Don't perform checks on Inactive MonitorQualification Record
 
       if (qual.qualificationTypeCode !== 'LMEA') {
-        qual.monitoringQualificationLMEData.forEach((lmeQual, idx) => {
+        qual.monitoringQualificationLMEData?.forEach((lmeQual, idx) => {
           if (lmeQual.so2Tons !== null) {
             errorList.push(
               `[IMPORT11-NONCRIT-A] A value has been reported for SO2Tons for the Monitor Qualification LME record #${idx}. This field should be blank`,
@@ -112,6 +112,7 @@ export class MonitorQualificationWorkspaceService {
 
       if (
         !['PK', 'SK', 'GF'].includes(qual.qualificationTypeCode) &&
+        qual.monitoringQualificationPercentData &&
         qual.monitoringQualificationPercentData.length > 0
       ) {
         errorList.push(
@@ -121,6 +122,7 @@ export class MonitorQualificationWorkspaceService {
 
       if (
         !['LMEA', 'LMES'].includes(qual.qualificationTypeCode) &&
+        qual.monitoringQualificationLMEData &&
         qual.monitoringQualificationLMEData.length > 0
       ) {
         errorList.push(
@@ -130,6 +132,7 @@ export class MonitorQualificationWorkspaceService {
 
       if (
         qual.qualificationTypeCode !== 'LEE' &&
+        qual.monitoringQualificationLEEData &&
         qual.monitoringQualificationLEEData.length > 0
       ) {
         errorList.push(
@@ -150,7 +153,8 @@ export class MonitorQualificationWorkspaceService {
   ): Promise<void> {
     const promises = [];
     if (
-      qualification.monitoringQualificationLEEData?.length > 0 &&
+      qualification.monitoringQualificationLEEData &&
+      qualification.monitoringQualificationLEEData.length > 0 &&
       qualification.qualificationTypeCode === 'LEE'
     ) {
       promises.push(
@@ -165,7 +169,8 @@ export class MonitorQualificationWorkspaceService {
     }
 
     if (
-      qualification.monitoringQualificationLMEData?.length > 0 &&
+      qualification.monitoringQualificationLMEData &&
+      qualification.monitoringQualificationLMEData.length > 0 &&
       ['LMEA', 'LMES'].includes(qualification.qualificationTypeCode)
     ) {
       promises.push(
@@ -180,7 +185,8 @@ export class MonitorQualificationWorkspaceService {
     }
 
     if (
-      qualification.monitoringQualificationPercentData?.length > 0 &&
+      qualification.monitoringQualificationPercentData &&
+      qualification.monitoringQualificationPercentData.length > 0 &&
       ['PK', 'SK', 'GF'].includes(qualification.qualificationTypeCode)
     ) {
       promises.push(

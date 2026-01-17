@@ -329,7 +329,7 @@ async function monitoringLocation(monitorLocations: MonitorLocationDTO[]) {
 }
 
 async function unitCapacity(unitCapacities: UnitCapacityDTO[]) {
-  unitCapacities.forEach(capacity => {
+  unitCapacities?.forEach(capacity => {
     delete capacity.unitRecordId;
     delete capacity.commercialOperationDate;
     delete capacity.operationDate;
@@ -345,7 +345,7 @@ async function unitCapacity(unitCapacities: UnitCapacityDTO[]) {
 }
 
 async function unitControl(unitControls: UnitControlDTO[]) {
-  unitControls.forEach(control => {
+  unitControls?.forEach(control => {
     delete control.unitRecordId;
     delete control.id;
     delete control.userId;
@@ -356,7 +356,7 @@ async function unitControl(unitControls: UnitControlDTO[]) {
 }
 
 async function unitFuel(unitFuels: UnitFuelDTO[]) {
-  unitFuels.forEach(fuel => {
+  unitFuels?.forEach(fuel => {
     delete fuel.unitRecordId;
     delete fuel.actualOrProjectCode;
     delete fuel.sulfurContent;
@@ -369,7 +369,7 @@ async function unitFuel(unitFuels: UnitFuelDTO[]) {
 }
 
 async function suppMatsMonitorMethod(matsMethods: MatsMethodDTO[]) {
-  matsMethods.forEach(method => {
+  matsMethods?.forEach(method => {
     delete method.id;
     delete method.locationId;
     delete method.userId;

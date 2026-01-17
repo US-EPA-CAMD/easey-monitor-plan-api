@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { MonitorPlanDataTypes } from '../enums/monitor-plan-data-types.enum';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
-
+import { DataSource } from 'typeorm';
 const commonSQL = (schema: string) => {
   return `
     JOIN ${schema}.monitor_plan_location mpl USING (mon_loc_id)
@@ -24,7 +24,9 @@ const commonSQL = (schema: string) => {
 
 @Injectable()
 export class WhatHasDataService {
-  constructor(private readonly repository: MonitorPlanRepository) {}
+  constructor(
+    private readonly dataSource: DataSource,
+  ) {}
 
   async whatHasData(
     dataType: MonitorPlanDataTypes,
@@ -32,6 +34,8 @@ export class WhatHasDataService {
   ): Promise<any> {
     let sql = null;
     const schema = isWorkspace ? 'camdecmpswks' : 'camdecmps';
+    const slaveQueryRunner = this.dataSource.createQueryRunner('slave');
+    const slaveMonitorPlanRepository = slaveQueryRunner.manager.getRepository(MonitorPlanRepository);
 
     switch (dataType) {
       case MonitorPlanDataTypes.ANALYZER_RANGES:
@@ -114,6 +118,12 @@ export class WhatHasDataService {
         break;
     }
 
-    return this.repository.query(sql);
+    try{
+      return slaveMonitorPlanRepository.query(sql);
+    }
+    finally
+    {
+      await slaveQueryRunner.release();
+    }
   }
 }

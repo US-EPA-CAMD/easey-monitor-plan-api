@@ -4,6 +4,10 @@ import { DuctWafMap } from '../maps/duct-waf.map';
 import { DuctWafService } from './duct-waf.service';
 import { DuctWafRepository } from './duct-waf.repository';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const mockRepository = () => ({
   findBy: jest.fn().mockResolvedValue(''),
@@ -15,6 +19,7 @@ const mockMap = () => ({
 
 describe('DuctWafService', () => {
   let service: DuctWafService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,6 +34,7 @@ describe('DuctWafService', () => {
           provide: DuctWafMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -41,6 +47,10 @@ describe('DuctWafService', () => {
 
   describe('getDuctWafs', () => {
     it('should return array of duct wafs', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getDuctWafs(null);
       expect(result).toEqual('');
     });

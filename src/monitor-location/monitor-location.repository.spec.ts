@@ -4,6 +4,7 @@ import { EntityManager, SelectQueryBuilder } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorLocationRepository } from './monitor-location.repository';
+import { DataSource } from 'typeorm';
 
 const mockQueryBuilder = () => ({
   innerJoinAndSelect: jest.fn(),
@@ -17,6 +18,7 @@ const mockQueryBuilder = () => ({
 describe('MonitorLocationRepository', () => {
   let monitorLocationRepository;
   let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -25,6 +27,7 @@ describe('MonitorLocationRepository', () => {
         EntityManager,
         MonitorLocationRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 

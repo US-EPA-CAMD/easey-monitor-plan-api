@@ -12,6 +12,10 @@ import { UnitStackConfigurationRepository } from '../unit-stack-configuration/un
 import { UnitStackConfigurationMap } from '../maps/unit-stack-configuration.map';
 import { UnitStackConfigurationDTO } from '../dtos/unit-stack-configuration.dto';
 import { StackPipe } from '../entities/stack-pipe.entity';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const locId = '6';
 const uscDto = new UnitStackConfigurationDTO();
@@ -31,8 +35,11 @@ const mockUscService = () => ({
 
 describe('MonitorLocationService', () => {
   let service: MonitorLocationService;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
+    dataSource = {} as DataSource;
+
     const module: TestingModule = await Test.createTestingModule({
       imports: [NotFoundException, LoggerModule],
       providers: [
@@ -54,6 +61,7 @@ describe('MonitorLocationService', () => {
           provide: MonitorLocationMap,
           useFactory: mockMap,
         },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -62,6 +70,10 @@ describe('MonitorLocationService', () => {
 
   describe('tests getLocation method', () => {
     it('should return a monitor location object', async () => {
+     (useSlaveRepository as jest.Mock).mockImplementation(
+       async (_dataSource, _repo, callback) =>
+         callback(mockRepository()) 
+     );
       const result = await service.getLocation(locId);
       expect(result).toEqual({});
     });

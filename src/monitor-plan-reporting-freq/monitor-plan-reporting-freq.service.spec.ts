@@ -3,13 +3,20 @@ import { MonitorPlanReportingFrequencyRepository } from './monitor-plan-reportin
 import { EntityManager } from 'typeorm';
 import { MonitorPlanReportingFrequencyService } from './monitor-plan-reporting-freq.service';
 
+const mockQueryRunner = {
+  query: jest.fn().mockResolvedValue([]),
+  release: jest.fn().mockResolvedValue(undefined),
+};
+const mockConnection = {
+  createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
+};
 const mockRepository = () => ({
   getReportingFreqs: jest.fn().mockResolvedValue([]),
 });
+const mockEntityManager = {
+  connection: mockConnection,
+};
 
-const mockEntityManager = () => ({
-  query: jest.fn().mockResolvedValue([]),
-});
 
 describe('MonitorPlanReportingFrequencyService', () => {
   let service: MonitorPlanReportingFrequencyService;
@@ -25,12 +32,12 @@ describe('MonitorPlanReportingFrequencyService', () => {
         },
         {
           provide: EntityManager,
-          useFactory: mockEntityManager,
+          useFactory: () => mockEntityManager,
         },
       ],
     }).compile();
 
-    service = module.get(MonitorPlanReportingFrequencyService);
+    service = new MonitorPlanReportingFrequencyService(mockEntityManager as any);
     entityManager = module.get(EntityManager);
   });
 

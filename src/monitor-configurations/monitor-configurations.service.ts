@@ -6,11 +6,12 @@ import { MonitorPlanMap } from '../maps/monitor-plan.map';
 import { PlantRepository } from '../plant/plant.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorPlanRepository } from '../monitor-plan/monitor-plan.repository';
-import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
+import { EntityManager, In, MoreThanOrEqual, DataSource } from 'typeorm';
 import { UnitStackConfigurationRepository } from '../unit-stack-configuration/unit-stack-configuration.repository';
 import { UnitCapacityRepository } from '../unit-capacity/unit-capacity.repository';
 import { UnitControlRepository } from '../unit-control/unit-control.repository';
 import { UnitFuelRepository } from '../unit-fuel/unit-fuel.repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class MonitorConfigurationsService {
@@ -24,6 +25,7 @@ export class MonitorConfigurationsService {
     private readonly unitControlRepository: UnitControlRepository,
     private readonly unitFuelRepository: UnitFuelRepository,
     private readonly map: MonitorPlanMap,
+    private readonly dataSource: DataSource,
   ) {}
 
   async populateLocationsAndStackConfigs(plan: MonitorPlan) {
@@ -46,18 +48,19 @@ export class MonitorConfigurationsService {
       plant: true,
     };
     if (monPlanIds.length > 0) {
-      plans = await this.monitorPlanRepository.find({
-        where: { id: In(monPlanIds) },
-        relations,
-      });
+      plans = await useSlaveRepository(this.dataSource, MonitorPlanRepository, async (repository) => repository.find({
+            where: { id: In(monPlanIds) },
+            relations,
+          }));
     } else {
-      const plants = await this.plantRepository.find({
+      const plants = await useSlaveRepository(this.dataSource, PlantRepository, async (repository) => repository.find({
         where: { orisCode: In(orisCodes) },
-      });
-      plans = await this.monitorPlanRepository.find({
+      }));
+      
+      plans = await useSlaveRepository(this.dataSource, MonitorPlanRepository, async (repository) => repository.find({
         where: { facId: In(plants.map(p => p.id)) },
         relations,
-      });
+      }));
     }
 
     await Promise.all(
@@ -109,17 +112,22 @@ export class MonitorConfigurationsService {
     queryTime: string,
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
-
-    const clock: Date = (await this.entityManager.query('SELECT now();'))[0]
-      .now;
-    dto.mostRecentUpdate = clock;
+    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
+    slaveQueryRunner.connect();
+    try {
+      const clock: Date = (await slaveQueryRunner.query('SELECT now();'))[0]
+        .now;
+      dto.mostRecentUpdate = clock;
+    } finally {
+      slaveQueryRunner.release();
+    }
 
     // Populate the monitor plans that have been changed
 
-    dto.changedConfigs = await this.monitorPlanRepository.find({
+    dto.changedConfigs = await useSlaveRepository(this.dataSource, MonitorPlanRepository, async (repository) => repository.find({
       where: { updateDate: MoreThanOrEqual(new Date(queryTime)) },
       relations: ['locations', 'comments', 'reportingFrequencies'],
-    });
+    }));
 
     const promises = [];
 
