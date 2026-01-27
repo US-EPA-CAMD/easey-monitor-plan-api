@@ -17,8 +17,8 @@ export class LastUpdatedConfigQueryDTO {
     type: String,
     format: propertyMetadata.date.fieldLabels.value,
     example: propertyMetadata.date.example,
-    description: propertyMetadata.date.description + ` Date in YYYY-MM-DD format. Must be within the last year from current date and cannot be in the future.`,
+    description: propertyMetadata.date.description + ` Must be within the last year from current date and cannot be in the future.`,
     required: true
   })
-  date: string;
+  date: Date;
 }
