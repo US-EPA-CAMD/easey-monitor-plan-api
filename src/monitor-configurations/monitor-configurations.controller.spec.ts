@@ -51,12 +51,12 @@ describe('MonitorConfigurations', () => {
       jest
         .spyOn(service, 'getConfigurationsByLastUpdated')
         .mockResolvedValue(dto);
-      expect(await controller.getLastUpdated({ date: '2025-08-05' })).toBe(dto);
+      expect(await controller.getLastUpdated({ date: new Date('2025-08-05') })).toBe(dto);
     });
 
     it('should reject dates more than 1 year old', async () => {
       const dto = new LastUpdatedConfigQueryDTO();
-      dto.date = '2020-01-01';
+      (dto as any).date = '2020-01-01';
       const errors = await validate(dto);
       expect(errors[0].constraints).toEqual({
         IsValidDateWithinLastYear: 'date must be within the last year'
