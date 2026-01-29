@@ -109,7 +109,7 @@ export class MonitorConfigurationsService {
   }
 
   async getConfigurationsByLastUpdated(
-    queryTime: string,
+    queryTime: Date,
   ): Promise<LastUpdatedConfigDTO> {
     const dto = new LastUpdatedConfigDTO();
     const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");

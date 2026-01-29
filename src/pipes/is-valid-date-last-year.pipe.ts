@@ -12,12 +12,17 @@ import { Injectable } from '@nestjs/common';
 export class IsValidDateWithinLastYearConstraint implements ValidatorConstraintInterface {
   validate(value: any, args: ValidationArguments) {
 
-    const inputDate = new Date(value);
-    
     // Security: Reject any potentially malicious patterns
-    // Strict ISO date format (YYYY-MM-DD)
-    if (typeof value !== 'string' || /[;&|$`<>]/.test(value) || !/^\d{4}-\d{2}-\d{2}$/.test(value) || isNaN(inputDate.getTime())) {
-      args.constraints[0] = args.constraints[0] = `${args.property} must be in YYYY-MM-DD format`;
+    if (typeof value !== 'string' || /[;&|$`<>]/.test(value)) {
+      args.constraints[0] = `${args.property} must be a valid date format`;
+      return false;
+    }
+
+    const inputDate = new Date(value);
+
+    // Validate that the date is parseable
+    if (isNaN(inputDate.getTime())) {
+      args.constraints[0] = `${args.property} must be a valid date format`;
       return false;
     }
 
@@ -40,7 +45,7 @@ export class IsValidDateWithinLastYearConstraint implements ValidatorConstraintI
   }
 
   defaultMessage(args: ValidationArguments) {
-    return args.constraints[0] || `Ensure ${args.property} is a valid date format of YYYY-MM-DD and within the last year`;
+    return args.constraints[0] || `Ensure ${args.property} is a valid date format and within the last year`;
   }
 }
 
