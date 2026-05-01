@@ -137,6 +137,9 @@ Please refer to the Monitor Plan Management API Swagger Documentation for descri
 [Performance Environment](https://api.epa.gov/easey/perf/monitor-plan-mgmt/swagger/) |
 [Beta Environment](https://api.epa.gov/easey/beta/monitor-plan-mgmt/swagger/) | [Staging Environment](https://api.epa.gov/easey/staging/monitor-plan-mgmt/swagger/)
 
+## Timestamp Standard
+`last_activity` on `camdecmpswks.user_check_out` is stored as `timestamp with time zone` (UTC) and written via TypeORM from a plain `new Date()`. The map serializes it with `.toISOString()` so clients always receive a Z-suffixed UTC string. Do not use `dateToEstString()` from `@us-epa-camd/easey-common` for this column. Session/check-out maintenance runs in UTC and an unlabeled local-TZ string would cause premature or delayed deletes.
+
 ## License & Contributing
 
 This project is licensed under the MIT License. We encourage you to read this project’s [License](LICENSE), [Contributing Guidelines](CONTRIBUTING.md), and [Code of Conduct](CODE-OF-CONDUCT.md).
