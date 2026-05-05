@@ -11,7 +11,7 @@
 
 ## Description
 
-Manages Monitor Plan and Location data for the EPA CAMD Business Systems. The Monitor Plan API endpoints return the monitor plans of a particular facility along with methods, supplemental methods, spans, formulas, defaults, systems and components of each monitor location associated with the plan.
+Manages Monitor Plan and Location data for EPA's CAMD Business Systems. The Monitor Plan API endpoints return the monitor plans of a particular facility along with methods, supplemental methods, spans, formulas, defaults, systems and components of each monitor location associated with the plan.
 ​
 
 ## Getting Started
