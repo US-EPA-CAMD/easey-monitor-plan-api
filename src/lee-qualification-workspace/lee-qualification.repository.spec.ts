@@ -36,7 +36,7 @@ describe('LEEQualificationWorkspaceRepository', () => {
   });
 
   describe('getLEEQualification', () => {
-    it('calls createQueryBuilder and gets all LEEQualifications from the repository with the specified facId', async () => {
+    it('calls createQueryBuilder method and gets all LEEQualifications from the repository with the specified facId', async () => {
       leeQualificationRepository.createQueryBuilder = jest
         .fn()
         .mockReturnValue(queryBuilder);
