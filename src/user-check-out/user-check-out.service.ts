@@ -25,7 +25,7 @@ export class UserCheckOutService {
     monPlanId: string,
     username: string,
   ): Promise<UserCheckOutDTO> {
-    if (!(await this.ensureNoEvaluationOrSubmissionInProgress(monPlanId))) {
+    if (!(await this.ensureNoEvaluationSubmissionOrImportInProgress(monPlanId))) {
       throw new EaseyException(
         new Error(
           'Record can not be checked out. It is currently being evaluated or submitted.',
@@ -60,7 +60,7 @@ export class UserCheckOutService {
     return this.map.one(record);
   }
 
-  private async ensureNoEvaluationOrSubmissionInProgress(
+  private async ensureNoEvaluationSubmissionOrImportInProgress(
     monPlanId: string,
     trx?: EntityManager,
   ) {
@@ -81,9 +81,20 @@ export class UserCheckOutService {
       [monPlanId],
     );
 
+    // NEW is excluded: a draft import is still being assembled (its plan is
+    // checked out to the user), so only QUEUED/WIP imports lock the plan.
+    const importRecordsInProgress = await (trx ?? this.returnManager()).query(
+      `SELECT * FROM CAMDECMPSAUX.import_set iset
+       JOIN CAMDECMPSAUX.import_queue iq USING(import_set_id)
+       WHERE iq.mon_plan_id = $1 AND iset.status_cd NOT IN ('NEW', 'COMPLETE', 'ERROR');
+      `,
+      [monPlanId],
+    );
+
     if (
       (evalRecordsInProgress && evalRecordsInProgress.length > 0) ||
-      (submissionRecordsInProgress && submissionRecordsInProgress.length > 0)
+      (submissionRecordsInProgress && submissionRecordsInProgress.length > 0) ||
+      (importRecordsInProgress && importRecordsInProgress.length > 0)
     ) {
       return false;
     }
@@ -118,7 +129,7 @@ export class UserCheckOutService {
     trx?: EntityManager,
   ): Promise<boolean> {
     if (
-      !(await this.ensureNoEvaluationOrSubmissionInProgress(monPlanId, trx))
+      !(await this.ensureNoEvaluationSubmissionOrImportInProgress(monPlanId, trx))
     ) {
       throw new EaseyException(
         new Error(
