@@ -6,8 +6,15 @@ import {
   Param,
   Controller,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { ClientTokenGuard } from '@us-epa-camd/easey-common/guards';
 
 import { MonitorPlanDTO } from '../dtos/monitor-plan.dto';
 import { MonitorPlanImportResponseDTO } from '../dtos/monitor-plan-import-response.dto';
@@ -115,6 +122,25 @@ export class MonitorPlanWorkspaceController {
     await this.importChecksService.runImportChecks(plan);
     await this.mpChecksService.runChecks(plan);
     return await this.service.importMpPlan(plan, user.userId, draft);
+  }
+
+  @Post('import/bulk')
+  @ApiSecurity('ClientId')
+  @ApiBearerAuth('ClientToken')
+  @UseGuards(ClientTokenGuard)
+  @ApiOkResponse({
+    type: MonitorPlanImportResponseDTO,
+    description:
+      'Imports a monitor plan on behalf of a user for the bulk import job',
+  })
+  async importPlanBulk(
+    @Body() plan: UpdateMonitorPlanDTO,
+    @Query('userId') userId: string,
+    @Query('draft') draft: boolean,
+  ): Promise<MonitorPlanImportResponseDTO> {
+    await this.importChecksService.runImportChecks(plan);
+    await this.mpChecksService.runChecks(plan);
+    return await this.service.importMpPlan(plan, userId, draft);
   }
 
   @Post('single-unit')
