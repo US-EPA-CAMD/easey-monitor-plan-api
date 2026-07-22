@@ -81,12 +81,10 @@ export class UserCheckOutService {
       [monPlanId],
     );
 
-    // NEW is excluded: a draft import is still being assembled (its plan is
-    // checked out to the user), so only QUEUED/WIP imports lock the plan.
     const importRecordsInProgress = await (trx ?? this.returnManager()).query(
       `SELECT * FROM CAMDECMPSAUX.import_set iset
        JOIN CAMDECMPSAUX.import_queue iq USING(import_set_id)
-       WHERE iq.mon_plan_id = $1 AND iset.status_cd NOT IN ('NEW', 'COMPLETE', 'ERROR');
+       WHERE iq.mon_plan_id = $1 AND iset.status_cd NOT IN ('COMPLETE', 'ERROR');
       `,
       [monPlanId],
     );
