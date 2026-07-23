@@ -89,7 +89,6 @@ export class MonitorDefaultBaseDTO {
         );
       },
     },
-    false,
   )
   @IsNumber(
     { maxDecimalPlaces: 4 },
