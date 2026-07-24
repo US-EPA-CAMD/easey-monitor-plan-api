@@ -133,6 +133,15 @@ export class MonitorPlanWorkspaceController {
     description:
       'Imports a monitor plan on behalf of a user for the bulk import job',
   })
+  @AuditLog({
+    label: 'Imported monitoring plan on behalf of a user for the bulk import job',
+    requestBodyOutFields: [
+      'orisCode',
+      'unitStackConfigurationData.unitId',
+      'unitStackConfigurationData.stackPipeId',
+      'monitoringLocationData.unitId',
+    ],
+  })
   async importPlanBulk(
     @Body() plan: UpdateMonitorPlanDTO,
     @Query('userId') userId: string,
