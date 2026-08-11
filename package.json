@@ -40,7 +40,7 @@
     "@nestjs/swagger": "^11.4.6",
     "@nestjs/typeorm": "^11.0.3",
     "@nestjs/websockets": "^11.1.28",
-    "@types/pg": "^8.20.4",
+    "@types/pg": "^8.21.0",
     "@us-epa-camd/easey-common": "21.5.7",
     "axios": "^1.19.0",
     "class-transformer": "0.5.1",
