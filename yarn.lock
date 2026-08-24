@@ -1235,7 +1235,7 @@
     webpack "5.106.2"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^11.1.28", "@nestjs/common@^11.2.1":
+"@nestjs/common@^11.2.1":
   version "11.2.1"
   resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.2.1.tgz#0b767bef0157600ebbdc80c736752cadeb3f39c0"
   integrity sha512-SEgtP+M9DqNhQkgJIlJ3oTp3gemo/8owySovzMGmJj2kcfIH1G6QP45AAb8dE4a3IpVicpUvdDAy7Syk7ebjBw==
@@ -1255,7 +1255,7 @@
     dotenv-expand "12.0.3"
     lodash "4.18.1"
 
-"@nestjs/core@^11.1.28", "@nestjs/core@^11.2.1":
+"@nestjs/core@^11.2.1":
   version "11.2.1"
   resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-11.2.1.tgz#69a3e63ebf56360e0d7cdaa99318127f579709fb"
   integrity sha512-M5PWFU8NdRTgX9Po49d7TQKg7f5t8GAVUa/Esy4tmaMWcKugTzg3ZzpJfD3LEPMuRHjfs6+8pQYgtuP2uz3rDw==
@@ -1271,7 +1271,7 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-2.1.1.tgz#9530ac3250ab433ba6ef831e9dd5d483f5fc8144"
   integrity sha512-SCCoMEJ6jdeI5h/N+KCVF1+pmg/hmEkNA5nHTS8Gvww7T/LCl4o1gFLinw2iQ60w7slFkszHcGLKGdazVI4F8A==
 
-"@nestjs/platform-express@^11.1.28":
+"@nestjs/platform-express@^11.2.1":
   version "11.2.1"
   resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.2.1.tgz#f8b5fee77d87be8d2bc2c59474f8d47ed31773dd"
   integrity sha512-lbaVW94s1u8AJfgmBtdMPi16MEuFBiLrnflUIA9tZ9e5eoUsGTN7XXXRjU5kTTLgjnTCM53qgBXXGmTqmyfoQA==
@@ -1282,7 +1282,7 @@
     path-to-regexp "8.4.2"
     tslib "2.8.1"
 
-"@nestjs/platform-socket.io@^11.1.28":
+"@nestjs/platform-socket.io@^11.2.1":
   version "11.2.1"
   resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-11.2.1.tgz#fcf02cfd47f3fa87bb5399d2495b685e08d2dffe"
   integrity sha512-BZuk8PpZCN5Dp1nXRuzRIMP9GwOH7YkP10nXQDtKnJfJnMhEfi5ANTjHrk/j0qHB/dhxy6WgFzib7ncSg7wMDw==
@@ -1301,7 +1301,7 @@
     jsonc-parser "3.3.1"
     pluralize "8.0.0"
 
-"@nestjs/swagger@^11.4.6", "@nestjs/swagger@^11.4.7":
+"@nestjs/swagger@^11.4.7":
   version "11.4.7"
   resolved "https://registry.yarnpkg.com/@nestjs/swagger/-/swagger-11.4.7.tgz#d6f9b777d52ced21888bdff4b0c706e069ff9372"
   integrity sha512-QyDYnmfP4IRucgmtQxMqzgRBdWtjFoDp8eFvvgf92+3wdLCL+Q0xOFO1948j/ntW/Wi7qT2dyck6ka8ADzPWQQ==
@@ -1333,7 +1333,7 @@
   resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-11.0.3.tgz#7b1da806fa23c5e2f222d25088334e2bf3d0aad5"
   integrity sha512-zJ+E5l7auVVA7c0PsvcMdyvRPKTUqU5s2ToYmOA2QEsXQ42qbUGtK4+1HlRfpHqBkCSXP+phiH4luvf9DyJNog==
 
-"@nestjs/websockets@^11.1.28":
+"@nestjs/websockets@^11.2.1":
   version "11.2.1"
   resolved "https://registry.yarnpkg.com/@nestjs/websockets/-/websockets-11.2.1.tgz#c24e3e37e464a73605664fdc556955948816b3e0"
   integrity sha512-HWBSJl4kciGJW+PfSgVUKa2tsrM9IqmjsovGQOla44x6VnE/N57y/dJmEJISaoHUJm+bDm4whO5ggXxQHhLwMw==
