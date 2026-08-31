@@ -1355,10 +1355,10 @@
   resolved "https://registry.yarnpkg.com/@nestjs/typeorm/-/typeorm-11.0.3.tgz#7b1da806fa23c5e2f222d25088334e2bf3d0aad5"
   integrity sha512-zJ+E5l7auVVA7c0PsvcMdyvRPKTUqU5s2ToYmOA2QEsXQ42qbUGtK4+1HlRfpHqBkCSXP+phiH4luvf9DyJNog==
 
-"@nestjs/websockets@^11.2.3":
-  version "11.2.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/websockets/-/websockets-11.2.3.tgz#5a354f08faf911b98ec97d42bf3aa2f3d03013bf"
-  integrity sha512-Vjh+KswJbUJpTwTHwNH2CvnetUGkk4dQzyXmPKgty6dxLxtJbLZM3oOoLhIr8XOwrEBZDKqluIdFs8QKZAIm/w==
+"@nestjs/websockets@^12.0.1":
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/websockets/-/websockets-12.0.1.tgz#fb0c01c2450188ea4b87d5ede407c661932531d5"
+  integrity sha512-TxyfPg726saaaRihjBc5izQjQ7bRV1VJrZiEH9KO1LztJQyFbMDVztUI8ZXRgMYDuv8ZY0ENUaDb2JkpCkny0Q==
   dependencies:
     iterare "1.2.1"
     object-hash "3.0.0"
