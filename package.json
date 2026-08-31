@@ -32,7 +32,7 @@
 	"ws": "^8.21.3"
   },
   "dependencies": {
-    "@nestjs/axios": "^4.0.1",
+    "@nestjs/axios": "^12.0.0",
     "@nestjs/common": "^11.2.3",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.2.3",
