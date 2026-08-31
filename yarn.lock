@@ -417,6 +417,11 @@
   resolved "https://registry.yarnpkg.com/@borewit/text-codec/-/text-codec-0.1.1.tgz#7e7f27092473d5eabcffef693a849f2cc48431da"
   integrity sha512-5L/uBxmjaCIX5h8Z+uu+kA9BQLkc/Wl06UGR5ajNRxu+/XjonB5i8JpgFMrPj3LXTCPA0pv8yxUvbUi+QthGGA==
 
+"@borewit/text-codec@^0.2.1":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@borewit/text-codec/-/text-codec-0.2.2.tgz#75025f735c0983b3a871668804a57387e3649375"
+  integrity sha512-DDaRehssg1aNrH4+2hnj1B7vnUGEjU6OIlyRdkMd0aUdIUvKXrJfXsy8LVtXAy7DRvYVluWbMspsRhz2lcW0mQ==
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
@@ -1257,13 +1262,25 @@
     webpack "5.106.2"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^11.2.1", "@nestjs/common@^11.2.3":
+"@nestjs/common@^11.2.1":
   version "11.2.3"
   resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.2.3.tgz#1aa7d68430aba4b3621d313d61627a4040a1bfd8"
   integrity sha512-obdauJXHfthhepbV+LpGe88OeBlR/Kw9lwjLo0Utzc//agoLXYb9DUGhPQWtm81IpBWMv+19eiwcve9MsBZwXA==
   dependencies:
     uid "2.0.2"
     file-type "21.3.4"
+    iterare "1.2.1"
+    load-esm "1.0.3"
+    tslib "2.8.1"
+
+"@nestjs/common@^12.0.1":
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-12.0.1.tgz#f90cda321a57e739fcdc8de0ee6a981814ee5eb0"
+  integrity sha512-v0zTaRCTV2K2xSnb3GnJoQKtaR6VxouJtm+P2gpr5w61dlXeWpXl1WVknCSzUqx2QwTV10tBkHETxvQvkf2Exg==
+  dependencies:
+    uid "2.0.2"
+    "@standard-schema/spec" "1.1.0"
+    file-type "22.0.2"
     iterare "1.2.1"
     load-esm "1.0.3"
     tslib "2.8.1"
@@ -1515,6 +1532,11 @@
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@sqltools/formatter/-/formatter-1.2.5.tgz#3abc203c79b8c3e90fd6c156a0c62d5403520e12"
   integrity sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==
+
+"@standard-schema/spec@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@standard-schema/spec/-/spec-1.1.0.tgz#a79b55dbaf8604812f52d140b2c9ab41bc150bb8"
+  integrity sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==
 
 "@tokenizer/inflate@^0.4.1":
   version "0.4.1"
@@ -3793,6 +3815,16 @@ file-type@21.3.4:
     strtok3 "^10.3.4"
     token-types "^6.1.1"
     uint8array-extras "^1.4.0"
+
+file-type@22.0.2:
+  version "22.0.2"
+  resolved "https://registry.yarnpkg.com/file-type/-/file-type-22.0.2.tgz#a1dae5d38db379374ae475781822fb76936d5134"
+  integrity sha512-0H8TsCUGBLx+V5adH3EY52hTAcyLKbV1D4gq5cIOJ6DnQAHeV9Z2Hhuc5CoBX4YmvB2oL+JIC84z0qO7JsCoNw==
+  dependencies:
+    "@tokenizer/inflate" "^0.4.1"
+    strtok3 "^10.3.5"
+    token-types "^6.1.2"
+    uint8array-extras "^1.5.0"
 
 fill-range@^7.1.1:
   version "7.1.1"
@@ -6432,6 +6464,13 @@ strtok3@^10.3.4:
   dependencies:
     "@tokenizer/token" "^0.3.0"
 
+strtok3@^10.3.5:
+  version "10.3.5"
+  resolved "https://registry.yarnpkg.com/strtok3/-/strtok3-10.3.5.tgz#7213285da0dc3dec0fc8ce5df4b8b7a733f14360"
+  integrity sha512-ki4hZQfh5rX0QDLLkOCj+h+CVNkqmp/CMf8v8kZpkNVK6jGQooMytqzLZYUVYIZcFZ6yDB70EfD8POcFXiF5oA==
+  dependencies:
+    "@tokenizer/token" "^0.3.0"
+
 superagent@^10.3.0:
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/superagent/-/superagent-10.3.0.tgz#ff1e39e7976b63f8084291d65f5bfbbbbd156989"
@@ -6592,6 +6631,15 @@ token-types@^6.1.1:
   integrity sha512-kh9LVIWH5CnL63Ipf0jhlBIy0UsrMj/NJDfpsy1SqOXlLKEVyXXYrnFxFT1yOOYVGBSApeVnjPw/sBz5BfEjAQ==
   dependencies:
     "@borewit/text-codec" "^0.1.0"
+    "@tokenizer/token" "^0.3.0"
+    ieee754 "^1.2.1"
+
+token-types@^6.1.2:
+  version "6.1.2"
+  resolved "https://registry.yarnpkg.com/token-types/-/token-types-6.1.2.tgz#18d0fd59b996d421f9f83914d6101c201bd08129"
+  integrity sha512-dRXchy+C0IgK8WPC6xvCHFRIWYUbqqdEIKPaKo/AcTUNzwLTK6AH7RjdLWsEZcAN/TBdtfUw3PYEgPr5VPr6ww==
+  dependencies:
+    "@borewit/text-codec" "^0.2.1"
     "@tokenizer/token" "^0.3.0"
     ieee754 "^1.2.1"
 
@@ -6819,6 +6867,11 @@ uint8array-extras@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/uint8array-extras/-/uint8array-extras-1.4.0.tgz#e42a678a6dd335ec2d21661333ed42f44ae7cc74"
   integrity sha512-ZPtzy0hu4cZjv3z5NW9gfKnNLjoz4y6uv4HlelAjDK7sY/xOkKZv9xK/WQpcsBB3jEybChz9DPC2U/+cusjJVQ==
+
+uint8array-extras@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/uint8array-extras/-/uint8array-extras-1.5.0.tgz#10d2a85213de3ada304fea1c454f635c73839e86"
+  integrity sha512-rvKSBiC5zqCCiDZ9kAOszZcDvdAHwwIKJG33Ykj43OKcWsnmcBRL09YTU4nOeHZ8Y2a7l1MgTd08SBe9A8Qj6A==
 
 unbox-primitive@^1.1.0:
   version "1.1.0"
