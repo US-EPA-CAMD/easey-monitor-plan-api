@@ -39,9 +39,7 @@ export class EmissionEvaluation extends BaseEntity {
   needsEvalFlag: string;
 
   @PrimaryColumn({
-    type: 'numeric',
-    precision: 38,
-    scale: 0,
+    type: 'bigint',
     name: 'rpt_period_id',
     nullable: false,
     transformer: new NumericColumnTransformer(),
@@ -56,9 +54,7 @@ export class EmissionEvaluation extends BaseEntity {
   submissionAvailabilityCode: string;
 
   @Column({
-    type: 'numeric',
-    precision: 38,
-    scale: 0,
+    type: 'bigint',
     name: 'submission_id',
     transformer: new NumericColumnTransformer(),
   })
