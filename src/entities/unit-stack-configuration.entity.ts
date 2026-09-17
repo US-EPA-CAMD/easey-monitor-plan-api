@@ -16,7 +16,7 @@ export class UnitStackConfiguration extends BaseEntity {
   id: string;
 
   @Column({
-    type: 'numeric',
+    type: 'bigint',
     name: 'unit_id',
     transformer: new NumericColumnTransformer(),
   })
