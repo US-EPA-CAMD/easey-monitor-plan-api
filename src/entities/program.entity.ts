@@ -16,8 +16,7 @@ import { ProgramCode } from './program-code.entity';
 export class Program extends BaseEntity {
   @PrimaryColumn({
     name: 'prg_id',
-    precision: 38,
-    scale: 0,
+    type: 'bigint',
     transformer: new NumericColumnTransformer(),
   })
   programId: number;
