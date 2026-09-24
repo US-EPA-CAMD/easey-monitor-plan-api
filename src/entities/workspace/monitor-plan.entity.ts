@@ -68,14 +68,14 @@ export class MonitorPlan extends BaseEntity {
   checkSessionId: string;
 
   @Column({
-    type: 'bigint',
+    type: 'numeric',
     name: 'end_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
   endReportPeriodId: number;
 
   @Column({
-    type: 'bigint',
+    type: 'numeric',
     name: 'begin_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
