@@ -17,9 +17,7 @@ export class VwMPLocationsAndUnitStackConfigurations extends BaseEntity {
     orisCode: number;
     
     @Column({
-      type: 'numeric',
-      precision: 38,
-      scale: 0,
+      type: 'bigint',
       name: 'fac_id', 
       transformer: new NumericColumnTransformer(),
     })
@@ -98,9 +96,7 @@ export class VwMPLocationsAndUnitStackConfigurations extends BaseEntity {
     updateDate: Date;
 
     @Column({
-      type: 'numeric',
-      precision: 38,
-      scale: 0,
+      type: 'bigint',
       name: 'submission_id', 
       transformer: new NumericColumnTransformer(),
     })
@@ -121,9 +117,7 @@ export class VwMPLocationsAndUnitStackConfigurations extends BaseEntity {
     pendingStatusCode: string;
 
     @Column({
-      type: 'numeric',
-      precision: 38,
-      scale: 0,
+      type: 'bigint',
       name: 'begin_rpt_period_id', 
       transformer: new NumericColumnTransformer(),
     })
@@ -136,9 +130,7 @@ export class VwMPLocationsAndUnitStackConfigurations extends BaseEntity {
     beginReportPeriodDescription: string;
     
     @Column({
-      type: 'numeric',
-      precision: 38,
-      scale: 0,
+      type: 'bigint',
       name: 'end_rpt_period_id', 
       transformer: new NumericColumnTransformer(),
     })

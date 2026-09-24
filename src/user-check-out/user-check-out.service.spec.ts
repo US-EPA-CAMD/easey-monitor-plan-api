@@ -60,7 +60,7 @@ describe('UserCheckOutService', () => {
   describe('checkOutConfiguration', () => {
     it('should check out a configuration and return it', async () => {
       jest
-        .spyOn(service as any, 'ensureNoEvaluationOrSubmissionInProgress')
+        .spyOn(service as any, 'ensureNoEvaluationSubmissionOrImportInProgress')
         .mockResolvedValue(true);
       const result = await service.checkOutConfiguration(null, null);
       expect(result).toEqual(userCheckoutDto);

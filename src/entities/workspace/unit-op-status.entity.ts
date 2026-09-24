@@ -14,14 +14,14 @@ export class UnitOpStatus extends BaseEntity {
   @PrimaryColumn({
     name: 'unit_op_status_id',
     transformer: new NumericColumnTransformer(),
-    type: 'numeric',
+    type: 'bigint',
   })
   id: number;
 
   @Column({
     name: 'unit_id',
     transformer: new NumericColumnTransformer(),
-    type: 'numeric',
+    type: 'bigint',
   })
   unitId: number;
 
