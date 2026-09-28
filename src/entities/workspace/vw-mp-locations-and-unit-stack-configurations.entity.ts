@@ -117,7 +117,7 @@ export class VwMPLocationsAndUnitStackConfigurations extends BaseEntity {
     pendingStatusCode: string;
 
     @Column({
-      type: 'bigint',
+      type: 'numeric',
       name: 'begin_rpt_period_id', 
       transformer: new NumericColumnTransformer(),
     })
@@ -130,7 +130,7 @@ export class VwMPLocationsAndUnitStackConfigurations extends BaseEntity {
     beginReportPeriodDescription: string;
     
     @Column({
-      type: 'bigint',
+      type: 'numeric',
       name: 'end_rpt_period_id', 
       transformer: new NumericColumnTransformer(),
     })
