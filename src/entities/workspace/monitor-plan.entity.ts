@@ -30,7 +30,9 @@ export class MonitorPlan extends BaseEntity {
   id: string;
 
   @Column({
-    type: 'bigint',
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'fac_id',
     transformer: new NumericColumnTransformer(),
   })
@@ -69,6 +71,8 @@ export class MonitorPlan extends BaseEntity {
 
   @Column({
     type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'end_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
@@ -76,6 +80,8 @@ export class MonitorPlan extends BaseEntity {
 
   @Column({
     type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'begin_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
@@ -95,7 +101,9 @@ export class MonitorPlan extends BaseEntity {
   updateDate: Date;
 
   @Column({
-    type: 'bigint',
+    type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'submission_id',
     transformer: new NumericColumnTransformer(),
   })

@@ -17,7 +17,7 @@ export class UnitFuel extends BaseEntity {
   @Column({
     name: 'unit_id',
     transformer: new NumericColumnTransformer(),
-    type: 'bigint',
+    type: 'numeric',
   })
   unitId: number;
 
