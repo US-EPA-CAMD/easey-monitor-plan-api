@@ -39,6 +39,8 @@ export class MonitorPlanReportingFrequency extends BaseEntity {
 
   @Column({
     type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'begin_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
@@ -46,6 +48,8 @@ export class MonitorPlanReportingFrequency extends BaseEntity {
 
   @Column({
     type: 'numeric',
+    precision: 38,
+    scale: 0,
     name: 'end_rpt_period_id',
     transformer: new NumericColumnTransformer(),
   })
