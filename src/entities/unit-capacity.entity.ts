@@ -20,9 +20,7 @@ export class UnitCapacity extends BaseEntity {
   id: string;
 
   @Column({
-    type: 'numeric',
-    precision: 38,
-    scale: 0,
+    type: 'integer',
     nullable: false,
     name: 'unit_id',
     transformer: new NumericColumnTransformer(),

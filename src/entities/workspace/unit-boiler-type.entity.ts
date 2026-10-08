@@ -21,9 +21,7 @@ export class UnitBoilerType extends BaseEntity {
   id: number;
 
   @Column({
-    type: 'numeric',
-    precision: 38,
-    scale: 0,
+    type: 'integer',
     nullable: false,
     name: 'unit_id',
     transformer: new NumericColumnTransformer(),
