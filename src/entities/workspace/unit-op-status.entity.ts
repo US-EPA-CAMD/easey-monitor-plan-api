@@ -21,7 +21,7 @@ export class UnitOpStatus extends BaseEntity {
   @Column({
     name: 'unit_id',
     transformer: new NumericColumnTransformer(),
-    type: 'numeric',
+    type: 'integer',
   })
   unitId: number;
 
