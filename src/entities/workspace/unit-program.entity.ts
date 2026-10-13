@@ -16,7 +16,7 @@ export class UnitProgram extends BaseEntity {
   @PrimaryColumn({
     name: 'up_id',
     transformer: new NumericColumnTransformer(),
-    type: 'numeric',
+    type: 'integer',
   })
   id: number;
 
@@ -91,9 +91,7 @@ export class UnitProgram extends BaseEntity {
 
   @Column({
     name: 'prg_id',
-    type: 'numeric',
-    precision: 38,
-    scale: 0,
+    type: 'integer',
     transformer: new NumericColumnTransformer(),
   })
   programId: number;
@@ -113,9 +111,7 @@ export class UnitProgram extends BaseEntity {
 
   @Column({
     name: 'unit_id',
-    type: 'numeric',
-    precision: 38,
-    scale: 0,
+    type: 'integer',
     transformer: new NumericColumnTransformer(),
   })
   unitId: number;

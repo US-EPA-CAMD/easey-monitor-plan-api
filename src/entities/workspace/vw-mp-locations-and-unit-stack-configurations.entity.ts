@@ -17,9 +17,7 @@ export class VwMPLocationsAndUnitStackConfigurations extends BaseEntity {
     orisCode: number;
     
     @Column({
-      type: 'numeric',
-      precision: 38,
-      scale: 0,
+      type: 'integer',
       name: 'fac_id', 
       transformer: new NumericColumnTransformer(),
     })
