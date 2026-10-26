@@ -1317,10 +1317,10 @@
     path-to-regexp "8.4.2"
     tslib "2.8.1"
 
-"@nestjs/platform-socket.io@^11.2.7":
-  version "11.2.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-11.2.7.tgz#4d15420bc1a51e7827d5a5acce372c4abc758da0"
-  integrity sha512-lEXZA+fEeQemLaDb3eAwghR0BYHJgb7KZ/SVmw6LQ7DPo9suSu51bjQtr/JSjpvagLqJQREIrM1X8jQvd4uZZQ==
+"@nestjs/platform-socket.io@^11.2.8":
+  version "11.2.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-socket.io/-/platform-socket.io-11.2.8.tgz#2e664b88d892bee474b7c21c25f04fe67a13661f"
+  integrity sha512-hF6NYa+B/edgw/77qqaprLCmgV0AKzg3sJPJJxZfVKt+xdaAm1GMzCxfnwThUPcRRDDTORsBqGT4HBwT9p+DBQ==
   dependencies:
     socket.io "4.8.3"
     tslib "2.8.1"
