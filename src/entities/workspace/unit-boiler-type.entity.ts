@@ -12,14 +12,14 @@ import { Unit } from './unit.entity';
 @Entity({ name: 'camd.unit_boiler_type' })
 export class UnitBoilerType extends BaseEntity {
   @PrimaryColumn({
-    type: 'bigint',
+    type: 'integer',
     name: 'unit_boiler_type_id',
     transformer: new NumericColumnTransformer(),
   })
   id: number;
 
   @Column({
-    type: 'bigint',
+    type: 'integer',
     nullable: false,
     name: 'unit_id',
     transformer: new NumericColumnTransformer(),

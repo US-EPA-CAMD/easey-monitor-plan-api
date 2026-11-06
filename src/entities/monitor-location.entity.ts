@@ -41,7 +41,7 @@ export class MonitorLocation extends BaseEntity {
   stackPipeId?: string;
 
   @Column({
-    type: 'bigint',
+    type: 'integer',
     transformer: new NumericColumnTransformer(),
     name: 'unit_id',
   })
